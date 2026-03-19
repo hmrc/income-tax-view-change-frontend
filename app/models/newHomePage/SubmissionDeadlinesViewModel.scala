@@ -60,5 +60,5 @@ final case class SubmissionDeadlinesViewModel(
   def isQuarterlyObligations: Boolean =
     openObligations.exists(_.obligationType == obligationTypeQuarterly)
 
-  def showNextUpdatesTileContent: Boolean = openObligations.nonEmpty
+  def hasOpenObligations: Boolean = openObligations.nonEmpty
 }

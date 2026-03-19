@@ -36,7 +36,7 @@ import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.HandleYourTasksView
+import views.html.newHomePage.NewHomeYourTasksView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -44,7 +44,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HandleYourTasksController @Inject()(val authActions: AuthActions,
-                                          val handleYourTasksView: HandleYourTasksView,
+                                          val handleYourTasksView: NewHomeYourTasksView,
                                           val signUpService: SignUpService,
                                           val optOutService: OptOutService,
                                           val ITSAStatusService: ITSAStatusService,

@@ -29,7 +29,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
-import views.html.NewHomeOverviewView
+import views.html.newHomePage.NewHomeOverviewView
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 

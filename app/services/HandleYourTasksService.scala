@@ -37,9 +37,6 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
   private val lppSet: Set[TransactionType] = Set(FirstLatePaymentPenalty, SecondLatePaymentPenalty)
   private val lspSet: Set[TransactionType] = Set(LateSubmissionPenalty)
 
-  case class ParametrisedTaskDescription(content: String, amount: Option[BigDecimal], count: Option[Int])
-  case class ParametrisedTaskDateLabel(content: String, date: Option[LocalDate])
-
   def getYourTasksCards(submissionsViewModel: SubmissionDeadlinesViewModel,
                         isAgent: Boolean,
                         chargeItemList: List[ChargeItem],
@@ -48,8 +45,13 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
                         currentItsaStatus: ITSAStatus)(implicit user: MtdItUser[_]) = {
 
     val isQuarterly = currentItsaStatus == ITSAStatus.Mandated || currentItsaStatus == ITSAStatus.Voluntary
-
     val isSupportingAgent = user.usersRole == MTDSupportingAgent
+
+    println(Console.YELLOW + user.nino + Console.RESET)
+    println(Console.YELLOW + user.mtditid + Console.RESET)
+    println(Console.MAGENTA + isSupportingAgent + Console.RESET)
+    
+    chargeItemList.foreach(charge => println(Console.CYAN + charge + Console.RESET))
 
     val submissionsTasks = getSubmissionTasks(submissionsViewModel, isAgent, isQuarterly)
     val paymentsTasks    = if(isSupportingAgent) None else getFinancialsAndPenalties(chargeItemList, credits, creditsRefundsRepayEnabled, isAgent)
@@ -90,7 +92,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
     val submissionsLinkTextKey = "new.home.yourTasks.updates-and-deadlines"
 
-    val overdueCards =  if(viewModel.showNextUpdatesTileContent) {
+    val overdueCards =  if(viewModel.hasOpenObligations) {
       getOverdueSubmissionsCards(viewModel, submissionsLink, submissionsLinkTextKey, isQuarterly)
     } else Seq.empty
 
@@ -156,7 +158,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
   private def getFinancialsAndPenalties(chargeItemList: List[ChargeItem],
                                 credits: CreditsModel,
                                 creditsRefundsRepayEnabled: Boolean,
-                                isAgent: Boolean)(implicit user: MtdItUser[_]): Seq[YourTasksCard] = {
+                                isAgent: Boolean): Seq[YourTasksCard] = {
 
     val redirectLinkMoneyInYourAccount = {
       if (isAgent) {
@@ -183,10 +185,8 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
     }
   }
 
-  private def getPaymentsCard(
-                                 chargeItemList: List[ChargeItem],
-                                 isAgent: Boolean
-                               )(implicit user: MtdItUser[_]): Seq[YourTasksCard] = {
+  private def getPaymentsCard(chargeItemList: List[ChargeItem],
+                              isAgent: Boolean): Seq[YourTasksCard] = {
 
     val dueChargesList: List[ChargeItem] = dueChargesByTypes(chargeItemList, chargesSet)
     val dueLppsList: List[ChargeItem]    = dueChargesByTypes(chargeItemList, lppSet)
@@ -198,10 +198,6 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
     chargeTask ++ lppTask ++ lspTask
   }
-
-  private def oldestTransaction(chargeList: List[ChargeItem]): Option[ChargeItem] = chargeList
-    .collect { case item if item.dueDate.isDefined => item }
-    .minByOption(_.dueDate)
 
   private def getChargesCard(chargeList: List[ChargeItem], isAgent: Boolean) = {
     val linkText = "newHome.yourTasks.selfAssessment"
@@ -229,8 +225,8 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
     val dateLabel = (maturity, count) match {
       case (Some(MaturityLevel.Upcoming) | Some(MaturityLevel.DueToday) | Some(MaturityLevel.DueEarly), _) => "newHome.yourTasks.selfAssessment.upcomingCharge.label"
-      case (_, 1)                            => "newHome.yourTasks.selfAssessment.overdueCharge.single.label"
-      case _                                 => "newHome.yourTasks.selfAssessment.overdueCharge.multiple.label"
+      case (_, 1) => "newHome.yourTasks.selfAssessment.overdueCharge.single.label"
+      case _ => "newHome.yourTasks.selfAssessment.overdueCharge.multiple.label"
     }
 
     maturity match {
@@ -285,6 +281,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
       (lateSubmissionPenaltyList.head.transactionType, isAgent) match {
         case (LateSubmissionPenalty, false) => s"${appConfig.incomeTaxPenaltiesFrontend}#lspTab"
         case (LateSubmissionPenalty, true)  => s"${appConfig.incomeTaxPenaltiesFrontend}/agent#lspTab"
+        case _ => ""
       }
     } else if (isAgent) {
       controllers.routes.ChargeSummaryController.showAgent(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
@@ -311,142 +308,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
       case (Some(MaturityLevel.Overdue)) => Seq(OverdueTaskCard(contentDescription._1, linkText, redirectLink, dueDateLabel._1, dueDateLabel._2, contentDescription._2, PENALTIES))
       case None => Seq.empty
     }
-
-    Seq()
   }
 
-  private def dueChargesByTypes(list: List[ChargeItem], targetTypes: Set[TransactionType]): List[ChargeItem] = list.filter { charge =>targetTypes.contains(charge.transactionType) }
+  private def dueChargesByTypes(list: List[ChargeItem], targetTypes: Set[TransactionType]): List[ChargeItem] = list.filter { charge => targetTypes.contains(charge.transactionType) }
 
-  private def oldestChargeTransactionTypeTaskDescription(
-                                                          oldestCharge: Option[ChargeItem],
-                                                          oldestChargeDate: Option[LocalDate],
-                                                          overdueCharges: List[ChargeItem],
-                                                          overdueLpps: List[ChargeItem],
-                                                          overdueLsps: List[ChargeItem],
-                                                          outstandingAmountOverdueCharges: BigDecimal
-                                                        ): Option[ParametrisedTaskDescription] = {
-    oldestCharge.flatMap { charge =>
-      (charge.transactionType, MaturityLevel.get(oldestChargeDate)) match {
-        case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment,
-        Some(MaturityLevel.Upcoming)) => Some(ParametrisedTaskDescription("newHome.yourTasks.selfAssessment.upcomingCharge", None, None))
-
-        case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment,
-        Some(MaturityLevel.Overdue)) => if (overdueCharges.size > 1) Some(ParametrisedTaskDescription("newHome.yourTasks.selfAssessment.overdueCharge.multiple", Some(outstandingAmountOverdueCharges), None))
-        else Some(ParametrisedTaskDescription("newHome.yourTasks.selfAssessment.overdueCharge.single", Some(outstandingAmountOverdueCharges), None))
-
-        case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, _) => if (overdueLpps.size > 1) Some(ParametrisedTaskDescription("newHome.yourTasks.selfAssessment.lpp.multiple", None, Some(overdueLpps.size)))
-        else Some(ParametrisedTaskDescription("newHome.yourTasks.selfAssessment.lpp.single", None, None))
-
-        case (LateSubmissionPenalty, _) => if (overdueLsps.size > 1) Some(ParametrisedTaskDescription("newHome.yourTasks.selfAssessment.lsp.multiple", None, Some(overdueLsps.size)))
-        else Some(ParametrisedTaskDescription("newHome.yourTasks.selfAssessment.lsp.single", None, None))
-
-        case _ => None
-      }
-    }
-  }
-
-  private def oldestChargeTransactionTypeTaskDateLabel(
-                                                        oldestCharge: Option[ChargeItem],
-                                                        oldestChargeDate: Option[LocalDate],
-                                                        overdueCharges: List[ChargeItem],
-                                                        overdueLpps: List[ChargeItem],
-                                                        overdueLsps: List[ChargeItem]
-                                                      ): Option[ParametrisedTaskDateLabel] = {
-    oldestCharge.flatMap { charge =>
-      (charge.transactionType, MaturityLevel.get(oldestChargeDate)) match {
-        case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment,
-        Some(MaturityLevel.Upcoming)) => Some(ParametrisedTaskDateLabel("newHome.yourTasks.selfAssessment.upcomingCharge.label", charge.dueDate))
-
-        case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment,
-        Some(MaturityLevel.Overdue)) => if (overdueCharges.size > 1) Some(ParametrisedTaskDateLabel("newHome.yourTasks.selfAssessment.overdueCharge.multiple.label", charge.dueDate))
-        else Some(ParametrisedTaskDateLabel("newHome.yourTasks.selfAssessment.overdueCharge.single.label", charge.dueDate))
-
-        case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, _) => if (overdueLpps.size > 1) Some(ParametrisedTaskDateLabel("newHome.yourTasks.selfAssessment.lpp.multiple.label", charge.dueDate))
-        else Some(ParametrisedTaskDateLabel("newHome.yourTasks.selfAssessment.lpp.single.label", charge.dueDate))
-
-        case (LateSubmissionPenalty, _) => if (overdueLsps.size > 1) Some(ParametrisedTaskDateLabel("newHome.yourTasks.selfAssessment.lsp.multiple.label", charge.dueDate))
-        else Some(ParametrisedTaskDateLabel("newHome.yourTasks.selfAssessment.lsp.single.label", charge.dueDate))
-
-        case _ => None
-      }
-    }
-  }
-
-  private def getParametrisedContent(
-                              oldestCharge: Option[ChargeItem],
-                              oldestChargeDate: Option[LocalDate],
-                              overdueCharges: List[ChargeItem],
-                              overdueLpps: List[ChargeItem],
-                              overdueLsps: List[ChargeItem],
-                              outstandingAmountOverdueCharges: BigDecimal
-                            ): (String, String) = {
-    oldestChargeTransactionTypeTaskDescription(
-      oldestCharge = oldestCharge,
-      oldestChargeDate = oldestChargeDate,
-      overdueCharges = overdueCharges,
-      overdueLpps = overdueLpps,
-      overdueLsps = overdueLsps,
-      outstandingAmountOverdueCharges = outstandingAmountOverdueCharges
-    ).map { content =>
-      val param =
-        content.count.map(_.toString)
-          .orElse(content.amount.map(_.toString))
-          .getOrElse("")
-      (content.content, param)
-    }.getOrElse("", "")
-  }
-
-  private def getParametrisedTaskDateLabel(
-                                    oldestCharge: Option[ChargeItem],
-                                    oldestChargeDate: Option[LocalDate],
-                                    overdueCharges: List[ChargeItem],
-                                    overdueLpps: List[ChargeItem],
-                                    overdueLsps: List[ChargeItem]
-                                  ): (String, LocalDate) = {
-    oldestChargeTransactionTypeTaskDateLabel(
-      oldestCharge = oldestCharge,
-      oldestChargeDate = oldestChargeDate,
-      overdueCharges = overdueCharges,
-      overdueLpps = overdueLpps,
-      overdueLsps = overdueLsps
-    ).map { taskDateLabel =>
-      val date = taskDateLabel.date.getOrElse(LocalDate.now())
-      (taskDateLabel.content, date)
-    }.getOrElse(("" -> LocalDate.now()))
-  }
-
-  private def defineRedirectLinkPayments(
-                                          isAgent: Boolean,
-                                          oldestCharge: Option[ChargeItem],
-                                          overdueLpps: List[ChargeItem],
-                                          overdueLsps: List[ChargeItem]
-                                        ): Option[String] = {
-    oldestCharge.flatMap { charge =>
-      (charge.transactionType, isAgent) match {
-        case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, false) => Some(controllers.routes.WhatYouOweController.show().url)
-        case (PoaOneDebit | PoaTwoDebit | PoaOneReconciliationDebit | PoaTwoReconciliationDebit | BalancingCharge | MfaDebitCharge | ITSAReturnAmendment, true) => Some(controllers.routes.WhatYouOweController.showAgent().url)
-
-        case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, false) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
-          else Some(controllers.routes.ChargeSummaryController.show(overdueLpps.head.taxYear.endYear, overdueLpps.head.transactionId).url)
-        case (FirstLatePaymentPenalty | SecondLatePaymentPenalty, true) => if (overdueLpps.size > 1) Some(getLPP1orLPP2link(overdueLpps.head, isAgent))
-          else Some(controllers.routes.ChargeSummaryController.showAgent(overdueLpps.head.taxYear.endYear, overdueLpps.head.transactionId).url)
-
-        case (LateSubmissionPenalty, false) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
-          else Some(controllers.routes.ChargeSummaryController.show(overdueLsps.head.taxYear.endYear, overdueLsps.head.transactionId).url)
-        case (LateSubmissionPenalty, true) => if (overdueLsps.size > 1) Some(getLPP1orLPP2link(overdueLsps.head, isAgent))
-          else Some(controllers.routes.ChargeSummaryController.showAgent(overdueLsps.head.taxYear.endYear, overdueLsps.head.transactionId).url)
-        case _ => None
-      }
-    }
-  }
-
-  private def getLPP1orLPP2link(chargeItem: ChargeItem, isAgent: Boolean): String = {
-    (chargeItem.transactionType, isAgent) match {
-      case (FirstLatePaymentPenalty, false)  => appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeItem.chargeReference.getOrElse(""))
-      case (FirstLatePaymentPenalty, true)   => appConfig.incomeTaxPenaltiesFrontendLPP1CalculationAgent(chargeItem.chargeReference.getOrElse(""))
-      case (SecondLatePaymentPenalty, false) => appConfig.incomeTaxPenaltiesFrontendLPP2Calculation(chargeItem.chargeReference.getOrElse(""))
-      case (SecondLatePaymentPenalty, true)  => appConfig.incomeTaxPenaltiesFrontendLPP2CalculationAgent(chargeItem.chargeReference.getOrElse(""))
-      case _                                 => ""
-    }
-  }
+  private def oldestTransaction(chargeList: List[ChargeItem]): Option[ChargeItem] = chargeList.collect { case item if item.dueDate.isDefined => item }.minByOption(_.dueDate)
 }
