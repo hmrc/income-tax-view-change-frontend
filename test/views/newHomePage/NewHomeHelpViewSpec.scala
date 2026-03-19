@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.newHomePage
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.getMtdItUser
