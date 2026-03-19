@@ -96,7 +96,9 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         chargeItems,
         useRebrand,
         false,
-        true)(testMessages, appConfig, FakeRequest())
+        true,
+        isRecentActivityEnabled
+      )(testMessages, appConfig, FakeRequest())
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
