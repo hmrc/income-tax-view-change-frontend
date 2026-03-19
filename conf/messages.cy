@@ -193,7 +193,7 @@ home.agent.supporting.cannotAccess.payments                     = taliadau, cred
 home.agent.supporting.cannotAccess.returns                      = Ffurflenni Treth
 home.agent.supporting.cannotAccess.nextChargesDue               = y ffioedd sy’n ddyledus nesaf
 home.agent.supporting.cannotAccess.penaltiesAndAppeals          = cosbau ac apeliadau
-home.agent.supporting.readMore                                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK (yn agor tab newydd).
+home.agent.supporting.readMore                                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK (yn agor tab newydd)
 
 home.penaltiesAndAppeals.heading                                = Cosbau ac apeliadau
 home.penaltiesAndAppeals.view                                   = Gwirio cosbau ac apeliadau Hunanasesiad
