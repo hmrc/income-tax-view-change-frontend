@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package views
+package views.newHomePage
 
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.financialDetails.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import models.financialDetails.*
+import models.incomeSourceDetails.TaxYear
+import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames
@@ -27,11 +29,8 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
 import views.html.newHomePage.NewHomeOverviewView
-import models.incomeSourceDetails.TaxYear
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 
 import java.time.{LocalDate, Month}
 

@@ -45,21 +45,14 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
                         currentItsaStatus: ITSAStatus)(implicit user: MtdItUser[_]) = {
 
     val isQuarterly = currentItsaStatus == ITSAStatus.Mandated || currentItsaStatus == ITSAStatus.Voluntary
-    val isSupportingAgent = user.usersRole == MTDSupportingAgent
-
-    println(Console.YELLOW + user.nino + Console.RESET)
-    println(Console.YELLOW + user.mtditid + Console.RESET)
-    println(Console.MAGENTA + isSupportingAgent + Console.RESET)
-    
-    chargeItemList.foreach(charge => println(Console.CYAN + charge + Console.RESET))
 
     val submissionsTasks = getSubmissionTasks(submissionsViewModel, isAgent, isQuarterly)
-    val paymentsTasks    = if(isSupportingAgent) None else getFinancialsAndPenalties(chargeItemList, credits, creditsRefundsRepayEnabled, isAgent)
+    val paymentsTasks    = if(user.isSupportingAgent) None else getFinancialsAndPenalties(chargeItemList, credits, creditsRefundsRepayEnabled, isAgent)
 
     val allTasks = submissionsTasks ++ paymentsTasks
 
     if (allTasks.isEmpty) {
-      val noTaskDescription = if(isSupportingAgent) "newHome.yourTasks.selfAssessment.supporting.no-tasks" else "newHome.yourTasks.selfAssessment.no-tasks"
+      val noTaskDescription = if(user.isSupportingAgent) "newHome.yourTasks.selfAssessment.supporting.no-tasks" else "newHome.yourTasks.selfAssessment.no-tasks"
       val noTaskCard: NoTaskCard = NoTaskCard("newHome.yourTasks.no-tasks.selfAssessment", noTaskDescription)
 
       HandleYourTasksViewModel(overdueTasks = Seq.empty, datelessTasks = Seq.empty, upcomingTasks = Seq.empty, noTaskCard = Some(noTaskCard))
