@@ -30,7 +30,6 @@ import views.html.TaxYearsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 
 class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
                                    val authActions: AuthActions,
@@ -48,24 +47,25 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
                     isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_]): Future[Result] = {
-    Try {
-      taxYearsView(
-        taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
-        backUrl,
-        isAgent = isAgent,
-        utr = user.saUtr,
-        itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
-        isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
-        earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
-        btaNavPartial = user.btaNavPartial,
-        origin = origin
-      )
-    } match {
-      case Success(taxView) => Future.successful(Ok(taxView))
-      case Failure(ex) =>
-        Logger("application").error(s"failed to render view file for taxYears due to ${ex.getMessage}")
+
+    user.incomeSources.orderedTaxYearsByAccountingPeriods match {
+      case Nil =>
+        Logger("application").error(s"[TaxYearsController][handleRequest] failed to render taxYearsView for taxYears due to no orderedTaxYearsByAccountingPeriods returned")
         val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
         Future.successful(errorHandler.showInternalServerError())
+      case orderedTaxYearsByAccountingPeriods if orderedTaxYearsByAccountingPeriods.nonEmpty =>
+        Logger("application").debug(s"[TaxYearsController][handleRequest] taxYears = ${user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse}")
+        Future(Ok(taxYearsView(
+          taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+          backUrl = backUrl,
+          isAgent = isAgent,
+          utr = user.saUtr,
+          itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+          isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
+          earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
+          btaNavPartial = user.btaNavPartial,
+          origin = origin
+        )))
     }
   }
 

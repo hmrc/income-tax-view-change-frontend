@@ -21,13 +21,16 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import models.incomeSourceDetails.IncomeSourceDetailsError
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+
+import java.time.LocalDate
 
 class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter {
 
@@ -48,15 +51,20 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
 
     s"show${if (isAgent) "Agent"}TaxYears" when {
+
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
         } else {
           "render the Tax years page" when {
+
             "income source details contains a business firstAccountingPeriodEndDate" in {
+
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+
+              when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(2026)
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
