@@ -370,6 +370,29 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         result.futureValue shouldBe List.empty[FinancialDetailsResponseModel]
       }
+
+      "no unpaid transactions exist and there is a payment with an outstanding amount" in {
+
+        setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(taxYear = 9999, outstandingAmount = -2000.0, accruingInterestAmount = None, interestOutstandingAmount = None)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        )))
+        setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(getFinancialDetailSuccess(documentDetails = List(
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None),
+          fullDocumentDetailModel.copy(outstandingAmount = 0, accruingInterestAmount = None, interestOutstandingAmount = None)
+        ), financialDetails = List(
+          fullFinancialDetailModel,
+          fullFinancialDetailModel
+        )))
+
+        val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
+
+        result.futureValue shouldBe List.empty[FinancialDetailsResponseModel]
+      }
+
       "errored financial transactions exist" in {
 
         val financialDetailError = FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "internal server error")
