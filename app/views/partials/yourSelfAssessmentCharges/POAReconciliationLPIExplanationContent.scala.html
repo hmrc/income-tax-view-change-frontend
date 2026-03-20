@@ -37,31 +37,30 @@
 <div>
     @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit) {
         @p(id = Some("poa1-extra-charge-p1")) {
-            @getMessage("poa1ExtraAmountInterest.p1")
-        }
-        @p(id = Some("poa1-extra-charge-p2")) {
-            @getMessage("poa1ExtraAmountInterest.p2")
-        }
-        @p(id = Some("poa1-extra-charge-p3")) {
-            @getMessage("poa1ExtraAmountInterest.p3")
-            <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{
-                ExternalUrlHelper.interestRateBankRateUrl
-            }">@getMessage("poa1ExtraAmountInterest.p3LinkText")</a>
-            @getMessage("poa1ExtraAmountInterest.p3AfterLink")
+            @getMessage("poa1ExtraAmountInterest.p1", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
         }
     } else {
-        @p(id = Some("poa2-extra-charge-p1")){
-            @getMessage("poa2ExtraAmountInterest.p1")
+            @p(id = Some("poa2-extra-charge-p1")) {
+                @getMessage("poa2ExtraAmountInterest.p1", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
+            }
         }
-        @p(id = Some("poa2-extra-charge-p2")){
-            @getMessage("poa2ExtraAmountInterest.p2")
+        @p(id = Some("poa-extra-charge-p2")) {
+            @getMessage("paragraphList.intro")
         }
-        @p(id = Some("poa2-extra-charge-p3")){
-            @getMessage("poa2ExtraAmountInterest.p3")
-            <a class="govuk-link" rel="noreferrer noopener" target="_blank"  href="@{
-                ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl
-            }">@getMessage("poa2ExtraAmountInterest.p3LinkText")</a>
-            @getMessage("poa2ExtraAmountInterest.p3AfterLink")
+
+        <ul class="govuk-list govuk-list--bullet" id="poa-extra-charge-p3">
+            <li id="poa-extra-charge-bullet1">@getMessage("paragraphList.bullet1")</li>
+            <li id="poa-extra-charge-bullet2">@getMessage("paragraphList.bullet2")</li>
+        </ul>
+
+        @p(id = Some("poa-extra-charge-p4")) {
+            @getMessage("extraAmountInterest.p1")
         }
-    }
+        @p(id = Some("poa-extra-charge-p5")) {
+            @getMessage("extraAmountInterest.p2")
+            <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{
+                ExternalUrlHelper.interestRateBankRateUrl
+            }">@getMessage("extraAmountInterest.p2LinkText")</a>
+            @getMessage("extraAmountInterest.p2AfterLink")
+        }
 </div>

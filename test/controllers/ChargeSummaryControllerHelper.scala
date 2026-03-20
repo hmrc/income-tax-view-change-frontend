@@ -99,7 +99,7 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
 
   def successHeadingForRAR2 = s"${messages("chargeSummary.reviewAndReconcilePoa2.text")}"
 
-  def successHeadingRAR1Interest = s"${messages("chargeSummary.lpi.reviewAndReconcilePoa1.text")}"
+  def successHeadingRAR1Interest = s"${messages("yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading")}"
 
   val dunningLocksBannerHeading: String = messages("chargeSummary.dunning.locks.banner.title")
   val paymentBreakdownHeading: String = messages("chargeSummary.paymentBreakdown.heading")
@@ -114,7 +114,10 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
   val explanationTextForRAR2: String = messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1") + " " + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText") + " " + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo", "2017", "2018") + messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p2")
   val descriptionTextForRAR1: String = messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text")
   val descriptionTextForRAR2: String = messages("chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text")
-  val descriptionTextRAR1Interest: String = messages("chargeSummary.poa1ExtraAmountInterest.p1")
+  val descriptionTextRAR1Interest: String = messages("yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1", "2017", "2018")
+  val descriptionTextRARLpiBulletPara: String = messages("yourSelfAssessmentChargeSummary.paragraphList.intro")
+  val descriptionTextRARLpiBulletList: String = messages("yourSelfAssessmentChargeSummary.paragraphList.bullet1") + " " + messages("yourSelfAssessmentChargeSummary.paragraphList.bullet2")
+  val descriptionTextRARLpiPara2: String = messages("yourSelfAssessmentChargeSummary.extraAmountInterest.p1")
 
   class Setup(financialDetails: FinancialDetailsResponseModel,
               chargeHistoryHasError: Boolean = false,

@@ -529,6 +529,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .getElementsByClass("govuk-table__cell")
                   .get(1)
                   .text() shouldBe descriptionTextForRAR1
+                document.getElementById("charge-history-caption").text() shouldBe "This first payment on account extra amount goes towards your 2017 to 2018 tax bill."
               }
 
               "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas, docId = id1040000124) {
@@ -559,6 +560,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                   .getElementsByClass("govuk-table__cell")
                   .get(1)
                   .text() shouldBe descriptionTextForRAR2
+                document.getElementById("charge-history-caption").text() shouldBe "This second payment on account extra amount goes towards your 2017 to 2018 tax bill."
               }
 
               "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest, docId = id1040000123) {
@@ -578,6 +580,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
                 document.select("h1").text() shouldBe successHeadingRAR1Interest
                 document.getElementById("poa1-extra-charge-p1").text() shouldBe descriptionTextRAR1Interest
+                document.getElementById("poa-extra-charge-p2").text() shouldBe descriptionTextRARLpiBulletPara
+                document.getElementById("poa-extra-charge-p3").text() shouldBe descriptionTextRARLpiBulletList
+                document.getElementById("poa-extra-charge-p4").text() shouldBe descriptionTextRARLpiPara2
               }
 
               "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(accruingInterestAmount = Some(0.0)), docId = id1040000123) {
