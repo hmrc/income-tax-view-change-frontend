@@ -70,19 +70,20 @@ class TriggeredMigrationRetrievalAction @Inject()(
               isItsaStatusVoluntaryOrMandated().flatMap {
                 case Right(false) => confirmIneligibleUser(req, isTriggeredMigrationPage)
                 case Left(errorResult) => Future(Left(errorResult))
-                case Right(true) => 
+                case Right(true) =>
                   val yearOfMigration = req.incomeSources.yearOfMigration.getOrElse(req.incomeSources.startingTaxYear.toString)
-                  isCalculationCrystallised(req, yearOfMigration).flatMap {
-                  case Right(true) => confirmIneligibleUser(req, isTriggeredMigrationPage)
-                  case Right(false) => if (isTriggeredMigrationPage) {
-                    Future.successful(Right(req))
-                  } else {
-                    Future.successful(
-                      Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
-                    )
-                  }
-                  case Left(errorResult) => Future.successful(Left(errorResult))
-                }
+                  isCalculationCrystallised(req, req.incomeSources.startingTaxYear.map(_.toString))
+                    .flatMap {
+                      case Right(true) => confirmIneligibleUser(req, isTriggeredMigrationPage)
+                      case Right(false) => if (isTriggeredMigrationPage) {
+                        Future.successful(Right(req))
+                      } else {
+                        Future.successful(
+                          Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
+                        )
+                      }
+                      case Left(errorResult) => Future.successful(Left(errorResult))
+                    }
               }
           }
         }
@@ -95,16 +96,26 @@ class TriggeredMigrationRetrievalAction @Inject()(
       }
     }
 
-  private def isCalculationCrystallised(req: MtdItUser[_], taxYear: String)(implicit hc: HeaderCarrier) = {
-    incomeTaxConnector.getCalculationResponse(
-      req.mtditid,
-      req.nino,
-      taxYear,
-      Some(LATEST)
-    ).map {
-      case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT => Right(false)
-      case calcResponse: LiabilityCalculationResponse => Right(calcResponse.metadata.isCalculationCrystallised)
-      case _: LiabilityCalculationError => Left(internalServerErrorFor(req, "Error retrieving liability calculation during triggered migration retrieval"))
+  private def isCalculationCrystallised(req: MtdItUser[_], taxYearOpt: Option[String])(implicit hc: HeaderCarrier) = {
+
+    def request(taxYear: String) =
+      incomeTaxConnector.getCalculationResponse(
+        mtditid = req.mtditid,
+        nino = req.nino,
+        taxYear = taxYear,
+        calculationRecord = Some(LATEST)
+      ).map {
+        case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
+          Right(false)
+        case calcResponse: LiabilityCalculationResponse =>
+          Right(calcResponse.metadata.isCalculationCrystallised)
+        case _: LiabilityCalculationError =>
+          Left(internalServerErrorFor(req, "Error retrieving liability calculation during triggered migration retrieval"))
+      }
+
+    taxYearOpt match {
+      case Some(taxYear) => request(taxYear)
+      case None => Future(Left(internalServerErrorFor(request = req, context = "TaxYear ==  None")))
     }
   }
 
@@ -113,14 +124,15 @@ class TriggeredMigrationRetrievalAction @Inject()(
       Future(Left(if (user.isAgent()) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
-      itsaStatusList => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
+      itsaStatusList =>
+        itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
           case Some(status) if status.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)) => Future(Right(true))
           case Some(status) if status.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
           case _ => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd) match {
-              case Some(_) => redirectBasedOnUser
-              case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
+            case Some(_) => redirectBasedOnUser
+            case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
           }
-      }
+        }
     }
   }
 

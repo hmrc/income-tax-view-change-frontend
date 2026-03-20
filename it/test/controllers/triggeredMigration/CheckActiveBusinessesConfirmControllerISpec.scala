@@ -84,7 +84,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
           checkPageContent(result, mtdRole)
         }
-        
+
         "render the page when TriggeredMigration FS is enabled - With no Year of Migration" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
