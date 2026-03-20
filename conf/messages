@@ -1917,6 +1917,9 @@ check-details.address                                   = Address
 check-details.change                                    = Change
 check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
 
+check-details.added-address                             = Added address for this business
+check-details.added-international-address               = Added international address for this business
+
 check-details-uk.title                                  = Confirm this information is correct
 check-details-uk.heading                                = UK property
 check-details-uk.start-date                             = Start date
