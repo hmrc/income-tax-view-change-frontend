@@ -71,7 +71,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
                    ctaViewModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2025,2026))),
                    welshLang: Boolean = false,
                    chargeItems: List[ChargeItem] = List.empty,
-                   useRebrand: Boolean = false) {
+                   useRebrand: Boolean = false,
+                   isRecentActivityEnabled: Boolean = false) {
 
     val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
@@ -95,7 +96,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         moneyInYourAccount,
         ctaViewModel,
         chargeItems,
-        useRebrand)(testMessages, appConfig, FakeRequest())
+        useRebrand,
+        isRecentActivityEnabled)(testMessages, appConfig, FakeRequest())
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }

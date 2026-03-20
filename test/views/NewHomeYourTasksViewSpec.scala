@@ -73,7 +73,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
                    welshLang: Boolean = false,
                    obligations: Seq[SingleObligationModel] = getSingleObligationModels(),
                    nextTaxReturnDueDate: Option[LocalDate] = None,
-                   nextQuarterlyUpdatesDueDate: Option[LocalDate] = None) {
+                   nextQuarterlyUpdatesDueDate: Option[LocalDate] = None,
+                   isRecentActivityEnabled: Boolean = false) {
 
     val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
@@ -98,7 +99,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         recentActivityUrl = recentActivityUrl,
         overViewUrl = overViewUrl,
         helpUrl = helpUrl,
-        isGovUkRebrandEnabled = true)(testMessages, FakeRequest(), testMtdItUser)
+        isGovUkRebrandEnabled = true,
+        isRecentActivityEnabled = isRecentActivityEnabled)(testMessages, FakeRequest(), testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }

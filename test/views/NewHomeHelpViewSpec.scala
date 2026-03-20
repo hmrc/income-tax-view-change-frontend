@@ -45,7 +45,8 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
                    overViewUrl: String = "testOverviewUrl",
                    helpUrl: String = "testHelpUrl",
                    welshLang: Boolean = false,
-                   useRebrand: Boolean = false
+                   useRebrand: Boolean = false,
+                   isRecentActivityEnabled: Boolean = false
                  ) {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -71,7 +72,8 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
         recentActivityUrl,
         overViewUrl,
         helpUrl,
-        useRebrand
+        useRebrand,
+        isRecentActivityEnabled
       )(testMessages, request, testUser)
 
     lazy val document: Document = Jsoup.parse(contentAsString(page))
