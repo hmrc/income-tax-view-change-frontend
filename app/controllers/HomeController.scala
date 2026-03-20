@@ -50,9 +50,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.HomeView,
-                               val newHomeRecentActivityView: views.html.NewHomeRecentActivityView,
-                               val newHomeOverviewView: views.html.NewHomeOverviewView,
-                               val newHomeHelpView: views.html.NewHomeHelpView,
+                               val newHomeRecentActivityView: views.html.newHomePage.NewHomeRecentActivityView,
+                               val newHomeOverviewView: views.html.newHomePage.NewHomeOverviewView,
+                               val newHomeHelpView: views.html.newHomePage.NewHomeHelpView,
                                val primaryAgentHomeView: views.html.agent.PrimaryAgentHomeView,
                                val supportingAgentHomeView: views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActions,

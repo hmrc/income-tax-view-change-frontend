@@ -217,7 +217,6 @@ new.home.yourTasks.overdue-quarterly-submission-single-label           = Was due
 new.home.yourTasks.overdue-quarterly-submission-multiple-body          = You have {0} overdue quarterly submissions.
 new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Oldest submission due {0}
 
-
 ### Overview Tab
 new.home.navigation.tabs.overview                               = Overview
 
