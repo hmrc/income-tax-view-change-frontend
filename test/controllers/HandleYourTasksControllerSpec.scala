@@ -76,8 +76,8 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   val baseStatusDetail: StatusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Annual, StatusReason.SignupReturnAvailable, Some(8000.25))
 
   val expectedYourTasksTitle = s"${messages("newHome.navigation.yourTasks")}"
-  val expectedOverdueAmount = s"${messages("newHome.yourTasks.selfAssessment.overdueCharge.single", "1000.0 ")}Was due 31 Jan 2019"
-  val expectedCredit = s"${messages("newHome.yourTasks.selfAssessment.money-in-account", "1000")}"
+  val expectedOverdueAmount = s"${messages("newHome.yourTasks.selfAssessment.overdueCharge.single", "£1,000.00 ")}Was due 31 Jan 2019"
+  val expectedCredit = s"${messages("newHome.yourTasks.selfAssessment.money-in-account", "£1,000.00")}"
   val expectedUpcomingAnnualSubmissionTag = s"${messages("new.home.yourTasks.upcoming-annual-updates-label", "15 Mar 2024")}"
   val expectedUpcomingAnnualSubmissionDeadlineBody = "You have an upcoming annual submission deadline."
   val expectedOverdueQuarterlySubmissionDeadlineBody = "You have an overdue quarterly submission."
