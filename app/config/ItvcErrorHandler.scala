@@ -17,7 +17,7 @@
 package config
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.InternalServerError
+import play.api.mvc.Results.{BadRequest, InternalServerError}
 import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
@@ -42,6 +42,14 @@ class ItvcErrorHandler @Inject()(errorTemplate: ErrorTemplate,
 
   def showInternalServerError()(implicit request: RequestHeader): Result =
     InternalServerError(errorTemplate(
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.heading"),
+      messagesApi.preferred(request)("standardError.message"),
+      isAgent = false
+    ))
+
+  def showBadRequestError()(implicit request: RequestHeader): Result =
+    BadRequest(errorTemplate(
       messagesApi.preferred(request)("standardError.heading"),
       messagesApi.preferred(request)("standardError.heading"),
       messagesApi.preferred(request)("standardError.message"),

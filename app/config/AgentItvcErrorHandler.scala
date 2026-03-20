@@ -17,9 +17,10 @@
 package config
 
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.{InternalServerError, Unauthorized}
+import play.api.mvc.Results.{BadRequest, InternalServerError, Unauthorized}
 import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
+import uk.gov.hmrc.http.BadRequestException
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.agent.errorPages.UnauthorisedAgentView
 import views.html.errorPages.templates.ErrorTemplate
@@ -42,6 +43,15 @@ class AgentItvcErrorHandler @Inject()(val errorTemplate: ErrorTemplate,
       message = messagesApi.preferred(request)("standardError.message"),
       isAgent = true
     ))
+
+  def showBadRequestError()(implicit request: RequestHeader): Result =
+    BadRequest(errorTemplate(
+      pageTitle = messagesApi.preferred(request)("standardError.heading"),
+      heading = messagesApi.preferred(request)("standardError.heading"),
+      message = messagesApi.preferred(request)("standardError.message"),
+      isAgent = true
+    ))
+
 
   def supportingAgentUnauthorised()(implicit request: RequestHeader): Result =
     Unauthorized(unauthorisedAgentView())

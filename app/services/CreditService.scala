@@ -35,8 +35,8 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
                               implicit val dateService: DateServiceInterface)
                              (implicit ec: ExecutionContext,
                               val appConfig: FrontendAppConfig) {
-  def getAllCredits(implicit user: MtdItUser[_],
-                    hc: HeaderCarrier): Future[CreditsModel] = {
+
+  def getAllCredits(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[CreditsModel] = {
 
     val mergeCreditAndRefundModels = (x: CreditsModel, y: CreditsModel) =>
       x.copy(transactions = x.transactions :++ y.transactions.filterNot(item => item.transactionType == Repayment || x.transactions.map(_.transactionId).contains(item.transactionId)))
@@ -46,7 +46,7 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
 
     Future.sequence(
         user.incomeSources.orderedTaxYearsByYearOfMigration.map { taxYearInt =>
-          Logger("application").debug(s"Getting financial details for TaxYear: ${taxYearInt}")
+          Logger("application").debug(s"Getting financial details for TaxYear: $taxYearInt")
           for {
             taxYear <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
             response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
@@ -56,9 +56,13 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
               throw new Exception("Error response while getting Unpaid financial details")
             case _ => None
           }
-        })
+        }
+      )
       .map(_.flatten)
-      .map(_.reduceOption(mergeCreditAndRefundModels).getOrElse(CreditsModel(0, 0, 0, 0, None, None, Nil)))
+      .map(_
+        .reduceOption(mergeCreditAndRefundModels)
+        .getOrElse(CreditsModel(0, 0, 0, 0, None, None, Nil))
+      )
   }
 
   def getAllCreditsV2(implicit user: MtdItUser[_],

@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
+import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewModel}
 import models.obligations.{ObligationsModel, SingleObligationModel}
@@ -31,7 +32,6 @@ import play.api.mvc.*
 import services.*
 import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
-import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.HandleYourTasksView
@@ -42,18 +42,17 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HandleYourTasksController @Inject()(val authActions: AuthActions,
-                                val handleYourTasksView: HandleYourTasksView,
-                                val signUpService: SignUpService,
-                                val optOutService: OptOutService,
-                                val ITSAStatusService: ITSAStatusService,
-                                val whatYouOweService: WhatYouOweService,
-                                val creditService: CreditService,
-                                val dateService: DateServiceInterface,
-                                val financialDetailsService: FinancialDetailsService,
-                                val nextUpdatesService: NextUpdatesService)
-                               (implicit val ec: ExecutionContext,
-                                mcc: MessagesControllerComponents,
-                                val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                          val handleYourTasksView: HandleYourTasksView,
+                                          val signUpService: SignUpService,
+                                          val optOutService: OptOutService,
+                                          val ITSAStatusService: ITSAStatusService,
+                                          val whatYouOweService: WhatYouOweService,
+                                          val creditService: CreditService,
+                                          val dateService: DateServiceInterface,
+                                          val financialDetailsService: FinancialDetailsService,
+                                         val nextUpdatesService: NextUpdatesService)(implicit val ec: ExecutionContext,
+                                          mcc: MessagesControllerComponents,
+                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
@@ -74,7 +73,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
                              (implicit user: MtdItUser[_]): Future[Result] = {
     for {
-      credits <- creditService.getAllCredits()
+      credits: CreditsModel <- creditService.getAllCredits
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
@@ -91,9 +90,16 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
       val homeViewModel = HandleYourTasksViewModel(chargeItemList, credits, creditsRefundsRepayEnabled, updatesAndDeadlinesViewModel, userMandatedOrVoluntary)
 
-      Ok(handleYourTasksView(origin, isAgent,
-        yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
-        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), homeViewModel, appConfig.itvcRebrand)).addingToSession(mandationStatus)
+      Ok(
+        handleYourTasksView(
+          origin = origin,
+          isAgent = isAgent,
+          yourTasksUrl = yourTasksUrl(origin, isAgent),
+          recentActivityUrl = recentActivityUrl(origin, isAgent),
+          overViewUrl = overviewUrl(origin, isAgent),
+          helpUrl = helpUrl(origin, isAgent),
+          viewModel = homeViewModel, appConfig.itvcRebrand)
+      ).addingToSession(mandationStatus)
 
     }
   }

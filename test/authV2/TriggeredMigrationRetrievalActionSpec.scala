@@ -35,7 +35,7 @@ import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.Assertion
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -410,7 +410,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe BAD_REQUEST
       }
       "The user has no ITSA statuses available" in {
         enable(TriggeredMigration)
@@ -429,7 +429,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
-        status(result) shouldBe INTERNAL_SERVER_ERROR
+        status(result) shouldBe BAD_REQUEST
       }
     }
   }

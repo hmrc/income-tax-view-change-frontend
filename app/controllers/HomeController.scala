@@ -147,7 +147,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
 
     for {
-      credits <- creditService.getAllCredits()
+      credits <- creditService.getAllCredits
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       dunningLockExists = hasDunningLock(unpaidCharges)
@@ -334,7 +334,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     implicit user => {
       for {
         ctaViewModel <- whatYouOweService.claimToAdjustViewModel(Nino(user.nino))
-        credits <- creditService.getAllCredits()
+        credits <- creditService.getAllCredits
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
         chargeItem = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
         mandatedOrVoluntary <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandatedOrVoluntary)
