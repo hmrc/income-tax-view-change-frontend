@@ -283,7 +283,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
         val link: Option[Elements] = getElementById("read-more-about-differences-link").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some("https://www.gov.uk/guidance/choose-agents-for-making-tax-digital-for-income-tax")
-        link.map(_.text) shouldBe Some("Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).")
+        link.map(_.text) shouldBe Some("Read more about the difference between main and supporting agents on GOV.UK (opens in new tab)")
       }
     }
 
