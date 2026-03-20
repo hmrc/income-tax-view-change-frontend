@@ -25,8 +25,8 @@ import models.itsaStatus.ITSAStatus
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.NewCalcBreakdownItTestConstants.{liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed}
+import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed, singleBusinessIncomeWithYearOfMigration}
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
 
@@ -71,7 +71,21 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
     s"GET $path" when {
       s"user is $mtdRole" should {
-        "render the page when TriggeredMigration FS is enabled" in {
+        "render the page when TriggeredMigration FS is enabled - With Year of Migration" in {
+          enable(TriggeredMigration)
+          stubAuthorised(mtdRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeWithYearOfMigration)
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+            status = OK,
+            body = liabilityCalculationModelSuccessfulNotCrystallised
+          )
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+          checkPageContent(result, mtdRole)
+        }
+        
+        "render the page when TriggeredMigration FS is enabled - With no Year of Migration" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
