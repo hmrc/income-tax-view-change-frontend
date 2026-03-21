@@ -57,7 +57,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
             "render the charge summary page" that {
               "has expected Payments Breakdown" when {
                 "Charge History feature is disabled" in {
-                  disable(ChargeHistory)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
@@ -84,7 +83,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
               }
               "includes the importantPaymentBreakdown" when {
                 "Charge History feature is disabled" in {
-                  disable(ChargeHistory)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testAuditFinancialDetailsModelJson(123.45, 1.2,
@@ -180,7 +178,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                               }
 
                               "late payment interest flag is true and chargeHistory FS is disabled" in {
-                                disable(ChargeHistory)
                                 stubAuthorised(mtdUserRole)
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 0.0))
@@ -199,7 +196,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                             "is expected" when {
                               "late payment interest flag is true but there are no payment allocations" in {
-                                disable(ChargeHistory)
                                 stubAuthorised(mtdUserRole)
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
@@ -292,7 +288,6 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
                   Given("the ChargeHistory feature switch is disabled")
-                  disable(ChargeHistory)
 
                   val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 

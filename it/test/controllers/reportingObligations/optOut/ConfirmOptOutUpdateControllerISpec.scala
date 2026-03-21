@@ -65,7 +65,6 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 
           s"render check opt-out update answers page" in {
             enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -89,7 +88,6 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
         "has already completed the journey (according to session data)" should {
           s"redirect to the cannot go back page" in {
             enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -120,13 +118,9 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
 
         "is authenticated, with a valid enrolment" should {
-
           "redirect to the completion page" when {
-
             "user confirms opt-out for one-year scenario" in {
-
               enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)

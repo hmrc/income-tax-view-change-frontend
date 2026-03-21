@@ -47,7 +47,8 @@
         isAgent: Boolean,
         backUrl: String,
         origin: Option[String] = None,
-        isTriggeredMigration: Boolean
+        isTriggeredMigration: Boolean,
+        overseasBusinessAddressEnabled: Boolean = false
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
@@ -77,10 +78,20 @@
 }
 
 @changeBusinessAddressURL = @{
-    if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = CheckMode, isTriggeredMigration).url
+    if (overseasBusinessAddressEnabled) {
+        val isNoAddressOnFile = businessDetailsViewModel.exists(_.isNoAddressOnFile)
+
+        if (isNoAddressOnFile) {
+            controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent, isTriggeredMigration).url
+        } else {
+            controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
+        }
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = CheckMode, isTriggeredMigration).url
+        if (isAgent) {
+            controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = CheckMode, isTriggeredMigration).url
+        } else {
+            controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = CheckMode, isTriggeredMigration).url
+        }
     }
 }
 
@@ -221,16 +232,49 @@
     } else Seq.empty
 }
 
+@businessDetailsViewModel = @{
+    viewModel match {
+        case x: CheckBusinessDetailsViewModel => Some(x)
+        case _                               => None
+    }
+}
+
+@showAddedAddressRow = @{
+    overseasBusinessAddressEnabled && businessDetailsViewModel.exists(viewModel =>
+        viewModel.isAddingNewAddress || viewModel.isNoAddressOnFile
+    )
+}
+
+@addedAddressRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment && showAddedAddressRow) {
+        val msgKey = businessDetailsViewModel.map(_.addedAddressMessageKey).getOrElse("added-address")
+        Seq(
+            SummaryListRow(
+                key = Key(content = Text(getMessage(msgKey))),
+                value = Value(content = extractAddress),
+                actions = Some(Actions(items = Seq(
+                    ActionItem(
+                        href = changeBusinessAddressURL,
+                        content = Text(getMessage("change")),
+                        attributes = Map("id" -> "change-added-business-address-link"),
+                        visuallyHiddenText = Some(getMessage(msgKey))
+                    )
+                )))
+            )
+        )
+    } else Seq.empty
+}
+
 @businessAddressRow = @{
-    if(viewModel.incomeSourceType == SelfEmployment) {
+    if(viewModel.incomeSourceType == SelfEmployment && !showAddedAddressRow) {
         Seq(
             SummaryListRow(
                 key = Key(
-                    content = Text(getMessage("address"))
-                ),
+                content = Text(getMessage("address"))
+            ),
                 value = Value(
-                    content = extractAddress
-                ),
+                content = extractAddress
+            ),
                 actions = Some(Actions(
                     items = Seq(
                         ActionItem(
@@ -264,7 +308,11 @@
 
         @govukSummaryList(SummaryList(
             rows = {
-                businessNameRow ++ businessStartDateRow ++ businessTradeRow ++ businessAddressRow
+                businessNameRow ++
+                businessStartDateRow ++
+                businessTradeRow ++
+                addedAddressRow ++
+                businessAddressRow
             },
             attributes = Map("id" -> "check-details-table")
         ))

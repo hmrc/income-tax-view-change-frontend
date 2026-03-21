@@ -93,7 +93,6 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
         }
 
         "redirect to home page when TriggeredMigration FS is disabled" in {
-          disable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
 

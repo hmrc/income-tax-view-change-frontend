@@ -109,7 +109,6 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
           }
 
           "be redirected to the home page if the feature switch is disabled" in {
-            disable(ReportingFrequencyPage)
             enable(OptInOptOutContentUpdateR17, SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -130,7 +129,6 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
 
           "be redirected to the reporting frequency page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
             enable(ReportingFrequencyPage, SignUpFs)
-            disable(OptInOptOutContentUpdateR17)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 

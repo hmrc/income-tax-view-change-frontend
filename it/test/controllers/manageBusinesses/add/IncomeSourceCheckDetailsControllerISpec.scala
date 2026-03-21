@@ -21,12 +21,13 @@ import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationAdded
-import enums.{MTDIndividual, MTDUserRole}
-import helpers.IncomeSourceCheckDetailsConstants._
+import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import helpers.IncomeSourceCheckDetailsConstants.*
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.NavBarFs
+import models.admin.{NavBarFs, OverseasBusinessAddress}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
+import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
@@ -82,7 +83,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "render the Check Business details page" when {
 
               "the user has no existing businesses" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
@@ -137,7 +137,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "redirect to IncomeSourceReportingFrequencyController" when {
               "user selects 'confirm and continue'" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -169,8 +168,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "redirect to check hmrc records page" when {
               "user selects 'confirm and continue' and they are in triggered migration" in {
                 val path = getPath(mtdUserRole, incomeSourceType, isTriggeredMigration = true)
-
-                disable(NavBarFs)
+                
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -201,7 +199,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
             "render the error page" when {
               "error in response from API" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -231,7 +228,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               }
 
               "user session has no details" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
@@ -247,6 +243,222 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             }
           }
           testAuthFailures(path, mtdUserRole, optBody = Some(Map.empty))
+        }
+      }
+    }
+  }
+
+  List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent).foreach { mtdUserRole =>
+    val path = getPath(mtdUserRole, SelfEmployment, false)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+
+    s"GET $path (OverseasBusinessAddress enabled)" when {
+
+      s"a $mtdUserRole user" should {
+
+        "render Address row and no overseas rows when user selects an existing address from their address on file" in {
+          enable(OverseasBusinessAddress)
+          disable(NavBarFs)
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val sessionData = UIJourneySessionData(
+            sessionId = testSessionId,
+            journeyType = IncomeSourceJourneyType(Add, SelfEmployment).toString,
+            addIncomeSourceData = Some(testAddBusinessData.copy(
+              chooseSoleTraderAddress = Some(ChooseSoleTraderAddressUserAnswer(
+                addressLine1 = Some("123 Test Address"),
+                addressLine2 = None,
+                addressLine3 = None,
+                addressLine4 = None,
+                postcode = None,
+                countryCode = Some("GB"),
+                newAddress = false)),
+              addressId = Some("selected-address-id")
+            ))
+          )
+          await(sessionService.setMongoData(sessionData))
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(mtdUserRole, "check-details.title")
+          )
+          val body = result.body
+          body should include("Address")
+          body should not include "Added address for this business"
+
+          disable(OverseasBusinessAddress)
+        }
+
+        "render the correct rows when user adds a new UK address via postcode lookup" in {
+          enable(OverseasBusinessAddress)
+          disable(NavBarFs)
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val sessionData = UIJourneySessionData(
+            sessionId = testSessionId,
+            journeyType = IncomeSourceJourneyType(Add, SelfEmployment).toString,
+            addIncomeSourceData = Some(testAddBusinessData.copy(
+              chooseSoleTraderAddress = Some(ChooseSoleTraderAddressUserAnswer(
+                addressLine1 = Some("123 Test Address"),
+                addressLine2 = None,
+                addressLine3 = None,
+                addressLine4 = None,
+                postcode = None,
+                countryCode = Some("GB"),
+                newAddress = true)),
+              addressId = Some("lookup-result-id"),
+              countryCode = Some("GB")
+            ))
+          )
+          await(sessionService.setMongoData(sessionData))
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(mtdUserRole, "check-details.title")
+          )
+          val body = result.body
+          body should include("Added address for this business")
+          body should not include "Added international address for this business"
+
+          disable(OverseasBusinessAddress)
+        }
+
+        "render the correct rows when user adds a new international address" in {
+          enable(OverseasBusinessAddress)
+          disable(NavBarFs)
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val sessionData = UIJourneySessionData(
+            sessionId = testSessionId,
+            journeyType = IncomeSourceJourneyType(Add, SelfEmployment).toString,
+            addIncomeSourceData = Some(testAddBusinessData.copy(
+              chooseSoleTraderAddress = Some(ChooseSoleTraderAddressUserAnswer(
+                addressLine1 = Some("123 Test Address"),
+                addressLine2 = None,
+                addressLine3 = None,
+                addressLine4 = None,
+                postcode = None,
+                countryCode = Some("FR"),
+                newAddress = true)),
+              addressId = None,
+              countryCode = Some("FR")
+            ))
+          )
+          await(sessionService.setMongoData(sessionData))
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(mtdUserRole, "check-details.title")
+          )
+          val body = result.body
+          body should include("Added international address for this business")
+          body should not include "Added address for this business"
+
+          disable(OverseasBusinessAddress)
+        }
+
+        "render the correct rows when user has no address on file and finds a UK address via postcode lookup" in {
+          enable(OverseasBusinessAddress)
+          disable(NavBarFs)
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val sessionData = UIJourneySessionData(
+            sessionId = testSessionId,
+            journeyType = IncomeSourceJourneyType(Add, SelfEmployment).toString,
+            addIncomeSourceData = Some(testAddBusinessData.copy(
+              chooseSoleTraderAddress = None,
+              addressId = Some("lookup-address-id"),
+              countryCode = Some("GB")
+            ))
+          )
+          await(sessionService.setMongoData(sessionData))
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(mtdUserRole, "check-details.title")
+          )
+          val body = result.body
+          body should include("Added address for this business")
+          body should not include "Added international address for this business"
+
+          disable(OverseasBusinessAddress)
+        }
+
+        "render the correct rows when user has no address on file and manually enters a UK address" in {
+          enable(OverseasBusinessAddress)
+          disable(NavBarFs)
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val sessionData = UIJourneySessionData(
+            sessionId = testSessionId,
+            journeyType = IncomeSourceJourneyType(Add, SelfEmployment).toString,
+            addIncomeSourceData = Some(testAddBusinessData.copy(
+              chooseSoleTraderAddress = None,
+              addressId = None,
+              countryCode = Some("GB")
+            ))
+          )
+          await(sessionService.setMongoData(sessionData))
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(mtdUserRole, "check-details.title")
+          )
+          val body = result.body
+          body should include("Added address for this business")
+          body should not include "Added international address for this business"
+
+          disable(OverseasBusinessAddress)
+        }
+
+        "render only the legacy Address row and no overseas rows when OverseasBusinessAddress feature is disabled" in {
+          disable(OverseasBusinessAddress)
+          disable(NavBarFs)
+          stubAuthorised(mtdUserRole)
+          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+          val sessionData = UIJourneySessionData(
+            sessionId = testSessionId,
+            journeyType = IncomeSourceJourneyType(Add, SelfEmployment).toString,
+            addIncomeSourceData = Some(testAddBusinessData.copy(
+              chooseSoleTraderAddress = Some(ChooseSoleTraderAddressUserAnswer(
+                addressLine1 = Some("123 Test Address"),
+                addressLine2 = None,
+                addressLine3 = None,
+                addressLine4 = None,
+                postcode = None,
+                countryCode = Some("GB"),
+                newAddress = true)),
+              countryCode = Some("GB")
+            ))
+          )
+          await(sessionService.setMongoData(sessionData))
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(OK),
+            pageTitle(mtdUserRole, "check-details.title")
+          )
+          val body = result.body
+          body should include("Address")
+          body should not include "Added address for this business"
+          body should not include "Added international address for this business"
         }
       }
     }

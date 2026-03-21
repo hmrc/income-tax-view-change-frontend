@@ -125,7 +125,6 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
           } else {
             "render the what you owe page" which {
               "displays the payments due totals" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                   propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))

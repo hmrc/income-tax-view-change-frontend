@@ -128,7 +128,6 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
             "is authenticated, with a valid enrolment" should {
               "render the Business Start Date Check Page" when {
                 "using the manage businesses journey" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -163,10 +162,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 }
 
                 s"redirect to $checkDetailsUrl" when {
-
                   "form response is Yes" in {
-
-                    disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -188,10 +184,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                   controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(mode = NormalMode).url
                 }
                 s"redirect to $addTradeUrl" when {
-
                   "form response is Yes" in {
-
-                    disable(NavBarFs)
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -211,7 +204,6 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
               } else {
 
                 "redirect to IncomeSourceCheckDetails page" when {
-
                   "form response is Yes" in {
 
                     val redirectCall =
@@ -219,8 +211,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                         controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(incomeSourceType)
                       else
                         controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
-
-                    disable(NavBarFs)
+                    
                     stubAuthorised(mtdUserRole)
                     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -241,10 +232,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
               val expectedUrlForNo = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent, mode, incomeSourceType).url
 
               s"redirect to $expectedUrlForNo" when {
-
                 "form response is No" in {
-
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -264,9 +252,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
               }
 
               "return a BAD_REQUEST" when {
-
                 "form is empty" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -282,7 +268,6 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 }
 
                 "invalid entry given" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 

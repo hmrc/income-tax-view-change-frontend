@@ -61,7 +61,6 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the income source ceased Page" in {
               stubAuthorised(mtdUserRole)
-              disable(NavBarFs)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -87,7 +86,6 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
             "redirect to IncomeSourceEndDateControllerUrl" when {
               "continue is pressed correctly" in {
                 stubAuthorised(mtdUserRole)
-                disable(NavBarFs)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
 

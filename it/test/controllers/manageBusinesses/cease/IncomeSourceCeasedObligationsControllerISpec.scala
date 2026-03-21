@@ -95,7 +95,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
           "is authenticated, with a valid enrolment" should {
             "render the Business Ceased obligations page with remaining business content when only one business in latency exists and RF FS is turned on" in {
               stubAuthorised(mtdUserRole)
-              disable(NavBarFs)
               enable(ReportingFrequencyPage)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
@@ -114,8 +113,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
             }
             "render the Business Ceased obligations page with remaining business content when only one business in latency exists and RF FS is turned OFF" in {
               stubAuthorised(mtdUserRole)
-              disable(NavBarFs)
-              disable(ReportingFrequencyPage)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
@@ -133,7 +130,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
             }
             "render the Business Ceased obligations page with remaining business content when  all business ceased and RF FS is turned on" in {
               stubAuthorised(mtdUserRole)
-              disable(NavBarFs)
               enable(ReportingFrequencyPage)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
@@ -152,8 +148,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
             }
             "render the Business Ceased obligations page with remaining business content when  all business ceased and RF FS is turned OFF" in {
               stubAuthorised(mtdUserRole)
-              disable(NavBarFs)
-              disable(ReportingFrequencyPage)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
