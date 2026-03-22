@@ -86,7 +86,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           "render the Cease Business Details Page" when {
             "using the manage businesses journey" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
@@ -120,7 +119,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           }
           "render the Cease Business Page with unknown address and title and trade" when {
             "using the manage businesses journey" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
 
@@ -160,7 +158,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           "render the Cease UK Property Details Page" when {
             "using the manage businesses journey" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -191,7 +188,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           "render the Cease Foreign Property Details Page" when {
             "using the manage businesses journey" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
@@ -222,7 +218,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, SelfEmployment)
           s"redirect to $redirectUrl" in {
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
             IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
@@ -252,7 +247,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, UkProperty)
           s"redirect to $redirectUrl" in {
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
             IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
@@ -281,7 +275,6 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, ForeignProperty)
           s"redirect to $redirectUrl" in {
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
             IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))

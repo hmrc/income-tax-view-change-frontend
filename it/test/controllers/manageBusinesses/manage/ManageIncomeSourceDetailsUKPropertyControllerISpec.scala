@@ -52,9 +52,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
           "render the Manage UK Property page" when {
 
             "URL contains a valid income source ID user has no latency information" in {
-
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -75,7 +73,6 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
 
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
 
@@ -97,7 +94,6 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
 
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 
@@ -123,7 +119,6 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")

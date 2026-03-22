@@ -43,7 +43,6 @@ class AddInternationalBusinessAddressControllerISpec extends ControllerISpecHelp
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "redirect to address lookup" in {
-            disable(NavBarFs)
             enable(OverseasBusinessAddress)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)

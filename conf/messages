@@ -192,7 +192,7 @@ home.agent.supporting.cannotAccess.payments                     = payments, cred
 home.agent.supporting.cannotAccess.returns                      = returns
 home.agent.supporting.cannotAccess.nextChargesDue               = next charges due
 home.agent.supporting.cannotAccess.penaltiesAndAppeals          = penalties and appeals
-home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab).
+home.agent.supporting.readMore                                  = Read more about the difference between main and supporting agents on GOV.UK (opens in new tab)
 
 home.penaltiesAndAppeals.heading                                = Penalties and appeals
 home.penaltiesAndAppeals.view                                   = Check Self Assessment penalties and appeals
@@ -1916,6 +1916,9 @@ check-details.trade                                     = Type of trade
 check-details.address                                   = Address
 check-details.change                                    = Change
 check-details.description                               = Once you confirm these details, you will not be able to amend them in the next step and will need to contact HMRC to do so.
+
+check-details.added-address                             = Added address for this business
+check-details.added-international-address               = Added international address for this business
 
 check-details-uk.title                                  = Confirm this information is correct
 check-details-uk.heading                                = UK property

@@ -77,7 +77,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
           "render the home page" which {
             "displays the next upcoming payment and charge" when {
               "there are payments upcoming and nothing is overdue" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -149,7 +148,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
             "displays no upcoming payment" when {
               "there are no upcoming payments" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -220,7 +218,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
             "displays an overdue payment and an overdue obligation" when {
               "there is a single payment overdue and a single obligation overdue" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -291,7 +288,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               }
 
               "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
@@ -363,7 +359,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             }
             "display a count of the overdue payments a count of overdue obligations" when {
               "there is more than one payment overdue and more than one obligation overdue" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -456,7 +451,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             }
             "display Income Sources tile" when {
               "using the manage businesses journey" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -526,7 +520,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             }
             "display Your Businesses tile" when {
               "using the manage businesses journey" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
@@ -599,7 +592,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
           "display the reporting obligations tile" when {
             "Reporting Frequency feature switches are enabled" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
               enable(ReportingFrequencyPage)
@@ -672,7 +664,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
           "render the error page" when {
 
             "retrieving the charges was unsuccessful" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -713,7 +704,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             }
           }
           "retrieving the obligations was unsuccessful" in {
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -731,7 +721,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             )
           }
           "retrieving the income sources was unsuccessful" in {
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(

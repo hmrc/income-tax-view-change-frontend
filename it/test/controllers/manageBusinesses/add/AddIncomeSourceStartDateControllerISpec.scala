@@ -117,7 +117,6 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
             "is authenticated, with a valid enrolment" should {
               "render the Business Start Date Check Page" when {
                 "using the manage businesses journey" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -158,7 +157,6 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                 controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.show(mtdUserRole != MTDIndividual, mode, incomeSourceType).url
               s"redirect to $addBusinessStartDateCheckUrl" when {
                 "a valid date is submitted" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -184,7 +182,6 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
 
               "return a BAD_REQUEST" when {
                 "form is filled incorrectly" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
@@ -207,7 +204,6 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                 }
 
                 "form is empty" in {
-                  disable(NavBarFs)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 

@@ -58,7 +58,6 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
           } else {
             s"render the payment allocation page" which {
               "is for non LPI" in {
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
@@ -77,7 +76,6 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
             }
 
             "shows payment allocation for HMRC adjustment" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               val docNumber = "MA999991A202202"
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
@@ -96,7 +94,6 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper with Featur
             }
 
             s"is for LPI" in {
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 

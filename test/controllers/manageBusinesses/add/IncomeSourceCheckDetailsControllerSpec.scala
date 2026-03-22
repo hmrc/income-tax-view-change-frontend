@@ -22,7 +22,9 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
+import models.admin.OverseasBusinessAddress
 import models.createIncomeSource.CreateIncomeSourceResponse
+import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -104,6 +106,77 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
               document.title shouldBe getTitle(incomeSourceType, mtdRole != MTDIndividual)
               document.select("h1:nth-child(1)").text shouldBe getHeading(incomeSourceType)
               changeDetailsLinks.first().ownText() shouldBe getLink(incomeSourceType)
+            }
+
+          }
+          if (incomeSourceType == SelfEmployment) {
+            "render the check details page with overseas address rows when OverseasBusinessAddress is enabled" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+              mockNoIncomeSources()
+              setupMockCreateSession(true)
+
+              val sessionDataWithNewAddress = notCompletedUIJourneySessionData(
+                IncomeSourceJourneyType(Add, SelfEmployment)
+              ).copy(
+                addIncomeSourceData = notCompletedUIJourneySessionData(
+                  IncomeSourceJourneyType(Add, SelfEmployment)
+                ).addIncomeSourceData.map(
+                  _.copy(chooseSoleTraderAddress = Some(ChooseSoleTraderAddressUserAnswer(
+                    addressLine1 = Some("123 Test Address"),
+                    addressLine2 = None,
+                    addressLine3 = None,
+                    addressLine4 = None,
+                    postcode = None,
+                    countryCode = Some("GB"),
+                    newAddress = true)))
+                )
+              )
+
+              setupMockGetMongo(Right(Some(sessionDataWithNewAddress)))
+              enable(OverseasBusinessAddress)
+
+              val result: Future[Result] = action(fakeRequest)
+
+              status(result) shouldBe OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              val bodyText = document.body().text()
+              bodyText should (
+                include("Added address for this business") or
+                  include("Added international address for this business")
+                )
+              disable(OverseasBusinessAddress)
+            }
+
+            "render the check details page without overseas address rows when OverseasBusinessAddress is disabled" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+              mockNoIncomeSources()
+              setupMockCreateSession(true)
+
+              val sessionDataWithNewAddress = notCompletedUIJourneySessionData(
+                IncomeSourceJourneyType(Add, SelfEmployment)
+              ).copy(
+                addIncomeSourceData = notCompletedUIJourneySessionData(
+                  IncomeSourceJourneyType(Add, SelfEmployment)
+                ).addIncomeSourceData.map(
+                  _.copy(chooseSoleTraderAddress = Some(ChooseSoleTraderAddressUserAnswer(addressLine1 = Some("123 Test Address"),
+                    addressLine2 = None,
+                    addressLine3 = None,
+                    addressLine4 = None,
+                    postcode = None,
+                    countryCode = Some("GB"),
+                    newAddress = true)))
+                )
+              )
+              setupMockGetMongo(Right(Some(sessionDataWithNewAddress)))
+              disable(OverseasBusinessAddress)
+
+              val result: Future[Result] = action(fakeRequest)
+
+              status(result) shouldBe OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.body().text() should not include "Added address for this business"
             }
           }
 

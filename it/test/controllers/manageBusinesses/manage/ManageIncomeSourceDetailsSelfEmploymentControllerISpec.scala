@@ -51,7 +51,6 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
           "render the Manage Self Employment business page" when {
             "URL contains a valid income source ID and user has no latency information" in {
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
@@ -78,7 +77,6 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
 
@@ -108,9 +106,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             }
 
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
-
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
@@ -133,9 +129,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             }
 
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
-
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 
@@ -160,7 +154,6 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
               enable(DisplayBusinessStartDate)
-              disable(NavBarFs)
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
@@ -189,7 +182,6 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
           "render the correct MTD usage content when OptInOptOutContentUpdateR17 is enabled" in {
             enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17)
-            disable(NavBarFs)
             stubAuthorised(mtdUserRole)
             val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 

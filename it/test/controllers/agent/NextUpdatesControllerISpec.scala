@@ -182,7 +182,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           "has obligations and the Opt Out feature switch disabled" in {
             stubAuthorised(mtdUserRole)
-            disable(OptOutFs)
 
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(

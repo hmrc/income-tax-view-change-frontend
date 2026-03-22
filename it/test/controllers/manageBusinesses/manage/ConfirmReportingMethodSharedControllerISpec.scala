@@ -99,7 +99,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
                 enable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -120,8 +119,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               }
 
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                disable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -154,7 +151,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
                 enable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
@@ -174,8 +170,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               }
 
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                disable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
@@ -207,7 +201,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
                 enable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
@@ -226,8 +219,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 )
               }
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                disable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
@@ -260,7 +251,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             s"redirect to business will report (completion) page" when {
               "called with a valid form (OptInOptOutContentUpdateR17 FS enabled)" in {
                 enable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
@@ -280,8 +270,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 )
               }
               "called with a valid form (OptInOptOutContentUpdateR17 FS disabled)" in {
-                disable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
@@ -313,7 +301,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS enabled)" when {
               "called with a valid form" in {
                 enable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -332,8 +319,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS disabled)" when {
               "called with a valid form" in {
-                disable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
@@ -364,7 +349,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS enabled)" when {
               "called with a valid form" in {
                 enable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
@@ -383,8 +367,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             }
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS disabled)" when {
               "called with a valid form" in {
-                disable(OptInOptOutContentUpdateR17)
-                disable(NavBarFs)
                 stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
