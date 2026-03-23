@@ -34,7 +34,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClientV2,
                                            )(implicit val ec: ExecutionContext) {
 
   def createBusinessIncomeSourcesUrl(): String =
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business"
+    s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/create-income-source/business"
 
   def createBusiness(request: CreateBusinessIncomeSourceRequest)
                         (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
