@@ -55,7 +55,7 @@ class UpdateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with M
     val baseUrl = "http://localhost:9999"
     def getAppConfig(): FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
+        override lazy val incomeTaxBusinessDetailsBaseUrl: String = "http://localhost:9999"
       }
 
     val connector = new UpdateIncomeSourceConnector(mockHttpClientV2, getAppConfig())
