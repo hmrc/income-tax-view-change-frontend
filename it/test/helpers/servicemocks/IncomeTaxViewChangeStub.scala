@@ -34,7 +34,7 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   // NINO Lookup Stubs
   // =================
-  val ninoLookupUrl: String => String = mtditid => s"/income-tax-view-change/nino-lookup/$mtditid"
+  val ninoLookupUrl: String => String = mtditid => s"/nino-lookup/$mtditid"
 
   def stubGetNinoResponse(mtditid: String, nino: NinoResponseSuccess): Unit =
     WiremockHelper.stubGet(ninoLookupUrl(mtditid), Status.OK, Json.toJson(nino).toString)
@@ -48,7 +48,7 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   // Get Business Details Stubs
   // ==========================
-  def getBusinessDetailsUrl(nino: String): String = s"/income-tax-view-change/get-business-details/nino/$nino"
+  def getBusinessDetailsUrl(nino: String): String = s"/get-business-details/nino/$nino"
 
   def stubGetBusinessDetails(nino: String)(status: Int, response: JsValue): Unit = {
     WiremockHelper.stubGet(getBusinessDetailsUrl(nino), status, response.toString())
@@ -60,7 +60,7 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   // Income Source Details Stubs
   // ===========================
-  val incomeSourceDetailsUrl: String => String = mtditid => s"/income-tax-view-change/income-sources/$mtditid"
+  val incomeSourceDetailsUrl: String => String = mtditid => s"/income-sources/$mtditid"
 
   def stubGetIncomeSourceDetailsResponse(mtditid: String)(status: Int, response: IncomeSourceDetailsResponse): StubMapping =
     WiremockHelper.stubGet(incomeSourceDetailsUrl(mtditid), status, response.toJson.toString)
@@ -78,13 +78,13 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
 
   // Stub CreateBusinessDetails
   def stubCreateBusinessDetailsResponse()(status: Int, response: List[CreateIncomeSourceResponse]): Unit =
-    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business", status, Json.toJson(response).toString)
+    WiremockHelper.stubPost(s"/create-income-source/business", status, Json.toJson(response).toString)
 
   def stubCreateBusinessDetailsErrorResponse(): Unit =
-    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business", INTERNAL_SERVER_ERROR, "")
+    WiremockHelper.stubPost(s"/create-income-source/business", INTERNAL_SERVER_ERROR, "")
 
   def stubCreateBusinessDetailsErrorResponseNew()(response: List[CreateIncomeSourceErrorResponse]): Unit =
-    WiremockHelper.stubPost(s"/income-tax-view-change/create-income-source/business", INTERNAL_SERVER_ERROR, Json.toJson(response).toString)
+    WiremockHelper.stubPost(s"/create-income-source/business", INTERNAL_SERVER_ERROR, Json.toJson(response).toString)
 
   //PreviousObligations Stubs
   def fulfilledObligationsUrl(nino: String): String = {
@@ -225,7 +225,7 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   }
 
   def stubUpdateIncomeSource(status: Int, response: JsValue): StubMapping =
-    WiremockHelper.stubPut("/income-tax-view-change/update-income-source", status, response.toString())
+    WiremockHelper.stubPut("/update-income-source", status, response.toString())
 
   def stubUpdateIncomeSourceError(): StubMapping = {
     stubUpdateIncomeSource(INTERNAL_SERVER_ERROR, Json.obj("failures" -> Json.arr(
@@ -234,7 +234,7 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   }
 
   def verifyUpdateIncomeSource(body: Option[String]): Unit = {
-    WiremockHelper.verifyPut("/income-tax-view-change/update-income-source", body)
+    WiremockHelper.verifyPut("/update-income-source", body)
   }
 
   def stubPostClaimToAdjustPoa(status: Int, response: String): Unit = {
