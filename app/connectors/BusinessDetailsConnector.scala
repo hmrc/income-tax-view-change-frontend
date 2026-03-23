@@ -40,15 +40,15 @@ class BusinessDetailsConnector @Inject()(
                                         )(implicit val ec: ExecutionContext) {
 
   private[connectors] def getBusinessDetailsUrl(nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
+    s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/get-business-details/nino/$nino"
   }
 
   private[connectors] def getIncomeSourcesUrl(mtditid: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
+    s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-sources/$mtditid"
   }
 
   private[connectors] def getNinoLookupUrl(mtdRef: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
+    s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/nino-lookup/$mtdRef"
   }
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
