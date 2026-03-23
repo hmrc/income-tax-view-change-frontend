@@ -59,16 +59,16 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     tradingStartDate = LocalDate.of(2022, 1, 1),
     incomeSourceType = UkProperty)
 
-  def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole, isError: Boolean): CreateIncomeSourceAuditModel = {
+  def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole, isError: Boolean, isTrigMig: Boolean = false): CreateIncomeSourceAuditModel = {
     (incomeSourceType, mtdUserRole, isError) match {
-      case (SelfEmployment, MTDIndividual, true) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, Some(failureCategory), Some(failureReason), None)
-      case (SelfEmployment, MTDIndividual, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))
-      case (SelfEmployment, ur, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))(agentUserConfirmedClient(ur == MTDSupportingAgent))
-      case _ => CreateIncomeSourceAuditModel(incomeSourceType, createForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)))
+      case (SelfEmployment, MTDIndividual, true) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, Some(failureCategory), Some(failureReason), None, isTrigMig)
+      case (SelfEmployment, MTDIndividual, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)), isTrigMig)
+      case (SelfEmployment, ur, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)), isTrigMig)(agentUserConfirmedClient(ur == MTDSupportingAgent))
+      case _ => CreateIncomeSourceAuditModel(incomeSourceType, createForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)), isTrigMig)
     }
   }
 
-  val seAuditDetails: Boolean => JsObject = isSuccess => {
+  val seAuditDetails: (Boolean, Boolean) => JsObject = (isSuccess, isTrigMig) => {
     val outcome = if (isSuccess) {
       Json.obj(
         "isSuccessful" -> true
@@ -90,23 +90,35 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
       "addressLine2" -> "Test Unit",
       "addressTownOrCity" -> "Test City",
       "addressPostcode" -> "TE5 7TT",
-      "addressCountry" -> "GB"
+      "addressCountry" -> "GB",
+      "isTriggeredMigration" -> isTrigMig
     ) ++ {
       if (isSuccess) Json.obj("addedIncomeSourceID" -> "XA00001234") else Json.obj()
     }
   }
 
-  val detailIndividualSE = commonAuditDetails(Individual) ++ seAuditDetails(true)
+  val detailIndividualSE = commonAuditDetails(Individual) ++ seAuditDetails(true, false)
+  val detailIndividualSETrigMig = commonAuditDetails(Individual) ++ seAuditDetails(true, true)
 
-  val detailAgentSE: Boolean => JsObject = isSupportingAgent => commonAuditDetails(Agent, isSupportingAgent) ++ seAuditDetails(true)
+  val detailAgentSE: Boolean => JsObject = isSupportingAgent => commonAuditDetails(Agent, isSupportingAgent) ++ seAuditDetails(true, false)
+  val detailAgentSETrigMig: Boolean => JsObject = isSupportingAgent => commonAuditDetails(Agent, isSupportingAgent) ++ seAuditDetails(true, true)
 
-  val detailOutcomeError = commonAuditDetails(Individual) ++ seAuditDetails(false)
+  val detailOutcomeError = commonAuditDetails(Individual) ++ seAuditDetails(false, false)
+  val detailOutcomeErrorTrigMig = commonAuditDetails(Individual) ++ seAuditDetails(false, true)
 
   val detailProperty = commonAuditDetails(Individual) ++ Json.obj(
     "outcome" -> Json.obj("isSuccessful" -> true),
     "journeyType" -> "UKPROPERTY",
     "addedIncomeSourceID" -> "XA00001234",
-    "dateStarted" -> "2022-01-01"
+    "dateStarted" -> "2022-01-01",
+    "isTriggeredMigration" -> false
+  )
+  val detailPropertyTrigMig = commonAuditDetails(Individual) ++ Json.obj(
+    "outcome" -> Json.obj("isSuccessful" -> true),
+    "journeyType" -> "UKPROPERTY",
+    "addedIncomeSourceID" -> "XA00001234",
+    "dateStarted" -> "2022-01-01",
+    "isTriggeredMigration" -> true
   )
 
   "CeaseIncomeSourceAuditModel" should {
@@ -123,6 +135,9 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     "user is an Individual and when income source type is Self Employment" in {
       assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false).detail, detailIndividualSE)
     }
+    "user is an Individual and when income source type is Self Employment and is triggered migration journey" in {
+      assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false, isTrigMig = true).detail, detailIndividualSETrigMig)
+    }
 
     "user is an primary Agent and when income source type is Self Employment" in {
       assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDPrimaryAgent, isError = false).detail, detailAgentSE(false))
@@ -138,6 +153,9 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
     "user is an Individual and when income source type is Property" in {
       assertJsonEquals(getCreateIncomeSourceAuditModel(UkProperty, MTDIndividual, isError = false).detail, detailProperty)
+    }
+    "user is an Individual and when income source type is Property and is triggered migration journey" in {
+      assertJsonEquals(getCreateIncomeSourceAuditModel(UkProperty, MTDIndividual, isError = false, isTrigMig = true).detail, detailPropertyTrigMig)
     }
   }
 }

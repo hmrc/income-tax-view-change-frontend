@@ -193,11 +193,15 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
 
     updateIncomeSourceService.updateCessationDate(user.nino, incomeSourceId.value, cessationDate).flatMap {
       case Right(_) =>
-        auditingService.extendedAudit(CeaseIncomeSourceAuditModel(
-          incomeSourceType = incomeSourceType,
-          cessationDate = cessationDate.toString,
-          incomeSourceId = incomeSourceId,
-          updateIncomeSourceErrorResponse = None))
+        auditingService.extendedAudit(
+          CeaseIncomeSourceAuditModel(
+            incomeSourceType = incomeSourceType,
+            cessationDate = cessationDate.toString,
+            incomeSourceId = incomeSourceId,
+            updateIncomeSourceErrorResponse = None,
+            isTrigMig = isTriggeredMigration
+          )
+        )
 
         Future.successful(Redirect(redirectCall))
 
@@ -205,11 +209,15 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
         Logger("application").error("" +
           " Unsuccessful update response received")
 
-        auditingService.extendedAudit(CeaseIncomeSourceAuditModel(
-          incomeSourceType = incomeSourceType,
-          cessationDate = cessationDate.toString,
-          incomeSourceId = incomeSourceId,
-          updateIncomeSourceErrorResponse = Some(error)))
+        auditingService.extendedAudit(
+          CeaseIncomeSourceAuditModel(
+            incomeSourceType = incomeSourceType,
+            cessationDate = cessationDate.toString,
+            incomeSourceId = incomeSourceId,
+            updateIncomeSourceErrorResponse = Some(error),
+            isTrigMig = isTriggeredMigration
+          )
+        )
 
         Future.successful {
           Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType, isTriggeredMigration))

@@ -234,8 +234,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
             )
 
             AuditStub.verifyAuditContainsDetail(
-              CeaseIncomeSourceAuditModel(SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None)
-              (getTestUser(mtdUserRole, businessOnlyResponse)).detail)
+              CeaseIncomeSourceAuditModel(
+                SelfEmployment, testEndDate2022, mkIncomeSourceId(testSelfEmploymentId), None, isTrigMig = false
+              )
+              (getTestUser(mtdUserRole, businessOnlyResponse)).detail
+            )
           }
         }
         testAuthFailures(selfEmploymentPath, mtdUserRole, optBody = Some(Map.empty))
@@ -261,9 +264,12 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               redirectURI(redirectUrl),
             )
 
-            AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(
-              UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)
-            (getTestUser(mtdUserRole, ukPropertyOnlyResponse)).detail)
+            AuditStub.verifyAuditContainsDetail(
+              CeaseIncomeSourceAuditModel(
+                UkProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None, isTrigMig = false
+              )
+              (getTestUser(mtdUserRole, ukPropertyOnlyResponse)).detail
+            )
           }
         }
         testAuthFailures(ukPropertyPath, mtdUserRole, optBody = Some(Map.empty))
@@ -288,9 +294,11 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               httpStatus(SEE_OTHER),
               redirectURI(redirectUrl),
             )
-            AuditStub.verifyAuditContainsDetail(CeaseIncomeSourceAuditModel(
-              ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None)
-            (getTestUser(mtdUserRole, foreignPropertyOnlyResponse)).detail)
+            AuditStub.verifyAuditContainsDetail(
+              CeaseIncomeSourceAuditModel(
+                ForeignProperty, testEndDate2022, mkIncomeSourceId(testPropertyIncomeId), None, isTrigMig = false
+              )
+              (getTestUser(mtdUserRole, foreignPropertyOnlyResponse)).detail)
           }
         }
         testAuthFailures(foreignPropertyPath, mtdUserRole, optBody = Some(Map.empty))

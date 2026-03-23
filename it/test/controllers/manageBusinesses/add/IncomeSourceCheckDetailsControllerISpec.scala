@@ -25,7 +25,7 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.IncomeSourceCheckDetailsConstants.*
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, OverseasBusinessAddress}
+import models.admin.{NavBarFs, OverseasBusinessAddress, TriggeredMigration}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -146,15 +146,15 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 incomeSourceType match {
                   case SelfEmployment => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = false)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case UkProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = false)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case ForeignProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = false)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
                 }
 
@@ -178,15 +178,15 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 incomeSourceType match {
                   case SelfEmployment => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = true)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case UkProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = true)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case ForeignProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)))
+                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = true)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
                 }
 
@@ -209,15 +209,15 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 incomeSourceType match {
                   case SelfEmployment => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, Some("API_FAILURE"), Some(testErrorReason), None)
+                    CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, Some("API_FAILURE"), Some(testErrorReason), None, isTrigMig = false)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case UkProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)
+                    CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None, isTrigMig = false)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case ForeignProperty => AuditStub.verifyAuditContainsDetail(
-                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None)
+                    CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None, isTrigMig = false)
                     (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
                 }
 

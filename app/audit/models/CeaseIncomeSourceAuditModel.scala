@@ -28,7 +28,9 @@ import utils.Utilities.JsonUtil
 case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                        cessationDate: String,
                                        incomeSourceId: IncomeSourceId,
-                                       updateIncomeSourceErrorResponse: Option[UpdateIncomeSourceResponseError])(implicit user: MtdItUser[_])
+                                       updateIncomeSourceErrorResponse: Option[UpdateIncomeSourceResponseError],
+                                       isTrigMig: Boolean
+                                      )(implicit user: MtdItUser[_])
   extends ExtendedAuditModel with ImplicitDateParser {
 
   private val isSuccessful = updateIncomeSourceErrorResponse.isEmpty
@@ -39,17 +41,21 @@ case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
     else outcome ++ Json.obj(
       "isSuccessful" -> isSuccessful,
       "failureCategory" -> "API_FAILURE",
-      "failureReason" -> updateIncomeSourceErrorResponse.get.reason)
+      "failureReason" -> updateIncomeSourceErrorResponse.get.reason
+    )
   }
 
   override val transactionName: String = enums.TransactionName.CeaseIncomeSource
   override val auditType: String = enums.AuditType.CeaseIncomeSource
   override val detail: JsValue = {
     val details = userAuditDetails(user) ++
-      Json.obj("outcome" -> outcome,
+      Json.obj(
+        "outcome" -> outcome,
         "journeyType" -> incomeSourceType.journeyType,
         "dateBusinessStopped" -> cessationDate,
-        "incomeSourceID" -> incomeSourceId.value)
+        "incomeSourceID" -> incomeSourceId.value,
+        "isTriggeredMigration" -> isTrigMig
+      )
 
     incomeSourceType match {
       case SelfEmployment =>

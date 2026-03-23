@@ -28,7 +28,8 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                         viewModel: CheckDetailsViewModel,
                                         failureCategory: Option[String],
                                         failureReason: Option[String],
-                                        createIncomeSourceResponse: Option[CreateIncomeSourceResponse]
+                                        createIncomeSourceResponse: Option[CreateIncomeSourceResponse],
+                                        isTrigMig: Boolean
                                        )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
 
@@ -52,7 +53,8 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
     val baseDetails = userAuditDetails(user) ++
       Json.obj(
         "outcome" -> outcome,
-        "journeyType" -> incomeSourceType.journeyType
+        "journeyType" -> incomeSourceType.journeyType,
+        "isTriggeredMigration"-> isTrigMig
       ) ++
      Json.obj ("addedIncomeSourceID" -> createIncomeSourceResponse.map(x => x.incomeSourceId))
 
