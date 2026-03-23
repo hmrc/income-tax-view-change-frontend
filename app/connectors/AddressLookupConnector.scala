@@ -86,7 +86,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                   Seq(
                     "postcode" -> JsBoolean(true)
                   )
-                )
+                ),
+                "showOrganisationName" -> JsBoolean(false)
               )
             ),
             "confirmPageConfig" -> JsObject(

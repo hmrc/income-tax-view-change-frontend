@@ -38,7 +38,8 @@ object AddressLookupTestConstants {
       |    "manualAddressEntryConfig": {
       |      "mandatoryFields": {
       |        "postcode": true
-      |      }
+      |      },
+      |      "showOrganisationName": false
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
@@ -107,7 +108,8 @@ object AddressLookupTestConstants {
       |    "manualAddressEntryConfig": {
       |      "mandatoryFields": {
       |        "postcode": true
-      |      }
+      |      },
+      |      "showOrganisationName": false
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
