@@ -3296,6 +3296,7 @@ yourSelfAssessmentChargeSummary.overDueCharge                       = Mae arnoch
 yourSelfAssessmentChargeSummary.youOwe                              = Mae arnoch:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Swm dyledus i’w gasglu:
+yourSelfAssessmentChargeSummary.amountCollected                     = Swm a gasglwyd:
 yourSelfAssessmentChargeSummary.creditAmount                        = Cyfanswm y credyd:
 yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
@@ -3428,6 +3429,8 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = a dysg
 
 yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
 yourSelfAssessmentChargeSummary.codingOutPOAMessage                        = Dyma’r dreth sydd arnoch ar gyfer blwyddyn dreth {0} i {1}.
+yourSelfAssessmentChargeSummary.codingOutBCDMessageFullyCollected       = Dyma oedd y dreth sy’n weddill yn ddyledus ar gyfer y flwyddyn dreth {0} i {1}. Cafodd ei gasglu yn y flwyddyn dreth {2} i {3} drwy’ch cod treth TWE.
+yourSelfAssessmentChargeSummary.codingOutPOAMessageFullyCollected       = Dyma oedd y dreth oedd yn ddyledus ar gyfer y flwyddyn dreth {0} i {1}. Cafodd ei gasglu yn y flwyddyn dreth {2} i {3} drwy’ch cod treth TWE.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 

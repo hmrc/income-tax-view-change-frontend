@@ -47,8 +47,15 @@
 @{chargeItem.transactionType match {
     case BalancingCharge             => {
         p(id=Some("codedOutBCDExplanation")) {
-            Html(getMessage("codingOutBCDMessage", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
-                collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString))
+            Html(
+                if(chargeItem.isCodingOutFullyCollected) {
+                    getMessage("codingOutBCDMessageFullyCollected", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
+                        collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
+                } else {
+                    getMessage("codingOutBCDMessage", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
+                        collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
+                }
+            )
         }
     }
     case PoaOneDebit | PoaTwoDebit   => {

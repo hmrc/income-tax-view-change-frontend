@@ -63,11 +63,11 @@ case class ChargeItem(
   }
 
   val hasLpiWithDunningLock: Boolean =
-    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
+    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse(BigDecimal(0)) > 0
 
-  def hasAccruingInterest: Boolean = accruingInterestAmount.getOrElse[BigDecimal](0) > 0
+  def hasAccruingInterest: Boolean = accruingInterestAmount.getOrElse(BigDecimal(0)) > 0
 
-  def hasInterest: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) > 0
+  def hasInterest: Boolean = interestOutstandingAmount.getOrElse(BigDecimal(0)) > 0
 
   def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
@@ -114,6 +114,14 @@ case class ChargeItem(
   def isCodingOut: Boolean = {
     val codingOutSubTypes = Seq(Accepted, Cancelled, FullyCollected)
     codedOutStatus.exists(subType => codingOutSubTypes.contains(subType))
+  }
+
+  def isCodingOutAccepted: Boolean = {
+    codedOutStatus.contains(Accepted)
+  }
+
+  def isCodingOutFullyCollected: Boolean = {
+    codedOutStatus.contains(FullyCollected)
   }
 
   def isCodingOutAcceptedOrFullyCollected: Boolean = {

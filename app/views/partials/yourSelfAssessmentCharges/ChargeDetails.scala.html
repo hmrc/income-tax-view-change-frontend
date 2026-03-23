@@ -45,6 +45,7 @@
 @import models.financialDetails.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit,MfaDebitCharge}
 @import views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccountReconciliationPoaDebits
 @import models.chargeSummary.ChargeSummaryViewModel
+@import models.financialDetails.FullyCollected
 
 @this(
     p: p,
@@ -78,12 +79,12 @@
 @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus, viewModel.latePaymentInterestCharge) match {
     case (BalancingCharge, _, true)                        => balancingChargeLPIExplanationContent()
     case (BalancingCharge, Some(Nics2), _)                 => classTwoNICSContent(viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString, viewModel.isAgent)
-    case (BalancingCharge, Some(Accepted), _)              => codedOutExplanationContent(viewModel.chargeItem)
+    case (BalancingCharge, Some(Accepted | FullyCollected), _) => codedOutExplanationContent(viewModel.chargeItem)
     case (BalancingCharge, Some(Cancelled), _)             => cancelledPAYEExplanationContent(viewModel.chargeItem)
     case (BalancingCharge, None, _)                        => whatIsABalancingPayment()
     case (PoaOneDebit | PoaTwoDebit, _, true)              => poaLPIExplanationContent(viewModel)
     case (PoaOneDebit | PoaTwoDebit, None, _)              => whatIsPaymentOnAccount()
-    case (PoaOneDebit | PoaTwoDebit, Some(Accepted), _)    => codedOutExplanationContent(viewModel.chargeItem)
+    case (PoaOneDebit | PoaTwoDebit, Some(Accepted | FullyCollected), _) => codedOutExplanationContent(viewModel.chargeItem)
     case (PoaOneDebit | PoaTwoDebit, Some(Cancelled), _)   => cancelledPAYEExplanationContent(viewModel.chargeItem)
     case (PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _, true) => poaReconciliationLPIExplanationContent(viewModel)
     case (PoaOneReconciliationDebit | PoaTwoReconciliationDebit, _, _) => whatIsPaymentOnAccountReconciliationPoaDebits(viewModel)
