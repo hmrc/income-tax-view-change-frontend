@@ -241,6 +241,7 @@ new.home.overview.penalties.sub-heading                         = Cosbau ac apel
 new.home.overview.penalties.check-penalties                     = Gwirio cosbau ac apeliadau Hunanasesiad
 new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
 new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
+new.home.overview.deadlines.mandated.view-updates               = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
 
 ### Help Tab
 new.home.help.heading                                           = Troi Treth yn Ddigidol
