@@ -285,7 +285,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
       outstandingChargesModel = List.empty,
       credits = zeroCredits,
       creditsRefundsRepayEnabled = false,
-      obligations = updatesAndDeadlinesViewModel
+      obligations = updatesAndDeadlinesViewModel,
+      userMandatedOrVoluntary = false
     )
   }
 }

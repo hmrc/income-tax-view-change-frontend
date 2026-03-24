@@ -49,7 +49,8 @@
         moneyInYourAccount: Boolean,
         ctaViewModel: WYOClaimToAdjustViewModel,
         chargeItems: List[ChargeItem],
-        isGovUkRebrandEnabled: Boolean)(
+        isGovUkRebrandEnabled: Boolean,
+        userMandatedOrVoluntary: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -136,7 +137,7 @@
     @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel)
     @SectionBreak
 
-    @deadlinesSection(isAgent = false)
+    @deadlinesSection(isAgent = false, userMandatedOrVoluntary)
     @SectionBreak
 
     @incomeSection(isAgent = false)
@@ -157,7 +158,7 @@
     @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel)
     @SectionBreak
 
-    @deadlinesSection(isAgent = true)
+    @deadlinesSection(isAgent = true, userMandatedOrVoluntary)
     @SectionBreak
 
     @incomeSection(isAgent = true)
@@ -172,7 +173,7 @@
 
 @SupportingAgentSections() = {
 
-    @deadlinesSection(isAgent = true)
+    @deadlinesSection(isAgent = true, userMandatedOrVoluntary)
     @SectionBreak
 
     @incomeSection(isAgent = true)
