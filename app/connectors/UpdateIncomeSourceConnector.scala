@@ -34,7 +34,7 @@ class UpdateIncomeSourceConnector @Inject()(val http: HttpClientV2,
                                             val appConfig: FrontendAppConfig
                                            )(implicit val ec: ExecutionContext) extends RawResponseReads {
   def getUpdateIncomeSourceUrl: String = {
-    s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/update-income-source"
+    s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/update-income-source"
   }
 
   def updateCessationDate(nino: String, incomeSourceId: String, cessationDate: Option[LocalDate])(
