@@ -110,12 +110,12 @@ class TriggeredMigrationRetrievalAction @Inject()(
         case calcResponse: LiabilityCalculationResponse =>
           Right(calcResponse.metadata.isCalculationCrystallised)
         case _: LiabilityCalculationError =>
-          Left(internalServerErrorFor(req, "Error retrieving liability calculation during triggered migration retrieval"))
+          Left(showErrorPageBasedOnContext(req, "Error retrieving liability calculation during triggered migration retrieval"))
       }
 
     taxYearOpt match {
       case Some(taxYear) => request(taxYear)
-      case None => Future(Left(internalServerErrorFor(request = req, context = "TaxYear ==  None")))
+      case None => Future(Left(showErrorPageBasedOnContext(request = req, context = "startingTaxYearNone")))
     }
   }
 
@@ -130,21 +130,21 @@ class TriggeredMigrationRetrievalAction @Inject()(
           case Some(status) if status.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
           case _ => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd) match {
             case Some(_) => redirectBasedOnUser
-            case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
+            case _ => Future(Left(showErrorPageBasedOnContext(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
           }
         }
     }
   }
 
-  private def internalServerErrorFor(
-                                      request: MtdItUser[_],
-                                      context: String
-                                    ): Result = {
+  private def showErrorPageBasedOnContext(request: MtdItUser[_], context: String): Result = {
 
     Logger(getClass).error(s"[TriggeredMigrationRetrievalAction][$context]")
-    request.authUserDetails.affinityGroup match {
-      case Some(Agent) => agentErrorHandler.showBadRequestError()(request)
-      case _ => individualErrorHandler.showBadRequestError()(request)
+
+    (request.authUserDetails.affinityGroup, context) match {
+      case (Some(Agent), "startingTaxYearNone") => agentErrorHandler.showBadRequestError()(request)
+      case (_, "startingTaxYearNone") => individualErrorHandler.showBadRequestError()(request)
+      case (Some(Agent), _) => agentErrorHandler.showInternalServerError()(request)
+      case (_, _) => individualErrorHandler.showInternalServerError()(request)
     }
   }
 

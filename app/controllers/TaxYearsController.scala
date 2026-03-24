@@ -50,10 +50,6 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
     user.incomeSources.orderedTaxYearsByAccountingPeriods match {
-      case Nil =>
-        Logger("application").error(s"[TaxYearsController][handleRequest] failed to render taxYearsView for taxYears due to no orderedTaxYearsByAccountingPeriods returned")
-        val errorHandler = if (isAgent) agentItvcErrorHandler.showBadRequestError() else itvcErrorHandler.showBadRequestError()
-        Future.successful(errorHandler)
       case orderedTaxYearsByAccountingPeriods if orderedTaxYearsByAccountingPeriods.nonEmpty =>
         Logger("application").debug(s"[TaxYearsController][handleRequest] taxYears = ${user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse}")
         Future(Ok(taxYearsView(
@@ -67,6 +63,10 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
           btaNavPartial = user.btaNavPartial,
           origin = origin
         )))
+      case _ =>
+        Logger("application").error(s"[TaxYearsController][handleRequest] failed to render taxYearsView for taxYears due to no orderedTaxYearsByAccountingPeriods returned")
+        val errorHandler = if (isAgent) agentItvcErrorHandler.showBadRequestError() else itvcErrorHandler.showBadRequestError()
+        Future.successful(errorHandler)
     }
   }
 

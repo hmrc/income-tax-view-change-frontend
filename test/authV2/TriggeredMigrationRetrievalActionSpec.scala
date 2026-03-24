@@ -96,9 +96,17 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
   val validITSAStatuses = Seq(Voluntary, Mandated)
   val invalidITSAStatuses = Seq(Annual, NoStatus, Exempt, DigitallyExempt, Dormant)
 
-  def incomeSourcesWithChannel(channel: String) = defaultIncomeSourcesData.copy(
-    channel = channel,
-    businesses = List(BusinessDetailsModel("testId", None, None, None, Some(LocalDate.now()), None, None, None)))
+  def incomeSourcesWithChannel(channel: String) =
+    defaultIncomeSourcesData.copy(
+      channel = channel,
+      businesses = List(BusinessDetailsModel(incomeSourceId = "testId", incomeSource = None, accountingPeriod = None, tradingName = None, firstAccountingPeriodEndDate = Some(LocalDate.now()), tradingStartDate = None, contextualTaxYear = None, cessation = None))
+    )
+
+  def incomeSourcesWithNoAccountingPeriodEndDate(channel: String) =
+    defaultIncomeSourcesData.copy(
+      channel = channel,
+      businesses = List(BusinessDetailsModel(incomeSourceId = "testId", incomeSource = None, accountingPeriod = None, tradingName = None, firstAccountingPeriodEndDate = None, tradingStartDate = None, contextualTaxYear = None, cessation = None))
+    )
 
   val testCalcResponse: LiabilityCalculationResponse =
     LiabilityCalculationResponse(
@@ -121,6 +129,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
   )
 
   ".apply()" should {
+
     "redirect to the home page" when {
       "an individual user has a channel of confirmed and is on a triggered migration page and is not recently confirmed" in {
         enable(TriggeredMigration)
@@ -205,6 +214,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
     }
 
     "allow the request to proceed" when {
+
       "the user is unconfirmed, they have an ITSA status of Voluntary or Mandated and their calculation is not crystallised while being on a triggered migration page" in {
         enable(TriggeredMigration)
 
@@ -397,6 +407,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
     }
 
     "return an error result" when {
+
       "there is an error retrieving the user's calculation during triggered migration retrieval" in {
         enable(TriggeredMigration)
 
@@ -410,9 +421,10 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
-        status(result) shouldBe BAD_REQUEST
+        status(result) shouldBe INTERNAL_SERVER_ERROR
       }
-      "The user has no ITSA statuses available" in {
+
+      "the user has no ITSA statuses available" in {
         enable(TriggeredMigration)
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
@@ -428,6 +440,40 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(Future(testCalcResponse))
 
         val result = action(true).invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+
+      "Agent - the user is has no incomeSources startingTaxYear - return 400 bad request" in {
+
+        enable(TriggeredMigration)
+
+        val unconfirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithNoAccountingPeriodEndDate(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Voluntary, StatusReason.Complex)))))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+          .thenReturn(Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
+
+        val result = action(true).invokeBlock(unconfirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
+
+        status(result) shouldBe BAD_REQUEST
+      }
+
+      "Individual - the user is has no incomeSources startingTaxYear - return 400 bad request" in {
+
+        enable(TriggeredMigration)
+
+        val unconfirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithNoAccountingPeriodEndDate(HmrcUnconfirmed.getValue))
+
+        when(mockItsaStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Voluntary, StatusReason.Complex)))))))
+
+        when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
+          .thenReturn(Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
+
+        val result = action(true).invokeBlock(unconfirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
         status(result) shouldBe BAD_REQUEST
       }
