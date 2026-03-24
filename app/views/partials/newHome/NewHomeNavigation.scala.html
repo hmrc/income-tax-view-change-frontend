@@ -42,7 +42,7 @@
         ServiceNavigationItem(
             content = Text(messages("newHome.navigation.yourTasks")),
             href = yourTasksUrl,
-            active = (activeTab == "your-tasks")
+            active = (activeTab == "your-tasks") || (activeTab == "recent-activity" && !isRecentActivityEnabled)
         ),
         ServiceNavigationItem(
             content = Text("Recent activity"),
