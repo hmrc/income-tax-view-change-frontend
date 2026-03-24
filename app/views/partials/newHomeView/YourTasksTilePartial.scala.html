@@ -20,6 +20,7 @@
 @import java.time.LocalDate
 
 @import enums.MTDSupportingAgent
+@import implicits.ImplicitCurrencyFormatter._
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
         link: link,
@@ -98,7 +99,7 @@
 
 @getChargesDescription = @{
   viewModel.getChargesTaskDescription match {
-      case Some(value) => messages(value._1, value._2.getOrElse(BigDecimal(0)).toString())
+      case Some(value) => messages(value._1, value._2.getOrElse(BigDecimal(0)).toCurrencyString)
       case None => ""
   }
 }
@@ -130,5 +131,5 @@
 }
 @getMoneyInYourAccountDescription = @{
   val moneyInYourAccountDescription = viewModel.getMoneyInYourAccountTaskDescription
-  messages(moneyInYourAccountDescription._1, moneyInYourAccountDescription._2.getOrElse(BigDecimal(0)).toString)
+  messages(moneyInYourAccountDescription._1, moneyInYourAccountDescription._2.getOrElse(BigDecimal(0)).toCurrencyString)
 }
