@@ -46,7 +46,7 @@ import views.html.newHomePage.NewHomeYourTasksView
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
 
-class HandleYourTasksControllerSpec extends MockAuthActions
+class NewHomeYourTasksControllerSpec extends MockAuthActions
   with MockDateService
   with MockFinancialDetailsService
   with MockITSAStatusService
@@ -82,7 +82,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   val expectedYourTasksTitle = "Your tasks"
 
   trait Setup {
-    val controller: HandleYourTasksController = HandleYourTasksController(
+    val controller: NewHomeYourTasksController = NewHomeYourTasksController(
       authActions,
       view,
       mockedSignUpService,

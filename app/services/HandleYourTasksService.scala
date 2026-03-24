@@ -18,13 +18,11 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import enums.MTDSupportingAgent
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.newHomePage.*
-import models.newHomePage.MaturityLevel.Overdue
 import models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import models.newHomePage.YourTasksCard.*
 
@@ -223,8 +221,8 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
     }
 
     maturity match {
-      case (Some(MaturityLevel.Upcoming) | Some(MaturityLevel.DueToday) | Some(MaturityLevel.DueEarly)) => Seq(UpcomingTaskCard(contentDescription._1, linkText, redirectLink, dateLabel, dueDate, contentDescription._2, maturity.get, PENALTIES))
-      case (Some(MaturityLevel.Overdue)) => Seq(OverdueTaskCard(contentDescription._1, linkText, redirectLink, dateLabel, dueDate, contentDescription._2, PENALTIES))
+      case (Some(MaturityLevel.Upcoming) | Some(MaturityLevel.DueToday) | Some(MaturityLevel.DueEarly)) => Seq(UpcomingTaskCard(contentDescription._1, linkText, redirectLink, dateLabel, dueDate, contentDescription._2, maturity.get, FINANCIALS))
+      case (Some(MaturityLevel.Overdue)) => Seq(OverdueTaskCard(contentDescription._1, linkText, redirectLink, dateLabel, dueDate, contentDescription._2, FINANCIALS))
       case None => Seq.empty
     }
   }

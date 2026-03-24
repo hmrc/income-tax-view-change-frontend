@@ -109,28 +109,28 @@
         attributes = Map("style" -> "background-color: white;")
     ))
 
-    @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
+    @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("your-tasks-heading"))
 
     @if(viewModel.noTaskCard.isDefined) {
         @viewModel.noTaskCard.map { noTask =>
             <div id= "noTaskCard" class="hmrc-card">
                 <div class="tile-body">
-                    <h3 class="hmrc-card__heading">
+                    <h3 class="hmrc-card__heading" id="noTaskCard-heading">
                         @messages(noTask.cardHeading)
                     </h3>
-                    <div class="govuk-body">@messages(noTask.cardContent)</div>
+                    <div class="govuk-body" id="noTaskCard-content">@messages(noTask.cardContent)</div>
                 </div>
             </div>
         }
     } else {
         @viewModel.overdueTasks.zipWithIndex.map { case (overdueTask, index) =>
-        <div id= "overdueTaskCard-@index" class="hmrc-card">
+        <div id="overdueTaskCard-@index" class="hmrc-card">
             <div class="tile-body">
-                <h3 class="hmrc-card__heading">
+                <h3 class="hmrc-card__heading" id="overdueTaskCard-heading-@index">
                     <a href=@overdueTask.cardLink>@messages(overdueTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
                 </h3>
-                <div class="govuk-body">@getCardContent(overdueTask)</div>
-                <div>@getTagContent(overdueTask)</div>
+                <div class="govuk-body" id="overdueTaskCard-content-@index">@getCardContent(overdueTask)</div>
+                <div id="overdueTaskCard-tag-@index">@getTagContent(overdueTask, index)</div>
         </div>
         </div>
         }
@@ -138,23 +138,23 @@
         @viewModel.datelessTasks.zipWithIndex.map { case (datelessTask, index) =>
         <div id= "datelessTaskCard-@index" class="hmrc-card">
             <div class="tile-body">
-                <h3 class="hmrc-card__heading">
+                <h3 class="hmrc-card__heading" id="datelessTaskCard-heading-@index">
                     <a href=@datelessTask.cardLink>@messages(datelessTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
                 </h3>
-                <div class="govuk-body">@getCardContent(datelessTask)</div>
+                <div class="govuk-body" id="datelessTaskCard-content-@index">@getCardContent(datelessTask)</div>
         </div>
         </div>
         }
 
         @viewModel.upcomingTasks.zipWithIndex.map { case (upcomingTask, index) =>
-        <div id= "upcomingTaskCard-@index" class="hmrc-card">
+        <div id="upcomingTaskCard-@index" class="hmrc-card">
             <div class="tile-body">
-                <h3 class="hmrc-card__heading">
+                <h3 class="hmrc-card__heading" id="upcomingTaskCard-heading-@index">
                     <a href=@upcomingTask.cardLink>@messages(upcomingTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
                 </h3>
-                <div class="govuk-body">@getCardContent(upcomingTask)</div>
-                <div>@getTagContentUpcoming(upcomingTask)</div>
-        </div>
+                <div class="govuk-body" id="upcomingTaskCard-content-@index">@getCardContent(upcomingTask)</div>
+                <div id="upcomingTaskCard-tag-@index">@getTagContentUpcoming(upcomingTask, index)</div>
+            </div>
         </div>
         }
     }
@@ -167,17 +167,17 @@
     }
 }
 
-@getTagContent(overdueTask: OverdueTaskCard) = {
+@getTagContent(overdueTask: OverdueTaskCard, index: Int) = {
     @overdueTask.dueDate.map { date =>
-        <span class="govuk-tag govuk-tag--red" id="date-tag">
+        <span class="govuk-tag govuk-tag--red" id="overdue-date-tag-@index">
             @messages(overdueTask.tagContent, date.toLongDateShort)
         </span>
     }
 }
 
-@getTagContentUpcoming(upcomingTask: UpcomingTaskCard) = {
+@getTagContentUpcoming(upcomingTask: UpcomingTaskCard, index: Int) = {
     @upcomingTask.dueDate.map { date =>
-        <span class="govuk-tag govuk-tag--@upcomingTask.maturityLevel.tagColour" id="date-tag">
+        <span class="govuk-tag govuk-tag--@upcomingTask.maturityLevel.tagColour" id="@upcomingTask.maturityLevel.toString-date-tag-@index">
         @messages(upcomingTask.tagContent, date.toLongDateShort)
         </span>
     }
