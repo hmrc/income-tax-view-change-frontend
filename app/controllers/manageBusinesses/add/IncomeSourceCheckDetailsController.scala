@@ -197,7 +197,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
             case Right(CreateIncomeSourceResponse(id)) =>
 
               auditingService.extendedAudit(
-                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)))
+                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, None, None, Some(CreateIncomeSourceResponse(id)), isTrigMig = isTriggeredMigration)
               )
 
               val saveAddIncomeSourceDataToMongo =
@@ -218,7 +218,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
               }
             case Left(ex) =>
               auditingService.extendedAudit(
-                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None)
+                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None, isTrigMig = isTriggeredMigration)
               )
               Future.failed(ex)
           }
