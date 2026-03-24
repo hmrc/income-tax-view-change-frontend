@@ -41,7 +41,8 @@ trait TransactionItem {
   def notCodedOutPoa(filterCodedOutPoasEnabled: Boolean): Boolean = {
     (filterCodedOutPoasEnabled, transactionType) match {
       case (false, _) => true
-      case (_, PoaOneDebit | PoaTwoDebit) if amountCodedOut.getOrElse(BigDecimal(0)) > 0 => false      case _ => true
+      case (_, PoaOneDebit | PoaTwoDebit) if amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
+      case _ => true
     }
   }
 

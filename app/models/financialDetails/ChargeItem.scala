@@ -63,11 +63,11 @@ case class ChargeItem(
   }
 
   val hasLpiWithDunningLock: Boolean =
-    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse(BigDecimal(0)) > 0
+    lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
-  def hasAccruingInterest: Boolean = accruingInterestAmount.getOrElse(BigDecimal(0)) > 0
+  def hasAccruingInterest: Boolean = accruingInterestAmount.getOrElse[BigDecimal](0) > 0
 
-  def hasInterest: Boolean = interestOutstandingAmount.getOrElse(BigDecimal(0)) > 0
+  def hasInterest: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) > 0
 
   def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
