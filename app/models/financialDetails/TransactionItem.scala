@@ -41,8 +41,7 @@ trait TransactionItem {
   def notCodedOutPoa(filterCodedOutPoasEnabled: Boolean): Boolean = {
     (filterCodedOutPoasEnabled, transactionType) match {
       case (false, _) => true
-      case (_, PoaOneDebit | PoaTwoDebit) if amountCodedOut.getOrElse[BigDecimal](0) > 0 => false
-      case _ => true
+      case (_, PoaOneDebit | PoaTwoDebit) if amountCodedOut.getOrElse(BigDecimal(0)) > 0 => false      case _ => true
     }
   }
 
@@ -54,13 +53,14 @@ trait TransactionItem {
       case (PoaOneDebit, Some(FullyCollected))  => "poa1CodedOut.text"
       case (PoaTwoDebit, Some(Accepted))        => "poa2CodedOut.text"
       case (PoaTwoDebit, Some(FullyCollected))  => "poa2CodedOut.text"
-      case (PoaOneDebit, Some(Cancelled)) => "cancelledPayeSelfAssessment.text"
-      case (PoaTwoDebit, Some(Cancelled)) => "cancelledPayeSelfAssessment.text"
+      case (PoaOneDebit, Some(Cancelled))       => "cancelledPayeSelfAssessment.text"
+      case (PoaTwoDebit, Some(Cancelled))       => "cancelledPayeSelfAssessment.text"
       case (PoaOneDebit, _)                     => "paymentOnAccount1.text"
       case (PoaTwoDebit, _)                     => "paymentOnAccount2.text"
       case (MfaDebitCharge, _)                  => "hmrcAdjustment.text"
       case (BalancingCharge, Some(Nics2))       => "class2Nic.text"
       case (BalancingCharge, Some(Accepted))    => "codingOut.text"
+      case (BalancingCharge, Some(FullyCollected)) => "codingOut.text"
       case (BalancingCharge, Some(Cancelled))   => "cancelledPayeSelfAssessment.text"
       case (BalancingCharge, _)                 => "balancingCharge.text"
       case (PoaOneReconciliationDebit, _)       => "reviewAndReconcilePoa1.text"

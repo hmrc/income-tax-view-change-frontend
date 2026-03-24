@@ -60,8 +60,15 @@
     }
     case PoaOneDebit | PoaTwoDebit   => {
         p(id=Some("codedOutPOAExplanation")) {
-            Html(getMessage("codingOutPOAMessage", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
-                collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString))
+            Html(
+                if(chargeItem.isCodingOutFullyCollected) {
+                    getMessage("codingOutPOAMessageFullyCollected", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
+                        collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
+                } else {
+                    getMessage("codingOutPOAMessage", chargeItem.taxYear.startYear.toString, chargeItem.taxYear.endYear.toString,
+                        collectionTaxYear.startYear.toString, collectionTaxYear.endYear.toString)
+                }
+            )
         }
     }
     case _                           =>

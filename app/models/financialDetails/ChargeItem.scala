@@ -152,10 +152,13 @@ case class ChargeItem(
     val validCharge = (transactionType, codedOutStatus) match {
       case (BalancingCharge, Some(Nics2)) => true
       case (BalancingCharge, Some(Accepted)) => true
+      case (BalancingCharge, Some(FullyCollected)) => true
       case (BalancingCharge, Some(Cancelled)) => true
       case (BalancingCharge, None) => true
       case (PoaOneDebit, Some(Accepted)) => true
+      case (PoaOneDebit, Some(FullyCollected)) => true
       case (PoaTwoDebit, Some(Accepted)) => true
+      case (PoaTwoDebit, Some(FullyCollected)) => true
       case (PoaOneDebit, Some(Cancelled)) => true
       case (PoaTwoDebit, Some(Cancelled)) => true
       case (PoaOneDebit, None) => true

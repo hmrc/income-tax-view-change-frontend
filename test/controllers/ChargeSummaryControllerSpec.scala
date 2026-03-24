@@ -165,6 +165,23 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
+              "provided with an id associated to a POA1 Debit that has been fully collected through PAYE tax code" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1FullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "First payment on account collected through PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount collected: £12.34"
+                document.getElementById("codedOutPOAExplanation").text() shouldBe "This was the tax you owed for the 2020 to 2021 tax year. It was collected in the 2022 to 2023 tax year through your PAYE tax code."
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
+              }
               "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
@@ -178,6 +195,23 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select("h1").first().text() shouldBe "Second payment on account collected through PAYE tax code"
                 document.getElementById("charge-amount-heading").text() shouldBe "Amount due to be collected: £12.34"
                 document.getElementById("codedOutPOAExplanation").text() shouldBe "This is the tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
+                document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
+              }
+              "provided with an id associated to a POA2 Debit that has been fully collected through PAYE tax code" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2FullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.select("h1").first().text() shouldBe "Second payment on account collected through PAYE tax code"
+                document.getElementById("charge-amount-heading").text() shouldBe "Amount collected: £12.34"
+                document.getElementById("codedOutPOAExplanation").text() shouldBe "This was the tax you owed for the 2020 to 2021 tax year. It was collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementsByClass("govuk-details__summary-text").first().text() shouldBe "What is payment on account?"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
@@ -363,6 +397,27 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount due to be collected: £12.34"
                 Option(document.getElementById("due-date-text")) shouldBe None
                 document.getElementById("codedOutBCDExplanation").text() shouldBe "This is the remaining tax you owe for the 2020 to 2021 tax year. It will be collected in the 2022 to 2023 tax year through your PAYE tax code."
+                document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
+                document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
+                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 Mar 2018 Amount to be collected through your PAYE tax code in 2022 to 2023 tax year. £2,500.00"
+                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 Mar 2019 Amount adjusted to be collected through your PAYE tax code in 2022 to 2023 tax year £2,000.00"
+              }
+
+              "provided with an id associated to a fully collected coded out Balancing Payment" in new Setup(testFinancialDetailsModelWithPayeSACodingOutFullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
+                enable(ChargeHistory)
+                setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action("CODINGOUT01")(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+                document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment collected through PAYE tax code")
+                document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
+                document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount collected: £12.34"
+                Option(document.getElementById("due-date-text")) shouldBe None
+                document.getElementById("codedOutBCDExplanation").text() shouldBe "This was the remaining tax you owed for the 2020 to 2021 tax year. It was collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
                 document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 Mar 2018 Amount to be collected through your PAYE tax code in 2022 to 2023 tax year. £2,500.00"
