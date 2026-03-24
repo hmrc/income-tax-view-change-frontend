@@ -172,14 +172,17 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
       .sortBy(_.taxYear).reverse.headOption.map(doc => makeTaxYearWithEndYear(doc.taxYear))
   }
 
-  def unpaidDocumentDetails(): List[DocumentDetail] = {
-    this.documentDetails.collect {
-      case documentDetail: DocumentDetail if documentDetail.isCodingOutDocumentDetail => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.accruingInterestAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.interestOutstandingAmount.isDefined && !documentDetail.interestIsPaid => documentDetail
-      case documentDetail: DocumentDetail if documentDetail.isNotCodingOutDocumentDetail && !documentDetail.isPaid => documentDetail
+
+  def unpaidDocumentDetails(): List[DocumentDetail] =
+    documentDetails.filter { doc =>
+      (doc.taxYear != 9999 && (
+      doc.isCodingOutDocumentDetail ||
+        (doc.accruingInterestAmount.isDefined && !doc.interestIsPaid) ||
+        (doc.interestOutstandingAmount.isDefined && !doc.interestIsPaid) ||
+        (doc.isNotCodingOutDocumentDetail && !doc.isPaid)
+        ))
     }
-  }
+
 
   def docDetailsNotDueWithInterest(currentDate: LocalDate): Int = {
     this.documentDetails.count(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate))
