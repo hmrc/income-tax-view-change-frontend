@@ -83,7 +83,7 @@ class ChooseSoleTraderAddressController @Inject()(
 
     val formResponse = validForm.response
     lazy val isNewAddress = ChooseSoleTraderAddressUserAnswer(None, None, None, None, None, None, true)
-    lazy val isAddressInTheUkPage = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
+    lazy val isAddressInTheUkPage = Redirect(controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
     lazy val showGenericErrorPage = errorHandler(isAgent).showInternalServerError()
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment)).flatMap {
@@ -186,7 +186,7 @@ class ChooseSoleTraderAddressController @Inject()(
             Future {
               BadRequest(
                 view(
-                  postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
+                  postAction = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent),
                   isAgent = isAgent,
                   form = formWithErrors,
                   chooseSoleTraderAddressRadioOptionsWithIndex = addressOptions,

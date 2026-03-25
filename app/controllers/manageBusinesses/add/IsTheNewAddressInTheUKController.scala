@@ -25,7 +25,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
 import models.admin.OverseasBusinessAddress
-import models.core.{Mode, NormalMode}
+import models.core.Mode
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -61,7 +61,8 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
 
-      val backURL = getBackURL(isAgent, mode)
+      // TODO do we need to deal with Mode and isTriggeredMigration ???
+      val backURL = getBackURL(isAgent/*, mode, isTriggeredMigration*/)
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
@@ -91,7 +92,8 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                   postAction = getPostAction(isAgent, mode, isTriggeredMigration),
                   isAgent = isAgent,
                   hasUKAddress = hasUKAddress(user),
-                  backUrl = getBackURL(isAgent, mode)
+//                  TODO do we need to deal with Mode and isTriggeredMigration ???
+                  backUrl = getBackURL(isAgent/*, mode, isTriggeredMigration*/)
                 )
               )
             },
@@ -135,21 +137,15 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     validUKAddress.nonEmpty
   }
 
-  //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-  private def getBackURL(isAgent: Boolean, mode: Mode): String = {
-    val notImplementedCall: Call = Call(method = "", url = "#NotImplemented")
-
-    ((isAgent, mode) match {
-      case (_, NormalMode) => notImplementedCall
-      case (false, _) => notImplementedCall
-      case (_, _) => notImplementedCall
-    }).url
+  // TODO do we need to deal with Mode and isTriggeredMigration ???
+  private def getBackURL(isAgent: Boolean): String = {
+    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
   }
 
-  //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
+  // TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
   private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
-    controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.submit(true, isTriggeredMigration)
+    controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = mode, isTriggeredMigration)
   } else {
-    routes.IsTheNewAddressInTheUKController.submit(false, isTriggeredMigration)
+    controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = mode, isTriggeredMigration)
   }
 }

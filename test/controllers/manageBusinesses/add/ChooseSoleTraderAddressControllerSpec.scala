@@ -182,7 +182,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
               "value" -> "new-address"
             ))
 
-            val redirectUrl = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
+            val redirectUrl = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent).url
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)

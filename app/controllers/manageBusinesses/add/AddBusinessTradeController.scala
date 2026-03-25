@@ -65,11 +65,9 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if(isAgent) {
-    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submitAgent(mode, isTriggeredMigration)
-  } else {
-    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(mode, isTriggeredMigration)
-  }
+//  TODO check if we need a Mode and isTriggeredMigration params
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call =
+    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)
 
   def show(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit user =>

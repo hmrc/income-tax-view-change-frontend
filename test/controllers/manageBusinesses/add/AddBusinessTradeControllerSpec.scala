@@ -29,10 +29,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
-import org.scalatest.matchers.must.Matchers
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 
