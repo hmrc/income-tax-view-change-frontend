@@ -79,14 +79,14 @@ class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitchin
             "return 500 Internal Server " when {
               "no firstAccountingPeriodEndDate exists for both business and property" in {
                 stubAuthorised(mtdUserRole)
+
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
-
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 res should have(
-                  httpStatus(INTERNAL_SERVER_ERROR)
+                  httpStatus(BAD_REQUEST)
                 )
               }
             }
