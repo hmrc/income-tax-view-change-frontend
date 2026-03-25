@@ -18,6 +18,7 @@ package services
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.itsaStatus.ITSAStatus
@@ -119,31 +120,29 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
   }
 
   private def getUpcomingSubmissionsCards(
-                                             viewModel: SubmissionDeadlinesViewModel,
-                                             submissionsLink: String,
-                                             submissionsLinkText: String,
-                                             isQuarterly: Boolean
-                                           ): Seq[UpcomingTaskCard] = {
+                                           viewModel: SubmissionDeadlinesViewModel,
+                                           submissionsLink: String,
+                                           submissionsLinkText: String,
+                                           isQuarterly: Boolean
+                                         ): Seq[UpcomingTaskCard] = {
 
-    if (viewModel.isAnnualObligations && viewModel.nextTaxReturnDueDate.nonEmpty) {
-      (for {
-        date     <- viewModel.nextTaxReturnDueDate
-        maturity <- MaturityLevel.get(viewModel.nextTaxReturnDueDate)
-      } yield {
-        UpcomingTaskCard("new.home.yourTasks.upcoming-annual-updates-body", submissionsLinkText, submissionsLink, "new.home.yourTasks.upcoming-annual-updates-label", Some(date), maturityLevel = maturity, cardType = SUBMISSIONS)
-      }).toSeq
+    val annualCardOpt: Option[UpcomingTaskCard] =
+      if (viewModel.isAnnualObligations && viewModel.nextTaxReturnDueDate.nonEmpty) {
+        for {
+          date     <- viewModel.nextTaxReturnDueDate
+          maturity <- MaturityLevel.get(viewModel.nextTaxReturnDueDate)
+        } yield UpcomingTaskCard("new.home.yourTasks.upcoming-annual-updates-body", submissionsLinkText, submissionsLink, "new.home.yourTasks.upcoming-annual-updates-label", Some(date), maturityLevel = maturity, cardType = SUBMISSIONS)
+      } else None
 
-    } else if (viewModel.isQuarterlyObligations && viewModel.nextQuarterlyUpdateDueDate.nonEmpty && isQuarterly) {
-      (for {
-        date     <- viewModel.nextQuarterlyUpdateDueDate
-        maturity <- MaturityLevel.get(viewModel.nextQuarterlyUpdateDueDate)
-      } yield {
-        UpcomingTaskCard("new.home.yourTasks.upcoming-quarterly-updates-body", submissionsLinkText, submissionsLink, "new.home.yourTasks.upcoming-quarterly-updates-label", Some(date), maturityLevel = maturity, cardType = SUBMISSIONS)
-      }).toSeq
+    val quarterlyCardOpt: Option[UpcomingTaskCard] =
+      if (viewModel.isQuarterlyObligations && viewModel.nextQuarterlyUpdateDueDate.nonEmpty && isQuarterly) {
+        for {
+          date     <- viewModel.nextQuarterlyUpdateDueDate
+          maturity <- MaturityLevel.get(viewModel.nextQuarterlyUpdateDueDate)
+        } yield UpcomingTaskCard("new.home.yourTasks.upcoming-quarterly-updates-body", submissionsLinkText, submissionsLink, "new.home.yourTasks.upcoming-quarterly-updates-label", Some(date), maturityLevel = maturity, cardType = SUBMISSIONS)
+      } else None
 
-    } else {
-      Seq.empty
-    }
+    annualCardOpt.toSeq ++ quarterlyCardOpt.toSeq
   }
 
   private def getFinancialsAndPenalties(chargeItemList: List[ChargeItem],
@@ -170,7 +169,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
   private def getMoneyInAccount(credits: CreditsModel, moneyInAccountLink: String): Seq[DatelessTaskCard] = {
     if(credits.totalCredit > 0) {
-      Seq(DatelessTaskCard("newHome.yourTasks.selfAssessment.money-in-account", "newHome.yourTasks.selfAssessment.money-in-account.h1", moneyInAccountLink, Some(credits.totalCredit.toString()), cardType = FINANCIALS))
+      Seq(DatelessTaskCard("newHome.yourTasks.selfAssessment.money-in-account", "newHome.yourTasks.selfAssessment.money-in-account.h1", moneyInAccountLink, Some(credits.totalCredit.toCurrencyString), cardType = FINANCIALS))
     } else {
       Seq.empty
     }
@@ -201,9 +200,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
         MaturityLevel.get(charge.dueDate) match {
           case Some(MaturityLevel.Upcoming) | Some(MaturityLevel.DueEarly) | Some(MaturityLevel.DueToday) => Some(("newHome.yourTasks.selfAssessment.upcomingCharge", None))
           case Some(MaturityLevel.Overdue) => if(overdueCharges.size > 1) {
-            Some(("newHome.yourTasks.selfAssessment.overdueCharge.multiple", Some(chargeList.map(_.outstandingAmount).sum.toString())))
+            Some(("newHome.yourTasks.selfAssessment.overdueCharge.multiple", Some(chargeList.map(_.outstandingAmount).sum.toCurrencyString)))
           } else {
-            Some(("newHome.yourTasks.selfAssessment.overdueCharge.single", Some(chargeList.map(_.outstandingAmount).sum.toString())))
+            Some(("newHome.yourTasks.selfAssessment.overdueCharge.single", Some(chargeList.map(_.outstandingAmount).sum.toCurrencyString)))
           }
           case _ => None
         }
