@@ -43,18 +43,18 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NewHomeYourTasksController @Inject()(val authActions: AuthActions,
-                                           val handleYourTasksView: NewHomeYourTasksView,
-                                           val signUpService: SignUpService,
-                                           val optOutService: OptOutService,
-                                           val ITSAStatusService: ITSAStatusService,
-                                           val whatYouOweService: WhatYouOweService,
-                                           val creditService: CreditService,
-                                           val dateService: DateServiceInterface,
-                                           val financialDetailsService: FinancialDetailsService,
-                                           val nextUpdatesService: NextUpdatesService,
-                                           val handleYourTasksService: HandleYourTasksService)
-                                          (implicit val ec: ExecutionContext,
+class HandleYourTasksController @Inject()(val authActions: AuthActions,
+                                          val handleYourTasksView: NewHomeYourTasksView,
+                                          val signUpService: SignUpService,
+                                          val optOutService: OptOutService,
+                                          val ITSAStatusService: ITSAStatusService,
+                                          val whatYouOweService: WhatYouOweService,
+                                          val creditService: CreditService,
+                                          val dateService: DateServiceInterface,
+                                          val financialDetailsService: FinancialDetailsService,
+                                          val nextUpdatesService: NextUpdatesService,
+                                          val handleYourTasksService: HandleYourTasksService)
+                                         (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
@@ -168,7 +168,7 @@ class NewHomeYourTasksController @Inject()(val authActions: AuthActions,
       }
   }
 
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.NewHomeYourTasksController.showAgent().url else controllers.routes.NewHomeYourTasksController.show().url
+  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url
 
   def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
 

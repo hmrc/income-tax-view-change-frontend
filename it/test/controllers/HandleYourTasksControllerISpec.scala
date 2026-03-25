@@ -34,7 +34,7 @@ import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2Cessati
 import testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import java.time.LocalDate
 
-class NewHomeYourTasksControllerISpec extends ControllerISpecHelper {
+class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
