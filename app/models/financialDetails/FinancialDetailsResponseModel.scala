@@ -175,12 +175,10 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
   def unpaidDocumentDetails(): List[DocumentDetail] =
     documentDetails.filter { doc =>
-      (doc.taxYear != 9999 && (
       doc.isCodingOutDocumentDetail ||
         (doc.accruingInterestAmount.isDefined && !doc.interestIsPaid) ||
         (doc.interestOutstandingAmount.isDefined && !doc.interestIsPaid) ||
         (doc.isNotCodingOutDocumentDetail && !doc.isPaid)
-        ))
     }
 
 

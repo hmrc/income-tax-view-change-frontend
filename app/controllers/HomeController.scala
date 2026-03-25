@@ -336,10 +336,14 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         ctaViewModel <- whatYouOweService.claimToAdjustViewModel(Nino(user.nino))
         credits <- creditService.getAllCredits()
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
+        paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+        outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
+        outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
+        paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
         chargeItem = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       }
       yield {
-        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem, appConfig.itvcRebrand))
+        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), !paymentsDueMerged.isDefined, credits.availableCreditInAccount, ctaViewModel, chargeItem, appConfig.itvcRebrand))
       }
     }
   }
