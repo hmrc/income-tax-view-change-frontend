@@ -61,7 +61,6 @@ trait TransactionItem {
       case (MfaDebitCharge, _)                  => "hmrcAdjustment.text"
       case (BalancingCharge, Some(Nics2))       => "class2Nic.text"
       case (BalancingCharge, Some(Accepted))    => "codingOut.text"
-      case (BalancingCharge, Some(FullyCollected)) => "codingOut.text"
       case (BalancingCharge, Some(Cancelled))   => "cancelledPayeSelfAssessment.text"
       case (BalancingCharge, _)                 => "balancingCharge.text"
       case (PoaOneReconciliationDebit, _)       => "reviewAndReconcilePoa1.text"

@@ -413,15 +413,15 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
-                document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment collected through PAYE tax code")
+                document.getElementsByClass("govuk-heading-xl").first().text() should include("Balancing payment")
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2020 to 2021 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Amount collected: £12.34"
                 Option(document.getElementById("due-date-text")) shouldBe None
                 document.getElementById("codedOutBCDExplanation").text() shouldBe "This was the remaining tax you owed for the 2020 to 2021 tax year. It was collected in the 2022 to 2023 tax year through your PAYE tax code."
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
-                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 Mar 2018 Amount to be collected through your PAYE tax code in 2022 to 2023 tax year. £2,500.00"
-                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 Mar 2019 Amount adjusted to be collected through your PAYE tax code in 2022 to 2023 tax year £2,000.00"
+                document.getElementById("payment-history-table").select("tr").get(1).text() shouldBe s"29 Mar 2018 HMRC created your balancing payment £2,500.00"
+                document.getElementById("payment-history-table").select("tr").get(3).text() shouldBe s"30 Mar 2019 Balancing payment reduced due to amended return £2,000.00"
               }
 
               "provided with an id associated to an ITSA Return Amendment charge" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment, docId = id1040000123) {
