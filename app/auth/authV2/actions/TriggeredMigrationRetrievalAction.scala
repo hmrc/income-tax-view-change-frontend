@@ -72,7 +72,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                 case Left(errorResult) => Future(Left(errorResult))
                 case Right(true) =>
                   val yearOfMigration = req.incomeSources.yearOfMigration.getOrElse(req.incomeSources.startingTaxYear.toString)
-                  isCalculationCrystallised(req, req.incomeSources.startingTaxYear.map(_.toString))
+                  isCalculationCrystallised(req, Some(yearOfMigration))
                     .flatMap {
                       case Right(true) => confirmIneligibleUser(req, isTriggeredMigrationPage)
                       case Right(false) => if (isTriggeredMigrationPage) {
