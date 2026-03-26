@@ -120,19 +120,20 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
     ".getBusinessDetailsUrl()" should {
       "return the correct url" in new Setup {
-        connector.getBusinessDetailsUrl(testNino) shouldBe s"$baseUrl/income-tax-business-details/get-business-details/nino/$testNino"
+        connector.getBusinessDetailsUrl(testNino) shouldBe s"$baseUrl/income-tax-view-change/get-business-details/nino/$testNino"
       }
     }
 
     ".getIncomeSourcesUrl()" should {
       "return the correct url" in new Setup {
-        connector.getIncomeSourcesUrl(testMtditid) shouldBe s"$baseUrl/income-tax-business-details/income-sources/$testMtditid"
+        connector.getIncomeSourcesUrl(testMtditid) shouldBe s"$baseUrl/income-tax-view-change/income-sources/$testMtditid"
       }
     }
 
     ".getNinoLookupUrl()" should {
       "return the correct url" in new Setup {
-        connector.getNinoLookupUrl(testMtditid) shouldBe s"$baseUrl/income-tax-business-details/nino-lookup/$testMtditid"      }
+        connector.getNinoLookupUrl(testMtditid) shouldBe s"$baseUrl/income-tax-view-change/nino-lookup/$testMtditid"
+      }
     }
 
     ".getBusinessDetails()" should {
