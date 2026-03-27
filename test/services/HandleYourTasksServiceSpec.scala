@@ -89,7 +89,8 @@ class HandleYourTasksServiceSpec extends TestSupport {
                   credits: CreditsModel = creditsModel(0),
                   currentItsaStatus: ITSAStatus = ITSAStatus.Annual,
                   obligations: Seq[SingleObligationModel] = Seq.empty,
-                  chargeItemList: List[ChargeItem] = List.empty) {
+                  chargeItemList: List[ChargeItem] = List.empty,
+                  penaltiesAndAppealsEnabled: Boolean = true) {
 
     val nextQuarterlyDueDate = if(hasUpcomingQuarterlyDate) Some(fixedDate.plusYears(3)) else None
     val nextTaxReturnDueDate = if (hasUpcomingAnnualDate) Some(fixedDate.plusYears(3)) else None
@@ -99,7 +100,7 @@ class HandleYourTasksServiceSpec extends TestSupport {
     val affinityGroup = if(isAgent) Agent else Individual
     val testUser: MtdItUser[_] = defaultMTDITUser(Some(affinityGroup), IncomeSourceDetailsModel("AB123456C", "123", Some("2023"), List.empty, List.empty), isSupportingAgent = supportingAgent)
 
-    val resultViewModel = service.getYourTasksCards(submissionsViewModel, isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus)(testUser)
+    val resultViewModel = service.getYourTasksCards(submissionsViewModel, isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus, penaltiesAndAppealsEnabled)(testUser)
   }
 
 

@@ -92,15 +92,17 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       val mandation = currentItsaStatus == ITSAStatus.Mandated
 
       val creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay)
+      val penaltiesAndAppealsEnabled = isEnabled(PenaltiesAndAppeals)
       val mandationStatus =
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel, isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus)
+      val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel,
+        isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus, penaltiesAndAppealsEnabled)
 
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
-        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), yourTaskCardViewModel, appConfig.itvcRebrand,  isEnabled(PenaltiesAndAppeals)).addingToSession(mandationStatus)
+        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), yourTaskCardViewModel, appConfig.itvcRebrand)).addingToSession(mandationStatus)
     }
   }
 
