@@ -103,7 +103,7 @@ case class IncomeSourceDetailsModel(
   def orderedTaxYearsByAccountingPeriods(implicit dateService: DateServiceInterface): List[Int] = {
     startingTaxYear match {
       case Some(startTaxYear) =>
-        Logger("application").debug(s"[IncomeSourceDetailsModel][orderedTaxYearsByAccountingPeriods] startTaxYear: ${startTaxYear}, endTaxYear: ${dateService.getCurrentTaxYearEnd}")
+        Logger("application").debug(s"[IncomeSourceDetailsModel][orderedTaxYearsByAccountingPeriods] startTaxYear: $startTaxYear, endTaxYear: ${dateService.getCurrentTaxYearEnd}")
         (startTaxYear to dateService.getCurrentTaxYearEnd).toList
       case None =>
         Logger("application").error("[IncomeSourceDetailsModel][orderedTaxYearsByAccountingPeriods] No income source start date found returning empty list")
