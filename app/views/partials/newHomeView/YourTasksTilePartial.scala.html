@@ -26,7 +26,7 @@
         link: link,
         p: p)
 
-@(viewModel: HandleYourTasksViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: HandleYourTasksViewModel, isAgent: Boolean, penaltiesAndAppealsEnabled: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
  @import implicitDateFormatter.longDate
 
 @moneyInYourAccount = @{viewModel.creditInAccount}
@@ -35,11 +35,11 @@
               @showCharges
             }
 
-            @if(viewModel.areLPPPresent){
+            @if(viewModel.areLPPPresent && penaltiesAndAppealsEnabled){
               @showLpp
             }
 
-            @if(viewModel.isLSPPresent){
+            @if(viewModel.isLSPPresent && penaltiesAndAppealsEnabled){
               @showLsp
             }
             @if(viewModel.isMoneyInYourAccountPresent){

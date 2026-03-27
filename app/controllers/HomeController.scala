@@ -343,7 +343,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
-          appConfig.itvcRebrand, mandatedOrVoluntary))
+          appConfig.itvcRebrand, mandatedOrVoluntary, isEnabled(PenaltiesAndAppeals)))
       }
     }
   }

@@ -98,7 +98,8 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
           recentActivityUrl = recentActivityUrl(origin, isAgent),
           overViewUrl = overviewUrl(origin, isAgent),
           helpUrl = helpUrl(origin, isAgent),
-          viewModel = homeViewModel, appConfig.itvcRebrand)
+          viewModel = homeViewModel, appConfig.itvcRebrand,
+          isEnabled(PenaltiesAndAppeals))
       ).addingToSession(mandationStatus)
 
     }

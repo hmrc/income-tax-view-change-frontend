@@ -98,7 +98,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
         recentActivityUrl = recentActivityUrl,
         overViewUrl = overViewUrl,
         helpUrl = helpUrl,
-        isGovUkRebrandEnabled = true)(testMessages, FakeRequest(), testMtdItUser)
+        isGovUkRebrandEnabled = true,
+        penaltiesAndAppealsEnabled = true)(testMessages, FakeRequest(), testMtdItUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
