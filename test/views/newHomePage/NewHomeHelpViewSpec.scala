@@ -91,6 +91,20 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
       }
     }
 
+    "display the correct service navigation section" when {
+      "Recent Activity feature switch is ENABLED" in new TestSetup(isRecentActivityEnabled = true) {
+        document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Help"
+        document.getElementsByClass("govuk-service-navigation__item").eq(0).text() shouldBe "Your tasks"
+        document.getElementsByClass("govuk-service-navigation__item").eq(1).text() shouldBe "Recent activity"
+        document.getElementsByClass("govuk-service-navigation__item").eq(2).text() shouldBe "Overview"
+      }
+      "Recent Activity feature switch is DISABLED" in new TestSetup(isRecentActivityEnabled = false) {
+        document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Help"
+        document.getElementsByClass("govuk-service-navigation__item").eq(0).text() shouldBe "Your tasks"
+        document.getElementsByClass("govuk-service-navigation__item").eq(1).text() shouldBe "Overview"
+      }
+    }
+
     "display the section heading and open-in-new-tab message" in new TestSetup() {
       document.select("h2.govuk-heading-m").first().text() shouldBe messages("new.home.help.heading")
       document.select("p.govuk-body").first().text() shouldBe messages("new.home.help.openInNewTab")

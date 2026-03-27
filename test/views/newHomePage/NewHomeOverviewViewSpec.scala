@@ -70,7 +70,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
                    ctaViewModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2025,2026))),
                    welshLang: Boolean = false,
                    chargeItems: List[ChargeItem] = List.empty,
-                   useRebrand: Boolean = false) {
+                   useRebrand: Boolean = false,
+                   isRecentActivityEnabled: Boolean = false) {
 
     val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
@@ -112,6 +113,20 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       }
       "useRebrand is true" in new TestSetup(useRebrand = true) {
         document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
+      }
+    }
+
+    "display the correct service navigation section" when {
+      "Recent Activity feature switch is ENABLED" in new TestSetup(isRecentActivityEnabled = true) {
+        document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Overview"
+        document.getElementsByClass("govuk-service-navigation__item").eq(0).text() shouldBe "Your tasks"
+        document.getElementsByClass("govuk-service-navigation__item").eq(1).text() shouldBe "Recent activity"
+        document.getElementsByClass("govuk-service-navigation__item").eq(3).text() shouldBe "Help"
+      }
+      "Recent Activity feature switch is DISABLED" in new TestSetup(isRecentActivityEnabled = false) {
+        document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Overview"
+        document.getElementsByClass("govuk-service-navigation__item").eq(0).text() shouldBe "Your tasks"
+        document.getElementsByClass("govuk-service-navigation__item").eq(2).text() shouldBe "Help"
       }
     }
 
