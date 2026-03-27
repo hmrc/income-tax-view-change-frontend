@@ -40,7 +40,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
 
   class TestSetup(handleYourTasksViewModel: HandleYourTasksViewModel = defaultViewModel,
                   isAgent: Boolean = false,
-                  isGovUkRebrandEnabled: Boolean = true) {
+                  isGovUkRebrandEnabled: Boolean = true,
+                  isRecentActivityEnabled: Boolean = false) {
 
     val testMessages: Messages = messages
 
@@ -51,7 +52,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
       overviewUrl = "/overviewUrl",
       helpUrl = "/helpUrl",
       viewModel = handleYourTasksViewModel,
-      isGovUkRebrandEnabled = isGovUkRebrandEnabled
+      isGovUkRebrandEnabled = isGovUkRebrandEnabled,
+      isRecentActivityEnabled = isRecentActivityEnabled
     )(testMessages, FakeRequest(), tsTestUser)
 
     lazy val document = Jsoup.parse(contentAsString(page))
@@ -67,11 +69,18 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
       }
     }
 
-    "display the correct service navigation section" in new TestSetup() {
-      document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Your tasks"
-      document.getElementsByClass("govuk-service-navigation__item").eq(1).text() shouldBe "Recent activity"
-      document.getElementsByClass("govuk-service-navigation__item").eq(2).text() shouldBe "Overview"
-      document.getElementsByClass("govuk-service-navigation__item").eq(3).text() shouldBe "Help"
+    "display the correct service navigation section" when {
+      "Recent Activity feature switch is ENABLED" in new TestSetup(isRecentActivityEnabled = true) {
+        document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Your tasks"
+        document.getElementsByClass("govuk-service-navigation__item").eq(1).text() shouldBe "Recent activity"
+        document.getElementsByClass("govuk-service-navigation__item").eq(2).text() shouldBe "Overview"
+        document.getElementsByClass("govuk-service-navigation__item").eq(3).text() shouldBe "Help"
+      }
+      "Recent Activity feature switch is DISABLED" in new TestSetup(isRecentActivityEnabled = false) {
+        document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Your tasks"
+        document.getElementsByClass("govuk-service-navigation__item").eq(1).text() shouldBe "Overview"
+        document.getElementsByClass("govuk-service-navigation__item").eq(2).text() shouldBe "Help"
+      }
     }
 
     "display the correct h2" in new TestSetup() {

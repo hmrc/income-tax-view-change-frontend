@@ -45,7 +45,8 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
                    overViewUrl: String = "testOverviewUrl",
                    helpUrl: String = "testHelpUrl",
                    welshLang: Boolean = false,
-                   useRebrand: Boolean = false
+                   useRebrand: Boolean = false,
+                   isRecentActivityEnabled: Boolean = false
                  ) {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -71,7 +72,8 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
         recentActivityUrl,
         overViewUrl,
         helpUrl,
-        useRebrand
+        useRebrand,
+        isRecentActivityEnabled
       )(testMessages, request, testUser)
 
     lazy val document: Document = Jsoup.parse(contentAsString(page))
@@ -86,6 +88,20 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
       }
       "useRebrand is true" in new TestSetup(useRebrand = true) {
         document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
+      }
+    }
+
+    "display the correct service navigation section" when {
+      "Recent Activity feature switch is ENABLED" in new TestSetup(isRecentActivityEnabled = true) {
+        document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Help"
+        document.getElementsByClass("govuk-service-navigation__item").eq(0).text() shouldBe "Your tasks"
+        document.getElementsByClass("govuk-service-navigation__item").eq(1).text() shouldBe "Recent activity"
+        document.getElementsByClass("govuk-service-navigation__item").eq(2).text() shouldBe "Overview"
+      }
+      "Recent Activity feature switch is DISABLED" in new TestSetup(isRecentActivityEnabled = false) {
+        document.getElementsByClass("govuk-service-navigation__item--active").eq(0).text() shouldBe "Help"
+        document.getElementsByClass("govuk-service-navigation__item").eq(0).text() shouldBe "Your tasks"
+        document.getElementsByClass("govuk-service-navigation__item").eq(1).text() shouldBe "Overview"
       }
     }
 

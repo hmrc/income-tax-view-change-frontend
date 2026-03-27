@@ -102,7 +102,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
-        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), yourTaskCardViewModel, appConfig.itvcRebrand)).addingToSession(mandationStatus)
+        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), yourTaskCardViewModel, appConfig.itvcRebrand, isEnabled(RecentActivity))).addingToSession(mandationStatus)
     }
   }
 
