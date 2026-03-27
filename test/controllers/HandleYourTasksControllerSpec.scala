@@ -178,7 +178,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
         when(mockNextUpdatesService.getNextDueDates()(any(), any()))
           .thenReturn(Future.successful(None, None))
 
-        when(mockedHandleYourTasksService.getYourTasksCards(any(), any(), any(), any(), any(), any())(any()))
+        when(mockedHandleYourTasksService.getYourTasksCards(any(), any(), any(), any(), any(), any(), any())(any()))
           .thenReturn(HandleYourTasksViewModel(Seq.empty, Seq.empty, Seq(UpcomingTaskCard("", "", "", "", None, None, Upcoming, FINANCIALS)), None))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
