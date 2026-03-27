@@ -17,14 +17,13 @@
 package mocks.services
 
 import implicits.ImplicitDateFormatter
-import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.obligations.{ObligationsErrorModel, ObligationsResponseModel}
-import org.mockito.ArgumentMatchers.{any, eq => matches}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq as matches}
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import services.NextUpdatesService
-import testConstants.IncomeSourcesWithDeadlinesTestConstants._
+import testConstants.IncomeSourcesWithDeadlinesTestConstants.*
 import testUtils.UnitSpec
 
 import java.time.LocalDate

@@ -16,9 +16,4 @@
 
 package models.newHomePage
 
-import models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
-
-case class HandleYourTasksViewModel(overdueTasks: Seq[OverdueTaskCard],
-                                    datelessTasks: Seq[DatelessTaskCard],
-                                    upcomingTasks: Seq[UpcomingTaskCard],
-                                    noTaskCard: Option[NoTaskCard])
+case class NoTaskCard(cardHeading: String, cardContent: String)

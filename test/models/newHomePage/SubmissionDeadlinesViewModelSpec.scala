@@ -210,7 +210,7 @@ class SubmissionDeadlinesViewModelSpec extends UnitSpec {
         val testModel: SubmissionDeadlinesViewModel =
           SubmissionDeadlinesViewModel(Seq.empty[SingleObligationModel], currentDate, None, None)
 
-        testModel.showNextUpdatesTileContent shouldBe false
+        testModel.hasOpenObligations shouldBe false
       }
     }
 
@@ -220,7 +220,7 @@ class SubmissionDeadlinesViewModelSpec extends UnitSpec {
         val testModel: SubmissionDeadlinesViewModel =
           SubmissionDeadlinesViewModel(multipleAnnualOverdueObligations, currentDate, None, None)
 
-        testModel.showNextUpdatesTileContent shouldBe true
+        testModel.hasOpenObligations shouldBe true
       }
     }
   }

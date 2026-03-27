@@ -39,8 +39,9 @@ import services.reportingObligations.signUp.SignUpService
 import services.{CreditService, NextUpdatesService}
 import services.reportingObligations.optOut.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.{HomeView, NewHomeHelpView, NewHomeOverviewView, NewHomeRecentActivityView}
+import views.html.HomeView
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import views.html.newHomePage.*
 import views.html.helpers.injected.home.YourReportingObligationsTile
 
 import java.time.LocalDate

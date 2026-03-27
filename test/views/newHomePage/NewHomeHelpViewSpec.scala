@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.newHomePage
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.getMtdItUser
@@ -31,7 +31,7 @@ import play.twirl.api.HtmlFormat
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.http.HeaderCarrier
-import views.html.NewHomeHelpView
+import views.html.newHomePage.NewHomeHelpView
 
 class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
