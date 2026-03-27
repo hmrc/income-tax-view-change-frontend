@@ -104,6 +104,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
   def incomeSourcesWithNoAccountingPeriodEndDate(channel: String) =
     defaultIncomeSourcesData.copy(
+      yearOfMigration = None,
       channel = channel,
       businesses = List(BusinessDetailsModel(incomeSourceId = "testId", incomeSource = None, accountingPeriod = None, tradingName = None, firstAccountingPeriodEndDate = None, tradingStartDate = None, contextualTaxYear = None, cessation = None))
     )
@@ -444,7 +445,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
-      "Agent - the user is has no incomeSources startingTaxYear - return 400 bad request" in {
+      "Agent - the user is has no incomeSources startingTaxYear and no triggered migration tax year - return 400 bad request" in {
 
         enable(TriggeredMigration)
 
@@ -461,7 +462,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         status(result) shouldBe BAD_REQUEST
       }
 
-      "Individual - the user is has no incomeSources startingTaxYear - return 400 bad request" in {
+      "Individual - the user is has no incomeSources startingTaxYear and no triggered migration tax year - return 400 bad request" in {
 
         enable(TriggeredMigration)
 
