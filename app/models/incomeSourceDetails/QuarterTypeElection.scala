@@ -30,7 +30,16 @@ case object QuarterTypeCalendar extends QuarterReportingType {
   val value: String = "CALENDAR"
 }
 
-case class QuarterTypeElection(quarterReportingType: String, taxYearofElection: String)
+case class QuarterTypeElection(quarterReportingType: String, taxYearofElection: String) {
+
+  val isStandardQuarterlyReporting: Option[QuarterReportingType] = {
+    quarterReportingType match {
+      case QuarterTypeStandard.value => Some(QuarterTypeStandard)
+      case QuarterTypeCalendar.value => Some(QuarterTypeCalendar)
+      case _ => None
+    }
+  }
+}
 
 object QuarterTypeElection {
   implicit val format: Format[QuarterTypeElection] = Json.format[QuarterTypeElection]
