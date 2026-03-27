@@ -58,7 +58,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  
+
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShowRequest(origin)
@@ -84,7 +84,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
-        
+
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       updatesAndDeadlinesViewModel <- getNextUpdates()
     } yield {
@@ -92,11 +92,13 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       val mandation = currentItsaStatus == ITSAStatus.Mandated
 
       val creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay)
+      val penaltiesAndAppealsEnabled = isEnabled(PenaltiesAndAppeals)
       val mandationStatus =
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel, isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus)
+      val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel,
+        isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus, penaltiesAndAppealsEnabled)
 
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),

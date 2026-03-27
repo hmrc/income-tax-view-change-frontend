@@ -50,7 +50,8 @@
         ctaViewModel: WYOClaimToAdjustViewModel,
         chargeItems: List[ChargeItem],
         isGovUkRebrandEnabled: Boolean,
-        userMandatedOrVoluntary: Boolean)(
+        userMandatedOrVoluntary: Boolean,
+        penaltiesAndAppealsEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -146,7 +147,9 @@
     @taxYearSection(isAgent = false, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    @if(penaltiesAndAppealsEnabled){
+        @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    }
 }
 
 
@@ -167,7 +170,9 @@
     @taxYearSection(isAgent = true, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    @if(penaltiesAndAppealsEnabled){
+        @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    }
 }
 
 

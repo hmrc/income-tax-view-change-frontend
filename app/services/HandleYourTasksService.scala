@@ -41,12 +41,13 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
                         chargeItemList: List[ChargeItem],
                         credits: CreditsModel,
                         creditsRefundsRepayEnabled: Boolean,
-                        currentItsaStatus: ITSAStatus)(implicit user: MtdItUser[_]) = {
+                        currentItsaStatus: ITSAStatus,
+                        penaltiesAndAppealsEnabled: Boolean)(implicit user: MtdItUser[_]) = {
 
     val isQuarterly = currentItsaStatus == ITSAStatus.Mandated || currentItsaStatus == ITSAStatus.Voluntary
 
     val submissionsTasks = getSubmissionTasks(submissionsViewModel, isAgent, isQuarterly)
-    val paymentsTasks    = if(user.isSupportingAgent) None else getFinancialsAndPenalties(chargeItemList, credits, creditsRefundsRepayEnabled, isAgent)
+    val paymentsTasks    = if(user.isSupportingAgent) None else getFinancialsAndPenalties(chargeItemList, credits, creditsRefundsRepayEnabled, isAgent, penaltiesAndAppealsEnabled)
 
     val allTasks = submissionsTasks ++ paymentsTasks
 
@@ -148,7 +149,8 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
   private def getFinancialsAndPenalties(chargeItemList: List[ChargeItem],
                                 credits: CreditsModel,
                                 creditsRefundsRepayEnabled: Boolean,
-                                isAgent: Boolean): Seq[YourTasksCard] = {
+                                isAgent: Boolean,
+                                        penaltiesAndAppealsEnabled: Boolean): Seq[YourTasksCard] = {
 
     val redirectLinkMoneyInYourAccount = {
       if (isAgent) {
@@ -161,7 +163,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
     val datelessTasks = if (creditsRefundsRepayEnabled) getMoneyInAccount(credits, redirectLinkMoneyInYourAccount) else Seq.empty
 
     val paymentTask = if(!chargeItemList.isEmpty) {
-      getPaymentsCard(chargeItemList, isAgent)
+      getPaymentsCard(chargeItemList, isAgent, penaltiesAndAppealsEnabled)
     } else Seq.empty
 
     datelessTasks ++ paymentTask
@@ -176,15 +178,16 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
   }
 
   private def getPaymentsCard(chargeItemList: List[ChargeItem],
-                              isAgent: Boolean): Seq[YourTasksCard] = {
+                              isAgent: Boolean,
+                              penaltiesAndAppealsEnabled: Boolean): Seq[YourTasksCard] = {
 
     val dueChargesList: List[ChargeItem] = dueChargesByTypes(chargeItemList, chargesSet)
     val dueLppsList: List[ChargeItem]    = dueChargesByTypes(chargeItemList, lppSet)
     val dueLspsList: List[ChargeItem]    = dueChargesByTypes(chargeItemList, lspSet)
 
     val chargeTask = if(dueChargesList.isEmpty) Seq.empty else getChargesCard(dueChargesList, isAgent)
-    val lppTask = if(dueLppsList.isEmpty) Seq.empty else getLppCard(dueLppsList, isAgent)
-    val lspTask = if(dueLspsList.isEmpty) Seq.empty else getLspCard(dueLspsList, isAgent)
+    val lppTask = if(dueLppsList.isEmpty || !penaltiesAndAppealsEnabled) Seq.empty else getLppCard(dueLppsList, isAgent)
+    val lspTask = if(dueLspsList.isEmpty || !penaltiesAndAppealsEnabled) Seq.empty else getLspCard(dueLspsList, isAgent)
 
     chargeTask ++ lppTask ++ lspTask
   }
