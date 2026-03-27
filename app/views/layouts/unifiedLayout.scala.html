@@ -62,7 +62,8 @@
     useFallbackBackLink: Boolean = true,
     showServiceName: Boolean = true,
     isErrorPage: Boolean = false,
-    gatewayPage: Option[GatewayPage] = None
+    gatewayPage: Option[GatewayPage] = None,
+    alternateContentClass: Option[String] = None
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 
@@ -200,6 +201,14 @@
 
 @hmrcFrontendAssetPath = @{uk.gov.hmrc.hmrcfrontend.controllers.routes.Assets.at("govuk").url}
 
+@alternateClassContentBlock(contentBlock: Html) = {
+    <div class="govuk-grid-row">
+        <div class="@alternateContentClass.getOrElse("")">
+            @contentBlock
+        </div>
+    </div>
+}
+
 @if(mainClass.isDefined){
     @govukLayout(
         pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
@@ -212,7 +221,20 @@
         assetPath = Some(hmrcFrontendAssetPath),
         mainContentLayout = Some(mainContentLayout(mainClass.get)(_))
     )(content)
-} else {
+} else if(alternateContentClass.isDefined) {
+    @govukLayout(
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        headerBlock = Some(siteHeader),
+        footerBlock = Some(footerLinks()),
+        scriptsBlock = Some(scripts()),
+        assetPath = Some(hmrcFrontendAssetPath),
+        mainContentLayout = None//TODO setting this to none goes full width, setting it to anything else retains the original problem.
+    )(alternateClassContentBlock(content))
+    }
+    else {
     @govukLayout(
         pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
         headBlock = Some(head),

@@ -95,3 +95,9 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 .uplift {
     color: #505a5f;
 }
+
+@media screen and (max-width: 52.125em) {
+    .govuk-grid-column-two-thirds.tab-fix {
+        width: 100%;
+    }
+}
