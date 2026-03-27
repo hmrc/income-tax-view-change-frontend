@@ -30,9 +30,9 @@
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
-        govukServiceNavigation : GovukServiceNavigation,
         h2: h2,
-        implicitDateFormatter: ImplicitDateFormatterImpl
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        newHomeNav: NewHomeNavigation
 )
 
 @(origin: Option[String] = None,
@@ -42,7 +42,8 @@
         overviewUrl: String,
         helpUrl: String,
         viewModel: HandleYourTasksViewModel,
-        isGovUkRebrandEnabled: Boolean)(
+        isGovUkRebrandEnabled: Boolean,
+        isRecentActivityEnabled: Boolean)(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -86,28 +87,7 @@
         </div>
     }
 
-    @govukServiceNavigation(ServiceNavigation(
-        navigation = Seq(
-            ServiceNavigationItem(
-                content = Text(messages("newHome.navigation.yourTasks")),
-                href = yourTasksUrl,
-                active = true
-            ),
-            ServiceNavigationItem(
-                content = Text("Recent activity"),
-                href = recentActivityUrl
-            ),
-            ServiceNavigationItem(
-                content = Text(messages("new.home.navigation.tabs.overview")),
-                href = overviewUrl
-            ),
-            ServiceNavigationItem(
-                content = Text("Help"),
-                href = helpUrl
-            )
-        ),
-        attributes = Map("style" -> "background-color: white;")
-    ))
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overviewUrl, helpUrl, "your-tasks", isRecentActivityEnabled)
 
     @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("your-tasks-heading"))
 
