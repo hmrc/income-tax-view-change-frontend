@@ -1,0 +1,184 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import enums.MTDSupportingAgent
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.h1WithCaption
+@import views.html.layouts.unifiedLayout
+@import views.html.partials.newHome._
+@import views.html.components._
+@import models.newHomePage.HandleYourTasksViewModel
+@import models.newHomePage.YourTasksCard.{OverdueTaskCard, UpcomingTaskCard, DatelessTaskCard}
+@import models.newHomePage.YourTasksCard
+@import _root_.implicits.ImplicitDateFormatterImpl
+
+@this(
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        h1WithCaption: h1WithCaption,
+        govukServiceNavigation : GovukServiceNavigation,
+        h2: h2,
+        implicitDateFormatter: ImplicitDateFormatterImpl
+)
+
+@(origin: Option[String] = None,
+        isAgent: Boolean,
+        yourTasksUrl: String,
+        recentActivityUrl: String,
+        overviewUrl: String,
+        helpUrl: String,
+        viewModel: HandleYourTasksViewModel,
+        isGovUkRebrandEnabled: Boolean)(
+        implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
+)
+
+@import implicitDateFormatter.longDate
+
+@pageHeading = @{
+    if (isAgent) {
+        user.optClientNameAsString.fold(messages("home.agent.heading")) {
+            clientName => messages("home.agent.headingWithClientName", clientName)
+        }
+    } else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading")
+}
+
+@caption = @{
+    if (user.usersRole == MTDSupportingAgent) {
+        messages("home.agent.supporting.caption")
+    } else if (isAgent) {
+        messages("home.agent.primary.caption")
+    } else {
+        user.userName.fold("")(_.name.getOrElse(""))
+    }
+}
+
+@mainTemplate(
+    pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
+    backUrl = None,
+    btaNavPartial = user.btaNavPartial,
+) {
+
+    @h1WithCaption(
+        heading = pageHeading,
+        captionMsg = caption,
+        extraClasses = if(user.saUtr.isDefined) { "margin-bottom-zero" } else {""},
+        headingId = Some("income-tax-heading"),
+        captionId = Some("sub-heading")
+    )
+    
+    @user.saUtr.map { utr =>
+        <div id="utr-reference-heading" class="form-hint heading-xl-addon">
+            @messages("home.unique.taxpayer.reference", utr)
+        </div>
+    }
+
+    @govukServiceNavigation(ServiceNavigation(
+        navigation = Seq(
+            ServiceNavigationItem(
+                content = Text(messages("newHome.navigation.yourTasks")),
+                href = yourTasksUrl,
+                active = true
+            ),
+            ServiceNavigationItem(
+                content = Text("Recent activity"),
+                href = recentActivityUrl
+            ),
+            ServiceNavigationItem(
+                content = Text(messages("new.home.navigation.tabs.overview")),
+                href = overviewUrl
+            ),
+            ServiceNavigationItem(
+                content = Text("Help"),
+                href = helpUrl
+            )
+        ),
+        attributes = Map("style" -> "background-color: white;")
+    ))
+
+    @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("your-tasks-heading"))
+
+    @if(viewModel.noTaskCard.isDefined) {
+        @viewModel.noTaskCard.map { noTask =>
+            <div id= "noTaskCard" class="hmrc-card">
+                <div class="tile-body">
+                    <h3 class="hmrc-card__heading" id="noTaskCard-heading">
+                        @messages(noTask.cardHeading)
+                    </h3>
+                    <div class="govuk-body" id="noTaskCard-content">@messages(noTask.cardContent)</div>
+                </div>
+            </div>
+        }
+    } else {
+        @viewModel.overdueTasks.zipWithIndex.map { case (overdueTask, index) =>
+        <div id="overdueTaskCard-@index" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading" id="overdueTaskCard-heading-@index">
+                    <a href=@overdueTask.cardLink>@messages(overdueTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                <div class="govuk-body" id="overdueTaskCard-content-@index">@getCardContent(overdueTask)</div>
+                <div id="overdueTaskCard-tag-@index">@getTagContent(overdueTask, index)</div>
+        </div>
+        </div>
+        }
+
+        @viewModel.datelessTasks.zipWithIndex.map { case (datelessTask, index) =>
+        <div id= "datelessTaskCard-@index" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading" id="datelessTaskCard-heading-@index">
+                    <a href=@datelessTask.cardLink>@messages(datelessTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                <div class="govuk-body" id="datelessTaskCard-content-@index">@getCardContent(datelessTask)</div>
+        </div>
+        </div>
+        }
+
+        @viewModel.upcomingTasks.zipWithIndex.map { case (upcomingTask, index) =>
+        <div id="upcomingTaskCard-@index" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading" id="upcomingTaskCard-heading-@index">
+                    <a href=@upcomingTask.cardLink>@messages(upcomingTask.cardLinkText) <span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                <div class="govuk-body" id="upcomingTaskCard-content-@index">@getCardContent(upcomingTask)</div>
+                <div id="upcomingTaskCard-tag-@index">@getTagContentUpcoming(upcomingTask, index)</div>
+            </div>
+        </div>
+        }
+    }
+}
+
+@getCardContent(taskCard: YourTasksCard) = @{
+    taskCard.amountOrCount match {
+        case Some(amount) => messages(taskCard.cardContent, amount)
+        case None         => messages(taskCard.cardContent)
+    }
+}
+
+@getTagContent(overdueTask: OverdueTaskCard, index: Int) = {
+    @overdueTask.dueDate.map { date =>
+        <span class="govuk-tag govuk-tag--red" id="overdue-date-tag-@index">
+            @messages(overdueTask.tagContent, date.toLongDateShort)
+        </span>
+    }
+}
+
+@getTagContentUpcoming(upcomingTask: UpcomingTaskCard, index: Int) = {
+    @upcomingTask.dueDate.map { date =>
+        <span class="govuk-tag govuk-tag--@upcomingTask.maturityLevel.tagColour" id="@upcomingTask.maturityLevel.toString-date-tag-@index">
+        @messages(upcomingTask.tagContent, date.toLongDateShort)
+        </span>
+    }
+}

@@ -24,7 +24,9 @@ import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
-import models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewModel}
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
+import models.newHomePage.SubmissionDeadlinesViewModel
 import models.obligations.{ObligationsModel, SingleObligationModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -34,7 +36,7 @@ import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.HandleYourTasksView
+import views.html.newHomePage.NewHomeYourTasksView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -42,7 +44,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HandleYourTasksController @Inject()(val authActions: AuthActions,
-                                          val handleYourTasksView: HandleYourTasksView,
+                                          val handleYourTasksView: NewHomeYourTasksView,
                                           val signUpService: SignUpService,
                                           val optOutService: OptOutService,
                                           val ITSAStatusService: ITSAStatusService,
@@ -50,7 +52,9 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                           val creditService: CreditService,
                                           val dateService: DateServiceInterface,
                                           val financialDetailsService: FinancialDetailsService,
-                                         val nextUpdatesService: NextUpdatesService)(implicit val ec: ExecutionContext,
+                                          val nextUpdatesService: NextUpdatesService,
+                                          val handleYourTasksService: HandleYourTasksService)
+                                         (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
@@ -72,36 +76,31 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
                              (implicit user: MtdItUser[_]): Future[Result] = {
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+
     for {
       credits: CreditsModel <- creditService.getAllCredits
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
-      mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
-      userMandatedOrVoluntary <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandatedOrVoluntary)
+      currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
+
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       updatesAndDeadlinesViewModel <- getNextUpdates()
     } yield {
+
+      val mandation = currentItsaStatus == ITSAStatus.Mandated
 
       val creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay)
       val mandationStatus =
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val homeViewModel = HandleYourTasksViewModel(chargeItemList, credits, creditsRefundsRepayEnabled, updatesAndDeadlinesViewModel, userMandatedOrVoluntary)
+      val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel, isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus)
 
-      Ok(
-        handleYourTasksView(
-          origin = origin,
-          isAgent = isAgent,
-          yourTasksUrl = yourTasksUrl(origin, isAgent),
-          recentActivityUrl = recentActivityUrl(origin, isAgent),
-          overViewUrl = overviewUrl(origin, isAgent),
-          helpUrl = helpUrl(origin, isAgent),
-          viewModel = homeViewModel, appConfig.itvcRebrand,
-          isEnabled(PenaltiesAndAppeals))
-      ).addingToSession(mandationStatus)
-
+      Ok(handleYourTasksView(origin, isAgent,
+        yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
+        overviewUrl(origin, isAgent), helpUrl(origin, isAgent), yourTaskCardViewModel, appConfig.itvcRebrand,  isEnabled(PenaltiesAndAppeals)).addingToSession(mandationStatus)
     }
   }
 
@@ -129,13 +128,13 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- nextUpdatesService.getNextDueDates()
         openObligations <- getOpenObligations()
       } yield {
-          SubmissionDeadlinesViewModel(
-            openObligations = openObligations,
-            currentDate = dateService.getCurrentDate,
-            nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
-            nextTaxReturnDueDate = nextTaxReturnDueDate
-          )
-        }
+        SubmissionDeadlinesViewModel(
+          openObligations = openObligations,
+          currentDate = dateService.getCurrentDate,
+          nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
+          nextTaxReturnDueDate = nextTaxReturnDueDate
+        )
+      }
     }.recoverWith {
       case ex =>
         Logger("application").error(s"Failed to retrieve reporting content checks: ${ex.getMessage}")
@@ -145,13 +144,28 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
   }
 
   private def getOpenObligations()
-                                    (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[SingleObligationModel]] = {
+                                (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[SingleObligationModel]] = {
     nextUpdatesService.getOpenObligations().flatMap {
       case openObligations: ObligationsModel if openObligations.obligations.forall(_.obligations.nonEmpty) => Future.successful(openObligations.obligations.flatMap(_.obligations))
       case _ =>
         Logger("application").error("Unexpected Exception getting open obligations")
         Future.successful(Seq.empty[SingleObligationModel])
     }
+  }
+
+  private def getCurrentITSAStatus(currentTaxYear: TaxYear)(
+    implicit hc: HeaderCarrier,
+    user: MtdItUser[_]
+  ): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService
+      .getITSAStatusDetail(currentTaxYear, false, false)
+      .map { statusDetailList =>
+        statusDetailList
+          .flatMap(_.itsaStatusDetails)
+          .flatMap(_.map(_.status))
+          .headOption
+          .getOrElse(ITSAStatus.NoStatus)
+      }
   }
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url
