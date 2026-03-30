@@ -21,12 +21,15 @@ import config.featureswitch.FeatureSwitching
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
 import testOnly.repository.FeatureSwitchRepository
+import connectors.FeatureSwitchConnector
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchRepository,
+                                     val featureSwitchConnector: FeatureSwitchConnector,
                                      val appConfig: FrontendAppConfig)
                                     (implicit val ec: ExecutionContext) extends FeatureSwitching {
 
@@ -56,10 +59,11 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
     }
   }
 
-  def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] = {
+  def set(featureSwitchName: FeatureSwitchName, enabled: Boolean)(implicit hc: HeaderCarrier): Future[Boolean] = {
     Logger("application").info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {
       featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
+      //featureSwitchConnector.setSwitch(featureSwitchName, enabled)
     } else {
       setFS(featureSwitchName, enabled)
       Future.successful(true)
