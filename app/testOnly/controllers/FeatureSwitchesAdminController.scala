@@ -20,6 +20,8 @@ import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.libs.json.{JsBoolean, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import services.admin.FeatureSwitchService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,6 +38,10 @@ class FeatureSwitchesAdminController @Inject() (
   }
 
   def put(featureSwitchName: FeatureSwitchName): Action[AnyContent] = Action.async { request =>
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
+
     request.body.asJson match {
       case Some(JsBoolean(enabled)) =>
         featureSwitchService
