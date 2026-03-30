@@ -18,6 +18,7 @@ package services.admin
 
 import config.FrontendAppConfig
 import mocks.repositories.MockFeatureSwitchRepository
+import mocks.connectors.MockFeatureSwitchConnector
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{verify, when}
@@ -26,7 +27,7 @@ import testUtils.TestSupport
 
 import scala.concurrent.ExecutionContext
 
-class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchRepository {
+class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchRepository with MockFeatureSwitchConnector {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
@@ -35,6 +36,7 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
 
   object TestFSService extends FeatureSwitchService(
     mockFeatureSwitchRepository,
+    mockFeatureSwitchConnector,
     mockFrontendAppConfig
   )(
     app.injector.instanceOf[ExecutionContext]
