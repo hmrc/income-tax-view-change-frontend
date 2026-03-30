@@ -205,7 +205,8 @@ object BaseIntegrationTestConstants {
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
-    currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+    currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+    quarterReportingType = Some(QuarterTypeStandard)
   )
 
   val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -228,7 +229,8 @@ object BaseIntegrationTestConstants {
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
-    currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+    currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+    quarterReportingType = Some(QuarterTypeStandard)
   )
 
   val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -251,6 +253,7 @@ object BaseIntegrationTestConstants {
     ),
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
-    currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+    currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+    quarterReportingType = None
   )
 }
