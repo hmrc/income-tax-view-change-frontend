@@ -25,7 +25,9 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +44,10 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
   val PROD_FEATURES: String = "feature-switch.prod-switches"
 
-  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { _ =>
+  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { implicit request =>
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
     featureSwitchService.set(featureFlagName, isEnabled).map {
       case true =>
         Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
@@ -118,7 +123,10 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
 
   }
 
-  def enableAll(): Action[AnyContent] = Action.async {
+  def enableAll(): Action[AnyContent] = Action.async { implicit request =>
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
     for {
       featureSwitches <- featureSwitchService.getAll
       _ <- Future.sequence(
