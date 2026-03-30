@@ -870,6 +870,8 @@ refund-to-taxpayer.tableHead.varied-interest-rates-value        = Rate of intere
 refund-to-taxpayer.method-type-bacs                             = Bacs
 refund-to-taxpayer.method-type-card                             = Card
 refund-to-taxpayer.method-type-postal-order                     = Postal Order
+refund-to-taxpayer.method-type-payable-order-repayment          = Payable order repayment
+refund-to-taxpayer.method-type-bacs-payment-out                 = BACS payment out
 
 ## Timeout page ##
 timeout.heading                                                 = Your session has timed out
