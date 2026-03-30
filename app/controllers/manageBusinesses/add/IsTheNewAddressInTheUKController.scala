@@ -25,7 +25,7 @@ import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
 import models.admin.OverseasBusinessAddress
-import models.core.Mode
+import models.core.{Mode, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -113,8 +113,8 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
-    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isTrigMig).url
-    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isTrigMig).url
+    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(NormalMode, isTrigMig).url
+    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddInternationalBusinessAddressController.show(isAgent, isTrigMig).url
     
     formResponse match {
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
@@ -142,10 +142,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
   }
 
-  // TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
-    controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = mode, isTriggeredMigration)
-  } else {
-    controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = mode, isTriggeredMigration)
-  }
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call =
+    controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.submit(isAgent, isTriggeredMigration)
+
 }

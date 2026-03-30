@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import enums.IncomeSourceJourney.SelfEmployment
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -154,7 +155,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
                 "value" -> "0"
               ))
 
-            val redirectUrl = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
+            val redirectUrl = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)

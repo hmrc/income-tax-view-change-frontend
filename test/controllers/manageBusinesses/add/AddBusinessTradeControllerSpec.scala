@@ -127,7 +127,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           if (mode == CheckMode) {
-            "redirect to the IncomeSourceCheckDetailsController page" when {
+            "redirect to the sole trader business address page" when {
               "the business trade entered is valid" in {
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -144,15 +144,15 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
                   status(result) shouldBe SEE_OTHER
                   val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
-                    controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+                    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(false).url
                   } else {
-                    controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+                    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(true).url
                   }
                   redirectLocation(result) shouldBe Some(expectedRedirectUrl)
                 }
               }
             }} else {
-              "redirect to the add business address page" when {
+              "redirect to the choose sole trader business address page" when {
                 "the individual is authenticated and the business trade entered is valid" in {
                   setupMockSuccess(mtdRole)
                   mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -166,9 +166,9 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                     BusinessTradeForm.businessTrade -> validBusinessTrade))
                   status(result) shouldBe SEE_OTHER
                   val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
-                    controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode).url
+                    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(false).url
                   } else {
-                    controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode).url
+                    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(true).url
                   }
                   redirectLocation(result) shouldBe Some(expectedRedirectUrl)
                 }

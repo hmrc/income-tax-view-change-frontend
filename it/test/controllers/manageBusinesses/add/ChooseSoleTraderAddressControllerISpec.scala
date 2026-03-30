@@ -17,10 +17,11 @@
 package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.SelfEmployment
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.AddProprertyForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{NavBarFs, OverseasBusinessAddress}
+import models.admin.OverseasBusinessAddress
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
@@ -82,7 +83,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url)
+                redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url)
               )
             }
             "form response is New Address" in {
@@ -96,7 +97,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url)
+                redirectURI(controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent).url)
               )
             }
           }

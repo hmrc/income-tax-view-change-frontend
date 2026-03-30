@@ -57,17 +57,21 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   }
 
   private def getSuccessURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): String = {
-    ((isAgent, mode) match {
+// TODO check if we need to deal with MODE and isTriggeredMigration ???
+    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
+    /*((isAgent, mode) match {
       case (false, NormalMode) => routes.AddBusinessAddressController.show(mode, isTriggeredMigration)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
       case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode, isTriggeredMigration)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
-    }).url
+    }).url*/
   }
 
-//  TODO check if we need a Mode and isTriggeredMigration params
-  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call =
-    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)
+  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if(isAgent) {
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submitAgent(mode, isTriggeredMigration)
+  } else {
+    controllers.manageBusinesses.add.routes.AddBusinessTradeController.submit(mode, isTriggeredMigration)
+  }
 
   def show(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividual(isTriggeredMigration).async {
     implicit user =>
