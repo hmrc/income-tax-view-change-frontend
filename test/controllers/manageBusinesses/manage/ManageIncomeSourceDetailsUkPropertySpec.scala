@@ -166,8 +166,8 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasInsetText(document) shouldBe true
 
               document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
-              summaryKeys.eq(1).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
-              summaryKeys.eq(2).text() shouldBe "Using Making Tax Digital for Income Tax for 2023 to 2024"
+              summaryKeys.eq(2).text() shouldBe "Using Making Tax Digital for Income Tax for 2022 to 2023"
+              summaryKeys.eq(3).text() shouldBe "Using Making Tax Digital for Income Tax for 2023 to 2024"
               summaryValues should contain("Yes")
               summaryValues should contain("No")
 
@@ -203,8 +203,8 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               latencyParagraph.text().nonEmpty shouldBe true
 
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.get(1).text() shouldBe quarterlyGracePeriod
-              manageDetailsSummaryValues.get(2).text() shouldBe annuallyGracePeriod
+              manageDetailsSummaryValues.get(2).text() shouldBe quarterlyGracePeriod
+              manageDetailsSummaryValues.get(3).text() shouldBe annuallyGracePeriod
             }
 
             "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
@@ -231,8 +231,8 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasInsetText(document) shouldBe true
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.eq(1).size() shouldBe 1
               manageDetailsSummaryValues.eq(2).size() shouldBe 1
+              manageDetailsSummaryValues.eq(3).size() shouldBe 1
             }
             "the user has a valid id parameter, valid latency information and tax year1 crystallised and tax year not crystallised" in {
               enable(DisplayBusinessStartDate, ReportingFrequencyPage)
@@ -257,8 +257,8 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeSecondYearReportingMethodLink(document) shouldBe true
               hasGracePeriodInfo(document) shouldBe false
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.eq(1).size() shouldBe 1
               manageDetailsSummaryValues.eq(2).size() shouldBe 1
+              manageDetailsSummaryValues.eq(3).size() shouldBe 1
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in { //I think this scenario is not possible
@@ -284,8 +284,8 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.eq(1).size() shouldBe 1
               manageDetailsSummaryValues.eq(2).size() shouldBe 1
+              manageDetailsSummaryValues.eq(3).size() shouldBe 1
             }
 
             "the user has a valid id parameter, but non eligable itsa status" in {
@@ -338,7 +338,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               val manageDetailsSummaryValues = getManageDetailsSummaryValues(document)
-              manageDetailsSummaryValues.size() shouldBe 1
+              manageDetailsSummaryValues.size() shouldBe 2
             }
           }
 
