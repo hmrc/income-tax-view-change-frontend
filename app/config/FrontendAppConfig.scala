@@ -150,7 +150,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   // Service Navigation Links
   lazy val ptaFrontendBase: String = servicesConfig.baseUrl("pta-frontend")
-  lazy val btaFrontendBase: String = servicesConfig.baseUrl("bta-frontend")
+  lazy val btaFrontendBase: String = servicesConfig.baseUrl("business-account")
   lazy val helpAndContactBase: String = servicesConfig.baseUrl("help-and-contact-frontend")
   lazy val trackingBase: String = servicesConfig.baseUrl("tracking-frontend")
 
