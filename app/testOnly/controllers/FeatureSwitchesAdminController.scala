@@ -53,6 +53,10 @@ class FeatureSwitchesAdminController @Inject() (
   }
 
   def putAll: Action[AnyContent] = Action.async { request =>
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
+    
     val switches = request.body.asJson
       .map(_.as[Seq[FeatureSwitch]])
       .getOrElse(Seq.empty)

@@ -62,18 +62,20 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean)(implicit hc: HeaderCarrier): Future[Boolean] = {
     Logger("application").info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {
-      featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
-      //featureSwitchConnector.setSwitch(featureSwitchName, enabled)
+      //featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
+      featureSwitchConnector.setSwitch(featureSwitchName, enabled)
     } else {
       setFS(featureSwitchName, enabled)
       Future.successful(true)
     }
   }
 
-  def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] = {
+  def setAll(featureSwitches: Map[FeatureSwitchName, Boolean])(implicit hc: HeaderCarrier): Future[Unit] = {
     Logger("application").info(s"Setting all feature switches. FS values: $featureSwitches")
     if (appConfig.readFeatureSwitchesFromMongo) {
-      featureSwitchRepository.setFeatureSwitches(featureSwitches)
+      //featureSwitchRepository.setFeatureSwitches(featureSwitches)
+      //setSwitches
+      featureSwitchConnector.setSwitches(featureSwitches).map(_ => ())
     } else {
       featureSwitches.foreach { case (featureSwitchName, state) =>
         setFS(featureSwitchName, state)
