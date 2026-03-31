@@ -135,7 +135,8 @@
         isAgent = isAgent,
         form = Some(form),
         backUrl = None,
-        btaNavPartial = user.btaNavPartial
+        btaNavPartial = user.btaNavPartial,
+        btaAndPtaServiceNavigation = user.serviceNavigationPartial
     ) {
 
     @if(form.errors.nonEmpty) {

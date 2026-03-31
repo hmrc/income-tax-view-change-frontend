@@ -65,7 +65,8 @@
                isAgent = isAgent,
                useFallbackBackLink = useFallbackLink,
                backUrl = Some("/"),
-               btaNavPartial = user.btaNavPartial) {
+               btaNavPartial = user.btaNavPartial,
+               btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @errorSummary(
         form = selectYourReasonForm

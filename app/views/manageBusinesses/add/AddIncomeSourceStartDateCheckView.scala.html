@@ -48,7 +48,8 @@
     form = Some(form),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @formWithCSRF(action = postAction, Symbol("id") -> "add-income-source-start-date-check-form") {
         @if(form.errors.nonEmpty) {

@@ -18,8 +18,8 @@ package views
 
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import org.jsoup.nodes.Element
-import org.scalatest.prop.TableDrivenPropertyChecks._
-import testConstants.BaseTestConstants.testNavHtml
+import org.scalatest.prop.TableDrivenPropertyChecks.*
+import testConstants.BaseTestConstants.{testNavHtml, testServiceNavigation}
 import testUtils.ViewSpec
 import views.html.DeductionBreakdownView
 
@@ -39,10 +39,10 @@ class DeductionBreakdownViewSpec extends ViewSpec {
 
     "provided with a btaNavPartial" should {
       val taxYear = 2017
-      lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, btaNavPartial = Some(testNavHtml))
+      lazy val view = deductionBreakdownView(AllowancesAndDeductionsViewModel(), taxYear, backUrl, serviceNavigationPartial = Some(testServiceNavigation))
 
       "render the btaNavPartial" in new Setup(view) {
-        document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"
+        document.getElementById(s"bta-service-navigation").text shouldBe "testHome"
       }
     }
 

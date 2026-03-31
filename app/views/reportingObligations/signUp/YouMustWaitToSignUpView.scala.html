@@ -61,7 +61,8 @@
 @mainTemplate(
     pageTitle = if(isAgent) messages("youMustWait.agent.title", viewModel.nextTaxYear) else messages("youMustWait.title", viewModel.nextTaxYear),
     backUrl = if(isAgent) None else Some(viewModel.backUrl),
-    btaNavPartial = user.btaNavPartial
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 
     @if(!isAgent){

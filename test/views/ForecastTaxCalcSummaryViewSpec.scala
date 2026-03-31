@@ -19,9 +19,9 @@ package views
 import models.liabilitycalculation.EndOfYearEstimate
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.TableDrivenPropertyChecks.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testNavHtml, testTaxYear}
+import testConstants.BaseTestConstants.{testNavHtml, testServiceNavigation, testTaxYear}
 import testUtils.ViewSpec
 import views.html.ForecastTaxCalcSummaryView
 
@@ -92,13 +92,13 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
 
   lazy val forecastTaxCalcView: ForecastTaxCalcSummaryView = app.injector.instanceOf[ForecastTaxCalcSummaryView]
 
-  val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
+  val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, serviceNavigationPartial = Some(testServiceNavigation))
   val viewModel2: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
 
   "The Forecast Tax Calc Summary View" when {
     "provided with a btaNavPartial" should {
-      "render the BA Nav bar" in new Setup(view) {
-        document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"
+      "render the BA service navigation" in new Setup(view) {
+        document.getElementById(s"bta-service-navigation").text shouldBe "testHome"
       }
     }
 

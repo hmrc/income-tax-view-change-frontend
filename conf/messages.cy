@@ -88,6 +88,16 @@ agent-unauthorised.note.b3                                      = y ffioedd sy�
 agent-unauthorised.note.b4                                      = cosbau ac apeliadau
 agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
 
+## Rebrand Service Navigation
+pta.navigation.messages = Negeseuon
+pta.navigation.checkProgress = Gwirio cynnydd
+pta.navigation.profileAndSettings = Proffil a gosodiadau
+pta.navigation.businessTaxAccount = Cyfrif treth busnes
+
+bta.navigation.manageAccount = Rheoli’r cyfrif
+bta.navigation.messages = Negeseuon
+bta.navigation.helpAndContact = Cymorth a chysylltu
+
 ## BTA Links ##
 bta.home                                                        = Treth Busnes – Hafan
 bta.messages                                                    = Negeseuon

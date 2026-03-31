@@ -62,7 +62,7 @@ class ForecastIncomeSummaryController @Inject()(val authActions: AuthActions,
           case Some(model) =>
             auditingService.extendedAudit(ForecastIncomeAuditModel(user, model))
             Ok(forecastIncomeSummaryView(model, taxYear, backUrl(taxYear, origin, isAgent), isAgent,
-              user.btaNavPartial))
+              user.btaNavPartial, user.serviceNavigationPartial))
           case _ =>
             onError("No income data could be retrieved. Not found", isAgent, taxYear)
         }
