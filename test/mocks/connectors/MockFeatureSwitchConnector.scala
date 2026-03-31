@@ -17,12 +17,10 @@
 package mocks.connectors
 
 import connectors.FeatureSwitchConnector
-import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import testUtils.UnitSpec
-import uk.gov.hmrc.auth.core.AffinityGroup
 
 import scala.concurrent.Future
 
@@ -33,6 +31,11 @@ trait MockFeatureSwitchConnector extends UnitSpec with BeforeAndAfterEach {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockFeatureSwitchConnector)
+  }
+
+  def mockConnectorSetFeatureSwitch(response: Boolean): Unit = {
+    when(mockFeatureSwitchConnector.setSwitch(any(), any())(any()))
+      .thenReturn(Future.successful(response))
   }
 
 }

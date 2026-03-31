@@ -17,10 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.admin.FeatureSwitchName
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.http.Status.NO_CONTENT
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -28,16 +30,17 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
                                        http: HttpClientV2)(implicit ec: ExecutionContext) extends RawResponseReads{
 
-  def getIncomeTaxVcFsAndStubUrl(featureFlagName: FeatureSwitchName, isEnabled: Boolean): String = {
+  def getSetSwitchStubUrl(featureFlagName: FeatureSwitchName, isEnabled: Boolean): String = {
     s"${appConfig.incomeTaxVcFsAndStubUrl}/features/${featureFlagName.name}?isEnabled=$isEnabled"
+  }
+
+  def getSetSwitchesStubUrl: String = {
+    s"${appConfig.incomeTaxVcFsAndStubUrl}/features"
   }
 
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean)(implicit headerCarrier: HeaderCarrier): Future[Boolean] = {
 
-    val url = getIncomeTaxVcFsAndStubUrl(featureFlagName, isEnabled)
-
-    println(s"Hello, World! $featureFlagName, $isEnabled ")
-    println(url)
+    val url = getSetSwitchStubUrl(featureFlagName, isEnabled)
 
     http.put(url"$url")
       .execute[HttpResponse] map { response =>
@@ -46,6 +49,31 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
         case _ => false
       }
     }
+  }
+
+  def setSwitches(featureSwitches: Map[FeatureSwitchName, Boolean])
+                 (implicit headerCarrier: HeaderCarrier): Future[Boolean] = {
+
+    val url = getSetSwitchesStubUrl
+
+    val featureSwitchSeq: Seq[FeatureSwitch] =
+      featureSwitches.toSeq.map { case (name, isEnabled) =>
+        FeatureSwitch(name, isEnabled)
+      }
+
+    val payload = Json.obj(
+      "features" -> featureSwitchSeq
+    )
+
+    http.post(url"$url")
+      .withBody(payload)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case NO_CONTENT => true
+          case _ => false
+        }
+      }
   }
 
 }
