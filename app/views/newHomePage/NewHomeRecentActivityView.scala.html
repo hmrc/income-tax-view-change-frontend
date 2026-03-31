@@ -19,13 +19,15 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
+@import views.html.partials.newHome.NewHomeNavigation
 
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
-        govukServiceNavigation : GovukServiceNavigation
+        govukServiceNavigation : GovukServiceNavigation,
+        newHomeNav: NewHomeNavigation
 )
 
 @(origin: Option[String] = None,
@@ -78,26 +80,5 @@
         </div>
     }
 
-    @govukServiceNavigation(ServiceNavigation(
-        navigation = Seq(
-            ServiceNavigationItem(
-                content = Text("Your tasks"),
-                href = yourTasksUrl
-            ),
-            ServiceNavigationItem(
-                content = Text("Recent activity"),
-                href = recentActivityUrl,
-                active = true
-            ),
-            ServiceNavigationItem(
-                content = Text(messages("new.home.navigation.tabs.overview")),
-                href = overViewUrl
-            ),
-            ServiceNavigationItem(
-                content = Text("Help"),
-                href = helpUrl
-            )
-        ),
-        attributes = Map("style" -> "background-color: white;")
-    ))
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "recent-activity", isRecentActivityEnabled = true)
 }
