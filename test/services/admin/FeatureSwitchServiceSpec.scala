@@ -21,11 +21,12 @@ import mocks.repositories.MockFeatureSwitchRepository
 import mocks.connectors.MockFeatureSwitchConnector
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import testUtils.TestSupport
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchRepository with MockFeatureSwitchConnector {
 
@@ -90,7 +91,7 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
     "return true if FS successfully set" when {
       "read FS from mongo FS is enabled" in {
         when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn true
-        mockRepositorySetFeatureSwitch(true)
+        mockConnectorSetFeatureSwitch(true)
 
         val result = TestFSService.set(exampleFSName, true)
         result.futureValue shouldBe true
@@ -105,7 +106,7 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
     "return false if FS not set" when {
       "read FS from mongo FS is enabled" in {
         when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn true
-        mockRepositorySetFeatureSwitch(false)
+        mockConnectorSetFeatureSwitch(false)
 
         val result = TestFSService.set(exampleFSName, true)
         result.futureValue shouldBe false
@@ -126,13 +127,17 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
     "call the repository" when {
       "read FS from mongo FS is enabled" in {
         when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn true
-        mockRepositorySetFeatureSwitches()
-        disableAllSwitches()
 
         val fsMap = Map(exampleFSName -> true, anotherFSName -> false)
+
+        when(mockFeatureSwitchConnector.setSwitches(ArgumentMatchers.eq(fsMap))(any()))
+          .thenReturn(Future.successful(true))
+
+        disableAllSwitches()
+
         TestFSService.setAll(fsMap)
 
-        verify(mockFeatureSwitchRepository).setFeatureSwitches(ArgumentMatchers.eq(fsMap))
+        verify(mockFeatureSwitchConnector).setSwitches(ArgumentMatchers.eq(fsMap))(any())
       }
     }
   }
