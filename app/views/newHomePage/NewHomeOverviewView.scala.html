@@ -53,7 +53,8 @@
         isGovUkRebrandEnabled: Boolean,
         userMandatedOrVoluntary: Boolean,
         penaltiesAndAppealsEnabled: Boolean,
-        isRecentActivityEnabled: Boolean)(
+        isRecentActivityEnabled: Boolean,
+        creditsRefundsRepayEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -116,7 +117,7 @@
 
 
 @IndividualSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel)
+    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled)
     @SectionBreak
 
     @deadlinesSection(isAgent = false, userMandatedOrVoluntary)
@@ -139,7 +140,7 @@
 }
 
 @AgentSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel)
+    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled)
     @SectionBreak
 
     @deadlinesSection(isAgent = true, userMandatedOrVoluntary)
