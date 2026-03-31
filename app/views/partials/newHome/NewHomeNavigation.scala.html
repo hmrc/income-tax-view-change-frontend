@@ -45,7 +45,7 @@
             active = (activeTab == "your-tasks") || (activeTab == "recent-activity" && !isRecentActivityEnabled)
         ),
         ServiceNavigationItem(
-            content = Text("Recent activity"),
+            content = Text(messages("new.home.navigation.tabs.recentActivity")),
             href = recentActivityUrl,
             active = activeTab == "recent-activity"
         ),
@@ -55,7 +55,7 @@
             active = activeTab == "overview"
         ),
         ServiceNavigationItem(
-            content = Text("Help"),
+            content = Text(messages("new.home.navigation.tabs.help")),
             href = helpUrl,
             active = activeTab == "help"
         )

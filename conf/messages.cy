@@ -245,11 +245,15 @@ new.home.overview.deadlines.mandated.view-updates               = Bwrw golwg dro
 ### Help Tab
 new.home.help.heading                                           = Troi Treth yn Ddigidol
 new.home.help.openInNewTab                                      = Mae pob cysylltiad yn agor mewn tab newydd.
+new.home.navigation.tabs.help                                   = Help
 
 home.help.link.makingTaxDigital.incomeTax                       = Dod o hyd i ragor o wybodaeth am Droi Treth yn Ddigidol ar gyfer Treth Incwm
 home.help.link.selfAssessment.payTaxBill                        = Dod o hyd i ragor o wybodaeth am dalu’ch bil treth Hunanasesiad
 home.help.link.makingTaxDigital.findSoftware                    = Dod o hyd i feddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm
 home.help.link.taxSupport.getHelp                               = Cael help os ydych yn ei chael hi’n anodd talu’ch treth
+
+## Recent Activity Tab
+new.home.navigation.tabs.recentActivity                         = Gweithgarwch diweddar
 
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
