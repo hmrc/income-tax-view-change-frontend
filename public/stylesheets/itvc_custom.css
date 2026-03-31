@@ -95,3 +95,9 @@ html[data-useragent*='MSIE 10.0'] .flex-container {
 .uplift {
     color: #505a5f;
 }
+
+@media screen and (min-width: 640px) and (max-width: 1020px) {
+    #updates-and-deadlines-tabs {
+        width: calc(100vw - 60px);
+    }
+}
