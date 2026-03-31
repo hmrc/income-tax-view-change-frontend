@@ -32,7 +32,7 @@
 
 
 @govukServiceNavigation(ServiceNavigation(
-    navigation = if(isRecentActivityEnabled) NavigationTabItems else NavigationTabItems.filterNot(_.content == Text("Recent activity")),
+    navigation = if(isRecentActivityEnabled) NavigationTabItems else NavigationTabItems.filterNot(_.content == Text(messages("new.home.navigation.tabs.recentActivity"))),
     attributes = Map("style" -> "background-color: white;")
 ))
 
