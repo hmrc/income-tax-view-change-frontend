@@ -21,12 +21,16 @@ import enums.IncomeSourceJourney.ForeignProperty
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.Mockito.{mock, reset}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, reset, when}
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTrader2023WithUnknowns, ukPlusForeignPropertyAndSoleTraderNoLatency, ukPlusForeignPropertyAndSoleTraderWithLatency, ukPlusForeignPropertyAndSoleTraderWithLatencyExpired}
+
+import scala.concurrent.Future
 
 
 class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDetailsHelper {
@@ -67,6 +71,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
               mockUkPlusForeignPlusSoleTraderNoLatency()
@@ -92,6 +97,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockCreateSession(true)
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
               mockUkPlusForeignPlusSoleTraderWithLatencyExpired()
@@ -115,6 +121,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -146,6 +153,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
               mockUkPlusForeignPlusSoleTraderWithLatency()
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, ForeignProperty)))))
               setupMockSetSessionKeyMongo(Right(true))
@@ -183,6 +191,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -215,6 +224,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, false)
@@ -242,6 +252,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -270,6 +281,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
               setupMockCreateSession(true)
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
@@ -298,6 +310,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -324,6 +337,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               mockItsaStatusRetrievalAction(businessIncome)
               setupMockCreateSession(true)
               mockBusinessIncomeSource()
+              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)

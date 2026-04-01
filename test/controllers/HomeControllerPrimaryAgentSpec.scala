@@ -141,7 +141,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               .thenReturn(Future.successful(true))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems))
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -167,7 +167,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -207,7 +207,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               .thenReturn(Future.successful(financialDetailsModels))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems))
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -255,7 +255,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               .thenReturn(Future.successful(financialDetailsModels))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems).take(3))
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -294,7 +294,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -331,7 +331,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -350,8 +350,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         "there is a problem getting financial details" in new Setup {
 
           mockGetDueDates(Right(futureDueDates))
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
-
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
@@ -378,7 +377,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
           setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -405,7 +404,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
           setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -422,7 +421,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
           setupNextUpdatesTests(futureDueDates, None, None, agentType)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
@@ -437,7 +436,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         "there is an overdue update date to display" in new Setup {
           setupNextUpdatesTests(overdueDueDates, None, None, agentType)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
@@ -452,7 +451,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         "there are no updates to display" in new Setup {
           setupNextUpdatesTests(Seq(), None, None, agentType)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
@@ -473,9 +472,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
-        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
-          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary)))
-        )
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Voluntary))
 
         setupNextUpdatesTests(allDueDates = Seq(nextQuarterlyUpdateDate),
           nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
@@ -510,9 +507,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
-        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
-          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated)))
-        )
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
         setupNextUpdatesTests(allDueDates = Seq(overdue1, overdue2, nextQuarterlyUpdateDate),
           nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
@@ -544,9 +539,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
-        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
-          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Annual)))
-        )
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Annual))
 
         setupNextUpdatesTests(allDueDates = futureDueDates,
           nextQuarterlyUpdateDueDate = None,
@@ -581,7 +574,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           mockGetAllUnpaidFinancialDetails()
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
           setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -608,7 +601,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             ))))
           setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
           setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -639,7 +632,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -671,7 +664,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -700,7 +693,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))

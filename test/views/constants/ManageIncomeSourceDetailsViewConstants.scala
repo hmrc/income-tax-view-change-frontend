@@ -128,7 +128,7 @@ object ManageIncomeSourceDetailsViewConstants {
       incomeSourceType = SelfEmployment,
       currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
       quarterReportingType = None,
-      currentItsaStatus = ITSAStatus.Annual
+      currentItsaStatus = ITSAStatus.Voluntary
     )
 
   val ukViewModel: ManageIncomeSourceDetailsViewModel =

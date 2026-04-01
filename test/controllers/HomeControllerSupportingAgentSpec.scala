@@ -119,7 +119,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(futureDueDates))
           mockSingleBusinessIncomeSource()
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
           when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
             .thenReturn(Future.successful(true))
           when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
@@ -139,7 +139,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(overdueDueDates))
           mockSingleBusinessIncomeSource()
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -154,7 +154,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(Seq()))
           mockSingleBusinessIncomeSource()
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -171,7 +171,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
           mockGetDueDates(Right(Seq()))
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
@@ -189,9 +189,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
-        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
-          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary)))
-        )
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Voluntary))
 
         setupNextUpdatesTests(allDueDates = Seq(nextQuarterlyUpdateDate),
           nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
@@ -227,9 +225,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           nextTaxReturnDueDate = Some(nextTaxReturnDueDate),
           mtdUserRole = agentType)
 
-        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
-          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated)))
-        )
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
         status(result) shouldBe Status.OK
@@ -258,9 +254,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           nextTaxReturnDueDate = Some(nextTaxReturnDueDate),
           mtdUserRole = agentType)
 
-        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
-          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Annual)))
-        )
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Annual))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
         status(result) shouldBe Status.OK
@@ -281,7 +275,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           setupMockAgentWithClientAuth(isSupportingAgent)
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
           status(result) shouldBe Status.OK
@@ -298,7 +292,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
             enable(ReportingFrequencyPage)
             setupMockAgentWithClientAuth(isSupportingAgent)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Annual))
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockedYourReportingObligationsTile.apply(any(), any())(any()))
@@ -316,7 +310,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
             enable(ReportingFrequencyPage)
             setupMockAgentWithClientAuth(isSupportingAgent)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
+            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
@@ -332,7 +326,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
             enable(ReportingFrequencyPage)
             setupMockAgentWithClientAuth(isSupportingAgent)
-            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
+            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
 
@@ -351,7 +345,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         mockItsaStatusRetrievalAction()
         mockGetDueDates(Right(overdueDueDates))
         mockSingleBusinessIncomeSource()
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -368,7 +362,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         mockItsaStatusRetrievalAction()
         mockGetDueDates(Right(overdueDueDates))
         mockSingleBusinessIncomeSource()
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -385,7 +379,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         mockItsaStatusRetrievalAction()
         mockGetDueDates(Right(overdueDueDates))
         mockSingleBusinessIncomeSource()
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
 
@@ -403,7 +397,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         mockItsaStatusRetrievalAction()
         mockGetDueDates(Right(overdueDueDates))
         mockSingleBusinessIncomeSource()
-        setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
         val result: Future[Result] = controller.showAgent()(fakeRequest)
 
