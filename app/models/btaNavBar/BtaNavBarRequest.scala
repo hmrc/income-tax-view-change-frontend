@@ -16,9 +16,7 @@
 
 package models.btaNavBar
 
-import auth.MtdItUser
 import play.api.libs.json.{Format, Json}
-import play.twirl.api.Html
 
 case class ListLinks(message: String, url: String, alerts: Option[String] = None, showBoolean: Option[Boolean] = Some(true))
 

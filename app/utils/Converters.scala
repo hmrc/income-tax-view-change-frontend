@@ -16,8 +16,7 @@
 
 package utils
 
-
-package object converters {
+package object Converters {
 
   implicit class OptionExtension(in: Option[String]) {
     def trim(): Option[String] = {

@@ -20,11 +20,12 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import models.core.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
+import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
@@ -47,9 +48,9 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
 
   def getRedirect(poa: PaymentOnAccountViewModel)(implicit user: MtdItUser[_]): String = {
     (if (poa.totalAmountLessThanPoa) {
-      controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(user.isAgent(), NormalMode)
+      controllers.claimToAdjustPoa.routes.EnterPoaAmountController.show(user.isAgent, NormalMode)
     } else {
-      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), NormalMode)
+      controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent, NormalMode)
     }).url
   }
 
@@ -57,7 +58,7 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(poa))
-        EitherT.rightT(Ok(view(user.isAgent(), viewModel)))
+        EitherT.rightT(Ok(view(user.isAgent, viewModel)))
       } recover logAndRedirect
   }
 

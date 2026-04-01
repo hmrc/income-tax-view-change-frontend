@@ -42,7 +42,7 @@ trait JourneyCheckerOptOut extends ReportingObligationsUtils {
         case true => codeBlock
         case false =>
           Logger("application").error(s"[JourneyCheckerOptOut][withSessionData] - Could not save sign up tax year to session")
-          showInternalServerError(user.isAgent())
+          showInternalServerError(user.isAgent)
       }
     } else {
       optOutService.recallSavedIntent().flatMap {

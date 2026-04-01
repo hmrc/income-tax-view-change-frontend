@@ -20,14 +20,15 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoaAmendmentData}
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.incomeSourceDetails.TaxYear
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
-import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService}
+import services.{DateServiceInterface, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 

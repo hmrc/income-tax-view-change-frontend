@@ -16,7 +16,6 @@
 
 package models.financialDetails
 
-import enums.CodingOutType
 import play.api.libs.json.{JsString, JsSuccess, Json}
 import testUtils.UnitSpec
 

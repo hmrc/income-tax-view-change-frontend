@@ -63,8 +63,9 @@ object ErrorMessageHelper {
     }
 
   /**
+   * Extracts summary errors from a form
    *
-   * @param form
+   * @param form the form to extract errors from
    * @return (String,SummaryError) where the String is the anchor and SummaryError describes the error message
    */
   def getSummaryErrors(form: Form[_]): Seq[(String, SummaryError)] = {

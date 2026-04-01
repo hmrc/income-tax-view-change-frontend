@@ -48,7 +48,7 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
     val action = if (isAgent) testController.showAgentTaxYears() else testController.showTaxYears()
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
 
-    s"show${if (isAgent) "Agent"}TaxYears" when {
+    s"show${if (isAgent) "Agent" else ""}TaxYears" when {
 
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {

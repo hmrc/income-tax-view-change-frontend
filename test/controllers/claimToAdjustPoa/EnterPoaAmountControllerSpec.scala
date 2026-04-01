@@ -22,7 +22,8 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import generators.PoaGenerator
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PaymentOnAccountViewModel, PoaAmendmentData}
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -34,7 +35,8 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.ClaimToAdjustService
+import services.{DateServiceInterface, PaymentOnAccountSessionService}
 import testConstants.BaseTestConstants
 
 import scala.concurrent.Future
@@ -209,7 +211,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
             }
           }
         }
-testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
       }
 
       s"submit(isAgent = $isAgent, mode = $mode)" when {
@@ -444,7 +446,7 @@ testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false
             }
           }
         }
-testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
       }
     }
   }

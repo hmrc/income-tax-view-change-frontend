@@ -104,7 +104,6 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
 
       }
     }
-
-testMTDAuthFailuresForRole(action, MTDIndividual)(fakeRequest)
+    testMTDAuthFailuresForRole(action, MTDIndividual)(fakeRequest)
   }
 }

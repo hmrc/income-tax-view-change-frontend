@@ -22,11 +22,13 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.claimToAdjustPoa.routes._
 import forms.adjustPoa.EnterPoaAmountForm
-import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel}
+import models.claimToAdjustPoa.Increase
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.core.{CheckMode, Mode, Nino, NormalMode}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
+import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.JourneyCheckerClaimToAdjust
@@ -56,7 +58,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
               val filledForm = session.newPoaAmount.fold(EnterPoaAmountForm.form)(value =>
                 EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
               )
-              Ok(view(filledForm, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))
+              Ok(view(filledForm, viewModel, user.isAgent, EnterPoaAmountController.submit(user.isAgent, mode)))
             case Left(ex) =>
               logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
           }
@@ -76,7 +78,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
   def handleForm(viewModel: PaymentOnAccountViewModel, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, viewModel, user.isAgent(), EnterPoaAmountController.submit(user.isAgent(), mode)))),
+        Future.successful(BadRequest(view(formWithErrors, viewModel, user.isAgent, EnterPoaAmountController.submit(user.isAgent, mode)))),
       validForm =>
         poaSessionService.setNewPoaAmount(validForm.amount).flatMap {
           case Left(ex) =>
@@ -90,7 +92,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
     (viewModel.totalAmountLessThanPoa, newPoaAmount > viewModel.totalAmountOne) match {
       case (true, true) => hasIncreased()
       case (true, _) => hasDecreased(mode)
-      case _ => Future.successful(Redirect(CheckYourAnswersController.show(user.isAgent())))
+      case _ => Future.successful(Redirect(CheckYourAnswersController.show(user.isAgent)))
     }
   }
 
@@ -99,19 +101,19 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
       case Left(ex) =>
         logAndRedirect(s"Error while setting adjustment reason to increase : ${ex.getMessage} - ${ex.getCause}")
       case Right(_) =>
-        Redirect(CheckYourAnswersController.show(user.isAgent()))
+        Redirect(CheckYourAnswersController.show(user.isAgent))
     }
   }
 
   //user has decreased but could have increased:
   private def hasDecreased(mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     if (mode == NormalMode)
-      Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), NormalMode)))
+      Future.successful(Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent, NormalMode)))
     else {
       poaSessionService.getMongo.map {
         case Right(Some(mongoData)) => mongoData.poaAdjustmentReason match {
-          case Some(reason) if reason != Increase => Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(user.isAgent()))
-          case _ => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent(), CheckMode))
+          case Some(reason) if reason != Increase => Redirect(controllers.claimToAdjustPoa.routes.CheckYourAnswersController.show(user.isAgent))
+          case _ => Redirect(controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(user.isAgent, CheckMode))
         }
         case _ =>
           logAndRedirect(s"No active mongo data found")

@@ -16,7 +16,6 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
 import controllers.ItvcLanguageController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.MessageCheckView

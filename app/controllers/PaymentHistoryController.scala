@@ -135,7 +135,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
   def logAndHandleError(message: String)
                        (implicit mtdItUser: MtdItUser[_]): Result = {
     Logger("application").error(message)
-    val errorHandler = if(mtdItUser.isAgent()) itvcErrorHandlerAgent else itvcErrorHandler
+    val errorHandler = if(mtdItUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
   }
 }

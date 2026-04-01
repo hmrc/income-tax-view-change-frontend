@@ -57,7 +57,7 @@ class ConfirmClientDetailsAuditModelSpec extends TestSupport {
           getConfirmClientDetailsAuditModel(isSupportingAgent).auditType shouldBe auditType
         }
 
-      "have the correct detail for the audit event" in {
+        "have the correct detail for the audit event" in {
           getConfirmClientDetailsAuditModel(isSupportingAgent).detail shouldBe detailsAuditData(isSupportingAgent)
         }
       }

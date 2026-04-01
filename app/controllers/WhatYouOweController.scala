@@ -56,12 +56,12 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         Ok(whatYouOwe(viewModel, origin))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
       case None =>
-        Logger("application").error(s"${if (isAgent) "[Agent]"}" + "Failed to create WhatYouOweViewModel")
+        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" + "Failed to create WhatYouOweViewModel")
         itvcErrorHandler.showInternalServerError()
     }
   } recover {
     case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+      Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
         s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
       itvcErrorHandler.showInternalServerError()
   }
@@ -85,7 +85,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
-  private def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (user.isAgent() match {
+  private def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (user.isAgent match {
     case true if user.incomeSources.yearOfMigration.isDefined  => MoneyInYourAccountController.showAgent()
     case true                                                  => NotMigratedUserController.showAgent()
     case false if user.incomeSources.yearOfMigration.isDefined => MoneyInYourAccountController.show()
@@ -93,14 +93,14 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   }).url
 
   private def getTaxYearSummaryUrl(origin: Option[String])(implicit user: MtdItUser[_]): Int => String = {
-    if (user.isAgent()) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+    if (user.isAgent) TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
     else                TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
   }
 
-  private def getAdjustPoaUrl(implicit user: MtdItUser[_]): String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent()).url
+  private def getAdjustPoaUrl(implicit user: MtdItUser[_]): String = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(user.isAgent).url
 
   private def getChargeSummaryUrl(implicit user: MtdItUser[_]): (Int, String, Boolean, Option[String]) => String = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) => {
-    if (user.isAgent()) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
+    if (user.isAgent) ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url
     else                ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
   }
 

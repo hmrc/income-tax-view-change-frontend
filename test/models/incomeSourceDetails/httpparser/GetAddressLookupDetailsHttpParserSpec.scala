@@ -47,33 +47,35 @@ class GetAddressLookupDetailsHttpParserSpec extends UnitSpec{
         )))
       }
 
-      "parse OK status and invalid json data" when {
-        "json is invalid" in {
-          val httpResponse = HttpResponse(OK, json = Json.obj(), headers = Map.empty)
-
-          lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
-
-          result shouldBe Left(InvalidJson)
+        "parse OK status and invalid json data" when {
+          "json is invalid" in {
+            val httpResponse = HttpResponse(OK, json = Json.obj(), headers = Map.empty)
+  
+            lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
+  
+            result shouldBe Left(InvalidJson)
+          }
         }
-      }
-
-      "parse NOT FOUND status as None" when {
-        "empty json" in {
-        val httpResponse = HttpResponse(NOT_FOUND, body = "")
-
-        lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
-
-        result shouldBe Right(None)
-      }}
-
-      "return UnexpectedGetStatusFailure" when {
-        "internal server error" in {
-          val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, body = "")
-
+  
+        "parse NOT FOUND status as None" when {
+          "empty json" in {
+          val httpResponse = HttpResponse(NOT_FOUND, body = "")
+  
           lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
-
-          result shouldBe Left(UnexpectedGetStatusFailure(INTERNAL_SERVER_ERROR))
-        }}
+  
+          result shouldBe Right(None)
+          }
+        }
+  
+        "return UnexpectedGetStatusFailure" when {
+          "internal server error" in {
+            val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, body = "")
+  
+            lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
+  
+            result shouldBe Left(UnexpectedGetStatusFailure(INTERNAL_SERVER_ERROR))
+          }
+        }
       }
     }
   }

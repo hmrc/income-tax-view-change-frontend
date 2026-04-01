@@ -17,7 +17,7 @@
 package services.reportingObligations.signUp.core
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated}
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
 object SignUpProposition {
 

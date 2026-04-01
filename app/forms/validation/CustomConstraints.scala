@@ -20,7 +20,6 @@ import play.api.data.validation.{Constraint, Constraints, Invalid, Valid}
 
 import java.time.LocalDate
 import java.time.format.{DateTimeFormatter, ResolverStyle}
-import scala.util.Try
 
 trait CustomConstraints extends Constraints {
 

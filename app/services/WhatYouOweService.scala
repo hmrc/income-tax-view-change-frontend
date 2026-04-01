@@ -22,15 +22,16 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
-import models.admin._
+import models.admin.*
 import models.core.Nino
 import models.financialDetails.ChargeItem.isAKnownTypeOfCharge
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
+import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -162,7 +163,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
     for {
       whatYouOweChargesList <- getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
-      lpp2Url = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent())
+      lpp2Url = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent)
       hasOverdueCharges = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       hasAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
       startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney

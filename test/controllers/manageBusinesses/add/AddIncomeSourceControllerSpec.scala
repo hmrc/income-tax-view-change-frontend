@@ -50,7 +50,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFor
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-    s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
+    s"show${if (mtdRole != MTDIndividual) "Agent" else ""}" when {
       val action = if (mtdRole == MTDIndividual) controller.show() else controller.showAgent()
       s"the user is authenticated as a $mtdRole" should {
         s"render the add income source page" when {

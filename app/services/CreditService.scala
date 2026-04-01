@@ -72,7 +72,7 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
     val (from, to) = (user.incomeSources.orderedTaxYearsByYearOfMigration.min, user.incomeSources.orderedTaxYearsByYearOfMigration.max)
-    Logger("application").debug(s"Getting financial details for TaxYears: ${from} - ${to}")
+    Logger("application").debug(s"Getting financial details for TaxYears: $from - $to")
 
     for {
       taxYearFrom <- Future.fromTry(Try(TaxYear.forYearEnd(from)))

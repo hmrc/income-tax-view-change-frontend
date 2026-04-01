@@ -40,7 +40,7 @@ class ApiFailureSubmittingPoaController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean): Action[AnyContent] = {
     authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
       implicit user =>
-          Future.successful(Ok(view(user.isAgent())))
+          Future.successful(Ok(view(user.isAgent)))
     }
   }
 }

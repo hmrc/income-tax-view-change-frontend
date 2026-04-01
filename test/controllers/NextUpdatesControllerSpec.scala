@@ -23,7 +23,7 @@ import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.obligations.*
-import models.reportingObligations.optOut.{NextUpdatesQuarterlyReportingContentChecks}
+import models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*

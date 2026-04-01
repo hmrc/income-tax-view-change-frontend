@@ -16,7 +16,6 @@
 
 package forms.reportingObligations.signUp
 
-import forms.reportingObligations.signUp.ChooseTaxYearForm
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, when}
 import play.api.data.{Form, FormError}

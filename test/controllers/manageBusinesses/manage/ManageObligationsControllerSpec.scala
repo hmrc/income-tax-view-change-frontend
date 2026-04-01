@@ -153,7 +153,7 @@ class ManageObligationsControllerSpec
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
-      s"show${if (isAgent) "Agent"}($incomeSourceType)" when {
+      s"show${if (isAgent) "Agent" else ""}($incomeSourceType)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
         def action = testController.show(isAgent, incomeSourceType)

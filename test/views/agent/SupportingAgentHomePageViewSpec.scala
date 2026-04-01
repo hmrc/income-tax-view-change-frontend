@@ -37,6 +37,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.agent.SupportingAgentHomeView
 
 import java.time.{LocalDate, Month}
+import scala.annotation.unused
 import scala.util.Try
 
 class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
@@ -76,7 +77,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
   private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
   private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, isReportingFrequencyEnabled = true, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
 
-  class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
+  class TestSetup(@unused nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   displayCeaseAnIncome: Boolean = false,
                   reportingFrequencyEnabled: Boolean = false,

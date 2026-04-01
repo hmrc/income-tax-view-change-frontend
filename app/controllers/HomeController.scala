@@ -23,16 +23,13 @@ import auth.authV2.AuthActions
 import config.featureswitch.*
 import config.*
 import controllers.agent.sessionUtils.SessionKeys
-import controllers.routes.WhatYouOweController
 import enums.MTDSupportingAgent
 import models.admin.*
-
 import models.financialDetails.*
 import models.core.Nino
 import models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.obligations.NextUpdatesTileViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.Logger
@@ -46,6 +43,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -87,7 +85,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     if (isEnabled(NewHomePage)) {
-      handleYourTasks(origin, user.isAgent())
+      handleYourTasks(origin, user.isAgent)
     } else {
       handleOldHomePage(origin)
     }
@@ -102,7 +100,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         buildHomePage(nextUpdatesDueDates, origin)
       case Left(ex) =>
         Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful(handleErrorGettingDueDates(user.isAgent()))
+        Future.successful(handleErrorGettingDueDates(user.isAgent))
     }
   }
 
@@ -213,14 +211,14 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
           auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
 
-          if (user.isAgent()) {
+          if (user.isAgent) {
             Ok(primaryAgentHomeView(homeViewModel)).addingToSession(mandationStatus)
           } else {
             Ok(homeView(homeViewModel)).addingToSession(mandationStatus)
           }
         case Left(ex: Throwable) =>
           Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
-          handleErrorGettingDueDates(user.isAgent())
+          handleErrorGettingDueDates(user.isAgent)
       }
     }
   }
@@ -244,7 +242,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       chargesList
         .flatMap(_.unpaidDocumentDetails())
         .filter(_.originalAmount > 0)
-        .flatMap(_.getDueDate())
+        .flatMap(_.getDueDate)
 
     val dueDates =
       if (dueDatesFromChargeItems.nonEmpty) dueDatesFromChargeItems
@@ -316,8 +314,8 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     }
   }
 
-  private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
-                             (implicit user: MtdItUser[_]): Future[Result] = {
+  private def handleYourTasks(@unused origin: Option[String] = None, isAgent: Boolean)
+                             (implicit  @unused user: MtdItUser[_]): Future[Result] = {
     if(isAgent){
       Future.successful(Redirect(routes.HandleYourTasksController.showAgent()))
     }else {

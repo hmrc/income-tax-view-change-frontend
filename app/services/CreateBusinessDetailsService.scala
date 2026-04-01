@@ -24,7 +24,7 @@ import models.createIncomeSource._
 import models.incomeSourceDetails.viewmodels._
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.converters.OptionExtension
+import utils.Converters.OptionExtension
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
@@ -58,7 +58,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
         Future.successful(Left(new Error("Failed to create incomeSources")))
       case Left(incomeSourceError) =>
         Logger("application").error("failed to create")
-        Future.successful(Left(new Error(s"Failed to create incomeSources: ${incomeSourceError}")))
+        Future.successful(Left(new Error(s"Failed to create incomeSources: $incomeSourceError")))
     }
   }
 

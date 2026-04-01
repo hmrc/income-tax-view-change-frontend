@@ -23,11 +23,13 @@ import com.google.inject.Singleton
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.claimToAdjustPoa.routes._
 import forms.adjustPoa.SelectYourReasonFormProvider
-import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, SelectYourReason}
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{Increase, SelectYourReason}
 import models.core.{Mode, NormalMode}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
+import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.SelectYourReasonView
@@ -59,7 +61,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
             EitherT.rightT(Ok(view(
               selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
               taxYear = poa.taxYear,
-              isAgent = user.isAgent(),
+              isAgent = user.isAgent,
               mode = mode,
               useFallbackLink = true)))
         }
@@ -73,7 +75,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, user.isAgent(), mode, useFallbackLink = true)))
+              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, user.isAgent, mode, useFallbackLink = true)))
             ,
             value => saveValueAndRedirect(mode, value, poa)
           )
@@ -87,8 +89,8 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
     } yield {
       res match {
         case _ => (mode, poa.totalAmountLessThanPoa) match {
-          case (NormalMode, false) if value != Increase => Redirect(EnterPoaAmountController.show(user.isAgent(), NormalMode))
-          case (_, _) => Redirect(CheckYourAnswersController.show(user.isAgent()))
+          case (NormalMode, false) if value != Increase => Redirect(EnterPoaAmountController.show(user.isAgent, NormalMode))
+          case (_, _) => Redirect(CheckYourAnswersController.show(user.isAgent))
         }
       }
     }

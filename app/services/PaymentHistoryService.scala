@@ -68,7 +68,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
     val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
 
     val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
-    Logger("application").debug(s"Getting payment history for TaxYears: ${from} - ${to}")
+    Logger("application").debug(s"Getting payment history for TaxYears: $from - $to")
 
     for {
       response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))

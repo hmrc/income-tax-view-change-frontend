@@ -20,7 +20,6 @@ import play.api.data.FormError
 import play.api.data.format.Formatter
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.util.control.Exception.nonFatalCatch
 
 trait Formatters {

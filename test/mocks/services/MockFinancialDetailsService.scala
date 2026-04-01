@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import services.FinancialDetailsService
-import testConstants.BaseTestConstants.{testNino, testTaxYear}
+import testConstants.BaseTestConstants.testTaxYear
 import testConstants.FinancialDetailsTestConstants._
 import testUtils.UnitSpec
 
