@@ -16,7 +16,6 @@
 
 package forms.reportingObligations.optOut
 
-import forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, when}
 import play.api.data.{Form, FormError}

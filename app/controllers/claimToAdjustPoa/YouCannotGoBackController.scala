@@ -23,8 +23,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.CannotGoBackPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.claimToAdjustPoa.RecalculatePoaHelper
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.{ClaimToAdjustService, RecalculatePoaHelper}
+import services.PaymentOnAccountSessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.YouCannotGoBackView
@@ -47,7 +47,7 @@ class YouCannotGoBackController @Inject()(val authActions: AuthActions,
     implicit user =>
       withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
         EitherT.rightT(Ok(view(
-          isAgent = user.isAgent(),
+          isAgent = user.isAgent,
           poaTaxYear = poa.taxYear
         )))
       } recover logAndRedirect

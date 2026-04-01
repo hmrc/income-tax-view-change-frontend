@@ -25,8 +25,8 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
-import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService}
+import services.{DateServiceInterface, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
@@ -120,7 +120,7 @@ class ConfirmationForAdjustingPoaControllerSpec
           }
         }
       }
-testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
 
     s"submit(isAgent = $isAgent)" when {
@@ -177,7 +177,7 @@ testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false
           }
         }
       }
-testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false, withNrsRetrievals = true)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false, withNrsRetrievals = true)(fakeRequest)
     }
   }
 }

@@ -17,13 +17,14 @@
 package testConstants
 
 import enums.ChargeType.NIC4_WALES
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import services.{DateService, DateServiceInterface}
 import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, fixedDate, futureFixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
 
 import java.time.LocalDate
+import scala.annotation.unused
 
 trait ChargeConstants {
 
@@ -87,7 +88,7 @@ trait ChargeConstants {
                                               interestEndDate: List[Option[LocalDate]] =
                                               List(Some(LocalDate.of(2018, 6, 15)), Some(LocalDate.of(2018, 6, 15))),
                                               taxYear: String = fixedDate.getYear.toString,
-                                              overdue: List[Boolean] = List(true, true),
+                                              @unused overdue: List[Boolean] = List(true, true),
                                               poaRelevantAmount: Option[BigDecimal] = None,
                                               dueDateForFinancialDetail: List[LocalDate] = List.empty,
                                               chargeReference: List[Option[String]] = List(Some("ABCD1234"), Some("ABCD1234"))): List[ChargeItem] = {

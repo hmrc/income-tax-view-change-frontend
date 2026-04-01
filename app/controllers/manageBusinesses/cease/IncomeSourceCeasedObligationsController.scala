@@ -19,7 +19,6 @@ package controllers.manageBusinesses.cease
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.routes
 import enums.CannotGoBackPage
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
@@ -138,16 +137,16 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
             )))
         case (Some(_), None) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - "}cease session data not found for $incomeSourceType")
+          Logger("application").error(s"${if (isAgent) "[Agent] - " else ""}cease session data not found for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
 
         case (None, Some(_)) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - "}IncomeSourceId not found for $incomeSourceType")
+          Logger("application").error(s"${if (isAgent) "[Agent] - " else ""}IncomeSourceId not found for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
         case _ =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - "}missing incomeSourceId and endDate for $incomeSourceType")
+          Logger("application").error(s"${if (isAgent) "[Agent] - " else ""}missing incomeSourceId and endDate for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
       }
     }

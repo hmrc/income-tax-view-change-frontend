@@ -34,7 +34,7 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
   def getLegacyCalculationList(nino: String, taxYearEnd: String)
                               (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
     Logger("application").debug("" +
-      s"Requesting legacy calculation list (1404) data from the backend with nino / taxYearEnd: ${nino} - $taxYearEnd")
+      s"Requesting legacy calculation list (1404) data from the backend with nino / taxYearEnd: $nino - $taxYearEnd")
     calculationListConnector.getLegacyCalculationList(nino, taxYearEnd)
   }
 

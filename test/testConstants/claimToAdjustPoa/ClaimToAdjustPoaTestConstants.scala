@@ -17,7 +17,7 @@
 package testConstants.claimToAdjustPoa
 
 import models.chargeHistory.ChargeHistoryModel
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import models.core.NormalMode
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear

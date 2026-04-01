@@ -37,6 +37,7 @@ import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
 import services.*
+import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -45,6 +46,7 @@ import views.html.TaxYearSummaryView
 import java.net.URI
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 //scalastyle:off
@@ -205,8 +207,8 @@ class TaxYearSummaryController @Inject()(
   }
 
   private def handleCalcSuccess(
-                                 mtdItId: String,
-                                 nino: String,
+                                 @unused mtdItId: String,
+                                 @unused nino: String,
                                  latestCalc: LiabilityCalculationResponse,
                                  previousCalc: Option[LiabilityCalculationResponse],
                                  chargeItems: List[TaxYearSummaryChargeItem],
@@ -279,8 +281,8 @@ class TaxYearSummaryController @Inject()(
   }
 
   private def handleCalcError(
-                               mtdItId: String,
-                               nino: String,
+                               @unused mtdItId: String,
+                               @unused nino: String,
                                error: LiabilityCalculationError,
                                validLatestCalculation: Option[LiabilityCalculationResponse],
                                chargeItems: List[TaxYearSummaryChargeItem],
@@ -424,7 +426,7 @@ class TaxYearSummaryController @Inject()(
         val chargeItemsCodingOut = chargeItemsNoPayments
           .filterNot(_.isNotCodingOutDocumentDetail)
           .flatMap(dd => getChargeItem(dd)
-            .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))
+            .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate)))
 
         val chargeItemsNoCodingOut: List[TaxYearSummaryChargeItem] = {
           chargeItemsNoPayments
@@ -460,7 +462,7 @@ class TaxYearSummaryController @Inject()(
           chargeItemsNoPayments
             .filter(_.isCodingOutFullyCollectedPoa(fd))
             .flatMap(dd => getChargeItem(dd)
-              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate())))
+              .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, dd.getDueDate)))
             .filter(x => x.transactionType == PoaOneDebit || x.transactionType == PoaTwoDebit)
 
         val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {

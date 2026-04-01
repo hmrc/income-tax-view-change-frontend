@@ -66,7 +66,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
     val isAgent = mtdUserRole != MTDIndividual
 
-    s"show${if (isAgent) "AgentCreditsSummary"}" when {
+    s"show${if (isAgent) "AgentCreditsSummary" else ""}" when {
       val action = if (isAgent) testController.showAgentCreditsSummary(calendarYear2018) else testController.showCreditsSummary(calendarYear2018)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
       s"the $mtdUserRole is authenticated" should {

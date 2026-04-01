@@ -20,7 +20,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.{BadRequest, InternalServerError, Unauthorized}
 import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
-import uk.gov.hmrc.http.BadRequestException
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import views.html.agent.errorPages.UnauthorisedAgentView
 import views.html.errorPages.templates.ErrorTemplate

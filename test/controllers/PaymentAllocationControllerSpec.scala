@@ -61,7 +61,7 @@ class PaymentAllocationControllerSpec extends MockAuthActions with ImplicitDateF
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.viewPaymentAllocationAgent(docNumber) else testController.viewPaymentAllocation(docNumber)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"show${if (isAgent) "Agent"}" when {
+    s"show${if (isAgent) "Agent" else ""}" when {
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)

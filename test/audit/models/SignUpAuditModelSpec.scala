@@ -17,11 +17,9 @@
 package audit.models
 
 import auth.MtdItUser
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Annual
-import play.api.http.Status.OK
 import play.api.libs.json.Json
 import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import testUtils.TestSupport
@@ -50,7 +48,7 @@ class SignUpAuditModelSpec extends TestSupport {
 
         auditModel.auditType shouldBe "SignUpTaxYearsPage"
         auditModel.transactionName shouldBe "sign-up-tax-years-page"
-       assertJsonEquals(auditModel.detail, Json.obj(
+        assertJsonEquals(auditModel.detail, Json.obj(
           "nino" -> tsTestUser.nino,
           "mtditid" -> tsTestUser.mtditid,
           "saUtr" -> tsTestUser.saUtr,

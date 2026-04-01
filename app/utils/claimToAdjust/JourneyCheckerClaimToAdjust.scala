@@ -54,7 +54,7 @@ trait JourneyCheckerClaimToAdjust extends ErrorRecovery {
   }
 
   def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
-    Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(user.isAgent()).url)
+    Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(user.isAgent).url)
   }
 
   def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {

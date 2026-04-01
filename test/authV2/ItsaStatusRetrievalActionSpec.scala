@@ -29,7 +29,6 @@ import models.itsaStatus.{ITSAStatusResponseError, ITSAStatusResponseModel, Stat
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyBoolean}
 import org.mockito.Mockito.{never, reset, verify, when}
-import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.Application

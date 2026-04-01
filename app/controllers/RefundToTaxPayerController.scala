@@ -73,7 +73,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                       backUrl, user.saUtr,
                       btaNavPartial = user.btaNavPartial,
                       serviceNavigationPartial = user.serviceNavigationPartial,
-                      isAgent = user.isAgent()))
+                      isAgent = user.isAgent))
               }
             case None => {
               Logger("application").error(s"No repayment details returned")
@@ -82,12 +82,12 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           }
         case error: RepaymentHistoryErrorModel =>
           Logger("application")
-            .error(s"${if (user.isAgent()) "[Agent] "}Could not retrieve repayment history" +
+            .error(s"${if (user.isAgent) "[Agent] " else ""}Could not retrieve repayment history" +
               s" for repaymentRequestNumber: $repaymentRequestNumber - ${error.message} - ${error.code}")
           itvcErrorHandler.showInternalServerError()
       }
     } else {
-      Future.successful(Redirect(homeUrl(user.isAgent())))
+      Future.successful(Redirect(homeUrl(user.isAgent)))
     }
   }
 

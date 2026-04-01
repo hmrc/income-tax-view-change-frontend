@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.viewmodels
+package viewmodels
 
 package object govuk {
 

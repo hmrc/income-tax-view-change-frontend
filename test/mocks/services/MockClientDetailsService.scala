@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import services.agent.ClientDetailsService

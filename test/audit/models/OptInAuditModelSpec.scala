@@ -49,7 +49,7 @@ class OptInAuditModelSpec extends TestSupport {
 
         auditModel.auditType shouldBe "OptInQuarterlyReportingRequest"
         auditModel.transactionName shouldBe "opt-in-quarterly-reporting-request"
-       assertJsonEquals(auditModel.detail, Json.obj(
+        assertJsonEquals(auditModel.detail, Json.obj(
           "nino" -> tsTestUser.nino,
           "mtditid" -> tsTestUser.mtditid,
           "saUtr" -> tsTestUser.saUtr,

@@ -20,7 +20,7 @@ import audit.AuditingService
 import audit.models.AdjustPaymentsOnAccountAuditModel
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
-import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PoaAmendmentData, SelectYourReason}
 import models.core.Nino
 import models.nrs.{IdentityData, NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
 import play.api.Logger
@@ -29,12 +29,13 @@ import play.api.libs.Files.logger
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
+import services.{NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import utils.ErrorRecovery
 import controllers.claimToAdjustPoa.routes._
 import models.admin.SubmitClaimToAdjustToNrs
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
 
@@ -70,7 +71,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
               adjustmentReasonDescription = Messages(poaAdjustmentReason.messagesKey)(lang2Messages),
               isDecreased = amount < poa.totalAmountOne
             ))
-            Redirect(ApiFailureSubmittingPoaController.show(user.isAgent()))
+            Redirect(ApiFailureSubmittingPoaController.show(user.isAgent))
           case Right(_) =>
             auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
               isSuccessful = true,
@@ -84,7 +85,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
             if (isEnabled(SubmitClaimToAdjustToNrs))
               submitClaimToAdjustToNrs(nrsService, amount, poa, poaAdjustmentReason)
 
-            Redirect(PoaAdjustedController.show(user.isAgent()))
+            Redirect(PoaAdjustedController.show(user.isAgent))
         }
       case PoaAmendmentData(_, _, _) =>
         Future.successful(logAndRedirect("Missing poaAdjustmentReason and/or amount"))
@@ -174,7 +175,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
       val tagsMap: Map[String, Map[String, String]] = Map("tags" -> auditTags)
 
       val combinedValid: Map[String, String] = currentHeaderData ++ tagsMap.flatMap {
-        case (k: String, v) => v.map(y => s"${k}.${y._1}" -> y._2)
+        case (k: String, v) => v.map(y => s"$k.${y._1}" -> y._2)
       }
       baseMetadata.copy(headerData = combinedValid)
     }

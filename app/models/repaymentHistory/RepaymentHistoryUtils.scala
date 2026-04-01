@@ -22,7 +22,7 @@ import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json
-import services.{DateService, DateServiceInterface}
+import services.DateServiceInterface
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
@@ -57,7 +57,7 @@ object RepaymentHistoryUtils {
     codedOut match {
       case Some(value) =>
         val joiner = if (baseUrl.contains("?")) "&" else "?"
-        s"${baseUrl}${joiner}codedOut=${value.toString}"
+        s"$baseUrl${joiner}codedOut=${value.toString}"
       case None => baseUrl
     }
   }

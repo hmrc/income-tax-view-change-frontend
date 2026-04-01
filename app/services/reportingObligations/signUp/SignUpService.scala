@@ -37,6 +37,7 @@ import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class SignUpService @Inject()(
@@ -183,7 +184,8 @@ class SignUpService @Inject()(
       case Some(s) => s.selectedSignUpYear.flatMap(TaxYear.getTaxYearModel)
     }
   }
-
+  
+  @unused //TODO: this method is flagging as unused, but leaving in as unsure of accuracy of IDE 
   private def isNextTaxYear(currentTaxYear: TaxYear, candidate: TaxYear): Boolean = currentTaxYear.nextYear == candidate
 
   def isSignUpTaxYearValid(taxYear: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpTaxYearQuestionViewModel]] = {

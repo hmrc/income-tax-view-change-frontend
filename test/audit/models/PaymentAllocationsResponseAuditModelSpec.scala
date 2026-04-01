@@ -122,7 +122,7 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
             ),
             "creditOnAccount" -> 543.32
           )
-         assertJsonEquals(paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail, expectedAudit)
+          assertJsonEquals(paymentAllocationsAuditFullCredit(userType = Some(Individual)).detail, expectedAudit)
         }
         "the user is an agent" in {
           val expectedAudit = commonAuditDetails(Agent) ++ Json.obj(

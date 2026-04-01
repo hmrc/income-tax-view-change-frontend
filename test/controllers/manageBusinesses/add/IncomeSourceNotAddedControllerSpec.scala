@@ -79,7 +79,7 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
-      s"show${if (mtdRole != MTDIndividual) "Agent"}($incomeSourceType)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}($incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {

@@ -19,7 +19,6 @@ package controllers.reportingObligations.optOut
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure.defaultFailure
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseSuccess}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import controllers.reportingObligations.optOut.ConfirmOptOutUpdateController
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockOptOutService, MockSessionService}

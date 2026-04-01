@@ -36,6 +36,7 @@ import views.html.errorPages.CustomNotFoundErrorView
 import views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -147,7 +148,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
   }
 
   //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
+  private def getPostAction(isAgent: Boolean, @unused mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
     controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.submit(true, isTriggeredMigration)
   } else {
     routes.IsTheNewAddressInTheUKController.submit(false, isTriggeredMigration)

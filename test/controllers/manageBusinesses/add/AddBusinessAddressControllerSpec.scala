@@ -27,16 +27,13 @@ import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddress
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{clearInvocations, never, verify, when, mock}
-import org.scalatest.matchers.must.Matchers
-import services.{DateService, DateServiceInterface}
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.*
-import services.{AddressLookupService, DateService, IncomeSourceDetailsService, SessionService}
+import services.{AddressLookupService, DateService, DateServiceInterface, IncomeSourceDetailsService, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-
 import scala.concurrent.Future
 
 
@@ -82,7 +79,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
   Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
         val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.show(mode, false) else testAddBusinessAddressController.showAgent(mode, false)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the address lookup service" when {
@@ -213,7 +210,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
         }
       }
 
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+      s"submit${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
         val action = if (mtdRole == MTDIndividual) testAddBusinessAddressController.submit(Some("123"), mode, false) else testAddBusinessAddressController.agentSubmit(Some("123"), mode, false)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the business check answers page" when {

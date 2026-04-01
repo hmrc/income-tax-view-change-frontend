@@ -32,4 +32,4 @@ class FrontendAuthConnector @Inject()(config: ServicesConfig,
 }
 
 @Singleton
-class ItvcHeaderCarrierForPartialsConverter @Inject()() extends HeaderCarrierForPartialsConverter {}
+class ItvcHeaderCarrierForPartialsConverter @Inject() extends HeaderCarrierForPartialsConverter {}

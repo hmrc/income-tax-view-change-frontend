@@ -38,6 +38,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, *}
 import services.*
+import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
@@ -47,6 +48,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusine
 import views.html.TaxYearSummaryView
 
 import java.time.LocalDate
+import scala.annotation.unused
 import scala.concurrent.Future
 
 class TaxYearSummaryControllerSpec
@@ -109,7 +111,7 @@ class TaxYearSummaryControllerSpec
     } + "/adjust-poa/start"
   }
 
-  val testObligtionsModel: ObligationsModel =
+  val testObligationsModel: ObligationsModel =
     ObligationsModel(Seq(
       GroupedObligationsModel(
         identification = "testId",
@@ -134,7 +136,7 @@ class TaxYearSummaryControllerSpec
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
       .withHeaders(HeaderNames.REFERER -> taxYearsBackLink(isAgent))
 
-    s"render${if (isAgent) "Agent"}TaxYearSummaryPage" when {
+    s"render${if (isAgent) "Agent" else ""}TaxYearSummaryPage" when {
 
       s"the $mtdUserRole is authenticated" should {
 
@@ -161,7 +163,7 @@ class TaxYearSummaryControllerSpec
                 mockGetNextUpdates(
                   fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
@@ -188,7 +190,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
@@ -214,7 +216,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
@@ -241,14 +243,14 @@ class TaxYearSummaryControllerSpec
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
                   .thenReturn(MtdSoftwareShowCalc)
 
-                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6), toDate = LocalDate.of(testTaxYear, 4, 5))(response = testObligtionsModel)
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6), toDate = LocalDate.of(testTaxYear, 4, 5))(response = testObligationsModel)
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
                 val taxYearSummary = TaxYearSummaryViewModel(
                   calculationSummary = Some(CalculationSummary(liabilityCalculationModelSuccessfulNotCrystallised.copy(submissionChannel = Some(IsMTD)))),
                   previousCalculationSummary = None,
                   charges = testChargesList,
-                  obligations = testObligtionsModel,
+                  obligations = testObligationsModel,
                   showForecastData = false,
                   ctaViewModel = emptyCTAViewModel,
                   LPP2Url = "",
@@ -292,7 +294,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
@@ -305,7 +307,7 @@ class TaxYearSummaryControllerSpec
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                     None,
                     testChargesList,
-                    testObligtionsModel,
+                    testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false
                   ),
@@ -341,19 +343,19 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
                   .thenReturn(MtdSoftwareShowCalc)
 
-                val expectedContent: String = taxYearSummaryView(
+                @unused val expectedContent: String = taxYearSummaryView(
                   taxYear = testTaxYear,
                   viewModel = TaxYearSummaryViewModel(
                     calculationSummary = None,
                     previousCalculationSummary = None,
                     charges = testChargesList,
-                    obligations = testObligtionsModel,
+                    obligations = testObligationsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false
@@ -388,7 +390,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
@@ -413,7 +415,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
@@ -434,7 +436,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
@@ -459,7 +461,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
 
@@ -482,7 +484,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
@@ -506,7 +508,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
@@ -532,7 +534,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
@@ -572,7 +574,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
@@ -615,7 +617,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -637,7 +639,7 @@ class TaxYearSummaryControllerSpec
               mockGetNextUpdates(
                 fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
-                response = testObligtionsModel
+                response = testObligationsModel
               )
 
               when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -656,7 +658,7 @@ class TaxYearSummaryControllerSpec
                     calculationSummary = Some(calcOverview),
                     previousCalculationSummary = None,
                     charges = testChargesList,
-                    obligations = testObligtionsModel,
+                    obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel,
                     LPP2Url = "",
                     pfaEnabled = false),
@@ -697,7 +699,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -712,7 +714,7 @@ class TaxYearSummaryControllerSpec
                     calculationSummary = Some(calcOverview),
                     previousCalculationSummary = None,
                     charges = class2NicsChargesList,
-                    obligations = testObligtionsModel,
+                    obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false),
                   backUrl = taxYearsBackLink(isAgent),
@@ -752,7 +754,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -767,7 +769,7 @@ class TaxYearSummaryControllerSpec
                     calculationSummary = Some(calcOverview),
                     previousCalculationSummary = None,
                     charges = payeChargesList,
-                    obligations = testObligtionsModel,
+                    obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false),
                   backUrl = taxYearsBackLink(isAgent),
@@ -799,7 +801,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -821,7 +823,7 @@ class TaxYearSummaryControllerSpec
                     calculationSummary = Some(calcOverview),
                     previousCalculationSummary = None,
                     charges = charges,
-                    obligations = testObligtionsModel,
+                    obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false
                   ),
@@ -854,7 +856,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -868,7 +870,7 @@ class TaxYearSummaryControllerSpec
                       Some(calcOverview),
                       None,
                       testEmptyChargesList,
-                      testObligtionsModel,
+                      testObligationsModel,
                       ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                       pfaEnabled = false),
                     backUrl = taxYearsBackLink(isAgent),
@@ -906,17 +908,17 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-                val expectedContent: String = Jsoup.parse(taxYearSummaryView(
+                @unused val expectedContent: String = Jsoup.parse(taxYearSummaryView(
                   taxYear = testTaxYear,
                   viewModel = TaxYearSummaryViewModel(
                     calculationSummary = None,
                     previousCalculationSummary = None,
                     charges = testChargesList,
-                    obligations = testObligtionsModel,
+                    obligations = testObligationsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false),
@@ -951,7 +953,7 @@ class TaxYearSummaryControllerSpec
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                   toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligtionsModel
+                  response = testObligationsModel
                 )
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -966,7 +968,7 @@ class TaxYearSummaryControllerSpec
                     calculationSummary = Some(calcOverview),
                     previousCalculationSummary = None,
                     charges = testChargesList,
-                    obligations = testObligtionsModel,
+                    obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
                     pfaEnabled = false),
                   backUrl = taxYearsBackLink(isAgent),
@@ -1074,7 +1076,7 @@ class TaxYearSummaryControllerSpec
               mockGetNextUpdates(
                 fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5)
-              )(response = testObligtionsModel)
+              )(response = testObligationsModel)
 
               mockCalculationErrorNew(testMtditid)
 
@@ -1099,7 +1101,7 @@ class TaxYearSummaryControllerSpec
 
               mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
                 toDate = LocalDate.of(testTaxYear, 4, 5))(
-                response = testObligtionsModel
+                response = testObligationsModel
               )
 
               val result = action(fakeRequest)

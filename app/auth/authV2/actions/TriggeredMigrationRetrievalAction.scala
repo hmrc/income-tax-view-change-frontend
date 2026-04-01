@@ -64,7 +64,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
             case (true, true) =>
               checkIfRecentlyConfirmed().map {
                 case true => Right(req)
-                case false => Left(redirectToHome(req.isAgent()))
+                case false => Left(redirectToHome(req.isAgent))
               }
             case (false, _) =>
               isItsaStatusVoluntaryOrMandated().flatMap {
@@ -80,7 +80,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                           Future.successful(Right(req))
                         } else {
                           Future.successful(
-                            Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
+                            Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent)))
                           )
                         }
                       case Left(errorResult) =>
@@ -125,7 +125,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   private def isItsaStatusVoluntaryOrMandated()(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Result, Boolean]] = {
     def redirectBasedOnUser: Future[Either[Result, Boolean]] =
-      Future(Left(if (user.isAgent()) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
+      Future(Left(if (user.isAgent) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
       itsaStatusList =>
@@ -181,7 +181,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
     customerFactsUpdateService.updateCustomerFacts(req.mtditid).map {
       _ =>
         if (isTriggeredMigrationPage) {
-          Left(redirectToHome(req.isAgent()))
+          Left(redirectToHome(req.isAgent))
         } else {
           Right(req)
         }

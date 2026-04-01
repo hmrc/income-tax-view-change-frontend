@@ -17,7 +17,7 @@
 package controllers
 
 import connectors.{ITSAStatusConnector, BusinessDetailsConnector}
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.PoaTwoReconciliationCredit
@@ -75,7 +75,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
     }
 
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"show${if (isAgent) "Agent"}" when {
+    s"show${if (isAgent) "Agent" else ""}" when {
       s"is an authenticated $mtdUserRole " should {
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action(id1040000123))(fakeRequest)

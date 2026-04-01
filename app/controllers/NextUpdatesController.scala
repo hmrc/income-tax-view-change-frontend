@@ -79,7 +79,7 @@ class NextUpdatesController @Inject()(
 
         result <- nextUpdates.obligations match {
           case Nil =>
-            Logger("application").warn(s"${if (isAgent) "[Agent]"} No open obligations found for user.")
+            Logger("application").warn(s"${if (isAgent) "[Agent]" else ""} No open obligations found for user.")
             Future.successful(errorHandler.showInternalServerError())
           case _ =>
             auditNextUpdates(user, isAgent, origin)

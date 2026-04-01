@@ -39,6 +39,7 @@ import services.{DateService, NextUpdatesService}
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 
+import scala.annotation.unused
 import scala.concurrent.Future
 
 case class TaxYearAndCountOfSubmissionsForIt(taxYear: TaxYear, submissions: Int)
@@ -90,7 +91,7 @@ class OptOutServiceSpec
                          previousYearStatus: Value,
                          currentYearStatus: Value,
                          nextYearStatus: Value,
-                         nino: String): Unit = {
+                         @unused nino: String): Unit = {
 
     val (previousYear, currentYear, nextYear) = taxYears(currentTaxYear)
 
@@ -449,7 +450,7 @@ class OptOutServiceSpec
                                           statusNY: ITSAStatus,
                                           crystallisedPY: Boolean
                                          )(optOutTaxYear: OptOutTaxYear, state: OptOutState): Unit = {
-
+      @unused
       def getTaxYearText(taxYear: TaxYear): String = {
         if (taxYear == CY) "CY" else if (taxYear == PY) "PY" else if (taxYear == NY) "NY" else ""
       }
@@ -476,7 +477,7 @@ class OptOutServiceSpec
 
     def testOptOutCheckPointPageViewModel(statusPY: ITSAStatus, statusCY: ITSAStatus, statusNY: ITSAStatus, crystallisedPY: Boolean)
                                          (intent: TaxYear, state: OptOutState): Unit = {
-
+      @unused
       def getTaxYearText(taxYear: TaxYear): String = {
         if (taxYear == CY) "CY" else if (taxYear == PY) "PY" else if (taxYear == NY) "NY" else ""
       }
@@ -515,7 +516,7 @@ class OptOutServiceSpec
     def testOptOutConfirmedPageViewModel(statusPY: ITSAStatus, statusCY: ITSAStatus, statusNY: ITSAStatus, crystallisedPY: Boolean)
                                         (viewModel: Option[ConfirmedOptOutViewModel]): Unit = {
 
-      s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT "}finalised" should {
+      s"PY is $statusPY, CY is $statusCY, NY is $statusNY and PY is ${if (!crystallisedPY) "NOT " else ""}finalised" should {
         s"return  $viewModel" in {
 
           stubCurrentTaxYear(CY)

@@ -23,8 +23,8 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.*
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.admin.{CreditsRefundsRepay, `CY+1YouMustWaitToSignUpPageEnabled`}
-import models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditsModel}
+import models.admin.CreditsRefundsRepay
+import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CreditService, RepaymentService}
@@ -36,6 +36,7 @@ import views.html.{CreditAndRefundsView, MoneyInYourAccountView}
 import views.html.errorPages.CustomNotFoundErrorView
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
@@ -61,7 +62,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
       implicit user =>
         handleRequest(
           backUrl = controllers.routes.HomeController.show(origin).url,
-          isAgent = user.isAgent()
+          isAgent = user.isAgent
         ) recover logAndRedirect
     }
 
@@ -83,7 +84,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
       implicit mtdItUser =>
         handleRequest(
           backUrl = controllers.routes.HomeController.showAgent().url,
-          isAgent = mtdItUser.isAgent()
+          isAgent = mtdItUser.isAgent
         ) recover logAndRedirect
     }
   }
@@ -101,7 +102,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
         }
     }
 
-  private def handleRefundRequest(isAgent: Boolean, backUrl: String)
+  private def handleRefundRequest(@unused isAgent: Boolean, @unused backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits flatMap {
       case _ if !isEnabled(CreditsRefundsRepay) =>

@@ -54,7 +54,7 @@ class IncomeSummaryControllerSpec extends MockAuthActions
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showIncomeSummaryAgent(testTaxYear) else testController.showIncomeSummary(testTaxYear)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"showIncomeSummary${if (isAgent) "Agent"}" when {
+    s"showIncomeSummary${if (isAgent) "Agent" else ""}" when {
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
