@@ -32,8 +32,10 @@ class FeatureSwitchesAdminController @Inject() (
                                                )(implicit ec: ExecutionContext)
   extends AbstractController(cc) {
 
-  def get: Action[AnyContent] = Action.async {
-    featureSwitchService.getAll
+  def get: Action[AnyContent] = Action.async { request =>
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
+    featureSwitchService.getAll()
       .map(switches => Ok(Json.toJson(switches)))
   }
 

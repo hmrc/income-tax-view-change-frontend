@@ -17,6 +17,7 @@
 package mocks.connectors
 
 import connectors.FeatureSwitchConnector
+import models.admin.FeatureSwitch
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
@@ -38,4 +39,9 @@ trait MockFeatureSwitchConnector extends UnitSpec with BeforeAndAfterEach {
       .thenReturn(Future.successful(response))
   }
 
+  def mockConnectorGetAllSwitches(response: List[FeatureSwitch]): Unit = {
+    when(mockFeatureSwitchConnector.getAllSwitches()(any()))
+      .thenReturn(Future.successful(response))
+  }
+  
 }

@@ -72,15 +72,15 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
         enable(exampleFSName)
         disable(anotherFSName)
 
-        val result = TestFSService.getAll
+        val result = TestFSService.getAll()
         result.futureValue should contain(FeatureSwitch(exampleFSName, isEnabled = true))
         result.futureValue should contain(FeatureSwitch(anotherFSName, isEnabled = false))
       }
       "read from mongo FS is enabled" in {
         when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn true
-        mockRepositoryGetFeatureSwitches(List(FeatureSwitch(exampleFSName, true), FeatureSwitch(anotherFSName, false)))
+        mockConnectorGetAllSwitches(List(FeatureSwitch(exampleFSName, true), FeatureSwitch(anotherFSName, false)))
 
-        val result = TestFSService.getAll
+        val result = TestFSService.getAll()
         result.futureValue should contain(FeatureSwitch(exampleFSName, isEnabled = true))
         result.futureValue should contain(FeatureSwitch(anotherFSName, isEnabled = false))
       }
