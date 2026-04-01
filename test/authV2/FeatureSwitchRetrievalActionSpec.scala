@@ -18,7 +18,7 @@ package authV2
 
 import auth.MtdItUser
 import auth.authV2.actions.FeatureSwitchRetrievalAction
-import authV2.AuthActionsTestData._
+import authV2.AuthActionsTestData.*
 import models.admin.{FeatureSwitch, NavBarFs}
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
@@ -26,9 +26,11 @@ import play.api
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import org.mockito.ArgumentMatchers.any
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -59,8 +61,8 @@ class FeatureSwitchRetrievalActionSpec extends AuthActionsSpecHelper {
       "Return list of feature switches" in {
         val featureSwitch = List(FeatureSwitch(NavBarFs, true))
         val mtdItUserRequest = getMtdItUser(Individual)(fakeRequestWithActiveSession)
-        when(mockFeatureSwitchService.getAll)
-          .thenReturn(Future(featureSwitch))
+        when(mockFeatureSwitchService.getAll()(any[HeaderCarrier]))
+          .thenReturn(Future.successful(featureSwitch))
 
         val result = action.invokeBlock(
           mtdItUserRequest,
@@ -72,8 +74,8 @@ class FeatureSwitchRetrievalActionSpec extends AuthActionsSpecHelper {
       }
       "Return empty list of feature switches" in {
         val mtdItUserRequest = getMtdItUser(Individual)(fakeRequestWithActiveSession)
-        when(mockFeatureSwitchService.getAll)
-          .thenReturn(Future(List.empty))
+        when(mockFeatureSwitchService.getAll()(any[HeaderCarrier]))
+          .thenReturn(Future.successful(List.empty))
         val result = action.invokeBlock(
           mtdItUserRequest,
           defaultAsyncBody(_.featureSwitches shouldBe List.empty)

@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.admin.{FeatureSwitch, FeatureSwitchName}
-import play.api.http.Status.NO_CONTENT
+import play.api.http.Status.{NO_CONTENT, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import play.api.libs.json.Json
@@ -35,6 +35,10 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def getSetSwitchesStubUrl: String = {
+    s"${appConfig.incomeTaxVcFsAndStubUrl}/features"
+  }
+
+  def getAllSwitchesStubUrl: String = {
     s"${appConfig.incomeTaxVcFsAndStubUrl}/features"
   }
 
@@ -72,6 +76,22 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
         response.status match {
           case NO_CONTENT => true
           case _ => false
+        }
+      }
+  }
+
+  def getAllSwitches()(implicit headerCarrier: HeaderCarrier): Future[List[FeatureSwitch]] = {
+
+    val url = getAllSwitchesStubUrl
+
+    http.get(url"$url")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            response.json.as[Seq[FeatureSwitch]].toList
+          case _ =>
+            throw new RuntimeException(s"Failed to fetch feature switches: ${response.status}")
         }
       }
   }
