@@ -40,7 +40,8 @@
     form = Some(form),
     isAgent = isAgent,
     backUrl = backUrl,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @formWithCSRF(action = postAction, Symbol("id") -> "type-of-business") {
 

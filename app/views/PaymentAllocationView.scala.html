@@ -39,7 +39,7 @@
 )
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
-    isAgent: Boolean = false, btaNavPartial: Option[Html] = None,
+    isAgent: Boolean = false, btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None,
     origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter._
 
@@ -58,7 +58,8 @@
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true,
-    gatewayPage = gatewayPage
+    gatewayPage = gatewayPage,
+    btaAndPtaServiceNavigation = serviceNavigationPartial
 ) {
 
     @if(paymentAllocations.hasDocumentDetailWithCredit) {

@@ -24,6 +24,7 @@ import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.retrieve.Name
+import uk.gov.hmrc.govukfrontend.views.Aliases.ServiceNavigation
 
 case class MtdItUser[A](mtditid: String,
                         nino: String,
@@ -32,6 +33,7 @@ case class MtdItUser[A](mtditid: String,
                         clientDetails: Option[AgentClientDetails],
                         incomeSources: IncomeSourceDetailsModel,
                         btaNavPartial: Option[Html] = None,
+                        serviceNavigationPartial: Option[ServiceNavigation] = None,
                         featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
                        )(implicit request: Request[A]) extends WrappedRequest[A](request){
 
@@ -58,5 +60,6 @@ case class MtdItUser[A](mtditid: String,
   def addFeatureSwitches(newFeatureSwitches: List[FeatureSwitch]) = copy(featureSwitches = newFeatureSwitches)
 
   def addNavBar(partial: Html) = copy(btaNavPartial = Some(partial))
+  def addServiceNavigation(partial: ServiceNavigation) = copy(serviceNavigationPartial = Some(partial))
 
 }

@@ -65,10 +65,10 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     val incomeSourceDetailsModel = optIncomeSourceDetailsModel.getOrElse(getIncomeSource(Random.nextBoolean()))
     if (hasSAUtr) {
       defaultMTDITUser(Some(testUserTypeIndividual), incomeSourceDetailsModel)
-        .addNavBar(testNavHtml)
+        .addServiceNavigation(testServiceNavigation)
     } else {
       getMinimalMTDITUser(Some(testUserTypeIndividual), incomeSourceDetailsModel)
-        .addNavBar(testNavHtml)
+        .addServiceNavigation(testServiceNavigation)
     }
   }
 
@@ -155,7 +155,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     "provided with a btaNavPartial" should {
 
       "render the btaNavPartial" in new Setup {
-        document.getElementById(s"nav-bar-link-testEnHome").text shouldBe "testEnHome"
+        document.getElementById(s"bta-service-navigation").text shouldBe "testHome"
       }
     }
 

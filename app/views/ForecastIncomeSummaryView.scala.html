@@ -26,7 +26,7 @@
     govukTable : GovukTable
 )
 
-@(endOfYearEstimateModel: EndOfYearEstimate, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(endOfYearEstimateModel: EndOfYearEstimate, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
 
 @getIncomeSources(incomeSourceOpt: Option[List[IncomeSource]]) = @{
     incomeSourceOpt.map(incomeSources => {
@@ -53,7 +53,7 @@
 }
 
 @mainTemplate(pageTitle = messages("forecast_income.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl),
-    isAgent = isAgent, btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
+    isAgent = isAgent, btaNavPartial = btaNavPartial, useFallbackBackLink = true, btaAndPtaServiceNavigation = serviceNavigationPartial) {
 
     @h1WithCaption(
         heading = messages("forecast_income.heading"),

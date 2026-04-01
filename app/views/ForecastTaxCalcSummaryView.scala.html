@@ -18,13 +18,13 @@
 @import models.liabilitycalculation.EndOfYearEstimate
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
-
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(mainTemplate: unifiedLayout,
     h1WithCaption: h1WithCaption
 )
 
-@(endOfYearEstimateModel: EndOfYearEstimate, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(endOfYearEstimateModel: EndOfYearEstimate, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
 
 @dataItem(message: String, value: Option[BigDecimal], bold: Boolean = false) = {
     @if(value.isDefined){
@@ -50,7 +50,7 @@
 }
 
 @mainTemplate(pageTitle = messages("forecast_taxCalc.heading"), backUrl = Some(backUrl), isAgent = isAgent,
-    btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
+    btaNavPartial = btaNavPartial, useFallbackBackLink = true, btaAndPtaServiceNavigation = serviceNavigationPartial) {
 
     @h1WithCaption(
         heading = messages("forecast_taxCalc.heading"),

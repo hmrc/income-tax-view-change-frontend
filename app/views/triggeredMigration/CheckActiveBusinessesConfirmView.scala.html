@@ -37,7 +37,8 @@
     pageTitle = messages("triggered-migration.check-active-businesses-confirm.heading"),
     backUrl   = Some(backUrl),
     isAgent   = isAgent,
-    btaNavPartial = user.btaNavPartial
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 
   @if(form.hasErrors) {

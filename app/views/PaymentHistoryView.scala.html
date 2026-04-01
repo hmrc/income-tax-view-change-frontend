@@ -44,7 +44,7 @@
 )
 
 @(groupedPayments: List[(Int, List[PaymentHistoryEntry])], viewModel: PaymentCreditAndRefundHistoryViewModel, paymentHistoryAndRefundsEnabled: Boolean = false, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
-btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @paymentHistoryInfo(messageInfo: String, infoLink: => String, infoLinkText: String) = {
@@ -124,7 +124,8 @@ btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit requ
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
-    useFallbackBackLink = true
+    useFallbackBackLink = true,
+    btaAndPtaServiceNavigation = serviceNavigationPartial
 ) {
 
     @h1(msg = messages(viewModel.title()))

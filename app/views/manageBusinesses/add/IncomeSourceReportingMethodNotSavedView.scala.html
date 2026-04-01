@@ -47,7 +47,11 @@
     }
 }
 
-@mainTemplate(pageTitle = messages("incomeSources.add.error.standardError"), isAgent = isAgent, backUrl = None, btaNavPartial = user.btaNavPartial) {
+@mainTemplate(
+    pageTitle = messages("incomeSources.add.error.standardError"),
+    isAgent = isAgent, backUrl = None,
+    btaNavPartial = user.btaNavPartial,
+btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @hmrcPageHeading(PageHeading(
         text = messages("incomeSources.add.error.reportingMethodNotSaved.heading"),

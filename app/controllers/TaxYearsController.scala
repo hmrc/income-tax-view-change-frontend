@@ -61,6 +61,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
           isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
           earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
           btaNavPartial = user.btaNavPartial,
+          serviceNavigationPartial = user.serviceNavigationPartial,
           origin = origin
         )))
       case _ =>
