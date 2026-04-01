@@ -59,7 +59,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   }
 
   def show(): Action[AnyContent] = Action.async { implicit user =>
-    featureSwitchService.getAll.flatMap { featureSwitches =>
+    featureSwitchService.getAll().flatMap { featureSwitches =>
       val fss = featureSwitches.filter(_.name.name != InvalidFS.name).map(x => {
         (FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
       }).toMap
@@ -128,7 +128,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     implicit val hc: HeaderCarrier =
       HeaderCarrierConverter.fromRequest(request)
     for {
-      featureSwitches <- featureSwitchService.getAll
+      featureSwitches <- featureSwitchService.getAll()
       _ <- Future.sequence(
         featureSwitches.map(featureSwitch =>
           featureSwitchService.set(featureSwitch.name, enabled = true)
