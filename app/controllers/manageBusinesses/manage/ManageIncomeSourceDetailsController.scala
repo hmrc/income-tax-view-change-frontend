@@ -28,6 +28,7 @@ import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -141,10 +142,12 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       case Left(exception) => Future.failed(exception)
     }
 
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+
     val result = for {
       incomeSourceIdHash <- getIncomeSourceIdHash(hashIdString)
       incomeSourceId <- validateIncomeSourcesContainsIncomeSourceId(incomeSourceIdHash)
-      currentItsaStatus <- itsaStatusService.getCurrentITSAStatus()
+      currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       _ <- setMongoKey(incomeSourceId)
       viewModel <- getManageIncomeSourceViewModel(
         sources = user.incomeSources,
@@ -178,7 +181,9 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                      isAgent: Boolean,
                      backUrl: String,
                      incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    itsaStatusService.getCurrentITSAStatus().flatMap { currentItsaStatus =>
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+    
+    getCurrentITSAStatus(currentTaxYear).flatMap { currentItsaStatus =>
       getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType, currentItsaStatus)
         .map { viewModel =>
           Ok(view(
@@ -463,5 +468,20 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         case None => quarterTypeElection.isStandardQuarterlyReporting
       }
     })
+  }
+
+  private def getCurrentITSAStatus(currentTaxYear: TaxYear)(
+    implicit hc: HeaderCarrier,
+    user: MtdItUser[_]
+  ): Future[ITSAStatus.ITSAStatus] = {
+    itsaStatusService
+      .getITSAStatusDetail(currentTaxYear, false, false)
+      .map { statusDetailList =>
+        statusDetailList
+          .flatMap(_.itsaStatusDetails)
+          .flatMap(_.map(_.status))
+          .headOption
+          .getOrElse(ITSAStatus.NoStatus)
+      }
   }
 }

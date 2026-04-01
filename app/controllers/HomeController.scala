@@ -110,7 +110,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
 
     for {
-      currentITSAStatus <- ITSAStatusService.getCurrentITSAStatus()
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
@@ -153,7 +153,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, getCurrentDate)
-      currentITSAStatus <- ITSAStatusService.getCurrentITSAStatus()
+      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
       penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
@@ -364,5 +364,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
       isPenaltiesEnabled = penaltiesEnabled,
       remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter)
+  }
+
+  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
+      .toMap
+      .withDefaultValue(ITSAStatus.NoStatus)
+    ).map(detail => detail(taxYear))
   }
 }

@@ -110,21 +110,5 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     //item.taxYear has string format as 2021-22
     TaxYear.forYearEnd(taxYear.split("-")(0).toInt + 1)
   }
-
-  def getCurrentITSAStatus()(
-    implicit hc: HeaderCarrier,
-    user: MtdItUser[_],
-    executionContext: ExecutionContext
-  ): Future[ITSAStatus.ITSAStatus] = {
-    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
-    
-    getITSAStatusDetail(currentTaxYear, false, false).map { statusDetailList =>
-        statusDetailList
-          .flatMap(_.itsaStatusDetails)
-          .flatMap(_.map(_.status))
-          .headOption
-          .getOrElse(ITSAStatus.NoStatus)
-      }
-  }
 }
 

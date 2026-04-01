@@ -83,7 +83,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
-      currentItsaStatus <- ITSAStatusService.getCurrentITSAStatus()
+      currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
 
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       updatesAndDeadlinesViewModel <- getNextUpdates()
@@ -153,6 +153,21 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         Logger("application").error("Unexpected Exception getting open obligations")
         Future.successful(Seq.empty[SingleObligationModel])
     }
+  }
+
+  private def getCurrentITSAStatus(currentTaxYear: TaxYear)(
+    implicit hc: HeaderCarrier,
+    user: MtdItUser[_]
+  ): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService
+      .getITSAStatusDetail(currentTaxYear, false, false)
+      .map { statusDetailList =>
+        statusDetailList
+          .flatMap(_.itsaStatusDetails)
+          .flatMap(_.map(_.status))
+          .headOption
+          .getOrElse(ITSAStatus.NoStatus)
+      }
   }
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url
