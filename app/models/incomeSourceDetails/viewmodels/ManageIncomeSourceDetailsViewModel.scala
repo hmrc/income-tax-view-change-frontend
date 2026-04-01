@@ -18,7 +18,9 @@ package models.incomeSourceDetails.viewmodels
 
 import enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
+import models.itsaStatus.ITSAStatus
+import models.itsaStatus.ITSAStatus.ITSAStatus
 
 import java.time.LocalDate
 
@@ -33,7 +35,8 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
                                               latencyDetails: Option[LatencyDetails],
                                               incomeSourceType: IncomeSourceType,
                                               currentTaxYearEnd: Int,
-                                              quarterReportingType: Option[QuarterReportingType]
+                                              quarterReportingType: Option[QuarterReportingType],
+                                              currentItsaStatus: ITSAStatus
                                              ) {
 
   def latencyValueAsKey(latencyIndicator: String): String = {
@@ -60,6 +63,8 @@ case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
       ((latencyDetails.exists(_.latencyIndicator2 == "A") && latencyYearsAnnual.secondYear.contains(false)) ||
         latencyDetails.exists(_.latencyIndicator2 == "Q"))
   }
+  
+  def isQuarterly = currentItsaStatus == ITSAStatus.Mandated || currentItsaStatus == ITSAStatus.Voluntary
 }
 
 

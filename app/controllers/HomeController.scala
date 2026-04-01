@@ -110,7 +110,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
 
     for {
-      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      currentITSAStatus <- ITSAStatusService.getCurrentITSAStatus()
       (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
@@ -153,7 +153,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, getCurrentDate)
-      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
+      currentITSAStatus <- ITSAStatusService.getCurrentITSAStatus()
       penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
       mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
@@ -292,13 +292,6 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
-  }
-
-  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
-    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
-      .toMap
-      .withDefaultValue(ITSAStatus.NoStatus)
-    ).map(detail => detail(taxYear))
   }
 
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {

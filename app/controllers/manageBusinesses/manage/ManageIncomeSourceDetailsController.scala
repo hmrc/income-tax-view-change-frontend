@@ -28,6 +28,7 @@ import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -143,10 +144,12 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
     val result = for {
       incomeSourceIdHash <- getIncomeSourceIdHash(hashIdString)
       incomeSourceId <- validateIncomeSourcesContainsIncomeSourceId(incomeSourceIdHash)
+      currentItsaStatus <- itsaStatusService.getCurrentITSAStatus()
       _ <- setMongoKey(incomeSourceId)
       viewModel <- getManageIncomeSourceViewModel(
         sources = user.incomeSources,
-        incomeSourceId = incomeSourceId
+        incomeSourceId = incomeSourceId,
+        currentItsaStatus = currentItsaStatus
       )
     } yield {
 
@@ -175,22 +178,23 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                      isAgent: Boolean,
                      backUrl: String,
                      incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-
-    getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType)
-      .map { viewModel =>
-        Ok(view(
-          viewModel = viewModel,
-          isAgent = isAgent,
-          showStartDate = isEnabled(DisplayBusinessStartDate),
-          showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
-          showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
-          backUrl = backUrl
-        ))
-      }.recover {
-        case ex =>
-          Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
-          errorHandler(isAgent).showInternalServerError()
-      }
+    itsaStatusService.getCurrentITSAStatus().flatMap { currentItsaStatus =>
+      getManageIncomeSourceViewModelProperty(sources = sources, isAgent = isAgent, incomeSourceType = incomeSourceType, currentItsaStatus)
+        .map { viewModel =>
+          Ok(view(
+            viewModel = viewModel,
+            isAgent = isAgent,
+            showStartDate = isEnabled(DisplayBusinessStartDate),
+            showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
+            showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
+            backUrl = backUrl
+          ))
+        }.recover {
+          case ex =>
+            Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+            errorHandler(isAgent).showInternalServerError()
+        }
+    }
   }
 
   private def getIncomeSourceIdHash(hashIdString: String): Future[IncomeSourceIdHash] = {
@@ -231,7 +235,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                            incomeSource: BusinessDetailsModel,
                                            latencyYearsQuarterly: LatencyYearsQuarterly,
                                            latencyYearsAnnual: LatencyYearsAnnual,
-                                           latencyYearsCrystallised: LatencyYearsCrystallised
+                                           latencyYearsCrystallised: LatencyYearsCrystallised,
+                                           currentItsaStatus: ITSAStatus
                                          ): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
@@ -245,7 +250,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = SelfEmployment,
       currentTaxYearEnd = dateService.getCurrentTaxYearEnd,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentItsaStatus = currentItsaStatus
     )
   }
 
@@ -253,7 +259,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                 latencyYearsQuarterly: LatencyYearsQuarterly,
                                                 latencyYearsAnnual: LatencyYearsAnnual,
                                                 latencyYearsCrystallised: LatencyYearsCrystallised,
-                                                incomeSourceType: IncomeSourceType): ManageIncomeSourceDetailsViewModel = {
+                                                incomeSourceType: IncomeSourceType,
+                                                currentItsaStatus: ITSAStatus): ManageIncomeSourceDetailsViewModel = {
     ManageIncomeSourceDetailsViewModel(
       incomeSourceId = mkIncomeSourceId(incomeSource.incomeSourceId),
       incomeSource = None,
@@ -266,14 +273,16 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyDetails = incomeSource.latencyDetails,
       incomeSourceType = incomeSourceType,
       currentTaxYearEnd = dateService.getCurrentTaxYearEnd,
-      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection)
+      quarterReportingType = getQuarterType(incomeSource.latencyDetails, incomeSource.quarterTypeElection),
+      currentItsaStatus = currentItsaStatus
     )
   }
 
 
   private def getManageIncomeSourceViewModel(
                                               sources: IncomeSourceDetailsModel,
-                                              incomeSourceId: IncomeSourceId
+                                              incomeSourceId: IncomeSourceId,
+                                              currentItsaStatus: ITSAStatus
                                             )(implicit user: MtdItUser[_],
                                               hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
@@ -296,7 +305,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsCrystallised = LatencyYearsCrystallised(
         firstYear = None,
         secondYear = None
-      )
+      ), currentItsaStatus = currentItsaStatus
     ))
 
     desiredIncomeSourceMaybe match {
@@ -304,7 +313,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
             if(latencyDetails.isBusinessOrPropertyInLatency(dateService.getCurrentTaxYearEnd))
-              handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails)
+              handleLatencyAndCrystallisationDetails(desiredIncomeSource, latencyDetails, currentItsaStatus)
             else
               defaultViewModel(desiredIncomeSource)
           case None =>
@@ -317,7 +326,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
 
   private def handleLatencyAndCrystallisationDetails(
                                                       desiredIncomeSource: BusinessDetailsModel,
-                                                      latencyDetails: LatencyDetails
+                                                      latencyDetails: LatencyDetails,
+                                                      currentItsaStatus: ITSAStatus
                                                     )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
@@ -334,7 +344,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             latencyYearsCrystallised = LatencyYearsCrystallised(
               firstYear = None,
               secondYear = None
-            )
+            ), currentItsaStatus = currentItsaStatus
           )
 
         case Some(crystallisationList: List[Boolean]) =>
@@ -345,7 +355,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             latencyYearsCrystallised = LatencyYearsCrystallised(
               firstYear = crystallisationList.headOption,
               secondYear = crystallisationList.lastOption
-            )
+            ),
+            currentItsaStatus = currentItsaStatus
           )
       }
     }
@@ -354,7 +365,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
 
   private def getManageIncomeSourceViewModelProperty(sources: IncomeSourceDetailsModel,
                                                      incomeSourceType: IncomeSourceType,
-                                                     @unused isAgent: Boolean
+                                                     @unused isAgent: Boolean,
+                                                     currentItsaStatus: ITSAStatus
                                                     )(implicit user: MtdItUser[_],
                                                       hc: HeaderCarrier,
                                                       ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
@@ -377,7 +389,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       latencyYearsQuarterly = LatencyYearsQuarterly(Some(false), Some(false)),
       latencyYearsAnnual = LatencyYearsAnnual(Some(false), Some(false)),
       latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
-      incomeSourceType = incomeSourceType
+      incomeSourceType = incomeSourceType,
+      currentItsaStatus = currentItsaStatus
     ))
 
     desiredIncomeSourceMaybe match {
@@ -385,7 +398,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         desiredIncomeSource.latencyDetails match {
           case Some(latencyDetails) =>
             if(latencyDetails.isBusinessOrPropertyInLatency(dateService.getCurrentTaxYearEnd))
-              handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType)
+              handleLatencyAndCrystallisationDetailsForProperty(desiredIncomeSource, latencyDetails, incomeSourceType, currentItsaStatus)
             else
               defaultViewModel(desiredIncomeSource)
 
@@ -401,7 +414,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
   private def handleLatencyAndCrystallisationDetailsForProperty(
                                                                  desiredIncomeSource: PropertyDetailsModel,
                                                                  latencyDetails: LatencyDetails,
-                                                                 incomeSourceType: IncomeSourceType
+                                                                 incomeSourceType: IncomeSourceType,
+                                                                 currentItsaStatus: ITSAStatus
                                                                )(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[ManageIncomeSourceDetailsViewModel] = {
 
     for {
@@ -417,7 +431,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             latencyYearsQuarterly = latencyYearsQuarterlyAndAnnualStatus.latencyYearsQuarterly,
             latencyYearsAnnual = latencyYearsQuarterlyAndAnnualStatus.latencyYearsAnnual,
             latencyYearsCrystallised = LatencyYearsCrystallised(None, None),
-            incomeSourceType = incomeSourceType
+            incomeSourceType = incomeSourceType,
+            currentItsaStatus = currentItsaStatus
           )
 
         case Some(crystallisationList: List[Boolean]) =>
@@ -426,7 +441,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             latencyYearsQuarterly = latencyYearsQuarterlyAndAnnualStatus.latencyYearsQuarterly,
             latencyYearsAnnual = latencyYearsQuarterlyAndAnnualStatus.latencyYearsAnnual,
             latencyYearsCrystallised = LatencyYearsCrystallised(crystallisationList.headOption, crystallisationList.lastOption),
-            incomeSourceType = incomeSourceType
+            incomeSourceType = incomeSourceType,
+            currentItsaStatus = currentItsaStatus
           )
       }
     }

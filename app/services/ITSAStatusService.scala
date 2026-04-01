@@ -20,8 +20,8 @@ import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
-import models.incomeSourceDetails._
-import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
+import models.incomeSourceDetails.*
+import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -109,6 +109,22 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   private def parseTaxYear(taxYear: String) = {
     //item.taxYear has string format as 2021-22
     TaxYear.forYearEnd(taxYear.split("-")(0).toInt + 1)
+  }
+
+  def getCurrentITSAStatus()(
+    implicit hc: HeaderCarrier,
+    user: MtdItUser[_],
+    executionContext: ExecutionContext
+  ): Future[ITSAStatus.ITSAStatus] = {
+    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
+    
+    getITSAStatusDetail(currentTaxYear, false, false).map { statusDetailList =>
+        statusDetailList
+          .flatMap(_.itsaStatusDetails)
+          .flatMap(_.map(_.status))
+          .headOption
+          .getOrElse(ITSAStatus.NoStatus)
+      }
   }
 }
 
