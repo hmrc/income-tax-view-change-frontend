@@ -156,10 +156,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val businessTaxAccountManageAccountUrl: String = s"$btaFrontendBase"
   lazy val businessTaxAccountMessagesUrl: String = s"$btaFrontendBase/messages"
-  lazy val businessTaxAccountHelpUrl: String = s"$helpAndContactBase"
+  lazy val businessTaxAccountHelpUrl: String = s"$helpAndContactBase/business-account/help"
 
   lazy val personalTaxAccountMessagesUrl: String = s"$ptaFrontendBase/messages"
-  lazy val personalTaxAccountCheckProgressUrl: String = s"$trackingBase"
+  lazy val personalTaxAccountCheckProgressUrl: String = s"$trackingBase/track"
   lazy val personalTaxAccountProfileUrl: String = s"$ptaFrontendBase/your-profile"
   lazy val personalTaxAccountBtaUrl: String = s"$btaFrontendBase"
 
