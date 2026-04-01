@@ -19,17 +19,13 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.UkProperty
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.*
-import models.itsaStatus.ITSAStatus
+import models.admin._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status
-import play.api.test.Helpers.*
+import play.api.test.Helpers._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTrader2023WithUnknowns, ukPlusForeignPropertyAndSoleTraderNoLatency, ukPlusForeignPropertyAndSoleTraderWithLatency, ukPlusForeignPropertyAndSoleTraderWithLatencyExpired}
-
-import scala.concurrent.Future
 
 class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsHelper {
 
@@ -75,7 +71,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockSetSessionKeyMongo(Right(true))
 
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty)))))
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -98,7 +93,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               mockUkPlusForeignPlusSoleTraderWithLatencyExpired()
               setupMockCreateSession(true)
               setupMockSetSessionKeyMongo(Right(true))
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty)))))
 
@@ -119,7 +113,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -152,7 +145,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
               mockUkPlusForeignPlusSoleTraderWithLatency()
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty)))))
               setupMockSetSessionKeyMongo(Right(true))
@@ -189,7 +181,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -222,7 +213,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, false)
@@ -249,7 +239,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -277,7 +266,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -306,7 +294,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
               setupMockCreateSession(true)
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
@@ -334,7 +321,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockCreateSession(true)
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
@@ -362,7 +348,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               mockSingleBusinessIncomeSource()
-              when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
 
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)

@@ -141,7 +141,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               .thenReturn(Future.successful(true))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems))
-            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -167,7 +167,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
-            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             val result: Future[Result] = controller.showAgent()(fakeRequest)
 
             status(result) shouldBe Status.OK
@@ -207,7 +207,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               .thenReturn(Future.successful(financialDetailsModels))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems))
-            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -255,7 +255,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
               .thenReturn(Future.successful(financialDetailsModels))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(financialDetailsModels.flatMap(_.asChargeItems).take(3))
-when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -294,7 +294,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -331,7 +331,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
               )))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-            when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -350,7 +350,8 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
         "there is a problem getting financial details" in new Setup {
 
           mockGetDueDates(Right(futureDueDates))
-          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
             .thenReturn(Future.successful(List(FinancialDetailsErrorModel(1, "testString"))))
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
@@ -377,7 +378,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
           setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -404,7 +405,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
           when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
             .thenReturn(Future.successful(emptyWhatYouOweChargesList))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
           setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -421,7 +422,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
           setupNextUpdatesTests(futureDueDates, None, None, agentType)
-          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
@@ -436,7 +437,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
 
         "there is an overdue update date to display" in new Setup {
           setupNextUpdatesTests(overdueDueDates, None, None, agentType)
-          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
@@ -451,7 +452,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
 
         "there are no updates to display" in new Setup {
           setupNextUpdatesTests(Seq(), None, None, agentType)
-          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
@@ -472,7 +473,9 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
-        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Voluntary))
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary)))
+        )
 
         setupNextUpdatesTests(allDueDates = Seq(nextQuarterlyUpdateDate),
           nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
@@ -507,7 +510,9 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
-        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated)))
+        )
 
         setupNextUpdatesTests(allDueDates = Seq(overdue1, overdue2, nextQuarterlyUpdateDate),
           nextQuarterlyUpdateDueDate = Some(nextQuarterlyUpdateDate),
@@ -539,7 +544,9 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
 
-        when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Annual))
+        setupMockGetStatusTillAvailableFutureYears(currentTaxYear.previousYear)(
+          Future.successful(Map(currentTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Annual)))
+        )
 
         setupNextUpdatesTests(allDueDates = futureDueDates,
           nextQuarterlyUpdateDueDate = None,
@@ -574,7 +581,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
           mockGetAllUnpaidFinancialDetails()
           setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
           setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -601,7 +608,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
             ))))
           setupMockGetWhatYouOweChargesListFromFinancialDetails(oneOverdueBCDPaymentInWhatYouOweChargesList)
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-          when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
           setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -632,7 +639,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -664,7 +671,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
@@ -693,7 +700,7 @@ when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenRetu
               ))))
             setupMockGetWhatYouOweChargesListFromFinancialDetails(emptyWhatYouOweChargesList)
             setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
-when(mockITSAStatusService.getCurrentITSAStatus()(any(), any(), any())).thenReturn(Future.successful(ITSAStatus.Mandated))
+            setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
             setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
             setupMockGetPenaltyDetailsCount(enabled = false)(Future.successful(0))
