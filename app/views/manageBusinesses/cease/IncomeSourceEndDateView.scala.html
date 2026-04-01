@@ -67,7 +67,8 @@
     form = Some(form),
     isAgent = isAgent,
     backUrl = Some(backUrl),
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @if(form.errors.nonEmpty) {
         @govukErrorSummary(

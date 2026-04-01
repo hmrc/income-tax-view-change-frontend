@@ -96,6 +96,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
           isAgent = isAgent,
           utr = user.saUtr,
           btaNavPartial = user.btaNavPartial,
+          serviceNavigationPartial = user.serviceNavigationPartial,
           charges = charges,
           maybeAvailableCredit = maybeAvailableCredit,
           origin = origin)))

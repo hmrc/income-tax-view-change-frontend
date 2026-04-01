@@ -63,7 +63,7 @@ class DeductionsSummaryController @Inject()(val authActions: AuthActions,
         auditingService.extendedAudit(AllowanceAndDeductionsResponseAuditModel(user, viewModel))
         val fallbackBackUrl = getFallbackUrl(user.session.get(calcPagesBackPage), isAgent,
           liabilityCalc.metadata.isCalculationCrystallised, taxYear, origin)
-        Ok(deductionBreakdownView(viewModel, taxYear, backUrl = fallbackBackUrl, btaNavPartial = user.btaNavPartial, isAgent = isAgent)(implicitly, messages))
+        Ok(deductionBreakdownView(viewModel, taxYear, backUrl = fallbackBackUrl, btaNavPartial = user.btaNavPartial, serviceNavigationPartial = user.serviceNavigationPartial, isAgent = isAgent)(implicitly, messages))
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
         Logger("application").info(s"${if (isAgent) "[Agent]"}[$taxYear] No deductions data found.")
         itvcErrorHandler.showInternalServerError()

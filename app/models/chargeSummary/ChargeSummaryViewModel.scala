@@ -16,14 +16,15 @@
 
 package models.chargeSummary
 
-import enums.GatewayPage._
+import enums.GatewayPage.*
 import models.ChargeHistoryItem
 import models.chargeHistory.AdjustmentHistoryModel
-import models.financialDetails._
+import models.financialDetails.*
 import play.api.i18n.Messages
 import play.twirl.api.Html
-import controllers.routes._
+import controllers.routes.*
 import models.repaymentHistory.RepaymentHistoryUtils
+import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation
 
 import java.time.LocalDate
 
@@ -41,6 +42,7 @@ case class ChargeSummaryViewModel(
                                    reviewAndReconcileCredit: Option[ChargeItem],
                                    isAgent: Boolean = false,
                                    btaNavPartial: Option[Html] = None,
+                                   serviceNavigationPartial: Option[ServiceNavigation] = None,
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,
                                    adjustmentHistory: AdjustmentHistoryModel,

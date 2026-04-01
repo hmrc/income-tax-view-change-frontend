@@ -83,6 +83,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
         Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
           btaNavPartial = user.btaNavPartial,
+          serviceNavigationPartial = user.serviceNavigationPartial,
           isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
           creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages))
 

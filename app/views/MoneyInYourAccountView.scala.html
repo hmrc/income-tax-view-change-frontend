@@ -47,7 +47,9 @@
     pageTitle = messages("money-in-your-account.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    useFallbackBackLink = true
+    useFallbackBackLink = true,
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 
     @h1(msg = messages("money-in-your-account.heading"))

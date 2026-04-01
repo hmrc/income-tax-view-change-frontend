@@ -18,7 +18,7 @@ package testConstants
 
 import auth.MtdItUser
 import auth.authV2.models.AuthorisedAndEnrolledRequest
-import authV2.AuthActionsTestData._
+import authV2.AuthActionsTestData.*
 import config.FrontendAppConfig
 import enums.MTDIndividual
 import models.btaNavBar.ListLinks
@@ -32,8 +32,10 @@ import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.PropertyDetailsTestConstants.propertyDetails
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.UnitSpec
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ServiceNavigationItem, Text}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation
 
 object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
@@ -194,4 +196,12 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
       "<li> <a href='testUrl' id='nav-bar-link-testEnForm' class='hmrc-account-menu__link'> testEnForm <span class='hmrc-notification-badge'>1</span> </a> </li>" +
       "<li> <a href='testUrl' id='nav-bar-link-testEnHelp' class='hmrc-account-menu__link'> testEnHelp </a> </li>" +
       "</ul>  </nav> </body></html>")
+
+  val testServiceNavigation = ServiceNavigation(
+      navigation = Seq(ServiceNavigationItem(
+      content = Text("testHome"),
+      href = "testLink"
+    )), 
+    navigationId = "bta-service-navigation"
+  )
 }

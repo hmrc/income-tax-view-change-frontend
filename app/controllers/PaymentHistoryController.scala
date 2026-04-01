@@ -90,6 +90,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           saUtr = user.saUtr,
           viewModel = viewModel,
           btaNavPartial = user.btaNavPartial,
+          serviceNavigationPartial = user.serviceNavigationPartial,
           groupedPayments = paymentHistoryEntries,
           paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)
         ))

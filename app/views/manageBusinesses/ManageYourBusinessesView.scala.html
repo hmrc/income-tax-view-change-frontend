@@ -121,7 +121,8 @@
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @h1(msg = getMessage("heading"), id = Some("manage-your-businesses-h1"))
 

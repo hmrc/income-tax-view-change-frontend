@@ -322,7 +322,7 @@
 }
 
 @mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
-    useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage) {
+    useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage, btaAndPtaServiceNavigation = viewModel.serviceNavigationPartial) {
 
     @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
         @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)

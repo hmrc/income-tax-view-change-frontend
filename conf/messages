@@ -87,6 +87,16 @@ agent-unauthorised.note.b3                                      = next charges d
 agent-unauthorised.note.b4                                      = penalties and appeals
 agent-unauthorised.link                                         = Read more about the difference between main and supporting agents on GOV.UK.
 
+## Rebrand Service Navigation
+pta.navigation.messages = Messages
+pta.navigation.checkProgress = Check progress
+pta.navigation.profileAndSettings = Profile and settings
+pta.navigation.businessTaxAccount = Business tax account
+
+bta.navigation.manageAccount = Manage account
+bta.navigation.messages = Messages
+bta.navigation.helpAndContact = Help and contact
+
 ## BTA Links ##
 bta.home                                                        = Business tax home
 bta.messages                                                    = Messages

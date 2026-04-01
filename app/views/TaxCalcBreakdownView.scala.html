@@ -31,7 +31,7 @@
         capitalGainsTaxTable: CapitalGainsTaxTableNew,
         govukInsetText: GovukInsetText
 )
-@(viewModel: TaxDueSummaryViewModel, taxYear: Int, startAVRTYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(viewModel: TaxDueSummaryViewModel, taxYear: Int, startAVRTYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
 
 @taxBandTableRow(band: TaxBands, scottishRegime: Boolean = false, startAVRTYear: Int) = {
     <tr class="govuk-table__row">
@@ -76,7 +76,7 @@
 }
 
 @mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent,
-    btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
+    btaNavPartial = btaNavPartial, useFallbackBackLink = true, btaAndPtaServiceNavigation = serviceNavigationPartial) {
 
     @h1WithCaption(
         heading = messages("taxCal_breakdown.heading"),

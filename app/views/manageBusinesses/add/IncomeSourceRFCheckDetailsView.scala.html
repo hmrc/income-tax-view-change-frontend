@@ -156,7 +156,8 @@
     pageTitle = messages("income-sources.check-details-reporting-frequency.title"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @hmrcPageHeading(PageHeading(
         text = messages("income-sources.check-details-reporting-frequency.title"),

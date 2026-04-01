@@ -16,6 +16,7 @@
 
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -34,6 +35,7 @@
     earliestSubmissionTaxYear: Int,
     isAgent: Boolean = false,
     btaNavPartial: Option[Html] = None,
+    serviceNavigationPartial: Option[ServiceNavigation] = None,
     origin: Option[String] = None
 )(implicit request: Request[_], messages: Messages)
 
@@ -83,7 +85,8 @@
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
-    useFallbackBackLink = true
+    useFallbackBackLink = true,
+    btaAndPtaServiceNavigation = serviceNavigationPartial
 ) {
 
     @h1(msg = messages("taxYears.heading"), id = Some("heading"))

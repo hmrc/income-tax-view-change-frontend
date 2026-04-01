@@ -77,7 +77,8 @@
     pageTitle = if(isOptInOptOutContentUpdateR17) messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading.feature.switched") else messages("manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.heading"),
     isAgent = isAgent,
     backUrl = Some("#"),
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @if(form.errors.nonEmpty) {
         <div class="govuk-error-summary" data-module="govuk-error-summary">

@@ -43,7 +43,8 @@
 @mainTemplate(
     pageTitle = getMessage("title"),
     isAgent = viewModel.isAgent,
-    btaNavPartial = user.btaNavPartial
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
     @govukPanel(
         Panel(

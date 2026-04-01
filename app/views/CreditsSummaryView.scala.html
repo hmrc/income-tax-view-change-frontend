@@ -22,6 +22,7 @@
 @import views.html.components._
 @import models.creditDetailModel.CreditDetailModel
 @import viewUtils.ExternalUrlHelper
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
         mainTemplate: unifiedLayout,
@@ -38,6 +39,7 @@
     backUrl: String,
     utr: Option[String],
     btaNavPartial: Option[Html] = None,
+    serviceNavigationPartial: Option[ServiceNavigation] = None,
     charges: List[CreditDetailModel],
     maybeAvailableCredit: Option[BigDecimal],
     isAgent: Boolean = false,
@@ -140,7 +142,8 @@
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
-    useFallbackBackLink = true
+    useFallbackBackLink = true,
+    btaAndPtaServiceNavigation = serviceNavigationPartial
 ) {
     @h1(msg = messages("credits.heading", s"$calendarYear"), id = Some("page-heading"))
     <div>

@@ -45,7 +45,8 @@
     pageTitle = s"${messages("cannotGoBack.heading")}",
     isAgent = isAgent,
     backUrl = None,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @h1(msg = messages("cannotGoBack.heading"), id = Some("title"))
 
