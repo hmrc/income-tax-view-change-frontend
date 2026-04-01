@@ -127,7 +127,7 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
-  def getBalancingChargeDueDate(): Option[LocalDate] = {
+  def getBalancingChargeDueDate: Option[LocalDate] = {
     isBalancingChargeZero match {
       case true => None
       case _ => documentDueDate
@@ -165,7 +165,7 @@ case class DocumentDetail(taxYear: Int,
       "unknownCharge"
   }
 
-  def getDueDate(): Option[LocalDate] = {
+  def getDueDate: Option[LocalDate] = {
     if (isAccruingInterest) {
       interestEndDate
     } else {

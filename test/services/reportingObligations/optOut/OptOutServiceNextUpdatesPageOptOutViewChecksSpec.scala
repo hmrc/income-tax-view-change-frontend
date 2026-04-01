@@ -23,13 +23,13 @@ import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResp
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
-import models.reportingObligations.optOut.{NextUpdatesQuarterlyReportingContentChecks}
+import models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
-import services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutProposition, OptOutService, PreviousOptOutTaxYear}
+import services.reportingObligations.optOut
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 

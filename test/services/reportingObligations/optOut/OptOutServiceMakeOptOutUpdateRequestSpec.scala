@@ -32,7 +32,6 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
 import services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
-import services.reportingObligations.optOut.OptOutService
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HeaderCarrier
 

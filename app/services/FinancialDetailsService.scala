@@ -48,7 +48,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
 
     Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
-        Logger("application").debug(s"Getting financial details for TaxYear: ${taxYear}")
+        Logger("application").debug(s"Getting financial details for TaxYear: $taxYear")
         financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
           case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
           case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))

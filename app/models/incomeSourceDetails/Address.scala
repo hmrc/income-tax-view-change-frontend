@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails
 
-import play.api.libs.json.{Format, Json, OFormat, __}
+import play.api.libs.json.{Format, Json, OFormat}
 import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 import uk.gov.hmrc.crypto.json.JsonEncryption
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
@@ -28,8 +28,8 @@ case class Address(
 
   def encrypted: SensitiveAddress =
     SensitiveAddress(
-      lines     .map(SensitiveString),
-      postcode  .map(SensitiveString)
+      lines     .map(SensitiveString.apply),
+      postcode  .map(SensitiveString.apply)
     )
 
 

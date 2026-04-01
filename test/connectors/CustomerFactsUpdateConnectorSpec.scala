@@ -30,12 +30,12 @@ import scala.concurrent.Future
 class CustomerFactsUpdateConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
 
   trait Setup {
-    def getAppConfig(): FrontendAppConfig =
+    def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new CustomerFactsUpdateConnector(mockHttpClientV2, getAppConfig())
+    val connector = new CustomerFactsUpdateConnector(mockHttpClientV2, getAppConfig)
     val mtdId = "XAIT0000123456"
     val url = connector.getCustomerFactsUpdateUrl(mtdId)
   }

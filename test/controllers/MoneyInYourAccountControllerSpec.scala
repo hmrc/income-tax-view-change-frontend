@@ -33,7 +33,6 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import services.{CreditService, DateServiceInterface, RepaymentService}
 import testConstants.ANewCreditAndRefundModel
-import testConstants.BaseTestConstants.testTaxYearTo
 import testConstants.FinancialDetailsTestConstants._
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 
@@ -62,7 +61,7 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
 
     val isAgent = mtdUserRole != MTDIndividual
 
-    s"show${if (isAgent) "Agent"}" when {
+    s"show${if (isAgent) "Agent" else ""}" when {
 
       val action = if (isAgent) testController.showAgent() else testController.show()
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)

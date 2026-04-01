@@ -48,7 +48,7 @@ class PaymentController @Inject()(val authActions: AuthActions,
     )
     mtdItUser.saUtr match {
       case Some(utr) =>
-        payApiConnector.startPaymentJourney(utr, paymentAmountInPence, mtdItUser.isAgent()).map {
+        payApiConnector.startPaymentJourney(utr, paymentAmountInPence, mtdItUser.isAgent).map {
           case model: PaymentJourneyModel => Redirect(model.nextUrl)
           case PaymentJourneyErrorResponse(status, message) => logAndHandleError(s"Failed to start payments journey due to downstream response, status: $status, message: $message")
           case _: PaymentJourneyResponse => logAndHandleError("Failed to start payments journey due to downstream response")
@@ -74,7 +74,7 @@ class PaymentController @Inject()(val authActions: AuthActions,
   def logAndHandleError(message: String)
                        (implicit mtdItUser: MtdItUser[_]): Result = {
     Logger("application").error(message)
-    val errorHandler = if(mtdItUser.isAgent()) itvcAgentErrorHandler else itvcErrorHandler
+    val errorHandler = if(mtdItUser.isAgent) itvcAgentErrorHandler else itvcErrorHandler
     errorHandler.showInternalServerError()
   }
 

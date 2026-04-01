@@ -25,6 +25,7 @@ import play.mvc.Http.Status
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
+import scala.annotation.unused
 import scala.concurrent.Future
 
 class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with IncomeSourcesDataHelper {
@@ -36,7 +37,7 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
     "return success" when {
       "return expected status code OK" in {
         val expectedIncomeSourceId = "123123123"
-        val mtdId = individualUser.mtditid
+        @unused val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl()
         val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
@@ -53,7 +54,7 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
 
 
       "return expected status code OK - but invalid json" in {
-        val mtdId = individualUser.mtditid
+        @unused val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl()
         val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson("Error message"), headers = Map.empty)
@@ -66,7 +67,7 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
 
     "return failure" when {
       "return error" in {
-        val mtdId = individualUser.mtditid
+        @unused val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl()
         val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(
@@ -90,8 +91,8 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
 
   "call create foreign property" should {
     "return expected status code OK" in {
-      val expectedIncomeSourceId = "5656"
-      val mtdId = individualUser.mtditid
+      @unused val expectedIncomeSourceId = "5656"
+      @unused val mtdId = individualUser.mtditid
 
       val url = UnderTestConnector.createBusinessIncomeSourcesUrl()
       val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
@@ -108,7 +109,7 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
 
     "return failure" when {
       "return status error 500" in {
-        val mtdId = individualUser.mtditid
+        @unused val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl()
         val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(
@@ -132,8 +133,8 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
 
   "call create UK property" should {
     "return expected status code OK" in {
-      val expectedIncomeSourceId = "5656"
-      val mtdId = individualUser.mtditid
+      @unused val expectedIncomeSourceId = "5656"
+      @unused val mtdId = individualUser.mtditid
 
       val url = UnderTestConnector.createBusinessIncomeSourcesUrl()
       val expectedResponse = HttpResponse(status = Status.OK, json = Json.toJson(
@@ -150,7 +151,7 @@ class CreateIncomeSourceConnectorSpec extends TestSupport with MockHttpV2 with I
 
     "return failure" when {
       "return status error 500" in {
-        val mtdId = individualUser.mtditid
+        @unused val mtdId = individualUser.mtditid
 
         val url = UnderTestConnector.createBusinessIncomeSourcesUrl()
         val expectedResponse = HttpResponse(status = Status.INTERNAL_SERVER_ERROR, json = Json.toJson(

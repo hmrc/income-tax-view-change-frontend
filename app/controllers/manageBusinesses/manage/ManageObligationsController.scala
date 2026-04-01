@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AnnualReportingMethod, CannotGoBackPage, QuarterlyReportingMethod}
 import models.admin.OptInOptOutContentUpdateR17
@@ -27,7 +27,7 @@ import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{DateService, IncomeSourceDetailsService, NextUpdatesService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -35,6 +35,7 @@ import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.manage.ManageObligationsView
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class ManageObligationsController @Inject()(val authActions: AuthActions,
@@ -127,7 +128,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
   }
 
   private def showError(isAgent: Boolean, message: String)(implicit user: MtdItUser[_]): Future[Result] = {
-    Logger("application").error(s"${if (isAgent) "[Agent] - "}$message")
+    Logger("application").error(s"${if (isAgent) "[Agent] - " else ""}$message")
     Future(errorHandler(isAgent).showInternalServerError())
   }
 
@@ -149,7 +150,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: Option[IncomeSourceId], isAgent: Boolean)
+  private def getIncomeSourceId(incomeSourceType: IncomeSourceType, id: Option[IncomeSourceId], @unused isAgent: Boolean)
                                (implicit user: MtdItUser[_]): Option[IncomeSourceId] = {
     incomeSourceType match {
       case SelfEmployment =>

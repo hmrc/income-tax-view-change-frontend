@@ -246,7 +246,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
       val fromYear = {response.taxYear - 1}.toString
       val toYear = {response.taxYear}.toString
       IncomeTaxViewChangeStub.stubGetFinancialDetailsCreditsByDateRange(
-        testNino, s"${fromYear}-04-06", s"${toYear}-04-05")(
+        testNino, s"$fromYear-04-06", s"$toYear-04-05")(
         response.code,
         response.json)
     })

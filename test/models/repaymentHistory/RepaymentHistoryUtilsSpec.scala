@@ -22,7 +22,6 @@ import models.financialDetails._
 import models.repaymentHistory.RepaymentHistoryUtils._
 import org.scalatest.matchers.should.Matchers
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{id1040000123, id1040000124, id1040000125}
 import testUtils.TestSupport
 
 import java.time.LocalDate

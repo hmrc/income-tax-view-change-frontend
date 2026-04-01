@@ -89,7 +89,7 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
       }
     }.recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent] "}" +
+        Logger("application").error(s"${if (isAgent) "[Agent] " else ""}" +
           s"Error getting CeaseCheckIncomeSourceDetails page: ${ex.getMessage} - ${ex.getCause}")
         Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType, isTriggeredMigration))
     }

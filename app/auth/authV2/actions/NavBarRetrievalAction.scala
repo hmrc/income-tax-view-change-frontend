@@ -24,7 +24,6 @@ import models.OriginEnum
 import models.OriginEnum.{BTA, PTA}
 import models.admin.NavBarFs
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.Results.Redirect
 import play.api.mvc.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ServiceNavigationItem, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation

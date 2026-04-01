@@ -59,7 +59,7 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"have a back link" in new Setup(confirmClientView) {
-      document.hasFallbackBacklink()
+      document.hasFallbackBacklink
     }
 
     s"have the sub heading ${confirmClientMessages.clientNameHeading}" in new Setup(confirmClientView) {

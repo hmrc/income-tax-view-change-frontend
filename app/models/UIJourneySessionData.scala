@@ -20,12 +20,13 @@ import models.incomeSourceDetails.*
 import models.reportingObligations.signUp.SignUpSessionData
 import models.reportingObligations.optOut.OptOutSessionData
 import models.triggeredMigration.TriggeredMigrationSessionData
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.*
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
+import scala.language.implicitConversions
 
 case class UIJourneySessionData(
                                  sessionId: String,

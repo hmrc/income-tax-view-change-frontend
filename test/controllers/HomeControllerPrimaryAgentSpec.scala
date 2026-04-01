@@ -44,6 +44,7 @@ import views.html.newHomePage.*
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 
 import java.time.LocalDate
+import scala.annotation.unused
 import scala.concurrent.Future
 
 class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injecting {
@@ -113,7 +114,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
   "show()" when {
     val agentType = MTDPrimaryAgent
-    val isSupportingAgent = false
+    @unused val isSupportingAgent = false
     val fakeRequest = fakeRequestConfirmedClient()
 
     s"the user is authenticated $agentType" should {

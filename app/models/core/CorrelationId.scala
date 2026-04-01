@@ -20,7 +20,7 @@ import models.core.CorrelationId.correlationId
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
-import java.util.UUID.randomUUID;
+import java.util.UUID.randomUUID
 
 case class CorrelationId(id: UUID = randomUUID()) {
   def asHeader(): (String, String) = (correlationId, id.toString)

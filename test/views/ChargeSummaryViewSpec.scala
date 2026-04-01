@@ -1078,7 +1078,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       "display a notification banner when there are dunning locks" which {
 
-        s"has the '${dunningLockBannerHeader}' heading" in new TestSetup(
+        s"has the '$dunningLockBannerHeader' heading" in new TestSetup(
           chargeItem = chargeItemModel(),
           paymentBreakdown = paymentBreakdownWithDunningLocks
         ) {
@@ -1118,7 +1118,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     }
 
     "have a fallback link" in new TestSetup() {
-      document.hasFallbackBacklink()
+      document.hasFallbackBacklink
     }
 
     "displaying charge amount" when {
@@ -1503,14 +1503,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
         document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
-        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWordAgent $interestLinkTextAgent $interestLinkFullTextAgent"
       }
 
       "have a interest lock payment link when the interest has previously" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true,
         whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
         document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
-        document.select("#p-interest-locks-msg").text() shouldBe s"${interestLinkFirstWordAgent} ${interestLinkTextAgent} ${interestLinkFullTextAgent}"
+        document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWordAgent $interestLinkTextAgent $interestLinkFullTextAgent"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true,

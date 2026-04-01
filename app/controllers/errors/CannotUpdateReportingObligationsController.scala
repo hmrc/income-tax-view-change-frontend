@@ -17,7 +17,6 @@
 package controllers.errors
 
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.errorPages.CannotUpdateReportingObligations

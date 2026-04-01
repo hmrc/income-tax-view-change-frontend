@@ -35,7 +35,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface, SessionService}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, incomeSourceWithBothYearsInLatency, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
 
 import scala.concurrent.Future
 
@@ -95,7 +95,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
   Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
     mtdAllRoles.foreach { testMtdRole =>
-      s"show${if (testMtdRole != MTDIndividual) "Agent"}($testIncomeSourceType)" when {
+      s"show${if (testMtdRole != MTDIndividual) "Agent" else ""}($testIncomeSourceType)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(testMtdRole).withMethod("GET")
         s"the user is authenticated as s$testMtdRole" should {
           s"return ${Status.OK}" when {
@@ -271,7 +271,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
   Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { testIncomeSourceType =>
     mtdAllRoles.foreach { testMtdRole =>
-      s"submit${if (testMtdRole != MTDIndividual) "Agent"}($testIncomeSourceType)" when {
+      s"submit${if (testMtdRole != MTDIndividual) "Agent" else ""}($testIncomeSourceType)" when {
         val fakeRequest = fakePostRequestBasedOnMTDUserType(testMtdRole).withMethod("POST")
         s"the user is authenticated as s$testMtdRole" should {
           s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a property (OptInOptOutContentUpdateR17 FS enabled)" when {

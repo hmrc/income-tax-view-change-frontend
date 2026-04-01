@@ -79,7 +79,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
   Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
         val action = if (mtdRole == MTDIndividual) testAddInternationalBusinessAddressController.show(isAgent = false, mode, false) else testAddInternationalBusinessAddressController.show(isAgent = true, mode, false)
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the address lookup service" when {

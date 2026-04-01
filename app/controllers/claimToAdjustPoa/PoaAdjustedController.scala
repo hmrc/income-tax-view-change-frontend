@@ -22,12 +22,14 @@ import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.AfterSubmissionPage
-import models.claimToAdjustPoa.{Increase, PaymentOnAccountViewModel, PoaAmendmentData, SelectYourReason}
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{Increase, PoaAmendmentData, SelectYourReason}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{ClaimToAdjustService, DateService, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.ClaimToAdjustService
+import services.{DateService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
@@ -69,7 +71,7 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
   private def handleView(poa: PaymentOnAccountViewModel, session: PoaAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
       case Right(_) => Future.successful(
-        Ok(view(user.isAgent(), poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
+        Ok(view(user.isAgent, poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
       case Left(ex) =>
         Future.successful(logAndRedirect(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}"))
     }

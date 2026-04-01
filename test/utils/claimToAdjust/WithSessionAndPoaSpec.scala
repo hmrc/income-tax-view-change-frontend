@@ -22,7 +22,8 @@ import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.{PaymentOnAccountViewModel, PoaAmendmentData}
+import models.claimToAdjustPoa.PoaAmendmentData
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,7 +34,8 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
+import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned

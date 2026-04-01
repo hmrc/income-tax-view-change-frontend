@@ -21,12 +21,11 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.admin.{FeatureSwitch, ReportingFrequencyPage}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
-import services.reportingObligations.optOut.{OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated}
 import testConstants.BaseTestConstants.{testNino, testUserTypeIndividual}
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.language.LanguageUtils

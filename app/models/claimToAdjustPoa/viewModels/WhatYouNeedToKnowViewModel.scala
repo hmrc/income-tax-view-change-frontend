@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.claimToAdjustPoa
+package models.claimToAdjustPoa.viewModels
 
 import models.incomeSourceDetails.TaxYear
 

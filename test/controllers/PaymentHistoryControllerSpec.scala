@@ -62,7 +62,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgent() else testController.show()
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"show${if (isAgent) "Agent"}" when {
+    s"show${if (isAgent) "Agent" else ""}" when {
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)
@@ -165,6 +165,6 @@ class PaymentHistoryControllerSpec extends MockAuthActions
         }
       }
     }
-testMTDAuthFailuresForRole(testController.refundStatus, MTDIndividual)(fakeRequestWithActiveSession)
+    testMTDAuthFailuresForRole(testController.refundStatus, MTDIndividual)(fakeRequestWithActiveSession)
   }
 }

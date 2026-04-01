@@ -32,9 +32,9 @@
 )
 
 <div class="govuk-body" id="money-in-your-account">
-    @h2(msg = messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent()) "-agent" else ""}"))
+    @h2(msg = messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent) "-agent" else ""}"))
     @messages("whatYouOwe.moneyOnAccount-1") @availableCredit
-    @messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent()) "-agent" else ""}-2")
+    @messages(s"whatYouOwe.moneyOnAccount${if(user.isAgent) "-agent" else ""}-2")
     @link(
         link = creditAndRefundsUrl,
         messageKey = "whatYouOwe.moneyOnAccount-3",

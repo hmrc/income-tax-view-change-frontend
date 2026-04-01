@@ -19,7 +19,6 @@ package services
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import connectors.AddressLookupConnector
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}

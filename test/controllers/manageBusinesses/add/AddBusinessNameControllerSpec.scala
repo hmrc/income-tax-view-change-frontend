@@ -55,7 +55,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions with MockSessionServ
   val validBusinessName: String = "Test Business Name"
   val journeyType: IncomeSourceJourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
 
-  def getValidationErrorTabTitle(): String = {
+  def getValidationErrorTabTitle: String = {
     s"${messages("htmlTitle.invalidInput", messages("add-business-name.heading1"))}"
   }
 
@@ -68,7 +68,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions with MockSessionServ
 
   Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
         val action = getAction(mtdRole, mode)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
@@ -133,7 +133,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions with MockSessionServ
           testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
         }
       }
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+      s"submit${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
         val action = getAction(mtdRole, mode, true)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
@@ -196,7 +196,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions with MockSessionServ
               contentAsString(result) must include("Enter your name or the name of your business")
 
               val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe getValidationErrorTabTitle()
+              document.title shouldBe getValidationErrorTabTitle
             }
 
             "Business name is too long" in {

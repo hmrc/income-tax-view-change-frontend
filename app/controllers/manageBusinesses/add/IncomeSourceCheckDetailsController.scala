@@ -40,6 +40,7 @@ import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsView: IncomeSourceCheckDetailsView,
@@ -79,7 +80,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
       )(implicitly, itvcErrorHandlerAgent)
   }
 
-  private def handleRequest(sources: IncomeSourceDetailsModel,
+  private def handleRequest( @unused sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType,
                             isTriggeredMigration: Boolean)
@@ -138,7 +139,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
     }
   }
 
-  private def getBusinessModel(sessionData: UIJourneySessionData)(implicit user: MtdItUser[_]): Option[CheckBusinessDetailsViewModel] = {
+  private def getBusinessModel(sessionData: UIJourneySessionData)(implicit @unused user: MtdItUser[_]): Option[CheckBusinessDetailsViewModel] = {
 
     sessionData.addIncomeSourceData.flatMap { addIncomeSourceData =>
       for {

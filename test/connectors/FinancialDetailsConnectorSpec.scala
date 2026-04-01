@@ -45,12 +45,12 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
     val baseUrl = "http://localhost:9999"
 
-    def getAppConfig(): FrontendAppConfig =
+    def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new FinancialDetailsConnector(mockHttpClientV2, getAppConfig())
+    val connector = new FinancialDetailsConnector(mockHttpClientV2, getAppConfig)
   }
 
   override def beforeEach(): Unit = {

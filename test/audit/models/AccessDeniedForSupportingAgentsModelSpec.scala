@@ -50,7 +50,7 @@ class AccessDeniedForSupportingAgentsModelSpec extends TestSupport {
       audit.auditType shouldBe auditType
     }
 
-  "have the correct detail for the audit event" in {
+    "have the correct detail for the audit event" in {
       audit.detail shouldBe expectedAuditDetails
     }
   }

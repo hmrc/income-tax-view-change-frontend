@@ -26,8 +26,8 @@ import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import models.core.CheckMode
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
-import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}
+import services.{NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
@@ -59,14 +59,14 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
             EitherT.rightT(
               Ok(
                 checkYourAnswers(
-                  isAgent = user.isAgent(),
+                  isAgent = user.isAgent,
                   poaReason = reason,
                   taxYear = poa.taxYear,
                   adjustedFirstPoaAmount = amount,
                   adjustedSecondPoaAmount = amount,
-                  redirectUrl = ConfirmationForAdjustingPoaController.show(user.isAgent()).url,
-                  changePoaAmountUrl = EnterPoaAmountController.show(user.isAgent(), CheckMode).url,
-                  changePoaReasonUrl = SelectYourReasonController.show(user.isAgent(), CheckMode).url
+                  redirectUrl = ConfirmationForAdjustingPoaController.show(user.isAgent).url,
+                  changePoaAmountUrl = EnterPoaAmountController.show(user.isAgent, CheckMode).url,
+                  changePoaReasonUrl = SelectYourReasonController.show(user.isAgent, CheckMode).url
                 )
               )
             )

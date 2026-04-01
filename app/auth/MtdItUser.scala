@@ -43,7 +43,7 @@ case class MtdItUser[A](mtditid: String,
   val userType: Option[AffinityGroup] = authUserDetails.affinityGroup
   val arn: Option[String] = authUserDetails.agentReferenceNumber
 
-  def isAgent(): Boolean = usersRole != MTDIndividual
+  def isAgent: Boolean = usersRole != MTDIndividual
   def userName: Option[Name] = authUserDetails.name
   def optClientNameAsString: Option[String] = {
     val optClientName = clientDetails.fold[Option[Name]](None)(_.clientName)

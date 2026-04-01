@@ -46,13 +46,13 @@ case class AddIncomeSourceData(
 
   def encrypted: SensitiveAddIncomeSourceData =
     SensitiveAddIncomeSourceData(
-      businessName.map(SensitiveString),
-      businessTrade.map(SensitiveString),
-      dateStarted.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
-      accountingPeriodStartDate.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
-      accountingPeriodEndDate.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant),
-      incomeSourceId.map(SensitiveString),
-      address.map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString), postcode.map(SensitiveString)) },
+      businessName.map(SensitiveString.apply),
+      businessTrade.map(SensitiveString.apply),
+      dateStarted.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant.apply),
+      accountingPeriodStartDate.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant.apply),
+      accountingPeriodEndDate.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant.apply),
+      incomeSourceId.map(SensitiveString.apply),
+      address.map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString.apply), postcode.map(SensitiveString.apply)) },
       chooseSoleTraderAddress.map { case
         ChooseSoleTraderAddressUserAnswer(
           addressLine1: Option[String],
@@ -64,24 +64,24 @@ case class AddIncomeSourceData(
           newAddress
         ) =>
         SensitiveChooseSoleTraderAddressRadioAnswer(
-          addressLine1.map(SensitiveString),
-          addressLine2.map(SensitiveString),
-          addressLine3.map(SensitiveString),
-          addressLine4.map(SensitiveString),
-          postcode.map(SensitiveString),
-          countryCode.map(SensitiveString),
+          addressLine1.map(SensitiveString.apply),
+          addressLine2.map(SensitiveString.apply),
+          addressLine3.map(SensitiveString.apply),
+          addressLine4.map(SensitiveString.apply),
+          postcode.map(SensitiveString.apply),
+          countryCode.map(SensitiveString.apply),
           newAddress
         )
       },
-      countryCode.map(SensitiveString),
-      addressId.map(SensitiveString),
-      addressLookupId.map(SensitiveString),
-      changeReportingFrequency.map(SensitiveBoolean),
-      reportingMethodTaxYear1.map(SensitiveString),
-      reportingMethodTaxYear2.map(SensitiveString),
-      incomeSourceAdded.map(SensitiveBoolean),
-      incomeSourceCreatedJourneyComplete.map(SensitiveBoolean),
-      incomeSourceRFJourneyComplete.map(SensitiveBoolean)
+      countryCode.map(SensitiveString.apply),
+      addressId.map(SensitiveString.apply),
+      addressLookupId.map(SensitiveString.apply),
+      changeReportingFrequency.map(SensitiveBoolean.apply),
+      reportingMethodTaxYear1.map(SensitiveString.apply),
+      reportingMethodTaxYear2.map(SensitiveString.apply),
+      incomeSourceAdded.map(SensitiveBoolean.apply),
+      incomeSourceCreatedJourneyComplete.map(SensitiveBoolean.apply),
+      incomeSourceRFJourneyComplete.map(SensitiveBoolean.apply)
     )
 }
 
@@ -156,8 +156,6 @@ object SensitiveAddIncomeSourceData {
 
   implicit def sensitiveBooleanFormat(implicit crypto: Encrypter with Decrypter): Format[SensitiveBoolean] =
     JsonEncryption.sensitiveEncrypterDecrypter(SensitiveBoolean.apply)
-
-  import play.api.libs.json.{Format, Json}
 
   implicit def format(implicit crypto: Encrypter with Decrypter): Format[SensitiveAddIncomeSourceData] =
     Json.format[SensitiveAddIncomeSourceData]

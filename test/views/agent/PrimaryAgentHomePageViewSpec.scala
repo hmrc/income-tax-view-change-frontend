@@ -38,6 +38,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.agent.PrimaryAgentHomeView
 
 import java.time.{LocalDate, Month}
+import scala.annotation.unused
 import scala.util.Try
 
 class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
@@ -77,7 +78,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
   private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, true, false, ITSAStatus.NoStatus, None, None)
 
   class TestSetup(nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
-                  overduePaymentExists: Boolean = true,
+                  @unused overduePaymentExists: Boolean = true,
                   overDuePaymentsCount: Int = 0,
                   paymentsAccruingInterestCount: Int = 0,
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
@@ -360,7 +361,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         "dont have a link to the update and submit page when ITSASubmissionIntegrationEnabled is disabled" in new TestSetup(ITSASubmissionIntegrationEnabled = false) {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").get(1))
           link.map(_.attr("href")) should not be Some(appConfig.submissionFrontendTaxYearsPage(currentTaxYear))
-          link.map(_.text) should not be Some(s"Update and submit your ${currentTaxYear - 1} to ${currentTaxYear} return")
+          link.map(_.text) should not be Some(s"Update and submit your ${currentTaxYear - 1} to $currentTaxYear return")
         }
         "has a link to the tax years page" in new TestSetup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)

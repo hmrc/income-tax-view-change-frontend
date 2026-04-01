@@ -19,7 +19,7 @@ package views
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks.*
-import testConstants.BaseTestConstants.{testNavHtml, testServiceNavigation}
+import testConstants.BaseTestConstants.testServiceNavigation
 import testUtils.ViewSpec
 import views.html.DeductionBreakdownView
 
@@ -56,7 +56,7 @@ class DeductionBreakdownViewSpec extends ViewSpec {
       }
 
       "have a fallback backlink" in new Setup(view) {
-        document.hasFallbackBacklink()
+        document.hasFallbackBacklink
       }
 
       "have the correct heading" in new Setup(view) {

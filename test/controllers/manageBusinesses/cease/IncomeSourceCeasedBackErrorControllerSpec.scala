@@ -42,7 +42,7 @@ class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with Moc
   mtdAllRoles.foreach { mtdRole =>
     List(UkProperty, ForeignProperty).foreach { incomeSourceType =>
       val isAgent = mtdRole != MTDIndividual
-      s"show${if (isAgent) "Agent"}($incomeSourceType)" when {
+      s"show${if (isAgent) "Agent" else ""}($incomeSourceType)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = if (!isAgent) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
@@ -54,7 +54,7 @@ class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with Moc
             status(result) shouldBe OK
           }
         }
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

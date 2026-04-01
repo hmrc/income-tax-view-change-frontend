@@ -30,8 +30,8 @@ import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services._
+import play.api.mvc.*
+import services.*
 import services.manageBusinesses.IncomeSourceRFService
 import services.reportingObligations.signUp.SignUpService
 import services.reportingObligations.optOut.OptOutService
@@ -43,6 +43,7 @@ import views.html.errorPages.templates.ErrorTemplate
 import views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthActions,
@@ -82,9 +83,9 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                                                    isChange: Boolean,
                                                    isR17ContentEnabled: Boolean
                                                   )
-                                                  (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
+                                                  (implicit user: MtdItUser[_], @unused hc: HeaderCarrier): Future[Result] = {
     updateIncomeSourceAsAdded(sessionData).flatMap {
-      case false => Logger("application").error(s"${if (isAgent) "[Agent]"}" +
+      case false => Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
         s"Error retrieving data from session, IncomeSourceType: $incomeSourceType")
         Future.successful {
           incomeSourceReportingFrequencyService.errorHandler(isAgent).showInternalServerError()
@@ -190,7 +191,7 @@ class IncomeSourceReportingFrequencyController @Inject()(val authActions: AuthAc
                               incomeSourceType: IncomeSourceType,
                               sessionData: UIJourneySessionData
                              )
-                             (implicit user: MtdItUser[_]): Future[Result] = {
+                             (implicit  @unused user: MtdItUser[_]): Future[Result] = {
     val yesOrNo = form.yesNo.exists(_.toBoolean)
     if (yesOrNo) {
       val previousChoice: Option[Boolean] =

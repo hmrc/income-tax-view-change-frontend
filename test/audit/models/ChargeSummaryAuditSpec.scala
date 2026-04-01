@@ -33,7 +33,7 @@ import play.api.test.FakeRequest
 import services.DateService
 import testConstants.BaseTestConstants.*
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetails, financialDetail}
+import testConstants.FinancialDetailsTestConstants.financialDetail
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 

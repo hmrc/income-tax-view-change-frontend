@@ -12,10 +12,10 @@ val bootstrapPlayVersion = "10.7.0"
 val playPartialsVersion = "10.2.0"
 val playFrontendHMRCVersion = "12.25.0"
 val catsVersion = "2.13.0"
-val jsoupVersion = "1.21.2"
-val mockitoVersion = "5.21.0"
-val scalaMockVersion = "7.5.2"
-val wiremockVersion = "3.0.0-beta-7"
+val jsoupVersion = "1.22.1"
+val mockitoVersion = "5.23.0"
+val scalaMockVersion = "7.5.5"
+val wiremockVersion = "3.0.1"
 val hmrcMongoVersion = "2.11.0"
 val currentScalaVersion = "3.3.6"
 val playVersion = "play-30"
@@ -40,7 +40,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.jsoup" % "jsoup" % jsoupVersion % scope,
   "org.mockito" % "mockito-core" % mockitoVersion % scope,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion % scope,
-  "org.scalacheck" %% "scalacheck" % "1.18.1" % scope,
+  "org.scalacheck" %% "scalacheck" % "1.19.0" % scope,
   "org.scalatestplus" %% "scalacheck-1-15" % "3.2.11.0" % scope,
   "uk.gov.hmrc" %% s"bootstrap-test-$playVersion" % bootstrapPlayVersion % "test",
   caffeine,

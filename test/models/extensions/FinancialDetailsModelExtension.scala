@@ -34,7 +34,7 @@ trait FinancialDetailsModelExtension {
     def getAllDueDates: List[LocalDate] = {
       fdm match {
         case FinancialDetailsModel(_, _, documentDetails, _) =>
-          documentDetails.flatMap(_.getDueDate())
+          documentDetails.flatMap(_.getDueDate)
       }
     }
 

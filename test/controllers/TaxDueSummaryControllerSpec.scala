@@ -109,7 +109,7 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showTaxDueSummaryAgent(testTaxYear) else testController.showTaxDueSummary(testTaxYear)
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
-    s"showTaxDueSummary${if (isAgent) "Agent"}" when {
+    s"showTaxDueSummary${if (isAgent) "Agent" else ""}" when {
       s"the $mtdUserRole is authenticated" should {
         if (mtdUserRole == MTDSupportingAgent) {
           testSupportingAgentDeniedAccess(action)(fakeRequest)

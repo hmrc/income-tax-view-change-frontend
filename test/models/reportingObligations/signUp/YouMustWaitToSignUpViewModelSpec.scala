@@ -17,7 +17,6 @@
 package models.reportingObligations.signUp
 
 import models.incomeSourceDetails.TaxYear
-import models.reportingObligations.signUp.YouMustWaitToSignUpViewModel
 import testUtils.UnitSpec
 
 class YouMustWaitToSignUpViewModelSpec extends UnitSpec {

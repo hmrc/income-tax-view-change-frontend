@@ -25,7 +25,8 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
+import services.{DateServiceInterface, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.ClaimToAdjustService
 
 import scala.concurrent.Future
 
@@ -81,7 +82,7 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
 
           "redirect to the You Cannot Go Back page" in {
               mockSingleBISWithCurrentYearAsMigrationYear()
-            mockItsaStatusRetrievalAction()
+              mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount()
               setupMockTaxYearNotCrystallised()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
