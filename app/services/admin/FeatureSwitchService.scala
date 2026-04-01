@@ -39,23 +39,32 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
       .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
 
 
-  def getAll: Future[List[FeatureSwitch]] = {
+  def getAll()(implicit hc: HeaderCarrier): Future[List[FeatureSwitch]] = {
+
+    def enrich(mongoSwitches: List[FeatureSwitch]) = {
+      Logger("application").debug(s"reading FSS: $mongoSwitches")
+      FeatureSwitchName.allFeatureSwitches
+        .foldLeft(mongoSwitches) { (featureSwitches, missingSwitch) =>
+          if (featureSwitches.map(_.name).contains(missingSwitch))
+            featureSwitches
+          else
+            FeatureSwitch(missingSwitch, false) :: featureSwitches
+        }
+        .reverse
+    }
 
     if (appConfig.readFeatureSwitchesFromMongo) {
-      // TODO: do we need to apply fallback in case can not connect to mongoDb?
-      featureSwitchRepository.getFeatureSwitches.map { mongoSwitches =>
-        Logger("application").debug(s"reading FSS: ${mongoSwitches}")
-        FeatureSwitchName.allFeatureSwitches
-          .foldLeft(mongoSwitches) { (featureSwitches, missingSwitch) =>
-            if (featureSwitches.map(_.name).contains(missingSwitch))
-              featureSwitches
-            else
-              FeatureSwitch(missingSwitch, false) :: featureSwitches
-          }
-          .reverse
-      }
+      featureSwitchConnector.getAllSwitches()
+        .recoverWith { case ex =>
+          Logger("application").warn(
+            s"Connector failed, falling back to repository: ${ex.getMessage}"
+          )
+          featureSwitchRepository.getFeatureSwitches
+        }
+        .map(enrich)
+
     } else {
-      Future.successful(getFSList)
+      Future.successful(enrich(getFSList))
     }
   }
 
