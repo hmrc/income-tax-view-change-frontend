@@ -74,6 +74,8 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
 
   def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel)(implicit user: MtdItUser[_]): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
+//      TODO remove it after debugging
+      Logger("application").error(s"convertToCreateBusinessIncomeSourceRequest called  CheckBusinessDetailsViewModel= $viewModel")
       CreateBusinessIncomeSourceRequest(
         mtdbsa = user.mtditid,
         businessDetails = List(
@@ -86,7 +88,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
               addressLine2 = viewModel.businessAddressLine2.trim(),
               addressLine3 = viewModel.businessAddressLine3.trim(),
               addressLine4 = viewModel.businessAddressLine4.trim(),
-              countryCode = Some("GB"), // required to be GB by API when postcode present
+              countryCode = viewModel.businessCountryCode, // required to be GB by API when postcode present
               postalCode = viewModel.businessPostalCode
             ),
             typeOfBusiness = Some(viewModel.businessTrade),

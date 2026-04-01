@@ -57,14 +57,12 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   }
 
   private def getSuccessURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): String = {
-// TODO check if we need to deal with MODE and isTriggeredMigration ???
-    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
-    /*((isAgent, mode) match {
-      case (false, NormalMode) => routes.AddBusinessAddressController.show(mode, isTriggeredMigration)
+    ((isAgent, mode) match {
+      case (false, NormalMode) => controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
-      case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode, isTriggeredMigration)
+      case (_, NormalMode) => controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
-    }).url*/
+    }).url
   }
 
   private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call = if(isAgent) {

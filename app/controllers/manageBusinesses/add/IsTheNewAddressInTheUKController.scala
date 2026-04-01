@@ -111,7 +111,6 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                               isAgent: Boolean,
                               isTrigMig: Boolean = false)
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
     val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(NormalMode, isTrigMig).url
     val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddInternationalBusinessAddressController.show(isAgent, isTrigMig).url
