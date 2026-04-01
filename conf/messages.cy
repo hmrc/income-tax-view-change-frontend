@@ -359,7 +359,7 @@ tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwlad
 tax-year-summary.payments.codingOut.text                       = Taliad mantoli a gesglir drwy’r cod treth TWE
 tax-year-summary.payments.poa1CodedOut.text                    = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy god treth TWE
 tax-year-summary.payments.poa2CodedOut.text                    = Ail daliad ar gyfrif sy’n cael ei gasglu drwy god treth TWE
-tax-year-summary.noData                                            = Amh
+tax-year-summary.noData                                        = Amh
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
@@ -1433,6 +1433,7 @@ paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu�
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’r ail daliad ar gyfrif yn hwyr
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
+paymentAllocation.paymentAllocations.onAccount.table.description.poa = Amh
 
 
 ## Tax Years Overview Update Tab ##

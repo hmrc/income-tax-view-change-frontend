@@ -1434,6 +1434,7 @@ paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment i
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for second payment on account
 paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest on balancing payment
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
+paymentAllocation.paymentAllocations.onAccount.table.description.poa = No Data
 
 
 ##Tax Years Overview Submissions Tab##
