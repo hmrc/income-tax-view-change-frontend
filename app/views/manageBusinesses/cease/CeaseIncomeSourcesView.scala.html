@@ -72,6 +72,7 @@
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     isAgent = isAgent) {
 
     @h1(msg = getMessage("heading"),

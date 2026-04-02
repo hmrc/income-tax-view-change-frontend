@@ -34,7 +34,7 @@
 )
 
 @(viewModel: RefundToTaxPayerViewModel, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
-        btaNavPartial: Option[Html] = None, origin: Option[String] = None)(implicit request: Request[_], messages: Messages)
+        btaNavPartial: Option[Html] = None, origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
 @import implicitDateFormatter.longDate
 
 @getRepaymentSupplementItemSize(repaymentHistoryItem: RefundToTaxPayerViewModel) = @{
@@ -48,7 +48,8 @@
     backUrl = Some(backUrl),
     isAgent = isAgent,
     btaNavPartial = btaNavPartial,
-    useFallbackBackLink = true
+    useFallbackBackLink = true,
+    btaAndPtaServiceNavigation = serviceNavigationPartial
 ) {
 
     @h1(msg = messages("refund-to-taxpayer.heading"))

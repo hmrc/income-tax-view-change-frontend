@@ -43,7 +43,9 @@
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
-    isAgent = isAgent) {
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @govukPanel(Panel(
         title = Text(getMessage("h1")),

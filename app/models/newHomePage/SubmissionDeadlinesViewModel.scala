@@ -17,7 +17,6 @@
 package models.newHomePage
 
 import models.obligations.SingleObligationModel
-
 import java.time.LocalDate
 
 final case class SubmissionDeadlinesViewModel(
@@ -61,5 +60,5 @@ final case class SubmissionDeadlinesViewModel(
   def isQuarterlyObligations: Boolean =
     openObligations.exists(_.obligationType == obligationTypeQuarterly)
 
-  def showNextUpdatesTileContent: Boolean = openObligations.nonEmpty
+  def hasOpenObligations: Boolean = openObligations.nonEmpty
 }

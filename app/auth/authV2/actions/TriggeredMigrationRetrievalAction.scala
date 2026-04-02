@@ -70,19 +70,22 @@ class TriggeredMigrationRetrievalAction @Inject()(
               isItsaStatusVoluntaryOrMandated().flatMap {
                 case Right(false) => confirmIneligibleUser(req, isTriggeredMigrationPage)
                 case Left(errorResult) => Future(Left(errorResult))
-                case Right(true) => 
-                  val yearOfMigration = req.incomeSources.yearOfMigration.getOrElse(req.incomeSources.startingTaxYear.toString)
-                  isCalculationCrystallised(req, yearOfMigration).flatMap {
-                  case Right(true) => confirmIneligibleUser(req, isTriggeredMigrationPage)
-                  case Right(false) => if (isTriggeredMigrationPage) {
-                    Future.successful(Right(req))
-                  } else {
-                    Future.successful(
-                      Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
-                    )
-                  }
-                  case Left(errorResult) => Future.successful(Left(errorResult))
-                }
+                case Right(true) =>
+                  val taxYear = req.incomeSources.yearOfMigration.orElse(req.incomeSources.startingTaxYear).map(_.toString)
+                  isCalculationCrystallised(req, taxYear)
+                    .flatMap {
+                      case Right(true) => confirmIneligibleUser(req, isTriggeredMigrationPage)
+                      case Right(false) =>
+                        if (isTriggeredMigrationPage) {
+                          Future.successful(Right(req))
+                        } else {
+                          Future.successful(
+                            Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent())))
+                          )
+                        }
+                      case Left(errorResult) =>
+                        Future.successful(Left(errorResult))
+                    }
               }
           }
         }
@@ -95,16 +98,28 @@ class TriggeredMigrationRetrievalAction @Inject()(
       }
     }
 
-  private def isCalculationCrystallised(req: MtdItUser[_], taxYear: String)(implicit hc: HeaderCarrier) = {
-    incomeTaxConnector.getCalculationResponse(
-      req.mtditid,
-      req.nino,
-      taxYear,
-      Some(LATEST)
-    ).map {
-      case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT => Right(false)
-      case calcResponse: LiabilityCalculationResponse => Right(calcResponse.metadata.isCalculationCrystallised)
-      case _: LiabilityCalculationError => Left(internalServerErrorFor(req, "Error retrieving liability calculation during triggered migration retrieval"))
+  private def isCalculationCrystallised(req: MtdItUser[_], taxYearOpt: Option[String])(implicit hc: HeaderCarrier) = {
+
+    def request(taxYear: String) =
+      incomeTaxConnector.getCalculationResponse(
+        mtditid = req.mtditid,
+        nino = req.nino,
+        taxYear = taxYear,
+        calculationRecord = Some(LATEST)
+      ).map {
+        case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
+          Right(false)
+        case calcResponse: LiabilityCalculationResponse =>
+          Right(calcResponse.metadata.isCalculationCrystallised)
+        case _: LiabilityCalculationError =>
+          Left(showErrorPageBasedOnContext(req, "Error retrieving liability calculation during triggered migration retrieval"))
+      }
+
+    taxYearOpt match {
+      case Some(taxYear) =>
+        request(taxYear)
+      case None =>
+        Future(Left(showErrorPageBasedOnContext(request = req, context = "startingTaxYearNone")))
     }
   }
 
@@ -113,26 +128,27 @@ class TriggeredMigrationRetrievalAction @Inject()(
       Future(Left(if (user.isAgent()) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
-      itsaStatusList => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
+      itsaStatusList =>
+        itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.shortenTaxYearEnd) match {
           case Some(status) if status.itsaStatusDetails.exists(_.exists(_.isMandatedOrVoluntary)) => Future(Right(true))
           case Some(status) if status.itsaStatusDetails.exists(_.exists(!_.isMandatedOrVoluntary)) => Future(Right(false))
           case _ => itsaStatusList.find(_.taxYear == dateService.getCurrentTaxYear.nextYear.shortenTaxYearEnd) match {
-              case Some(_) => redirectBasedOnUser
-              case _ => Future(Left(internalServerErrorFor(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
+            case Some(_) => redirectBasedOnUser
+            case _ => Future(Left(showErrorPageBasedOnContext(user, "Error retrieving ITSA status during triggered migration retrieval - no current or next year status found")))
           }
-      }
+        }
     }
   }
 
-  private def internalServerErrorFor(
-                                      request: MtdItUser[_],
-                                      context: String
-                                    ): Result = {
+  private def showErrorPageBasedOnContext(request: MtdItUser[_], context: String): Result = {
 
     Logger(getClass).error(s"[TriggeredMigrationRetrievalAction][$context]")
-    request.authUserDetails.affinityGroup match {
-      case Some(Agent) => agentErrorHandler.showInternalServerError()(request)
-      case _ => individualErrorHandler.showInternalServerError()(request)
+
+    (request.authUserDetails.affinityGroup, context) match {
+      case (Some(Agent), "startingTaxYearNone") => agentErrorHandler.showBadRequestError()(request)
+      case (_, "startingTaxYearNone") => individualErrorHandler.showBadRequestError()(request)
+      case (Some(Agent), _) => agentErrorHandler.showInternalServerError()(request)
+      case (_, _) => individualErrorHandler.showInternalServerError()(request)
     }
   }
 

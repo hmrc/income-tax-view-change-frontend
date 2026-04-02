@@ -121,7 +121,8 @@
 
 @mainTemplate(pageTitle = getPageTitle,
     isAgent = source.isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
         @confirmationPanel
         @yourRevisedDeadlinesHeading
         @getInsetWarning

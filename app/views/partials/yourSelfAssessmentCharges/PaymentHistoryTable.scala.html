@@ -48,16 +48,31 @@
 }
 
 @chargeHistoryCaption = {
-    @if(viewModel.chargeItem.transactionType == ITSAReturnAmendment && !viewModel.latePaymentInterestCharge) {
-        @p(id = Some("charge-history-caption")) {
-            @messages("yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text",
-                viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
-        }
-    } else {
 
-        @p(id = Some("charge-history-caption")) {
-            @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading",
-                viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+    @(viewModel.chargeItem.transactionType, viewModel.latePaymentInterestCharge) match {
+        case (ITSAReturnAmendment, false) => {
+            @p(id = Some("charge-history-caption")) {
+                @messages("yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text",
+                    viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+            }
+        }
+        case (PoaOneReconciliationDebit, false) => {
+            @p(id = Some("charge-history-caption")) {
+                @messages("yourSelfAssessmentChargeSummary.chargeHistory.poaOneReconciliation.caption.text",
+                    viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+            }
+        }
+        case (PoaTwoReconciliationDebit, false) => {
+            @p(id = Some("charge-history-caption")) {
+                @messages("yourSelfAssessmentChargeSummary.chargeHistory.poaTwoReconciliation.caption.text",
+                    viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+            }
+        }
+        case _ => {
+            @p(id = Some("charge-history-caption")) {
+                @messages(s"yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading",
+                    viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+            }
         }
     }
 }

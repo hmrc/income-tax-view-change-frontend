@@ -26,10 +26,10 @@
       table : table
 )
 
-@(incomeBreakdownViewModel: IncomeBreakdownViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None)(implicit request: Request[_], messages: Messages)
+@(incomeBreakdownViewModel: IncomeBreakdownViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(pageTitle = messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl),
-    isAgent = isAgent, btaNavPartial = btaNavPartial, useFallbackBackLink = true) {
+    isAgent = isAgent, btaNavPartial = btaNavPartial, useFallbackBackLink = true, btaAndPtaServiceNavigation = serviceNavigationPartial) {
 
     @h1WithCaption(
         heading = messages("income_breakdown.heading"),

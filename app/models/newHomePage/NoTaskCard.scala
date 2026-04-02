@@ -1,5 +1,5 @@
-@*
- * Copyright 2023 HM Revenue & Customs
+/*
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,21 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+package models.newHomePage
 
-@this(
- mainTemplate: unifiedLayout,
- appConfig: config.FrontendAppConfig,
- h1: h1,
- h2: h2,
- p: p,
- link: link
-)
-
-
-
-
-
+case class NoTaskCard(cardHeading: String, cardContent: String)

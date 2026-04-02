@@ -35,7 +35,8 @@
     pageTitle = messages("notmigrated.user.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
     @if(isAgent) {
         <div class="grid-row">

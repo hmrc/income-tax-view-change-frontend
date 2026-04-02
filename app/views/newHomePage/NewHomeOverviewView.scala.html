@@ -20,6 +20,7 @@
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.overview._
+@import views.html.partials.newHome.NewHomeNavigation
 @import config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
@@ -29,12 +30,12 @@
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
-        govukServiceNavigation : GovukServiceNavigation,
         chargesSection: ChargesSection,
         deadlinesSection: DeadlinesSection,
         incomeSection: IncomeSection,
         taxYearSection: TaxYearSection,
-        penaltiesSection: PenaltiesSection
+        penaltiesSection: PenaltiesSection,
+        newHomeNav: NewHomeNavigation,
 )
 
 @(origin: Option[String] = None,
@@ -49,7 +50,11 @@
         moneyInYourAccount: Boolean,
         ctaViewModel: WYOClaimToAdjustViewModel,
         chargeItems: List[ChargeItem],
-        isGovUkRebrandEnabled: Boolean)(
+        isGovUkRebrandEnabled: Boolean,
+        userMandatedOrVoluntary: Boolean,
+        penaltiesAndAppealsEnabled: Boolean,
+        isRecentActivityEnabled: Boolean,
+        creditsRefundsRepayEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -80,6 +85,7 @@
     pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 
     @h1WithCaption(
@@ -97,28 +103,7 @@
         </div>
     }
 
-    @govukServiceNavigation(ServiceNavigation(
-        navigation = Seq(
-            ServiceNavigationItem(
-                content = Text("Your tasks"),
-                href = yourTasksUrl
-            ),
-            ServiceNavigationItem(
-                content = Text("Recent activity"),
-                href = recentActivityUrl
-            ),
-            ServiceNavigationItem(
-                content = Text(messages("new.home.navigation.tabs.overview")),
-                href = overViewUrl,
-                active = true
-            ),
-            ServiceNavigationItem(
-                content = Text("Help"),
-                href = helpUrl
-            )
-        ),
-        attributes = Map("style" -> "background-color: white;")
-    ))
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "overview", isRecentActivityEnabled)
 
 
     <div class="govuk-!-padding-bottom-6"></div>
@@ -133,10 +118,10 @@
 
 
 @IndividualSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel)
+    @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled)
     @SectionBreak
 
-    @deadlinesSection(isAgent = false)
+    @deadlinesSection(isAgent = false, userMandatedOrVoluntary)
     @SectionBreak
 
     @incomeSection(isAgent = false)
@@ -145,7 +130,9 @@
     @taxYearSection(isAgent = false, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    @if(penaltiesAndAppealsEnabled){
+        @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    }
 }
 
 
@@ -154,10 +141,10 @@
 }
 
 @AgentSections(noChargesToPay: Boolean) = {
-    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel)
+    @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled)
     @SectionBreak
 
-    @deadlinesSection(isAgent = true)
+    @deadlinesSection(isAgent = true, userMandatedOrVoluntary)
     @SectionBreak
 
     @incomeSection(isAgent = true)
@@ -166,13 +153,15 @@
     @taxYearSection(isAgent = true, taxYear = currentTaxYear)
     @SectionBreak
 
-    @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    @if(penaltiesAndAppealsEnabled){
+        @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+    }
 }
 
 
 @SupportingAgentSections() = {
 
-    @deadlinesSection(isAgent = true)
+    @deadlinesSection(isAgent = true, userMandatedOrVoluntary)
     @SectionBreak
 
     @incomeSection(isAgent = true)

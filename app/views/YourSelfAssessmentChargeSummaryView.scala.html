@@ -101,7 +101,8 @@
     backUrl = Some(viewModel.backUrl),
     isAgent = viewModel.isAgent,
     btaNavPartial = viewModel.btaNavPartial,
-    gatewayPage = viewModel.gatewayPage) {
+    gatewayPage = viewModel.gatewayPage,
+    btaAndPtaServiceNavigation = viewModel.serviceNavigationPartial) {
 
     @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
         @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
@@ -118,7 +119,8 @@
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
           s"${
               getMessage(
-                  if(viewModel.chargeItem.isCodingOutAcceptedOrFullyCollected) "toBeCollected" else
+                  if(viewModel.chargeItem.isCodingOutFullyCollected) "amountCollected" else
+                  if(viewModel.chargeItem.isCodingOutAccepted) "toBeCollected" else
                   if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
                   else "charge"
               )

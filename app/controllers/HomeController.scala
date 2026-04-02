@@ -50,9 +50,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: views.html.HomeView,
-                               val newHomeRecentActivityView: views.html.NewHomeRecentActivityView,
-                               val newHomeOverviewView: views.html.NewHomeOverviewView,
-                               val newHomeHelpView: views.html.NewHomeHelpView,
+                               val newHomeRecentActivityView: views.html.newHomePage.NewHomeRecentActivityView,
+                               val newHomeOverviewView: views.html.newHomePage.NewHomeOverviewView,
+                               val newHomeHelpView: views.html.newHomePage.NewHomeHelpView,
                                val primaryAgentHomeView: views.html.agent.PrimaryAgentHomeView,
                                val supportingAgentHomeView: views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActions,
@@ -147,7 +147,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
 
     for {
-      credits <- creditService.getAllCredits()
+      credits <- creditService.getAllCredits
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
       paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       dunningLockExists = hasDunningLock(unpaidCharges)
@@ -327,26 +327,33 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
     def handleRecentActivity(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        Future.successful(Ok(newHomeRecentActivityView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand)))
+        if(isEnabled(RecentActivity))
+          Future.successful(Ok(newHomeRecentActivityView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand)))
+        else
+          handleYourTasks(origin, isAgent)
     }
 
   def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
       for {
         ctaViewModel <- whatYouOweService.claimToAdjustViewModel(Nino(user.nino))
-        credits <- creditService.getAllCredits()
+        credits <- creditService.getAllCredits
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
         chargeItem = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+        mandatedOrVoluntary <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandatedOrVoluntary)
       }
       yield {
-        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem, appConfig.itvcRebrand))
+        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear,
+          yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
+          helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
+          appConfig.itvcRebrand, mandatedOrVoluntary, isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay)))
       }
     }
   }
 
     def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
       implicit user =>
-        Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand)))
+        Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand, isEnabled(RecentActivity))))
     }
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url

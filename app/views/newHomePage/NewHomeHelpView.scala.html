@@ -20,17 +20,18 @@
 @import views.html.components._
 @import views.html.partials.newHome.overview.OverviewCard
 @import views.html.layouts.unifiedLayout
+@import views.html.partials.newHome.NewHomeNavigation
 
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
-        govukServiceNavigation : GovukServiceNavigation,
         h2: h2,
         p: p,
         overviewCard: OverviewCard,
-        appConfig: config.FrontendAppConfig
+        appConfig: config.FrontendAppConfig,
+        newHomeNav: NewHomeNavigation
 )
 
 @(origin: Option[String] = None,
@@ -39,9 +40,9 @@
         recentActivityUrl: String,
         overViewUrl: String,
         helpUrl: String,
-        isGovUkRebrandEnabled: Boolean)(
-        implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
-)
+        isGovUkRebrandEnabled: Boolean,
+        isRecentActivityEnabled: Boolean
+)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
 
 @pageHeading = @{
     if (isAgent) {
@@ -65,6 +66,7 @@
     pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 
     @h1WithCaption(
@@ -82,28 +84,8 @@
         </div>
     }
 
-    @govukServiceNavigation(ServiceNavigation(
-        navigation = Seq(
-            ServiceNavigationItem(
-                content = Text("Your tasks"),
-                href = yourTasksUrl
-            ),
-            ServiceNavigationItem(
-                content = Text("Recent activity"),
-                href = recentActivityUrl
-            ),
-            ServiceNavigationItem(
-                content = Text(messages("new.home.navigation.tabs.overview")),
-                href = overViewUrl
-            ),
-            ServiceNavigationItem(
-                content = Text("Help"),
-                href = helpUrl,
-                active = true
-            )
-        ),
-        attributes = Map("style" -> "background-color: white;")
-    ))
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "help", isRecentActivityEnabled)
+
 
 <div class="govuk-!-padding-top-4 govuk-!-padding-bottom-6" id="help" role="tabpanel" aria-labelledby="tab_help">
 

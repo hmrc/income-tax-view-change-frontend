@@ -262,7 +262,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     def secondLatePaymentOnAccountInterestCreated = s"Late payment interest for second payment on account created"
 
 
-    val hmrcCreated: String = messages("chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text")
+    val lpiPoaOne: String = messages("chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text")
+    val lpiPoaTwo: String = messages("chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text")
 
     val balancingChargeCreated: String = messages("chargeSummary.chargeHistory.created.balancingCharge.text")
     val balancingChargeInterestCreated: String = messages("chargeSummary.lpi.chargeHistory.created.balancingCharge.text")
@@ -760,7 +761,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       document.select("tbody tr").size() shouldBe 1
       document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
-      document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
+      document.select("tbody tr td:nth-child(2)").text() shouldBe lpiPoaOne
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
     "charge is interest for a POA 2 reconciliation charge" in new TestSetup(chargeItem = chargeItemModel(transactionType = PoaTwoReconciliationDebit), latePaymentInterestCharge = true) {
@@ -778,7 +779,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
       document.select("tbody tr").size() shouldBe 1
       document.select("tbody tr td:nth-child(1)").text() shouldBe "15 Jun 2018"
-      document.select("tbody tr td:nth-child(2)").text() shouldBe hmrcCreated
+      document.select("tbody tr td:nth-child(2)").text() shouldBe lpiPoaTwo
       document.select("tbody tr td:nth-child(3)").text() shouldBe "£100.00"
     }
     "charge is a late submission penalty" in new TestSetup(chargeItem = chargeItemModel(transactionType = LateSubmissionPenalty)) {

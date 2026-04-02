@@ -40,7 +40,8 @@
     pageTitle = messages("signUp.start.heading"),
     backUrl = Some("#"),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @h1(id = Some("sign-up-start-heading"), msg = messages("signUp.start.heading"))
 

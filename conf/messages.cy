@@ -88,6 +88,16 @@ agent-unauthorised.note.b3                                      = y ffioedd sy�
 agent-unauthorised.note.b4                                      = cosbau ac apeliadau
 agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
 
+## Rebrand Service Navigation
+pta.navigation.messages = Negeseuon
+pta.navigation.checkProgress = Gwirio cynnydd
+pta.navigation.profileAndSettings = Proffil a gosodiadau
+pta.navigation.businessTaxAccount = Cyfrif treth busnes
+
+bta.navigation.manageAccount = Rheoli’r cyfrif
+bta.navigation.messages = Negeseuon
+bta.navigation.helpAndContact = Cymorth a chysylltu
+
 ## BTA Links ##
 bta.home                                                        = Treth Busnes – Hafan
 bta.messages                                                    = Negeseuon
@@ -204,7 +214,6 @@ home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 ### Your New Tasks Tab
 
 new.home.navigation.tabs.yourTasks                              = Eich tasgau
-
 new.home.yourTasks.updates-and-deadlines                        = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
 new.home.yourTasks.upcoming-annual-updates-body            = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad blynyddol.
 new.home.yourTasks.upcoming-annual-updates-label           = Dyledus erbyn {0}
@@ -241,15 +250,20 @@ new.home.overview.penalties.sub-heading                         = Cosbau ac apel
 new.home.overview.penalties.check-penalties                     = Gwirio cosbau ac apeliadau Hunanasesiad
 new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
 new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
+new.home.overview.deadlines.mandated.view-updates               = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
 
 ### Help Tab
 new.home.help.heading                                           = Troi Treth yn Ddigidol
 new.home.help.openInNewTab                                      = Mae pob cysylltiad yn agor mewn tab newydd.
+new.home.navigation.tabs.help                                   = Help
 
 home.help.link.makingTaxDigital.incomeTax                       = Dod o hyd i ragor o wybodaeth am Droi Treth yn Ddigidol ar gyfer Treth Incwm
 home.help.link.selfAssessment.payTaxBill                        = Dod o hyd i ragor o wybodaeth am dalu’ch bil treth Hunanasesiad
 home.help.link.makingTaxDigital.findSoftware                    = Dod o hyd i feddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm
 home.help.link.taxSupport.getHelp                               = Cael help os ydych yn ei chael hi’n anodd talu’ch treth
+
+## Recent Activity Tab
+new.home.navigation.tabs.recentActivity                         = Gweithgarwch diweddar
 
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
@@ -347,8 +361,8 @@ tax-year-summary.payments.no-payments                          = Dim taliadau’
 tax-year-summary.payments.paymentUnderReview                   = Taliad dan adolygiad
 tax-year-summary.payments.reviewAndReconcilePoa1.text          = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
 tax-year-summary.payments.reviewAndReconcilePoa2.text          = Ail daliad ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth
-tax-year-summary.payments.lpi.reviewAndReconcilePoa1.text      = Llog ar gyfer taliad cyntaf ar gyfrif: swm ychwanegol
-tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text      = Llog ar gyfer ail daliad ar gyfrif: swm ychwanegol
+tax-year-summary.payments.lpi.reviewAndReconcilePoa1.text      = Llog am daliad hwyr ar gyfer y taliad cyntaf ar gyfrif: swm ychwanegol
+tax-year-summary.payments.lpi.reviewAndReconcilePoa2.text      = Llog am daliad hwyr ar gyfer yr ail daliad ar gyfrif: swm ychwanegol
 tax-year-summary.payments.lpi.firstLatePaymentPenalty.text     = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
 tax-year-summary.payments.lpi.secondLatePaymentPenalty.text    = Llog am dalu’n hwyr ar yr ail gosb am dalu’n hwyr
 tax-year-summary.payments.lpi.lateSubmissionPenalty.text       = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
@@ -1157,13 +1171,13 @@ chargeSummary.lpi.paymentsOnAccount.p3                                 = Gweler 
 chargeSummary.lpi.paymentsOnAccount.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
 
 chargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif, a gafodd ei addasu, yn rhy isel.
-chargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+chargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol — y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
 chargeSummary.poa1ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich taliad cyntaf ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
 chargeSummary.poa1ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
 chargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
 
 chargeSummary.poa2ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif, a gafodd ei addasu, yn rhy isel.
-chargeSummary.poa2ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
+chargeSummary.poa2ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol — y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
 chargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
 chargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
 chargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
@@ -1281,8 +1295,8 @@ chargeSummary.chargeHistory.amend.poa2CodedOut.text                     = Y swm 
 
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount1.text          = Llog am dalu’r taliad cyntaf ar gyfrif yn hwyr wedi’i greu
 chargeSummary.lpi.chargeHistory.created.paymentOnAccount2.text          = Llog am dalu’r ail daliad ar gyfrif yn hwyr wedi’i greu
-chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text     = CThEF sydd wedi creu’r tâl hwn
-chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text     = CThEF sydd wedi creu’r tâl hwn
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa1.text     = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol taliad cyntaf ar gyfrif
+chargeSummary.lpi.chargeHistory.created.reviewAndReconcilePoa2.text     = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol ail daliad ar gyfrif
 chargeSummary.lpi.chargeHistory.created.balancingCharge.text            = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli wedi’i greu
 chargeSummary.lpi.chargeHistory.created.itsaReturnAmendment.text        = Llog am dalu’n hwyr wedi’i greu ar gyfer swm ychwanegol taliad mantoli
 
@@ -2304,6 +2318,17 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property
 
 ####### Manage journey manage income source
 
+incomeSources.manage.quarterly-period                                 =   Cyfnod diweddaru
+incomeSources.manage.quarterly-period.standard                        =   Safonol
+incomeSources.manage.quarterly-period.calendar                        =   Calendr
+incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
+incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod chwarterol calendr?
+incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r busnes yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
+incomeSources.manage.quarterly-period.standard.content.p2             =   Os yw eich meddalwedd yn ei gefnogi gallwch newid hyn i gyflwyno adroddiadau o 1af y mis yn ôl chwarterau calendr.
+incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r busnes yn cyflwyno adroddiadau o 1 Ebrill yn ôl chwarterau calendr.
+incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
+incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
+
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
 incomeSources.manage.business-manage-details.sole-trader-section      =   Unig fasnachwr
 incomeSources.manage.business-manage-details.business-name            =   Enw’r busnes
@@ -2325,6 +2350,14 @@ incomeSources.manage.foreign-property-manage-details.foreign-property-section   
 ##################### New - Manage journey manage income source #####################
 
 incomeSources.manage.new.business-manage-details.heading                  =   Manage your details
+
+incomeSources.manage.new.quarterly.update.period                          =   Cyfnod diweddaru
+incomeSources.manage.new.quarterly.period.standard                        =   Safonol
+incomeSources.manage.new.quarterly.period.calendar                        =   Calendr
+incomeSources.manage.new.quarterly.period.summary                         =   Beth yw cyfnod chwarterol safonol?
+incomeSources.manage.new.quarterly.period.content.p1                      =   Mae’r busnes hwn yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth – enw arall ar hyn yw ‘defnyddio cyfnodau diweddaru safonol’.
+incomeSources.manage.new.quarterly.period.content.p2                      =   Gallwch ddewis adrodd gan ddefnyddio cyfnodau diweddaru calendr sy’n dod i ben ar ddiwrnod olaf y mis, os yw’ch meddalwedd yn caniatáu hyn.
+incomeSources.manage.new.quarterly.period.content.p3.link                 =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 
 incomeSources.manage.new.business.details.heading                         =   Gwirio’ch manylion
 incomeSources.manage.new.business.details.sole.trader.section             =   Unig fasnachwr
@@ -3296,6 +3329,7 @@ yourSelfAssessmentChargeSummary.overDueCharge                       = Mae arnoch
 yourSelfAssessmentChargeSummary.youOwe                              = Mae arnoch:
 yourSelfAssessmentChargeSummary.charge                              = Tâl:
 yourSelfAssessmentChargeSummary.toBeCollected                       = Swm dyledus i’w gasglu:
+yourSelfAssessmentChargeSummary.amountCollected                     = Swm a gasglwyd:
 yourSelfAssessmentChargeSummary.creditAmount                        = Cyfanswm y credyd:
 yourSelfAssessmentChargeSummary.due                                 = Yn ddyledus {0}
 yourSelfAssessmentChargeSummary.chargeReference                     = Charge Reference: {0}
@@ -3310,7 +3344,7 @@ yourSelfAssessmentChargeSummary.whatIsABalancingPayment.p5          = Hefyd, mae
 
 yourSelfAssessmentChargeSummary.overdue-inset-text-1                                    = Gall taliadau a wnewch gymryd hyd at 3 diwrnod gwaith i’w prosesu, yn dibynnu ar y dull talu rydych yn ei ddefnyddio. Mae’n rhaid i daliadau ddod i law CThEF erbyn y dyddiad dyledus er mwyn osgoi unrhyw log neu gosbau am dalu’n hwyr.
 yourSelfAssessmentChargeSummary.overdue-inset-text-2                                    = Bydd unrhyw daliadau a wnewch yn mynd tuag at dalu taliadau gorddyledus yn y drefn yr oeddent yn ddyledus.
-yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = Mae CThEF wedi creu’r tâl hwn oherwydd bod eich
+yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1               = Mae CThEF wedi creu’r tâl ychwanegol hwn o’ch Ffurflen Dreth oherwydd bod eich
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p2               = Efallai fod hyn oherwydd eich bod wedi addasu eich Ffurflen Dreth yn y flwyddyn flaenorol. Efallai fod hyn hefyd oherwydd eich bod wedi gostwng eich taliadau ar gyfrif i swm sy’n llai na’r hyn mae’ch Ffurflen Dreth yn nodi y dylech fod wedi’i dalu.
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.linkText                         = taliad cyntaf ar gyfrif
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText                         = ail daliad ar gyfrif
@@ -3323,7 +3357,7 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.linkText                 
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p1                        = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.warning.p2                        = Os byddwch yn talu yn hwyrach na’r dyddiad dyledus {0} mae’n bosibl y cewch gosb am dalu’n hwyr.
 yourSelfAssessmentChargeSummary.interestOnThisCharge.heading                            = Llog ar y tâl hwn
-yourSelfAssessmentChargeSummary.interestOnThisCharge.p1                                 = Caiff llog ei godi o ddyddiad dyledus gwreiddiol eich taliad cyntaf ar gyfrif.
+yourSelfAssessmentChargeSummary.interestOnThisCharge.p1                                 = Caiff llog ei godi o’r diwrnod ar ôl dyddiad dyledus gwreiddiol eich taliad ar gyfrif.
 yourSelfAssessmentChargeSummary.interestOnThisCharge.p2                                 = Bydd llog yn cael ei amcangyfrif hyd nes caiff y tâl cysylltiedig ei dalu’n llawn.
 yourSelfAssessmentChargeSummary.crystallisedInterest.text-1                             = Roedd y taliad hwn yn orddyledus ac roedd llog yn cynyddu’n ddyddiol. Gan fod y taliad bellach wedi’i dalu, mae’r
 yourSelfAssessmentChargeSummary.crystallisedInterest.link-text                          = llog
@@ -3349,24 +3383,23 @@ yourSelfAssessmentChargeSummary.lpi.balancingCharge.text.heading	    		        =
 yourSelfAssessmentChargeSummary.lpi.interestPeriod								        = Cyfnod llog:
 yourSelfAssessmentChargeSummary.lpi.interestPeriod.dates							    = {0} i {1}
 
-yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading                 = Llog ar y taliad cyntaf ar gyfrif: swm ychwanegol
-yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading                 = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif, a gafodd ei addasu, yn rhy isel.
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich taliad cyntaf ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
-yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif, a gafodd ei addasu, yn rhy isel.
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol – y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3                            = Mae llog yn cael ei godi o’r dyddiad yr oedd eich ail daliad ar gyfrif yn ddyledus, ac yn cael ei gyfrifo ar
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3LinkText                    = gyfradd sail Banc Lloegr (yn agor tab newydd)
-yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p3AfterLink                   = , ynghyd â 2.5%.
-yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                 = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                          = Crëwyd swm ychwanegol taliad mantoli oherwydd newid a wnaethoch i’ch Ffurflen Dreth.
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p2                       = Mae CThEF yn codi llog ar y swm ychwanegol – sef y gwahaniaeth rhwng eich taliad a’r hyn sydd arnoch mewn gwirionedd.
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3                       = Caiff llog ei godi o’r diwrnod ar ôl dyddiad dyledus gwreiddiol eich taliad mantoli, hyd at y diwrnod bydd y swm ychwanegol yn cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3LinkText               = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
-yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3AfterLink              = yn ogystal â 2.5% ychwanegol.
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa1.text.heading               = Llog am daliad hwyr ar gyfer y taliad cyntaf ar gyfrif: swm ychwanegol
+yourSelfAssessmentChargeSummary.lpi.reviewAndReconcilePoa2.text.heading               = Llog am daliad hwyr ar gyfer yr ail daliad ar gyfrif: swm ychwanegol
+yourSelfAssessmentChargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif ar gyfer blwyddyn dreth {0} i {1} yn rhy isel.
+yourSelfAssessmentChargeSummary.poa2ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich ail daliad ar gyfrif ar gyfer blwyddyn dreth {0} i {1} yn rhy isel.
+yourSelfAssessmentChargeSummary.paragraphList.intro                                   = Gallai hyn fod oherwydd y canlynol:
+yourSelfAssessmentChargeSummary.paragraphList.bullet1                                 = rydych wedi addasu eich Ffurflen Dreth ar gyfer y flwyddyn flaenorol
+yourSelfAssessmentChargeSummary.paragraphList.bullet2                                 = rydych wedi gostwng eich taliadau ar gyfrif i swm sy’n llai na’r swm y mae’ch Ffurflen Dreth yn nodi y dylech fod wedi’i dalu
+yourSelfAssessmentChargeSummary.extraAmountInterest.p1                                = Mae CThEF yn codi llog ar y swm ychwanegol — sef y gwahaniaeth rhwng eich taliad ar gyfrif, a’r hyn sydd arnoch mewn gwirionedd.
+yourSelfAssessmentChargeSummary.extraAmountInterest.p2                                = Caiff llog ei godi o’r diwrnod ar ôl dyddiad dyledus gwreiddiol eich taliad ar gyfrif, hyd at y diwrnod bydd y swm ychwanegol yn cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar gyfradd sylfaenol
+yourSelfAssessmentChargeSummary.extraAmountInterest.p2LinkText                        = Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.extraAmountInterest.p2AfterLink                       = yn ogystal â 2.5% ychwanegol.
+yourSelfAssessmentChargeSummary.lpi.itsaReturnAmendment.text.heading                  = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info                           = Mae arnoch log i CThEF oherwydd eich bod wedi talu’ch taliad mantoli yn hwyr.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p2                        = Mae CThEF yn codi llog ar y swm ychwanegol — sef y gwahaniaeth rhwng eich taliad a’r hyn sydd arnoch mewn gwirionedd.
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3                        = Caiff llog ei godi o’r diwrnod ar ôl dyddiad dyledus gwreiddiol eich taliad mantoli, hyd at y diwrnod bydd y swm ychwanegol yn cael ei dalu’n llawn. Mae’n cael ei gyfrifo ar
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3LinkText                = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
+yourSelfAssessmentChargeSummary.itsaReturnAmendmentLPI.info.p3AfterLink               = yn ogystal â 2.5% ychwanegol.
 
 yourSelfAssessmentChargeSummary.lpi.lateSubmissionPenalty.text.heading                    = Llog am dalu’n hwyr ar gosb am gyflwyno’n hwyr
 yourSelfAssessmentChargeSummary.lpi.firstLatePaymentPenalty.text.heading                  = Llog am dalu’n hwyr ar y gosb gyntaf am dalu’n hwyr
@@ -3405,8 +3438,10 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p2           = Mae CThEF 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p3           = Os byddwch chi’n gwneud diwygiad i’r Ffurflen Dreth ac mae’r bil treth yn newid, yna bydd pob taliad ar gyfrif yn cael ei ddiweddaru i hanner y cyfanswm newydd.
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i ddeall eich bil treth Hunanasesiad
 
-yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading       = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
-yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text       = Mae’r swm ychwanegol taliad mantoli hwn yn cyfrannu at eich bil treth ar gyfer {0} i {1}
+yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading              = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
+yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text              = Mae’r swm ychwanegol taliad mantoli hwn yn cyfrannu at eich bil treth ar gyfer {0} i {1}
+yourSelfAssessmentChargeSummary.chargeHistory.poaOneReconciliation.caption.text         = Mae’r swm ychwanegol taliad cyntaf ar gyfrif hwn yn cyfrannu at eich bil treth {0} i {1}.
+yourSelfAssessmentChargeSummary.chargeHistory.poaTwoReconciliation.caption.text         = Mae’r swm ychwanegol ail daliad ar gyfrif hwn yn cyfrannu at eich bil treth {0} i {1}.
 
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet1      = Treth Incwm
 yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.bullet2      = Cyfraniadau Yswiriant Gwladol Dosbarth 4 (yn agor tab newydd)
@@ -3428,6 +3463,8 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = a dysg
 
 yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = Dyma’r dreth sy’n weddill y mae angen i chi ei thalu ar gyfer blwyddyn dreth {0} i {1}.
 yourSelfAssessmentChargeSummary.codingOutPOAMessage                        = Dyma’r dreth sydd arnoch ar gyfer blwyddyn dreth {0} i {1}.
+yourSelfAssessmentChargeSummary.codingOutBCDMessageFullyCollected       = Dyma oedd y dreth sy’n weddill yn ddyledus ar gyfer y flwyddyn dreth {0} i {1}. Cafodd ei gasglu yn y flwyddyn dreth {2} i {3} drwy’ch cod treth TWE.
+yourSelfAssessmentChargeSummary.codingOutPOAMessageFullyCollected       = Dyma oedd y dreth oedd yn ddyledus ar gyfer y flwyddyn dreth {0} i {1}. Cafodd ei gasglu yn y flwyddyn dreth {2} i {3} drwy’ch cod treth TWE.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 

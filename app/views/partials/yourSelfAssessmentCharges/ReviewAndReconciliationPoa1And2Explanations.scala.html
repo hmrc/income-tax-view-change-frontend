@@ -37,13 +37,13 @@
 @if(viewModel.chargeItem.transactionType == PoaOneReconciliationDebit) {
  @p(id = Some("rar-poa1-explanation-p1")) {
   @messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1")
-  @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+  @link(id = Some("poa1-link"), link = viewModel.poaOneChargeUrl, messageKey = "yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1.linkText")
   @messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
  }
 } else {
  @p(id = Some("rar-poa2-explanation-p1")) {
   @messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa1and2.explanation.p1")
-  @link(id = Some("poa2-link"), link = viewModel.poaTwoChargeUrl, messageKey = "yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText", outerMessage = messages("chargeSummary.reviewAndReconcilePoa.comma"))
+  @link(id = Some("poa2-link"), link = viewModel.poaTwoChargeUrl, messageKey = "yourSelfAssessmentChargeSummary.reviewAndReconcilePoa2.linkText")
   @messages("yourSelfAssessmentChargeSummary.reviewAndReconcilePoa.p.textTwo", viewModel.taxYearFrom.toString, viewModel.taxYearTo.toString)
  }
 }

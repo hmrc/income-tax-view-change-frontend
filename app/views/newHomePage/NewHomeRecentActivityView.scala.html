@@ -19,20 +19,15 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
-@import views.html.partials.newHomeView._
-@import views.html.components._
-@import models.newHomePage.HandleYourTasksViewModel
-@import views.html.partials.newHome.yourTasks._
-@import views.html.partials.newHome.yourTasks.SubmissionDeadlinesTilePartial
+@import views.html.partials.newHome.NewHomeNavigation
+
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
         govukServiceNavigation : GovukServiceNavigation,
-        yourTasksTilePartial: YourTasksTilePartial,
-        submissionDeadlinesTilePartial: SubmissionDeadlinesTilePartial,
-        h2: h2
+        newHomeNav: NewHomeNavigation
 )
 
 @(origin: Option[String] = None,
@@ -41,8 +36,8 @@
         recentActivityUrl: String,
         overViewUrl: String,
         helpUrl: String,
-        viewModel: HandleYourTasksViewModel,
-        isGovUkRebrandEnabled: Boolean)(
+        isGovUkRebrandEnabled: Boolean
+)(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
 
@@ -68,6 +63,7 @@
     pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 
     @h1WithCaption(
@@ -85,36 +81,5 @@
         </div>
     }
 
-    @govukServiceNavigation(ServiceNavigation(
-        navigation = Seq(
-            ServiceNavigationItem(
-                content = Text(messages("newHome.navigation.yourTasks")),
-                href = yourTasksUrl,
-                active = true
-            ),
-            ServiceNavigationItem(
-                content = Text("Recent activity"),
-                href = recentActivityUrl
-            ),
-            ServiceNavigationItem(
-                content = Text(messages("new.home.navigation.tabs.overview")),
-                href = overViewUrl
-            ),
-            ServiceNavigationItem(
-                content = Text("Help"),
-                href = helpUrl
-            )
-        ),
-        attributes = Map("style" -> "background-color: white;")
-    ))
-
-    @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m")
-
-    @if(viewModel.areAnyTasksPresent){
-    @yourTasksTilePartial(viewModel, isAgent)
-
-    @submissionDeadlinesTilePartial(isAgent, messages("new.home.yourTasks.updates-and-deadlines"), viewModel)
-    } else {
-        <div class="govuk-body">@messages(viewModel.getNoTasksLabel(user.usersRole == MTDSupportingAgent))</div>
-    }
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "recent-activity", isRecentActivityEnabled = true)
 }

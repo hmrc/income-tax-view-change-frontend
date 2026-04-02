@@ -54,7 +54,8 @@
     form = Some(form),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial) {
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @formWithCSRF(action = postAction, Symbol("id") -> s"$messagesPrefix-form") {
 

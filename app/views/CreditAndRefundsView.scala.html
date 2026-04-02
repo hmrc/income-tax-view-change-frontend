@@ -46,7 +46,9 @@
 @mainTemplate(
     pageTitle = messages("credit-and-refund.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 
     @h1(msg = messages("credit-and-refund.heading"))

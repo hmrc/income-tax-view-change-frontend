@@ -79,7 +79,7 @@
         Seq(
             SummaryListRow(
                 key = Key(content = Text(messages("tax-year-summary.forecast_total_title", s"${taxYear - 1}", s"$taxYear")), classes = "govuk-summary-list__key dt-cell-width"),
-                value = Value(content = Text(model.forecastIncomeTaxAndNics.get.toCurrencyString), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right"),
+                value = Value(content = Text(model.forecastIncomeTaxAndNics.get.toCurrencyString)),
                 classes = "govuk-summary-list__row"
             )
         )
@@ -93,11 +93,11 @@
     Seq(
         SummaryListRow(
             key = Key(content = Text(messages("tax-year-summary.calculation-date")), classes = "govuk-summary-list__key dt-cell-width"),
-            value = Value(content = model.timestamp.map(_.toLongDate).fold(Text(""))(Text(_)), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0"),
+            value = Value(content = model.timestamp.map(_.toLongDate).fold(Text(""))(Text(_))),
             classes = "govuk-summary-list__row"),
         SummaryListRow(
             key = Key(content = Text(getTotalDue(model)), classes = "govuk-summary-list__key dt-cell-width"),
-            value = Value(content = Text(model.taxDue.toCurrencyString), classes = "govuk-summary-list__value--numeric govuk-!-text-align-right"),
+            value = Value(content = Text(model.taxDue.toCurrencyString)),
             classes = "govuk-summary-list__row"
         )
     ) ++ addForecastData(model)
@@ -175,6 +175,7 @@
     pageTitle = messages("tax-year-summary.heading"),
     backUrl = Some(backUrl), isAgent = isAgent,
     btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     mainClass = Some("govuk-width-container")
 ) {
 

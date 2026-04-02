@@ -47,7 +47,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = SelfEmployment,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeStandard)
     )
 
   val selfEmploymentViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel =
@@ -71,7 +72,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = SelfEmployment,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeStandard)
     )
 
   val selfEmploymentViewModelCYUnknown: ManageIncomeSourceDetailsViewModel =
@@ -95,7 +97,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails4),
       incomeSourceType = SelfEmployment,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeStandard)
     )
 
   val selfEmploymentViewModelWithUnknowns: ManageIncomeSourceDetailsViewModel =
@@ -119,7 +122,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = None,
       incomeSourceType = SelfEmployment,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = None
     )
 
   val ukViewModel: ManageIncomeSourceDetailsViewModel =
@@ -143,7 +147,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = UkProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeCalendar)
     )
 
   val ukViewModelOneYearQuarterly: ManageIncomeSourceDetailsViewModel =
@@ -167,7 +172,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails4),
       incomeSourceType = UkProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeCalendar)
     )
 
   val ukPropertyViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel =
@@ -191,7 +197,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = UkProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeStandard)
     )
 
   val ukPropertyViewModelCYUnknown: ManageIncomeSourceDetailsViewModel =
@@ -215,7 +222,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetailsCYUnknown),
       incomeSourceType = UkProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeStandard)
     )
 
   val ukViewModelUnknowns: ManageIncomeSourceDetailsViewModel =
@@ -239,7 +247,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = None,
       incomeSourceType = UkProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = None
     )
 
   val foreignViewModel: ManageIncomeSourceDetailsViewModel =
@@ -263,7 +272,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = ForeignProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeCalendar)
     )
 
   val foreignPropertyViewModelOneYearCrystallised: ManageIncomeSourceDetailsViewModel =
@@ -287,7 +297,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetails3),
       incomeSourceType = ForeignProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeStandard)
     )
 
   val foreignPropertyLatencyYearTwoUnknown: ManageIncomeSourceDetailsViewModel =
@@ -311,7 +322,8 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = Some(testLatencyDetailsCYUnknown),
       incomeSourceType = ForeignProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = Some(QuarterTypeStandard)
     )
 
   val foreignViewModelUnknowns: ManageIncomeSourceDetailsViewModel =
@@ -335,6 +347,7 @@ object ManageIncomeSourceDetailsViewConstants {
       ),
       latencyDetails = None,
       incomeSourceType = ForeignProperty,
-      currentTaxYearEnd = getCurrentTaxYearEnd.getYear
+      currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
+      quarterReportingType = None
     )
 }
