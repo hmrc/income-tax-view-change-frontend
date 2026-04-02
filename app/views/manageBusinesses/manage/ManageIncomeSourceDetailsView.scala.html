@@ -417,7 +417,7 @@ val rows = {
             attributes = Map("id" -> "manage-details-table")
         )
     )
-    @if(!viewModel.isBusinessInLatency || !viewModel.isQuarterly){
+    @if(!viewModel.isBusinessInLatency && viewModel.isQuarterly){
         @quarterlyPeriodDropDown
     }
 
