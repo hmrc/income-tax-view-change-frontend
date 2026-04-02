@@ -510,7 +510,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
         document.getElementById("expandable-standard-update-period").text() shouldBe "This business is currently reporting from 1 April using calendar update periods."
         document.getElementById("software-support").text() shouldBe "You can change to use standard update periods, in line with the tax year, so you report from 6 April. This change can only be made in your compatible software."
-        document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+        document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)."
         document.getElementById("standard-update-period-dropdown").text().contains("What is a calendar update period?") shouldBe true
       }
 
@@ -531,7 +531,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
         document.getElementById("expandable-standard-update-period").text() shouldBe "This business is reporting from 6 April in line with the tax year, also known as using standard update periods."
         document.getElementById("software-support").text() shouldBe "If your software supports it, you can choose to report using calendar update periods which end on the last day of the month."
-        document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+        document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)."
         document.getElementById("standard-update-period-dropdown").text().contains("What is a standard update period?") shouldBe true
       }
     }
