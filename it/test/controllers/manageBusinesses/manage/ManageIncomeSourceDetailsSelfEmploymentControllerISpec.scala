@@ -192,6 +192,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
             val taxYear1ToString = s"${latencyDetailsCty.taxYear1.toInt - 1} to ${latencyDetailsCty.taxYear1}"
             val taxYear2ToString = s"${latencyDetailsCty.taxYear2.toInt - 1} to ${latencyDetailsCty.taxYear2}"
+            val mandatoryFromYear = latencyDetailsCty.taxYear2.toInt
 
             ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
             ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
@@ -218,7 +219,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")("Yes"),
               elementTextByID("sign-up-link-1")("Sign up"),
               elementTextByID("opt-out-link-2")("Opt out"),
-              elementTextByID("up-to-two-tax-years")("Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April 2028, you could be required to use the service.")
+              elementTextByID("up-to-two-tax-years")(s"Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April $mandatoryFromYear, you could be required to use the service.")
             )
           }
         }
