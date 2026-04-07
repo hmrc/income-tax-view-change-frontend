@@ -20,7 +20,6 @@ import audit.mocks.MockAuditingService
 import audit.models.OptInAuditModel
 import connectors.itsastatus.ITSAStatusUpdateConnector
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import controllers.routes
 import enums.JourneyType.{Opt, SignUpJourney}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.UIJourneySessionData
@@ -36,8 +35,6 @@ import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository
 import services.NextUpdatesService
-import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.reportingObligations.signUp.SignUpService
 import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

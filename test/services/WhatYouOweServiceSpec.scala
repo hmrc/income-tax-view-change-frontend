@@ -22,14 +22,15 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import enums.ChargeType.NIC4_WALES
-import enums.CodingOutType._
+import enums.CodingOutType.*
 import models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
-import models.financialDetails._
+import models.financialDetails.*
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

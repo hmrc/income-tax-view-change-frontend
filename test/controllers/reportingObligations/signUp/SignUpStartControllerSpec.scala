@@ -17,7 +17,6 @@
 package controllers.reportingObligations.signUp
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import controllers.reportingObligations.signUp.SignUpStartController
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSignUpService

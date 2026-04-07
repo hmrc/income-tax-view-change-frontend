@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-package services
+package services.claimToAdjustPoa
 
 import auth.MtdItUser
 import cats.data.EitherT
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.NOT_FOUND
-import services.claimToAdjustPoa.ClaimToAdjustHelper
+import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -111,6 +112,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
 
   //TODO: Merge the two functions below, lots of code duplication
+  @unused
   private def getNonCrystallisedFinancialDetails(nino: Nino)
                                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
     checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {

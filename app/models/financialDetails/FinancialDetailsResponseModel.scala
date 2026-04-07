@@ -78,7 +78,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
     documentDetails
       .find(_.transactionId == id)
       .map(documentDetail =>
-        DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(), dunningLock = dunningLockExists(documentDetail.transactionId))
+        DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate, dunningLock = dunningLockExists(documentDetail.transactionId))
       )
   }
 
@@ -93,7 +93,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
   // TODO: drop usage of DocumentDetailWithDueDate / and use ChargeItem/TransactionItem instead
   def getAllDocumentDetailsWithDueDates()(implicit dateService: DateServiceInterface): List[DocumentDetailWithDueDate] = {
     documentDetails.map(documentDetail =>
-      DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate(),
+      DocumentDetailWithDueDate(documentDetail, documentDetail.getDueDate,
         documentDetail.isAccruingInterest, dunningLockExists(documentDetail.transactionId),
         isMFADebit = isMFADebit(documentDetail.transactionId),
         isReviewAndReconcilePoaOneDebit = isReviewAndReconcilePoaOneDebit(documentDetail.transactionId),

@@ -22,16 +22,18 @@ import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnecto
 import mocks.services.MockFinancialDetailsService
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
-import models.claimToAdjustPoa.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import services.{ClaimToAdjustService, DateService}
+import services.DateService
+import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.BaseTestConstants.{testNino, testUserNino}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
+import scala.annotation.unused
 import scala.language.reflectiveCalls
 
 class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockChargeHistoryConnector
@@ -337,7 +339,7 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
 
       setupGetCalculationList(testNino, "22-23")(calculationListSuccessResponseModelNonCrystallised)
 
-      val financialDetailsModelWithoutDocumentDetails = financialDetailsModelBothPoas
+      @unused val financialDetailsModelWithoutDocumentDetails = financialDetailsModelBothPoas
       setupMockGetFinancialDetails(taxYear, testNino)(FinancialDetailsErrorModel(500, "failed call"))
 
       setupGetChargeHistory(testNino, Some("ABCD1234"))(ChargesHistoryModel(

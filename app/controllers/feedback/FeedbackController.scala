@@ -69,7 +69,7 @@ class FeedbackController @Inject()(val authActions: AuthActions,
               Future.successful(Redirect(routes.FeedbackController.thankYou()))
             case Left(status) =>
               Logger("application").error(s"Unexpected status code from feedback form: $status")
-              throw new Error(s"Failed to on post request: ${status}")
+              throw new Error(s"Failed to on post request: $status")
           }).recover {
           case ex: Exception =>
             Logger("application")
@@ -89,7 +89,7 @@ class FeedbackController @Inject()(val authActions: AuthActions,
               Future.successful(Redirect(routes.FeedbackController.thankYouAgent()))
             case Left(status) =>
               Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
-              throw new Error(s"Failed to on post request: ${status}")
+              throw new Error(s"Failed to on post request: $status")
           }).recover {
           case ex: Exception =>
             Logger("application")

@@ -45,7 +45,7 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-    s"calculationPoller${if (isAgent) "Agent"}" when {
+    s"calculationPoller${if (isAgent) "Agent" else ""}" when {
       def action(isFinalCalc: Boolean = false) = if (isAgent) {
         testController.calculationPollerAgent(testTaxYear, isFinalCalc)
       } else {

@@ -47,11 +47,11 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
               case true => codeBlock
               case false =>
                 Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session")
-                showInternalServerError(user.isAgent())
+                showInternalServerError(user.isAgent)
             }
           case false =>
             Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not initialise opt-in context data in session")
-            showInternalServerError(user.isAgent())
+            showInternalServerError(user.isAgent)
         }
       case (false, None) =>
         signUpService.fetchSavedChosenTaxYear().flatMap {

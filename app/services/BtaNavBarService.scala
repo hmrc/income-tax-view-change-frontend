@@ -28,7 +28,7 @@ class BtaNavBarService @Inject()()(implicit val appConfig: FrontendAppConfig) {
     messageCount match {
       case 0 => "0"
       case count if count > 99 => "+99"
-      case _ => s"${messageCount}"
+      case _ => s"$messageCount"
     }
   }
 

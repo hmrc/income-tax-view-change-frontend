@@ -38,7 +38,6 @@ import services.manageBusinesses.IncomeSourceRFService
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 import models.itsaStatus.StatusDetail
-import org.mockito.ArgumentMatchers.{any => mAny}
 import java.time.LocalDate
 import scala.concurrent.Future
 

@@ -448,7 +448,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         chargeItem.codedOutStatus shouldBe None
       }
 
-    "isOverdue calculated correctly" when {
+      "isOverdue calculated correctly" when {
 
       "date is before due date" in {
 

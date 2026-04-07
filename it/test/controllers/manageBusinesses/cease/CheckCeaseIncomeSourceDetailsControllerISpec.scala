@@ -81,7 +81,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
     val selfEmploymentPath = s"$pathStart/manage-your-businesses/cease/business-check-answers"
     val ukPropertyPath = s"$pathStart/manage-your-businesses/cease/uk-property-check-answers"
     val foreignPropertyPath = s"$pathStart/manage-your-businesses/cease/foreign-property-check-answers"
-    s"calling GET ${selfEmploymentPath}" when {
+    s"calling GET $selfEmploymentPath" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Cease Business Details Page" when {
@@ -92,7 +92,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
 
-              When(s"I call GET ${selfEmploymentPath}")
+              When(s"I call GET $selfEmploymentPath")
               val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
@@ -125,7 +125,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
 
-              When(s"I call GET ${selfEmploymentPath}")
+              When(s"I call GET $selfEmploymentPath")
               val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
@@ -153,7 +153,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
     }
 
-    s"calling GET ${ukPropertyPath}" when {
+    s"calling GET $ukPropertyPath" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Cease UK Property Details Page" when {
@@ -164,7 +164,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-              When(s"I call GET ${ukPropertyPath}")
+              When(s"I call GET $ukPropertyPath")
               val result = buildGETMTDClient(ukPropertyPath, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
@@ -183,7 +183,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
     }
 
-    s"calling GET ${foreignPropertyPath}" when {
+    s"calling GET $foreignPropertyPath" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the Cease Foreign Property Details Page" when {
@@ -194,7 +194,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
-              When(s"I call GET ${foreignPropertyPath}")
+              When(s"I call GET $foreignPropertyPath")
               val result = buildGETMTDClient(foreignPropertyPath, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
@@ -213,7 +213,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
     }
 
-    s"calling POST ${selfEmploymentPath}" when {
+    s"calling POST $selfEmploymentPath" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, SelfEmployment)
@@ -245,7 +245,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
     }
 
-    s"calling POST ${ukPropertyPath}" when {
+    s"calling POST $ukPropertyPath" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, UkProperty)
@@ -276,7 +276,7 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
       }
     }
 
-    s"calling POST ${foreignPropertyPath}" when {
+    s"calling POST $foreignPropertyPath" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, ForeignProperty)

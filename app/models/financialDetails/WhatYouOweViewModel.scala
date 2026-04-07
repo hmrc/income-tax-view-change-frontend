@@ -18,8 +18,6 @@ package models.financialDetails
 
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import services.DateServiceInterface
-import auth.MtdItUser
-
 import java.time.LocalDate
 
 case class WhatYouOweViewModel(currentDate: LocalDate,

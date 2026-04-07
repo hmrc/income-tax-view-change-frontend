@@ -92,14 +92,14 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
   trait Setup {
     val baseUrl = "http://localhost:9999"
 
-    def getAppConfig(): FrontendAppConfig =
+    def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
 
         override def incomeSourceOverrides(): Option[Seq[String]] = Some(incomeSourceOverride)
       }
 
-    val connector = new BusinessDetailsConnector(mockHttpClientV2, mockAuditingService, getAppConfig())
+    val connector = new BusinessDetailsConnector(mockHttpClientV2, mockAuditingService, getAppConfig)
     val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   }
 
@@ -294,7 +294,7 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
         forAll(scenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
           s"add test header for $scenarioName with path: $path" in new Setup {
-            implicit val appConfig: FrontendAppConfig = getAppConfig()
+            implicit val appConfig: FrontendAppConfig = getAppConfig
             val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
 
             modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
@@ -313,7 +313,7 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
         forAll(noHeaderScenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
           s"not add test header for $scenarioName with path: $path" in new Setup {
-            implicit val appConfig: FrontendAppConfig = getAppConfig()
+            implicit val appConfig: FrontendAppConfig = getAppConfig
             val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
 
             modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader

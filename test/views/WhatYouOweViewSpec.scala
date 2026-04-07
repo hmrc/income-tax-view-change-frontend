@@ -39,6 +39,7 @@ import testUtils.{TestSupport, ViewSpec}
 import views.html.WhatYouOweView
 
 import java.time.LocalDate
+import scala.annotation.unused
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with ChargeConstants {
 
@@ -133,7 +134,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                   dunningLock: Boolean = false,
                   taxYear: Int = fixedDate.getYear,
                   migrationYear: Int = fixedDate.getYear - 1,
-                  adjustPaymentsOnAccountFSEnabled: Boolean = false,
+                  @unused adjustPaymentsOnAccountFSEnabled: Boolean = false,
                   claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
                   LPP2Url: String = ""
                  ) {
@@ -186,8 +187,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
                        migrationYear: Int = fixedDate.getYear - 1,
                        dunningLock: Boolean = false,
                        taxYear: Int = fixedDate.getYear,
-                       hasLpiWithDunningLock: Boolean = false,
-                       adjustPaymentsOnAccountFSEnabled: Boolean = false,
+                       @unused hasLpiWithDunningLock: Boolean = false,
+                       @unused adjustPaymentsOnAccountFSEnabled: Boolean = false,
                        claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None) {
 
     val defaultClaimToAdjustViewModel: WYOClaimToAdjustViewModel = ctaViewModel

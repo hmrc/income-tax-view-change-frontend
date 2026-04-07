@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.viewmodels.govuk
+package viewmodels.govuk
 
 import play.api.data.Field
 import play.api.i18n.Messages

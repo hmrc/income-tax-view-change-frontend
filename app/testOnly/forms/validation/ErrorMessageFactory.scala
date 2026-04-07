@@ -34,9 +34,9 @@ object ErrorMessageFactory {
    * Designed for creating cross field validation error messages
    *
    * @param targetIds which fields this message is designated for
-   * @param errKey
-   * @param errArgs
-   * @return
+   * @param errKey the error message key
+   * @param errArgs the error message arguments
+   * @return an Invalid validation result with field and summary errors
    */
   def error(targetIds: TargetIds, errKey: String, errArgs: String*): Invalid = {
     val fieldError = FieldError(errKey, errArgs)
@@ -51,9 +51,9 @@ object ErrorMessageFactory {
    * Designed for creating cross field validation error messages
    *
    * @param targetIds which fields this message is designated for
-   * @param fieldError
-   * @param summaryError
-   * @return
+   * @param fieldError the field-level error details
+   * @param summaryError the summary-level error details
+   * @return an Invalid validation result with the specified errors and target IDs
    */
   def error(targetIds: TargetIds, fieldError: FieldError, summaryError: SummaryError): Invalid =
     Invalid("", fieldError, summaryError, targetIds)

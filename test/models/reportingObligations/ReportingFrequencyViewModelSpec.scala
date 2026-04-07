@@ -19,7 +19,6 @@ package models.reportingObligations
 import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
-import models.reportingObligations.ReportingFrequencyViewModel
 import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import services.DateService

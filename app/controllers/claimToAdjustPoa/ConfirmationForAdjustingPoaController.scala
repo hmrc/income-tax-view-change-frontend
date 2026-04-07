@@ -24,8 +24,8 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, RecalculatePoaHelper}
-import services.{ClaimToAdjustService, NrsService, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}
+import services.{NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
@@ -55,7 +55,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
           case Some(value) =>
             val isAmountZero: Boolean = value.equals(BigDecimal(0))
             val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)
-            EitherT.rightT(Ok(view(user.isAgent(), viewModel)))
+            EitherT.rightT(Ok(view(user.isAgent, viewModel)))
           case None =>
 
             EitherT.rightT(logAndRedirect(s"Error, New PoA Amount was not found in session"))

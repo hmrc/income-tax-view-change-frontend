@@ -18,9 +18,6 @@ package models.nrs
 
 import org.apache.pekko.util.ByteString
 
-import java.io.{ByteArrayInputStream, InputStream}
-import scala.xml.NodeSeq
-
 case class RawPayload(byteString: ByteString, encoding: Option[String]) {
   lazy val byteArray: Array[Byte] = byteString.toArray
 }

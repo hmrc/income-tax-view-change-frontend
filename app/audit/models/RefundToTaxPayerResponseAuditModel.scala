@@ -37,7 +37,7 @@ case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistory
     val from = repaymentInterestContent.map(_.fromDate.format(pattern)).getOrElse("")
     val to = repaymentInterestContent.map(_.toDate.format(pattern)).getOrElse("")
     val rate = repaymentInterestContent.map(_.fromRate.toString()).getOrElse("")
-    s"${from} to ${to} at ${rate}%"
+    s"$from to $to at $rate%"
   }
 
   val totalRefund: String = repaymentHistoryItem.flatMap(_.totalRepaymentAmount).map(_.toString).getOrElse("")

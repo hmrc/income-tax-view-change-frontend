@@ -80,7 +80,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
     incomeSourceTypes.foreach { incomeSourceType =>
-      s"show${if (mtdRole != MTDIndividual) "Agent"}($incomeSourceType)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}($incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testController.show(incomeSourceType) else testController.showAgent(incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
@@ -99,7 +99,7 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
             document.getElementById("subheading").text() shouldBe getSubHeading(incomeSourceType)
           }
         }
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

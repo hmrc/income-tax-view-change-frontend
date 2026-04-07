@@ -20,7 +20,7 @@ import org.scalacheck.Gen
 import testUtils.TestSupport
 
 class ConvertersSpec extends TestSupport {
-  import converters.OptionExtension
+  import Converters.OptionExtension
   "OptionExtension" when {
     "call trim method" should {
       "Some('') return None" in {

@@ -17,12 +17,13 @@
 package services.reportingObligations.signUp
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
-import org.scalatest.prop.TableDrivenPropertyChecks._
+import models.itsaStatus.ITSAStatus.*
+import org.scalatest.prop.TableDrivenPropertyChecks.*
 import services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
 import services.reportingObligations.signUp.core.SignUpProposition
 import testUtils.UnitSpec
 
+import scala.annotation.unused
 import scala.io.Source
 
 class SignUpPropositionExcelSpec extends UnitSpec {
@@ -180,9 +181,9 @@ class SignUpPropositionExcelSpec extends UnitSpec {
   private def testSignUpScenario(signUpProposition: SignUpProposition,
                                  valid: Boolean,
                                  intent: String,
-                                 presented: List[String],
+                                 @unused presented: List[String],
                                  expectedCY: String,
-                                 expectedNY: String) = {
+                                 expectedNY: String): Any = {
 
 
     if (valid) {

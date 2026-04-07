@@ -41,12 +41,12 @@ class CreditsModelSpec extends UnitSpec {
   val allCreditsJson: String =
     s"""
       |{
-      |  "availableCreditForRepayment" : ${availableCreditForRepayment},
-      |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
-      |  "unallocatedCredit" : ${unallocatedCredit},
-      |  "totalCredit" : ${totalCredit},
-      |  "firstPendingAmountRequested": ${firstPendingAmountRequested},
-      |  "secondPendingAmountRequested": ${secondPendingAmountRequested},
+      |  "availableCreditForRepayment" : $availableCreditForRepayment,
+      |  "allocatedCreditForFutureCharges" : $allocatedCreditForFutureCharges,
+      |  "unallocatedCredit" : $unallocatedCredit,
+      |  "totalCredit" : $totalCredit,
+      |  "firstPendingAmountRequested": $firstPendingAmountRequested,
+      |  "secondPendingAmountRequested": $secondPendingAmountRequested,
       |  "transactions" : [ {
       |    "transactionType" : "refund",
       |    "amount" : 5,
@@ -201,12 +201,12 @@ class CreditsModelSpec extends UnitSpec {
       val invalid =
         s"""
           |{
-          |  "availableCreditForRepayment" : ${availableCreditForRepayment},
-          |  "allocatedCreditForFutureCharges" : ${allocatedCreditForFutureCharges},
-          |  "unallocatedCredit" : ${unallocatedCredit},
-          |  "totalCredit" : ${totalCredit},
-          |  "firstPendingAmountRequested": ${firstPendingAmountRequested},
-          |  "secondPendingAmountRequested": ${secondPendingAmountRequested},
+          |  "availableCreditForRepayment" : $availableCreditForRepayment,
+          |  "allocatedCreditForFutureCharges" : $allocatedCreditForFutureCharges,
+          |  "unallocatedCredit" : $unallocatedCredit,
+          |  "totalCredit" : $totalCredit,
+          |  "firstPendingAmountRequested": $firstPendingAmountRequested,
+          |  "secondPendingAmountRequested": $secondPendingAmountRequested,
           |  "transactions" : [ {
           |    "transactionType" : "invalid credit type",
           |    "amount" : 5,

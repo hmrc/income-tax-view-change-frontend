@@ -24,7 +24,8 @@ import models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
 import play.api.test.Helpers._
-import services.{ClaimToAdjustService, DateServiceInterface, PaymentOnAccountSessionService}
+import services.claimToAdjustPoa.ClaimToAdjustService
+import services.{DateServiceInterface, PaymentOnAccountSessionService}
 
 import scala.concurrent.Future
 
@@ -129,7 +130,7 @@ class AmendablePoaControllerSpec
           }
         }
       }
-testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole, supportingAgentAccessAllowed = false)(fakeRequest)
     }
   }
 }

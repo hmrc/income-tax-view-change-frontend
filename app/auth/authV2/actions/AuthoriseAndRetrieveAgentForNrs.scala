@@ -25,14 +25,15 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
+import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -117,7 +118,7 @@ class AuthoriseAndRetrieveAgentForNrs @Inject()(val authorisedFunctions: Fronten
   }
 
   private def redirectIfNonAgent[A]()(
-    implicit request: Request[A]): PartialFunction[NrsAgentAuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
+    implicit @unused request: Request[A]): PartialFunction[NrsAgentAuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ ~ _ ~ _ ~ _ ~ _ ~
       _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ =>
       logger.error(s"$ag on endpoint for agents")

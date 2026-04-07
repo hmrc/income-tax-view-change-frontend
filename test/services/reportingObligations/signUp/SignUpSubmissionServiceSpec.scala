@@ -30,7 +30,7 @@ import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import play.mvc.Http.Status.NO_CONTENT
 import repositories.UIJourneySessionDataRepository
 import services.DateService
-import services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
+import services.reportingObligations.signUp
 import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import testConstants.BaseTestConstants.testSessionId
 import testUtils.{TestSupport, UnitSpec}

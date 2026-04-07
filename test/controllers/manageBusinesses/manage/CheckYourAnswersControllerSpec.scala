@@ -101,7 +101,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions with ImplicitDateFo
             }
           }
         }
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
 
       s"submit(isAgent = $isAgent, incomeSourceType = $incomeSourceType)" when {
@@ -192,7 +192,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
             }
           }
         }
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

@@ -71,7 +71,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    handleYourTasks(origin, user.isAgent())
+    handleYourTasks(origin, user.isAgent)
   }
 
   private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)

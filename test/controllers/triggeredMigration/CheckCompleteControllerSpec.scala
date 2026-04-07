@@ -28,6 +28,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
+import scala.annotation.unused
 import scala.concurrent.Future
 
 class CheckCompleteControllerSpec extends MockAuthActions {
@@ -57,7 +58,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
 
-    val homeUrl = mtdRole match {
+    @unused val homeUrl = mtdRole match {
       case MTDIndividual => controllers.routes.HomeController.show().url
       case _             => controllers.routes.HomeController.showAgent().url
     }

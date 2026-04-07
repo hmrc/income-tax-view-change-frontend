@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel, Metadata}
+import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

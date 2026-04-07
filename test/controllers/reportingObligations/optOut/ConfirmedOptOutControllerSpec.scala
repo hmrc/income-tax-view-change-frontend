@@ -17,7 +17,6 @@
 package controllers.reportingObligations.optOut
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import controllers.reportingObligations.optOut.ConfirmedOptOutController
 import enums.{CurrentTaxYear, MTDIndividual, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
 import mocks.auth.MockAuthActions
 import mocks.services.MockOptOutService
@@ -31,7 +30,6 @@ import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
 import services.reportingObligations.optOut.{CurrentOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutProposition, OptOutService, OptOutTaxYear}
