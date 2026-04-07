@@ -77,9 +77,9 @@ class SignUpCompletedViewSpec extends TestSupport {
     val nextYearReportingObligationsDesc2 = "If this happens, we will write to you to let you know."
     val nextYearReportingObligationsDesc3 = "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab)."
 
-    val compatibleSoftwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+    val compatibleSoftwareLink = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
     val fileATaxReturnLink = "https://www.gov.uk/log-in-file-self-assessment-tax-return"
-    val criteriaForMtdLink = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+    val criteriaForMtdLink = "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
   }
 
   val view: SignUpCompletedView = app.injector.instanceOf[SignUpCompletedView]

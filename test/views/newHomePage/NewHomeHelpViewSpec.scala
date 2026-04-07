@@ -133,7 +133,7 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
       val expectedLinks: Seq[String] = List(
         "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax",
         "https://www.gov.uk/pay-self-assessment-tax-bill",
-        "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax",
+        "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax",
         "https://www.gov.uk/difficulties-paying-hmrc"
       )
 
@@ -152,7 +152,7 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
       val expectedLinks: Seq[String] = List(
         "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm",
         "https://www.gov.uk/taluch-bil-treth-hunanasesiad",
-        "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy",
+        "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax.cy",
         "https://www.gov.uk/anawsterau-talu-cthem"
       )
 
