@@ -86,7 +86,6 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean)(implicit hc: HeaderCarrier): Future[Boolean] = {
     Logger("application").info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {
-      //featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
       featureSwitchConnector.setSwitch(featureSwitchName, enabled)
     } else {
       setFS(featureSwitchName, enabled)
