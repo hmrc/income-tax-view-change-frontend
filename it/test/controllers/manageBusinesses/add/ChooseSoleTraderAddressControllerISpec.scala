@@ -66,10 +66,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
 
           "reload the page" when {
-
-            //TODO nav ticket should implement proper redirection test here
             "form response is Existing Address" in {
-
               val isAgent: Boolean = mtdUserRole != MTDIndividual
               enable(OverseasBusinessAddress)
               stubAuthorised(mtdUserRole)

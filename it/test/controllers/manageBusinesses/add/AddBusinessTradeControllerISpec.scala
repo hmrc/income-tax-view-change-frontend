@@ -23,6 +23,8 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
+import models.core.NormalMode
+import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -112,7 +114,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
     s"POST $path" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
-          s"303 SEE_OTHER and redirect to choose sole trader business address" when {
+          s"303 SEE_OTHER and redirect to add business address" when {
             "User is authorised and business trade is valid" in {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -131,6 +133,36 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
 
               val expectedUrl = if(mtdUserRole == MTDIndividual) {
+                controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = NormalMode).url
+              } else {
+                controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = NormalMode).url
+              }
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(expectedUrl)
+              )
+            }
+          }
+          s"303 SEE_OTHER and redirect to choose sole trader business address" when {
+            "User is authorised and business trade is valid and the OverseasBusinessAddress FS is on" in {
+              enable(OverseasBusinessAddress)
+              stubAuthorised(mtdUserRole)
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+              val formData: Map[String, Seq[String]] = {
+                Map(
+                  BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+                )
+              }
+
+              await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+                addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+
+              val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
+
+              sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+
+              val expectedUrl = if (mtdUserRole == MTDIndividual) {
                 controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(false).url
               } else {
                 controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(true).url
@@ -173,7 +205,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
     s"POST $changePath" when {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
-          s"303 SEE_OTHER and redirect to choose sole trader details" when {
+          s"303 SEE_OTHER and redirect to Check details" when {
             "User is authorised and business trade is valid" in {
               stubAuthorised(mtdUserRole)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -193,9 +225,9 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(changedTrade))
 
               val expectedUrl = if(mtdUserRole == MTDIndividual) {
-                controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(false).url
+                controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
               } else {
-                controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(true).url
+                controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
               }
               result should have(
                 httpStatus(SEE_OTHER),
@@ -203,6 +235,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               )
             }
           }
+
           "show error when form is filled incorrectly" in {
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)

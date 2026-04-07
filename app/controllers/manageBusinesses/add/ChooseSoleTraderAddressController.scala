@@ -122,7 +122,7 @@ class ChooseSoleTraderAddressController @Inject()(
                     journeyType = "ADD-SE",
                     addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(isNewAddress)))
                   )
-                val redirect = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
+                val redirect = Redirect(controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent))
                 sessionService.setMongoData(newUiSessionData).map { data => redirect }
               case previousBusinessAddressIndex =>
                 val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
@@ -132,7 +132,7 @@ class ChooseSoleTraderAddressController @Inject()(
                     journeyType = "ADD-SE",
                     addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(previousBusinessAddressDetails)))
                   )
-                val redirect = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Update with route
+                val redirect = Redirect(controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)) // TODO: Update with route
                 sessionService.setMongoData(uiSessionData).map { data => redirect }
               case _ =>
                 Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] No existing ui session data and invalid form response")
