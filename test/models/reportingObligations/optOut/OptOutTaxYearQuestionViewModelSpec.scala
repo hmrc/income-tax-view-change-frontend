@@ -109,8 +109,16 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
           val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, Mandated, Voluntary)
           model.showSecondParagraph shouldBe true
         }
-        "the optOutState is OneYearOptOutFollowedByMandated and is the previous tax year" in {
+        "the optOutState is NextYearOptOut and the current year status is Voluntary" in {
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, Voluntary, Voluntary)
+          model.showSecondParagraph shouldBe true
+        }
+        "the optOutState is OneYearOptOutFollowedByAnnual and is the previous tax year" in {
           val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
+          model.showSecondParagraph shouldBe true
+        }
+        "the optOutState is OneYearOptOutFollowedByAnnual and is the current tax year" in {
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
           model.showSecondParagraph shouldBe true
         }
       }
@@ -119,14 +127,13 @@ class OptOutTaxYearQuestionViewModelSpec extends UnitSpec {
           val model = OptOutTaxYearQuestionViewModel(previousOptOutTaxYear, None, 0, NoStatus, NoStatus)
           model.showSecondParagraph shouldBe false
         }
-        "the optOutState is OneYearOptOutFollowedByMandated and is the current tax year" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByAnnual), 0, Voluntary, Voluntary)
-          model.showSecondParagraph shouldBe true
+        "the optOutState is OneYearOptOutFollowedByMandated" in {
+          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(OneYearOptOutFollowedByMandated), 0, Voluntary, Mandated)
+          model.showSecondParagraph shouldBe false
         }
-
-        "the optOutState is NextYearOptOut and the current year status is Voluntary" in {
-          val model = OptOutTaxYearQuestionViewModel(currentOptOutTaxYear, Some(NextYearOptOut), 0, Voluntary, Voluntary)
-          model.showSecondParagraph shouldBe true
+        "the optOutState is NextYearOptOut and the current year status is NoStatus" in {
+          val model = OptOutTaxYearQuestionViewModel(nextOptOutTaxYear, Some(NextYearOptOut), 0, NoStatus, Voluntary)
+          model.showSecondParagraph shouldBe false
         }
       }
     }
