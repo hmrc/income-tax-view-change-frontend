@@ -30,15 +30,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
                                        http: HttpClientV2)(implicit ec: ExecutionContext) extends RawResponseReads{
 
-  def getSetSwitchStubUrl(featureFlagName: FeatureSwitchName, isEnabled: Boolean): String = {
+  def setSwitchStubUrl(featureFlagName: FeatureSwitchName, isEnabled: Boolean): String = {
     s"${appConfig.incomeTaxVcFsAndStubUrl}/features/${featureFlagName.name}?isEnabled=$isEnabled"
   }
 
-  def getSetSwitchesStubUrl: String = {
-    s"${appConfig.incomeTaxVcFsAndStubUrl}/features"
-  }
-
-  def getAllSwitchesStubUrl: String = {
+  def switchesStubBaseUrl: String = {
     s"${appConfig.incomeTaxVcFsAndStubUrl}/features"
   }
 
@@ -48,7 +44,7 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean)(implicit headerCarrier: HeaderCarrier): Future[Boolean] = {
 
-    val url = getSetSwitchStubUrl(featureFlagName, isEnabled)
+    val url = setSwitchStubUrl(featureFlagName, isEnabled)
 
     http.put(url"$url")
       .execute[HttpResponse] map { response =>
@@ -62,7 +58,7 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
   def setSwitches(featureSwitches: Map[FeatureSwitchName, Boolean])
                  (implicit headerCarrier: HeaderCarrier): Future[Boolean] = {
 
-    val url = getSetSwitchesStubUrl
+    val url = switchesStubBaseUrl
 
     val featureSwitchSeq: Seq[FeatureSwitch] =
       featureSwitches.toSeq.map { case (name, isEnabled) =>
@@ -86,7 +82,7 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def getAllSwitches()(implicit headerCarrier: HeaderCarrier): Future[List[FeatureSwitch]] = {
 
-    val url = getAllSwitchesStubUrl
+    val url = switchesStubBaseUrl
 
     http.get(url"$url")
       .execute[HttpResponse]
