@@ -22,6 +22,7 @@ import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.admin.{FeatureSwitchName, InvalidFS}
 import play.api.Logger
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
@@ -43,6 +44,15 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
   val PROD_FEATURES: String = "feature-switch.prod-switches"
+
+  def getSwitch(featureFlagName: FeatureSwitchName): Action[AnyContent] = Action.async { implicit request =>
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
+
+    featureSwitchService.get(featureFlagName).map { featureSwitch =>
+      Ok(Json.toJson(featureSwitch))
+    }
+  }
 
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { implicit request =>
 
