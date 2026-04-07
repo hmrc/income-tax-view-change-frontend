@@ -82,7 +82,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Annual) {
         pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display correct tax return due date for the 2025-26 tax year in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Annual) {
@@ -95,7 +95,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Annual) {
         pageDocument.getElementById("next-year-desc").text() shouldBe "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the deadline description for the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Annual) {
@@ -134,7 +134,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link within the dropdown in the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("active-quarterly-dropdown-desc2").text() shouldBe "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-        pageDocument.getElementById("active-quarterly-compatible-software-link-dropdown").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("active-quarterly-compatible-software-link-dropdown").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the tax year summary description for the current year tab - individuals" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
@@ -155,7 +155,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("active-quarterly-return-due-desc").text() shouldBe "If you have submitted quarterly updates for the tax year, in your tax return you will also provide any other taxable income. You will then need to file your return using software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-        pageDocument.getElementById("quarterly-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("quarterly-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the correct tax return due date for the 2025-26 tax year in the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
@@ -205,7 +205,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the next year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("next-year-desc").text() shouldBe "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the deadline description for the next year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
@@ -228,7 +228,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
         pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display correct tax return due date for the 2025-26 tax year in the current year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
@@ -265,7 +265,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link within the dropdown in the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
         pageDocument.getElementById("active-quarterly-dropdown-desc2").text() shouldBe "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-        pageDocument.getElementById("active-quarterly-compatible-software-link-dropdown").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("active-quarterly-compatible-software-link-dropdown").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the upcoming deadlines subheading for the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
@@ -290,7 +290,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
         pageDocument.getElementById("active-quarterly-return-due-desc").text() shouldBe "If you have submitted quarterly updates for the tax year, in your tax return you will also provide any other taxable income. You will then need to file your return using software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-        pageDocument.getElementById("quarterly-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("quarterly-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the correct tax return due date for the 2025-26 tax year in the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
@@ -362,7 +362,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link within the dropdown in the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("active-quarterly-dropdown-desc2").text() shouldBe "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-        pageDocument.getElementById("active-quarterly-compatible-software-link-dropdown").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("active-quarterly-compatible-software-link-dropdown").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the upcoming deadlines subheading for the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
@@ -387,7 +387,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("active-quarterly-return-due-desc").text() shouldBe "If you have submitted quarterly updates for the tax year, in your tax return you will also provide any other taxable income. You will then need to file your return using software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-        pageDocument.getElementById("quarterly-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("quarterly-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the correct tax return due date for the 2025-26 tax year in the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
@@ -444,7 +444,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the next year tab" in new Setup(isAgent = false, obligationsModel, Mandated, Mandated) {
         pageDocument.getElementById("next-year-desc").text() shouldBe "As you are either required or voluntarily signed up for the 2026 to 2027 tax year, you will need software compatible with Making Tax Digital for Income Tax (opens in new tab)."
-        pageDocument.getElementById("quarterly-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("quarterly-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the deadline description for the next year tab" in new Setup(isAgent = false, obligationsModel, Mandated, Mandated) {
@@ -468,7 +468,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the compatible software link section in the current year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
         pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are exempt from Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display correct tax return due date for the 2025-26 tax year in the current year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
@@ -481,7 +481,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
       "display the description containing the compatible software link in the next year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
         pageDocument.getElementById("next-year-desc").text() shouldBe "As you are exempt from Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
       }
 
       "display the deadline description for the next year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {

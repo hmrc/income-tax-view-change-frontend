@@ -29,7 +29,7 @@ class CheckCompleteViewSpec extends TestSupport {
   def nextUpdatesLink(isAgent: Boolean): String =
     if(isAgent)controllers.routes.NextUpdatesController.showAgent().url
     else controllers.routes.NextUpdatesController.show().url
-  val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   class Setup(isAgent: Boolean) {
     val homeCall: Call = if(isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()

@@ -31,7 +31,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
   val view: ReportingFrequencyView = app.injector.instanceOf[ReportingFrequencyView]
 
-  val govGuidanceUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  val govGuidanceUrl = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   def nextUpdatesUrl(isAgent: Boolean): String =
     if(isAgent) controllers.routes.NextUpdatesController.showAgent().url
