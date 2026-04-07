@@ -94,6 +94,13 @@ object StatusReason extends Enumeration {
   val MtdItsaOptOut = Value("MTD ITSA Opt-Out")
   val MtdItsaOptIn = Value("MTD ITSA Opt-In")
   val DigitallyExempt = Value("Digitally Exempt")
+  val Capacitor = Value("Capacitor")
+  val ResidenceAndRemittance = Value("Residence and remittance")
+  val MinistersOfReligion = Value("Ministers of religion")
+  val LloydsUnderwriters = Value("Lloyds underwriters")
+  val BlindPersonsAllowance = Value("Blind persons allowance")
+  val MarriedCouplesAllowance = Value("Married couples allowance")
+  val ReturnNotConsidered = Value("Return not considered")
 
   implicit val statusReasonReads: Reads[StatusReason] = Reads.enumNameReads(StatusReason)
   implicit val statusReasonWrite: Writes[StatusReason.Value] = Writes.enumNameWrites[StatusReason.type]
