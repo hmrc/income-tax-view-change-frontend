@@ -39,7 +39,7 @@ object IncomeSourceAddedObligationsConstants {
   val manageBusinessesAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
 
   val testId: String = "XAIS00000000005"
-  val submitSoftwareUrl = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  val submitSoftwareUrl = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
   val testName = Some("Test Name")
 
   val day: LocalDate = LocalDate.of(2022, 1, 1)

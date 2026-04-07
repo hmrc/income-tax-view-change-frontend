@@ -35,7 +35,7 @@ class ExternalUrlHelperSpec extends UnitSpec with GuiceOneAppPerSuite {
   val generalQuarterlyUpdatesGuidanceUrl = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
 
   val welshSaWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax.cy#pwy-fydd-angen-cofrestru"
-  val generalSaWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+  val generalSaWhoNeedsToSignUpUrl = "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 
 
   "clientAuthorisationGuidance" should {

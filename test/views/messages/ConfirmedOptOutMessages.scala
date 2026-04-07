@@ -30,7 +30,7 @@ object ConfirmedOptOutMessages {
   val singleYearReportingUpdatesListP2 = "you reported an increase in your qualifying income in last year’s tax return"
   val singleYearReportingUpdatesP1 = "This could be because:"
   val singleYearReportingUpdatesHeading = "Reporting quarterly from next tax year onwards"
-  val singleYearSoftwareCompatibleLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  val singleYearSoftwareCompatibleLink = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
 
   val heading: String = "Opt out completed"
@@ -55,5 +55,5 @@ object ConfirmedOptOutMessages {
   val multiYearReportingUpdatesInset = s"For example, if your qualifying income exceeds the threshold in the ${optOutTaxYear.taxYear.startYear} to ${optOutTaxYear.taxYear.endYear} tax year, you would have to report quarterly from 6 April ${optOutTaxYear.taxYear.nextYear.endYear}."
   val multiYearReportingUpdatesP2 = "If this happens, we will write to you to let you know."
   val multiYearReportingUpdatesP3 = "You can check the threshold for qualifying income in the criteria for people who will need to sign up for Making Tax Digital (opens in new tab) ."
-  val multiYearReportingUpdatesP3Link = "https://www.gov.uk/guidance/check-if-youre-eligible-for-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
+  val multiYearReportingUpdatesP3Link = "https://www.gov.uk/guidance/find-out-if-and-when-you-need-to-use-making-tax-digital-for-income-tax#who-will-need-to-sign-up"
 }
