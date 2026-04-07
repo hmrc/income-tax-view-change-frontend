@@ -218,7 +218,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               elementTextBySelectorList("#manage-details-table .govuk-summary-list__row:nth-of-type(6) dd")("Yes"),
               elementTextByID("sign-up-link-1")("Sign up"),
               elementTextByID("opt-out-link-2")("Opt out"),
-              elementTextByID("up-to-two-tax-years")("Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April 2027, you could be required to use the service.")
+              elementTextByID("up-to-two-tax-years")("Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April 2028, you could be required to use the service.")
             )
           }
         }
