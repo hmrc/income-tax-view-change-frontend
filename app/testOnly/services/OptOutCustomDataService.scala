@@ -69,7 +69,7 @@ class OptOutCustomDataService @Inject()(implicit val appConfig: FrontendAppConfi
           case StatusReason.LloydsUnderwriters => "16"
           case StatusReason.BlindPersonsAllowance => "17"
           case StatusReason.MarriedCouplesAllowance => "18"
-          case StatusReason.ReturnNotConsidered => "18"
+          case StatusReason.ReturnNotConsidered => "19"
           case _ => ""
         })
       ) ++ (statusDetail.businessIncomePriorTo2Years match {
