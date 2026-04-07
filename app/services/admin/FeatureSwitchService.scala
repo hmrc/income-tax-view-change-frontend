@@ -33,11 +33,26 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
                                      val appConfig: FrontendAppConfig)
                                     (implicit val ec: ExecutionContext) extends FeatureSwitching {
 
-  def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
-    featureSwitchRepository
-      .getFeatureSwitch(featureSwitchName)
-      .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
+  def get(featureSwitchName: FeatureSwitchName)
+         (implicit hc: HeaderCarrier): Future[FeatureSwitch] = {
 
+    if (appConfig.readFeatureSwitchesFromMongo) {
+      featureSwitchConnector.getSwitch(featureSwitchName)
+        .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
+        .recoverWith { case ex =>
+          Logger("application").warn(
+            s"Connector failed, falling back to repository: ${ex.getMessage}"
+          )
+          featureSwitchRepository
+            .getFeatureSwitch(featureSwitchName)
+            .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
+        }
+    } else {
+      featureSwitchRepository
+        .getFeatureSwitch(featureSwitchName)
+        .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
+    }
+  }
 
   def getAll()(implicit hc: HeaderCarrier): Future[List[FeatureSwitch]] = {
 
@@ -82,8 +97,6 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
   def setAll(featureSwitches: Map[FeatureSwitchName, Boolean])(implicit hc: HeaderCarrier): Future[Unit] = {
     Logger("application").info(s"Setting all feature switches. FS values: $featureSwitches")
     if (appConfig.readFeatureSwitchesFromMongo) {
-      //featureSwitchRepository.setFeatureSwitches(featureSwitches)
-      //setSwitches
       featureSwitchConnector.setSwitches(featureSwitches).map(_ => ())
     } else {
       featureSwitches.foreach { case (featureSwitchName, state) =>
