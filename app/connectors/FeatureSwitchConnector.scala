@@ -38,10 +38,6 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
     s"${appConfig.incomeTaxVcFsAndStubUrl}/features"
   }
 
-  def getSwitchStubUrl(featureFlagName: FeatureSwitchName): String = {
-    s"${appConfig.incomeTaxVcFsAndStubUrl}/features/${featureFlagName.name}"
-  }
-
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean)(implicit headerCarrier: HeaderCarrier): Future[Boolean] = {
 
     val url = setSwitchStubUrl(featureFlagName, isEnabled)
@@ -90,22 +86,6 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
         response.status match {
           case OK =>
             response.json.as[Seq[FeatureSwitch]].toList
-          case _ =>
-            throw new RuntimeException(s"Failed to fetch feature switches: ${response.status}")
-        }
-      }
-  }
-
-  def getSwitch(featureFlagName: FeatureSwitchName)(implicit headerCarrier: HeaderCarrier): Future[Option[FeatureSwitch]] = {
-
-    val url = getSwitchStubUrl(featureFlagName)
-
-    http.get(url"$url")
-      .execute[HttpResponse]
-      .map { response =>
-        response.status match {
-          case OK =>
-            Some(response.json.as[FeatureSwitch])
           case _ =>
             throw new RuntimeException(s"Failed to fetch feature switches: ${response.status}")
         }
