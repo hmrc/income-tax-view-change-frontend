@@ -1786,14 +1786,14 @@ radioForm.checkDate.heading.withDate                                = Ai {0} yw�
 #Generic income sources messages
 incomeSources.generic.unknown                                       = Anhysbys
 
-incomeSources.cease.endDate.selfEmployment.heading                               = Y dyddiad gwnaeth eich busnes hunangyflogedig stopio
+incomeSources.cease.endDate.selfEmployment.heading                               = Pryd y daeth eich busnes unig fasnachwr i ben?
 incomeSources.cease.endDate.selfEmployment.error.invalid                         = Mae’n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
 incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
 
 incomeSources.cease.endDate.ukProperty.heading                    = Pryd y gwnaeth y busnes eiddo yn y DU ddod i ben?
 incomeSources.cease.endDate.ukProperty.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
 
-incomeSources.cease.SE.heading                            = Cadarnhau eich bod am ddod â’ch busnes hunangyflogedig i ben
+incomeSources.cease.SE.heading                            = Dod â busnes unig fasnachwr i ben
 incomeSources.cease.SE.caption                            = Unig fasnachwr
 incomeSources.cease.SE.checkboxLabel                      = Rwyf yn cadarnhau fy mod am ddod â’r busnes hwn i ben
 incomeSources.cease.SE.hint                               = Ond dod â {0} i ben os nad ydych bellach yn cael unrhyw incwm neu os oes gennych unrhyw gostau sy’n gysylltiedig â’r busnes hwn.
