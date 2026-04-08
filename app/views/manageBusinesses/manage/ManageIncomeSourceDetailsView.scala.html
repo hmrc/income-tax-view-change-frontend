@@ -26,6 +26,7 @@
 @import views.html.layouts.unifiedLayout
 @import config.FrontendAppConfig
 @import viewUtils.ExternalUrlHelper
+@import play.twirl.api.HtmlFormat
 
 @this(
         mainTemplate: unifiedLayout,
@@ -279,37 +280,45 @@ val rows = {
 }
 
 @getQuarterlyType = @{
-    viewModel.quarterReportingType match {
-        case Some(quarterType) =>
-            Seq(
-                SummaryListRow(
-                    key = Key(
-                        content = Text(messages("incomeSources.manage.new.quarterly.update.period"))
-                    ),
-                    value = Value(
-                        content = Text(messages(s"incomeSources.manage.new.quarterly.period.${quarterType.value.toLowerCase}"))
+    if(!viewModel.isQuarterly) {
+        Seq.empty
+    } else {
+        viewModel.quarterReportingType match {
+            case Some(quarterType) =>
+                Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("incomeSources.manage.quarterly-period"))
+                        ),
+                        value = Value(
+                            content = Text(messages(s"incomeSources.manage.quarterly-period.${quarterType.value.toLowerCase}"))
+                        )
                     )
                 )
-            )
-        case None => Seq.empty
+            case None => Seq.empty
+        }
     }
 }
 
 @quarterlyPeriodDropDown = @{
-    val messagePrefix = "incomeSources.manage.quarterly-period"
+    viewModel.quarterReportingType match {
+        case None => HtmlFormat.empty
+        case Some(quarterlyType) => {
+            val messagePrefix = s"incomeSources.manage.quarterly-period.${quarterlyType.value.toLowerCase()}"
 
-    val p1 = p(id = Some("expandable-standard-update-period"))(Html(messages(s"incomeSources.manage.new.quarterly.period.content.p1")))
-    val p2 = p(id = Some("software-support"))(Html(messages(s"incomeSources.manage.new.quarterly.period.content.p2")))
+            val p1 = p(id = Some("expandable-standard-update-period"))(Html(messages(s"$messagePrefix.content.p1")))
+            val p2 = p(id = Some("software-support"))(Html(messages(s"$messagePrefix.content.p2")))
 
-    val anchor = link( id = Some("learn-about-quarters-link"), target = Some("_blank"), link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl, messageKey = s"incomeSources.manage.new.quarterly.period.content.p3.link" )
-    val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
+            val anchor = link( id = Some("learn-about-quarters-link"), target = Some("_blank"), link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl, messageKey = s"incomeSources.manage.quarterly-period.content.p3", outerMessage = messages("base.fullstop"))
+            val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
 
-    govukDetails(Details(
-        id = Some("standard-update-period-dropdown"),
-        summary = Text(messages(s"incomeSources.manage.new.quarterly.period.summary")),
-        content = content
-    ))
-
+            govukDetails(Details(
+                id = Some("standard-update-period-dropdown"),
+                summary = Text(messages(s"$messagePrefix.summary")),
+                content = content
+            ))
+        }
+    }
 }
 
 @mainTemplate(
@@ -408,7 +417,7 @@ val rows = {
             attributes = Map("id" -> "manage-details-table")
         )
     )
-    @if(!viewModel.isBusinessInLatency){
+    @if(!viewModel.isBusinessInLatency && viewModel.isQuarterly){
         @quarterlyPeriodDropDown
     }
 

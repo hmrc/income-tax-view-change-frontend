@@ -294,13 +294,6 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     errorHandler.showInternalServerError()
   }
 
-  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
-    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
-      .toMap
-      .withDefaultValue(ITSAStatus.NoStatus)
-    ).map(detail => detail(taxYear))
-  }
-
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
   }
@@ -371,5 +364,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
       isPenaltiesEnabled = penaltiesEnabled,
       remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter)
+  }
+
+  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
+    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
+      .toMap
+      .withDefaultValue(ITSAStatus.NoStatus)
+    ).map(detail => detail(taxYear))
   }
 }

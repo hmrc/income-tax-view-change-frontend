@@ -23,8 +23,9 @@ import enums.{MTDIndividual, MTDUserRole}
 import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import models.itsaStatus.ITSAStatus
 import play.api.http.Status
 import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
@@ -206,7 +207,8 @@ object BaseIntegrationTestConstants {
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = SelfEmployment,
     currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
-    quarterReportingType = Some(QuarterTypeStandard)
+    quarterReportingType = Some(QuarterTypeStandard),
+    currentItsaStatus = ITSAStatus.Voluntary
   )
 
   val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -230,7 +232,8 @@ object BaseIntegrationTestConstants {
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = UkProperty,
     currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
-    quarterReportingType = Some(QuarterTypeStandard)
+    quarterReportingType = Some(QuarterTypeStandard),
+    currentItsaStatus = ITSAStatus.Voluntary
   )
 
   val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
@@ -254,6 +257,7 @@ object BaseIntegrationTestConstants {
     latencyDetails = Some(testLatencyDetails3),
     incomeSourceType = ForeignProperty,
     currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
-    quarterReportingType = None
+    quarterReportingType = None,
+    currentItsaStatus = ITSAStatus.Annual
   )
 }
