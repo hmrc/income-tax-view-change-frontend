@@ -226,7 +226,7 @@ class AddBusinessNameControllerSpec extends MockAuthActions with MockSessionServ
                 BusinessNameForm.businessName -> invalidBusinessNameEmpty))
 
               status(result) mustBe BAD_REQUEST
-              contentAsString(result) must include("Business name cannot include !, &quot;&quot;, * or ?")
+              contentAsString(result) must include("The business name can only include upper or lower case letters, full stops, commas, digits, &amp;, ’, \\, /, -.")
             }
 
             if (mode == CheckMode) {
