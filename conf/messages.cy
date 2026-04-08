@@ -1679,7 +1679,7 @@ add-trade.trade-info-2                          = Er enghraifft: plymio, gwaith 
 add-trade.form.error.empty                      = Nodwch fasnach eich busnes
 add-trade.form.error.short                      = Mae’n rhaid i’r fasnach fod yn 2 o gymeriadau neu fwy
 add-trade.form.error.long                       = Mae’n rhaid i’r fasnach fod yn 35 o gymeriadau neu lai
-add-trade.form.error.invalid                    = Ni all y fasnach gynnwys !, “”,* neu ?
+add-trade.form.error.invalid                    = Gall masnach y busnes gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, ’, \, /, - yn unig.
 add-trade.form.error.same-name                  = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 

@@ -1677,7 +1677,7 @@ add-trade.trade-info-2                          = For example: plumbing, electri
 add-trade.form.error.empty                      = Enter the trade of your business
 add-trade.form.error.short                      = Trade must be 2 characters or more
 add-trade.form.error.long                       = Trade must be 35 characters or fewer
-add-trade.form.error.invalid                    = Trade cannot include !, "", * or ?
+add-trade.form.error.invalid                    = The business trade can only include upper or lower case letters, full stops, commas, digits, &, ’, \, /, -.
 add-trade.form.error.same-name                  = Trade and business name cannot be the same
 
 

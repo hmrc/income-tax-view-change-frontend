@@ -207,7 +207,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                   BusinessTradeForm.businessTrade -> invalidBusinessTradeChar))
 
                 status(result) shouldBe BAD_REQUEST
-                contentAsString(result) should include("Trade cannot include !, &quot;&quot;, * or ?")
+                contentAsString(result) should include("The business trade can only include upper or lower case letters, full stops, commas, digits, &amp;, ’, \\, /, -.")
               }
 
               "trade name is empty" in {
