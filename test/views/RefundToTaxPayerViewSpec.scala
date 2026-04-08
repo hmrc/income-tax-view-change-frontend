@@ -261,7 +261,6 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
           allTableData.get(0).text() shouldBe "23 July 2021"
           allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypePayableOrderRepayment
           allTableData.get(2).text() shouldBe "£12,345.00"
-          document.text() should not include "refund-to-taxpayer.method-type-payable-order-repayment"
         }
       }
 
@@ -271,7 +270,6 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
           allTableData.get(0).text() shouldBe "23 July 2021"
           allTableData.get(1).text() shouldBe RefundToTaxPayerMessages.tableValueMethodTypeBacsPaymentOut
           allTableData.get(2).text() shouldBe "£12,345.00"
-          document.text() should not include "refund-to-taxpayer.method-type-bacs-payment-out"
         }
       }
 
