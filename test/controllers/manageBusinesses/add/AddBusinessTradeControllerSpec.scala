@@ -18,20 +18,22 @@ package controllers.manageBusinesses.add
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType, Manage}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
+import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.mvc.Result
+import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
+import testConstants.BusinessDetailsTestConstants.{address, business1}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
@@ -52,9 +54,9 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 
-  lazy val testAddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
+  lazy val testAddBusinessTradeController: AddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
 
-  def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false) = mtdRole match {
+  def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false): Action[AnyContent] = mtdRole match {
     case MTDIndividual if isPost => testAddBusinessTradeController.submit(mode, false)
     case MTDIndividual => testAddBusinessTradeController.show(mode, false)
     case _ if isPost => testAddBusinessTradeController.submitAgent(mode, false)
@@ -176,25 +178,52 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               }
 
               "redirect to the choose sole trader business address page" when {
-                "the OverseasBusinessAddress FS is on and the individual is authenticated and the business trade entered is valid" in {
-                  enable(OverseasBusinessAddress)
-                  setupMockSuccess(mtdRole)
-                  mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-                  setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-                  setupMockCreateSession(true)
-                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
-                    .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
-                  setupMockSetMongoData(true)
+                "the OverseasBusinessAddress FS is on" when {
+                  "the individual is authenticated and the business trade entered is valid" in {
+                    enable(OverseasBusinessAddress)
+                    setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
+                    setupMockSetMongoData(true)
 
-                  val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
-                    BusinessTradeForm.businessTrade -> validBusinessTrade))
-                  status(result) shouldBe SEE_OTHER
-                  val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
-                    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(false).url
-                  } else {
-                    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(true).url
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(false).url
+                    } else {
+                      controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
                   }
-                  redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                }
+              }
+
+              "redirect to the is the new address in the UK page" when {
+                "the OverseasBusinessAddress FS is on" when {
+                  "the individual is authenticated and the business trade entered is valid" in {
+                    enable(OverseasBusinessAddress)
+                    setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(false).url
+                    } else {
+                      controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
                 }
               }
             }

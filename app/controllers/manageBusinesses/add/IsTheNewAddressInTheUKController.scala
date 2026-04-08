@@ -61,9 +61,8 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
-
-      // TODO do we need to deal with Mode and isTriggeredMigration ???
-      val backURL = getBackURL(isAgent/*, mode, isTriggeredMigration*/)
+      
+      val backURL = getBackURL(isAgent)
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
@@ -93,8 +92,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                   postAction = getPostAction(isAgent, mode, isTriggeredMigration),
                   isAgent = isAgent,
                   hasUKAddress = hasUKAddress(user),
-//                  TODO do we need to deal with Mode and isTriggeredMigration ???
-                  backUrl = getBackURL(isAgent/*, mode, isTriggeredMigration*/)
+                  backUrl = getBackURL(isAgent)
                 )
               )
             },
@@ -136,8 +134,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     } yield a
     validUKAddress.nonEmpty
   }
-
-  // TODO do we need to deal with Mode and isTriggeredMigration ???
+  
   private def getBackURL(isAgent: Boolean): String = {
     controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
   }
