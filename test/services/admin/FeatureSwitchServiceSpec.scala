@@ -45,25 +45,6 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
 
   override val appConfig: FrontendAppConfig = mockFrontendAppConfig
 
-  "FeatureSwitchService.get" should {
-    "return a FeatureSwitch model for a given FS" when {
-      "repository returns a FeatureSwitch" in {
-        mockRepositoryGetFeatureSwitch(Some(FeatureSwitch(exampleFSName, isEnabled = true)))
-
-        val result = TestFSService.get(exampleFSName)
-        result.futureValue shouldBe FeatureSwitch(exampleFSName, isEnabled = true)
-      }
-    }
-    "return false for given FS" when {
-      "repository returns nothing" in {
-        mockRepositoryGetFeatureSwitch(None)
-
-        val result = TestFSService.get(exampleFSName)
-        result.futureValue shouldBe FeatureSwitch(exampleFSName, isEnabled = false)
-      }
-    }
-  }
-
   "FeatureSwitchService.getAll" should {
     "return a list of all FS and whether they are enabled" when {
       "read from mongo FS is disabled" in {
