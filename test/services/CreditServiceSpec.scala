@@ -38,7 +38,7 @@ class CreditServiceSpec extends TestSupport {
 
   val mockFinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
 
- class TestCreditService extends CreditService(mockFinancialDetailsConnector, dateService)
+  class TestCreditService extends CreditService(mockFinancialDetailsConnector, dateService)
 
   //Remove once deprecated method removed
   "CreditService.getAllCredits method" should {

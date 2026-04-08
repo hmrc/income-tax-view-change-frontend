@@ -155,7 +155,7 @@ trait ViewSpec extends TestSupport {
       link.attr("target") shouldBe "_blank"
     }
 
-    def hasFallbackBacklink(): Assertion = {
+    def hasFallbackBacklink: Assertion = {
       Option(element.getElementById("back-fallback")).isDefined shouldBe true
     }
 

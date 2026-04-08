@@ -75,7 +75,7 @@ class ViewInYearTaxEstimateAuditModelSpec extends UnitSpec {
     
     "transactionName is called" should {
       
-      s"return a value of ${expectedKey}" in {
+      s"return a value of $expectedKey" in {
         viewInYearModel.transactionName shouldBe expectedKey
       }
       
@@ -83,7 +83,7 @@ class ViewInYearTaxEstimateAuditModelSpec extends UnitSpec {
     
     "auditType is called" should {
       
-      s"return a value of ${expectedKey}" in {
+      s"return a value of $expectedKey" in {
         viewInYearModel.auditType shouldBe expectedKey
       }
       

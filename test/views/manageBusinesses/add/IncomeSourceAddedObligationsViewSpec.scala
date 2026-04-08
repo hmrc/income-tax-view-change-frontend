@@ -57,7 +57,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
   val getReportingFrequencyUrl = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
   val getNextUpdatesUrl = controllers.routes.NextUpdatesController.show().url
   val getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-  val softwareLink = "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+  val softwareLink = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 

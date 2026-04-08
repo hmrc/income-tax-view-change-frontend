@@ -436,7 +436,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       }
 
       "have a fallback backlink" in new Setup(view) {
-        document.hasFallbackBacklink()
+        document.hasFallbackBacklink
       }
 
       "have the correct heading" in new Setup(view) {

@@ -84,7 +84,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
     incomeSourceTypes.foreach { incomeSourceType =>
       val isAgent = mtdRole != MTDIndividual
       val optId = if (incomeSourceType == SelfEmployment) Some("test-id") else None
-      s"show${if (isAgent) "Agent"}($incomeSourceType)" when {
+      s"show${if (isAgent) "Agent" else ""}($incomeSourceType)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = if (!isAgent) testController.show(optId, incomeSourceType) else testController.showAgent(optId, incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
@@ -127,7 +127,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
 
-      s"submit${if (isAgent) "Agent"}($incomeSourceType)" when {
+      s"submit${if (isAgent) "Agent" else ""}($incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testController.submit(optId, incomeSourceType, false) else testController.submitAgent(optId, incomeSourceType, false)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         val validFormData = Map(

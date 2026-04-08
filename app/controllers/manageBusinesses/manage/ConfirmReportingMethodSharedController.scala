@@ -21,7 +21,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AfterSubmissionPage, BeforeSubmissionPage, ReportingMethod}
 import forms.manageBusinesses.manage.ChangeReportingMethodForm
@@ -33,13 +33,14 @@ import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{DateService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.manage.ConfirmReportingMethodView
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActions,
@@ -233,7 +234,7 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                validForm: ChangeReportingMethodForm,
                                isAgent: Boolean,
                                incomeSourceType: IncomeSourceType,
-                               maybeIncomeSourceId: Option[IncomeSourceId]
+                               @unused maybeIncomeSourceId: Option[IncomeSourceId]
                              )(implicit user: MtdItUser[_]): Future[Result] = {
 
     val formResponse: Option[String] = validForm.toFormMap(ChangeReportingMethodForm.response).headOption

@@ -64,7 +64,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
 
   incomeSourceTypes.foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdRole =>
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}(incomeSourceType = $incomeSourceType)" when {
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedBackErrorController.show(incomeSourceType) else testIncomeSourceAddedBackErrorController.showAgent(incomeSourceType)
         s"the user is authenticated as a $mtdRole" should {
@@ -85,7 +85,7 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
         testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
 
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
+      s"submit${if (mtdRole != MTDIndividual) "Agent" else ""}(incomeSourceType = $incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testIncomeSourceAddedBackErrorController.submit(incomeSourceType) else testIncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {

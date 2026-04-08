@@ -18,7 +18,6 @@ package controllers.reportingObligations.signUp
 
 import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import controllers.reportingObligations.signUp.SignUpTaxYearQuestionController
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSignUpService

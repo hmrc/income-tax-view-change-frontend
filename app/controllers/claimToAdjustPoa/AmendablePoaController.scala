@@ -25,7 +25,8 @@ import models.core.Nino
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{ClaimToAdjustService, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
+import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa
@@ -58,7 +59,7 @@ class AmendablePoaController @Inject()(val authActions: AuthActions,
         }.value.flatMap {
           case Right(viewModel) =>
             Future.successful(
-              Ok(view(user.isAgent(), viewModel))
+              Ok(view(user.isAgent, viewModel))
             )
           case Left(ex) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")

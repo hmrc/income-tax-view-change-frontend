@@ -21,7 +21,7 @@ import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
 import config.featureswitch.FeatureSwitching
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.services.{MockClientDetailsService, MockCustomerFactsUpdateService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
@@ -29,14 +29,12 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.*
-import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.mockito.stubbing.OngoingStubbing
 import play.api
-import play.api.Application
 import play.api.http.Status
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
@@ -46,7 +44,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
 import scala.concurrent.Future
 import services.agent.ClientDetailsService
-import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, IncomeSourceDetailsService, SessionDataService}
+import services.{CustomerFactsUpdateService, DateServiceInterface, IncomeSourceDetailsService, SessionDataService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport

@@ -95,7 +95,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
   Seq(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
     mtdAllRoles.foreach { mtdRole =>
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}(incomeSourceType = $incomeSourceType)" when {
         val action = if (mtdRole == MTDIndividual) testCeaseCheckIncomeSourceDetailsController.show(incomeSourceType, false) else testCeaseCheckIncomeSourceDetailsController.showAgent(incomeSourceType, false)
         s"the user is authenticated as a $mtdRole" should {
           "return 200 OK" when {
@@ -144,7 +144,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
         }
       }
 
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(incomeSourceType = $incomeSourceType)" when {
+      s"submit${if (mtdRole != MTDIndividual) "Agent" else ""}(incomeSourceType = $incomeSourceType)" when {
         def action(isTriggeredMigration: Boolean) = if (mtdRole == MTDIndividual) testCeaseCheckIncomeSourceDetailsController.submit(incomeSourceType, isTriggeredMigration) else testCeaseCheckIncomeSourceDetailsController.submitAgent(incomeSourceType, isTriggeredMigration)
         val fakePostRequest = fakeRequest.withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {

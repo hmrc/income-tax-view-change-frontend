@@ -36,6 +36,7 @@ import views.html.errorPages.CustomNotFoundErrorView
 import views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
 
 import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -141,7 +142,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
   }
 
-  private def getPostAction(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Call =
+  private def getPostAction(isAgent: Boolean, @unused mode: Mode, isTriggeredMigration: Boolean): Call =
     controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.submit(isAgent, isTriggeredMigration)
 
 }

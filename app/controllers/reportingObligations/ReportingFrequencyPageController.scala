@@ -62,7 +62,7 @@ class ReportingFrequencyPageController @Inject()(
         _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
         viewModel =
           ReportingFrequencyViewModel(
-            isAgent = user.isAgent(),
+            isAgent = user.isAgent,
             signUpTaxYears = signUpTaxYears,
             itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
             displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
@@ -97,7 +97,7 @@ class ReportingFrequencyPageController @Inject()(
                   pageTitle = "standardError.heading",
                   heading = "standardError.heading",
                   message = "standardError.message",
-                  isAgent = user.isAgent()
+                  isAgent = user.isAgent
                 )
               )
             )

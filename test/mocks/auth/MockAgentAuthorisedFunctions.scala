@@ -20,8 +20,7 @@ import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.delegatedEnrolmentPredicate
 import forms.IncomeSourcesFormsSpec.AuthRetrievals
 import org.mockito.Mockito.*
-import forms.IncomeSourcesFormsSpec.{AuthRetrievals, NrsAgentAuthRetrievals}
-import org.mockito.Mockito._
+import forms.IncomeSourcesFormsSpec.NrsAgentAuthRetrievals
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}

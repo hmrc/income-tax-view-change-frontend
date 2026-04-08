@@ -24,11 +24,13 @@ import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsH
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.Logger
 import play.api.i18n.{Lang, MessagesApi}
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import play.api.libs.ws.writeableOf_JsValue
+
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
@@ -169,7 +171,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     )
   }
 
-  private def internationalAddressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
+  private def internationalAddressJson(continueUrl: String, feedbackUrl: String, @unused headerEnglish: String, @unused headerWelsh: String): JsValue = {
     JsObject(
       Seq(
         "version" -> JsNumber(2),

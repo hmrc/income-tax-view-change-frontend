@@ -71,7 +71,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions with MockCalcula
 
     val isAgent = mtdUserRole != MTDIndividual
 
-    s"show${if (isAgent) "Agent"}" when {
+    s"show${if (isAgent) "Agent" else ""}" when {
       val action = if (isAgent) testController.showAgent(testTaxYear) else testController.show(testTaxYear, None)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdUserRole)
       s"the $mtdUserRole is authenticated" should {
@@ -104,7 +104,7 @@ class FinalTaxCalculationControllerSpec extends MockAuthActions with MockCalcula
       testMTDAuthFailuresForRole(action, mtdUserRole, false)(fakeRequest)
     }
 
-    s"submit${if (isAgent) "Agent"}" when {
+    s"submit${if (isAgent) "Agent" else ""}" when {
 
       val action = if (isAgent) testController.agentSubmit(testTaxYear) else testController.submit(testTaxYear)
       val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdUserRole)

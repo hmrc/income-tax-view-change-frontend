@@ -16,11 +16,9 @@
 
 package auth
 
-import org.mockito.Mockito._
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.mvc._
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 

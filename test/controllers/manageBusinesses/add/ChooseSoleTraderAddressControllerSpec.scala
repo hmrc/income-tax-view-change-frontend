@@ -36,6 +36,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2018and2019AndProp, businessInternational}
 
+import scala.annotation.unused
 import scala.concurrent.Future
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
@@ -65,7 +66,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
     val isAgent = mtdRole != MTDIndividual
 
-    s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
+    s"show${if (mtdRole != MTDIndividual) "Agent" else ""}" when {
 
       val action = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
@@ -124,7 +125,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
     s"submit() - isAgent == $isAgent" when {
 
       val action = testController.submit(isAgent)
-      val actionTrigMig = testController.submit(isAgent)
+      @unused val actionTrigMig = testController.submit(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
 
       s"the user is authenticated as a $mtdRole" should {

@@ -103,6 +103,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
+              val mandatoryFromYear = latencyDetailsCty.taxYear2.toInt
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
@@ -118,7 +119,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
                 elementTextByID("change-link-1")(messagesChangeLinkText),
                 elementTextByID("change-link-2")(messagesChangeLinkText),
-                elementTextByID("up-to-two-tax-years")("Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2027, you could be required to report quarterly.")
+                elementTextByID("up-to-two-tax-years")(s"Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April $mandatoryFromYear, you could be required to report quarterly.")
               )
             }
 

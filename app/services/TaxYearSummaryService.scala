@@ -25,7 +25,7 @@ import play.api.Logger
 import javax.inject.Inject
 
 // noinspection ScalaStyle
-class TaxYearSummaryService @Inject()() {
+class TaxYearSummaryService @Inject() {
 
   def checkSubmissionChannel(liabilityCalculationResponse: Option[LiabilityCalculationResponseModel]): TaxYearViewScenarios = {
 
@@ -55,7 +55,7 @@ class TaxYearSummaryService @Inject()() {
     val irsaEnrolement: Option[String] = mtdItUser.authUserDetails.saUtr
 
     (liabilityCalculationResponse, irsaEnrolement) match {
-      case (Some(LiabilityCalculationError(_, _)) | Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacyWithCesa) | Some(UnableToDetermineSubmissionChannel))), _) if mtdItUser.isAgent() =>
+      case (Some(LiabilityCalculationError(_, _)) | Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacyWithCesa) | Some(UnableToDetermineSubmissionChannel))), _) if mtdItUser.isAgent =>
         Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] AgentCannotViewTaxCalc")
         AgentCannotViewTaxCalc
       case (Some(LiabilityCalculationError(status, _)), Some(_)) if taxYear.isBefore(taxYear2023) && status != 404 =>

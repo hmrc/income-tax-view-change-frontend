@@ -16,7 +16,6 @@
 
 package views.partials.paymentAllocations.newHome
 
-import models.admin.{NewHomePage, RecentActivity}
 import testUtils.TestSupport
 import views.html.partials.newHome.NewHomeNavigation
 import org.jsoup.Jsoup

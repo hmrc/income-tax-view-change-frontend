@@ -26,6 +26,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.triggeredMigration.CheckCompleteView
 import utils.TriggeredMigrationUtils
 
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -64,6 +65,7 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
 
   def submit(isAgent: Boolean): Action[AnyContent] =
     auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+      @unused
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
       withTriggeredMigrationFS {
 

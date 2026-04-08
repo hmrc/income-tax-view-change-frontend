@@ -28,12 +28,13 @@ import models.core.Mode
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{AddressLookupService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -109,7 +110,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def getRedirectUrl(isAgent: Boolean, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): String = {
+  private def getRedirectUrl(isAgent: Boolean, isTriggeredMigration: Boolean)(implicit @unused user: MtdItUser[_]): String = {
     (if (isAgent) {
       routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
     } else {

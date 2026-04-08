@@ -219,9 +219,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   def compatibleSoftwareLink(implicit messages: Messages): String =
     messages.lang.code match {
-      case "en" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
-      case "cy" => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax.cy"
-      case _ => "https://www.gov.uk/guidance/find-software-thats-compatible-with-making-tax-digital-for-income-tax"
+      case "en" => "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
+      case "cy" => "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax.cy"
+      case _ => "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
     }
 
   def mtdIncomeTaxLink(implicit messages: Messages): String =

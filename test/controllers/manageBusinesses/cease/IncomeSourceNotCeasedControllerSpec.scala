@@ -72,7 +72,7 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
             document.text() should include(getMessage(incomeSourceType))
           }
         }
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+        testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
       }
     }
   }

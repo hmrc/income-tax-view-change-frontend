@@ -19,7 +19,6 @@ package audit.models
 import auth.MtdItUser
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
-import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.Json
 import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*

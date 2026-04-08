@@ -57,12 +57,12 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
     val fromDate: LocalDate = LocalDate.of(2023, 4, 1)
     val toDate: LocalDate = LocalDate.of(2024, 5, 1)
 
-    def getAppConfig(): FrontendAppConfig =
+    def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
-    val connector = new ObligationsConnector(mockHttpClientV2, mockAuditingService, getAppConfig())
+    val connector = new ObligationsConnector(mockHttpClientV2, mockAuditingService, getAppConfig)
   }
 
   "getOpenObligationsUrl" should {
@@ -119,7 +119,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
 
     }
 
-    s"return a empty SuccessResponse when ${NOT_FOUND} or ${FORBIDDEN}" in new Setup {
+    s"return a empty SuccessResponse when $NOT_FOUND or $FORBIDDEN" in new Setup {
       setupMockHttpV2Get(s"$getNextUpdatesTestUrl")(emptyResponse)
       val result: Future[ObligationsResponseModel] = connector.getOpenObligations()
       result.futureValue shouldBe ObligationsModel(Seq.empty)
@@ -168,7 +168,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
 
     }
 
-    s"return a empty SuccessResponse when ${NOT_FOUND} or ${FORBIDDEN}" in new Setup {
+    s"return a empty SuccessResponse when $NOT_FOUND or $FORBIDDEN" in new Setup {
       setupMockHttpV2Get(s"${connector.getAllObligationsDateRangeUrl(fromDate, toDate, testNino)}")(emptyResponse)
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
       result.futureValue shouldBe ObligationsModel(Seq.empty)

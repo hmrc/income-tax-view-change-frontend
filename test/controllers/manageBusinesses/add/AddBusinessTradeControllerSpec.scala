@@ -63,7 +63,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
   Seq(CheckMode, NormalMode).foreach { mode =>
     mtdAllRoles.foreach { mtdRole =>
-      s"show${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
         val action = getAction(mtdRole, mode)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
         s"the user is authenticated as a $mtdRole" should {
@@ -123,7 +123,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
         }
       }
 
-      s"submit${if (mtdRole != MTDIndividual) "Agent"}(mode = $mode)" when {
+      s"submit${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
         val action = getAction(mtdRole, mode, true)
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
@@ -185,7 +185,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                     .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
                   setupMockSetMongoData(true)
-  
+
                   val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                     BusinessTradeForm.businessTrade -> validBusinessTrade))
                   status(result) shouldBe SEE_OTHER

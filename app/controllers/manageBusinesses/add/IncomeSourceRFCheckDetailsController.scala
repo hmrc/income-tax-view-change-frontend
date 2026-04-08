@@ -27,11 +27,11 @@ import enums.{AfterSubmissionPage, ReportingFrequencyPages}
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.{IncomeSourceId, NormalMode}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.viewmodels.*
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.manageBusinesses.IncomeSourceRFService
 import services.{CreateBusinessDetailsService, DateServiceInterface, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,6 +39,7 @@ import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView
 
 import javax.inject.Inject
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: IncomeSourceRFCheckDetailsView,
@@ -91,7 +92,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
     )
   }
 
-  private def handleRequest(sources: IncomeSourceDetailsModel,
+  private def handleRequest (@unused sources: IncomeSourceDetailsModel,
                             isAgent: Boolean,
                             incomeSourceType: IncomeSourceType)
                            (implicit user: MtdItUser[_]): Future[Result] = {

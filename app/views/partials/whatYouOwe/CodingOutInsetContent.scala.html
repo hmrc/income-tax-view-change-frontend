@@ -38,7 +38,7 @@
 
 @p(id = Some("coding-out-notice"), classes = "govuk-body coding-out-notice") {
 
-    @if(user.isAgent()) {
+    @if(user.isAgent) {
         @getMessage("codingOut-1a")
     } else {
         @getMessage("credit-overpaid-prefix")
@@ -57,7 +57,7 @@
         )
     </b>
 
-    @if(user.isAgent()) {
+    @if(user.isAgent) {
         @getMessage("codingOut-3")
     } else {
         @getMessage("codingOut-individual")

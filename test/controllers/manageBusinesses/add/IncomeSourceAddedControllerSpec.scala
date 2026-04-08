@@ -19,13 +19,13 @@ package controllers.manageBusinesses.add
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockITSAStatusService, MockNextUpdatesService, MockSessionService}
 import models.UIJourneySessionData
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
@@ -33,14 +33,15 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
-import services._
+import services.*
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants.{year2018, year2019}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants._
+import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.*
 import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 
 import java.time.LocalDate
+import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdatesService with MockSessionService with MockITSAStatusService {
@@ -440,7 +441,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
 
         "redirect to the cannot-go-back page" when {
          "there is no journey session" in {
-           val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
+           @unused val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
            val taxYearStartDate = LocalDate.of(2023, 4, 6)
 
            val testLatencyDetails =

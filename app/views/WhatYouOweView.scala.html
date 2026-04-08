@@ -63,7 +63,7 @@
 @import implicitDateFormatter.longDate
 
 @mainTemplate(
-    isAgent = user.isAgent(),
+    isAgent = user.isAgent,
     pageTitle = getHeading,
     backUrl = Some(viewModel.backUrl),
     btaNavPartial = user.btaNavPartial,
@@ -190,12 +190,12 @@
     }
 
     @paymentsMadeContent(
-        isAgent = user.isAgent(),
+        isAgent = user.isAgent,
         origin = origin,
         viewModel = viewModel)
 
     @saNoteParagraph(utr = viewModel.utr,
-        isAgent = user.isAgent(),
+        isAgent = user.isAgent,
         claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
         selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl,
         adjustPoaUrl = viewModel.adjustPoaUrl,

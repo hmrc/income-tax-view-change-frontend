@@ -31,7 +31,7 @@ import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
 import services.triggeredMigration.TriggeredMigrationService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeUnconfirmed
 
 import scala.concurrent.Future
 

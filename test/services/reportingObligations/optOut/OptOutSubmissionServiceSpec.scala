@@ -28,7 +28,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
-import services.reportingObligations.optOut.OptOutSubmissionService
 import testConstants.BaseTestConstants.testSessionId
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

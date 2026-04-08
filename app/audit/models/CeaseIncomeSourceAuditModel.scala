@@ -23,7 +23,6 @@ import implicits.ImplicitDateParser
 import models.core.IncomeSourceId
 import models.updateIncomeSource.UpdateIncomeSourceResponseError
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities.JsonUtil
 
 case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                        cessationDate: String,

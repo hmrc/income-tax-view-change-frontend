@@ -71,7 +71,7 @@
     ))
 }
 
-@if(viewModel.utr.isDefined && !user.isAgent()) {
+@if(viewModel.utr.isDefined && !user.isAgent) {
     @{
         viewModel.whatYouOweChargesList.getDefaultPaymentAmount match {
             case Some(value) => insetTextAndButton(value)

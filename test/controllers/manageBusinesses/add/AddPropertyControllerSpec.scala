@@ -59,13 +59,13 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
     else fakePostRequestWithActiveSession
   }
 
-  def getValidationErrorTabTitle(): String = {
+  def getValidationErrorTabTitle: String = {
     s"${messages("htmlTitle.invalidInput", messages("manageBusinesses.type-of-property.heading"))}"
   }
 
   mtdAllRoles.foreach { mtdRole =>
     val isAgent = mtdRole != MTDIndividual
-    s"show${if (mtdRole != MTDIndividual) "Agent"}" when {
+    s"show${if (mtdRole != MTDIndividual) "Agent" else ""}" when {
       val action = testController.show(isAgent)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
       s"the user is authenticated as a $mtdRole" should {
@@ -84,7 +84,7 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
           }
         }
       }
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
 
     s"submit($isAgent)" when {
@@ -166,7 +166,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
             status(result) shouldBe BAD_REQUEST
 
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe getValidationErrorTabTitle()
+            document.title shouldBe getValidationErrorTabTitle
           }
           "an empty form is submitted" in {
             setupMockSuccess(mtdRole)
@@ -178,7 +178,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
             status(result) shouldBe BAD_REQUEST
 
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.title shouldBe getValidationErrorTabTitle()
+            document.title shouldBe getValidationErrorTabTitle
           }
           "no form is submitted" in {
             setupMockSuccess(mtdRole)
@@ -192,7 +192,7 @@ testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
           }
         }
       }
-testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }
   }
 }
