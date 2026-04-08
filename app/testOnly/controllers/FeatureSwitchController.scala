@@ -45,15 +45,6 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
   val PROD_FEATURES: String = "feature-switch.prod-switches"
 
-  def getSwitch(featureFlagName: FeatureSwitchName): Action[AnyContent] = Action.async { implicit request =>
-    implicit val hc: HeaderCarrier =
-      HeaderCarrierConverter.fromRequest(request)
-
-    featureSwitchService.get(featureFlagName).map { featureSwitch =>
-      Ok(Json.toJson(featureSwitch))
-    }
-  }
-
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { implicit request =>
 
     implicit val hc: HeaderCarrier =
