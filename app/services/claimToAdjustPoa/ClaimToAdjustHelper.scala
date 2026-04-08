@@ -166,55 +166,6 @@ trait ClaimToAdjustHelper {
       ).sortBy(_.endYear)
     }
   }
-
-  //Replaced all usages with getPaymentOnAccountModel to reduce duplication
-  //Left in only as
-  def getAmendablePoaViewModel(documentDetails: List[DocumentDetail],
-                               poasHaveBeenAdjustedPreviously: Boolean,
-                               taxYear: Option[TaxYear]): Either[Throwable, PaymentOnAccountViewModel] = {
-    val res  = for {
-      poaOneDocDetail <- documentDetails.find(isPoaOne)
-      poaTwoDocDetail <- documentDetails.find(isPoaTwo)
-      latestDocumentDetail = poaTwoDocDetail
-      poaTwoDueDate <- poaTwoDocDetail.documentDueDate
-      taxReturnDeadline = getTaxReturnDeadline(poaTwoDueDate)
-      poasAreBeforeDeadline = poaTwoDueDate isBefore taxReturnDeadline
-      if poasAreBeforeDeadline
-  } yield {
-      if (poaOneDocDetail.poaRelevantAmount.isDefined && poaTwoDocDetail.poaRelevantAmount.isDefined) {
-        Right(
-          PaymentOnAccountViewModel(
-            poaOneTransactionId = poaOneDocDetail.transactionId,
-            poaTwoTransactionId = poaTwoDocDetail.transactionId,
-            taxYear = makeTaxYearWithEndYear(latestDocumentDetail.taxYear),
-            totalAmountOne = poaOneDocDetail.originalAmount,
-            totalAmountTwo = poaTwoDocDetail.originalAmount,
-            relevantAmountOne = poaOneDocDetail.poaRelevantAmount.get,
-            relevantAmountTwo = poaTwoDocDetail.poaRelevantAmount.get,
-            partiallyPaid = poaOneDocDetail.isPartPaid || poaTwoDocDetail.isPartPaid,
-            fullyPaid = poaOneDocDetail.isPaid || poaTwoDocDetail.isPaid,
-            previouslyAdjusted = Some(poasHaveBeenAdjustedPreviously)
-          )
-        )
-      } else {
-        taxYear match {
-          case Some(year) => Right(generateZeroedPoas(year))
-          case _ =>
-            val errors: List[String] = List(
-              poaOneDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::One"),
-              poaTwoDocDetail.poaRelevantAmount.map(_ => "").getOrElse("DocumentDetail.poaRelevantAmount::Two")
-            ).filterNot(_.isEmpty)
-            Left(new Exception(errors.mkString("-")))
-        }
-      }
-    }
-    res match {
-      case Some(e) => e
-      case None if taxYear.isDefined => Right(generateZeroedPoas(taxYear.get))
-      case _ => Left(new Exception("Unable to construct PaymentOnAccountViewModel"))
-    }
-  }
-
   protected def isSubsequentAdjustment(chargeHistoryConnector: ChargeHistoryConnector, chargeReference: Option[String])
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_], ec: ExecutionContext): Future[Either[Throwable, Boolean]] = {
     chargeHistoryConnector.getChargeHistory(user.nino, chargeReference) map {

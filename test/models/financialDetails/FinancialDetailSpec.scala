@@ -162,6 +162,9 @@ class FinancialDetailSpec extends UnitSpec {
 
         getMessageKeyForChargeType(Some(CGT)) shouldBe Some("cgt")
         getMessageKeyForChargeType(Some(SL)) shouldBe Some("sl")
+
+        getMessageKeyForChargeType(Some("ITSA POA(Payment On Account)")) shouldBe Some("incomeTax")
+
       }
 
       "return invalid for an unknown chargeType" in {
