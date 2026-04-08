@@ -17,16 +17,17 @@
 package views.manageBusinesses.manage
 
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly}
+import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
+import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.{Html, HtmlFormat}
-import testConstants.BusinessDetailsTestConstants._
+import testConstants.BusinessDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
-import views.constants.ManageIncomeSourceDetailsViewConstants._
+import views.constants.ManageIncomeSourceDetailsViewConstants.*
 import views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
-import views.messages.ManageIncomeSourceDetailsViewMessages._
+import views.messages.ManageIncomeSourceDetailsViewMessages.*
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
@@ -385,16 +386,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
     }
 
-    "display standard update period dropdown when NO latency details" in new SelfEmploymentUnknownsSetup(false) {
-      val expandableInfo = document.getElementById("standard-update-period-dropdown")
-      expandableInfo.getElementsByClass("govuk-details__summary-text").eq(0).text() shouldBe expandableInfoStandardSummary
-      expandableInfo.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      expandableInfo.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      expandableInfo.getElementById("learn-about-quarters-link").text() shouldBe expandableInfoContentP3 + " " + opensInNewTabText
-      expandableInfo.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
-
-    }
-
     "render the correct text when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
 
       def insetText()(implicit document: Document) = document.getElementsByClass("up-to-two-tax-years").text()
@@ -501,7 +492,175 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       actions should not contain ("Sign up")
     }
 
+    "render the update period dropdown and field" when {
+      "update period is calendar and user is reporting quarterly" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Voluntary, quarterReportingType = Some(QuarterTypeCalendar), latencyDetails = None)
 
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          showReportingFrequencyLink = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        document.getElementById("expandable-standard-update-period").text() shouldBe "This business is currently reporting from 1 April using calendar update periods."
+        document.getElementById("software-support").text() shouldBe "You can change to use standard update periods, in line with the tax year, so you report from 6 April. This change can only be made in your compatible software."
+        document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+        document.getElementById("standard-update-period-dropdown").text().contains("What is a calendar update period?") shouldBe true
+      }
+
+      "update period is standard and user is reporting quarterly" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Voluntary, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          showReportingFrequencyLink = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        document.getElementById("expandable-standard-update-period").text() shouldBe "This business is reporting from 6 April in line with the tax year, also known as using standard update periods."
+        document.getElementById("software-support").text() shouldBe "If your software supports it, you can choose to report using calendar update periods which end on the last day of the month."
+        document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+        document.getElementById("standard-update-period-dropdown").text().contains("What is a standard update period?") shouldBe true
+      }
+    }
+    "not render the update period dropdown and field" when {
+      "user doesn't have an update period" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Voluntary, quarterReportingType = None, latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          showReportingFrequencyLink = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+      "user's business is in latency" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Voluntary, quarterReportingType = Some(QuarterTypeStandard))
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          showReportingFrequencyLink = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+
+      "user's ITSA status is Annual" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Annual, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          showReportingFrequencyLink = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+
+      "user's ITSA status is Exempt" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Exempt, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          showReportingFrequencyLink = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+
+      "user's ITSA status is Digitally Exempt" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.DigitallyExempt, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          showReportingFrequencyLink = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+
+      "user's ITSA status is No Status" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.NoStatus, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          showReportingFrequencyLink = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+    }
   }
 
   "ManageSelfEmployment - Agent" should {
@@ -580,12 +739,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the whole page with unknowns and no change links" in new UkSetupUnknowns(false) {
-      document.getElementById("standard-update-period-dropdown").text() shouldBe "What is a standard quarterly period? This business is reporting from 6 April in line with the tax year, also known as using standard update periods. If your software supports it, you can choose to report using calendar update periods which end on the last day of the month. Learn more about standard and calendar quarters (opens in new tab)"
-      document.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
-      document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
-
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
 
       summaryListRowValues().eq(0).text() shouldBe unknown
@@ -664,13 +817,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
 
       summaryListRowValues().eq(0).text() shouldBe unknown
-
-      document.getElementById("standard-update-period-dropdown").text() shouldBe "What is a standard quarterly period? This business is reporting from 6 April in line with the tax year, also known as using standard update periods. If your software supports it, you can choose to report using calendar update periods which end on the last day of the month. Learn more about standard and calendar quarters (opens in new tab)"
-      document.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
-      document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
-
     }
 
     "do not display start date if DisplayBusinessStartDate is disabled" in new UkSetup(false, startDateEnabled = false) {
@@ -713,12 +859,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       summaryListRowKeys().eq(0).text() shouldBe dateStarted
       summaryListRowValues().eq(0).text() shouldBe unknown
-
-      document.getElementById("standard-update-period-dropdown").text() shouldBe "What is a standard quarterly period? This business is reporting from 6 April in line with the tax year, also known as using standard update periods. If your software supports it, you can choose to report using calendar update periods which end on the last day of the month. Learn more about standard and calendar quarters (opens in new tab)"
-      document.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
-      document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
     }
 
     "Do not render the reporting frequency rows when NO latency details" in new ForeignSetupUnknowns(false) {
@@ -793,12 +933,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
       summaryListRowValues().eq(0).text() shouldBe unknown
 
-      document.getElementById("standard-update-period-dropdown").text() shouldBe "What is a standard quarterly period? This business is reporting from 6 April in line with the tax year, also known as using standard update periods. If your software supports it, you can choose to report using calendar update periods which end on the last day of the month. Learn more about standard and calendar quarters (opens in new tab)"
-      document.getElementById("expandable-standard-update-period").text() shouldBe expandableInfoStandardContentP1
-      document.getElementById("software-support").text() shouldBe expandableInfoStandardContentP2
-      document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
-      document.getElementById("learn-about-quarters-link").attr("href") shouldBe expandableMoreInfoLink
-      
       Option(document.getElementById("up-to-two-tax-years")) shouldBe None
     }
 
