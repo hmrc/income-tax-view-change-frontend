@@ -38,10 +38,14 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
   val continueButtonText: String = messagesAPI("base.continue")
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
 
-  def getPath(mtdRole: MTDUserRole): String = {
+  private def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/manage-your-businesses/add-sole-trader/is-the-new-address-in-the-uk"
   }
+
+  private def getAddBusinessAddressControllerUrlByType(isAgent: Boolean) =
+    if isAgent then controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(NormalMode).url
+    else controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(NormalMode).url
 
   def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
@@ -94,7 +98,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(SEE_OTHER),
-              redirectURI(controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(NormalMode).url)
+              redirectURI(getAddBusinessAddressControllerUrlByType(mtdUserRole != MTDIndividual))
             )
           }
           "form response is No" in {

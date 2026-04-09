@@ -111,7 +111,8 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                               isTrigMig: Boolean = false)
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
-    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(NormalMode, isTrigMig).url
+    val ukPropertyUrl: String = if isAgent then controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(NormalMode, isTrigMig).url
+      else controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(NormalMode, isTrigMig).url
     val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddInternationalBusinessAddressController.show(isAgent, isTrigMig).url
     
     formResponse match {
