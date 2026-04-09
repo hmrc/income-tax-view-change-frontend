@@ -16,26 +16,26 @@
 
 package connectors
 
-import config.FrontendAppConfig
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.http.Status.{NO_CONTENT, OK}
-import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import testOnly.TestOnlyAppConfig
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
+class FeatureSwitchConnector @Inject()(val appConfig: TestOnlyAppConfig,
                                        http: HttpClientV2)(implicit ec: ExecutionContext) extends RawResponseReads{
 
   def setSwitchStubUrl(featureFlagName: FeatureSwitchName, isEnabled: Boolean): String = {
-    s"${appConfig.incomeTaxVcFsAndStubUrl}/features/${featureFlagName.name}?isEnabled=$isEnabled"
+    s"${appConfig.dynamicStubUrl}/features/${featureFlagName.name}?isEnabled=$isEnabled"
   }
 
   def switchesStubBaseUrl: String = {
-    s"${appConfig.incomeTaxVcFsAndStubUrl}/features"
+    s"${appConfig.dynamicStubUrl}/features"
   }
 
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean)(implicit headerCarrier: HeaderCarrier): Future[Boolean] = {
