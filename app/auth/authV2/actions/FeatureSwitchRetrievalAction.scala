@@ -19,8 +19,10 @@ package auth.authV2.actions
 import auth.MtdItUser
 import config.FrontendAppConfig
 import play.api.i18n.MessagesApi
-import play.api.mvc._
+import play.api.mvc.*
 import services.admin.FeatureSwitchService
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +38,11 @@ class FeatureSwitchRetrievalAction @Inject()(
                                             ) extends ActionRefiner[MtdItUser, MtdItUser] {
 
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
-    featureSwitchService.getAll.map(fs =>
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
+
+    featureSwitchService.getAll().map(fs =>
       Right(request.addFeatureSwitches(fs))
     )
   }

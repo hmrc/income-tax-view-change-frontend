@@ -21,55 +21,65 @@ import config.featureswitch.FeatureSwitching
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
 import testOnly.repository.FeatureSwitchRepository
+import connectors.FeatureSwitchConnector
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchRepository,
+                                     val featureSwitchConnector: FeatureSwitchConnector,
                                      val appConfig: FrontendAppConfig)
                                     (implicit val ec: ExecutionContext) extends FeatureSwitching {
 
-  def get(featureSwitchName: FeatureSwitchName): Future[FeatureSwitch] =
-    featureSwitchRepository
-      .getFeatureSwitch(featureSwitchName)
-      .map(_.getOrElse(FeatureSwitch(featureSwitchName, false)))
+  def getAll()(implicit hc: HeaderCarrier): Future[List[FeatureSwitch]] = {
 
-
-  def getAll: Future[List[FeatureSwitch]] = {
+    def enrich(mongoSwitches: List[FeatureSwitch]) = {
+      Logger("application").debug(s"reading FSS: $mongoSwitches")
+      FeatureSwitchName.allFeatureSwitches
+        .foldLeft(mongoSwitches) { (featureSwitches, missingSwitch) =>
+          if (featureSwitches.map(_.name).contains(missingSwitch))
+            featureSwitches
+          else
+            FeatureSwitch(missingSwitch, false) :: featureSwitches
+        }
+        .reverse
+    }
 
     if (appConfig.readFeatureSwitchesFromMongo) {
-      // TODO: do we need to apply fallback in case can not connect to mongoDb?
-      featureSwitchRepository.getFeatureSwitches.map { mongoSwitches =>
-        Logger("application").debug(s"reading FSS: $mongoSwitches")
-        FeatureSwitchName.allFeatureSwitches
-          .foldLeft(mongoSwitches) { (featureSwitches, missingSwitch) =>
-            if (featureSwitches.map(_.name).contains(missingSwitch))
-              featureSwitches
-            else
-              FeatureSwitch(missingSwitch, false) :: featureSwitches
+      featureSwitchConnector.getAllSwitches()
+        .flatMap { switches =>
+          if (switches.nonEmpty) {
+            Future.successful(switches)
+          } else {
+            Logger("application").warn(
+              "Connector returned empty list, falling back to repository"
+            )
+            featureSwitchRepository.getFeatureSwitches
           }
-          .reverse
-      }
+        }
+        .map(enrich)
+
     } else {
-      Future.successful(getFSList)
+      Future.successful(enrich(getFSList))
     }
   }
 
-  def set(featureSwitchName: FeatureSwitchName, enabled: Boolean): Future[Boolean] = {
+  def set(featureSwitchName: FeatureSwitchName, enabled: Boolean)(implicit hc: HeaderCarrier): Future[Boolean] = {
     Logger("application").info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {
-      featureSwitchRepository.setFeatureSwitch(featureSwitchName, enabled)
+      featureSwitchConnector.setSwitch(featureSwitchName, enabled)
     } else {
       setFS(featureSwitchName, enabled)
       Future.successful(true)
     }
   }
 
-  def setAll(featureSwitches: Map[FeatureSwitchName, Boolean]): Future[Unit] = {
+  def setAll(featureSwitches: Map[FeatureSwitchName, Boolean])(implicit hc: HeaderCarrier): Future[Unit] = {
     Logger("application").info(s"Setting all feature switches. FS values: $featureSwitches")
     if (appConfig.readFeatureSwitchesFromMongo) {
-      featureSwitchRepository.setFeatureSwitches(featureSwitches)
+      featureSwitchConnector.setSwitches(featureSwitches).map(_ => ())
     } else {
       featureSwitches.foreach { case (featureSwitchName, state) =>
         setFS(featureSwitchName, state)
