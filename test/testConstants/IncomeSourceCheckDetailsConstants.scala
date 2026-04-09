@@ -19,7 +19,7 @@ package testConstants
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
-import models.incomeSourceDetails.{AddIncomeSourceData, Address}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 
 import java.time.LocalDate
@@ -32,7 +32,7 @@ object IncomeSourceCheckDetailsConstants {
   val testBusinessTrade: String = "Plumbing"
   val testBusinessAddressLine1: String = "123 Main Street"
   val testBusinessPostCode: String = "AB123CD"
-  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
+  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode), Some(Country(Some("GB"), Some("United Kingdom"))))
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
   val testCountryCode = "GB"
 

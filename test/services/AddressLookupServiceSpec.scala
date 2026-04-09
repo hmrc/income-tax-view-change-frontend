@@ -22,7 +22,7 @@ import connectors.AddressLookupConnector
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
-import models.incomeSourceDetails.{Address, BusinessAddressModel}
+import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
@@ -36,7 +36,7 @@ class AddressLookupServiceSpec extends TestSupport
 
   case class AddressError(status: String) extends RuntimeException
 
-  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
+  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"), Some(Country(Some("GB"), Some("United Kingdom")))))
 
   val mockAddressLookupConnector: AddressLookupConnector = mock(classOf[AddressLookupConnector])
 
@@ -187,7 +187,7 @@ class AddressLookupServiceSpec extends TestSupport
           case Left(_) => Fail("Error returned from connector")
           case Right(BusinessAddressModel(auditRef, address)) =>
             auditRef shouldBe "auditRef"
-            address shouldBe Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"))
+            address shouldBe Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"), Some(Country(Some("GB"), Some("United Kingdom"))))
 
         }
       }

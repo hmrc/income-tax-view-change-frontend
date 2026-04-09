@@ -23,10 +23,10 @@ import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.core.{CheckMode, NormalMode}
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, Country}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{clearInvocations, never, verify, when, mock}
+import org.mockito.Mockito.{clearInvocations, mock, never, verify, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
@@ -34,6 +34,7 @@ import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.*
 import services.{AddressLookupService, DateService, DateServiceInterface, IncomeSourceDetailsService, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+
 import scala.concurrent.Future
 
 
@@ -59,7 +60,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
   lazy val testAddBusinessAddressController = app.injector.instanceOf[AddBusinessAddressController]
   lazy val frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
+  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"), Some(Country(Some("GB"), Some("United Kingdom")))))
   val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), countryCode = Some("GB"), addressLookupId = Some("123")))
   val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData("", "", testAddIncomeSourceSessionData)
 

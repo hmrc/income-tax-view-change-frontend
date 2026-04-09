@@ -48,6 +48,7 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     businessAddressLine3 = None,
     businessAddressLine4 = Some("Test City"),
     businessCountryCode = Some("GB"),
+    businessCountryName = Some("United Kingdom"),
     addressId = None
   )
 
