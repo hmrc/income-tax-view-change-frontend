@@ -18,7 +18,7 @@ package helpers
 
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
-import models.incomeSourceDetails.{AddIncomeSourceData, Address}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
 
 import java.time.LocalDate
@@ -35,7 +35,7 @@ object IncomeSourceCheckDetailsConstants {
 
   val testAccountingPeriodEndDate: LocalDate = LocalDate.of(2023, 11, 11)
   val testCountryCode = "GB"
-  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode))
+  val testBusinessAddress: Address = Address(lines = Seq(testBusinessAddressLine1), postcode = Some(testBusinessPostCode) , country = Some(Country(Some("GB"), Some("United Kingdom"))))
   val testErrorReason: String =
     "Failed to create incomeSources: CreateIncomeSourceErrorResponse(500,Error creating incomeSource: [{\"status\":500,\"reason\":\"INTERNAL_SERVER_ERROR\"}])"
 
@@ -52,6 +52,7 @@ object IncomeSourceCheckDetailsConstants {
       businessAddressLine4 = None,
       businessPostalCode = Some(testBusinessPostCode),
       businessCountryCode = Some(testCountryCode),
+      businessCountryName = Some(testBusinessCountryCode),
       addressId = None
     )
 
