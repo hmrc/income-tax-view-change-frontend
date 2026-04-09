@@ -74,8 +74,6 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
 
   def convertToCreateBusinessIncomeSourceRequest(viewModel: CheckBusinessDetailsViewModel)(implicit user: MtdItUser[_]): Either[Throwable, CreateBusinessIncomeSourceRequest] = {
     Try {
-//      TODO remove it after debugging
-      Logger("application").error(s"convertToCreateBusinessIncomeSourceRequest called  CheckBusinessDetailsViewModel= $viewModel")
       CreateBusinessIncomeSourceRequest(
         mtdbsa = user.mtditid,
         businessDetails = List(

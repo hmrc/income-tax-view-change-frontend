@@ -26,7 +26,7 @@ import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import jakarta.inject.Singleton
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, ChooseSoleTraderAddressUserAnswer}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, ChooseSoleTraderAddressUserAnswer, Country}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -99,8 +99,7 @@ class ChooseSoleTraderAddressController @Inject()(
               case previousBusinessAddressIndex =>
                 val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
                 val previousBusinessAddress: Option[Address] = (previousBusinessAddressDetails.addressLine1, previousBusinessAddressDetails.postcode) match {
-//                  TODO can we just remove None ???
-                  case (Some(addressLine1), postcode@Some(_)) if addressLine1.nonEmpty && postcode.nonEmpty => Some(Address(Seq(addressLine1), postcode, None))
+                  case (Some(addressLine1), postcode@Some(_)) if addressLine1.nonEmpty && postcode.nonEmpty => Some(Address(Seq(addressLine1), postcode, Some(Country(Some("GB"), Some("United Kingdom")))))
                   case _ => None
                 }
                 val redirect: Result = Redirect(controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment))

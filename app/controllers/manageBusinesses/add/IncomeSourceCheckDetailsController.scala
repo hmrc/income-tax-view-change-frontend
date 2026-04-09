@@ -160,7 +160,6 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
           businessAddressLine3 = address.lines.lift(2),
           businessAddressLine4 = address.lines.lift(3),
           businessPostalCode = address.postcode,
-//          TODO should we just use address.country.flatMap(_.code) below ???
           businessCountryCode = addIncomeSourceData.countryCode,
           businessCountryName = address.country.flatMap(_.name),
           addressId = addIncomeSourceData.addressLookupId.orElse(addIncomeSourceData.addressId),
