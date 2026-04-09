@@ -70,7 +70,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
 
   "BusinessEndDateView - Individual" should {
     "render the heading - Self employment" in new Setup(isAgent = false, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your self-employed business stopped"
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "When did your sole trader business stop?"
       document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe "This section is: Sole trader"
     }
     "render the heading - Foreign property" in new Setup(isAgent = false, incomeSourceType = ForeignProperty) {
@@ -112,7 +112,7 @@ class IncomeSourceEndDateViewSpec extends TestSupport {
 
   "BusinessEndDateView - Agent" should {
     "render the heading - Self employment" in new Setup(isAgent = true, incomeSourceType = SelfEmployment) {
-      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "Date your self-employed business stopped"
+      document.getElementsByClass("govuk-fieldset__heading").first().text() shouldBe "When did your sole trader business stop?"
       document.getElementById(s"$prefixSoleTrader-caption").text() shouldBe "This section is: Sole trader"
     }
     "render the heading - Foreign property" in new Setup(isAgent = true, incomeSourceType = ForeignProperty) {

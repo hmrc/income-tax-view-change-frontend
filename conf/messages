@@ -1788,14 +1788,14 @@ radioForm.checkDate.heading.withDate                                = Is {0} the
 #Generic income sources messages
 incomeSources.generic.unknown                                       = Unknown
 
-incomeSources.cease.endDate.selfEmployment.heading                               = Date your self-employed business stopped
+incomeSources.cease.endDate.selfEmployment.heading                               = When did your sole trader business stop?
 incomeSources.cease.endDate.selfEmployment.error.invalid                         = The date your self-employed business stopped trading must be a real date
 incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = The cessation date cannot be earlier than the 6th of April 2015
 
 incomeSources.cease.endDate.ukProperty.heading                    = When did your UK property business stop?
 incomeSources.cease.endDate.ukProperty.error.invalid              = The date your UK property business stopped must be a real date
 
-incomeSources.cease.SE.heading                            = Confirm you want to cease your self-employed business
+incomeSources.cease.SE.heading                            = Cease sole trader business
 incomeSources.cease.SE.caption                            = Sole trader
 incomeSources.cease.SE.checkboxLabel                      = I confirm I want to cease this business
 incomeSources.cease.SE.hint                               = Only cease {0} if you no longer receive any income or have any expenses related to this business.
