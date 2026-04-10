@@ -33,7 +33,7 @@ class OutstandingChargesConnector @Inject()(
                                             appConfig: FrontendAppConfig
                                           )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  private[connectors] val baseUrl = s"${appConfig.itvcProtectedService}/income-tax-view-change"
+  private[connectors] val baseUrl = s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details"
 
   private[connectors] def getOutstandingChargesUrl(idType: String, idNumber: String, taxYear: String): String =
     baseUrl + s"/out-standing-charges/$idType/$idNumber/$taxYear"

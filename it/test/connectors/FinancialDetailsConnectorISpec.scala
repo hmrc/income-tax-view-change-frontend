@@ -47,8 +47,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           val testUserNino = "AA123456A"
           val response: String = Json.toJson(testValidPaymentAllocationsModel).toString()
-
-          val url = s"/income-tax-view-change/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
+          val url = s"/income-tax-financial-details/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
 
           WiremockHelper.stubGet(url, OK, response)
 
@@ -68,7 +67,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a PaymentAllocationsError a message notifying us of json validation errors" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
+            val url = s"/income-tax-financial-details/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
 
             WiremockHelper.stubGet(url, OK, """{"bad_key":"bad_value"}""")
 
@@ -92,7 +91,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a PaymentAllocationsError containing the error status and error response" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
+            val url = s"/income-tax-financial-details/$testUserNino/payment-allocations/$testPaymentLot/$testPaymentLotItem"
             val response = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
@@ -121,7 +120,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           val testCreditModel = CreditsModel(0.0, 0.0, 0.0, 0.0, None, None, Nil)
           val response: String = Json.toJson(testCreditModel).toString()
 
-          val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
+          val url = s"/income-tax-financial-details/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
 
           WiremockHelper.stubGet(url, OK, response)
 
@@ -140,7 +139,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a Left(ErrorModel(500, \"Invalid JSON\"))" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
 
             WiremockHelper.stubGet(url, OK, """{"bad_key":"bad_value"}""")
 
@@ -163,7 +162,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a Left(ErrorModel(500, \"Invalid JSON\"))" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/credits/from/2023-04-06/to/2024-04-05"
             val response = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
@@ -191,7 +190,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           val testCreditModel = CreditsModel(0.0, 0.0, 0.0, 0.0, None, None, Nil)
           val response: String = Json.toJson(testCreditModel).toString()
 
-          val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
+          val url = s"/income-tax-financial-details/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
 
           WiremockHelper.stubGet(url, OK, response)
 
@@ -211,7 +210,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a Left(ErrorModel(500, \"Invalid JSON\"))" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
 
             WiremockHelper.stubGet(url, OK, """{"bad_key":"bad_value"}""")
 
@@ -235,7 +234,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a Left(ErrorModel(500, \"Invalid JSON\"))" in {
 
             val testUserNino = "AB123456C"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/credits/from/2023-04-06/to/2025-04-05"
             val response = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
@@ -261,7 +260,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
         "return a successful Payments" in {
 
           val testUserNino = "AA123456A"
-          val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
+          val url = s"/income-tax-financial-details/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
 
           val paymentFull: List[Payment] =
             List(
@@ -293,7 +292,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a PaymentsError" in {
 
             val testUserNino = "AA123456A"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
 
             val response = """{"bad_key":"bad_value"}"""
 
@@ -314,7 +313,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a OutstandingChargesErrorModel with response body message" in {
 
             val testUserNino = "AA123456A"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/payments/from/2023-04-06/to/2024-04-05"
 
             val response = """{"fake_error_key: "fake_error_value"}"""
 
@@ -336,7 +335,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
         "return a successful Payments" in {
 
           val testUserNino = "AA123456A"
-          val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+          val url = s"/income-tax-financial-details/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
 
           val paymentFull: List[Payment] =
             List(
@@ -368,7 +367,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a PaymentsError" in {
 
             val testUserNino = "AA123456A"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
 
             val response = """{"bad_key":"bad_value"}"""
 
@@ -389,8 +388,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "return a OutstandingChargesErrorModel with response body message" in {
 
             val testUserNino = "AA123456A"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
-
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/payments/from/2023-04-06/to/2025-04-05"
             val response = """{"fake_error_key: "fake_error_value"}"""
 
             WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, response)
@@ -412,7 +410,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
           val testUserNino = "AA123456A"
           val documentNumber = "12345"
-          val url = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
+          val url = s"/income-tax-financial-details/$testUserNino/financial-details/charges/documentId/$documentNumber"
 
           val response: FinancialDetailsWithDocumentDetailsModel = paymentAllocationChargesModelMultiplePayments
 
@@ -433,7 +431,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
             val testUserNino = "AA123456A"
             val documentNumber = "12345"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/charges/documentId/$documentNumber"
 
             val response = """{"bad_key": 1}"""
 
@@ -458,7 +456,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
 
             val testUserNino = "AA123456A"
             val documentNumber = "12345"
-            val url = s"/income-tax-view-change/$testUserNino/financial-details/charges/documentId/$documentNumber"
+            val url = s"/income-tax-financial-details/$testUserNino/financial-details/charges/documentId/$documentNumber"
 
             val response = """{"fake_error_key: "fake_error_value"}"""
 
