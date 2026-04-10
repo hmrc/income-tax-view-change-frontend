@@ -21,7 +21,7 @@ import auth.authV2.AuthActions
 import cats.data.EitherT
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
+import models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}
