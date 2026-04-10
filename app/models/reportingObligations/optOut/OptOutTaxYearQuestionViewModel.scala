@@ -16,7 +16,7 @@
 
 package models.reportingObligations.optOut
 
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, Voluntary}
+import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import services.reportingObligations.optOut.*
 
 case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
@@ -67,9 +67,10 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
   }
 
   def showSecondParagraph: Boolean = optOutState match {
-    case Some(OneYearOptOutFollowedByMandated) => false
-    case Some(_)                               => true
-    case _                                     => false
+    case Some(OneYearOptOutFollowedByMandated)                 => false
+    case Some(NextYearOptOut) if currentYearStatus == NoStatus => false
+    case Some(_)                                               => true
+    case _                                                     => false
   }
 
   val messageSuffix = s"$taxYearMessageSuffix.$optOutStateMessageSuffix"
