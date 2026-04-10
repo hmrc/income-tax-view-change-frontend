@@ -132,7 +132,7 @@ class ChooseSoleTraderAddressController @Inject()(
                     journeyType = "ADD-SE",
                     addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(previousBusinessAddressDetails)))
                   )
-                val redirect = Redirect(controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)) // TODO: Update with route
+                val redirect = Redirect(controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment))
                 sessionService.setMongoData(uiSessionData).map { data => redirect }
               case _ =>
                 Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] No existing ui session data and invalid form response")
