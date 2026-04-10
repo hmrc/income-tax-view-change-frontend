@@ -1,0 +1,168 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.itsaStatus.ITSAStatus
+
+@this(
+        layout: unifiedLayout,
+        h1: h1,
+        customLoginHubNav: CustomLoginHubNav,
+        h2: h2,
+        p: p,
+        govukRadios: GovukRadios,
+        h3: h3,
+        govukButton: GovukButton,
+        govukSelect: GovukSelect,
+        govukCheckboxes: GovukCheckboxes,
+        form: FormWithCSRF
+)
+
+@(postAction: Call)(implicit request: Request[_], messages: Messages)
+
+@ITSAOptions = @{
+    ITSAStatus.values.unsorted.map { status =>
+        SelectItem(
+            value = Some(status.toString),
+            text = status.toString
+        )
+    }.toSeq
+}
+
+@layout(pageTitle = "Custom User Builder - Manage your Self Assessment - GOV.UK") {
+    @h1("Custom User Builder")
+    @customLoginHubNav("custom-user-builder")
+    @h2("Builder", classes = "govuk-!-padding-top-6 govuk-heading-m")
+    @p(){Please input the details below to create a custom user. Once created, you can use the generated user code to login via the Custom User Login tab.}
+
+    @form(postAction) {
+        @h3("User Type")
+        @govukRadios(Radios(
+            name = "AgentType",
+            items = Seq(
+                RadioItem(
+                    content = Text("Individual"),
+                    value = Some("individual"),
+                    checked = true
+                ),
+                RadioItem(
+                    content = Text("Primary Agent"),
+                    value = Some("primaryAgent")
+                ),
+                RadioItem(
+                    content = Text("Supporting Agent"),
+                    value = Some("supportingAgent")
+                )
+            )
+        ))
+
+        @h3("Income Sources")
+
+        @govukCheckboxes(
+            Checkboxes(
+                fieldset = Some(Fieldset(
+                    legend = None
+                )),
+                name = "SoleTraderCheckbox",
+                items = Seq(
+                    CheckboxItem(
+                        content = Text("Active Sole Trader Business"),
+                        value = "true"
+                    )
+                ),
+            )
+        )
+
+        @govukCheckboxes(
+            Checkboxes(
+                fieldset = Some(Fieldset(
+                    legend = None
+                )),
+                name = "UkPropertyCheckbox",
+                items = Seq(
+                    CheckboxItem(
+                        content = Text("Active UK Property"),
+                        value = "true"
+                    )
+                ),
+            )
+        )
+
+        @govukCheckboxes(
+            Checkboxes(
+                fieldset = Some(Fieldset(
+                    legend = None
+                )),
+                name = "ForeignPropertyCheckbox",
+                items = Seq(
+                    CheckboxItem(
+                        content = Text("Active Foreign Property"),
+                        value = "true"
+                    )
+                ),
+            )
+        )
+
+        @h3("ITSA Status")
+
+        @govukSelect(Select(
+            id = "cyMinusOneCrystallisationStatus",
+            name = "cyMinusOneCrystallisationStatus",
+            items =
+                Seq(
+                    SelectItem(
+                        value = Some("Crystallised"),
+                        text = "Crystallised"
+                    ),
+                    SelectItem(
+                        value = Some("NonCrystallised"),
+                        text = "Non Crystallised"
+                    )
+                ),
+            label = Label(
+                content = Text("CY-1 Crystallisation"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyMinusOneItsaStatus",
+            name = "cyMinusOneItsaStatus",
+            items = ITSAOptions,
+            label = Label(content = Text("CY-1 ITSA Status"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyItsaStatus",
+            name = "cyItsaStatus",
+            items = ITSAOptions,
+            label = Label(content = Text("CY ITSA Status"))
+        ))
+
+        @govukSelect(Select(
+            id = "cyPlusOneItsaStatus",
+            name = "cyPlusOneItsaStatus",
+            items = ITSAOptions,
+            label = Label(content = Text("CY+1 ITSA Status"))
+        ))
+
+        @govukButton(
+            Button(
+                content = Text("Generate User Code")
+            )
+        )
+    }
+}
