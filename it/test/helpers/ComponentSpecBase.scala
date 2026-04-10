@@ -170,6 +170,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.pay-api.port" -> mockPort,
     "microservice.services.income-tax-calculation.host" -> mockHost,
     "microservice.services.income-tax-calculation.port" -> mockPort,
+    "microservice.services.income-tax-financial-details.host" -> mockHost,
+    "microservice.services.income-tax-financial-details.port" -> mockPort,
     "microservice.services.income-tax-penalties-stub.host" -> mockHost,
     "microservice.services.income-tax-penalties-stub.port" -> mockPort,
     "microservice.services.penalties.host" -> mockHost,

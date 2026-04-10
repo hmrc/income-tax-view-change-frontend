@@ -41,7 +41,7 @@ class FinancialDetailsConnector @Inject()(
                                            appConfig: FrontendAppConfig
                                          )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  private[connectors] val baseUrl = s"${appConfig.itvcProtectedService}/income-tax-view-change"
+  private[connectors] val baseUrl = s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details"
 
   private[connectors] def getChargesUrl(nino: String, from: String, to: String): String =
     baseUrl + s"/$nino/financial-details/charges/from/$from/to/$to"
