@@ -51,7 +51,7 @@ import scala.concurrent.Future
 class RepaymentHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAuditingService {
 
   trait Setup {
-    val baseUrl = "http://localhost:9999"
+    val baseUrl = "http://localhost:9090"
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
@@ -62,13 +62,13 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttpV2 with Moc
 
   "getRepaymentHistoryByIdUrl" should {
     "return the correct url" in new Setup {
-      connector.getRepaymentHistoryByIdUrl(testNino, repaymentId) shouldBe s"$baseUrl/income-tax-view-change/repayments/$testNino/repaymentId/$repaymentId"
+      connector.getRepaymentHistoryByIdUrl(testNino, repaymentId) shouldBe s"$baseUrl/income-tax-financial-details/repayments/$testNino/repaymentId/$repaymentId"
     }
   }
 
   "getAllRepaymentHistory" should {
     "return the correct url" in new Setup {
-      connector.getAllRepaymentHistoryUrl(testNino) shouldBe s"$baseUrl/income-tax-view-change/repayments/$testNino"
+      connector.getAllRepaymentHistoryUrl(testNino) shouldBe s"$baseUrl/income-tax-financial-details/repayments/$testNino"
     }
   }
 
