@@ -102,7 +102,9 @@ class ChooseSoleTraderAddressController @Inject()(
                   case (Some(addressLine1), postcode@Some(_)) if addressLine1.nonEmpty && postcode.nonEmpty => Some(Address(Seq(addressLine1), postcode, Some(Country(Some("GB"), Some("United Kingdom")))))
                   case _ => None
                 }
-                val redirect: Result = Redirect(controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment))
+                val redirectCallByType = if isAgent then controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+                else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+                val redirect: Result = Redirect(redirectCallByType)
                 val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(
                   chooseSoleTraderAddress = Some(previousBusinessAddressDetails),
                   address = previousBusinessAddress)))
@@ -132,7 +134,10 @@ class ChooseSoleTraderAddressController @Inject()(
                     journeyType = "ADD-SE",
                     addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(previousBusinessAddressDetails)))
                   )
-                val redirect = Redirect(controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment))
+
+                val redirectCallByType = if isAgent then controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+                else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+                val redirect = Redirect(redirectCallByType)
                 sessionService.setMongoData(uiSessionData).map { data => redirect }
               case _ =>
                 Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] No existing ui session data and invalid form response")

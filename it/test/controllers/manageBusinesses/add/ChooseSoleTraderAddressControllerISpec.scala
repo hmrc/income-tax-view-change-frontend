@@ -30,10 +30,14 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
 
   val continueButtonText: String = messagesAPI("base.continue")
 
-  def getPath(mtdRole: MTDUserRole): String = {
+  private def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/manage-your-businesses/add-sole-trader/choose-address"
   }
+
+  private def getIncomeSourceCheckDetailsControllerUrlByType(isAgent: Boolean) =
+    if isAgent then controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+    else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
   List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent).foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
@@ -80,7 +84,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url)
+                redirectURI(getIncomeSourceCheckDetailsControllerUrlByType(isAgent))
               )
             }
             "form response is New Address" in {

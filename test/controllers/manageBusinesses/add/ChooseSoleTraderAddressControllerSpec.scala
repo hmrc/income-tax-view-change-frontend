@@ -62,6 +62,10 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
     else fakePostRequestWithActiveSession
   }
 
+  private def getIncomeSourceCheckDetailsControllerUrlByType(isAgent: Boolean) =
+    if isAgent then controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+    else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+
   mtdAllRoles.foreach { mtdRole =>
 
     val isAgent = mtdRole != MTDIndividual
@@ -129,7 +133,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
 
       s"the user is authenticated as a $mtdRole" should {
-        //TODO change as part of the nav ticket
+
         s"return 303: reload the page" when {
 
           "existing address selected" in {
@@ -156,7 +160,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
                 "value" -> "0"
               ))
 
-            val redirectUrl = controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+            val redirectUrl = getIncomeSourceCheckDetailsControllerUrlByType(isAgent)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)
