@@ -1,0 +1,51 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@this(
+    govukServiceNavigation : GovukServiceNavigation,
+)
+
+@(activeTab: String)(implicit request: Request[_], messages: Messages)
+
+@govukServiceNavigation(ServiceNavigation(
+    navigation = Seq(
+        ServiceNavigationItem(
+            content = Text("User Hub"),
+            href = testOnly.controllers.customLoginV2.routes.TestUserHubController.show().url,
+            active = (activeTab == "test-user-hub")
+        ),
+        ServiceNavigationItem(
+            content = Text("Custom Builder"),
+            href = testOnly.controllers.customLoginV2.routes.CustomUserBuilderController.show().url,
+            active = (activeTab == "custom-user-builder")
+        ),
+        ServiceNavigationItem(
+            content = Text("Custom User Login"),
+            href = testOnly.controllers.customLoginV2.routes.CustomUserLoginController.show().url,
+            active = (activeTab == "custom-user-login")
+        ),
+        ServiceNavigationItem(
+            content = Text("JSON Data Creator"),
+            href = testOnly.controllers.customLoginV2.routes.JsonDataCreatorController.show().url,
+            active = (activeTab == "json-data-creator")
+        )
+    ),
+    attributes = Map("style" -> "background-color: white;")
+))

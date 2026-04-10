@@ -1,0 +1,66 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
+@this(
+        layout: unifiedLayout,
+        h1: h1,
+        customLoginHubNav: CustomLoginHubNav,
+        h2: h2,
+        p: p,
+        govukInput: GovukInput,
+        govukButton: GovukButton,
+        govukNotificationBanner: GovukNotificationBanner
+)
+
+@(userCode: Option[String])(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = "Custom User Builder - Manage your Self Assessment - GOV.UK") {
+    @h1("Custom User Login")
+    @customLoginHubNav("custom-user-login")
+    @if(userCode.isDefined) {
+        @govukNotificationBanner(NotificationBanner(
+            title = Text("User code generated"),
+            titleId = Some("user-code-heading"),
+            content = Text(s"Your user code is: ${userCode.get}"),
+            bannerType = Some("success"),
+            classes = "govuk-!-margin-top-6 govuk-!-margin-bottom-0"
+        ))
+    }
+    @h2("Login", classes = "govuk-!-padding-top-6 govuk-heading-m")
+    @p(){Please input your custom user code to continue.}
+    @govukInput(
+        Input(
+            id = "customUserCode",
+            name = "customUserCode",
+            classes = "govuk-!-width-three-quarters",
+            label = Label(
+                isPageHeading = false,
+                classes = "govuk-visually-hidden",
+                content = Text(messages("add-business-name.heading1"))
+            ),
+            value = userCode
+        )
+    )
+    @govukButton(
+        Button(
+            content = Text("Login")
+        )
+    )
+}
