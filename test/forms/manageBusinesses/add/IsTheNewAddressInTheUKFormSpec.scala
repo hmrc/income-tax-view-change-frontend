@@ -24,14 +24,14 @@ class IsTheNewAddressInTheUKFormSpec extends TestSupport {
   lazy val form: Form[IsTheNewAddressInTheUKForm] = IsTheNewAddressInTheUKForm.apply(true)
   "IsTheNewAddressInTheUKCheck form" should {
     "bind with a valid response - yes" in {
-      val formData = IsTheNewAddressInTheUKForm(Some("uk-property"))
+      val formData = IsTheNewAddressInTheUKForm(Some("Yes"))
       val completedForm = form.fill(formData)
       completedForm.data.get(IsTheNewAddressInTheUKForm.response) shouldBe Some(IsTheNewAddressInTheUKForm.responseUK)
       completedForm.errors shouldBe List.empty
     }
 
     "bind with a valid response - No" in {
-      val formData = IsTheNewAddressInTheUKForm(Some("foreign-property"))
+      val formData = IsTheNewAddressInTheUKForm(Some("No"))
       val completedForm = form.fill(formData)
       completedForm.data.get(AddProprertyForm.response) shouldBe Some(IsTheNewAddressInTheUKForm.responseForeign)
       completedForm.errors shouldBe List.empty

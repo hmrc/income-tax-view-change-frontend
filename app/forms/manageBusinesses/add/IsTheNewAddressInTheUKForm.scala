@@ -21,8 +21,8 @@ import play.api.data.Forms.*
 
 object IsTheNewAddressInTheUKForm {
 
-  val responseUK: String = "uk-property"
-  val responseForeign: String = "foreign-property"
+  val responseUK: String = "Yes"
+  val responseForeign: String = "No"
   val response: String = "type-of-business"
   
   def apply(hasUKAddress: Boolean): Form[IsTheNewAddressInTheUKForm] = {

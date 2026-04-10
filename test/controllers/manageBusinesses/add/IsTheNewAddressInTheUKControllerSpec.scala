@@ -79,6 +79,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
 
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheNewAddressInTheUKHeading))
+                document.select(".govuk-back-link").attr("href") shouldBe controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(mtdRole != MTDIndividual).url
                 status(result) shouldBe OK
               }
             }

@@ -26,7 +26,7 @@ import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import jakarta.inject.Singleton
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
-import models.incomeSourceDetails.{AddIncomeSourceData, ChooseSoleTraderAddressUserAnswer}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, ChooseSoleTraderAddressUserAnswer, Country}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -83,7 +83,7 @@ class ChooseSoleTraderAddressController @Inject()(
 
     val formResponse = validForm.response
     lazy val isNewAddress = ChooseSoleTraderAddressUserAnswer(None, None, None, None, None, None, true)
-    lazy val isAddressInTheUkPage = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
+    lazy val isAddressInTheUkPage = Redirect(controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent))
     lazy val showGenericErrorPage = errorHandler(isAgent).showInternalServerError()
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment)).flatMap {
@@ -98,8 +98,16 @@ class ChooseSoleTraderAddressController @Inject()(
                 sessionService.setMongoData(updatedData).map { data => isAddressInTheUkPage }
               case previousBusinessAddressIndex =>
                 val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
-                val redirect: Result = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Update with route
-                val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = Some(previousBusinessAddressDetails))))
+                val previousBusinessAddress: Option[Address] = (previousBusinessAddressDetails.addressLine1, previousBusinessAddressDetails.postcode) match {
+                  case (Some(addressLine1), postcode@Some(_)) if addressLine1.nonEmpty && postcode.nonEmpty => Some(Address(Seq(addressLine1), postcode, Some(Country(Some("GB"), Some("United Kingdom")))))
+                  case _ => None
+                }
+                val redirectCallByType = if isAgent then controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+                else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+                val redirect: Result = Redirect(redirectCallByType)
+                val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(
+                  chooseSoleTraderAddress = Some(previousBusinessAddressDetails),
+                  address = previousBusinessAddress)))
                 sessionService.setMongoData(updatedData).map { data => redirect }
               case _ =>
                 uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = None))
@@ -116,7 +124,7 @@ class ChooseSoleTraderAddressController @Inject()(
                     journeyType = "ADD-SE",
                     addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(isNewAddress)))
                   )
-                val redirect = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Add logic to navigate to the 'Is this address in the uk' page
+                val redirect = Redirect(controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent))
                 sessionService.setMongoData(newUiSessionData).map { data => redirect }
               case previousBusinessAddressIndex =>
                 val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
@@ -126,7 +134,10 @@ class ChooseSoleTraderAddressController @Inject()(
                     journeyType = "ADD-SE",
                     addIncomeSourceData = Some(AddIncomeSourceData(chooseSoleTraderAddress = Some(previousBusinessAddressDetails)))
                   )
-                val redirect = Redirect(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)) // TODO: Update with route
+
+                val redirectCallByType = if isAgent then controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+                else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+                val redirect = Redirect(redirectCallByType)
                 sessionService.setMongoData(uiSessionData).map { data => redirect }
               case _ =>
                 Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] No existing ui session data and invalid form response")
@@ -186,7 +197,7 @@ class ChooseSoleTraderAddressController @Inject()(
             Future {
               BadRequest(
                 view(
-                  postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
+                  postAction = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent),
                   isAgent = isAgent,
                   form = formWithErrors,
                   chooseSoleTraderAddressRadioOptionsWithIndex = addressOptions,

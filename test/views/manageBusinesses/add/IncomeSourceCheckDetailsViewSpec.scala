@@ -45,6 +45,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine3 = Some("Cbeebies"),
       businessAddressLine4 = None,
       businessCountryCode = Some("GB"),
+      businessCountryName = Some("United Kingdom"),
       addressId = Some("testAddressId")
     )
 
@@ -60,6 +61,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine4 = None,
       businessPostalCode = Some("M1 1AA"),
       businessCountryCode = Some("GB"),
+      businessCountryName = Some("United Kingdom"),
       addressId = Some("selected-address-id"),
       isAddingNewAddress = false,
       isNoAddressOnFile = false
@@ -77,6 +79,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine4 = None,
       businessPostalCode = Some("SW1A 2AA"),
       businessCountryCode = Some("GB"),
+      businessCountryName = Some("United Kingdom"),
       addressId = None,
       isAddingNewAddress = true,
       isNoAddressOnFile = false
@@ -94,6 +97,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine4 = None,
       businessPostalCode = Some("SW1A 2AA"),
       businessCountryCode = Some("GB"),
+      businessCountryName = Some("United Kingdom"),
       addressId = Some("lookup-result-id"),
       isAddingNewAddress = true,
       isNoAddressOnFile = false
@@ -111,6 +115,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine4 = None,
       businessPostalCode = None,
       businessCountryCode = Some("FR"),
+      businessCountryName = Some("France"),
       addressId = None,
       isAddingNewAddress = true,
       isNoAddressOnFile = false
@@ -128,6 +133,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine4 = None,
       businessPostalCode = Some("AB1 2CD"),
       businessCountryCode = Some("GB"),
+      businessCountryName = Some("United Kingdom"),
       addressId = Some("lookup-address-id"),
       isAddingNewAddress = false,
       isNoAddressOnFile = true
@@ -145,6 +151,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine4 = None,
       businessPostalCode = Some("TE1 1ST"),
       businessCountryCode = Some("GB"),
+      businessCountryName = Some("United Kingdom"),
       addressId = None,
       isAddingNewAddress = false,
       isNoAddressOnFile = true
@@ -162,6 +169,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine4 = None,
       businessPostalCode = None,
       businessCountryCode = Some("FR"),
+      businessCountryName = Some("France"),
       addressId = None,
       isAddingNewAddress = false,
       isNoAddressOnFile = true
@@ -347,7 +355,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
             document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Added international address for this business"
 
-            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "1 Example Street Paris FR"
+            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "1 Example Street Paris France"
 
             document.body().text() should not include "Address"
             document.body().text() should not include "Added address for this business"
@@ -419,7 +427,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
             document.getElementsByClass("govuk-summary-list__key").eq(3).text() shouldBe "Added international address for this business"
 
-            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "1 Example Street Paris FR"
+            document.getElementsByClass("govuk-summary-list__value").eq(3).text() shouldBe "1 Example Street Paris France"
 
             document.body().text() should not include "Address"
             document.body().text() should not include "Added address for this business"

@@ -52,7 +52,19 @@ case class AddIncomeSourceData(
       accountingPeriodStartDate.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant.apply),
       accountingPeriodEndDate.map(_.atStartOfDay().toInstant(ZoneOffset.UTC)).map(SensitiveInstant.apply),
       incomeSourceId.map(SensitiveString.apply),
-      address.map { case Address(lines, postcode) => SensitiveAddress(lines.map(SensitiveString.apply), postcode.map(SensitiveString.apply)) },
+      address.map {
+        case Address(lines, postcode, country) =>
+          SensitiveAddress(
+            lines.map(SensitiveString.apply),
+            postcode.map(SensitiveString.apply),
+            country.map { case Country(code, name) =>
+              SensitiveCountry(
+                code.map(SensitiveString.apply),
+                name.map(SensitiveString.apply)
+              )
+            }
+          )
+      },
       chooseSoleTraderAddress.map { case
         ChooseSoleTraderAddressUserAnswer(
           addressLine1: Option[String],

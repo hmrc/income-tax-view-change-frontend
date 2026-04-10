@@ -23,15 +23,15 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.NavBarFs
+import models.admin.OverseasBusinessAddress
 import models.core.NormalMode
-import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import models.incomeSourceDetails.AddIncomeSourceData
+import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse}
+import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse, singleBusinessResponse, ukPropertyOnlyResponse}
 
 class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
@@ -143,6 +143,77 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               )
             }
           }
+          
+          s"303 SEE_OTHER and redirect to choose sole trader business address" when {
+            "the OverseasBusinessAddress FS is on" when {
+              "there is address on file" when {
+                "User is authorised and business trade is valid" in {
+                  enable(OverseasBusinessAddress)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+
+                  val formData: Map[String, Seq[String]] = {
+                    Map(
+                      BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+                    )
+                  }
+
+                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+                    addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
+
+                  sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+
+                  val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(false).url
+                  } else {
+                    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(true).url
+                  }
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(expectedUrl)
+                  )
+                }
+              }
+            }
+          }
+
+          s"303 SEE_OTHER and redirect to is the new address in the uk" when {
+            "the OverseasBusinessAddress FS is on" when {
+              "there is no address on file" when {
+                "User is authorised and business trade is valid" in {
+                  enable(OverseasBusinessAddress)
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+                  val formData: Map[String, Seq[String]] = {
+                    Map(
+                      BusinessTradeForm.businessTrade -> Seq(testBusinessTrade)
+                    )
+                  }
+
+                  await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
+                    addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
+
+                  val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
+
+                  sessionService.getMongoKeyTyped[String](businessTradeField, IncomeSourceJourneyType(Add, SelfEmployment)).futureValue shouldBe Right(Some(testBusinessTrade))
+
+                  val expectedUrl = if (mtdUserRole == MTDIndividual) {
+                    controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(false).url
+                  } else {
+                    controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(true).url
+                  }
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(expectedUrl)
+                  )
+                }
+              }
+            }
+          }
+          
           "show error when form is filled incorrectly" in {
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -205,6 +276,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               )
             }
           }
+
           "show error when form is filled incorrectly" in {
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)

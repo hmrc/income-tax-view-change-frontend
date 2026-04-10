@@ -16,8 +16,8 @@
 
 package models.incomeSourceDetails.httpparser
 
-import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser._
-import models.incomeSourceDetails.{Address, BusinessAddressModel}
+import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.*
+import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import testUtils.UnitSpec
@@ -28,8 +28,12 @@ class GetAddressLookupDetailsHttpParserSpec extends UnitSpec{
   val testHttpVerb = "GET"
   val testUri = "/test"
 
+  val testCountryJson: JsObject = Json.obj(
+    "code" -> Some("GB"), "name" -> Some("United Kingdom")
+  )
+
   val testAddressJson: JsObject = Json.obj(
-   "lines" -> Seq("address line 1", "address line 2", "address line 3"), "postcode" -> Some("SE1 9DG")
+   "lines" -> Seq("address line 1", "address line 2", "address line 3"), "postcode" -> Some("SE1 9DG"), "country" -> testCountryJson
   )
   val testValidJson: JsObject = Json.obj(
     "auditRef" -> "", "address" -> testAddressJson
@@ -43,7 +47,7 @@ class GetAddressLookupDetailsHttpParserSpec extends UnitSpec{
 
         lazy val result = getAddressLookupDetailsHttpReads.read(testHttpVerb, testUri, httpResponse)
         result shouldBe Right(Some(BusinessAddressModel(auditRef = "",
-          Address(lines = Seq("address line 1", "address line 2", "address line 3"), postcode = Some("SE1 9DG"))
+          Address(lines = Seq("address line 1", "address line 2", "address line 3"), postcode = Some("SE1 9DG"), Some(Country(Some("GB"), Some("United Kingdom"))))
         )))
       }
 

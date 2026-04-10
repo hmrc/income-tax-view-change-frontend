@@ -114,6 +114,7 @@ trait IncomeSourcesDataHelper {
       businessAddressLine3 = Some(""),
       businessAddressLine4 = None,
       businessCountryCode = Some("GB"),
+      businessCountryName = Some("United Kingdom"),
       addressId = None
     )
 

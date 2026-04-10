@@ -24,10 +24,12 @@ import enums.BeforeSubmissionPage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
+import models.admin.OverseasBusinessAddress
 import models.core.{Mode, NormalMode}
+import models.incomeSourceDetails.Address
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
@@ -56,10 +58,14 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
     }).url
   }
 
-  private def getSuccessURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): String = {
+  private def getSuccessURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean, isOverseasBusinessAddress: Boolean, isNoAddressOnFile: Boolean): String = {
     ((isAgent, mode) match {
+      case (false, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent)
+      case (false, NormalMode) if isOverseasBusinessAddress => controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)
       case (false, NormalMode) => routes.AddBusinessAddressController.show(mode, isTriggeredMigration)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
+      case (_, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent)
+      case (_, NormalMode) if isOverseasBusinessAddress => controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent)
       case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode, isTriggeredMigration)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
     }).url
@@ -113,7 +119,8 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
 
   def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
-      val businessNameOpt = sessionData.addIncomeSourceData.flatMap(_.businessName)
+      val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
+      val isNoAddressOnFile: Boolean = user.incomeSources.businesses.flatMap(_.address).isEmpty
 
       BusinessTradeForm
         .checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt).fold(
@@ -139,7 +146,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                   )
               )
             ) flatMap {
-              case true  => Future.successful(Redirect(getSuccessURL(isAgent, mode, isTriggeredMigration)))
+              case true  => Future.successful(Redirect(getSuccessURL(isAgent, mode, isTriggeredMigration, isEnabled(OverseasBusinessAddress), isNoAddressOnFile)))
               case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
             }
         )

@@ -24,7 +24,7 @@ import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{CheckMode, NormalMode}
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, Country}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -59,7 +59,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
   lazy val testAddInternationalBusinessAddressController = app.injector.instanceOf[AddInternationalBusinessAddressController]
   lazy val frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
+  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"), Some(Country(Some("UK"), Some("United Kingdom")))))
   val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), countryCode = Some("GB"), addressLookupId = Some("123")))
   val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData("", "", testAddIncomeSourceSessionData)
 

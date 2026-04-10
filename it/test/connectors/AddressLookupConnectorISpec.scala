@@ -22,10 +22,9 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import models.core.NormalMode
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
-import models.incomeSourceDetails.{Address, BusinessAddressModel}
+import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, OK}
-import play.api.libs.json.Json
 import play.api.test.Injecting
 import testConstants.AddressLookupTestConstants
 
@@ -111,7 +110,11 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
               |  "auditRef": "auditRef",
               |  "address": {
               |    "lines": ["Line 1", "Line 2"],
-              |    "postcode": "AA1 1AA"
+              |    "postcode": "AA1 1AA",
+              |    "country":{
+              |      "code":"GB",
+              |      "name":"United Kingdom"
+              |    }
               |  }
               |}
               |""".stripMargin
@@ -122,7 +125,7 @@ class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase wit
 
           val result = connector.getAddressDetails(id)(hc).futureValue
 
-          result shouldBe Right(Some(BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))))
+          result shouldBe Right(Some(BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"), Some(Country(Some("GB"), Some("United Kingdom")))))))
           WiremockHelper.verifyGet(s"/api/v2/confirmed?id=$id")
         }
         "return an error when getting address details fails" in {
