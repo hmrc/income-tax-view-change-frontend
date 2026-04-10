@@ -34,7 +34,7 @@ class AddBusinessTradeViewSpec extends ViewSpec {
     val tradeEmptyError: String = "Enter the trade of your business"
     val tradeShortError: String = "Trade must be 2 characters or more"
     val tradeLongError: String = "Trade must be 35 characters or fewer"
-    val tradeInvalidCharError: String = "Trade cannot include !, \"\", * or ?"
+    val tradeInvalidCharError: String = "The business trade can only include upper or lower case letters, full stops, commas, digits, &, ’, \\, /, -."
     val tradeSameNameError: String = "Trade and business name cannot be the same"
     val continue: String = "Continue"
     val errorPrefix: String = "Error:"
