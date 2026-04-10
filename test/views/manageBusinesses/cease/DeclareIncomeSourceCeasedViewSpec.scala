@@ -68,24 +68,34 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
   } yield {
     s"Declare $incomeSourceType Ceased View - isAgent = $isAgent" should {
       "render the correct h1" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-        document.getElementById("heading").text() shouldBe messages(s"incomeSources.cease.${incomeSourceType.key}.heading")
+        val expectedHeading = incomeSourceType match {
+          case SelfEmployment => "Cease sole trader business"
+          case UkProperty     => "Cease UK property business"
+          case ForeignProperty => "Cease foreign property business"
+        }
+        document.getElementById("heading").text() shouldBe expectedHeading
       }
 
       if (incomeSourceType equals SelfEmployment) {
         "render the business-specific hint" in new Setup(isAgent = isAgent, incomeSourceType = SelfEmployment, businessName = Some(testBusinessName)) {
-          document.getElementById(s"$declaration-hint").text() shouldBe messages("incomeSources.cease.SE.hint", testBusinessName)
+          document.getElementById(s"$declaration-hint").text() shouldBe "Only cease Big Business if you no longer receive any income or have any expenses related to this business."
         }
         "render the generic business hint" in new Setup(isAgent = isAgent, incomeSourceType = SelfEmployment) {
-          document.getElementById(s"$declaration-hint").text() shouldBe messages("incomeSources.cease.SE.hint.noBusinessName")
+          document.getElementById(s"$declaration-hint").text() shouldBe "Only cease your sole trader business if you no longer receive any income or have any expenses related to this business."
         }
       } else {
         "render the property hint" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-          document.getElementById(s"$declaration-hint").text() shouldBe messages(s"incomeSources.cease.${incomeSourceType.key}.hint")
+          val propertyHint = incomeSourceType match {
+            case UkProperty => "Only cease your UK property business if you no longer get income from any properties in the UK"
+            case ForeignProperty => "Only cease your foreign property business if you no longer get income from any properties abroad."
+            case _ => ""
+          }
+          document.getElementById(s"$declaration-hint").text() shouldBe propertyHint
         }
       }
 
       "render the back link with the correct URL" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-        document.getElementById("back-fallback").text() shouldBe messages("base.back")
+        document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe(
           if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url
           else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
@@ -93,11 +103,11 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
       }
 
       "render the p1" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-        document.getElementById("confirm-cease-p1").text() shouldBe messages(s"incomeSources.cease.${incomeSourceType.key}.p1")
+        document.getElementById("confirm-cease-p1").text() shouldBe "By continuing I confirm I want to cease this business."
       }
 
       "render the confirm and continue button" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
-        document.getElementById("confirm-button").text() shouldBe messages(s"incomeSources.cease.${incomeSourceType.key}.continue")
+        document.getElementById("confirm-button").text() shouldBe "Confirm and continue"
       }
     }
   }

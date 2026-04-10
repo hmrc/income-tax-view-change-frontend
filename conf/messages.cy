@@ -872,6 +872,8 @@ refund-to-taxpayer.tableHead.varied-interest-rates-value        = Roedd y gyfrad
 refund-to-taxpayer.method-type-bacs                             = Bacs
 refund-to-taxpayer.method-type-card                             = Cerdyn
 refund-to-taxpayer.method-type-postal-order                     = Archeb Bost
+refund-to-taxpayer.method-type-payable-order-repayment          = Ad-daliad archeb talu
+refund-to-taxpayer.method-type-bacs-payment-out                 = Taliad BACS i chi
 
 ## Timeout page ##
 timeout.heading                                                 = Mae’ch sesiwn wedi dod i ben
@@ -1686,7 +1688,7 @@ add-business-trade.p1                       = Er enghraifft: plymio, gwaith tryd
 add-business-trade.form.error.empty         = Nodwch fasnach eich busnes
 add-business-trade.form.error.short         = Mae’n rhaid i fasnach y busnes gynnwys o leiaf dwy lythyren
 add-business-trade.form.error.long          = Mae’n rhaid i fasnach y busnes fod yn 35 o gymeriadau neu lai
-add-business-trade.form.error.invalid       = Ni all masnach y busnes gynnwys !, "" , * na ?
+add-business-trade.form.error.invalid       = Gall masnach y busnes gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, ’, \, /, - yn unig.
 add-business-trade.form.error.same-name     = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Is the new address in the UK page
@@ -1786,14 +1788,14 @@ radioForm.checkDate.heading.withDate                                = Ai {0} yw�
 #Generic income sources messages
 incomeSources.generic.unknown                                       = Anhysbys
 
-incomeSources.cease.endDate.selfEmployment.heading                               = Y dyddiad gwnaeth eich busnes hunangyflogedig stopio
+incomeSources.cease.endDate.selfEmployment.heading                               = Pryd y daeth eich busnes unig fasnachwr i ben?
 incomeSources.cease.endDate.selfEmployment.error.invalid                         = Mae’n rhaid i’r dyddiad y gwnaeth eich busnes hunangyflogedig roi’r gorau i fasnachu fod yn ddyddiad go iawn
 incomeSources.cease.endDate.selfEmployment.error.beforeEarliestDate              = Ni all y dyddiad dod i ben fod cyn 6 Ebrill 2015
 
 incomeSources.cease.endDate.ukProperty.heading                    = Pryd y gwnaeth y busnes eiddo yn y DU ddod i ben?
 incomeSources.cease.endDate.ukProperty.error.invalid              = Mae’n rhaid i’r dyddiad y daeth eich busnes eiddo yn y DU i ben fod yn ddyddiad go iawn
 
-incomeSources.cease.SE.heading                            = Cadarnhau eich bod am ddod â’ch busnes hunangyflogedig i ben
+incomeSources.cease.SE.heading                            = Dod â busnes unig fasnachwr i ben
 incomeSources.cease.SE.caption                            = Unig fasnachwr
 incomeSources.cease.SE.checkboxLabel                      = Rwyf yn cadarnhau fy mod am ddod â’r busnes hwn i ben
 incomeSources.cease.SE.hint                               = Ond dod â {0} i ben os nad ydych bellach yn cael unrhyw incwm neu os oes gennych unrhyw gostau sy’n gysylltiedig â’r busnes hwn.
@@ -1876,10 +1878,10 @@ add-business-name.heading1                                        = Enw’r busn
 add-business-name.heading2                                        = Beth yw enw’ch busnes?
 
 add-business-name.p1                                              = Dyma enw’r busnes a ddefnyddioch i gofrestru ar gyfer Hunanasesiad. Os nad oes enw gwahanol ar eich busnes unig fasnachwr, nodwch eich enw cyntaf ac enw olaf.
-add-business-name.p2                                            = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, {0}, \, /, - yn unig.
+add-business-name.p2                                              = Gall enw’r busnes rydych yn ei nodi gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, {0}, \, /, - yn unig.
 add-business-name.form.error.required                             = Nodwch eich enw neu enw’ch busnes
 add-business-name.form.error.maxLength                            = Mae’n rhaid i enw’r busnes fod yn 105 o gymeriadau neu lai
-add-business-name.form.error.invalidNameFormat                    = Ni all enw’r busnes gynnwys !, "", * neu ?
+add-business-name.form.error.invalidNameFormat                    = Gall enw’r busnes gynnwys llythrennau mawr neu fach, atalnodau llawn, comas, digidau, &, ’, \, /, - yn unig.
 add-business-name.form.error.invalidName                          = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 # add Business start date
@@ -2321,12 +2323,12 @@ incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.foreign-property
 incomeSources.manage.quarterly-period                                 =   Cyfnod diweddaru
 incomeSources.manage.quarterly-period.standard                        =   Safonol
 incomeSources.manage.quarterly-period.calendar                        =   Calendr
-incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod chwarterol safonol?
-incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod chwarterol calendr?
-incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r busnes yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth, a elwir hefyd yn chwarterau safonol.
-incomeSources.manage.quarterly-period.standard.content.p2             =   Os yw eich meddalwedd yn ei gefnogi gallwch newid hyn i gyflwyno adroddiadau o 1af y mis yn ôl chwarterau calendr.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd mae’r busnes yn cyflwyno adroddiadau o 1 Ebrill yn ôl chwarterau calendr.
-incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl chwarterau safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gall y newid hwn gael ei wneud yn eich meddalwedd sy’n cydweddu yn unig.
+incomeSources.manage.quarterly-period.standard.summary                =   Beth yw cyfnod diweddaru safonol?
+incomeSources.manage.quarterly-period.calendar.summary                =   Beth yw cyfnod diweddaru calendr?
+incomeSources.manage.quarterly-period.standard.content.p1             =   Mae’r busnes hwn yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth – enw arall ar hyn yw ‘defnyddio cyfnodau diweddaru safonol’.
+incomeSources.manage.quarterly-period.standard.content.p2             =   Gallwch ddewis adrodd gan ddefnyddio cyfnodau diweddaru calendr sy’n dod i ben ar ddiwrnod olaf y mis, os yw’ch meddalwedd yn caniatáu hyn.
+incomeSources.manage.quarterly-period.calendar.content.p1             =   Ar hyn o bryd, mae’r busnes hwn yn cyflwyno adroddiadau o 1 Ebrill gan ddefnyddio cyfnodau diweddaru calendr.
+incomeSources.manage.quarterly-period.calendar.content.p2             =   Gallwch newid hyn i adrodd yn ôl cyfnodau diweddaru safonol, yn unol â’r flwyddyn dreth, fel y gallwch adrodd o 6 Ebrill ymlaen. Gellir gwneud y newid hwn drwy’ch meddalwedd sy’n cydweddu yn unig.
 incomeSources.manage.quarterly-period.content.p3                      =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 
 incomeSources.manage.business-manage-details.heading                  =   Gwirio’ch manylion
@@ -2350,14 +2352,6 @@ incomeSources.manage.foreign-property-manage-details.foreign-property-section   
 ##################### New - Manage journey manage income source #####################
 
 incomeSources.manage.new.business-manage-details.heading                  =   Manage your details
-
-incomeSources.manage.new.quarterly.update.period                          =   Cyfnod diweddaru
-incomeSources.manage.new.quarterly.period.standard                        =   Safonol
-incomeSources.manage.new.quarterly.period.calendar                        =   Calendr
-incomeSources.manage.new.quarterly.period.summary                         =   Beth yw cyfnod chwarterol safonol?
-incomeSources.manage.new.quarterly.period.content.p1                      =   Mae’r busnes hwn yn cyflwyno adroddiadau o 6 Ebrill yn unol â’r flwyddyn dreth – enw arall ar hyn yw ‘defnyddio cyfnodau diweddaru safonol’.
-incomeSources.manage.new.quarterly.period.content.p2                      =   Gallwch ddewis adrodd gan ddefnyddio cyfnodau diweddaru calendr sy’n dod i ben ar ddiwrnod olaf y mis, os yw’ch meddalwedd yn caniatáu hyn.
-incomeSources.manage.new.quarterly.period.content.p3.link                 =   Dysgwch ragor am chwarterau safonol a chwarterau calendr
 
 incomeSources.manage.new.business.details.heading                         =   Gwirio’ch manylion
 incomeSources.manage.new.business.details.sole.trader.section             =   Unig fasnachwr

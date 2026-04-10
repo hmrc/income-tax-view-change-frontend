@@ -56,22 +56,22 @@
 
     <dl class="govuk-summary-list" id="refund-to-taxpayer-table">
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.estimated-date")</dt>
-            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right govuk-!-margin-0">@{
+            <dt class="govuk-summary-list__key govuk-!-width-one-half">@messages("refund-to-taxpayer.tableHead.estimated-date")</dt>
+            <dd class="govuk-summary-list__value govuk-!-width-one-half govuk-!-margin-0">@{
                 viewModel.estimatedRepaymentDate.toLongDate
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.method")</dt>
-            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+            <dt class="govuk-summary-list__key govuk-!-width-one-half">@messages("refund-to-taxpayer.tableHead.method")</dt>
+            <dd class="govuk-summary-list__value govuk-!-width-one-half">@{
                 messages(s"refund-to-taxpayer.method-type-${
                     viewModel.repaymentMethod.replace(" ", "-").toLowerCase
                 }")
             }</dd>
         </div>
         <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.total-refund")</dt>
-            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+            <dt class="govuk-summary-list__key govuk-!-width-one-half">@messages("refund-to-taxpayer.tableHead.total-refund")</dt>
+            <dd class="govuk-summary-list__value govuk-!-width-one-half">@{
                 viewModel.totalRepaymentAmount.toCurrencyString
             }</dd>
         </div>
@@ -86,20 +86,20 @@
             <dl class="govuk-summary-list" id="refund-to-taxpayer-table-under-details">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key dt-cell-width">@messages("refund-to-taxpayer.tableHead.requested-on")</dt>
-                    <dd class="govuk-summary-list__value govuk-!-text-align-right">@{
+                    <dd class="govuk-summary-list__value">@{
                         viewModel.creationDate.toLongDate
                     }</dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-reference")</dt>
-                    <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+                    <dd class="govuk-summary-list__value">@{
                         viewModel.repaymentRequestNumber
                     }</dd>
                 </div>
                 @if(viewModel.amountApprovedForRepayment.isEmpty || viewModel.amountRequested.toCurrencyString != viewModel.getApprovedAmount.toCurrencyString) {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.requested-amount")</dt>
-                        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+                        <dd class="govuk-summary-list__value">@{
                             viewModel.amountRequested.toCurrencyString
                         }</dd>
                     </div>
@@ -107,7 +107,7 @@
                 @if(viewModel.amountApprovedForRepayment.isDefined) {
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">@messages("refund-to-taxpayer.tableHead.refund-amount")</dt>
-                        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+                        <dd class="govuk-summary-list__value">@{
                             viewModel.getApprovedAmount.toCurrencyString
                         }</dd>
                     </div>
@@ -121,7 +121,7 @@
                                     @messages("refund-to-taxpayer.tableHead.interest-value", viewModel.getInterestContent.fromDate.toLongDate, viewModel.getInterestContent.toDate.toLongDate, viewModel.getInterestContent.fromRate)
                                 }
                             </dt>
-                            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+                            <dd class="govuk-summary-list__value">@{
                                 viewModel.getInterestContent.total.toCurrencyString
                             }</dd>
                         </div>
@@ -133,7 +133,7 @@
                                     @messages("refund-to-taxpayer.tableHead.varied-interest-rates-value", viewModel.getInterestContent.fromRate, viewModel.getInterestContent.toRate, viewModel.getInterestContent.fromDate.toLongDate, viewModel.getInterestContent.toDate.toLongDate)
                                 }
                             </dt>
-                            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">@{
+                            <dd class="govuk-summary-list__value">@{
                                 viewModel.getInterestContent.total.toCurrencyString
                             }</dd>
                         </div>

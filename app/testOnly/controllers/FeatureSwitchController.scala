@@ -22,10 +22,13 @@ import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.admin.{FeatureSwitchName, InvalidFS}
 import play.api.Logger
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +45,10 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
   val PROD_FEATURES: String = "feature-switch.prod-switches"
 
-  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { _ =>
+  def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean): Action[AnyContent] = Action.async { implicit request =>
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
     featureSwitchService.set(featureFlagName, isEnabled).map {
       case true =>
         Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
@@ -54,7 +60,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
   }
 
   def show(): Action[AnyContent] = Action.async { implicit user =>
-    featureSwitchService.getAll.flatMap { featureSwitches =>
+    featureSwitchService.getAll().flatMap { featureSwitches =>
       val fss = featureSwitches.filter(_.name.name != InvalidFS.name).map(x => {
         (FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
       }).toMap
@@ -118,9 +124,12 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
 
   }
 
-  def enableAll(): Action[AnyContent] = Action.async {
+  def enableAll(): Action[AnyContent] = Action.async { implicit request =>
+
+    implicit val hc: HeaderCarrier =
+      HeaderCarrierConverter.fromRequest(request)
     for {
-      featureSwitches <- featureSwitchService.getAll
+      featureSwitches <- featureSwitchService.getAll()
       _ <- Future.sequence(
         featureSwitches.map(featureSwitch =>
           featureSwitchService.set(featureSwitch.name, enabled = true)
