@@ -41,8 +41,6 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
     val today = dateService.getCurrentDate
     val recentActivityDate = today.minusDays(90)
 
-    println(Console.MAGENTA + currentItsaStatus + Console.RESET)
-
     val obligationsReceivedWithin90Days = fulfilledObligations.obligations.flatMap(_.obligations)
       .filter { obligation =>
         obligation.dateReceived.exists { dateReceived =>
