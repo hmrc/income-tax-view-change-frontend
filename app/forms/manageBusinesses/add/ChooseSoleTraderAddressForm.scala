@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 object ChooseSoleTraderAddressForm {
 
   val fieldName = "value"
+  val newAddress = "new-address"
 
   def form(allowedValues: Seq[String])
           (implicit messages: Messages): Form[ChooseSoleTraderAddressForm] = {
@@ -32,7 +33,8 @@ object ChooseSoleTraderAddressForm {
         fieldName -> optional(text)
           .verifying(
             messages("manageBusinesses.add.chooseSoleTraderAddress.radio.option.error"),
-            opt => opt.exists((v: String) => allowedValues.contains(v))
+            opt => opt.exists((v: String) =>
+              v.nonEmpty && allowedValues.contains(v) || v.equals(newAddress))
           )
       )(opt => ChooseSoleTraderAddressForm(opt.getOrElse("")))
         (form => Some(Some(form.response)))

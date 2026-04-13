@@ -37,6 +37,7 @@ import views.html.manageBusinesses.add.ChooseSoleTraderAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class ChooseSoleTraderAddressController @Inject()(
@@ -56,7 +57,9 @@ class ChooseSoleTraderAddressController @Inject()(
 
   private def backUrl(isAgent: Boolean): String =
     if (isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url //TODO: Change in nav ticket
+    else controllers.routes.HomeController.show().url
+
+  private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty
 
   private def buildAddressOptions(user: MtdItUser[_]): Seq[(String, Int)] = {
     user.incomeSources.getAllUniqueBusinessAddressesWithIndex.map {
@@ -96,7 +99,7 @@ class ChooseSoleTraderAddressController @Inject()(
               case "new-address" =>
                 val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = Some(isNewAddress))))
                 sessionService.setMongoData(updatedData).map { data => isAddressInTheUkPage }
-              case previousBusinessAddressIndex =>
+              case previousBusinessAddressIndex if isInstanceOfInt(previousBusinessAddressIndex) =>
                 val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
                 val previousBusinessAddress: Option[Address] = (previousBusinessAddressDetails.addressLine1, previousBusinessAddressDetails.postcode) match {
                   case (Some(addressLine1), postcode@Some(_)) if addressLine1.nonEmpty && postcode.nonEmpty => Some(Address(Seq(addressLine1), postcode, Some(Country(Some("GB"), Some("United Kingdom")))))
@@ -126,7 +129,7 @@ class ChooseSoleTraderAddressController @Inject()(
                   )
                 val redirect = Redirect(controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent))
                 sessionService.setMongoData(newUiSessionData).map { data => redirect }
-              case previousBusinessAddressIndex =>
+              case previousBusinessAddressIndex if isInstanceOfInt(previousBusinessAddressIndex) =>
                 val previousBusinessAddressDetails: ChooseSoleTraderAddressUserAnswer = mtdItUser.incomeSources.getAllUniqueBusinessAddresses(previousBusinessAddressIndex.toInt)
                 val uiSessionData =
                   UIJourneySessionData(
@@ -159,7 +162,7 @@ class ChooseSoleTraderAddressController @Inject()(
       // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
       // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
       val radioButtonValues =
-        chooseSoleTraderAddressRadioOptionsWithIndex.map { case (_, id) => id.toString } :+ "new-address"
+        chooseSoleTraderAddressRadioOptionsWithIndex.map { case (_, id) => id.toString }
 
       val form = ChooseSoleTraderAddressForm.form(radioButtonValues)
 
@@ -188,7 +191,7 @@ class ChooseSoleTraderAddressController @Inject()(
       // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
       // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
       val radioButtonValues =
-        addressOptions.map { case (_, id) => id.toString } :+ "new-address"
+        addressOptions.map { case (_, id) => id.toString }
 
       ChooseSoleTraderAddressForm.form(radioButtonValues)
         .bindFromRequest()
@@ -197,7 +200,7 @@ class ChooseSoleTraderAddressController @Inject()(
             Future {
               BadRequest(
                 view(
-                  postAction = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent),
+                  postAction = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent),
                   isAgent = isAgent,
                   form = formWithErrors,
                   chooseSoleTraderAddressRadioOptionsWithIndex = addressOptions,
