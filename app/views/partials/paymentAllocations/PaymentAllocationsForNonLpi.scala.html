@@ -38,15 +38,20 @@
         <tr>
             <td class="govuk-table__cell">@paymentAllocation.clearingDateActual.toLongDateShort.toNonBreaking</td>
             <td class="govuk-table__cell" id="payment-allocation-@index">
-                @if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined) {
-                <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
-                    @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
-                </a>
-                } else {
-                <a class="govuk-body no-wrap">
-                    @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
-                </a>
+                @if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined && paymentAllocation.allocationDetailActual.mainType != Some("On Account")) {
+                    <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
+                        @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
+                    </a>
+                } else if(paymentAllocation.allocationDetailActual.mainType == Some("On Account")) {
+                    <p class="govuk-body" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
+                        @messages("paymentAllocation.paymentAllocations.onAccount.table.description.poa")
+                    </p>
+                } else{
+                    <a class="govuk-body no-wrap">
+                        @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
+                    </a>
                 }
+
             </td>
             <td class="govuk-table__cell">
                 @if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined) {
