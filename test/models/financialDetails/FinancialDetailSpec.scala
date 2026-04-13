@@ -139,6 +139,7 @@ class FinancialDetailSpec extends UnitSpec {
     }
 
     "calling .getMessageKeyForChargeType with an optional value of a chargeType" should {
+
       "return Some correct message key for a known chargeType" in {
         getMessageKeyForChargeType(Some(ITSA_ENGLAND_AND_NI)) shouldBe Some("incomeTax")
         getMessageKeyForChargeType(Some(ITSA_NI)) shouldBe Some("incomeTax")
@@ -163,8 +164,7 @@ class FinancialDetailSpec extends UnitSpec {
         getMessageKeyForChargeType(Some(CGT)) shouldBe Some("cgt")
         getMessageKeyForChargeType(Some(SL)) shouldBe Some("sl")
 
-        getMessageKeyForChargeType(Some("ITSA POA(Payment On Account)")) shouldBe Some("incomeTax")
-
+        getMessageKeyForChargeType(Some("ITSA POA(Payment On Account)")) shouldBe Some("table.description.poa")
       }
 
       "return invalid for an unknown chargeType" in {
