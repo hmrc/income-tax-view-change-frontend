@@ -69,9 +69,9 @@ class PaymentAllocationsResponseAuditModelSpec extends TestSupport {
   private val paymentAllocationChargeModelCredit = FinancialDetailsWithDocumentDetailsModel(List(dd2), List(fd2))
 
   private val allocationDetail = AllocationDetail(transactionId = Some("transid2"), from = Some(LocalDate.parse("2017-03-21")), to = Some(LocalDate.parse("2017-03-20")),
-    chargeType = Some("ITSA- POA 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67), Some("chargeReference1"))
+    fallbackTaxYear = None, chargeType = Some("ITSA- POA 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67), chargeReference = Some("chargeReference1"))
 
-  private val allocationDetailCredit = AllocationDetail(transactionId = Some("transid2"), from = Some(LocalDate.parse("2017-03-21")), to = Some(LocalDate.parse("2017-03-20")),
+  private val allocationDetailCredit = AllocationDetail(transactionId = Some("transid2"), from = Some(LocalDate.parse("2017-03-21")), to = Some(LocalDate.parse("2017-03-20")), fallbackTaxYear = None,
     chargeType = Some("ITSA- POA 1"), mainType = Some("SA Payment on Account 1"), amount = Some(12345.67), clearedAmount = Some(12345.67), Some("chargeReference1"))
 
   private val originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] =

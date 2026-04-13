@@ -28,7 +28,7 @@ class PaymentAllocationViewModelSpec extends TestSupport with Matchers{
 
   "allocationDetailActual" should{
     "return value when value is present" in {
-      val allocationDetail = AllocationDetail(None, None, None, None, None, None, None, None)
+      val allocationDetail = AllocationDetail(None, None, None, None, None, None, None, None, None)
 
       val allocationDetailWithClearingDate = AllocationDetailWithClearingDate(Some(allocationDetail), None)
 

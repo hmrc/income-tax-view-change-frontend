@@ -28,6 +28,7 @@ case class AllocationDetail(
                              transactionId: Option[String],
                              from: Option[LocalDate],
                              to: Option[LocalDate],
+                             fallbackTaxYear: Option[Int],
                              chargeType: Option[String],
                              mainType: Option[String],
                              amount: Option[BigDecimal],
@@ -45,12 +46,12 @@ case class AllocationDetail(
   }
 
   def getTaxYear: Int = {
-    AccountingPeriodModel.determineTaxYearFromPeriodEnd(
-      to.getOrElse(throw new Exception("Missing tax period end date")))
+    getTaxYearOpt.getOrElse(throw new Exception("Missing tax year"))
   }
 
   def getTaxYearOpt: Option[Int] = {
     to.map(AccountingPeriodModel.determineTaxYearFromPeriodEnd)
+      .orElse(fallbackTaxYear)
   }
 
   def transactionIdActual: String = transactionId.getOrElse(throw MissingFieldException("Document ID"))

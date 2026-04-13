@@ -31,7 +31,7 @@ class AllocationDetailSpec extends TestSupport with Matchers {
   def allocationDetails(mainType: Option[String], chargeType: Option[String], to: Option[LocalDate]): AllocationDetail = {
     AllocationDetail(Some("id"),
       localToDateOpt,
-      to, chargeType, mainType, Some(10000.0), Some(5000.0), Some("chargeReference1"))
+      to, None, chargeType, mainType, Some(10000.0), Some(5000.0), Some("chargeReference1"))
   }
 
   "AllocationDetail" when {
@@ -78,7 +78,7 @@ class AllocationDetailSpec extends TestSupport with Matchers {
       "determine the allocation tax year by the period end date in the model" in {
         def allocationDetailWithDateTo(taxPeriodEndDate: String): AllocationDetail = {
           AllocationDetail(Some("id"), Some(LocalDate.parse("2018-08-04")), to = Some(LocalDate.parse(taxPeriodEndDate)),
-            Some("ITSA"), Some("SA Balancing Charge"), Some(10000.0), Some(5000.0), Some("chargeReference1"))
+            None, Some("ITSA"), Some("SA Balancing Charge"), Some(10000.0), Some(5000.0), Some("chargeReference1"))
         }
 
         allocationDetailWithDateTo("2018-03-06").getTaxYear shouldBe 2018
@@ -88,6 +88,18 @@ class AllocationDetailSpec extends TestSupport with Matchers {
         allocationDetailWithDateTo("2018-06-01").getTaxYear shouldBe 2019
       }
 
+      "determine the allocation tax year by the fallback tax year in the model" in {
+        AllocationDetail(Some("id"), Some(LocalDate.parse("2018-08-04")), to = None,
+          Some(2022), Some("ITSA"), Some("SA Balancing Charge"), Some(10000.0), Some(5000.0), Some("chargeReference1")).getTaxYear shouldBe 2022
+      }
+
+    }
+
+    "calling .getTaxYearOpt" should {
+      "return the fallback tax year when periodEndDate is None" in {
+        AllocationDetail(Some("id"), Some(LocalDate.parse("2018-08-04")), to = None,
+          Some(2022), Some("ITSA"), Some("SA Balancing Charge"), Some(10000.0), Some(5000.0), Some("chargeReference1")).getTaxYearOpt shouldBe Some(2022)
+      }
     }
 
     "calling .determineTaxYearFromPeriodEnd" should {

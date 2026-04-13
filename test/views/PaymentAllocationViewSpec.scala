@@ -311,7 +311,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
 
       def allocationDetail(sapDocNumber: String, taxPeriodEndDate: String,
                            mainType: String, chargeType: String, amount: BigDecimal): AllocationDetail =
-        AllocationDetail(transactionId = Some(sapDocNumber), Some("2017-03-23"), to = Some(taxPeriodEndDate),
+        AllocationDetail(transactionId = Some(sapDocNumber), Some("2017-03-23"), to = Some(taxPeriodEndDate), fallbackTaxYear = None,
           chargeType = Some(chargeType), mainType = Some(mainType), amount = Some(amount), Some(1.23), Some("chargeReference1"))
 
       def viewModel(allocationDetailWithClearingDate: (AllocationDetail, String)*): PaymentAllocationViewModel = {
