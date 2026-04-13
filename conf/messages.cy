@@ -264,6 +264,17 @@ home.help.link.taxSupport.getHelp                               = Cael help os y
 
 ## Recent Activity Tab
 new.home.navigation.tabs.recentActivity                         = Gweithgarwch diweddar
+new.home.navigation.tabs.recentActivity.h2                      = Gweithgareddau diweddar
+
+new.home.recentActivity.noActivity                              = Nid oes gennych unrhyw weithgarwch diweddar.
+
+new.home.recentActivity.submissions.annual.link.text            = Gweld crynodeb o flwyddyn dreth {0} i {1}
+new.home.recentActivity.submissions.annual.content.text         = Gwnaethoch gyflwyniad blynyddol o ran Ffurflen Dreth.
+new.home.recentActivity.submissions.annual.date.content.text    = Anfonwyd ar {0}
+
+new.home.recentActivity.submissions.quarterly.link.text         = Gweld eich crynodeb o’r flwyddyn dreth
+new.home.recentActivity.submissions.quarterly.content.text      = Gwnaethoch gyflwyno diweddariad chwarterol.
+new.home.recentActivity.submissions.quarterly.date.content.text = Anfonwyd ar {0}
 
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi

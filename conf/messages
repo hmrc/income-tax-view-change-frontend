@@ -263,13 +263,16 @@ home.help.link.taxSupport.getHelp                               = Get help if yo
 
 ## Recent Activity Tab
 new.home.navigation.tabs.recentActivity                         = Recent activity
+new.home.navigation.tabs.recentActivity.h2                      = Recent activities
+
+new.home.recentActivity.noActivity                              = You have no recent activity.
 
 new.home.recentActivity.submissions.annual.link.text            = View {0} to {1} tax year summary
-new.home.recentActivity.submissions.annual.content.text         = You made an annual tax return submission
+new.home.recentActivity.submissions.annual.content.text         = You made an annual tax return submission.
 new.home.recentActivity.submissions.annual.date.content.text    = Sent {0}
 
 new.home.recentActivity.submissions.quarterly.link.text         = View your tax year summary
-new.home.recentActivity.submissions.quarterly.content.text      = You submitted a quarterly update
+new.home.recentActivity.submissions.quarterly.content.text      = You submitted a quarterly update.
 new.home.recentActivity.submissions.quarterly.date.content.text = Sent {0}
 
 ## Custom Error Page ##

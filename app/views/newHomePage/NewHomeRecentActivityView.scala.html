@@ -17,6 +17,7 @@
 @import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.NewHomeNavigation
@@ -30,7 +31,8 @@
         h1WithCaption: h1WithCaption,
         govukServiceNavigation : GovukServiceNavigation,
         newHomeNav: NewHomeNavigation,
-        implicitDateFormatter: ImplicitDateFormatterImpl
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h2: h2
 )
 
 @(origin: Option[String] = None,
@@ -88,8 +90,14 @@
 
     @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "recent-activity", isRecentActivityEnabled = true)
 
-    @if(recentActivityViewModel.recentActivityCards.isEmpty) {
+    @h2(messages("new.home.navigation.tabs.recentActivity.h2"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("recent-activities-heading"))
 
+    @if(recentActivityViewModel.recentActivityCards.isEmpty) {
+        <div id="no-recent-activity-card" class="hmrc-card">
+            <div class="tile-body">
+                <div class="govuk-body" id="no-recent-activity-card-content">@messages("new.home.recentActivity.noActivity")</div>
+            </div>
+        </div>
     } else {
         @recentActivityViewModel.recentActivityCards.zipWithIndex.map { case (cardInfo, index) =>
         <div id="recent-activity-card-@index" class="hmrc-card">

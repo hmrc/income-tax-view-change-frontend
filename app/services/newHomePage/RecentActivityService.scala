@@ -39,8 +39,6 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
     val today = LocalDate.now()
     val recentActivityDate = today.minusDays(90)
 
-    println(Console.MAGENTA + currentItsaStatus + Console.RESET)
-
     val obligationsReceivedWithin90Days = fulfilledObligations.obligations.flatMap(_.obligations)
       .filter { obligation =>
         obligation.dateReceived.exists { dateReceived =>
@@ -57,8 +55,12 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
   }
 
   def recentActivityCards(recentSubmissionActivity: RecentActivitySubmissionsModel)(implicit mtdUser: MtdItUser[_]): RecentActivityViewModel = {
-    val submissionsCards = getRecentSubmissionsCards(recentSubmissionActivity.mostRecentAnnualSubmission, recentSubmissionActivity.mostRecentQuarterlySubmission)
-    RecentActivityViewModel(submissionsCards)
+    if(mtdUser.isSupportingAgent) {
+      RecentActivityViewModel(Seq.empty)
+    } else {
+      val submissionsCards = getRecentSubmissionsCards(recentSubmissionActivity.mostRecentAnnualSubmission, recentSubmissionActivity.mostRecentQuarterlySubmission)
+      RecentActivityViewModel(submissionsCards)
+    }
   }
 
   private def getRecentSubmissionsCards(recentAnnualSubmission: Option[SingleObligationModel], recentQuarterlySubmission: Option[SingleObligationModel])(implicit mtdUser: MtdItUser[_]) = {

@@ -44,7 +44,7 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
                                          mcc: MessagesControllerComponents,
                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  def show(isAgent: Boolean, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent).async {
+  def show(isAgent: Boolean, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
       if(isEnabled(RecentActivity)) {
         handleShowRequest(origin)
