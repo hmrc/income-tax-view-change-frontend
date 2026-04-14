@@ -23,20 +23,21 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.newHomePage.{RecentActivityCard, RecentActivitySubmissionsModel, RecentActivityViewModel}
 import models.obligations.{ObligationsModel, SingleObligationModel}
+import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.Singleton
 
 @Singleton
-class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector) {
+class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector,
+                                      dateService: DateServiceInterface) {
 
   def getFulfilledObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]) = {
     obligationsConnector.getFulfilledObligations()
   }
 
   def getRecentSubmissionActivity(fulfilledObligations: ObligationsModel, currentItsaStatus: ITSAStatus): RecentActivitySubmissionsModel = {
-    val today = LocalDate.now()
+    val today = dateService.getCurrentDate
     val recentActivityDate = today.minusDays(90)
 
     val obligationsReceivedWithin90Days = fulfilledObligations.obligations.flatMap(_.obligations)
