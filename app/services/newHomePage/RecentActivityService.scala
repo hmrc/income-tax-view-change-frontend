@@ -26,7 +26,6 @@ import models.obligations.{ObligationsModel, SingleObligationModel}
 import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
 import javax.inject.Singleton
 
 @Singleton
