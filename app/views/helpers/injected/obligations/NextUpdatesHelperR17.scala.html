@@ -110,7 +110,7 @@
     @if(!isSupportingAgent) {
         @p(id = Some("active-quarterly-tax-year-summary-desc")) {
             @getMessage("quarterly.link.text1")
-            @link(link = taxYearSummaryLink, messageKey = getMessage("quarterly.link.text2"), id = Some("tax-year-summary-link"), outerMessage = getMessage("quarterly.link.text3"))
+            @link(link = taxYearSummaryLink, messageKey = getMessage("quarterly.link.text2"), id = Some("tax-year-summary-link"), outerMessage = if(messages.lang.code == "en") " page." else ".")
         }
     }
 
