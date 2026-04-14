@@ -17,10 +17,11 @@
 package controllers.manageBusinesses.add
 
 import controllers.ControllerISpecHelper
+import enums.IncomeSourceJourney.SelfEmployment
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.AddProprertyForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{NavBarFs, OverseasBusinessAddress}
+import models.admin.OverseasBusinessAddress
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
@@ -29,10 +30,14 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
 
   val continueButtonText: String = messagesAPI("base.continue")
 
-  def getPath(mtdRole: MTDUserRole): String = {
+  private def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + "/manage-your-businesses/add-sole-trader/choose-address"
   }
+
+  private def getIncomeSourceCheckDetailsControllerUrlByType(isAgent: Boolean) =
+    if isAgent then controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+    else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
   List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent).foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
@@ -65,10 +70,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
 
           "reload the page" when {
-
-            //TODO nav ticket should implement proper redirection test here
             "form response is Existing Address" in {
-
               val isAgent: Boolean = mtdUserRole != MTDIndividual
               enable(OverseasBusinessAddress)
               stubAuthorised(mtdUserRole)
@@ -82,7 +84,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url)
+                redirectURI(getIncomeSourceCheckDetailsControllerUrlByType(isAgent))
               )
             }
             "form response is New Address" in {
@@ -96,7 +98,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url)
+                redirectURI(controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent).url)
               )
             }
           }

@@ -61,8 +61,8 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
-
-      val backURL = getBackURL(isAgent, mode)
+      
+      val backURL = getBackURL(isAgent)
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
       Future.successful {
@@ -92,7 +92,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                   postAction = getPostAction(isAgent, mode, isTriggeredMigration),
                   isAgent = isAgent,
                   hasUKAddress = hasUKAddress(user),
-                  backUrl = getBackURL(isAgent, mode)
+                  backUrl = getBackURL(isAgent)
                 )
               )
             },
@@ -110,10 +110,10 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                               isAgent: Boolean,
                               isTrigMig: Boolean = false)
                              (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
     val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
-    val ukPropertyUrl: String = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isTrigMig).url
-    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isTrigMig).url
+    val ukPropertyUrl: String = if isAgent then controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(NormalMode, isTrigMig).url
+      else controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(NormalMode, isTrigMig).url
+    val foreignPropertyUrl: String = controllers.manageBusinesses.add.routes.AddInternationalBusinessAddressController.show(isAgent, isTrigMig).url
     
     formResponse match {
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
@@ -135,22 +135,12 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     } yield a
     validUKAddress.nonEmpty
   }
-
-  //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-  private def getBackURL(isAgent: Boolean, mode: Mode): String = {
-    val notImplementedCall: Call = Call(method = "", url = "#NotImplemented")
-
-    ((isAgent, mode) match {
-      case (_, NormalMode) => notImplementedCall
-      case (false, _) => notImplementedCall
-      case (_, _) => notImplementedCall
-    }).url
+  
+  private def getBackURL(isAgent: Boolean): String = {
+    controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
   }
 
-  //  TODO this should be implemented as a part of the https://jira.tools.tax.service.gov.uk/browse/MISUV-10722 Jira ticket
-  private def getPostAction(isAgent: Boolean, @unused mode: Mode, isTriggeredMigration: Boolean): Call = if (isAgent) {
-    controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.submit(true, isTriggeredMigration)
-  } else {
-    routes.IsTheNewAddressInTheUKController.submit(false, isTriggeredMigration)
-  }
+  private def getPostAction(isAgent: Boolean, @unused mode: Mode, isTriggeredMigration: Boolean): Call =
+    controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.submit(isAgent, isTriggeredMigration)
+
 }

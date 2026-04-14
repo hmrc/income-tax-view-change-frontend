@@ -1693,7 +1693,7 @@ add-business-trade.form.error.invalid       = Gall masnach y busnes gynnwys llyt
 add-business-trade.form.error.same-name     = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Is the new address in the UK page
-add-business-is.the.new.address.in.the.uk.heading   = A yw’r cyfeiriad newydd yn y DU
+add-business-is.the.new.address.in.the.uk.heading   = A yw’r cyfeiriad newydd yn y DU?
 add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading   = A yw cyfeiriad eich busnes unig fasnachwr yn y DU?
 add-business-is.the.new.address.in.the.uk.error    = Dewiswch ‘Iawn’ os yw’r cyfeiriad newydd yn y DU
 add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error    = Dewiswch ‘Iawn’ os yw’ch busnes unig fasnachwr yn y DU

@@ -17,6 +17,7 @@
 package controllers.manageBusinesses.add
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import enums.IncomeSourceJourney.SelfEmployment
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -60,6 +61,10 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
     if (isAgent) fakePostRequestConfirmedClient()
     else fakePostRequestWithActiveSession
   }
+
+  private def getIncomeSourceCheckDetailsControllerUrlByType(isAgent: Boolean) =
+    if isAgent then controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+    else controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
 
   mtdAllRoles.foreach { mtdRole =>
 
@@ -128,7 +133,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
 
       s"the user is authenticated as a $mtdRole" should {
-        //TODO change as part of the nav ticket
+
         s"return 303: reload the page" when {
 
           "existing address selected" in {
@@ -155,7 +160,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
                 "value" -> "0"
               ))
 
-            val redirectUrl = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
+            val redirectUrl = getIncomeSourceCheckDetailsControllerUrlByType(isAgent)
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)
@@ -183,7 +188,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
               "value" -> "new-address"
             ))
 
-            val redirectUrl = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
+            val redirectUrl = controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent).url
 
             status(result) shouldBe SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)
