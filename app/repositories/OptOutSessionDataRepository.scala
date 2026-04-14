@@ -38,7 +38,7 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
       .map(journeySd => journeySd.copy(optOutSessionData = journeySd.optOutSessionData.map(_.copy(selectedOptOutYear = Some(intent.toString)))))
       .flatMap(journeySd => OptionT.liftF(repository.set(journeySd)))
       .getOrElse({
-        Logger("application").error(s"Failed to collect session data for sessionId: ${hc.sessionId.get.value} when trying to save opt out intent. Tax year intent was: ${intent.toString}")
+        Logger("application").error(s"Failed to collect session data for sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} when trying to save opt out intent. Tax year intent was: ${intent.toString}")
         false
       })
   }
