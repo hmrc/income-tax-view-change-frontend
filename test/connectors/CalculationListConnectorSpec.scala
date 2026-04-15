@@ -54,6 +54,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
+        override lazy val incomeTaxCalculationService: String = "http://localhost:9999"
       }
 
     val connector = new CalculationListConnector(mockHttpClientV2, getAppConfig)
@@ -67,7 +68,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
 
   "getCalculationListUrl" should {
     "return the correct url" in new Setup {
-      connector.getCalculationListUrl(testNino, testTaxYear.toString) shouldBe s"http://localhost:9999/income-tax-view-change/calculation-list/$testNino/$testTaxYear"
+      connector.getCalculationListUrl(testNino, testTaxYear.toString) shouldBe s"http://localhost:9999/income-tax-calculation/calculation-list/$testNino/$testTaxYear"
     }
   }
 
