@@ -33,11 +33,25 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetail
       "all fields are present" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
         setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel)
+        mockGetAllFinancialDetails(List((2018, lpiFinancialDetailsModel.copy(documentDetails = List(documentDetail), financialDetails = List(financialDetail)))))
 
         val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
 
         result shouldBe Right(paymentAllocationViewModel)
       }
+
+      "the tax period end date is missing and tax year falls back to full financial details" in {
+        setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
+        setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(testValidPaymentAllocationsModel.copy(
+          allocations = testValidPaymentAllocationsModel.allocations.map(_.copy(to = None))
+        ))
+        mockGetAllFinancialDetails(List((2018, lpiFinancialDetailsModel.copy(documentDetails = List(documentDetail), financialDetails = List(financialDetail)))))
+
+        val result = TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue
+
+        result.toOption.value.originalPaymentAllocationWithClearingDate.head.allocationDetail.get.getTaxYearOpt shouldBe Some(2018)
+      }
+
         "paymentLot and LotItem is missing" in {
           setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModelNoPayment)
 
