@@ -189,7 +189,8 @@
             @linkComponent(
                 id = Some("updates-and-deadlines-link"),
                 url = getNextUpdatesUrl,
-                message = messages("income.source.added.scenario.three.account.updated.p.link")
+                message = messages("income.source.added.scenario.three.account.updated.p.link"),
+                additionalMessage = Some(".")
             )
             @messages("income.source.added.scenario.one.account.updated.p.b")
         }
@@ -336,7 +337,12 @@
         @if(reportingFrequencyEnabled) {
             @p(id=Some("view-reporting-obligations")) {
                 @messages("income.source.added.scenario.four.view.reporting.obligations.p")
-                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.four.view.reporting.obligations.link"))
+                @linkComponent(
+                    id = Some("reporting-obligations-link"),
+                    url = getReportingFrequencyUrl,
+                    message = messages("income.source.added.scenario.four.view.reporting.obligations.link"),
+                    additionalMessage = Some(".")
+                )
             }
         }
 
