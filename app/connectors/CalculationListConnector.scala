@@ -37,7 +37,7 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
   }
 
   def getCalculationListUrl(nino: String, taxYearRange: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange"
+    s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
   }
 
   def getLegacyCalculationList(nino: String, taxYearEnd: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
