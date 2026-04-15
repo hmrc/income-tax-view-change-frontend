@@ -1169,7 +1169,7 @@ chargeSummary.lpi.paymentsOnAccount.textOne                        = Late paymen
 chargeSummary.lpi.paymentsOnAccount.linkText                       = Bank of England base rate (opens in new tab)
 chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
 chargeSummary.lpi.paymentsOnAccount.p3                             = See guidance on the
-chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab)
 
 chargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
 chargeSummary.poa1ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount — the difference between your adjusted payment on account and what you actually owe.
@@ -1189,7 +1189,7 @@ chargeSummary.lpi.penalties.textOne                        = Late payment intere
 chargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
 chargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
 chargeSummary.lpi.penalties.p3                             = See guidance on the
-chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab)
 
 chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your first payment on account because your tax return shows that your first payment on account was too high.
 credit-and-refund.row.POA1RR-credit                         = credit from first payment on account -
@@ -1208,14 +1208,14 @@ chargeSummary.definition.balancingcharge.p2                        = You’ll al
 chargeSummary.definition.hmrcadjustment                            = HMRC has added this charge after an adjustment to your tax return.
 
 chargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
-chargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+chargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated
 
 chargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 chargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
 chargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
 chargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
 chargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
-chargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
+chargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
@@ -1307,7 +1307,7 @@ chargeSummary.lpi.balancingCharge.textOne                          = Late paymen
 chargeSummary.lpi.balancingCharge.linkText                         = Bank of England base rate (opens in new tab)
 chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
-chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab)
 chargeSummary.reviewAndReconcilePoa.p1                             = HMRC has created this charge because your tax return shows that your adjusted
 chargeSummary.reviewAndReconcilePoa1.linkText                      = first payment on account
 chargeSummary.reviewAndReconcilePoa2.linkText                      = second payment on account
@@ -1315,7 +1315,7 @@ chargeSummary.reviewAndReconcilePoa.comma                          =
 chargeSummary.reviewAndReconcilePoa.p2                             = was too low.
 
 chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
-chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab)
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for first payment on account
 chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for first payment on account
@@ -3433,7 +3433,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal
 
 yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = This is the remaining tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
 yourSelfAssessmentChargeSummary.codingOutPOAMessage                        = This is the tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
@@ -3484,7 +3484,7 @@ yourSelfAssessmentChargeSummary.lpi.penalties.textOne                        = L
 yourSelfAssessmentChargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
 yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
 yourSelfAssessmentChargeSummary.lpi.penalties.p3                             = See guidance on the
-yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab)
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code
@@ -3508,7 +3508,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption     
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p                           = You have received this penalty because you are late paying your Income Tax.
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = This balancing payment extra amount was created because of a change you made to your return.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Pay this charge to stop this interest from increasing daily.
