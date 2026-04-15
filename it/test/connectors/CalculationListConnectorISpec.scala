@@ -76,22 +76,22 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
               |}
               |""".stripMargin
 
-          WiremockHelper.stubGet(s"/income-tax-view-change/calculation-list/$nino/$taxYearEnd", OK, responseBody)
+          WiremockHelper.stubGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd", OK, responseBody)
 
           val result = connector.getCalculationList(Nino(nino), taxYearEnd).futureValue
 
           result shouldBe CalculationListModel("TEST_ID", "TEST_STAMP", "TEST_TYPE", Some(false))
-          WiremockHelper.verifyGet(s"/income-tax-view-change/calculation-list/$nino/$taxYearEnd")
+          WiremockHelper.verifyGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd")
         }
         "return an error when the request fails" in {
           val responseBody = "{}"
 
-          WiremockHelper.stubGet(s"/income-tax-view-change/calculation-list/$nino/$taxYearEnd", INTERNAL_SERVER_ERROR, responseBody)
+          WiremockHelper.stubGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd", INTERNAL_SERVER_ERROR, responseBody)
 
           val result = connector.getCalculationList(Nino(nino), taxYearEnd).futureValue
 
           result shouldBe CalculationListErrorModel(INTERNAL_SERVER_ERROR, "{}")
-          WiremockHelper.verifyGet(s"/income-tax-view-change/calculation-list/$nino/$taxYearEnd")
+          WiremockHelper.verifyGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd")
         }
       }
     }
