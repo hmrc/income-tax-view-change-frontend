@@ -2057,7 +2057,7 @@ income.source.added.scenario.four.account.updated.p.link                        
 income.source.added.scenario.four.account.updated.p.b                                       = mae’ch cyfrif wedi’i ddiweddaru.
 
 income.source.added.scenario.four.view.reporting.obligations.p                              = Mae’r busnes newydd hwn wedi optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm. Dysgwch ragor am
-income.source.added.scenario.four.view.reporting.obligations.link                           = eich ymrwymiadau adrodd.
+income.source.added.scenario.four.view.reporting.obligations.link                           = eich ymrwymiadau adrodd
 
 income.source.added.scenario.four.view.businesses.link                                      = Bwrw golwg dros eich busnesau
 income.source.added.scenario.four.view.businesses.p                                         = er mwyn ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben.
