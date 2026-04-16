@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,21 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
-@import uk.gov.hmrc.govukfrontend.views.html.components._
+package testOnly.forms.customLoginV2
 
-@this(
-        layout: unifiedLayout,
-        h1: h1,
-        customLoginHubNav: CustomLoginHubNav
-)
+import play.api.data.Form
+import play.api.data.Forms.{mapping, text}
 
-@()(implicit request: Request[_], messages: Messages)
+case class CustomUserCreateForm(userCode: String)
 
-@layout(pageTitle = "JSON Data Creator - Manage your Self Assessment - GOV.UK") {
-    @h1("JSON Data Creator")
-    @customLoginHubNav("json-data-creator")
+object CustomUserCreateForm {
+
+  val form: Form[CustomUserCreateForm] = Form(
+    mapping(
+      "userCode" -> text.verifying("Invalid user code format", code => code.matches(userCodeRegex))
+    )(CustomUserCreateForm.apply)(form => Some(form.userCode))
+  )
+
+  val userCodeRegex: String = """^U[1-3]-S\d+-P[01]-F[01]-PYF[12]-PY[1-7]-CY[1-7]-NY[1-7]$"""
 }

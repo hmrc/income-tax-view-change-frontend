@@ -18,10 +18,10 @@ package testOnly.connectors
 
 import connectors.RawResponseReads
 import play.api.Logger
-import play.api.http.Status.OK
+import play.api.http.Status.{CREATED, OK}
 import play.api.libs.json.Json
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, Nino, SchemaModel, TrigMigUser}
+import testOnly.models.{CreateCustomUserModel, CustomUserResponse, DataModel, Nino, SchemaModel, TrigMigUser}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import play.api.libs.ws.writeableOf_JsValue
@@ -168,6 +168,27 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case _ =>
           Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+      }
+    }
+  }
+
+  def createCustomUser(request: CreateCustomUserModel)(implicit headerCarrier: HeaderCarrier): Future[CustomUserResponse] = {
+    val url = s"${appConfig.dynamicStubUrl}/income-tax-view-change/create-custom-user"
+    http.post(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .withBody(Json.toJson(request))
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case CREATED => response.json.validate[CustomUserResponse].fold(
+          invalid => {
+            Logger("application").error(s"Unable to parse response into CustomUserResponse - " + invalid)
+            throw new Exception(s"Unable to parse response into CustomUserResponse - " + invalid)
+          },
+          valid => valid
+        )
+        case _ =>
+          Logger("application").error(s" Create custom user unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Create custom user unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
   }

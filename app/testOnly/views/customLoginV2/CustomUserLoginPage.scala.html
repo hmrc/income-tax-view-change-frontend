@@ -17,6 +17,8 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import testOnly.forms.customLoginV2.CustomUserCreateForm
+@import views.html.helpers.injected.ErrorSummary
 
 @this(
         layout: unifiedLayout,
@@ -26,10 +28,12 @@
         p: p,
         govukInput: GovukInput,
         govukButton: GovukButton,
-        govukNotificationBanner: GovukNotificationBanner
+        govukNotificationBanner: GovukNotificationBanner,
+        form: FormWithCSRF,
+        errorSummary: ErrorSummary
 )
 
-@(userCode: Option[String])(implicit request: Request[_], messages: Messages)
+@(postAction: Call, createCustomUserForm: Form[CustomUserCreateForm], userCode: Option[String])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = "Custom User Builder - Manage your Self Assessment - GOV.UK") {
     @h1("Custom User Login")
@@ -43,24 +47,29 @@
             classes = "govuk-!-margin-top-6 govuk-!-margin-bottom-0"
         ))
     }
-    @h2("Login", classes = "govuk-!-padding-top-6 govuk-heading-m")
-    @p(){Please input your custom user code to continue.}
-    @govukInput(
-        Input(
-            id = "customUserCode",
-            name = "customUserCode",
-            classes = "govuk-!-width-three-quarters",
-            label = Label(
-                isPageHeading = false,
-                classes = "govuk-visually-hidden",
-                content = Text(messages("add-business-name.heading1"))
-            ),
-            value = userCode
+    @form(action = postAction) {
+        @errorSummary(createCustomUserForm)
+
+        @h2("Login", classes = "govuk-!-padding-top-6 govuk-heading-m")
+        @p() {Please input your custom user code to continue.}
+
+        @govukInput(
+            Input(
+                id = "userCode",
+                name = "userCode",
+                classes = "govuk-!-width-three-quarters",
+                label = Label(
+                    isPageHeading = false,
+                    classes = "govuk-visually-hidden",
+                    content = Text(messages("add-business-name.heading1"))
+                ),
+                value = userCode
+            )
         )
-    )
-    @govukButton(
-        Button(
-            content = Text("Login")
+        @govukButton(
+            Button(
+                content = Text("Login")
+            )
         )
-    )
+    }
 }

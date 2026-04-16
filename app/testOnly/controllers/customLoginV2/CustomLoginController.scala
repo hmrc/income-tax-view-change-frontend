@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testOnly.controllers
+package testOnly.controllers.customLoginV2
 
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -22,14 +22,14 @@ import controllers.BaseController
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
-import testOnly.models._
+import testOnly.models.*
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
 import testOnly.utils.UserRepository
-import testOnly.views.html.LoginPage
+import testOnly.views.html.customLoginV2.LoginPage
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.{AuthExchange, SessionBuilder}
 

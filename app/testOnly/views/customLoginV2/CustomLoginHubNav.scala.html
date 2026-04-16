@@ -27,9 +27,9 @@
 @govukServiceNavigation(ServiceNavigation(
     navigation = Seq(
         ServiceNavigationItem(
-            content = Text("User Hub"),
-            href = testOnly.controllers.customLoginV2.routes.TestUserHubController.show().url,
-            active = (activeTab == "test-user-hub")
+            content = Text("Custom Login"),
+            href = testOnly.controllers.customLoginV2.routes.CustomLoginController.showLogin().url,
+            active = (activeTab == "custom-login")
         ),
         ServiceNavigationItem(
             content = Text("Custom Builder"),
@@ -37,14 +37,9 @@
             active = (activeTab == "custom-user-builder")
         ),
         ServiceNavigationItem(
-            content = Text("Custom User Login"),
+            content = Text("Custom Code Login"),
             href = testOnly.controllers.customLoginV2.routes.CustomUserLoginController.show().url,
             active = (activeTab == "custom-user-login")
-        ),
-        ServiceNavigationItem(
-            content = Text("JSON Data Creator"),
-            href = testOnly.controllers.customLoginV2.routes.JsonDataCreatorController.show().url,
-            active = (activeTab == "json-data-creator")
         )
     ),
     attributes = Map("style" -> "background-color: white;")

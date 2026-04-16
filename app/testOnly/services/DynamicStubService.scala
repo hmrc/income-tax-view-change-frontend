@@ -23,7 +23,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import testOnly.connectors.DynamicStubConnector
-import testOnly.models.{DataModel, Nino, TrigMigUser}
+import testOnly.models.{CreateCustomUserModel, DataModel, Nino, TrigMigUser}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
@@ -86,6 +86,9 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
       response
     }
   }
-
+  
+  def createCustomUser(model: CreateCustomUserModel)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubConnector.createCustomUser(model)
+  }
 
 }
