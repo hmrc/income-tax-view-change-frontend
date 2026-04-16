@@ -30,8 +30,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
   lazy val connector: CreateIncomeSourceConnector = app.injector.instanceOf[CreateIncomeSourceConnector]
 
   val mtdId = "ID"
-  val createIncomeSourceUrl = "/income-tax-business-details/create-income-source/business"
-  
+  val createIncomeSourceUrl = "/income-tax-view-change/create-income-source/business"
+
   override def beforeEach(): Unit = {
     WireMock.reset()
     AuditStub.stubAuditing()
