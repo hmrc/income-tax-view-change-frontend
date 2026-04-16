@@ -82,7 +82,6 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -115,8 +114,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
-
-              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))

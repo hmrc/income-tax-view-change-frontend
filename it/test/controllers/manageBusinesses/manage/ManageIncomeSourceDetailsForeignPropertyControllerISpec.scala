@@ -82,7 +82,6 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -107,7 +106,6 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
-              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, taxYearShortString1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -134,7 +132,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
-              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              CalculationListStub.stubGetCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 

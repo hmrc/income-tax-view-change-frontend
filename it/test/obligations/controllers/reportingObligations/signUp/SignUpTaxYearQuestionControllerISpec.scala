@@ -108,7 +108,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
 
-          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+          CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
 
           await(
@@ -185,7 +185,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Annual,
             `itsaStatusCY+1` = ITSAStatus.Voluntary
           )
-          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+          CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -240,7 +240,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Annual,
             `itsaStatusCY+1` = ITSAStatus.Mandated
           )
-          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+          CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -297,7 +297,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Annual,
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
-          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+          CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           val result = buildGETMTDClient(s"$path?taxYear=$nextYear", additionalCookies).futureValue
 
@@ -342,7 +342,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Mandated,
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
-          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+          CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           val result = buildGETMTDClient(s"$path?taxYear=$nextYear", additionalCookies).futureValue
 
@@ -387,7 +387,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
-          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+          CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           val result = buildGETMTDClient(s"$path?taxYear=$nextYear", additionalCookies).futureValue
 
@@ -432,7 +432,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Voluntary,
             `itsaStatusCY+1` = ITSAStatus.Voluntary
           )
-          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+          CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           val reportingObligationsLink = mtdUserRole match {
             case MTDIndividual => "/report-quarterly/income-and-expenses/view/reporting-frequency"
@@ -466,7 +466,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           itsaStatusCY = ITSAStatus.Annual,
           `itsaStatusCY+1` = ITSAStatus.Voluntary
         )
-        CalculationListStub.stubGetLegacyCalculationList(testNino, currentTaxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+        CalculationListStub.stubGetCalculationList(testNino, currentTaxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
         ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino, Status.NO_CONTENT, emptyBodyString)
 
@@ -518,7 +518,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           itsaStatusCY = ITSAStatus.Annual,
           `itsaStatusCY+1` = ITSAStatus.Annual
         )
-        CalculationListStub.stubGetLegacyCalculationList(testNino, currentTaxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+        CalculationListStub.stubGetCalculationList(testNino, currentTaxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
         ITSAStatusUpdateConnectorStub.stubItsaStatusUpdate(propertyOnlyResponse.nino, Status.NO_CONTENT, emptyBodyString)
 
@@ -567,7 +567,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           itsaStatusCY = ITSAStatus.Annual,
           `itsaStatusCY+1` = ITSAStatus.Annual
         )
-        CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+        CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
         val result = buildPOSTMTDPostClient(s"$path?taxYear=$currentYear", additionalCookies, Map("sign-up-tax-year-question" -> Seq(""))).futureValue
 
@@ -592,7 +592,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             itsaStatusCY = ITSAStatus.Annual,
             `itsaStatusCY+1` = ITSAStatus.Annual
           )
-          CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
+          CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           await(setupOptInSessionData(currentTaxYear, currentYearStatus = ITSAStatus.Annual, nextYearStatus = ITSAStatus.Annual, currentTaxYear, journeyComplete = true))
 
