@@ -3063,7 +3063,6 @@ optin.completedOptIn.yourRevisedDeadline.inset                  = Your revised d
 optin.completedOptIn.yourRevisedDeadline.h2                     = Your revised deadlines
 optin.completedOptIn.yourRevisedDeadline.p1.a                   = Even if they are not displayed right away on the
 optin.completedOptIn.yourRevisedDeadline.p1.b                   = page, your account has been updated.
-optin.completedOptIn.yourRevisedDeadline.p1.link                = submission deadlines
 
 optin.completedOptIn.yourRevisedDeadline.p2.a                   = You can decide at any time to opt out of reporting quarterly for all your businesses on
 optin.completedOptIn.yourRevisedDeadline.p2.b                   =  page.
