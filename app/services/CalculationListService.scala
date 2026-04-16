@@ -32,13 +32,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class CalculationListService @Inject()(calculationListConnector: CalculationListConnector, dateService: DateService)
                                       (implicit ec: ExecutionContext) {
 
-  def getLegacyCalculationList(nino: String, taxYearEnd: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
-    Logger("application").debug("" +
-      s"Requesting legacy calculation list (1404) data from the backend with nino / taxYearEnd: $nino - $taxYearEnd")
-    calculationListConnector.getLegacyCalculationList(nino, taxYearEnd)
-  }
-
   def getCalculationList(nino: Nino, taxYearRange: String)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
     Logger("application").debug("" +
@@ -47,7 +40,7 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
   }
 
   private def getLegacyCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
-    calculationListConnector.getLegacyCalculationList(user.nino, taxYear.toString).flatMap {
+    calculationListConnector.getCalculationList(Nino(user.nino), taxYear.toString).flatMap {
       case res: CalculationListModel => Future.successful(res.crystallised)
       case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
