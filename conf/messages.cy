@@ -2763,8 +2763,6 @@ optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = 
 optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = Gallai hyn fod oherwydd y canlynol:
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
-optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
-optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = reporting.frequency.different.obligations.link.text
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
 optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = Rydych wedi optio allan o’r flwyddyn dreth nesaf ymlaen, ond gallai fod yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os yw’r canlynol yn wir:
