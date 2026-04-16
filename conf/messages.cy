@@ -3054,7 +3054,6 @@ optin.completedOptIn.yourRevisedDeadline.inset              = Bydd eich dyddiada
 optin.completedOptIn.yourRevisedDeadline.h2                 = Eich dyddiadau cau sydd wedi’u haddasu
 optin.completedOptIn.yourRevisedDeadline.p1.a               = Hyd yn oed os nad ydynt yn cael eu harddangos ar unwaith ar y dudalen
 optin.completedOptIn.yourRevisedDeadline.p1.b               = mae’ch cyfrif wedi’i ddiweddaru.
-optin.completedOptIn.yourRevisedDeadline.p1.link            = dyddiadau cau ar gyfer cyflwyno,
 
 optin.completedOptIn.yourRevisedDeadline.p2.a               = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
 optin.completedOptIn.yourRevisedDeadline.p2.b               =  .
@@ -3096,7 +3095,7 @@ signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.link     = dyddiadau cau ar
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.comma    = ,
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text2    = mae’ch cyfrif wedi’i ddiweddaru.
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text1    = Gallwch, ar unrhyw adeg, optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
-signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.link     = eich ymrwymiadau o ran adrodd.
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.link     = eich ymrwymiadau o ran adrodd
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text2    =
 
 signUp.completedSignUp.cy.submitUpdates                       = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
@@ -3134,7 +3133,7 @@ signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.link  = dyddiadau cau ar gy
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.comma = ,
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text2 = mae’ch cyfrif wedi’i ddiweddaru.
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text1 = Gallwch, ar unrhyw adeg, optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
-signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.link  = eich ymrwymiadau o ran adrodd.
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.link  = eich ymrwymiadau o ran adrodd
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text2 =
 
 signUp.completedSignUp.ny.submitUpdates             = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
