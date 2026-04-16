@@ -148,7 +148,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
-                CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
+                CalculationListStub.stubGetCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
                   .successResponseNonCrystallised.toString())
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -164,7 +164,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
-                CalculationListStub.stubGetLegacyCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
+                CalculationListStub.stubGetCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
                   .successResponseCrystallised.toString())
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
