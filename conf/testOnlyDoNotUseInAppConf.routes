@@ -29,13 +29,11 @@ POST        /report-quarterly/income-and-expenses/view/test-only/stub-schema/pro
 DELETE      /report-quarterly/income-and-expenses/view/test-only/all-schemas/proxy                    testOnly.controllers.StubSchemaController.deleteAllProxy()
 
 + nocsrf
-GET         /report-quarterly/income-and-expenses/view/test-only/custom-login                         testOnly.controllers.CustomLoginController.showLogin()
+GET         /report-quarterly/income-and-expenses/view/test-only/custom-login                         testOnly.controllers.customLoginV2.CustomLoginController.showLogin()
 
 + nocsrf
-POST        /report-quarterly/income-and-expenses/view/test-only/submitLogin                          testOnly.controllers.CustomLoginController.postLogin()
+POST        /report-quarterly/income-and-expenses/view/test-only/submitLogin                          testOnly.controllers.customLoginV2.CustomLoginController.postLogin()
 
-+ nocsrf
-GET         /report-quarterly/income-and-expenses/view/test-only/test-user-hub                        testOnly.controllers.customLoginV2.TestUserHubController.show()
 + nocsrf
 GET         /report-quarterly/income-and-expenses/view/test-only/custom-user-builder                  testOnly.controllers.customLoginV2.CustomUserBuilderController.show()
 + nocsrf
@@ -44,7 +42,7 @@ POST        /report-quarterly/income-and-expenses/view/test-only/generate-user-c
 + nocsrf
 GET         /report-quarterly/income-and-expenses/view/test-only/custom-user-login                    testOnly.controllers.customLoginV2.CustomUserLoginController.show(userCode: Option[String] ?= None)
 + nocsrf
-GET         /report-quarterly/income-and-expenses/view/test-only/json-data-creator                    testOnly.controllers.customLoginV2.JsonDataCreatorController.show()
+POST         /report-quarterly/income-and-expenses/view/test-only/custom-user-login                    testOnly.controllers.customLoginV2.CustomUserLoginController.createCustomUser(userCode: Option[String] ?= None)
 
 GET         /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.show()
 POST        /report-quarterly/income-and-expenses/view/test-only/stub-data                            testOnly.controllers.StubDataController.submit()

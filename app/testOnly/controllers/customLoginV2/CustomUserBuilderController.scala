@@ -39,10 +39,8 @@ class CustomUserBuilderController @Inject()(implicit mcc: MessagesControllerComp
 
   val generateUserCode: Action[AnyContent] = Action.async { implicit request =>
     CustomUserBuilderForm.form.bindFromRequest().fold(
-      formWithErrors =>
-        Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
+      formWithErrors => Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
       formData =>
-        println(Console.MAGENTA + formData + Console.RESET)
         val userCode = UserCodeUtils.generateUserCode(formData)
         Future.successful(Redirect(routes.CustomUserLoginController.show(Some(userCode))))
     )

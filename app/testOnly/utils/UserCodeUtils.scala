@@ -65,7 +65,7 @@ object UserCodeUtils {
 
     val crystallisationStatusCode = cyMinusOneCrystallisationStatus match {
       case "Crystallised" => "PYF1"
-      case "Not Crystallised" => "PYF1"
+      case "NonCrystallised" => "PYF2"
       case _ => throw new IllegalArgumentException(s"Invalid crystallisation status: $cyMinusOneCrystallisationStatus")
     }
 

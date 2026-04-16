@@ -20,6 +20,7 @@
 @import play.api.libs.json.Json
 @import models.itsaStatus.ITSAStatus
 @import views.html.helper.CSPNonce
+@import views.html.components._
 
 @this(
     layout: unifiedLayout,
@@ -27,7 +28,8 @@
     govukSelect: GovukSelect,
     govukCheckboxes: GovukCheckboxes,
     govukRadios: GovukRadios,
-    form: FormWithCSRF
+    form: FormWithCSRF,
+    customLoginHubNav: CustomLoginHubNav
 )
 
 @(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], trigMigUser: String)(implicit request: Request[_], messages: Messages)
@@ -102,7 +104,11 @@
         });
     </script>
 
-    <h1 class="govuk-heading-xl">Select Nino/User</h1>
+    <h1 class="govuk-heading-xl">Custom Login</h1>
+
+    @customLoginHubNav("custom-login")
+
+    <h2 class="govuk-!-padding-top-6 govuk-heading-m">Select Nino/User</h2>
 
     @form(postAction) {
         <div class="govuk-form-group">
