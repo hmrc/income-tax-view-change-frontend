@@ -36,23 +36,7 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
   when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
   when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd + 1)
   val notFoundText = "The remote endpoint has indicated that the requested resource could not be found."
-
-  "getLegacyCalculationList (API 1404)" should {
-    "return a CalculationListModel" when {
-      "a success response is received from the connector" in {
-        setupGetLegacyCalculationList(testNino, testTaxYear.toString)(CalculationListTestConstants.calculationListFull)
-        TestCalculationListService.getLegacyCalculationList(testNino, testTaxYear.toString).futureValue shouldBe
-          CalculationListTestConstants.calculationListFull
-      }
-      "return a CalculationListErrorModel" when {
-        "an error response is received from the connector" in {
-          setupGetLegacyCalculationList(testNino, testTaxYear.toString)(CalculationListErrorModel(NOT_FOUND, notFoundText))
-          TestCalculationListService.getLegacyCalculationList(testNino, testTaxYear.toString).futureValue shouldBe
-            CalculationListErrorModel(NOT_FOUND, notFoundText)
-        }
-      }
-    }
-  }
+  
   "getCalculationList (API 1896)" should {
     "a success response is received from the connector (including optional field `crystallised`)" in {
       setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFull)
@@ -77,25 +61,25 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
     "for year 2022-23" should {
       val taxYearEnd = "2023"
       "returns Some(true)" in {
-        setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListFull)
+        setupGetCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListFull)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe true
       }
       "returns Some(false)" in {
-        setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListFalseFull)
+        setupGetCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListFalseFull)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns None" in {
-        setupGetLegacyCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListMin)
+        setupGetCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListMin)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns Some(false) given 404 response from 1404" in {
         val error = CalculationListErrorModel(NOT_FOUND, "not found")
-        setupGetLegacyCalculationList(testNino, taxYearEnd)(error)
+        setupGetCalculationList(testNino, taxYearEnd)(error)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
-        setupGetLegacyCalculationList(testNino, taxYearEnd)(error)
+        setupGetCalculationList(testNino, taxYearEnd)(error)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).failed.futureValue.getMessage shouldBe error.message
       }
     }

@@ -64,7 +64,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
 
         val savedTaxYearOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
@@ -106,7 +106,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino,
+        CalculationListStub.stubGetCalculationList(testNino,
           previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
         optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue

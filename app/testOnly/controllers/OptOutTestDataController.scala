@@ -90,12 +90,7 @@ class OptOutTestDataController @Inject()(val authActions: AuthActions,
 
   private def cyMinusOneCrystallisationStatusResult(nino: String, taxYear: TaxYear)
                                                    (implicit hc: HeaderCarrier): Future[CalculationListResponseModel] = {
-
-    if (taxYear.endYear >= 2024) {
       calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = taxYear.formatAsShortYearRange)
-    } else {
-      calculationListService.getLegacyCalculationList(nino = nino, taxYearEnd = taxYear.endYear.toString)
-    }
   }
 
   val show: Action[AnyContent] = authActions.asMTDIndividual().async {
