@@ -275,6 +275,10 @@ new.home.recentActivity.submissions.quarterly.link.text         = Gweld eich cry
 new.home.recentActivity.submissions.quarterly.content.text      = Gwnaethoch gyflwyno diweddariad chwarterol.
 new.home.recentActivity.submissions.quarterly.date.content.text = Anfonwyd ar {0}
 
+new.home.recentActivity.payments.link.text = View payment history
+new.home.recentActivity.payments.content.text = You made a payment of £{0}.
+new.home.recentActivity.payments.date.content.text = Paid {0}
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
