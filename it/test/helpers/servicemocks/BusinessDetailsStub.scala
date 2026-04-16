@@ -24,7 +24,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 
 object BusinessDetailsStub {
 
-  def businessDetailsUrl(nino: String): String = s"/income-tax-view-change/get-business-details/nino/$nino"
+  def businessDetailsUrl(nino: String): String = s"/income-tax-business-details/get-business-details/nino/$nino"
 
   def stubGetBusinessDetails(nino: String = testNino)(status: Int = OK, response: JsValue = businessResponse(nino).toJson): Unit = {
     WiremockHelper.stubGet(businessDetailsUrl(testNino), status, response.toString())
