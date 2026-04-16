@@ -25,11 +25,6 @@ object CalculationListStub {
 
   def url(nino: String, taxYearRange: String): String = s"""/income-tax-calculation/calculation-list/$nino/$taxYearRange"""
 
-
-  def stubGetLegacyCalculationList(nino: String, taxYearEnd: String)(jsonResponse: String): Unit = {
-    WiremockHelper.stubGet(legacyUrl(nino, taxYearEnd), OK, jsonResponse)
-  }
-
   def stubGetCalculationList(nino: String, taxYearRange: String)(jsonResponse: String): Unit = {
     WiremockHelper.stubGet(url(nino, taxYearRange), OK, jsonResponse)
   }
