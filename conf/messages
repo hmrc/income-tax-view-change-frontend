@@ -262,7 +262,6 @@ home.help.link.taxSupport.getHelp                               = Get help if yo
 
 ## Recent Activity Tab
 new.home.navigation.tabs.recentActivity                         = Recent activity
-new.home.navigation.tabs.recentActivity.h2                      = Recent activities
 
 new.home.recentActivity.noActivity                              = You have no recent activity.
 
