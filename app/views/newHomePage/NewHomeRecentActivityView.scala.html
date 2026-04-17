@@ -32,7 +32,8 @@
         govukServiceNavigation : GovukServiceNavigation,
         newHomeNav: NewHomeNavigation,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        h2: h2
+        h2: h2,
+        p: p
 )
 
 @(origin: Option[String] = None,
@@ -90,23 +91,21 @@
 
     @newHomeNav(yourTasksUrl, recentActivityUrl, overviewUrl, helpUrl, "recent-activity", isRecentActivityEnabled = true)
 
-    @h2(messages("new.home.navigation.tabs.recentActivity.h2"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("recent-activities-heading"))
+    @h2(messages("new.home.navigation.tabs.recentActivity"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("recent-activities-heading"))
 
     @if(recentActivityViewModel.recentActivityCards.isEmpty) {
-        <div id="no-recent-activity-card" class="hmrc-card">
-            <div class="tile-body">
-                <div class="govuk-body" id="no-recent-activity-card-content">@messages("new.home.recentActivity.noActivity")</div>
-            </div>
-        </div>
+        @p(classes = "govuk-body", id = Some("no-recent-activity-text")) {
+            @messages("new.home.recentActivity.noActivity")
+        }
     } else {
         @recentActivityViewModel.recentActivityCards.zipWithIndex.map { case (cardInfo, index) =>
         <div id="recent-activity-card-@index" class="hmrc-card">
             <div class="tile-body">
                 <h3 class="hmrc-card__heading" id="recent-activity-card-heading-@index">
-                    <a href=@cardInfo.linkUrl>@getLinkText(cardInfo.linkContentText, cardInfo.cardTaxYear)</a>
+                    <a href=@cardInfo.linkUrl>@getLinkText(cardInfo.linkContentText, cardInfo.cardTaxYear)<span class="hmrc-card__chevron" aria-hidden="true"></span></a>
                 </h3>
                 <div class="govuk-body" id="recent-activity-card-content-@index">@messages(cardInfo.contentText)</div>
-                <div class="govuk-hint" id="recent-activity-hint-@index">@messages(cardInfo.dateContentText, cardInfo.cardDate.toLongDateShort)</div>
+                <div class="govuk-hint" id="recent-activity-hint-@index">@messages(cardInfo.dateContentText, cardInfo.cardDate.toLongDate)</div>
         </div>
         </div>
         }

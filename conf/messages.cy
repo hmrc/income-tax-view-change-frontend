@@ -264,7 +264,6 @@ home.help.link.taxSupport.getHelp                               = Cael help os y
 
 ## Recent Activity Tab
 new.home.navigation.tabs.recentActivity                         = Gweithgarwch diweddar
-new.home.navigation.tabs.recentActivity.h2                      = Gweithgareddau diweddar
 
 new.home.recentActivity.noActivity                              = Nid oes gennych unrhyw weithgarwch diweddar.
 

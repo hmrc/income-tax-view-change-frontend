@@ -65,12 +65,12 @@ class NewHomeRecentActivityViewSpec extends TestSupport with FeatureSwitching wi
     }
 
     "display the correct h2" in new TestSetup() {
-      document.getElementById("recent-activities-heading").text() shouldBe "Recent activities"
+      document.getElementById("recent-activities-heading").text() shouldBe "Recent activity"
     }
 
     "display the correct task cards" when {
       "no activity card is defined" in new TestSetup() {
-        document.getElementById("no-recent-activity-card").text() shouldBe "You have no recent activity."
+        document.getElementById("no-recent-activity-text").text() shouldBe "You have no recent activity."
       }
 
       "a recent activity card is displayed" in new TestSetup(recentActivityViewModel = defaultViewModel.copy(recentActivityCards = Seq(RecentActivityCard("ActivityCardText", "/link", "CardContent", "DateContent", LocalDate.of(2025, 1, 1))))) {

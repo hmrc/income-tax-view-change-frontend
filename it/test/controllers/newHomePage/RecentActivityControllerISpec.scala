@@ -64,11 +64,11 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
 
     val annualSubmissionLinkText = "View 2022 to 2023 tax year summary"
     val annualSubmissionContent = "You made an annual tax return submission."
-    val annualDateContent = "Sent 6 Mar 2023"
+    val annualDateContent = "Sent 6 March 2023"
 
     val quarterlySubmissionLinkText = "View your tax year summary"
     val quarterlySubmissionContent = "You submitted a quarterly update."
-    val quarterlyDateContent = "Sent 6 Mar 2023"
+    val quarterlyDateContent = "Sent 6 March 2023"
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -86,7 +86,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getTitle(mtdUserRole)),
-                  elementTextByID("no-recent-activity-card-content")(YourTasksViewMessages.noActivityText)
+                  elementTextByID("no-recent-activity-text")(YourTasksViewMessages.noActivityText)
                 )
               }
             } else {
@@ -97,7 +97,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getTitle(mtdUserRole)),
-                  elementTextByID("no-recent-activity-card-content")(YourTasksViewMessages.noActivityText)
+                  elementTextByID("no-recent-activity-text")(YourTasksViewMessages.noActivityText)
                 )
               }
             }
