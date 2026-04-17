@@ -168,7 +168,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     val lpiPoa1TextSentence = messages("chargeSummary.lpi.paymentsOnAccount.poa1")
     val lpiPoa2TextSentence = messages("chargeSummary.lpi.paymentsOnAccount.poa2")
     val lpiPoaTextParagraph = messages("chargeSummary.lpi.paymentsOnAccount.textOne") + " " + messages("chargeSummary.lpi.paymentsOnAccount.linkText") + " " + messages("chargeSummary.lpi.paymentsOnAccount.textTwo")
-    val lpiPoaTextP3 = messages("chargeSummary.lpi.paymentsOnAccount.p3") + " " + messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")
 
     val poa1ReconciliationInterestP1 = messages("chargeSummary.poa1ExtraAmountInterest.p1")
     val poa1ReconciliationInterestP2 = messages("chargeSummary.poa1ExtraAmountInterest.p2")
@@ -521,7 +520,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         ) {
           document.selectById("lpi-poa2").text() shouldBe lpiPoa1TextSentence
           document.selectById("lpi-poa5").text() shouldBe lpiPoaTextParagraph
-          document.selectById("lpi-poa6").text() shouldBe lpiPoaTextP3
+          document.selectById("lpi-poa6").text() shouldBe "See guidance on the interest rates set by HMRC (opens in new tab)."
         }
       }
 
@@ -654,7 +653,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         ) {
           document.selectById("lpi-poa4").text() shouldBe lpiPoa2TextSentence
           document.selectById("lpi-poa5").text() shouldBe lpiPoaTextParagraph
-          document.selectById("lpi-poa6").text() shouldBe lpiPoaTextP3
+          document.selectById("lpi-poa6").text() shouldBe "See guidance on the interest rates set by HMRC (opens in new tab)."
         }
 
         "display only the charge creation item for a payment on account 2 of 2 late interest charge" in new TestSetup(
@@ -978,7 +977,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         latePaymentInterestCharge = true) {
         document.selectById("lpi-bcd1").text() shouldBe lpiBcdTextSentence
         document.selectById("lpi-bcd2").text() shouldBe lpiBcdTextParagraph
-        document.selectById("lpi-bcd3").text() shouldBe lpiBcdTextP3
+        document.selectById("lpi-bcd3").text() shouldBe "See guidance on the interest rates set by HMRC (opens in new tab)."
       }
 
       "have the correct heading and caption for a new balancing charge late interest charge" in new TestSetup(

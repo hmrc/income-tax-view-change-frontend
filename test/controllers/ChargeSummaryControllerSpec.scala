@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{ITSAStatusConnector, BusinessDetailsConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
@@ -148,7 +148,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
-              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -165,7 +165,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA1 Debit that has been fully collected through PAYE tax code" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1FullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a POA1 Debit that has been fully collected through PAYE tax code" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1FullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -182,7 +182,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -199,7 +199,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
-              "provided with an id associated to a POA2 Debit that has been fully collected through PAYE tax code" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2FullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout){
+              "provided with an id associated to a POA2 Debit that has been fully collected through PAYE tax code" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2FullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
                 enable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -505,7 +505,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
                 document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
                 document.getElementById("interestOnCharge.p2").text() shouldBe "Interest will be estimated until the charge it is related to is paid in full."
-                document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal."
+                document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal"
                 document.getElementsByClass("govuk-heading-m").get(1).text() shouldBe "Interest on this charge"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
                 document.getElementById("guidance.p1").text() shouldBe "The interest on a charge you owe can go up and down. See guidance on the interest rate set by HMRC (opens in new tab)."
@@ -530,12 +530,13 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("LSP-content-2").text() shouldBe "If you reach 4 points, you’ll have to pay a £200 penalty."
                 document.getElementById("LSP-content-3").text() shouldBe "To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time."
                 document.getElementById("interestOnCharge.p1").text() shouldBe "This payment was overdue and interest was increasing daily. Now that payment has been made, the interest has been finalised and charged separately."
-                document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal."
+                document.getElementById("LSP-content-4").text() shouldBe "You can view the details about your penalty and find out how to appeal"
                 document.getElementsByClass("govuk-heading-m").get(1).text() shouldBe "Interest on this charge"
                 document.getElementById("charge-history-heading").text() shouldBe "History of this charge"
               }
 
               "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty, docId = id1040000123) {
+
                 enable(ChargeHistory, PenaltiesAndAppeals)
 
                 setupMockSuccess(mtdUserRole)
@@ -946,7 +947,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
         }
       }
 
-             testMTDAuthFailuresForRole(action(id1040000123), mtdUserRole, false)(fakeRequest)
+      testMTDAuthFailuresForRole(action(id1040000123), mtdUserRole, false)(fakeRequest)
     }
   }
 }
