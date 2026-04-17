@@ -21,13 +21,17 @@ import mocks.connectors.MockObligationsConnector
 import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.newHomePage.{RecentActivitySubmissionsModel, RecentActivityViewModel}
+import models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetailsModel, Payment}
 import models.obligations.*
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import services.DateServiceInterface
+import testConstants.FinancialDetailsTestConstants
 import testUtils.TestSupport
 
 import java.time.LocalDate
+import scala.math.BigDecimal
 
 class RecentActivityServiceSpec
   extends TestSupport
@@ -54,6 +58,34 @@ class RecentActivityServiceSpec
       periodKey = "#001",
       status = StatusFulfilled
     )
+
+
+  private def paymentAndDocDetail(transactionId: String, amount: BigDecimal, paymentDate: Option[LocalDate]): (Payment, DocumentDetail) = {
+    val payment = Payment(
+      reference = Some("reference"),
+      amount = Some(amount),
+      outstandingAmount = Some(0.00),
+      method = Some("method"),
+      documentDescription = Some("docDescription"),
+      lot = Some("lot"), lotItem = Some("lotItem"),
+      dueDate = Some(LocalDate.parse("2022-08-16")),
+      documentDate = LocalDate.parse("2022-08-16"),
+      transactionId = Some(transactionId)
+    )
+    val document = FinancialDetailsTestConstants.documentDetailModel(
+      transactionId = transactionId,
+      effectiveDateOfPayment = paymentDate
+    )
+    (payment, document)
+  }
+
+  private def getFinancialDetails(documentDetails: List[DocumentDetail]): List[FinancialDetailsModel] = {
+    List(FinancialDetailsModel(
+      balanceDetails = FinancialDetailsTestConstants.balanceDetails,
+      documentDetails = documentDetails,
+      financialDetails = List.empty
+    ))
+  }
 
   private def obligationsModel(
                                 obligations: List[SingleObligationModel]
@@ -112,6 +144,43 @@ class RecentActivityServiceSpec
     }
   }
 
+  "getRecentPaymentActivity" should {
+    "return the most recent payment made within 90 days" in {
+      when(mockDateService.getCurrentDate).thenReturn(today)
+      val (payment1, recentDocument) = paymentAndDocDetail("payment1", BigDecimal(50), Some(within90Days))
+      val (payment2, mostRecentDocument) = paymentAndDocDetail("payment2", BigDecimal(100), Some(within90Days.plusDays(5)))
+
+      val result = service.getRecentPaymentActivity(
+        List(payment1, payment2),
+        getFinancialDetails(List(recentDocument, mostRecentDocument))
+      )
+      result shouldBe Some(RecentActivityPaymentModel(BigDecimal(100), within90Days.plusDays(5), TaxYear.getTaxYear(within90Days.plusDays(5))))
+    }
+    "ignore payments made more than 90 days ago" in {
+      when(mockDateService.getCurrentDate).thenReturn(today)
+      val (payment1, oldDocument) = paymentAndDocDetail("payment1", BigDecimal(50), Some(outside90Days))
+
+      val result = service.getRecentPaymentActivity(
+        List(payment1),
+        getFinancialDetails(List(oldDocument))
+      )
+      result shouldBe None
+    }
+
+    "ignore payments without 'effectiveDateOfPayment' field" in {
+      when(mockDateService.getCurrentDate).thenReturn(today)
+      val (payment1, noDateDocument) = paymentAndDocDetail("payment1", BigDecimal(50), None)
+
+      val result = service.getRecentPaymentActivity(
+        List(payment1),
+        getFinancialDetails(List(noDateDocument))
+      )
+
+      result shouldBe None
+    }
+
+  }
+
   "recentActivityCards" should {
 
     "return no cards for supporting agents" in {
@@ -120,7 +189,7 @@ class RecentActivityServiceSpec
       when(supportingAgentUser.isSupportingAgent).thenReturn(true)
 
       val submissions = RecentActivitySubmissionsModel(None, None)
-      val result = service.recentActivityCards(submissions)
+      val result = service.recentActivityCards(submissions, None)
 
       result shouldBe RecentActivityViewModel(Seq.empty)
     }
@@ -134,10 +203,23 @@ class RecentActivityServiceSpec
       val annual = obligation("Crystallisation", LocalDate.of(2023, 4, 6), Some(within90Days))
       val quarterly = obligation("Quarterly", LocalDate.of(2023, 4, 6), Some(within90Days))
       val submissions = RecentActivitySubmissionsModel(Some(annual), Some(quarterly))
-      val result = service.recentActivityCards(submissions)
+      val result = service.recentActivityCards(submissions, None)
 
       result.recentActivityCards.size shouldBe 2
       result.recentActivityCards.head.cardTaxYear.value shouldBe TaxYear.getTaxYear(annual.start)
+    }
+
+    "return payment card for primary agents" in {
+      implicit val agentUser: MtdItUser[_] = MockitoSugar.mock[MtdItUser[_]]
+
+      when(agentUser.isSupportingAgent).thenReturn(false)
+      when(agentUser.isAgent).thenReturn(true)
+      val submissions = RecentActivitySubmissionsModel(None, None)
+      val payment = RecentActivityPaymentModel(BigDecimal(123.45), within90Days, TaxYear.getTaxYear(within90Days))
+      val result = service.recentActivityCards(submissions, Some(payment))
+
+      result.recentActivityCards.size shouldBe 1
+      result.recentActivityCards.head.cardDate shouldBe within90Days
     }
   }
 }

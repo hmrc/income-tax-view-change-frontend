@@ -62,7 +62,6 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
 
   def handleShowRequest(origin: Option[String] = None)(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
     val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
-
     for {
       fulfilledObligations <- recentActivityService.getFulfilledObligations().map {
         case obligations: ObligationsModel => obligations
@@ -71,10 +70,10 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       recentSubmissionActivities = recentActivityService.getRecentSubmissionActivity(fulfilledObligations, currentItsaStatus)
 
-      payments <- paymentHistoryService.getPaymentHistory()
-      financialDetails <- financialDetailsService.getAllFinancialDetails()
-      recentPaymentActivity = recentActivityService.getRecentPaymentActivity(payments.getOrElse(List.empty[Payment]), financialDetails.map { (_, fdm) => fdm })
-      
+      payments <- paymentHistoryService.getPaymentHistory().map(_.getOrElse(List.empty[Payment]))
+      financialDetails <- financialDetailsService.getAllFinancialDetails().map(_.map((_, fdm) => fdm))
+      recentPaymentActivity = recentActivityService.getRecentPaymentActivity(payments, financialDetails)
+
       recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPaymentActivity)
     } yield {
       Ok(newHomeRecentActivityView(
