@@ -86,7 +86,7 @@ agent-unauthorised.note.b1                                      = taliadau, cred
 agent-unauthorised.note.b2                                      = Ffurflenni Treth
 agent-unauthorised.note.b3                                      = y ffioedd sy’n ddyledus nesaf
 agent-unauthorised.note.b4                                      = cosbau ac apeliadau
-agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
+agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK
 
 ## Rebrand Service Navigation
 pta.navigation.messages = Negeseuon
