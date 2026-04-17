@@ -18,12 +18,13 @@ GET         /agents                                                       contro
 GET         /your-tasks                                                   controllers.HandleYourTasksController.show()
 GET         /agents/your-tasks                                            controllers.HandleYourTasksController.showAgent()
 
-GET         /recent-activity                                              controllers.HomeController.handleRecentActivity(origin: Option[String] ?= None, isAgent: Boolean = false)
+GET         /recent-activity                                              controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
+GET         /agents/recent-activity                                       controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
+
 GET         /overview                                                     controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = false)
 GET         /help                                                         controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)
-GET         /agents/recent-activity                                              controllers.HomeController.handleRecentActivity(origin: Option[String] ?= None, isAgent: Boolean = true)
-GET         /agents/overview                                                     controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
-GET         /agents/help                                                         controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
+GET         /agents/overview                                              controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
+GET         /agents/help                                                  controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
 
 #NextUpdates
 GET         /submission-deadlines                                         controllers.NextUpdatesController.show(origin: Option[String] ?= None)

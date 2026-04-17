@@ -276,14 +276,11 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = None)
-        
-        println(Json.prettyPrint(Json.toJson(chargeItem)))
 
         val exception = intercept[MissingFieldException] {
           chargeItem.getInterestOutstandingAmount
         }
         exception shouldBe MissingFieldException("documentInterestOutstandingAmount")
-
       }
     }
 
