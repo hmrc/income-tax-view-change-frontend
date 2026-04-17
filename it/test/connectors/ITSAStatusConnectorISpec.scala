@@ -40,7 +40,7 @@ class ITSAStatusConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val year = "2020"
           val futureYears = true
           val history = true
-          val url = s"/income-tax-view-change/itsa-status/status/$taxableEntityId/$year?futureYears=${futureYears.toString}&history=${history.toString}"
+          val url = s"/income-tax-obligations/itsa-status/status/$taxableEntityId/$year?futureYears=${futureYears.toString}&history=${history.toString}"
 
           WiremockHelper.stubGet(url, OK, responseBody.toString())
 
@@ -60,7 +60,7 @@ class ITSAStatusConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val year = "2020"
           val futureYears = true
           val history = true
-          val url = s"/income-tax-view-change/itsa-status/status/$taxableEntityId/$year?futureYears=${futureYears.toString}&history=${history.toString}"
+          val url = s"/income-tax-obligations/itsa-status/status/$taxableEntityId/$year?futureYears=${futureYears.toString}&history=${history.toString}"
 
           WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, "")
 
