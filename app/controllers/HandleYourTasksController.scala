@@ -21,6 +21,7 @@ import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
+import controllers.newHomePage.routes
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
@@ -172,7 +173,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url
 
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
+  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = routes.RecentActivityController.show(isAgent, origin).url
 
   def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
 

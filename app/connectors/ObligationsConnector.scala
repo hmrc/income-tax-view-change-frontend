@@ -45,6 +45,10 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
     s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/obligations/from/$fromDate/to/$toDate"
   }
 
+  def getFulfilledObligationsUrl(nino: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-obligations"
+  }
+
   def getOpenObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
 
     val url = getOpenObligationsUrl(mtdUser.nino)
@@ -63,6 +67,42 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
               valid.obligations.foreach { data =>
                 auditingService.extendedAudit(NextUpdatesResponseAuditModel(mtdUser, data.identification, data.obligations))
               }
+              valid
+            }
+          )
+        case NOT_FOUND | FORBIDDEN =>
+          Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+          ObligationsModel(Seq.empty)
+        case status =>
+          if (status >= 500) {
+            Logger("application").error(s"RESPONSE status: ${response.status}, body: ${response.body}")
+          } else {
+            Logger("application").warn(s"RESPONSE status: ${response.status}, body: ${response.body}")
+          }
+          ObligationsErrorModel(response.status, response.body)
+      }
+    } recover {
+      case ex =>
+        Logger("application").error(s"Unexpected future failed error, ${ex.getMessage}")
+        ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
+    }
+  }
+
+  def getFulfilledObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
+
+    val url = getFulfilledObligationsUrl(mtdUser.nino)
+    Logger("application").debug(s"GET $url")
+
+    http.get(url"$url").execute[HttpResponse] map { response =>
+      response.status match {
+        case OK =>
+          Logger("application").debug(s"RESPONSE status: ${response.status}, json: ${response.json}")
+          response.json.validate[ObligationsModel].fold(
+            invalid => {
+              Logger("application").error(s"Json Validation Error: $invalid")
+              ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Next Updates Data Response")
+            },
+            valid => {
               valid
             }
           )
