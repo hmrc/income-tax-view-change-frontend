@@ -21,10 +21,10 @@
     mainTemplate: unifiedLayout,
     h1: h1,
     p: p,
-    link: link
+    link: linkComponent
 )
 
-@(pageTitle: String, heading: String, message: String, linkPrefix: Option[String], linkText: String, linkUrl: String, isAgent: Boolean)(implicit request: Request[_], messages: Messages)
+@(pageTitle: String, heading: String, message: String, linkPrefix: Option[String], linkText: String, linkUrl: String, isAgent: Boolean, optLinkPunct: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
 @mainTemplate(pageTitle = pageTitle, isAgent = isAgent, isErrorPage = true) {
 
@@ -34,9 +34,18 @@
     }
     @if(linkPrefix) {
         @p() {
-            @linkPrefix.get @link(messageKey = linkText, link = linkUrl)
+            @linkPrefix.get
+            @link(
+                message = linkText,
+                url = linkUrl,
+                additionalMessage = optLinkPunct
+            )
         }
     } else {
-        @link(messageKey = linkText, link = linkUrl)
+        @link(
+            message = linkText,
+            url = linkUrl,
+            additionalMessage = optLinkPunct
+        )
     }
 }
