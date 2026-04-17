@@ -22,11 +22,15 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
+import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{AddressModel, CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.ArgumentCaptor
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{verify, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -37,10 +41,21 @@ import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, invalidUKAddressNoPostCode}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
 
+import scala.concurrent.Future
+
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
 
   private val addBusinessIsTheNewAddressInTheUKHeading = "add-business-is.the.new.address.in.the.uk.heading"
   private val addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading = "add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"
+  private val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = None, addressId = None, addressLookupId = None, countryCode = None))
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    disableAllSwitches()
+
+    when(mockSessionService.setMongoData(any()))
+      .thenReturn(Future(true))
+  }
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -52,11 +67,17 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
 
   lazy val testController: IsTheNewAddressInTheUKController = app.injector.instanceOf[IsTheNewAddressInTheUKController]
 
-  def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false): Action[AnyContent] = mtdRole match {
+  private def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false): Action[AnyContent] = mtdRole match {
     case MTDIndividual if isPost => testController.submit(false, mode, false)
     case MTDIndividual => testController.show(false, mode, false)
     case _ if isPost => testController.submit(true, mode, false)
     case _ => testController.show(true, mode, false)
+  }
+
+  private def verifySetMongoData(): Unit = {
+    val argument: ArgumentCaptor[UIJourneySessionData] = ArgumentCaptor.forClass(classOf[UIJourneySessionData])
+    verify(mockSessionService).setMongoData(argument.capture())
+    argument.getValue.addIncomeSourceData shouldBe testAddIncomeSourceSessionData
   }
 
   Seq(CheckMode, NormalMode).foreach { mode =>
@@ -81,6 +102,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 document.title should include(messages(addBusinessIsTheNewAddressInTheUKHeading))
                 document.select(".govuk-back-link").attr("href") shouldBe controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(mtdRole != MTDIndividual).url
                 status(result) shouldBe OK
+                verifySetMongoData()
               }
             }
             "display the is the address of your sole trader business in the UK page" when {
@@ -97,6 +119,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
                 status(result) shouldBe OK
+                verifySetMongoData()
               }
               "when user has invalid UK addresses without post code on file using the manage businesses journey" in {
                 enable(OverseasBusinessAddress)
@@ -111,6 +134,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
                 status(result) shouldBe OK
+                verifySetMongoData()
               }
               "when user has no UK addresses on file using the manage businesses journey" in {
                 enable(OverseasBusinessAddress)
@@ -125,6 +149,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 val document: Document = Jsoup.parse(contentAsString(result))
                 document.title should include(messages(addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading))
                 status(result) shouldBe OK
+                verifySetMongoData()
               }
             }
           }
