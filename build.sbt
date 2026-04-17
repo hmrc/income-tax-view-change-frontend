@@ -7,7 +7,7 @@ import uk.gov.hmrc.DefaultBuildSettings.*
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName = "income-tax-view-change-frontend"
-
+val cryptoJsonVersion = "8.4.0"
 val bootstrapPlayVersion = "10.7.0"
 val playPartialsVersion = "10.2.0"
 val playFrontendHMRCVersion = "12.32.0"
@@ -31,7 +31,7 @@ val compile = Seq(
   "org.typelevel" %% "cats-core" % catsVersion,
   "uk.gov.hmrc.mongo" %% s"hmrc-mongo-$playVersion" % hmrcMongoVersion,
   "uk.gov.hmrc" %% s"play-frontend-hmrc-$playVersion" % playFrontendHMRCVersion,
-  "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "8.4.0",
+  "uk.gov.hmrc" %% s"crypto-json-$playVersion" % cryptoJsonVersion,
   "org.jsoup" % "jsoup" % jsoupVersion,
 )
 
@@ -44,7 +44,7 @@ def test(scope: String = "test"): Seq[ModuleID] = Seq(
   "org.scalatestplus" %% "scalacheck-1-15" % "3.2.11.0" % scope,
   "uk.gov.hmrc" %% s"bootstrap-test-$playVersion" % bootstrapPlayVersion % "test",
   caffeine,
-  "uk.gov.hmrc" %% s"crypto-json-$playVersion" % "8.1.0"
+  "uk.gov.hmrc" %% s"crypto-json-$playVersion" % cryptoJsonVersion
 )
 
 def it(scope: String = "test"): Seq[ModuleID] = Seq(
