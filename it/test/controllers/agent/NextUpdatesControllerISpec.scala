@@ -157,7 +157,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
               taxYear = dateService.getCurrentTaxYear
             )
-            CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+            CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -244,7 +244,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   deadlines = currentObligations
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
-                CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+                CalculationListStub.stubGetCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -281,7 +281,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   deadlines = currentObligations
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatAsShortYearRange)
-                CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+                CalculationListStub.stubGetCalculationListError(testNino, previousYear.endYear.toString)
 
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -318,7 +318,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   deadlines = currentObligations
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
-                CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+                CalculationListStub.stubGetCalculationListError(testNino, previousYear.endYear.toString)
 
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue

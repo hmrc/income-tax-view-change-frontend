@@ -196,7 +196,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
         val res = buildGETMTDClient(path).futureValue
@@ -248,7 +248,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
         val res = buildGETMTDClient(path).futureValue
@@ -316,7 +316,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
         val res = buildGETMTDClient(path).futureValue
@@ -393,7 +393,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
         val res = buildGETMTDClient(path).futureValue
 
@@ -429,7 +429,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
-          CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+          CalculationListStub.stubGetCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
           val res = buildGETMTDClient(path).futureValue
 
@@ -458,7 +458,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatAsShortYearRange)
-          CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+          CalculationListStub.stubGetCalculationListError(testNino, previousYear.endYear.toString)
 
 
           val res = buildGETMTDClient(path).futureValue
@@ -488,7 +488,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange)
-          CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+          CalculationListStub.stubGetCalculationListError(testNino, previousYear.endYear.toString)
 
 
           val res = buildGETMTDClient(path).futureValue
