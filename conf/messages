@@ -85,7 +85,7 @@ agent-unauthorised.note.b1                                      = payments, cred
 agent-unauthorised.note.b2                                      = returns
 agent-unauthorised.note.b3                                      = next charges due
 agent-unauthorised.note.b4                                      = penalties and appeals
-agent-unauthorised.link                                         = Read more about the difference between main and supporting agents on GOV.UK.
+agent-unauthorised.link                                         = Read more about the difference between main and supporting agents on GOV.UK
 
 ## Rebrand Service Navigation
 pta.navigation.messages = Messages
