@@ -25,9 +25,14 @@ object CustomUserCreateForm {
 
   val form: Form[CustomUserCreateForm] = Form(
     mapping(
-      "userCode" -> text.verifying("Invalid user code format", code => code.matches(userCodeRegex))
+      "userCode" ->
+        text.verifying(
+          "Invalid user code format",
+          code => code.matches(userCodeRegex)
+        )
     )(CustomUserCreateForm.apply)(form => Some(form.userCode))
   )
 
-  val userCodeRegex: String = """^U[1-3]-S\d+-P[01]-F[01]-PYF[12]-PY[1-7]-CY[1-7]-NY[1-7]$"""
+  val userCodeRegex: String = """^U[1-3]\|UC[1-3]\|ST:[ALC-]+\|P:[AC-]+\|F:[AC-]+\|ITSA:(CR|NC)-\d+-\d+-\d+\|OB:[OFN]-[OFN]-[OFN]-[OFN]-[OFN]$"""
 }
+
