@@ -58,27 +58,18 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
   }
 
 
-  def getRecentPaymentActivity(payments: List[Payment], financialDetails: List[FinancialDetailsResponseModel]): Option[RecentActivityPaymentModel] = {
-    val recentActivityDate = dateService.getCurrentDate.minusDays(90)
-    println(s"§ Recent activity date: $recentActivityDate")
-    financialDetails.flatMap {
-        case FinancialDetailsModel(_, _, documentDetails, _) =>
-          payments.flatMap { payment =>
-            documentDetails
-              .filter(doc => doc.effectiveDateOfPayment.forall(date => !date.isBefore(recentActivityDate)))
-              .flatMap { dd =>
-                (payment.transactionId, payment.amount, dd.transactionId, dd.effectiveDateOfPayment) match {
-                  case (Some(pId), Some(amount), dId, Some(date)) if pId == dId =>
-                    Some(RecentActivityPaymentModel(amount, date, TaxYear.getTaxYear(date)))
-                  case _ => None
-                }
-              }
-          }
-        case FinancialDetailsErrorModel(code, message) => None
+  def getRecentPaymentActivity(payments: List[Payment]): Option[RecentActivityPaymentModel] = {
+    val today = dateService.getCurrentDate
+    val recentActivityDate = today.minusDays(90)
+    payments
+      .filter(_.dueDate.exists(date => !date.isBefore(recentActivityDate) && !date.isAfter(today)))
+      .maxByOption(_.dueDate)
+      .flatMap {
+        case Payment(_, Some(amount), _, _, _, _, _, Some(dueDate), _, _, _, _, _) => Some(RecentActivityPaymentModel(amount, dueDate))
+        case _ => None
       }
-      .sortBy(_.effectiveDateOfPayment)
-      .lastOption
   }
+
 
   def recentActivityCards(recentSubmissionActivity: RecentActivitySubmissionsModel, recentPayment: Option[RecentActivityPaymentModel])(implicit mtdUser: MtdItUser[_], messages: Messages): RecentActivityViewModel = {
     if (mtdUser.isSupportingAgent) {
@@ -97,7 +88,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
         linkUrl = if (mtdUser.isAgent) controllers.routes.PaymentHistoryController.showAgent().url else controllers.routes.PaymentHistoryController.show().url,
         contentText = messages("new.home.recentActivity.payments.content.text", payment.amount.abs),
         dateContentText = "new.home.recentActivity.payments.date.content.text",
-        cardDate = payment.effectiveDateOfPayment,
+        cardDate = payment.dateOfPayment,
         cardTaxYear = Some(payment.taxYear)
       )
     }

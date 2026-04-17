@@ -76,7 +76,6 @@ class RecentActivityControllerSpec extends MockAuthActions
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
-            when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any())).thenReturn(Future(List.empty))
             when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
@@ -97,7 +96,6 @@ class RecentActivityControllerSpec extends MockAuthActions
 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
-            when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any())).thenReturn(Future(List.empty))
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
             when(mockRecentActivityService.recentActivityCards(any(), any())(any(), any())).thenReturn(RecentActivityViewModel(Seq.empty))

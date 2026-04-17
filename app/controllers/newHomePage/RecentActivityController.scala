@@ -69,12 +69,9 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
       }
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       recentSubmissionActivities = recentActivityService.getRecentSubmissionActivity(fulfilledObligations, currentItsaStatus)
-
       payments <- paymentHistoryService.getPaymentHistory().map(_.getOrElse(List.empty[Payment]))
-      financialDetails <- financialDetailsService.getAllFinancialDetails().map(_.map((_, fdm) => fdm))
-      recentPaymentActivity = recentActivityService.getRecentPaymentActivity(payments, financialDetails)
-
-      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPaymentActivity)
+      recentPayment = recentActivityService.getRecentPaymentActivity(payments)
+      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPayment)
     } yield {
       Ok(newHomeRecentActivityView(
         origin,
