@@ -16,63 +16,117 @@
 
 package testOnly.utils
 
-import testOnly.forms.customLoginV2.CustomUserBuilderForm
+import testOnly.forms.customLoginV2.{CustomUserBuilderForm, IncomeSourceBuilderForm, ObligationsBuilderForm}
 
 object UserCodeUtils {
-  def generateUserCode(customUserInfo: CustomUserBuilderForm): String = {
 
-    val userTypeCode = getUserTypeCode(customUserInfo.userType)
-    val incomeSourceCode = getIncomeSourceCode(customUserInfo.activeSoleTrader, customUserInfo.activeUkProperty, customUserInfo.activeForeignProperty)
-    val itsaStatusCode = getItsaStatusCode(
-      customUserInfo.previousYearCrystallisationStatus,
-      customUserInfo.previousYearItsaStatus,
-      customUserInfo.currentYearItsaStatus,
-      customUserInfo.nextYearItsaStatus
-    )
-
-    s"$userTypeCode-$incomeSourceCode-$itsaStatusCode"
+  def generateUserCode(data: CustomUserBuilderForm): String = {
+    List(
+      userTypeCode(data.agentType),
+      userChannelCode(data.incomeSources.userChannel),
+      soleTraderCode(data.incomeSources),
+      ukPropertyCode(data.incomeSources),
+      foreignPropertyCode(data.incomeSources),
+      itsaStatusCode(
+        data.itsaStatus.cyMinusOneCrystallisationStatus,
+        data.itsaStatus.cyMinusOneItsaStatus,
+        data.itsaStatus.cyItsaStatus,
+        data.itsaStatus.cyPlusOneItsaStatus
+      ),
+      obligationsCode(data.obligations)
+    ).mkString("|")
   }
 
-  private def getUserTypeCode(userType: String) = {
+  private def userTypeCode(userType: String): String =
     userType match {
       case "individual"      => "U1"
       case "primaryAgent"    => "U2"
       case "supportingAgent" => "U3"
-      case _ => throw new IllegalArgumentException(s"Invalid user type: $userType")
+      case other             => invalid("user type", other)
     }
-  }
 
-  private def getIncomeSourceCode(activeSoleTrader: Boolean, activeUkProperty: Boolean, activeForeignProperty: Boolean) = {
-    val soleTraderCode = if (activeSoleTrader) "S1" else "S0"
-    val ukPropertyCode = if (activeUkProperty) "P1" else "P0"
-    val foreignPropertyCode = if (activeForeignProperty) "F1" else "F0"
-    s"$soleTraderCode-$ukPropertyCode-$foreignPropertyCode"
-  }
+  private def userChannelCode(userChannel: String): String =
+    userChannel match {
+      case "customer-led"            => "UC1"
+      case "hmrc-led-unconfirmed"     => "UC2"
+      case "hmrc-led-confirmed"       => "UC3"
+      case other                     => invalid("user channel", other)
+    }
 
-  private def getItsaStatusCode(cyMinusOneCrystallisationStatus: String, previousYearItsaStatus: String, currentYearItsaStatus: String, nextYearItsaStatus: String) = {
-    def itsaCode(status: String) = {
-      status match {
-        case "Annual" => "1"
-        case "MTD Voluntary" => "2"
-        case "MTD Mandated" => "3"
-        case "MTD Exempt" => "4"
-        case "Digitally Exempt" => "5"
-        case "No Status" => "6"
-        case "Dormant" => "7"
-        case _ => throw new IllegalArgumentException(s"Invalid ITSA status: $status")
+  private def soleTraderCode(i: IncomeSourceBuilderForm): String =
+    s"ST:${flags(
+      'A' -> i.activeSoleTrader,
+      'L' -> i.latentSoleTrader,
+      'C' -> i.ceasedSoleTrader
+    )}"
+
+  private def ukPropertyCode(i: IncomeSourceBuilderForm): String =
+    s"P:${flags(
+      'A' -> i.activeUkProperty,
+      'C' -> i.ceasedUkProperty
+    )}"
+
+  private def foreignPropertyCode(i: IncomeSourceBuilderForm): String =
+    s"F:${flags(
+      'A' -> i.activeForeignProperty,
+      'C' -> i.ceasedForeignProperty
+    )}"
+
+  private def itsaStatusCode(
+                              cyMinusOneCrystallisationStatus: String,
+                              previousYear: String,
+                              currentYear: String,
+                              nextYear: String
+                            ): String = {
+
+    val crystallisation =
+      cyMinusOneCrystallisationStatus match {
+        case "Crystallised"     => "CR"
+        case "NonCrystallised"  => "NC"
+        case other              => invalid("crystallisation status", other)
       }
-    }
 
-    val crystallisationStatusCode = cyMinusOneCrystallisationStatus match {
-      case "Crystallised" => "PYF1"
-      case "NonCrystallised" => "PYF2"
-      case _ => throw new IllegalArgumentException(s"Invalid crystallisation status: $cyMinusOneCrystallisationStatus")
-    }
+    val prev = itsaYearCode(previousYear)
+    val curr = itsaYearCode(currentYear)
+    val next = itsaYearCode(nextYear)
 
-    val previousYearItsaCode = s"PY${itsaCode(previousYearItsaStatus)}"
-    val currentYearItsaCode = s"CY${itsaCode(currentYearItsaStatus)}"
-    val nextYearItsaCode = s"NY${itsaCode(nextYearItsaStatus)}"
-
-    s"$crystallisationStatusCode-$previousYearItsaCode-$currentYearItsaCode-$nextYearItsaCode"
+    s"ITSA:$crystallisation-$prev-$curr-$next"
   }
+
+  private def itsaYearCode(status: String): String =
+    status match {
+      case "No Status"          => "0"
+      case "MTD Mandated"       => "1"
+      case "MTD Voluntary"      => "2"
+      case "Annual"             => "3"
+      case "Digitally Exempt"   => "4"
+      case "Dormant"            => "5"
+      case "MTD Exempt"         => "99"
+      case other                => invalid("ITSA status", other)
+    }
+
+  private def obligationsCode(o: ObligationsBuilderForm): String =
+    s"OB:${List(
+      obligation(o.annualObligation),
+      obligation(o.quarterlyUpdate1),
+      obligation(o.quarterlyUpdate2),
+      obligation(o.quarterlyUpdate3),
+      obligation(o.quarterlyUpdate4)
+    ).mkString("-")}"
+
+  private def obligation(status: String): String =
+    status match {
+      case "Open"      => "O"
+      case "Fulfilled" => "F"
+      case "None"      => "N"
+      case other       => invalid("obligation status", other)
+    }
+
+  private def flags(values: (Char, Boolean)*): String = {
+    val code = values.collect { case (c, true) => c }.mkString
+    if (code.isEmpty) "-" else code
+  }
+
+  private def invalid(context: String, value: String): Nothing =
+    throw new IllegalArgumentException(s"Invalid $context: $value")
 }

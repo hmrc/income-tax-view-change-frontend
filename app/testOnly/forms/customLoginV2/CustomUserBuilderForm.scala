@@ -20,59 +20,166 @@ import play.api.data.{Form, Mapping}
 import play.api.data.Forms.*
 
 case class CustomUserBuilderForm(
-                                  userType: String,
-                                  activeSoleTrader: Boolean,
-                                  activeUkProperty: Boolean,
-                                  activeForeignProperty: Boolean,
-                                  previousYearCrystallisationStatus: String,
-                                  previousYearItsaStatus: String,
-                                  currentYearItsaStatus: String,
-                                  nextYearItsaStatus: String
+                                  agentType: String,
+                                  incomeSources: IncomeSourceBuilderForm,
+                                  itsaStatus: ITSAStatusBuilderForm,
+                                  obligations: ObligationsBuilderForm
                                 )
 
-object CustomUserBuilderForm {
+case class IncomeSourceBuilderForm(
+                                    userChannel: String,
+                                    activeSoleTrader: Boolean,
+                                    latentSoleTrader: Boolean,
+                                    ceasedSoleTrader: Boolean,
+                                    activeUkProperty: Boolean,
+                                    ceasedUkProperty: Boolean,
+                                    activeForeignProperty: Boolean,
+                                    ceasedForeignProperty: Boolean
+                                  )
 
+case class ITSAStatusBuilderForm(
+                                  cyMinusOneCrystallisationStatus: String,
+                                  cyMinusOneItsaStatus: String,
+                                  cyItsaStatus: String,
+                                  cyPlusOneItsaStatus: String
+                                )
+
+case class ObligationsBuilderForm(
+                                   annualObligation: String,
+                                   quarterlyUpdate1: String,
+                                   quarterlyUpdate2: String,
+                                   quarterlyUpdate3: String,
+                                   quarterlyUpdate4: String
+                                 )
+
+object CustomUserBuilderForm {
+  
   private val checkbox: Mapping[Boolean] = optional(text).transform(_.contains("true"), if (_) Some("true") else None)
 
-  val form: Form[CustomUserBuilderForm] = Form(
+  private val incomeSourcesMapping: Mapping[IncomeSourceBuilderForm] =
     mapping(
-      "AgentType"               -> nonEmptyText,
-      "SoleTraderCheckbox"      -> checkbox,
-      "UkPropertyCheckbox"      -> checkbox,
-      "ForeignPropertyCheckbox" -> checkbox,
-      "cyMinusOneCrystallisationStatus" -> nonEmptyText,
-      "cyMinusOneItsaStatus"    -> nonEmptyText,
-      "cyItsaStatus"            -> nonEmptyText,
-      "cyPlusOneItsaStatus"     -> nonEmptyText
+      "userChannel" -> nonEmptyText,
+      "activeSoleTrader"  -> checkbox,
+      "latentSoleTrader"  -> checkbox,
+      "ceasedSoleTrader"  -> checkbox,
+      "activeUkProperty"  -> checkbox,
+      "ceasedUkProperty"  -> checkbox,
+      "activeForeignProperty" -> checkbox,
+      "ceasedForeignProperty" -> checkbox
     )(
-      (userType,
+      (userChannel,
        activeSoleTrader,
+       latentSoleTrader,
+       ceasedSoleTrader,
        activeUkProperty,
+       ceasedUkProperty,
        activeForeignProperty,
-       previousYearCrystallisationStatus,
-       previousYearItsaStatus,
-       currentYearItsaStatus,
-       nextYearItsaStatus) => CustomUserBuilderForm(
-        userType,
-        activeSoleTrader,
-        activeUkProperty,
-        activeForeignProperty,
-        previousYearCrystallisationStatus,
-        previousYearItsaStatus,
-        currentYearItsaStatus,
-        nextYearItsaStatus
-      )
+       ceasedForeignProperty) =>
+        IncomeSourceBuilderForm(
+          userChannel,
+          activeSoleTrader,
+          latentSoleTrader,
+          ceasedSoleTrader,
+          activeUkProperty,
+          ceasedUkProperty,
+          activeForeignProperty,
+          ceasedForeignProperty
+        )
     )(
-      form => Some(
-        form.userType,
-        form.activeSoleTrader,
-        form.activeUkProperty,
-        form.activeForeignProperty,
-        form.previousYearCrystallisationStatus,
-        form.previousYearItsaStatus,
-        form.currentYearItsaStatus,
-        form.nextYearItsaStatus
+      form =>
+        Some((
+          form.userChannel,
+          form.activeSoleTrader,
+          form.latentSoleTrader,
+          form.ceasedSoleTrader,
+          form.activeUkProperty,
+          form.ceasedUkProperty,
+          form.activeForeignProperty,
+          form.ceasedForeignProperty
+        ))
+    )
+  
+  private val itsaStatusMapping: Mapping[ITSAStatusBuilderForm] =
+    mapping(
+      "cyMinusOneCrystallisationStatus" -> nonEmptyText,
+      "cyMinusOneItsaStatus" -> nonEmptyText,
+      "cyItsaStatus" -> nonEmptyText,
+      "cyPlusOneItsaStatus" -> nonEmptyText
+    )(
+      (cyMinusOneCrystallisationStatus,
+       cyMinusOneItsaStatus,
+       cyItsaStatus,
+       cyPlusOneItsaStatus) =>
+        ITSAStatusBuilderForm(
+          cyMinusOneCrystallisationStatus,
+          cyMinusOneItsaStatus,
+          cyItsaStatus,
+          cyPlusOneItsaStatus
+        )
+    )(
+      form =>
+        Some((
+          form.cyMinusOneCrystallisationStatus,
+          form.cyMinusOneItsaStatus,
+          form.cyItsaStatus,
+          form.cyPlusOneItsaStatus
+        ))
+    )
+  
+  private val obligationsMapping: Mapping[ObligationsBuilderForm] =
+    mapping(
+      "annualObligation" -> nonEmptyText,
+      "quarterlyUpdate1" -> nonEmptyText,
+      "quarterlyUpdate2" -> nonEmptyText,
+      "quarterlyUpdate3" -> nonEmptyText,
+      "quarterlyUpdate4" -> nonEmptyText
+    )(
+      (annualObligation,
+       quarterlyUpdate1,
+       quarterlyUpdate2,
+       quarterlyUpdate3,
+       quarterlyUpdate4) =>
+        ObligationsBuilderForm(
+          annualObligation,
+          quarterlyUpdate1,
+          quarterlyUpdate2,
+          quarterlyUpdate3,
+          quarterlyUpdate4
+        )
+    )(
+      form =>
+        Some((
+          form.annualObligation,
+          form.quarterlyUpdate1,
+          form.quarterlyUpdate2,
+          form.quarterlyUpdate3,
+          form.quarterlyUpdate4
+        ))
+    )
+  
+  val form: Form[CustomUserBuilderForm] =
+    Form(
+      mapping(
+        "agentType"     -> nonEmptyText,
+        "incomeSources" -> incomeSourcesMapping,
+        "itsaStatus"    -> itsaStatusMapping,
+        "obligations"   -> obligationsMapping
+      )(
+        (agentType, incomeSources, itsaStatus, obligations) =>
+          CustomUserBuilderForm(
+            agentType,
+            incomeSources,
+            itsaStatus,
+            obligations
+          )
+      )(
+        form =>
+          Some((
+            form.agentType,
+            form.incomeSources,
+            form.itsaStatus,
+            form.obligations
+          ))
       )
     )
-  )
 }

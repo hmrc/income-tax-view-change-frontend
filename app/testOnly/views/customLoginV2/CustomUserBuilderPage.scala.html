@@ -14,6 +14,10 @@
  * limitations under the License.
  *@
 
+@*
+* Copyright 2026 HM Revenue & Customs
+*@
+
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -47,243 +51,187 @@
 
 @ObligationsOptions = @{
     Seq(
-        SelectItem(
-            value = Some("Open"),
-            text = "Open"
-        ),
-        SelectItem(
-            value = Some("Fulfilled"),
-            text = "Fulfilled"
-        ),
-        SelectItem(
-            value = Some("None"),
-            text = "None"
-        )
+        SelectItem(Some("Open"), "Open"),
+        SelectItem(Some("Fulfilled"), "Fulfilled"),
+        SelectItem(Some("None"), "None")
     )
 }
 
 @layout(pageTitle = "Custom User Builder - Manage your Self Assessment - GOV.UK") {
+
     @h1("Custom User Builder")
     @customLoginHubNav("custom-user-builder")
     @h2("Builder", classes = "govuk-!-padding-top-6 govuk-heading-m")
-    @p(){Please input the details below to create a custom user. Once created, you can use the generated user code to login via the Custom User Login tab.}
+
+    @p() {
+        Please input the details below to create a custom user. Once created, you can use the
+        generated user code to login via the Custom User Login tab.
+    }
 
     @form(postAction) {
+
         @h3("User Type")
         @govukRadios(Radios(
-            name = "AgentType",
+            name = "agentType",
             items = Seq(
-                RadioItem(
-                    content = Text("Individual"),
-                    value = Some("individual"),
-                    checked = true
-                ),
-                RadioItem(
-                    content = Text("Primary Agent"),
-                    value = Some("primaryAgent")
-                ),
-                RadioItem(
-                    content = Text("Supporting Agent"),
-                    value = Some("supportingAgent")
-                )
+                RadioItem(Text("Individual"), Some("individual"), checked = true, value = Some("individual")),
+                RadioItem(Text("Primary Agent"), Some("primaryAgent"), value = Some("primaryAgent")),
+                RadioItem(Text("Supporting Agent"), Some("supportingAgent"), value = Some("supportingAgent"))
             )
         ))
 
         @govukAccordion(Accordion(
             id = "accordion-with-summary-sections",
-            items = Seq(Section(
-                headingContent = HtmlContent("Income Sources"),
-                summaryContent = HtmlContent("Relating to data within the 5266 API (Business Details)"),
-                content = HtmlContent(incomeSourcesSection)
-            ),
-            Section(
+            items = Seq(
+
+                Section(
+                    headingContent = HtmlContent("Income Sources"),
+                    summaryContent = HtmlContent("Relating to data within the 5266 API (Business Details)"),
+                    content = HtmlContent(incomeSourcesSection)
+                ),
+
+                Section(
                     headingContent = HtmlContent("ITSA Status"),
                     summaryContent = HtmlContent("Relating to data used for Reporting Obligations"),
                     content = HtmlContent(ITSAStatusSection)
-            ),
-            Section(
-                headingContent = HtmlContent("Obligations"),
-                summaryContent = HtmlContent("Relating to data used for API 1330 Obligations"),
-                content = HtmlContent(ObligationsSection)
+                ),
+
+                Section(
+                    headingContent = HtmlContent("Obligations"),
+                    summaryContent = HtmlContent("Relating to data used for API 1330 Obligations"),
+                    content = HtmlContent(ObligationsSection)
+                )
             )
-        )))
+        ))
 
         @govukButton(
-            Button(
-                content = Text("Generate User Code")
-            )
+            Button(content = Text("Generate User Code"))
         )
     }
 }
 
 @incomeSourcesSection = {
-    @h3("User Channel")
-    @govukRadios(Radios(  //Not implemented
-        name = "UserChannel",
-        items = Seq(
-            RadioItem(
-                content = Text("Customer-Led"),
-                value = Some("customer-led"),
-                checked = true
-            ),
-            RadioItem(
-                content = Text("HMRC-Led Unconfirmed"),
-                value = Some("hmrc-led-unconfirmed")
-            ),
-            RadioItem(
-                content = Text("HMRC-Led Confirmed"),
-                value = Some("hmrc-led-confirmed")
-            )
-        )
-    ))
 
-    @h3("Sole Trader")
-    @govukCheckboxes(
-        Checkboxes(
-            fieldset = Some(Fieldset(
-                legend = None
-            )),
-            name = "SoleTraderCheckbox",
-            items = Seq(
-                CheckboxItem(
-                    content = Text("Active Sole Trader Business"),
-                    value = "true",
-                    checked = true
-                ),
-                CheckboxItem(
-                    content = Text("Latent Sole Trader Business"), //Not implemented
-                    value = "true",
-                    checked = false
-                ),
-                CheckboxItem(
-                    content = Text("Ceased Sole Trader Business"), //Not implemented
-                    value = "true",
-                    checked = false
-                )
-            ),
-        )
+@h3("User Channel")
+@govukRadios(Radios(
+    name = "incomeSources.userChannel",
+    items = Seq(
+        RadioItem(Text("Customer-Led"), Some("customer-led"), checked = true, value = Some("customer-led")),
+        RadioItem(Text("HMRC-Led Unconfirmed"), Some("hmrc-led-unconfirmed"), value = Some("hmrc-led-unconfirmed")),
+        RadioItem(Text("HMRC-Led Confirmed"), Some("hmrc-led-confirmed"), value = Some("hmrc-led-confirmed"))
     )
+))
 
-    @h3("UK Property")
+@h3("Sole Trader")
+@govukCheckboxes(Checkboxes(
+    name = "incomeSources.activeSoleTrader",
+    items = Seq(CheckboxItem(Text("Active Sole Trader Business"), checked = true, value = "true")))
+)
 
-    @govukCheckboxes(
-        Checkboxes(
-            fieldset = Some(Fieldset(
-                legend = None
-            )),
-            name = "UkPropertyCheckbox",
-            items = Seq(
-                CheckboxItem(
-                    content = Text("Active UK Property"),
-                    value = "true"
-                ),
-                CheckboxItem(
-                    content = Text("Ceased UK Property"), //Not implemented
-                    value = "true"
-                )
-            ),
-        )
-    )
+@govukCheckboxes(Checkboxes(
+    name = "incomeSources.latentSoleTrader",
+    items = Seq(CheckboxItem(Text("Latent Sole Trader Business"), value = "true")))
+)
 
-    @h3("Foreign Property")
+@govukCheckboxes(Checkboxes(
+    name = "incomeSources.ceasedSoleTrader",
+    items = Seq(CheckboxItem(Text("Ceased Sole Trader Business"), value = "true")))
+)
 
-    @govukCheckboxes(
-        Checkboxes(
-            fieldset = Some(Fieldset(
-                legend = None
-            )),
-            name = "ForeignPropertyCheckbox",
-            items = Seq(
-                CheckboxItem(
-                    content = Text("Active Foreign Property"),
-                    value = "true"
-                ),
-                CheckboxItem(
-                    content = Text("Ceased Foreign Property"), //Not implemented
-                    value = "true"
-                )
-            ),
-            classes = "govuk-!-margin-bottom-6"
-        )
-    )
+@h3("UK Property")
+@govukCheckboxes(Checkboxes(
+    name = "incomeSources.activeUkProperty",
+    items = Seq(CheckboxItem(Text("Active UK Property"), value = "true"))
+))
+
+@govukCheckboxes(Checkboxes(
+    name = "incomeSources.ceasedUkProperty",
+    items = Seq(CheckboxItem(Text("Ceased UK Property"), value = "true")),
+))
+
+@h3("Foreign Property")
+@govukCheckboxes(Checkboxes(
+    name = "incomeSources.activeForeignProperty",
+    items = Seq(CheckboxItem(Text("Active Foreign Property"), value = "true"))
+))
+
+@govukCheckboxes(Checkboxes(
+    name = "incomeSources.ceasedForeignProperty",
+    items = Seq(CheckboxItem(Text("Ceased Foreign Property"), value = "true")),
+    classes = "govuk-!-margin-bottom-6"
+))
 }
 
 @ITSAStatusSection = {
-    @govukSelect(Select(
-        id = "cyMinusOneCrystallisationStatus",
-        name = "cyMinusOneCrystallisationStatus",
-        items =
-            Seq(
-                SelectItem(
-                    value = Some("Crystallised"),
-                    text = "Crystallised"
-                ),
-                SelectItem(
-                    value = Some("NonCrystallised"),
-                    text = "Non Crystallised"
-                )
-            ),
-        label = Label(
-            content = Text("CY-1 Crystallisation"))
-    ))
 
-    @govukSelect(Select(
-        id = "cyMinusOneItsaStatus",
-        name = "cyMinusOneItsaStatus",
-        items = ITSAOptions,
-        label = Label(content = Text("CY-1 ITSA Status"))
-    ))
+@govukSelect(Select(
+    id = "cyMinusOneCrystallisationStatus",
+    name = "itsaStatus.cyMinusOneCrystallisationStatus",
+    items = Seq(
+        SelectItem(Some("Crystallised"), "Crystallised"),
+        SelectItem(Some("NonCrystallised"), "Non Crystallised")
+    ),
+    label = Label(content = Text("CY-1 Crystallisation"))
+))
 
-    @govukSelect(Select(
-        id = "cyItsaStatus",
-        name = "cyItsaStatus",
-        items = ITSAOptions,
-        label = Label(content = Text("CY ITSA Status"))
-    ))
+@govukSelect(Select(
+    id = "cyMinusOneItsaStatus",
+    name = "itsaStatus.cyMinusOneItsaStatus",
+    items = ITSAOptions,
+    label = Label(content = Text("CY-1 ITSA Status"))
+))
 
-    @govukSelect(Select(
-        id = "cyPlusOneItsaStatus",
-        name = "cyPlusOneItsaStatus",
-        items = ITSAOptions,
-        label = Label(content = Text("CY+1 ITSA Status")),
-        classes = "govuk-!-margin-bottom-6"
-    ))
+@govukSelect(Select(
+    id = "cyItsaStatus",
+    name = "itsaStatus.cyItsaStatus",
+    items = ITSAOptions,
+    label = Label(content = Text("CY ITSA Status"))
+))
+
+@govukSelect(Select(
+    id = "cyPlusOneItsaStatus",
+    name = "itsaStatus.cyPlusOneItsaStatus",
+    items = ITSAOptions,
+    label = Label(content = Text("CY+1 ITSA Status")),
+    classes = "govuk-!-margin-bottom-6"
+))
 }
-//Not Implemented
+
 @ObligationsSection = {
-    @govukSelect(Select(
-        id = "annualObligation",
-        name = "annualObligation",
-        items = ObligationsOptions,
-        label = Label(content = Text("Tax Return Obligation"))
-    ))
 
-    @govukSelect(Select(
-        id = "quarterlyUpdate1",
-        name = "quarterlyUpdate1",
-        items = ObligationsOptions,
-        label = Label(content = Text("Quarterly Update Q1"))
-    ))
+@govukSelect(Select(
+    id = "annualObligation",
+    name = "obligations.annualObligation",
+    items = ObligationsOptions,
+    label = Label(content = Text("Tax Return Obligation"))
+))
 
-    @govukSelect(Select(
-        id = "quarterlyUpdate2",
-        name = "quarterlyUpdate2",
-        items = ObligationsOptions,
-        label = Label(content = Text("Quarterly Update Q2"))
-    ))
+@govukSelect(Select(
+    id = "quarterlyUpdate1",
+    name = "obligations.quarterlyUpdate1",
+    items = ObligationsOptions,
+    label = Label(content = Text("Quarterly Update Q1"))
+))
 
-    @govukSelect(Select(
-        id = "quarterlyUpdate3",
-        name = "quarterlyUpdate3",
-        items = ObligationsOptions,
-        label = Label(content = Text("Quarterly Update Q3"))
-    ))
+@govukSelect(Select(
+    id = "quarterlyUpdate2",
+    name = "obligations.quarterlyUpdate2",
+    items = ObligationsOptions,
+    label = Label(content = Text("Quarterly Update Q2"))
+))
 
-    @govukSelect(Select(
-        id = "quarterlyUpdate4",
-        name = "quarterlyUpdate4",
-        items = ObligationsOptions,
-        label = Label(content = Text("Quarterly Update Q4")),
-        classes = "govuk-!-margin-bottom-6"
-    ))
+@govukSelect(Select(
+    id = "quarterlyUpdate3",
+    name = "obligations.quarterlyUpdate3",
+    items = ObligationsOptions,
+    label = Label(content = Text("Quarterly Update Q3"))
+))
+
+@govukSelect(Select(
+    id = "quarterlyUpdate4",
+    name = "obligations.quarterlyUpdate4",
+    items = ObligationsOptions,
+    label = Label(content = Text("Quarterly Update Q4")),
+    classes = "govuk-!-margin-bottom-6"
+))
 }
