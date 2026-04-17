@@ -20,6 +20,7 @@ import auth.MtdItUser
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -41,8 +42,8 @@ trait JourneyCheckerOptOut extends ReportingObligationsUtils {
       optOutService.saveIntent(taxYear).flatMap {
         case true => codeBlock
         case false =>
-          Logger("application").error(s"[JourneyCheckerOptOut][withSessionData] - Could not save sign up tax year to session")
-          showInternalServerError(user.isAgent)
+          Logger("application").error(s"[JourneyCheckerOptOut][withSessionData] - Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")}")
+          Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(user.isAgent)))
       }
     } else {
       optOutService.recallSavedIntent().flatMap {

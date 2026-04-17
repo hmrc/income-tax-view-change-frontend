@@ -26,6 +26,7 @@ import play.api.libs.json.{Json, OFormat}
 import services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import services.reportingObligations.optOut.OptOutProposition
 import uk.gov.hmrc.http.HeaderCarrier
+import play.api.Logger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +37,10 @@ class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionData
     OptionT(repository.get(hc.sessionId.get.value, Opt(OptOutJourney)))
       .map(journeySd => journeySd.copy(optOutSessionData = journeySd.optOutSessionData.map(_.copy(selectedOptOutYear = Some(intent.toString)))))
       .flatMap(journeySd => OptionT.liftF(repository.set(journeySd)))
-      .getOrElse(false)
+      .getOrElse({
+        Logger("application").error(s"Failed to collect session data for sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} when trying to save opt out intent. Tax year intent was: ${intent.toString}")
+        false
+      })
   }
 
   def buildResult(contextData: OptOutContextData, selectedOptOutYear: Option[String]): Option[(OptOutProposition, Option[TaxYear])] = {
