@@ -60,9 +60,9 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
 
   def getRecentPaymentActivity(payments: List[Payment], financialDetails: List[FinancialDetailsResponseModel]): Option[RecentActivityPaymentModel] = {
     val recentActivityDate = dateService.getCurrentDate.minusDays(90)
+    println(s"§ Recent activity date: $recentActivityDate")
     financialDetails.flatMap {
         case FinancialDetailsModel(_, _, documentDetails, _) =>
-          println(s"§ Recent activity date: $recentActivityDate")
           payments.flatMap { payment =>
             documentDetails
               .filter(doc => doc.effectiveDateOfPayment.forall(date => !date.isBefore(recentActivityDate)))
@@ -95,7 +95,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       RecentActivityCard(
         linkContentText = messages("new.home.recentActivity.payments.link.text"),
         linkUrl = if (mtdUser.isAgent) controllers.routes.PaymentHistoryController.showAgent().url else controllers.routes.PaymentHistoryController.show().url,
-        contentText = messages("new.home.recentActivity.payments.content.text", payment.amount),
+        contentText = messages("new.home.recentActivity.payments.content.text", payment.amount.abs),
         dateContentText = "new.home.recentActivity.payments.date.content.text",
         cardDate = payment.effectiveDateOfPayment,
         cardTaxYear = Some(payment.taxYear)
