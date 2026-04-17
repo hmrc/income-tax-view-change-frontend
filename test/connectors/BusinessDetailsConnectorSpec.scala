@@ -60,7 +60,7 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
         override lazy val itvcProtectedService: String = "http://localhost:9999"
 =======
         override lazy val incomeTaxBusinessDetailsBaseUrl: String = "http://localhost:9999"
-        
+
         override def incomeSourceOverrides(): Option[Seq[String]] = Some(incomeSourceOverride)
 >>>>>>> 51a7c0a85 (Reapply "MIPR-2520")
       }
