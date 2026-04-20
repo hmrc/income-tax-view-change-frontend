@@ -3543,7 +3543,7 @@ triggered-migration.check-hmrc-records.cessation-banner.link         = eich busn
 
 triggered-migration.check-hmrc-records.cessation-section.heading     = Eich busnesau sydd wedi dod i ben
 triggered-migration.check-hmrc-records.cessation-section.text        = Mae un neu ragor o fusnesau wedi dod i ben.
-triggered-migration.check-hmrc-records.cessation-section.text-link   = Gweld eich holl fusnesau sydd wedi dod i ben.
+triggered-migration.check-hmrc-records.cessation-section.text-link   = Gweld eich holl fusnesau sydd wedi dod i ben
 
 triggered-migration.check-hmrc-records.heading                       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
 triggered-migration.check-hmrc-records.title                         = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
