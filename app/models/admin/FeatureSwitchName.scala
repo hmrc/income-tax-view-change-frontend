@@ -79,6 +79,8 @@ object FeatureSwitchName {
       JsSuccess(OverseasBusinessAddress)
     case JsString(RecentActivity.name) =>
       JsSuccess(RecentActivity)
+    case JsString(MortgageEvidence.name) =>
+      JsSuccess(MortgageEvidence)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -123,7 +125,8 @@ object FeatureSwitchName {
       `CY+1YouMustWaitToSignUpPageEnabled`,
       NewHomePage,
       OverseasBusinessAddress,
-      RecentActivity
+      RecentActivity,
+      MortgageEvidence
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -244,4 +247,8 @@ case object RecentActivity extends FeatureSwitchName {
   override val toString: String = "Recent Activity"
 }
 
+case object MortgageEvidence extends FeatureSwitchName {
+  override val name: String = "mortgage-evidence"
+  override val toString: String = "mortgage-evidence"
+}
 
