@@ -282,6 +282,7 @@ trait CustomMatchers extends UnitSpec with GivenWhenThen {
   def elementAttributeBySelector(selector: String, attr: String)(expectedValue: String): HavePropertyMatcher[WSResponse, String] = {
     HavePropertyMatcher[WSResponse, String] { response =>
       val body = Jsoup.parse(response.body)
+      println(Console.MAGENTA + body + Console.RESET)
       Then(s"the text of element should be '$expectedValue'")
 
       HavePropertyMatchResult(
