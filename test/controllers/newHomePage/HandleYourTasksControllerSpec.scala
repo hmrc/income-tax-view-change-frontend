@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.newHomePage
 
 import auth.authV2.AuthActions
+import controllers.HomeController
 import controllers.agent.sessionUtils.SessionKeys
+import controllers.newHomePage.HandleYourTasksController
 import mocks.auth.MockAuthActions
 import mocks.services.*
 import models.financialDetails.*
@@ -38,6 +40,7 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
 import services.*
+import services.newHomePage.HandleYourTasksService
 import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
 import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
