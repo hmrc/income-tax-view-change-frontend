@@ -186,7 +186,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
 
-  lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
+  lazy val readFeatureSwitchesFromMongo: Boolean = /*servicesConfig.getBoolean("feature-switches.read-from-mongo")*/ true
   
   lazy val itvcRebrand: Boolean = servicesConfig.getBoolean("itvc.useRebrand")
 
