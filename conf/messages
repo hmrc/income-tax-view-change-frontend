@@ -2392,7 +2392,7 @@ incomeSources.cease.error.UK.notCeased.text                       = Your UK prop
 incomeSources.cease.error.FP.notCeased.text                       = Your foreign property business could not be ceased. We have not saved your answers. Please try again later.
 incomeSources.cease.error.SE.notCeased.text                       = Your sole trader business could not be ceased. We have not saved your answers. Please try again later.
 incomeSources.cease.error.notCeased.link.prefix                   = Back to
-incomeSources.cease.error.notCeased.link.text                     = cease an income source.
+incomeSources.cease.error.notCeased.link.text                     = your businesses.
 
 incomeSources.manage.reportingMethodError.hyperlink1            = manage your details
 incomeSources.manage.reportingMethodError.hyperlink2            = view and manage income sources

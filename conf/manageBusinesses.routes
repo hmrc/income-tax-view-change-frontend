@@ -179,6 +179,7 @@ GET          /manage-your-businesses/cannot-go-back                             
 GET          /agents/manage-your-businesses/cannot-go-back                                              controllers.manageBusinesses.manage.CannotGoBackErrorController.noJourneySessionShow(isAgent: Boolean = true)
 
 # Income Sources - Cease
+# TODO should this be remved
 GET          /manage-your-businesses/cease/cease-an-income-source                 controllers.manageBusinesses.cease.CeaseIncomeSourceController.show()
 GET          /agents/manage-your-businesses/cease/cease-an-income-source          controllers.manageBusinesses.cease.CeaseIncomeSourceController.showAgent()
 
@@ -248,6 +249,7 @@ GET         /manage-your-businesses/cease/error-uk-property-not-ceased          
 GET         /agents/manage-your-businesses/cease/error-uk-property-not-ceased                       controllers.manageBusinesses.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = UkProperty, isTriggeredMigration: Boolean ?= false)
 GET         /manage-your-businesses/cease/error-foreign-property-not-ceased                         controllers.manageBusinesses.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = ForeignProperty, isTriggeredMigration: Boolean ?= false)
 GET         /agents/manage-your-businesses/cease/error-foreign-property-not-ceased                  controllers.manageBusinesses.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = ForeignProperty, isTriggeredMigration: Boolean ?= false)
+#TODO should this be removed
 GET         /manage-your-businesses/cease/error-business-not-ceased                                 controllers.manageBusinesses.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = false, incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)
 GET         /agents/manage-your-businesses/cease/error-business-not-ceased                          controllers.manageBusinesses.cease.IncomeSourceNotCeasedController.show(isAgent: Boolean = true, incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)
 
