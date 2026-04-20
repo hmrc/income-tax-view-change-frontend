@@ -209,6 +209,16 @@ home.penaltiesAndAppeals.view                                   = Check Self Ass
 home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Penalty points
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Penalty points
 
+## No Income Sources Page ##
+noIncomeSources.error.title = You need to contact us to access this service
+noIncomeSources.error.p1 = A change is required before you can access the Manage your Self Assessment service. This does not mean there is anything wrong with your HMRC records.
+noIncomeSources.error.contact.heading = To contact us:
+noIncomeSources.error.step1 = Open the contact us form.
+noIncomeSources.error.step2 = Fill in your name and email address.
+noIncomeSources.error.step3 = In the box labelled "What do you need help with?", type "I need help accessing the Manage your Self Assessment service".
+noIncomeSources.error.p2 = We'll contact you with any updates and let you know how you can access this service.
+noIncomeSources.error.button = Contact us form
+
 ## New Home Page ##
 ### Your Tasks Tab
 new.home.navigation.tabs.yourTasks                              = Your tasks

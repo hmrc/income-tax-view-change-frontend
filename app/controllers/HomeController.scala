@@ -85,7 +85,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    if (isEnabled(NewHomePage)) {
+    if (!user.incomeSources.hasAnyIncomeSources) {
+      Logger("application").info(
+        s"[HomeController][handleShowRequest] User has no income sources. Redirecting to no income sources page. isAgent=${user.isAgent}"
+      )
+      Future.successful(Redirect(controllers.routes.NoIncomeSourcesController.show(user.isAgent)))
+    } else if (isEnabled(NewHomePage)) {
       handleYourTasks(origin, user.isAgent)
     } else {
       handleOldHomePage(origin)
