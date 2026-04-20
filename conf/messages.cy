@@ -239,7 +239,7 @@ new.home.overview.charges.money-in-account                      = Gwirio faint o
 new.home.overview.charges.no-money-in-account                   = Gwirio faint o arian sydd yn eich cyfrif
 new.home.overview.charges.adjust-payments                       = Addasu taliadau ar gyfrif
 new.home.overview.deadlines.sub-heading                         = Dyddiadau cau ac ymrwymiadau o ran adrodd
-new.home.overview.deadlines.view-updates                        = Gweld diweddariadau a dyddiadau cau
+new.home.overview.deadlines.view-updates                        = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
 new.home.overview.deadlines.check-obligations                   = Gwirio eich ymrwymiadau o ran adrodd
 new.home.overview.income.sub-heading                            = Ffynonellau incwm
 new.home.overview.income.manage-income                          = Ychwanegu, rheoli neu ddod â busnes neu ffynhonnell incwm i ben
@@ -250,7 +250,6 @@ new.home.overview.penalties.sub-heading                         = Cosbau ac apel
 new.home.overview.penalties.check-penalties                     = Gwirio cosbau ac apeliadau Hunanasesiad
 new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
 new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
-new.home.overview.deadlines.mandated.view-updates               = Bwrw golwg dros ddyddiadau cau ar gyfer cyflwyno
 
 ### Help Tab
 new.home.help.heading                                           = Troi Treth yn Ddigidol
