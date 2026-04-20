@@ -30,7 +30,14 @@ import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import testConstants.NextUpdatesIntegrationTestConstants.currentDate
 
+import java.time.LocalDate
+
 class RecentActivityControllerISpec extends ControllerISpecHelper {
+
+  val taxYearStartDate = LocalDate.of(2023, 4, 6)
+  val taxYearEndDate = LocalDate.of(2024, 4, 5)
+  val calendarStartDate = LocalDate.of(2023, 4, 1)
+  val calendarEndDate = LocalDate.of(2023, 6, 30)
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
@@ -62,13 +69,21 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
   object YourTasksViewMessages {
     val noActivityText = "You have no recent activity."
 
-    val annualSubmissionLinkText = "View 2022 to 2023 tax year summary"
+    val annualSubmissionLinkText = "View 2023 to 2024 tax year summary"
     val annualSubmissionContent = "You made an annual tax return submission."
     val annualDateContent = "Sent 6 March 2023"
 
     val quarterlySubmissionLinkText = "View your tax year summary"
     val quarterlySubmissionContent = "You submitted a quarterly update."
     val quarterlyDateContent = "Sent 6 March 2023"
+  }
+
+  def getTaxYearSummaryLink(mtdUserRole: MTDUserRole): String = {
+    if (mtdUserRole == MTDIndividual) {
+      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
+    } else {
+      controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(2024).url
+    }
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -112,6 +127,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getTitle(mtdUserRole)),
                   elementTextByID("recent-activity-card-heading-0")(YourTasksViewMessages.annualSubmissionLinkText),
+                  elementAttributeBySelector("#recent-activity-card-heading-link-0", "href")(getTaxYearSummaryLink(mtdUserRole)),
                   elementTextByID("recent-activity-card-content-0")(YourTasksViewMessages.annualSubmissionContent),
                   elementTextByID("recent-activity-hint-0")(YourTasksViewMessages.annualDateContent),
                 )
@@ -125,6 +141,21 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getTitle(mtdUserRole)),
                   elementTextByID("recent-activity-card-heading-0")(YourTasksViewMessages.quarterlySubmissionLinkText),
+                  elementAttributeBySelector("#recent-activity-card-heading-link-0", "href")(getTaxYearSummaryLink(mtdUserRole)),
+                  elementTextByID("recent-activity-card-content-0")(YourTasksViewMessages.quarterlySubmissionContent),
+                  elementTextByID("recent-activity-hint-0")(YourTasksViewMessages.quarterlyDateContent)
+                )
+              }
+
+              "the user has submitted a quarterly update within 90 days and the income source is reporting for calendar periods" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlySubmissionCalendar, mtdUserRole = mtdUserRole) {
+                enable(NewHomePage, RecentActivity)
+                val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, getTitle(mtdUserRole)),
+                  elementTextByID("recent-activity-card-heading-0")(YourTasksViewMessages.quarterlySubmissionLinkText),
+                  elementAttributeBySelector("#recent-activity-card-heading-link-0", "href")(getTaxYearSummaryLink(mtdUserRole)),
                   elementTextByID("recent-activity-card-content-0")(YourTasksViewMessages.quarterlySubmissionContent),
                   elementTextByID("recent-activity-hint-0")(YourTasksViewMessages.quarterlyDateContent)
                 )
@@ -138,6 +169,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getTitle(mtdUserRole)),
                   elementTextByID("recent-activity-card-heading-0")(YourTasksViewMessages.annualSubmissionLinkText),
+                  elementAttributeBySelector("#recent-activity-card-heading-link-0", "href")(getTaxYearSummaryLink(mtdUserRole)),
                   elementTextByID("recent-activity-card-content-0")(YourTasksViewMessages.annualSubmissionContent),
                   elementTextByID("recent-activity-hint-0")(YourTasksViewMessages.annualDateContent),
                   elementTextByID("recent-activity-card-heading-1")(YourTasksViewMessages.quarterlySubmissionLinkText),
@@ -217,7 +249,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
     GroupedObligationsModel(
       identification = "testId",
       obligations = List(
-        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", Some(currentDate.minusDays(91)), "testPeriodKey", StatusFulfilled)
+        SingleObligationModel(taxYearStartDate, taxYearEndDate, currentDate, "Quarterly", Some(currentDate.minusDays(91)), "testPeriodKey", StatusFulfilled)
       ))
   ))
 
@@ -225,7 +257,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
     GroupedObligationsModel(
       identification = "testId",
       obligations = List(
-        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Crystallisation", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled)
+        SingleObligationModel(taxYearStartDate, taxYearEndDate, currentDate, "Crystallisation", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled)
       ))
   ))
 
@@ -233,7 +265,15 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
     GroupedObligationsModel(
       identification = "testId",
       obligations = List(
-        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled)
+        SingleObligationModel(taxYearStartDate, taxYearEndDate, currentDate, "Quarterly", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled)
+      ))
+  ))
+
+  private val obligationsWithRecentQuarterlySubmissionCalendar: ObligationsModel = ObligationsModel(Seq(
+    GroupedObligationsModel(
+      identification = "testId",
+      obligations = List(
+        SingleObligationModel(calendarStartDate, calendarEndDate, currentDate, "Quarterly", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled)
       ))
   ))
 
@@ -241,15 +281,15 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
     GroupedObligationsModel(
       identification = "testId",
       obligations = List(
-        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", Some(currentDate.minusDays(91)), "testPeriodKey", StatusFulfilled),
-        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", Some(currentDate.minusDays(60)), "testPeriodKey", StatusFulfilled),
-        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Quarterly", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled)
+        SingleObligationModel(taxYearStartDate, taxYearEndDate, currentDate, "Quarterly", Some(currentDate.minusDays(91)), "testPeriodKey", StatusFulfilled),
+        SingleObligationModel(taxYearStartDate, taxYearEndDate, currentDate, "Quarterly", Some(currentDate.minusDays(60)), "testPeriodKey", StatusFulfilled),
+        SingleObligationModel(taxYearStartDate, taxYearEndDate, currentDate, "Quarterly", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled)
       )),
     GroupedObligationsModel(
       identification = "testId",
       obligations = List(
-        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Crystallisation", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled),
-        SingleObligationModel(currentDate, currentDate.plusDays(1), currentDate, "Crystallisation", Some(currentDate.minusDays(60)), "testPeriodKey", StatusFulfilled)
+        SingleObligationModel(taxYearStartDate, taxYearEndDate, currentDate, "Crystallisation", Some(currentDate.minusDays(30)), "testPeriodKey", StatusFulfilled),
+        SingleObligationModel(taxYearStartDate, taxYearEndDate, currentDate, "Crystallisation", Some(currentDate.minusDays(60)), "testPeriodKey", StatusFulfilled)
       ))
   ))
 }
