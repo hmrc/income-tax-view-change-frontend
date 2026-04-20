@@ -27,12 +27,12 @@ import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
 import models.admin.{DisplayBusinessStartDate, FeatureSwitch}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.viewmodels.*
 import play.api.cache.AsyncCacheApi
-import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants.{testStartDate => _, _}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import testConstants.BaseTestConstants.*
+import testConstants.BusinessDetailsTestConstants.*
+import testConstants.PropertyDetailsTestConstants.{testStartDate as _, *}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 import testUtils.TestSupport
 
 import scala.util.Success
@@ -173,8 +173,6 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
   "The IncomeSourceDetailsService.getViewIncomeSourceViewModel method" when {
     "a user has a uk property and a sole trader business" should {
       "return a ViewIncomeSourcesViewModel with a sole trader business and uk property" in {
-
-        enable(DisplayBusinessStartDate)
 
         val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome, true)
 
