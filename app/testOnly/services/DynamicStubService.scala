@@ -87,5 +87,9 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     }
   }
 
+  def overwriteEffectiveDateOfPaymentUrl()(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+    Logger("application").debug("Overwriting effectiveDateOfPayment the via dynamic stub")
+    dynamicStubConnector.overwriteEffectiveDateOfPayment()
+  }
 
 }
