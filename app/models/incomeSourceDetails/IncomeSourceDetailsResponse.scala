@@ -89,7 +89,7 @@ case class IncomeSourceDetailsModel(
 
   val hasPropertyIncome: Boolean = properties.nonEmpty
   val hasBusinessIncome: Boolean = businesses.nonEmpty
-  def hasAnyIncomeSources: Boolean = hasBusinessIncome || hasPropertyIncome
+  val hasAnyIncomeSources: Boolean = hasBusinessIncome || hasPropertyIncome
   val hasOngoingBusinessOrPropertyIncome: Boolean = businesses.exists(businessDetailsModel => businessDetailsModel.cessation.forall(_.date.isEmpty)) ||
     properties.exists(propertyDetailsModel => propertyDetailsModel.cessation.forall(_.date.isEmpty))
 
