@@ -21,13 +21,13 @@ import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.RecentActivity
+import models.admin.{PaymentHistoryRefunds, RecentActivity}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService}
+import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService}
 import services.newHomePage.RecentActivityService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,6 +39,7 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
                                          val authActions: AuthActions,
                                          recentActivityService: RecentActivityService,
                                          val ITSAStatusService: ITSAStatusService,
+                                         val paymentHistoryService: PaymentHistoryService,
                                          val dateService: DateServiceInterface)
                                         (implicit val ec: ExecutionContext,
                                          mcc: MessagesControllerComponents,
@@ -65,9 +66,16 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
         case obligations: ObligationsModel => obligations
         case _ => ObligationsModel(Nil)
       }
+
+      repaymentHistoryData <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds)).map {
+        case Right(repaymentHistory) => models.repaymentHistory.RepaymentHistoryModel(repaymentHistory)
+        case Left(value) => models.repaymentHistory.RepaymentHistoryModel(Nil)
+      }
+
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       recentSubmissionActivities = recentActivityService.getRecentSubmissionActivity(fulfilledObligations, currentItsaStatus)
-      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities)
+      recentRefunds = recentActivityService.getRecentRefundActivity(repaymentHistoryData, dateService)
+      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentRefunds)
     } yield {
       Ok(newHomeRecentActivityView(
         origin,

@@ -274,6 +274,10 @@ new.home.recentActivity.submissions.quarterly.link.text         = View your tax 
 new.home.recentActivity.submissions.quarterly.content.text      = You submitted a quarterly update.
 new.home.recentActivity.submissions.quarterly.date.content.text = Sent {0}
 
+new.home.recentActivity.recentRefund.link.text                 = View refund history
+new.home.recentActivity.recentRefund.content.text              = HMRC has paid your {0} refund.
+new.home.recentActivity.recentRefund.date.content.text         = Paid {0}
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed
