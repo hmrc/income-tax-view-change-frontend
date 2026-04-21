@@ -206,7 +206,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                     "addressLine1" -> JsBoolean(true),
                     "addressLine2" -> JsBoolean(true)
                   )
-                )
+                ),
+                "showOrganisationName" -> JsBoolean(false)
               )
             ),
             "phaseFeedbackLink" -> JsString(appConfig.itvcFrontendEnvironment + feedbackUrl),
