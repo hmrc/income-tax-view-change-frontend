@@ -41,7 +41,20 @@
 
     @p(){
         @messages("cannotUpdateReportingObligations.p2")
-        @link(link = reportingObligationsURL, messageKey = messages("cannotUpdateReportingObligations.link"), id = Some("your-reporting-obligations-link"))
-        @messages("cannotUpdateReportingObligations.p3")
+        @if(messages.lang.code == "cy") {
+            @link(
+                link = reportingObligationsURL,
+                messageKey = messages("cannotUpdateReportingObligations.link"),
+                id = Some("your-reporting-obligations-link"),
+                outerMessage = messages("cannotUpdateReportingObligations.p3")
+            )
+        } else {
+            @link(
+                link = reportingObligationsURL,
+                messageKey = messages("cannotUpdateReportingObligations.link"),
+                id = Some("your-reporting-obligations-link")
+            )
+            @messages("cannotUpdateReportingObligations.p3")
+        }
     }
 }

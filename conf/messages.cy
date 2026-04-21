@@ -86,7 +86,7 @@ agent-unauthorised.note.b1                                      = taliadau, cred
 agent-unauthorised.note.b2                                      = Ffurflenni Treth
 agent-unauthorised.note.b3                                      = y ffioedd sy’n ddyledus nesaf
 agent-unauthorised.note.b4                                      = cosbau ac apeliadau
-agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK.
+agent-unauthorised.link                                         = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK
 
 ## Rebrand Service Navigation
 pta.navigation.messages = Negeseuon
@@ -1373,8 +1373,8 @@ upliftFailure.bullet.3                                          = nid oeddem yn 
 cannotUpdateReportingObligations.title                          = Mae’n ddrwg gennym – mae problem gyda’r gwasanaeth
 cannotUpdateReportingObligations.p1                             = Nid oeddem yn gallu newid eich ymrwymiadau o ran adrodd ar gyfer un neu fwy o flynyddoedd treth.
 cannotUpdateReportingObligations.p2                             = Gwiriwch pa flynyddoedd treth sydd wedi eu diweddaru neu rhowch gynnig arall arni ar dudalen
-cannotUpdateReportingObligations.link                           = eich ymrwymiadau o ran adrodd.
-cannotUpdateReportingObligations.p3                             =
+cannotUpdateReportingObligations.link                           = eich ymrwymiadau o ran adrodd
+cannotUpdateReportingObligations.p3                             = .
 
 ## Payment History Page ##
 paymentHistory.heading                                          = Hanes taliadau
@@ -3543,7 +3543,7 @@ triggered-migration.check-hmrc-records.cessation-banner.link         = eich busn
 
 triggered-migration.check-hmrc-records.cessation-section.heading     = Eich busnesau sydd wedi dod i ben
 triggered-migration.check-hmrc-records.cessation-section.text        = Mae un neu ragor o fusnesau wedi dod i ben.
-triggered-migration.check-hmrc-records.cessation-section.text-link   = Gweld eich holl fusnesau sydd wedi dod i ben.
+triggered-migration.check-hmrc-records.cessation-section.text-link   = Gweld eich holl fusnesau sydd wedi dod i ben
 
 triggered-migration.check-hmrc-records.heading                       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
 triggered-migration.check-hmrc-records.title                         = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
