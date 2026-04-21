@@ -17,24 +17,28 @@
 package models.paymentAllocationCharges
 
 import exceptions.MissingFieldException
-import implicits.ImplicitCurrencyFormatter._
+import implicits.ImplicitCurrencyFormatter.*
 import models.financialDetails.DocumentDetail
 import models.paymentAllocations.AllocationDetail
 
 import java.time.LocalDate
 
 case class AllocationDetailWithClearingDate(allocationDetail: Option[AllocationDetail], clearingDate: Option[LocalDate]) {
+
   def allocationDetailActual: AllocationDetail = allocationDetail.getOrElse(throw MissingFieldException("Payment Allocation Detail"))
+
   def clearingDateActual: LocalDate = clearingDate.getOrElse(throw MissingFieldException("Payment Clearing Date"))
 
 }
 
 case class LatePaymentInterestPaymentAllocationDetails(documentDetail: DocumentDetail, amount: BigDecimal)
 
-case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDetailsWithDocumentDetailsModel,
-                                      originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] = Seq(),
-                                      latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
-                                      isLpiPayment: Boolean = false) {
+case class PaymentAllocationViewModel(
+                                       paymentAllocationChargeModel: FinancialDetailsWithDocumentDetailsModel,
+                                       originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] = Seq(),
+                                       latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
+                                       isLpiPayment: Boolean = false
+                                     ) {
 
   val outstandingAmount: Option[BigDecimal] = paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
   val dueDate: Option[LocalDate] = paymentAllocationChargeModel.financialDetails.headOption.flatMap(_.items.flatMap(_.headOption.flatMap(_.dueDate)))
@@ -56,7 +60,6 @@ case class PaymentAllocationViewModel(paymentAllocationChargeModel: FinancialDet
   def showPaymentAllocationsTable(): Boolean =
     !(paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) &&
       paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
-
 }
 
 case class PaymentAllocationError(status: Option[Int] = None)

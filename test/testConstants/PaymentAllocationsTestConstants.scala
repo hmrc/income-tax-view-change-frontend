@@ -312,16 +312,16 @@ object PaymentAllocationsTestConstants {
       Some(LocalDate.parse("2019-05-27")),
       Some("reference"),
       Seq(
-        AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
-        AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
+        AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1")),
+        AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))
       )
     )
 
   val testValidLpiPaymentAllocationsModel: PaymentAllocations = PaymentAllocations(
     Some(110.10), Some("Payment by Card"), Some(LocalDate.parse("2019-05-27")), Some("reference"),
     Seq(
-      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
-      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
+      AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), None, Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.10), Some(5.50), Some("latePaymentInterestId")),
+      AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), None, Some(ITSA_NIC4_INTEREST_GB), Some("SA Late Payment Interest"), Some(10.90), Some(5.90), Some("latePaymentInterestId"))
     )
   )
 
@@ -348,10 +348,10 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationViewModel: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), None, Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         Some(LocalDate.parse("2019-05-27"))),
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), None, Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
         Some(LocalDate.parse("2019-05-27"))
       )
     ))
@@ -359,10 +359,10 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationViewModelNoOutstandingAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModelNoOutstandingAmount,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), None, Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         Some(LocalDate.parse("2019-05-27"))),
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), None, Some("NIC4 Wales"), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
         Some(LocalDate.parse("2019-05-27"))
       )
     ))
@@ -383,10 +383,10 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationViewModelWithCreditZeroOutstanding: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsWithCreditZeroOutstanding,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         Some(LocalDate.parse("2021-01-31"))),
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
+        Some(AllocationDetail(Some("1040000873"), Some(LocalDate.parse("2019-07-28")), Some(LocalDate.parse("2019-09-28")), None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.90), Some(5.90), Some("chargeReference2"))),
         Some(LocalDate.parse("2021-01-31"))
       )
     ))
@@ -394,14 +394,14 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationViewModelWithNoClearingAmount: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), Some(LocalDate.parse("2019-08-27")), None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         None)
     ))
 
   val paymentAllocationViewModelWithNoTaxPeriodEndDate: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModel,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
+        Some(AllocationDetail(Some("1040000872"), Some(LocalDate.parse("2019-06-27")), None, None, Some(NIC4_WALES), Some("SA Payment on Account 1"), Some(10.10), Some(5.50), Some("chargeReference1"))),
         Some(LocalDate.parse("2021-01-31"))
       )
     ))
@@ -409,7 +409,7 @@ object PaymentAllocationsTestConstants {
   val paymentAllocationViewModelHmrcAdjustment: PaymentAllocationViewModel = PaymentAllocationViewModel(financialDetailsHmrcAdjustment,
     Seq(
       AllocationDetailWithClearingDate(
-        Some(AllocationDetail(Some("chargeReference3"), Some(LocalDate.parse("2021-04-06")), Some(LocalDate.parse("2022-04-05")), Some("Test"), Some("ITSA Misc Charge"), Some(300.00), Some(300.00), Some("chargeReference3"))),
+        Some(AllocationDetail(Some("chargeReference3"), Some(LocalDate.parse("2021-04-06")), Some(LocalDate.parse("2022-04-05")), None, Some("Test"), Some("ITSA Misc Charge"), Some(300.00), Some(300.00), Some("chargeReference3"))),
         Some(LocalDate.parse("2021-01-31")))
     ))
 

@@ -23,6 +23,7 @@ import auth.authV2.AuthActions
 import config.featureswitch.*
 import config.*
 import controllers.agent.sessionUtils.SessionKeys
+import controllers.newHomePage.routes
 import enums.MTDSupportingAgent
 import models.admin.*
 import models.financialDetails.*
@@ -310,19 +311,11 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   private def handleYourTasks(@unused origin: Option[String] = None, isAgent: Boolean)
                              (implicit  @unused user: MtdItUser[_]): Future[Result] = {
     if(isAgent){
-      Future.successful(Redirect(routes.HandleYourTasksController.showAgent()))
+      Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
     }else {
-     Future.successful(Redirect(routes.HandleYourTasksController.show()))
+     Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
     }
   }
-
-    def handleRecentActivity(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        if(isEnabled(RecentActivity))
-          Future.successful(Ok(newHomeRecentActivityView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand)))
-        else
-          handleYourTasks(origin, isAgent)
-    }
 
   def handleOverview(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user => {
@@ -348,10 +341,9 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     }
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
+  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.newHomePage.routes.RecentActivityController.show(isAgent, origin).url
   def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
   def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
-
 
   private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {
 

@@ -264,6 +264,16 @@ home.help.link.taxSupport.getHelp                               = Get help if yo
 ## Recent Activity Tab
 new.home.navigation.tabs.recentActivity                         = Recent activity
 
+new.home.recentActivity.noActivity                              = You have no recent activity.
+
+new.home.recentActivity.submissions.annual.link.text            = View {0} to {1} tax year summary
+new.home.recentActivity.submissions.annual.content.text         = You made an annual tax return submission.
+new.home.recentActivity.submissions.annual.date.content.text    = Sent {0}
+
+new.home.recentActivity.submissions.quarterly.link.text         = View your tax year summary
+new.home.recentActivity.submissions.quarterly.content.text      = You submitted a quarterly update.
+new.home.recentActivity.submissions.quarterly.date.content.text = Sent {0}
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed
@@ -1169,7 +1179,7 @@ chargeSummary.lpi.paymentsOnAccount.textOne                        = Late paymen
 chargeSummary.lpi.paymentsOnAccount.linkText                       = Bank of England base rate (opens in new tab)
 chargeSummary.lpi.paymentsOnAccount.textTwo                        = plus 2.5%.
 chargeSummary.lpi.paymentsOnAccount.p3                             = See guidance on the
-chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.paymentsOnAccount.p3LinkText                     = interest rates set by HMRC (opens in new tab)
 
 chargeSummary.poa1ExtraAmountInterest.p1                           = You owe HMRC interest because your tax return shows that your adjusted first payment on account was too low.
 chargeSummary.poa1ExtraAmountInterest.p2                           = HMRC applies the interest to the extra amount — the difference between your adjusted payment on account and what you actually owe.
@@ -1189,7 +1199,7 @@ chargeSummary.lpi.penalties.textOne                        = Late payment intere
 chargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
 chargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
 chargeSummary.lpi.penalties.p3                             = See guidance on the
-chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab)
 
 chargeSummary.POA1Credit.p1                                        = HMRC has added a credit to your first payment on account because your tax return shows that your first payment on account was too high.
 credit-and-refund.row.POA1RR-credit                         = credit from first payment on account -
@@ -1208,14 +1218,14 @@ chargeSummary.definition.balancingcharge.p2                        = You’ll al
 chargeSummary.definition.hmrcadjustment                            = HMRC has added this charge after an adjustment to your tax return.
 
 chargeSummary.firstLatePaymentPenalty.p = You have received this penalty because you are late paying your Income Tax.
-chargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated.
+chargeSummary.firstLatePaymentPenalty.link = View how your penalty was calculated
 
 chargeSummary.lateSubmissionPenalty.penaltyPoints     = You will get a late submission penalty point every time you send a submission after the deadline. A submission can be a quarterly update or annual tax return.
 chargeSummary.lateSubmissionPenalty.fourPoints        = If you reach 4 points, you’ll have to pay a £200 penalty.
 chargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
 chargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
 chargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
-chargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
+chargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal
 
 chargeSummary.paymentBreakdown.heading   						   = Payment breakdown
 chargeSummary.paymentBreakdown.incomeTax   						   = Income Tax
@@ -1307,7 +1317,7 @@ chargeSummary.lpi.balancingCharge.textOne                          = Late paymen
 chargeSummary.lpi.balancingCharge.linkText                         = Bank of England base rate (opens in new tab)
 chargeSummary.lpi.balancingCharge.textTwo                          = plus 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = See guidance on the
-chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.balancingCharge.p3LinkText                       = interest rates set by HMRC (opens in new tab)
 chargeSummary.reviewAndReconcilePoa.p1                             = HMRC has created this charge because your tax return shows that your adjusted
 chargeSummary.reviewAndReconcilePoa1.linkText                      = first payment on account
 chargeSummary.reviewAndReconcilePoa2.linkText                      = second payment on account
@@ -1315,7 +1325,7 @@ chargeSummary.reviewAndReconcilePoa.comma                          =
 chargeSummary.reviewAndReconcilePoa.p2                             = was too low.
 
 chargeSummary.lpi.poaExtraCharge.link                              = See guidance on the
-chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab).
+chargeSummary.lpi.poaExtraCharge.linkText                          = interest rates set by HMRC (opens in new tab)
 
 chargeSummary.paymentAllocations.poa1.incomeTax                    = Payment allocated to Income Tax for first payment on account
 chargeSummary.paymentAllocations.poa1.nic4                         = Payment allocated to Class 4 National Insurance for first payment on account
@@ -1450,6 +1460,7 @@ paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Late payment i
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Late payment interest for second payment on account
 paymentAllocation.paymentAllocations.balancingCharge.text       = Late payment interest on balancing payment
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustment
+paymentAllocation.paymentAllocations.onAccount.table.description.poa = No Data
 
 
 ##Tax Years Overview Submissions Tab##
@@ -1690,7 +1701,7 @@ add-business-trade.form.error.invalid       = The business trade can only includ
 add-business-trade.form.error.same-name     = Trade and business name cannot be the same
 
 ## Is the new address in the UK page
-add-business-is.the.new.address.in.the.uk.heading   = Is the new address in the UK
+add-business-is.the.new.address.in.the.uk.heading   = Is the new address in the UK?
 add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading  = Is the address of your sole trader business in the UK?
 add-business-is.the.new.address.in.the.uk.error    = Select yes if the new address is in the UK
 add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error    = Select yes if your sole trader business is in the UK
@@ -2768,8 +2779,6 @@ optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = 
 optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = This could be because:
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = HMRC lowered the income threshold for it
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = you reported an increase in your qualifying income in a tax return
-optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = You can check the threshold for qualifying income in the
-optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Your reporting obligations in the future
 optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = You are opted out from next tax year onwards, but you could be required to use Making Tax Digital for Income Tax again in the future if:
@@ -3064,7 +3073,6 @@ optin.completedOptIn.yourRevisedDeadline.inset                  = Your revised d
 optin.completedOptIn.yourRevisedDeadline.h2                     = Your revised deadlines
 optin.completedOptIn.yourRevisedDeadline.p1.a                   = Even if they are not displayed right away on the
 optin.completedOptIn.yourRevisedDeadline.p1.b                   = page, your account has been updated.
-optin.completedOptIn.yourRevisedDeadline.p1.link                = submission deadlines
 
 optin.completedOptIn.yourRevisedDeadline.p2.a                   = You can decide at any time to opt out of reporting quarterly for all your businesses on
 optin.completedOptIn.yourRevisedDeadline.p2.b                   =  page.
@@ -3432,7 +3440,7 @@ yourSelfAssessmentChargeSummary.lateSubmissionPenalty.fourPoints        = If you
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.avoidInFuture     = To avoid receiving late submission penalty points in the future, and the potential for a financial penalty, you need to send your submissions on time.
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText1  = You can
 yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText   = view the details about your penalty
-yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal.
+yourSelfAssessmentChargeSummary.lateSubmissionPenalty.penaltyLinkText2  = and find out how to appeal
 
 yourSelfAssessmentChargeSummary.codingOutBCDMessage                     = This is the remaining tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
 yourSelfAssessmentChargeSummary.codingOutPOAMessage                        = This is the tax you owe for the {0} to {1} tax year. It will be collected in the {2} to {3} tax year through your PAYE tax code.
@@ -3483,7 +3491,7 @@ yourSelfAssessmentChargeSummary.lpi.penalties.textOne                        = L
 yourSelfAssessmentChargeSummary.lpi.penalties.linkText                       = Bank of England base rate (opens in new tab)
 yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                        = plus 2.5%.
 yourSelfAssessmentChargeSummary.lpi.penalties.p3                             = See guidance on the
-yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab).
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                     = interest rates set by HMRC (opens in new tab)
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = First payment on account collected through PAYE tax code
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Second payment on account collected through PAYE tax code
@@ -3507,7 +3515,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption     
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = First late payment penalty
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p                           = You have received this penalty because you are late paying your Income Tax.
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                        = View how your penalty was calculated
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = This balancing payment extra amount was created because of a change you made to your return.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Pay this charge to stop this interest from increasing daily.

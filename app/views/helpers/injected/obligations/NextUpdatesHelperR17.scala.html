@@ -110,10 +110,22 @@
     @if(!isSupportingAgent) {
         @p(id = Some("active-quarterly-tax-year-summary-desc")) {
             @getMessage("quarterly.link.text1")
-            @link(link = taxYearSummaryLink, messageKey = getMessage("quarterly.link.text2"), id = Some("tax-year-summary-link"))
-            @getMessage("quarterly.link.text3")
+        @if(messages.lang.code == "cy") {
+            @link(
+                link = taxYearSummaryLink,
+                messageKey = getMessage("quarterly.link.text2"),
+                id = Some("tax-year-summary-link"),
+                outerMessage = getMessage("quarterly.link.text3")
+            )
+        } else {
+            @link(
+                link = taxYearSummaryLink,
+                messageKey = getMessage("quarterly.link.text2"),
+                id = Some("tax-year-summary-link")
+            )@getMessage("quarterly.link.text3")
         }
     }
+}
 
     @h3(getMessage("quarterly.subheading2"), optId = Some("active-quarterly-return-due-heading"))
     @p(id = Some("active-quarterly-return-due-desc")) {

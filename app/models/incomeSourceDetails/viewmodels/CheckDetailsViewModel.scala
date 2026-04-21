@@ -36,17 +36,13 @@ case class CheckBusinessDetailsViewModel(
                                           businessAddressLine4: Option[String],
                                           businessPostalCode: Option[String],
                                           businessCountryCode: Option[String],
+                                          businessCountryName: Option[String],
                                           addressId: Option[String],
                                           isAddingNewAddress: Boolean = false,
                                           isNoAddressOnFile: Boolean = false
                                         ) extends CheckDetailsViewModel {
 
   override val incomeSourceType: IncomeSourceType = SelfEmployment
-
-  def countryName: Option[String] = businessCountryCode match {
-    case Some("GB") | None => Some("United Kingdom")
-    case Some(code)        => Some(code)
-  }
 
   def isAddressInUK: Boolean = businessCountryCode.contains("GB")
 

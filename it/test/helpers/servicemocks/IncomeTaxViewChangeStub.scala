@@ -124,9 +124,13 @@ object  IncomeTaxViewChangeStub { // scalastyle:off number.of.methods
   //NextUpdates Stubs
   //=====================
   def nextUpdatesUrl(nino: String): String = s"/income-tax-view-change/$nino/open-obligations"
+  def nextUpdatesFulfilledUrl(nino: String): String = s"/income-tax-view-change/$nino/fulfilled-obligations"
 
   def stubGetNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
     WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
+
+  def stubGetFulfilledNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
+    WiremockHelper.stubGet(nextUpdatesFulfilledUrl(nino), Status.OK, Json.toJson(deadlines).toString())
 
   def stubGetNextUpdatesError(nino: String): Unit =
     WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")

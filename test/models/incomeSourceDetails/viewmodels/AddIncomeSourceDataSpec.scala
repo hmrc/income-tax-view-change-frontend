@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, SensitiveAddIncomeSourceData}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country, SensitiveAddIncomeSourceData}
 import testUtils.UnitSpec
 
 import java.time.LocalDate
@@ -33,7 +33,7 @@ class AddIncomeSourceDataSpec extends UnitSpec{
         accountingPeriodStartDate = Some(LocalDate.of(2020, 4, 6)),
         accountingPeriodEndDate = Some(LocalDate.of(2021, 4, 5)),
         incomeSourceId = Some("abc-123"),
-        address = Some(Address(Seq("123 Test Street", "Testville"), Some("AB1 2CD"))),
+        address = Some(Address(Seq("123 Test Street", "Testville"), Some("AB1 2CD"), Some(Country(Some("GB"), Some("United Kingdom"))))),
         countryCode = Some("GB"),
         changeReportingFrequency = Some(true),
         reportingMethodTaxYear1 = Some("Quarterly"),

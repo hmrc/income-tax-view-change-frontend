@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.newHomePage
 
+import controllers.ControllerISpecHelper
 import enums.ChargeType.ITSA_NI
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.WiremockHelper
@@ -32,6 +33,7 @@ import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino, testYear}
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import testConstants.NextUpdatesIntegrationTestConstants.currentDate
+
 import java.time.LocalDate
 
 class HandleYourTasksControllerISpec extends ControllerISpecHelper {

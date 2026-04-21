@@ -20,10 +20,10 @@ import config.featureswitch.FeatureSwitching
 import mocks.MockHttpV2
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
-import models.incomeSourceDetails.{Address, BusinessAddressModel}
+import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import org.scalactic.Fail
 import play.api.http.Status.{ACCEPTED, OK}
-import play.api.libs.json._
+import play.api.libs.json.*
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
@@ -31,7 +31,7 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
 
   val baseUrl: String = appConfig.addressLookupService
 
-  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA")))
+  val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"), Some(Country(Some("UK"), Some("United Kingdom")))))
 
   object TestAddressLookupConnector extends AddressLookupConnector(appConfig, mockHttpClientV2, messagesApi)
 

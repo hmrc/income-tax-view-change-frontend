@@ -94,7 +94,7 @@
             }
             @p(id = Some("lpi-poa6"), classes = "govuk-body govuk-!-margin-bottom-8") {
                 @messages("chargeSummary.lpi.paymentsOnAccount.p3")
-                <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>
+                <a class="govuk-link govuk-body" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.paymentsOnAccount.p3LinkText")</a>.
             }
         }
     </div>
@@ -134,7 +134,7 @@
         @p(id = Some("poa2-extra-charge-p2")){@messages("chargeSummary.poa2ExtraAmountInterest.p2")}
         @p(id = Some("poa2-extra-charge-p3")){
             @messages("chargeSummary.poa2ExtraAmountInterest.p3")
-            <a class="govuk-link" rel="noreferrer noopener" target="_blank"  href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText")</a>
+            <a class="govuk-link " rel="noreferrer noopener" target="_blank"  href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.poa2ExtraAmountInterest.p3LinkText")</a>
             @messages("chargeSummary.poa2ExtraAmountInterest.p3AfterLink")
         }
     </div>
@@ -150,8 +150,8 @@
         }
         @p(id = Some("lpi-LSP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
-            }
+            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>.
+        }
     </div>
 }
 
@@ -165,7 +165,7 @@
         }
         @p(id = Some("lpi-LPP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
+            <a class="govuk-link govuk-body" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>.
             }
     </div>
 }
@@ -181,7 +181,7 @@
         }
         @p(id = Some("lpi-bcd3"), classes = "govuk-body govuk-!-margin-bottom-8") {
         @messages("chargeSummary.lpi.balancingCharge.p3")
-        <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>
+        <a class="govuk-link govuk-body" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.balancingCharge.p3LinkText")</a>.
         }
     </div>
 }
@@ -225,11 +225,8 @@
         @messages("chargeSummary.firstLatePaymentPenalty.p")
     }
 
-    @link(
-        id = Some("first-payment-penalty-p2"),
-        link = viewModel.LPPUrl,
-        messageKey = "chargeSummary.firstLatePaymentPenalty.link"
-    )
+    <a id="first-payment-penalty-p2" class="govuk-link govuk-body" href="@{viewModel.LPPUrl}">@messages("chargeSummary.firstLatePaymentPenalty.link")</a>.
+
     <div class="govuk-!-margin-bottom-3"></div>
 }
 
@@ -257,14 +254,14 @@
 
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus) match {
     case (MfaDebitCharge, _)                                                                                => hmrcAdjustmentExplanation
-    case (PoaOneReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
-    case (PoaTwoReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaTwoDebitExplanation
-    case (PoaOneReconciliationDebit, _)                                                    => getPoa1ExtraChargeInterestExplanationContent
-    case (PoaTwoReconciliationDebit, _)                                                    => getPoa2ExtraChargeInterestExplanationContent
-    case (PoaOneDebit | PoaTwoDebit, _) if !viewModel.latePaymentInterestCharge             => paymentOnAccountExplanation
-    case (PoaOneDebit | PoaTwoDebit, _)                                                     => getLpiPoaExplanationContent
-    case (PoaOneReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaOneDebit)
-    case (PoaTwoReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaTwoDebit)
+    case (PoaOneReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge                            => reviewAndReconcilePoaOneDebitExplanation
+    case (PoaTwoReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge                            => reviewAndReconcilePoaTwoDebitExplanation
+    case (PoaOneReconciliationDebit, _)                                                                     => getPoa1ExtraChargeInterestExplanationContent
+    case (PoaTwoReconciliationDebit, _)                                                                     => getPoa2ExtraChargeInterestExplanationContent
+    case (PoaOneDebit | PoaTwoDebit, _) if !viewModel.latePaymentInterestCharge                             => paymentOnAccountExplanation
+    case (PoaOneDebit | PoaTwoDebit, _)                                                                     => getLpiPoaExplanationContent
+    case (PoaOneReconciliationCredit, _)                                                                    => reviewAndReconcilePoaCreditExplanation(PoaOneDebit)
+    case (PoaTwoReconciliationCredit, _)                                                                    => reviewAndReconcilePoaCreditExplanation(PoaTwoDebit)
     case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                                    => balancingChargeExplanation
     case (BalancingCharge, None)                                                                            => getBalancingPaymentsExplanationContent
     case (FirstLatePaymentPenalty, _) if !viewModel.latePaymentInterestCharge                               => firstLatePaymentPenaltyExplanation

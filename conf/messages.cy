@@ -265,6 +265,16 @@ home.help.link.taxSupport.getHelp                               = Cael help os y
 ## Recent Activity Tab
 new.home.navigation.tabs.recentActivity                         = Gweithgarwch diweddar
 
+new.home.recentActivity.noActivity                              = Nid oes gennych unrhyw weithgarwch diweddar.
+
+new.home.recentActivity.submissions.annual.link.text            = Gweld crynodeb o flwyddyn dreth {0} i {1}
+new.home.recentActivity.submissions.annual.content.text         = Gwnaethoch gyflwyniad blynyddol o ran Ffurflen Dreth.
+new.home.recentActivity.submissions.annual.date.content.text    = Anfonwyd ar {0}
+
+new.home.recentActivity.submissions.quarterly.link.text         = Gweld eich crynodeb o’r flwyddyn dreth
+new.home.recentActivity.submissions.quarterly.content.text      = Gwnaethoch gyflwyno diweddariad chwarterol.
+new.home.recentActivity.submissions.quarterly.date.content.text = Anfonwyd ar {0}
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
@@ -373,7 +383,7 @@ tax-year-summary.payments.class2Nic.text                       = Yswiriant Gwlad
 tax-year-summary.payments.codingOut.text                       = Taliad mantoli a gesglir drwy’r cod treth TWE
 tax-year-summary.payments.poa1CodedOut.text                    = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy god treth TWE
 tax-year-summary.payments.poa2CodedOut.text                    = Ail daliad ar gyfrif sy’n cael ei gasglu drwy god treth TWE
-tax-year-summary.noData                                            = Amh
+tax-year-summary.noData                                        = Amh
 tax-year-summary.forecast_tab.insetText                        = Amcangyfrif yw hwn o’ch bil treth ar gyfer y flwyddyn gyfan hyd at 5 Ebrill {0}. Bydd hyn yn cael ei ddiweddaru drwy gydol y flwyddyn wrth i ni gael rhagor o wybodaeth.
 tax-year-summary.forecast_total_title                          = Rhagolwg 6 Ebrill {0} i 5 Ebrill {1}
 tax-year-summary.forecast.tax-due                              = Rhagolwg o swm y dreth Hunanasesiad
@@ -963,8 +973,8 @@ nextUpdates.r17.tab.quarterly.dropdown.text3                       = unrhyw wybo
 nextUpdates.r17.tab.quarterly.dropdown.text4                       = Mae hyn yn cael ei wneud drwy
 nextUpdates.r17.tab.quarterly.dropdown.link.text                   = feddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
 nextUpdates.r17.tab.quarterly.link.text1                           = Er mwyn gweld diweddariadau a gyflwynwyd yn flaenorol, ewch i’r dudalen
-nextUpdates.r17.tab.quarterly.link.text2                           = trosolwg ar gyfer blynyddoedd treth.
-nextUpdates.r17.tab.quarterly.link.text3                           =
+nextUpdates.r17.tab.quarterly.link.text2                           = trosolwg ar gyfer blynyddoedd treth
+nextUpdates.r17.tab.quarterly.link.text3                           = .
 nextUpdates.r17.tab.quarterly.subheading2                          = Ffurflen Dreth i’w chyflwyno
 nextUpdates.r17.tab.quarterly.text3                                = Os ydych wedi cyflwyno diweddariadau chwarterol ar gyfer y flwyddyn dreth, byddwch hefyd yn nodi unrhyw incwm drethadwy arall yn eich Ffurflen Dreth. Yna, bydd angen i chi gyflwyno’ch Ffurflen Dreth gan ddefnyddio
 nextUpdates.r17.tab.quarterly.text4                                = meddalwedd sy’n cydweddu â’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm
@@ -1170,7 +1180,7 @@ chargeSummary.lpi.paymentsOnAccount.textOne                            = Mae llo
 chargeSummary.lpi.paymentsOnAccount.linkText                           = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
 chargeSummary.lpi.paymentsOnAccount.textTwo                            = plws 2.5%.
 chargeSummary.lpi.paymentsOnAccount.p3                                 = Gweler yr arweiniad ynghylch y
-chargeSummary.lpi.paymentsOnAccount.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+chargeSummary.lpi.paymentsOnAccount.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd)
 
 chargeSummary.poa1ExtraAmountInterest.p1                            = Mae arnoch log i CThEF oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif, a gafodd ei addasu, yn rhy isel.
 chargeSummary.poa1ExtraAmountInterest.p2                            = Mae CThEF yn codi’r llog ar y swm ychwanegol — y gwahaniaeth rhwng eich taliad ar gyfrif, a gafodd ei addasu, a’r hyn sydd arnoch mewn gwirionedd.
@@ -1190,7 +1200,7 @@ chargeSummary.lpi.penalties.textOne                            = Mae llog am dal
 chargeSummary.lpi.penalties.linkText                           = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
 chargeSummary.lpi.penalties.textTwo                            = plws 2.5%.
 chargeSummary.lpi.penalties.p3                                 = Gweler yr arweiniad ynghylch y
-chargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+chargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd)
 
 chargeSummary.POA1Credit.p1                                         = Mae CThEF wedi ychwanegu credyd at eich taliad cyntaf ar gyfrif oherwydd bod eich Ffurflen Dreth yn dangos bod eich taliad cyntaf ar gyfrif yn rhy uchel.
 credit-and-refund.row.POA1RR-credit                         = o gredyd o’r taliad cyntaf ar gyfrif - blwyddyn dreth
@@ -1209,7 +1219,7 @@ chargeSummary.definition.balancingcharge.p2                        = Bydd angen 
 chargeSummary.definition.hmrcadjustment                            = Mae CThEF wedi ychwanegu’r tâl hwn ar ôl addasiad i’ch Ffurflen Dreth.
 
 chargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
-chargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb.
+chargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb
 
 chargeSummary.lateSubmissionPenalty.penaltyPoints     = Byddwch yn cael pwynt cosb am gyflwyno’n hwyr pob tro y byddwch yn hwyr wrth gyflwyno. Gall cyflwyniad fod yn ddiweddariad chwarterol neu’n ddatganiad treth blynyddol.
 chargeSummary.lateSubmissionPenalty.fourPoints        = Os byddwch yn cyrraedd 4 o bwyntiau, bydd angen i chi dalu cosb o £200.
@@ -1307,14 +1317,14 @@ chargeSummary.lpi.balancingCharge.textOne                          = Mae llog am
 chargeSummary.lpi.balancingCharge.linkText                         = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
 chargeSummary.lpi.balancingCharge.textTwo                          = plws 2.5%.
 chargeSummary.lpi.balancingCharge.p3                               = Gweler yr arweiniad ynghylch y
-chargeSummary.lpi.balancingCharge.p3LinkText                       = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+chargeSummary.lpi.balancingCharge.p3LinkText                       = cyfraddau llog a bennir gan CThEF (yn agor tab newydd)
 chargeSummary.reviewAndReconcilePoa.p1                                = Mae CThEF wedi creu’r tâl hwn oherwydd bod eich Ffurflen Dreth yn dangos bod eich
 chargeSummary.reviewAndReconcilePoa1.linkText                         = taliad cyntaf ar gyfrif
 chargeSummary.reviewAndReconcilePoa2.linkText                         = ail daliad ar gyfrif
 chargeSummary.reviewAndReconcilePoa.comma                             = ,
 chargeSummary.reviewAndReconcilePoa.p2                                = a gafodd ei addasu, yn rhy isel.
 chargeSummary.lpi.poaExtraCharge.link                                 = Gweler yr arweiniad ynghylch
-chargeSummary.lpi.poaExtraCharge.linkText                             = y cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+chargeSummary.lpi.poaExtraCharge.linkText                             = y cyfraddau llog a bennir gan CThEF (yn agor tab newydd)
 
 chargeSummary.paymentAllocations.poa1.incomeTax                 = Taliad wedi’i ddyrannu i Dreth Incwm ar gyfer y taliad ar gyfrif cyntaf
 chargeSummary.paymentAllocations.poa1.nic4                      = Taliad wedi’i ddyrannu i Yswiriant Gwladol Dosbarth 4 ar gyfer y taliad ar gyfrif cyntaf
@@ -1449,6 +1459,7 @@ paymentAllocation.paymentAllocations.paymentOnAccount1.text     = Llog am dalu�
 paymentAllocation.paymentAllocations.paymentOnAccount2.text     = Llog am dalu’r ail daliad ar gyfrif yn hwyr
 paymentAllocation.paymentAllocations.balancingCharge.text       = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
 paymentAllocation.paymentAllocations.hmrcAdjustment.text        = Addasiad CThEF
+paymentAllocation.paymentAllocations.onAccount.table.description.poa = Amh
 
 
 ## Tax Years Overview Update Tab ##
@@ -1692,7 +1703,7 @@ add-business-trade.form.error.invalid       = Gall masnach y busnes gynnwys llyt
 add-business-trade.form.error.same-name     = Ni all enw’r busnes a’r enw masnachu fod yr un peth
 
 ## Is the new address in the UK page
-add-business-is.the.new.address.in.the.uk.heading   = A yw’r cyfeiriad newydd yn y DU
+add-business-is.the.new.address.in.the.uk.heading   = A yw’r cyfeiriad newydd yn y DU?
 add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading   = A yw cyfeiriad eich busnes unig fasnachwr yn y DU?
 add-business-is.the.new.address.in.the.uk.error    = Dewiswch ‘Iawn’ os yw’r cyfeiriad newydd yn y DU
 add-business-is.the.address.of.your.sole.trader.business.in.the.uk.error    = Dewiswch ‘Iawn’ os yw’ch busnes unig fasnachwr yn y DU
@@ -2762,8 +2773,6 @@ optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = 
 optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = Gallai hyn fod oherwydd y canlynol:
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = gwnaeth CThEF ostwng y trothwy incwm ar gyfer y cynllun Troi Treth yn Ddigidol
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = gwnaethoch roi gwybod am gynnydd yn eich incwm cymhwysol mewn Ffurflen Dreth
-optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = Gallwch wirio’r trothwy ar gyfer incwm cymhwysol yn y
-optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = reporting.frequency.different.obligations.link.text
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Eich ymrwymiadau o ran cyflwyno yn y dyfodol
 optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = Rydych wedi optio allan o’r flwyddyn dreth nesaf ymlaen, ond gallai fod yn ofynnol i chi ddefnyddio’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm eto yn y dyfodol os yw’r canlynol yn wir:
@@ -3053,7 +3062,6 @@ optin.completedOptIn.yourRevisedDeadline.inset              = Bydd eich dyddiada
 optin.completedOptIn.yourRevisedDeadline.h2                 = Eich dyddiadau cau sydd wedi’u haddasu
 optin.completedOptIn.yourRevisedDeadline.p1.a               = Hyd yn oed os nad ydynt yn cael eu harddangos ar unwaith ar y dudalen
 optin.completedOptIn.yourRevisedDeadline.p1.b               = mae’ch cyfrif wedi’i ddiweddaru.
-optin.completedOptIn.yourRevisedDeadline.p1.link            = dyddiadau cau ar gyfer cyflwyno,
 
 optin.completedOptIn.yourRevisedDeadline.p2.a               = Gallwch, ar unrhyw adeg, optio allan o adrodd yn chwarterol ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
 optin.completedOptIn.yourRevisedDeadline.p2.b               =  .
@@ -3095,7 +3103,7 @@ signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.link     = dyddiadau cau ar
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.comma    = ,
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc1.text2    = mae’ch cyfrif wedi’i ddiweddaru.
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text1    = Gallwch, ar unrhyw adeg, optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
-signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.link     = eich ymrwymiadau o ran adrodd.
+signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.link     = eich ymrwymiadau o ran adrodd
 signUp.completedSignUp.cy.yourRevisedDeadlines.desc2.text2    =
 
 signUp.completedSignUp.cy.submitUpdates                       = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
@@ -3133,7 +3141,7 @@ signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.link  = dyddiadau cau ar gy
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.comma = ,
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc1.text2 = mae’ch cyfrif wedi’i ddiweddaru.
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text1 = Gallwch, ar unrhyw adeg, optio allan o’r cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm ar gyfer pob un o’ch busnesau. Gallwch wneud hyn drwy fynd i’r dudalen ynghylch
-signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.link  = eich ymrwymiadau o ran adrodd.
+signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.link  = eich ymrwymiadau o ran adrodd
 signUp.completedSignUp.ny.yourRevisedDeadlines.desc2.text2 =
 
 signUp.completedSignUp.ny.submitUpdates             = Cyflwyno diweddariadau drwy ddefnyddio meddalwedd
@@ -3403,7 +3411,7 @@ yourSelfAssessmentChargeSummary.lpi.penalties.textOne                           
 yourSelfAssessmentChargeSummary.lpi.penalties.linkText                           = gyfradd sylfaenol Banc Lloegr (yn agor tab newydd)
 yourSelfAssessmentChargeSummary.lpi.penalties.textTwo                            = plws 2.5%.
 yourSelfAssessmentChargeSummary.lpi.penalties.p3                                 = Gweler yr arweiniad ynghylch y
-yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd).
+yourSelfAssessmentChargeSummary.lpi.penalties.p3LinkText                         = cyfraddau llog a bennir gan CThEF (yn agor tab newydd)
 
 yourSelfAssessmentChargeSummary.table.daysOverdue                       = {0} i {1}
 yourSelfAssessmentChargeSummary.table.totalInterestToDate               = Cyfanswm y llog ar y tâl hwn
@@ -3492,7 +3500,7 @@ yourSelfAssessmentChargeSummary.chargeHistory.paymentOnAccount.text.caption     
 
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.text.heading                = Cosb gyntaf am dalu’n hwyr
 yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.p = Rydych wedi cael y gosb hon oherwydd eich bod yn hwyr wrth dalu eich Treth Incwm.
-yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb.
+yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfrifwyd eich cosb
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Crëwyd y swm ychwanegol taliad mantoli hwn oherwydd newid a wnaethoch i’ch Ffurflen Dreth.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.

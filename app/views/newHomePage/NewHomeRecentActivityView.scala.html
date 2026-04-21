@@ -17,29 +17,38 @@
 @import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components._
 @import views.html.components.h1WithCaption
 @import views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.NewHomeNavigation
-
+@import models.newHomePage.RecentActivityViewModel
+@import models.incomeSourceDetails.TaxYear
+@import _root_.implicits.ImplicitDateFormatterImpl
 
 @this(
         mainTemplate: unifiedLayout,
         hmrcPageHeading: HmrcPageHeading,
         h1WithCaption: h1WithCaption,
         govukServiceNavigation : GovukServiceNavigation,
-        newHomeNav: NewHomeNavigation
+        newHomeNav: NewHomeNavigation,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h2: h2,
+        p: p
 )
 
 @(origin: Option[String] = None,
         isAgent: Boolean,
         yourTasksUrl: String,
         recentActivityUrl: String,
-        overViewUrl: String,
+        overviewUrl: String,
         helpUrl: String,
-        isGovUkRebrandEnabled: Boolean
+        isGovUkRebrandEnabled: Boolean,
+        recentActivityViewModel: RecentActivityViewModel
 )(
         implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
 )
+
+@import implicitDateFormatter.longDate
 
 @pageHeading = @{
     if (isAgent) {
@@ -74,12 +83,40 @@
         captionId = Some("sub-heading")
     )
 
-
     @user.saUtr.map { utr =>
         <div id="utr-reference-heading" class="form-hint heading-xl-addon">
             @messages("home.unique.taxpayer.reference", utr)
         </div>
     }
 
-    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "recent-activity", isRecentActivityEnabled = true)
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overviewUrl, helpUrl, "recent-activity", isRecentActivityEnabled = true)
+
+    @h2(messages("new.home.navigation.tabs.recentActivity"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("recent-activities-heading"))
+
+    @if(recentActivityViewModel.recentActivityCards.isEmpty) {
+        @p(classes = "govuk-body", id = Some("no-recent-activity-text")) {
+            @messages("new.home.recentActivity.noActivity")
+        }
+    } else {
+        @recentActivityViewModel.recentActivityCards.zipWithIndex.map { case (cardInfo, index) =>
+        <div id="recent-activity-card-@index" class="hmrc-card">
+            <div class="tile-body">
+                <h3 class="hmrc-card__heading" id="recent-activity-card-heading-@index">
+                    <a id="recent-activity-card-heading-link-@index" href=@cardInfo.linkUrl>@getLinkText(cardInfo.linkContentText, cardInfo.cardTaxYear)<span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                </h3>
+                <div class="govuk-body" id="recent-activity-card-content-@index">@messages(cardInfo.contentText)</div>
+                <div class="govuk-hint" id="recent-activity-hint-@index">@messages(cardInfo.dateContentText, cardInfo.cardDate.toLongDate)</div>
+        </div>
+        </div>
+        }
+    }
+}
+
+@getLinkText(linkContentText: String, taxYear: Option[TaxYear]) = @{
+    taxYear match {
+        case None => messages(linkContentText)
+        case Some(cardTaxYear) => {
+            messages(linkContentText, cardTaxYear.startYear.toString, cardTaxYear.endYear.toString)
+        }
+    }
 }

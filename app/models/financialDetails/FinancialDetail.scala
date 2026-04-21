@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import models.financialDetails.FinancialDetail.Types._
+import models.financialDetails.FinancialDetail.Types.*
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -84,19 +84,18 @@ object FinancialDetail {
   implicit val format: Format[FinancialDetail] = Json.format[FinancialDetail]
 
   def getMessageKeyByTypes(mainType: Option[String], chargeType: Option[String]): Option[String] = {
+
     if (MfaDebitUtils.isMFADebitMainType(mainType)) {
       Some("hmrcAdjustment.text")
-    }
-    else {
+    } else {
       for {
         mainTypeValue <- mainType
         chargeTypeValue <- chargeType
         chargeTypeParts <- supportedCTypePartsByMainType.get(mainTypeValue)
-        if chargeTypeParts.exists{
+        if chargeTypeParts.exists {
           supportedCTypePart => {
             chargeTypeValue.startsWith(supportedCTypePart)
           }
-
         }
         mainTypeKey <- getMessageKeyForMainType(mainType)
         chargeTypeKey <- getMessageKeyForChargeType(chargeType)
@@ -104,29 +103,38 @@ object FinancialDetail {
     }
   }
 
-  def getMessageKeyForMainType(mainType: Option[String]): Option[String] = mainType collect {
-    case MTypePOA1 => "poa1"
-    case MTypePOA2 => "poa2"
-    case MTypeBCD => "bcd"
-  }
+  def getMessageKeyForMainType(mainType: Option[String]): Option[String] =
+    mainType
+      .collect {
+        case MTypePOA1 => "poa1"
+        case MTypePOA2 => "poa2"
+        case MTypeBCD => "bcd"
+        case MainTypeOnAccount => "onAccount"
+      }
 
-  def getMessageKeyForChargeType(chargeType: Option[String]): Option[String] = chargeType collect {
-    case ct if ct.startsWith(CTypePartNIC4) => "nic4"
-    case ct if ct.startsWith(CTypePartITSA) => "incomeTax"
-    case ct if ct.startsWith(CTypePartVoluntaryNIC2) => "vcnic2"
-    case ct if ct.startsWith(CTypePartNIC2) => "nic2"
-    case ct if ct.startsWith(CTypeCGT) => "cgt"
-    case ct if ct.startsWith(CTypeSL) => "sl"
-    case ct if ct.startsWith(CTypeAccepted) => "accepted"
-    case ct if ct.startsWith(CTypeCancelled) => "cancelled"
-    case ct if ct.startsWith(CTypeInvalid) => "invalid"
-  }
+  def getMessageKeyForChargeType(chargeType: Option[String]): Option[String] =
+    chargeType.collect {
+      case ct if ct.startsWith(subChargePOAPaymentOnAccount) => "table.description.poa"
+      case ct if ct.startsWith(CTypePartNIC4) => "nic4"
+      case ct if ct.startsWith(CTypePartITSA) => "incomeTax"
+      case ct if ct.startsWith(CTypePartVoluntaryNIC2) => "vcnic2"
+      case ct if ct.startsWith(CTypePartNIC2) => "nic2"
+      case ct if ct.startsWith(CTypeCGT) => "cgt"
+      case ct if ct.startsWith(CTypeSL) => "sl"
+      case ct if ct.startsWith(CTypeAccepted) => "accepted"
+      case ct if ct.startsWith(CTypeCancelled) => "cancelled"
+      case ct if ct.startsWith(CTypeInvalid) => "invalid"
+    }
 
   object Types {
+
+    // Main Charge Types
     val MTypePOA1 = "SA Payment on Account 1"
     val MTypePOA2 = "SA Payment on Account 2"
     val MTypeBCD = "SA Balancing Charge"
+    val MainTypeOnAccount = "On Account"
 
+    // Sub Charge Types / Partials
     val CTypePartITSA = "ITSA"
     val CTypePartNIC4 = "NIC4"
     val CTypePartVoluntaryNIC2 = "Voluntary NIC2"
@@ -137,15 +145,32 @@ object FinancialDetail {
     val CTypeAccepted = "Balancing for payment collected through PAYE tax code"
     val CTypeInvalid = ""
 
+    val subChargePOAPaymentOnAccount = "ITSA POA(Payment On Account)"
+
     val supportedPOA1CTypeParts, supportedPOA2CTypeParts = Set(CTypePartITSA, CTypePartNIC4)
 
-    val supportedBCDCTypeParts = Set(CTypePartITSA, CTypePartNIC4, CTypePartNIC2, CTypePartVoluntaryNIC2, CTypeCGT,
-      CTypeSL, CTypeCancelled, CTypeAccepted, CTypeInvalid)
+    val supportedBCDCTypeParts =
+      Set(
+        CTypePartITSA,
+        CTypePartNIC4,
+        CTypePartNIC2,
+        CTypePartVoluntaryNIC2,
+        CTypeCGT,
+        CTypeSL,
+        CTypeCancelled,
+        CTypeAccepted,
+        CTypeInvalid
+      )
 
-    val supportedCTypePartsByMainType = Map(
-      MTypePOA1 -> supportedPOA1CTypeParts,
-      MTypePOA2 -> supportedPOA2CTypeParts,
-      MTypeBCD -> supportedBCDCTypeParts
-    )
+    val subChargeOnAccount =
+      Set(subChargePOAPaymentOnAccount)
+
+    val supportedCTypePartsByMainType =
+      Map(
+        MTypePOA1 -> supportedPOA1CTypeParts,
+        MTypePOA2 -> supportedPOA2CTypeParts,
+        MTypeBCD -> supportedBCDCTypeParts,
+        MainTypeOnAccount -> subChargeOnAccount
+      )
   }
 }

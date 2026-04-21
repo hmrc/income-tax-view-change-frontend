@@ -23,13 +23,15 @@ import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
 
 case class Address(
                     lines:    Seq[String],
-                    postcode: Option[String]
+                    postcode: Option[String],
+                    country: Option[Country]
                   ) {
 
   def encrypted: SensitiveAddress =
     SensitiveAddress(
       lines     .map(SensitiveString.apply),
-      postcode  .map(SensitiveString.apply)
+      postcode  .map(SensitiveString.apply),
+      country   .map { case Country(code, name) => SensitiveCountry(code.map(SensitiveString.apply), name.map(SensitiveString.apply))}
     )
 
 
@@ -43,13 +45,15 @@ object Address {
 
 case class SensitiveAddress(
                              lines:    Seq[SensitiveString],
-                             postcode: Option[SensitiveString]
+                             postcode: Option[SensitiveString],
+                             country: Option[SensitiveCountry]
                            ) {
 
   def decrypted: Address =
     Address(
       lines     .map(_.decryptedValue),
-      postcode  .map(_.decryptedValue)
+      postcode  .map(_.decryptedValue),
+      country   .map(_.decrypted)
     )
 }
 

@@ -28,6 +28,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDetailsConnector,
@@ -73,11 +74,30 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
             latePaymentInterestPaymentAllocationDetails = Some(lpiPaymentAllocationDetails), isLpiPayment = true))).getOrElse(Left(PaymentAllocationError()))
       }
     } else {
-      val paymentAllocationWithClearingDate = paymentAllocations.allocations map { allocation =>
-        AllocationDetailWithClearingDate(Some(allocation), paymentAllocations.transactionDate)
+      financialDetailsService.getAllFinancialDetails.map { financialDetailsWithTaxYear =>
+        val allFinancialDetails = financialDetailsWithTaxYear.collect {
+          case (_, financialDetails: FinancialDetailsModel) => financialDetails.financialDetails
+        }.flatten
+
+        val paymentAllocationWithClearingDate = paymentAllocations.allocations.map { allocation =>
+          val fallbackTaxYear =
+            if (allocation.to.isDefined) {
+              None
+            } else {
+              allFinancialDetails
+                .find { financialDetail =>
+                  financialDetail.mainType == allocation.mainType &&
+                    financialDetail.chargeType == allocation.chargeType
+                }
+                .flatMap(financialDetail => Try(financialDetail.taxYear.toInt).toOption)
+            }
+
+          AllocationDetailWithClearingDate(Some(allocation.copy(fallbackTaxYear = fallbackTaxYear)), paymentAllocations.transactionDate)
+        }
+
+        Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel,
+          paymentAllocationWithClearingDate))
       }
-      Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel,
-        paymentAllocationWithClearingDate)))
     }
   }
 
