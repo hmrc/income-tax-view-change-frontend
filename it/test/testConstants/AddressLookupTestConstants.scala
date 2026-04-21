@@ -185,7 +185,8 @@ object AddressLookupTestConstants {
       |      "mandatoryFields": {
       |       "addressLine1": true,
       |       "addressLine2": true
-      |      }
+      |      },
+      |      "showOrganisationName": false
       |    },
       |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
@@ -266,7 +267,8 @@ object AddressLookupTestConstants {
       |      "mandatoryFields": {
       |       "addressLine1": true,
       |       "addressLine2": true
-      |      }
+      |      },
+      |      "showOrganisationName": false
       |    },
       |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
