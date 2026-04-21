@@ -311,9 +311,9 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
   private def handleYourTasks(@unused origin: Option[String] = None, isAgent: Boolean)
                              (implicit  @unused user: MtdItUser[_]): Future[Result] = {
     if(isAgent){
-      Future.successful(Redirect(controllers.routes.HandleYourTasksController.showAgent()))
+      Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
     }else {
-     Future.successful(Redirect(controllers.routes.HandleYourTasksController.show()))
+     Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
     }
   }
 
@@ -324,13 +324,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         credits <- creditService.getAllCredits
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
         chargeItem = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
-        mandatedOrVoluntary <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandatedOrVoluntary)
       }
       yield {
         Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
-          appConfig.itvcRebrand, mandatedOrVoluntary, isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay)))
+          appConfig.itvcRebrand, isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay)))
       }
     }
   }

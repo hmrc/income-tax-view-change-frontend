@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package services.newHomePage
 
 import auth.MtdItUser
 import config.FrontendAppConfig

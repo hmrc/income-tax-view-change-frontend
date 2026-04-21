@@ -150,8 +150,8 @@
         }
         @p(id = Some("lpi-LSP3"), classes = "govuk-body govuk-!-margin-bottom-8") {
             @messages("chargeSummary.lpi.penalties.p3")
-            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>
-            }
+            <a class="govuk-link" href="@{ExternalUrlHelper.currentLPAndRepaymentInterestRatesUrl}">@messages("chargeSummary.lpi.penalties.p3LinkText")</a>.
+        }
     </div>
 }
 
@@ -254,14 +254,14 @@
 
 @getExplanationContent = @{(viewModel.chargeItem.transactionType, viewModel.chargeItem.codedOutStatus) match {
     case (MfaDebitCharge, _)                                                                                => hmrcAdjustmentExplanation
-    case (PoaOneReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaOneDebitExplanation
-    case (PoaTwoReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge           => reviewAndReconcilePoaTwoDebitExplanation
-    case (PoaOneReconciliationDebit, _)                                                    => getPoa1ExtraChargeInterestExplanationContent
-    case (PoaTwoReconciliationDebit, _)                                                    => getPoa2ExtraChargeInterestExplanationContent
-    case (PoaOneDebit | PoaTwoDebit, _) if !viewModel.latePaymentInterestCharge             => paymentOnAccountExplanation
-    case (PoaOneDebit | PoaTwoDebit, _)                                                     => getLpiPoaExplanationContent
-    case (PoaOneReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaOneDebit)
-    case (PoaTwoReconciliationCredit, _)                                                   => reviewAndReconcilePoaCreditExplanation(PoaTwoDebit)
+    case (PoaOneReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge                            => reviewAndReconcilePoaOneDebitExplanation
+    case (PoaTwoReconciliationDebit, _)  if !viewModel.latePaymentInterestCharge                            => reviewAndReconcilePoaTwoDebitExplanation
+    case (PoaOneReconciliationDebit, _)                                                                     => getPoa1ExtraChargeInterestExplanationContent
+    case (PoaTwoReconciliationDebit, _)                                                                     => getPoa2ExtraChargeInterestExplanationContent
+    case (PoaOneDebit | PoaTwoDebit, _) if !viewModel.latePaymentInterestCharge                             => paymentOnAccountExplanation
+    case (PoaOneDebit | PoaTwoDebit, _)                                                                     => getLpiPoaExplanationContent
+    case (PoaOneReconciliationCredit, _)                                                                    => reviewAndReconcilePoaCreditExplanation(PoaOneDebit)
+    case (PoaTwoReconciliationCredit, _)                                                                    => reviewAndReconcilePoaCreditExplanation(PoaTwoDebit)
     case (BalancingCharge, None) if !viewModel.latePaymentInterestCharge                                    => balancingChargeExplanation
     case (BalancingCharge, None)                                                                            => getBalancingPaymentsExplanationContent
     case (FirstLatePaymentPenalty, _) if !viewModel.latePaymentInterestCharge                               => firstLatePaymentPenaltyExplanation

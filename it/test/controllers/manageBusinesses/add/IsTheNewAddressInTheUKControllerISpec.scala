@@ -47,7 +47,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
     if isAgent then controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(NormalMode).url
     else controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(NormalMode).url
 
-  def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
+  private def testUIJourneySessionData(incomeSourceType: IncomeSourceType): UIJourneySessionData = UIJourneySessionData(
     sessionId = testSessionId,
     journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
     addIncomeSourceData = Some(AddIncomeSourceData(

@@ -238,8 +238,7 @@ new.home.overview.charges.money-in-account                      = Check for mone
 new.home.overview.charges.no-money-in-account                   = Check for money in your account
 new.home.overview.charges.adjust-payments                       = Adjust payments on account
 new.home.overview.deadlines.sub-heading                         = Deadlines and reporting obligations
-new.home.overview.deadlines.view-updates                        = View updates and deadlines
-new.home.overview.deadlines.mandated.view-updates               = View submission deadlines
+new.home.overview.deadlines.view-updates                        = View submission deadlines
 new.home.overview.deadlines.check-obligations                   = Check your reporting obligations
 new.home.overview.income.sub-heading                            = Income sources
 new.home.overview.income.manage-income                          = Add, manage or cease a business or income source
@@ -2779,8 +2778,6 @@ optout.confirmedOptOut.scenario2.reporting.obligations.inset                  = 
 optout.confirmedOptOut.scenario2.reporting.obligations.p1                     = This could be because:
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet1                = HMRC lowered the income threshold for it
 optout.confirmedOptOut.scenario2.reporting.obligations.bullet2                = you reported an increase in your qualifying income in a tax return
-optout.confirmedOptOut.scenario2.reporting.obligations.p2                     = You can check the threshold for qualifying income in the
-optout.confirmedOptOut.scenario2.reporting.obligations.p2.link                = criteria for people who will need to sign up for Making Tax Digital for Income Tax (opens in new tab).
 
 optout.confirmedOptOut.scenario3.reporting.obligations.heading                = Your reporting obligations in the future
 optout.confirmedOptOut.scenario3.reporting.obligations.p1                     = You are opted out from next tax year onwards, but you could be required to use Making Tax Digital for Income Tax again in the future if:
@@ -3075,7 +3072,6 @@ optin.completedOptIn.yourRevisedDeadline.inset                  = Your revised d
 optin.completedOptIn.yourRevisedDeadline.h2                     = Your revised deadlines
 optin.completedOptIn.yourRevisedDeadline.p1.a                   = Even if they are not displayed right away on the
 optin.completedOptIn.yourRevisedDeadline.p1.b                   = page, your account has been updated.
-optin.completedOptIn.yourRevisedDeadline.p1.link                = submission deadlines
 
 optin.completedOptIn.yourRevisedDeadline.p2.a                   = You can decide at any time to opt out of reporting quarterly for all your businesses on
 optin.completedOptIn.yourRevisedDeadline.p2.b                   =  page.

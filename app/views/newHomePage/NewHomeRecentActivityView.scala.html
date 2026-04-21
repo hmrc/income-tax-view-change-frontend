@@ -102,7 +102,7 @@
         <div id="recent-activity-card-@index" class="hmrc-card">
             <div class="tile-body">
                 <h3 class="hmrc-card__heading" id="recent-activity-card-heading-@index">
-                    <a href=@cardInfo.linkUrl>@getLinkText(cardInfo.linkContentText, cardInfo.cardTaxYear)<span class="hmrc-card__chevron" aria-hidden="true"></span></a>
+                    <a id="recent-activity-card-heading-link-@index" href=@cardInfo.linkUrl>@getLinkText(cardInfo.linkContentText, cardInfo.cardTaxYear)<span class="hmrc-card__chevron" aria-hidden="true"></span></a>
                 </h3>
                 <div class="govuk-body" id="recent-activity-card-content-@index">@messages(cardInfo.contentText)</div>
                 <div class="govuk-hint" id="recent-activity-hint-@index">@messages(cardInfo.dateContentText, cardInfo.cardDate.toLongDate)</div>

@@ -51,7 +51,6 @@
         ctaViewModel: WYOClaimToAdjustViewModel,
         chargeItems: List[ChargeItem],
         isGovUkRebrandEnabled: Boolean,
-        userMandatedOrVoluntary: Boolean,
         penaltiesAndAppealsEnabled: Boolean,
         isRecentActivityEnabled: Boolean,
         creditsRefundsRepayEnabled: Boolean)(
@@ -121,7 +120,7 @@
     @chargesSection(isAgent = false, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled)
     @SectionBreak
 
-    @deadlinesSection(isAgent = false, userMandatedOrVoluntary)
+    @deadlinesSection(isAgent = false)
     @SectionBreak
 
     @incomeSection(isAgent = false)
@@ -144,7 +143,7 @@
     @chargesSection(isAgent = true, noChargesToPay, moneyInYourAccount, ctaViewModel, creditsRefundsRepayEnabled)
     @SectionBreak
 
-    @deadlinesSection(isAgent = true, userMandatedOrVoluntary)
+    @deadlinesSection(isAgent = true)
     @SectionBreak
 
     @incomeSection(isAgent = true)
@@ -161,7 +160,7 @@
 
 @SupportingAgentSections() = {
 
-    @deadlinesSection(isAgent = true, userMandatedOrVoluntary)
+    @deadlinesSection(isAgent = true)
     @SectionBreak
 
     @incomeSection(isAgent = true)

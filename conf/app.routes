@@ -15,8 +15,8 @@ GET         /                                                             contro
 GET         /income-tax                                                   controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/client-income-tax                                     controllers.HomeController.showAgent()
 GET         /agents                                                       controllers.HomeController.showAgent()
-GET         /your-tasks                                                   controllers.HandleYourTasksController.show()
-GET         /agents/your-tasks                                            controllers.HandleYourTasksController.showAgent()
+GET         /your-tasks                                                   controllers.newHomePage.HandleYourTasksController.show()
+GET         /agents/your-tasks                                            controllers.newHomePage.HandleYourTasksController.showAgent()
 
 GET         /recent-activity                                              controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/recent-activity                                       controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
