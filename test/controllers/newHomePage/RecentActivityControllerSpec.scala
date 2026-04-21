@@ -73,7 +73,7 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
-            when(mockRecentActivityService.recentActivityCards(any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+            when(mockRecentActivityService.recentActivityCards(any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
             setupMockSuccess(mtdRole)
 
             val result = action(fakeRequest)
@@ -91,7 +91,7 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
-            when(mockRecentActivityService.recentActivityCards(any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+            when(mockRecentActivityService.recentActivityCards(any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
             setupMockSuccess(mtdRole)
 
             val result = action(fakeRequest)

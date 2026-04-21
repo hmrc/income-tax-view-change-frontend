@@ -21,7 +21,7 @@ import mocks.connectors.MockObligationsConnector
 import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.newHomePage.{RecentActivitySubmissionsModel, RecentActivityViewModel}
+import models.newHomePage.{RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import models.obligations.*
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -120,7 +120,8 @@ class RecentActivityServiceSpec
       when(supportingAgentUser.isSupportingAgent).thenReturn(true)
 
       val submissions = RecentActivitySubmissionsModel(None, None)
-      val result = service.recentActivityCards(submissions)
+      val refunds = RecentRefundModel(None)
+      val result = service.recentActivityCards(submissions, refunds)
 
       result shouldBe RecentActivityViewModel(Seq.empty)
     }
@@ -134,7 +135,8 @@ class RecentActivityServiceSpec
       val annual = obligation("Crystallisation", LocalDate.of(2023, 4, 6), Some(within90Days))
       val quarterly = obligation("Quarterly", LocalDate.of(2023, 4, 6), Some(within90Days))
       val submissions = RecentActivitySubmissionsModel(Some(annual), Some(quarterly))
-      val result = service.recentActivityCards(submissions)
+      val refunds = RecentRefundModel(None)
+      val result = service.recentActivityCards(submissions, refunds)
 
       result.recentActivityCards.size shouldBe 2
       result.recentActivityCards.head.cardTaxYear.value shouldBe TaxYear.getTaxYear(annual.start)
