@@ -17,9 +17,10 @@
 package services.reportingObligations
 
 import audit.reporting_obligations.*
+import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import enums.MTDIndividual
-import models.admin.OptInOptOutContentUpdateR17
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import org.mockito.ArgumentMatchers.any
@@ -44,11 +45,19 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
   implicit val mockDateService: DateService = mock(classOf[DateService])
 
-  val auditService =
-    new ReportingObligationsAuditService(
-      auditConnector = mockAuditingService,
-      reportingFrequencyViewUtils = mockReportingFrequencyViewUtils
-    )
+  object auditServiceFeatureEnabled extends ReportingObligationsAuditService(
+    auditConnector = mockAuditingService,
+    reportingFrequencyViewUtils = mockReportingFrequencyViewUtils
+  ) {
+    override def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean = true
+  }
+
+  object auditServiceFeatureDisabled extends ReportingObligationsAuditService(
+    auditConnector = mockAuditingService,
+    reportingFrequencyViewUtils = mockReportingFrequencyViewUtils
+  ) {
+    override def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean = false
+  }
 
   "ReportingObligationsAuditService" when {
 
@@ -63,7 +72,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
           val summaryCardSuffixes = List(Some("optOut.previousYear.onwards"), Some("optOut.currentYear.onwards"), Some("optOut.nextYear"))
 
-          val result = auditService.buildCards(summaryCardSuffixes)
+          val result = auditServiceFeatureDisabled.buildCards(summaryCardSuffixes)
 
           result shouldBe List(ReportingObligationCard(OptOut, "2024", Onwards), ReportingObligationCard(OptOut, "2025", Onwards), ReportingObligationCard(OptOut, "2026", SingleTaxYear))
         }
@@ -78,7 +87,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
           val summaryCardSuffixes = List(Some("optOut.currentYear.onwards"), Some("optOut.nextYear"))
 
-          val result = auditService.buildCards(summaryCardSuffixes)
+          val result = auditServiceFeatureDisabled.buildCards(summaryCardSuffixes)
 
           result shouldBe List(ReportingObligationCard(OptOut, "2025", Onwards), ReportingObligationCard(OptOut, "2026", SingleTaxYear))
         }
@@ -93,7 +102,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
           val summaryCardSuffixes = List(Some("optOut.nextYear"))
 
-          val result = auditService.buildCards(summaryCardSuffixes)
+          val result = auditServiceFeatureDisabled.buildCards(summaryCardSuffixes)
 
           result shouldBe List(ReportingObligationCard(OptOut, "2026", SingleTaxYear))
         }
@@ -108,7 +117,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
           val summaryCardSuffixes = List(Some("optOut.previousYear.single"), None, Some("optOut.nextYear"))
 
-          val result = auditService.buildCards(summaryCardSuffixes)
+          val result = auditServiceFeatureDisabled.buildCards(summaryCardSuffixes)
 
           result shouldBe List(ReportingObligationCard(OptOut, "2024", SingleTaxYear), ReportingObligationCard(OptOut, "2026", SingleTaxYear))
         }
@@ -125,7 +134,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
           val summaryCardSuffixes = List(Some("signUp.currentYear.onwards"), Some("signUp.nextYear"))
 
-          val result = auditService.buildCards(summaryCardSuffixes)
+          val result = auditServiceFeatureDisabled.buildCards(summaryCardSuffixes)
 
           result shouldBe List(ReportingObligationCard(SignUp, "2025", Onwards), ReportingObligationCard(SignUp, "2026", SingleTaxYear))
         }
@@ -140,7 +149,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
           val summaryCardSuffixes = List(None, Some("signUp.nextYear"))
 
-          val result = auditService.buildCards(summaryCardSuffixes)
+          val result = auditServiceFeatureDisabled.buildCards(summaryCardSuffixes)
 
           result shouldBe List(ReportingObligationCard(SignUp, "2026", SingleTaxYear))
         }
@@ -154,8 +163,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is crystallised and all years are Voluntary" should {
 
           "capture the correct table content shown to the user" in {
-
-            enable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -176,7 +183,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.buildItsaTableContentToCapture(optOutProposition)
+            val result = auditServiceFeatureEnabled.buildItsaTableContentToCapture(optOutProposition)
 
             result shouldBe
               List(
@@ -189,8 +196,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is crystallised and CY == Voluntary and CY+1 == Annual" should {
 
           "capture the table content shown to the user" in {
-
-            enable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -211,7 +216,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.buildItsaTableContentToCapture(optOutProposition)
+            val result = auditServiceFeatureEnabled.buildItsaTableContentToCapture(optOutProposition)
 
             result shouldBe
               List(
@@ -224,8 +229,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is crystallised and CY == Voluntary and CY+1 == Mandated" should {
 
           "capture the table content shown to the user" in {
-
-            enable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -246,7 +249,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.buildItsaTableContentToCapture(optOutProposition)
+            val result = auditServiceFeatureEnabled.buildItsaTableContentToCapture(optOutProposition)
 
             result shouldBe
               List(
@@ -259,8 +262,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is NOT crystallised and CY-1 == Voluntary, CY == Voluntary and CY+1 == Mandated" should {
 
           "capture the table content shown to the user" in {
-
-            enable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -282,7 +283,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.buildItsaTableContentToCapture(optOutProposition)
+            val result = auditServiceFeatureEnabled.buildItsaTableContentToCapture(optOutProposition)
 
             result shouldBe
               List(
@@ -299,8 +300,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is crystallised and all years are Voluntary" should {
 
           "capture the correct table content shown to the user" in {
-
-            disable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -321,7 +320,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.buildItsaTableContentToCapture(optOutProposition)
+            val result = auditServiceFeatureDisabled.buildItsaTableContentToCapture(optOutProposition)
 
             result shouldBe
               List(
@@ -334,8 +333,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is crystallised and CY == Voluntary and CY+1 == Annual" should {
 
           "capture the table content shown to the user" in {
-
-            disable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -356,7 +353,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.buildItsaTableContentToCapture(optOutProposition)
+            val result = auditServiceFeatureDisabled.buildItsaTableContentToCapture(optOutProposition)
 
             result shouldBe
               List(
@@ -369,8 +366,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is crystallised and CY == Voluntary and CY+1 == Mandated" should {
 
           "capture the table content shown to the user" in {
-
-            disable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -391,7 +386,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.buildItsaTableContentToCapture(optOutProposition)
+            val result = auditServiceFeatureDisabled.buildItsaTableContentToCapture(optOutProposition)
 
             result shouldBe
               List(
@@ -404,8 +399,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is NOT crystallised and CY-1 == Voluntary, CY == Voluntary and CY+1 == Mandated" should {
 
           "capture the table content shown to the user" in {
-
-            disable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -427,7 +420,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.buildItsaTableContentToCapture(optOutProposition)
+            val result = auditServiceFeatureDisabled.buildItsaTableContentToCapture(optOutProposition)
 
             result shouldBe
               List(
@@ -445,8 +438,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
       "all years are Voluntary" should {
 
         "return the correct audit event model" in {
-
-          enable(OptInOptOutContentUpdateR17)
 
           val optOutProposition =
             OptOutProposition(
@@ -472,7 +463,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
           when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
             .thenReturn(mockContentToReturn)
 
-          val result = auditService.createAuditEvent(optOutProposition, summaryCardSuffixes)
+          val result = auditServiceFeatureEnabled.createAuditEvent(optOutProposition, summaryCardSuffixes)
 
           val expected =
             ReportingObligationsAuditModel(
@@ -496,8 +487,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
       "CY-1 is crystallised, CY == Voluntary, CY+1 == Annual" should {
 
         "return the correct audit event model" in {
-
-          enable(OptInOptOutContentUpdateR17)
 
           val optOutProposition =
             OptOutProposition(
@@ -523,7 +512,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
           val summaryCardSuffixes = List(Some("optOut.currentYear.single"), Some("signUp.nextYear"))
 
-          val result = auditService.createAuditEvent(optOutProposition, summaryCardSuffixes)
+          val result = auditServiceFeatureEnabled.createAuditEvent(optOutProposition, summaryCardSuffixes)
 
           val expected =
             ReportingObligationsAuditModel(
@@ -547,8 +536,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
       "CY-1 is crystallised, all years are Annual" should {
 
         "return the correct audit event model" in {
-
-          enable(OptInOptOutContentUpdateR17)
 
           val optOutProposition =
             OptOutProposition(
@@ -574,7 +561,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
           when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
             .thenReturn(mockContentToReturn)
 
-          val result = auditService.createAuditEvent(optOutProposition, summaryCardSuffixes)
+          val result = auditServiceFeatureEnabled.createAuditEvent(optOutProposition, summaryCardSuffixes)
 
           val expected =
             ReportingObligationsAuditModel(
@@ -598,8 +585,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
       "CY-1 is NOT crystallised, all years Annual" should {
 
         "return the correct audit event model" in {
-
-          enable(OptInOptOutContentUpdateR17)
 
           val optOutProposition =
             OptOutProposition(
@@ -626,7 +611,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
           when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
             .thenReturn(mockContentToReturn)
 
-          val result = auditService.createAuditEvent(optOutProposition, summaryCardSuffixes)
+          val result = auditServiceFeatureEnabled.createAuditEvent(optOutProposition, summaryCardSuffixes)
 
           val expected =
             ReportingObligationsAuditModel(
@@ -661,8 +646,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
           "return Audit Success result" in {
 
-            enable(OptInOptOutContentUpdateR17)
-
             val optOutProposition =
               OptOutProposition(
                 previousTaxYear = PreviousOptOutTaxYear(Voluntary, TaxYear(2024, 2025), true),
@@ -690,7 +673,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
 
             val summaryCardSuffixes = List(Some("optOut.currentYear.onwards"), Some("optOut.nextYear"))
 
-            val result = auditService.sendAuditEvent(optOutProposition, summaryCardSuffixes)
+            val result = auditServiceFeatureEnabled.sendAuditEvent(optOutProposition, summaryCardSuffixes)
 
             val expected: AuditResult = Success
 
@@ -704,8 +687,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is crystallised, CY == Voluntary, CY+1 == Annual" should {
 
           "return Audit Success result" in {
-
-            enable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -734,7 +715,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.sendAuditEvent(optOutProposition, summaryCardSuffixes)
+            val result = auditServiceFeatureEnabled.sendAuditEvent(optOutProposition, summaryCardSuffixes)
 
             val expected: AuditResult = Success
 
@@ -748,8 +729,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is crystallised, all years are Annual" should {
 
           "return Audit Success result" in {
-
-            enable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -778,7 +757,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.sendAuditEvent(optOutProposition, summaryCardSuffixes)
+            val result = auditServiceFeatureEnabled.sendAuditEvent(optOutProposition, summaryCardSuffixes)
 
             val expected: AuditResult = Success
 
@@ -792,8 +771,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "CY-1 is NOT crystallised, all years Annual" should {
 
           "return Audit Success result" in {
-
-            enable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -823,7 +800,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.sendAuditEvent(optOutProposition, summaryCardSuffixes)
+            val result = auditServiceFeatureEnabled.sendAuditEvent(optOutProposition, summaryCardSuffixes)
 
             val expected: AuditResult = Success
 
@@ -840,8 +817,6 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
         "all years are Voluntary" should {
 
           "return Audit Success result" in {
-
-            enable(OptInOptOutContentUpdateR17)
 
             val optOutProposition =
               OptOutProposition(
@@ -872,7 +847,7 @@ class ReportingObligationsAuditServiceSpec extends UnitSpec with GuiceOneAppPerS
             when(mockReportingFrequencyViewUtils.itsaStatusTable(any())(any(), any()))
               .thenReturn(mockContentToReturn)
 
-            val result = auditService.sendAuditEvent(optOutProposition, summaryCardSuffixes)
+            val result = auditServiceFeatureEnabled.sendAuditEvent(optOutProposition, summaryCardSuffixes)
 
             val expected: AuditResult = failedAuditResponse
 

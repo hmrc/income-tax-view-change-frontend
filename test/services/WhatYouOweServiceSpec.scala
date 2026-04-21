@@ -45,7 +45,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
   }
 
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
@@ -333,7 +332,6 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
 
     "with Penalties And Accruals" should {
       def testGetWhatYouOweChargesList(penaltiesEnabled: Boolean, financialDetails: FinancialDetailsModel, expectedResult: WhatYouOweChargesList): Unit = {
-        if (penaltiesEnabled) enable(PenaltiesAndAppeals) else disable(PenaltiesAndAppeals)
         when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
           .thenReturn(Future.successful(OutstandingChargesModel(List())))
         when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
