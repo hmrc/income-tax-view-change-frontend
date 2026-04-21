@@ -324,13 +324,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         credits <- creditService.getAllCredits
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
         chargeItem = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
-        mandatedOrVoluntary <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandatedOrVoluntary)
       }
       yield {
         Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
-          appConfig.itvcRebrand, mandatedOrVoluntary, isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay)))
+          appConfig.itvcRebrand, isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay)))
       }
     }
   }
