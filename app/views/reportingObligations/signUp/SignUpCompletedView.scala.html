@@ -87,7 +87,7 @@
 
     @p(id = Some("your-revised-deadlines-desc-3")) {
         @getMessage("yourRevisedDeadlines.desc2.text1")
-        @link(viewModel.reportingObligationsLink, messageKey = getMessage("yourRevisedDeadlines.desc2.link"))
+        <a class="govuk-link govuk-body" href="@{viewModel.reportingObligationsLink}">@getMessage("yourRevisedDeadlines.desc2.link")</a>@if(messages.lang.code == "cy"){.}
         @getMessage("yourRevisedDeadlines.desc2.text2")
     }
 }

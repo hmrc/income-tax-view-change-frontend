@@ -64,7 +64,8 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     `CY+1YouMustWaitToSignUpPageEnabled`,
     NewHomePage,
     OverseasBusinessAddress,
-    RecentActivity
+    RecentActivity,
+    MortgageEvidence
   )
 
   "FeatureSwitchName" when {

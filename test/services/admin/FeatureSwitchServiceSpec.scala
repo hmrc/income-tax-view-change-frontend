@@ -41,7 +41,25 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
     mockFrontendAppConfig
   )(
     app.injector.instanceOf[ExecutionContext]
-  )
+  ) {
+    override def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean = false
+  }
+
+  object TestFSServiceFeatureEnabled extends FeatureSwitchService(
+    mockFeatureSwitchRepository,
+    mockFeatureSwitchConnector,
+    mockFrontendAppConfig
+  )(
+    app.injector.instanceOf[ExecutionContext]
+  ) {
+    override def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean = {
+      if (featureSwitch.name.equals(exampleFSName.name)) {
+        true
+      } else {
+        false
+      }
+    }
+  }
 
   override val appConfig: FrontendAppConfig = mockFrontendAppConfig
 
@@ -49,11 +67,8 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
     "return a list of all FS and whether they are enabled" when {
       "read from mongo FS is disabled" in {
         when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn false
-        disableAllSwitches()
-        enable(exampleFSName)
-        disable(anotherFSName)
 
-        val result = TestFSService.getAll()
+        val result = TestFSServiceFeatureEnabled.getAll()
         result.futureValue should contain(FeatureSwitch(exampleFSName, isEnabled = true))
         result.futureValue should contain(FeatureSwitch(anotherFSName, isEnabled = false))
       }
@@ -99,7 +114,6 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
     "set the FS in config" when {
       "read FS from mongo FS is disabled" in {
         when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn false
-        disableAllSwitches()
         TestFSService.setAll(Map(exampleFSName -> true, anotherFSName -> false))
         isEnabled(exampleFSName) shouldBe true
         isEnabled(anotherFSName) shouldBe false
@@ -113,8 +127,6 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
 
         when(mockFeatureSwitchConnector.setSwitches(ArgumentMatchers.eq(fsMap))(any()))
           .thenReturn(Future.successful(true))
-
-        disableAllSwitches()
 
         TestFSService.setAll(fsMap)
 

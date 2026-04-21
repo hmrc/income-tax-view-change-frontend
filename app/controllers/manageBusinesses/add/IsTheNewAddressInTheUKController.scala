@@ -24,6 +24,7 @@ import enums.BeforeSubmissionPage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
+import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{Mode, NormalMode}
 import play.api.Logger
@@ -65,8 +66,23 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       val backURL = getBackURL(isAgent)
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 
-      Future.successful {
-        Ok(isTheNewAddressInTheUKView(form.apply(hasUKAddress(user)), isAgent, hasUKAddress(user), postAction, backURL))
+      // we need to clean up session data when Overseas Business Address journey does not reset when switching from International to UK Address MISUV-11153
+      val resetAddressUpdateData: UIJourneySessionData = sessionData.copy(
+        addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(
+          addressId = None,
+          address = None,
+          countryCode = None,
+          addressLookupId = None)
+        )
+      )
+
+      sessionService.setMongoData(resetAddressUpdateData).flatMap {
+        case true =>
+          Future.successful {
+            Ok(isTheNewAddressInTheUKView(form.apply(hasUKAddress(user)), isAgent, hasUKAddress(user), postAction, backURL))
+          }
+
+        case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
       }
     }
   }.recover {

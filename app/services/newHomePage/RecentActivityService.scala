@@ -27,6 +27,7 @@ import models.repaymentHistory.RepaymentHistoryModel
 import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import javax.inject.Singleton
 
 @Singleton
@@ -59,7 +60,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
   def getRecentRefundActivity(repaymentHistoryModel: RepaymentHistoryModel, dateService: DateServiceInterface): RecentRefundModel = {
     val today = dateService.getCurrentDate
     val recentActivityDate = today.minusDays(90)
-    
+
     val mostRecentRefundWithin90days = repaymentHistoryModel.repaymentsViewerDetails
       .filter { refund =>
         refund.estimatedRepaymentDate.exists { date =>
@@ -104,7 +105,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       obligation.dateReceived.map { date =>
         RecentActivityCard(
           linkContentText = "new.home.recentActivity.submissions.quarterly.link.text",
-          linkUrl = getTaxYearSummaryUrl(TaxYear.getTaxYear(obligation.start).endYear),
+          linkUrl = getTaxYearSummaryUrl(getTaxYearIncludingCalendar(obligation.start)),
           contentText = "new.home.recentActivity.submissions.quarterly.content.text",
           dateContentText = "new.home.recentActivity.submissions.quarterly.date.content.text",
           cardDate = date
@@ -113,6 +114,14 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
     }
 
     List(recentAnnualCard, recentQuarterlyCard).flatten
+  }
+
+  private def getTaxYearIncludingCalendar(date: LocalDate): Int = {
+    if (date.getMonthValue == 4 && date.getDayOfMonth == 1) {
+      date.getYear + 1
+    } else {
+      TaxYear.getTaxYear(date).endYear
+    }
   }
 
   private def getRecentRefundCard(recentRefundModel: RecentRefundModel)(implicit mtdItUser: MtdItUser[_]): Option[RecentActivityCard] = {

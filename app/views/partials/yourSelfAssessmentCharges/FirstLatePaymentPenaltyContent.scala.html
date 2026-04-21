@@ -34,7 +34,6 @@
     @getMessage("firstLatePaymentPenalty.p")
 }
 
-<p>@link(
-    link = url,
-    messageKey = "yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link"
-)</p>
+<p>
+    <a class="govuk-link govuk-body" href="@{url}" target = Some("_blank")>@messages("yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link")</a>.
+</p>

@@ -51,9 +51,9 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
         handleShowRequest(origin)
       } else {
         if (isAgent) {
-          Future.successful(Redirect(controllers.routes.HandleYourTasksController.showAgent()))
+          Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
         } else {
-          Future.successful(Redirect(controllers.routes.HandleYourTasksController.show()))
+          Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
         }
       }
   }
