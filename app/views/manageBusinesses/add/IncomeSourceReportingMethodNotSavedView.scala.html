@@ -73,7 +73,8 @@ btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
         @linkComponent(
             id = Some("your-businesses-link"),
             url = manageBusinessesControllerURL,
-            message = messages("incomeSources.add.error.reportingMethodNotSaved.p3.linkText")
+            message = messages("incomeSources.add.error.reportingMethodNotSaved.p3.linkText"),
+            additionalMessage = if(messages.lang.code == "cy") { Some(".") } else { None }
         )
         @messages("incomeSources.add.error.reportingMethodNotSaved.p3.secondHalf")
 
