@@ -21,7 +21,7 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSignUpService
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
+import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
@@ -94,7 +94,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -113,7 +113,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -125,9 +125,8 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
 
           status(result) shouldBe SEE_OTHER
         }
-        "redirect the user to the home page when the feature switch is disabled" in {
+        "redirect the user to the reporting frequency page when the sign up and opt in opt out feature switches are disabled" in {
           disable(OptInOptOutContentUpdateR17)
-          disable(ReportingFrequencyPage)
           disable(SignUpFs)
 
           val action = testController.show(isAgent, currentYear)
@@ -140,11 +139,10 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val result = action(fakeRequest)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe homeLink(isAgent)
+          redirectLocation(result) shouldBe reportingObligationsLink(isAgent)
         }
 
         "redirect the user to the reporting obligations page when the sign up feature switch is disabled" in {
-          enable(ReportingFrequencyPage)
           enable(OptInOptOutContentUpdateR17)
           disable(SignUpFs)
 
@@ -168,7 +166,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
 
         "redirect the user when they select 'Yes' - to the completion page" in {
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
@@ -206,7 +204,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -231,7 +229,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -253,7 +251,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)

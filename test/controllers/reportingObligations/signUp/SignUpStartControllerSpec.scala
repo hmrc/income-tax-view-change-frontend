@@ -20,7 +20,7 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSignUpService
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
+import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.reportingObligations.signUp.{SignUpSessionData, SignUpTaxYearQuestionViewModel}
@@ -56,7 +56,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
       val action = testController.show(isAgent, Some("2025"))
       s"the user is authenticated as a $mtdRole" should {
         "render the sign up start page" in {
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+          enable(OptInOptOutContentUpdateR17, SignUpFs)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -75,7 +75,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
         }
 
         "be redirected to the reporting frequency page if the chosen tax year intent is not found" in {
-          enable(ReportingFrequencyPage, SignUpFs, OptInOptOutContentUpdateR17)
+          enable(SignUpFs, OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -94,8 +94,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           redirectLocation(result) shouldBe Some(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url)
         }
 
-        "be redirected to the home page if the feature switch is disabled" in {
-          disable(ReportingFrequencyPage)
+        "be redirected to the reporting frequency page if the sign up feature switch is disabled" in {
           disable(SignUpFs)
           enable(OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
@@ -104,9 +103,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
 
           val redirectUrl = if (isAgent) {
-            controllers.routes.HomeController.showAgent().url
+            controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
           } else {
-            controllers.routes.HomeController.show().url
+            controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
           }
 
           when(mockSignUpService.fetchSavedSignUpSessionData()(any(), any(), any()))
@@ -119,7 +118,6 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
         }
 
         "be redirected to the reporting frequency page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
-          enable(ReportingFrequencyPage)
           disable(OptInOptOutContentUpdateR17)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -143,7 +141,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
         }
 
         "be redirected to the reporting frequency page if the Sign Up feature switch is disabled" in {
-          enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+          enable(OptInOptOutContentUpdateR17)
           disable(SignUpFs)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)

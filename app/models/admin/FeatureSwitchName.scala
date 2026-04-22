@@ -53,8 +53,6 @@ object FeatureSwitchName {
       JsSuccess(SignUpFs)
     case JsString(FilterCodedOutPoas.name) =>
       JsSuccess(FilterCodedOutPoas)
-    case JsString(ReportingFrequencyPage.name) =>
-      JsSuccess(ReportingFrequencyPage)
     case JsString(DisplayBusinessStartDate.name) =>
       JsSuccess(DisplayBusinessStartDate)
     case JsString(PenaltiesAndAppeals.name) =>
@@ -113,7 +111,6 @@ object FeatureSwitchName {
       OptOutFs,
       SignUpFs,
       FilterCodedOutPoas,
-      ReportingFrequencyPage,
       DisplayBusinessStartDate,
       PenaltiesAndAppeals,
       PenaltiesBackendEnabled,
@@ -180,11 +177,6 @@ case object FilterCodedOutPoas extends FeatureSwitchName {
 case object InvalidFS extends FeatureSwitchName {
   override val name: String = "invalid-feature-switch"
   override val toString: String = "Invalid feature Switch"
-}
-
-case object ReportingFrequencyPage extends FeatureSwitchName {
-  override val name: String = "reporting-frequency-page"
-  override val toString: String = "Reporting Frequency page"
 }
 
 case object DisplayBusinessStartDate extends FeatureSwitchName {

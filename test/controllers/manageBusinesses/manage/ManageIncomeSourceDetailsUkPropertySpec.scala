@@ -66,7 +66,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
 
             "the user has a valid id parameter and no latency information" in {
 
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
@@ -92,7 +92,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter and latency period expired" in {
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               setupMockCreateSession(true)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
@@ -114,35 +114,9 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
             }
 
-            "the user does not have reporting frequency related content" in {
-
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
-              mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
-              setupMockCreateSession(true)
-              setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
-              setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
-              setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-              mockUkPlusForeignPlusSoleTraderNoLatency()
-              setupMockCreateSession(true)
-              setupMockSetSessionKeyMongo(Right(true))
-
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty)))))
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.OK
-              val document: Document = Jsoup.parse(contentAsString(result))
-              document.title shouldBe title()
-              getHeading(document) shouldBe heading
-              hasChangeFirstYearReportingMethodLink(document) shouldBe false
-              hasChangeSecondYearReportingMethodLink(document) shouldBe false
-              hasGracePeriodInfo(document) shouldBe false
-              hasReportingFrequencyContent(document) shouldBe false
-            }
-
             "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
 
-              enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17)
 
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
@@ -184,7 +158,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
 
             "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
 
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
@@ -216,7 +190,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
 
             "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
 
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
@@ -242,7 +216,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               manageDetailsSummaryValues.eq(3).size() shouldBe 1
             }
             "the user has a valid id parameter, valid latency information and tax year1 crystallised and tax year not crystallised" in {
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
@@ -269,7 +243,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in { //I think this scenario is not possible
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
@@ -297,7 +271,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
 
             "the user has a valid id parameter, but non eligable itsa status" in {
 
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
               setupMockCreateSession(true)
@@ -324,7 +298,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter, latency expired" in {
-              enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+              enable(DisplayBusinessStartDate)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockCreateSession(true)

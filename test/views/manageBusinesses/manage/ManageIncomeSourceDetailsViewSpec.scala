@@ -61,8 +61,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -82,8 +81,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -103,8 +101,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -120,8 +117,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -141,8 +137,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -161,8 +156,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -181,8 +175,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -198,8 +191,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -219,8 +211,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -239,8 +230,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -259,8 +249,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -276,8 +265,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -292,8 +280,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = true,
-        showReportingFrequencyLink = true
+        showOptInOptOutContentUpdateR17 = true
       )(messages, implicitly)
     }
 
@@ -426,7 +413,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent = false,
         showStartDate = true,
         showOptInOptOutContentUpdateR17 = true,
-        showReportingFrequencyLink = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -468,7 +454,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent = false,
         showStartDate = true,
         showOptInOptOutContentUpdateR17 = true,
-        showReportingFrequencyLink = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -501,7 +486,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           isAgent = false,
           showStartDate = true,
           showOptInOptOutContentUpdateR17 = true,
-          showReportingFrequencyLink = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -522,7 +506,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           isAgent = false,
           showStartDate = true,
           showOptInOptOutContentUpdateR17 = true,
-          showReportingFrequencyLink = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -544,7 +527,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           isAgent = false,
           showStartDate = true,
           showOptInOptOutContentUpdateR17 = true,
-          showReportingFrequencyLink = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -564,7 +546,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           isAgent = false,
           showStartDate = true,
           showOptInOptOutContentUpdateR17 = true,
-          showReportingFrequencyLink = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -585,7 +566,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           isAgent = false,
           showStartDate = true,
           showOptInOptOutContentUpdateR17 = true,
-          showReportingFrequencyLink = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -606,7 +586,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           isAgent = false,
           showStartDate = true,
           showOptInOptOutContentUpdateR17 = true,
-          showReportingFrequencyLink = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -627,7 +606,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           isAgent = false,
           showStartDate = true,
           showOptInOptOutContentUpdateR17 = true,
-          showReportingFrequencyLink = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -648,7 +626,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           isAgent = false,
           showStartDate = true,
           showOptInOptOutContentUpdateR17 = true,
-          showReportingFrequencyLink = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 

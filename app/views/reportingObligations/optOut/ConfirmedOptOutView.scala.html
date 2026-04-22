@@ -35,7 +35,6 @@
 @(
     viewModel: ConfirmedOptOutViewModel,
     isAgent: Boolean = false,
-    showReportingFrequencyContent: Boolean,
     confirmedOptOutViewScenarios: ConfirmedOptOutViewScenarios,
     selfAssessmentTaxReturnLink: String,
     compatibleSoftwareLink: String
@@ -309,10 +308,8 @@
                 messageKey = "optout.confirmedOptOut.viewUpcomingDeadlines.text"
             )
         }
-        @if(showReportingFrequencyContent) {
-            @p(id = Some("your-reporting-frequency-block")) {
-                @yourReportingFrequencyBlock
-            }
+        @p(id = Some("your-reporting-frequency-block")) {
+            @yourReportingFrequencyBlock
         }
     </div>
 }

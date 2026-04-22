@@ -21,7 +21,7 @@ import enums.JourneyType.{Opt, SignUpJourney}
 import enums.MTDIndividual
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
+import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.reportingObligations.signUp.SignUpSessionData
@@ -57,7 +57,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the sign up start page" in {
-            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+            enable(OptInOptOutContentUpdateR17, SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -87,7 +87,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
           }
 
           "render the sign up start page with CY only description" in {
-            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+            enable(OptInOptOutContentUpdateR17, SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -108,27 +108,8 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
             )
           }
 
-          "be redirected to the home page if the feature switch is disabled" in {
-            enable(OptInOptOutContentUpdateR17, SignUpFs)
-            stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-            val redirectUrl = if (isAgent) {
-              controllers.routes.HomeController.showAgent().url
-            } else {
-              controllers.routes.HomeController.show().url
-            }
-
-            val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-            result should have(
-              httpStatus(SEE_OTHER),
-              redirectURI(redirectUrl)
-            )
-          }
-
           "be redirected to the reporting frequency page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
-            enable(ReportingFrequencyPage, SignUpFs)
+            enable(SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -149,7 +130,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
 
         "has already completed the sign-up journey (according to session data)" should {
           "redirect to the cannot go back page" in {
-            enable(ReportingFrequencyPage, OptInOptOutContentUpdateR17, SignUpFs)
+            enable(OptInOptOutContentUpdateR17, SignUpFs)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 

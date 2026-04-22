@@ -70,17 +70,16 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
   val nextPaymentDue: LocalDate = LocalDate.of(year2019, Month.JANUARY, 31)
 
   val currentDate: LocalDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
   private val viewModelTwoOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1)), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
-  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, isReportingFrequencyEnabled = false, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
-  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, isReportingFrequencyEnabled = true, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+    LocalDate.of(2018, 2, 1)), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
 
   class TestSetup(@unused nextPaymentDueDate: Option[LocalDate] = Some(nextPaymentDue),
                   nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture,
                   displayCeaseAnIncome: Boolean = false,
-                  reportingFrequencyEnabled: Boolean = false,
                   currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary,
                   user: MtdItUser[_] = testMtdItUserNotMigrated
                  ) {
@@ -89,7 +88,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
     val yourBusinessesTileViewModel: YourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
-    val yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), reportingFrequencyEnabled, currentITSAStatus)
+    val yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), currentITSAStatus)
 
     val view: HtmlFormat.Appendable = agentHome(
       yourBusinessesTileViewModel,
@@ -161,11 +160,11 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         "has a link to view updates" in new TestSetup {
           val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
           link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
-          link.map(_.text) shouldBe Some(messages("home.updates.view"))
+          link.map(_.text) shouldBe Some(messages("home.updates.view.reportingFrequency"))
         }
         "is empty except for the title" when {
           "user has no open obligations" in new TestSetup(nextUpdatesTileViewModel = viewModelNoUpdates) {
-            getElementById("updates-tile").map(_.text()) shouldBe Some("Your submission deadlines View update deadlines")
+            getElementById("updates-tile").map(_.text()) shouldBe Some("Your submission deadlines View your deadlines")
           }
         }
         "has a link to view and manage updates - Opt Out" in new TestSetup(nextUpdatesTileViewModel = viewModelOptOut) {
@@ -177,7 +176,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         "has next update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with no overdue updates" in new TestSetup(
           nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(LocalDate.of(2099, 11, 5)),
             currentDate = LocalDate.of(2025, 6, 24),
-            isReportingFrequencyEnabled = true,
+            
             showOptInOptOutContentUpdateR17 = true,
             currentYearITSAStatus = ITSAStatus.Voluntary,
             nextQuarterlyUpdateDueDate = Some(LocalDate.of(2099, 11, 5)),
@@ -196,7 +195,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         "has overdue update and tax return when OptInOptOutContentUpdateR17 is enabled and 1 overdue update exists" in new TestSetup(
           nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(LocalDate.of(2024, 10, 1)),
             currentDate = LocalDate.of(2025, 6, 24),
-            isReportingFrequencyEnabled = true,
+            
             showOptInOptOutContentUpdateR17 = true,
             currentYearITSAStatus = ITSAStatus.Mandated,
             nextQuarterlyUpdateDueDate = Some(LocalDate.of(2024, 10, 1)),
@@ -220,7 +219,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
             LocalDate.of(2024, 11, 5)
           ),
             currentDate = LocalDate.of(2025, 6, 24),
-            isReportingFrequencyEnabled = true,
+            
             showOptInOptOutContentUpdateR17 = true,
             currentYearITSAStatus = ITSAStatus.Voluntary,
             nextQuarterlyUpdateDueDate = Some(LocalDate.of(2024, 5, 5)),
@@ -240,7 +239,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
         "has only the tax return due when ITSA status is Annual and OptInOptOutContentUpdateR17 is enabled" in new TestSetup(
           nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(LocalDate.of(2100, 11, 5)),
             currentDate = LocalDate.of(2025, 6, 24),
-            isReportingFrequencyEnabled = true,
+            
             showOptInOptOutContentUpdateR17 = true,
             currentYearITSAStatus = ITSAStatus.Annual,
             None,
@@ -303,30 +302,24 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
       "have a Reporting Obligations tile" when {
         "the reporting obligations page FS is enabled" which {
-          "has a heading" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
+          "has a heading" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("reporting-obligations-tile").map(_.select("h2").first().text()) shouldBe Some("Your reporting obligations")
           }
-          "has text for reporting quarterly(voluntary)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Voluntary) {
+          "has text for reporting quarterly(voluntary)" in new TestSetup(user = testMtdItUserMigrated, currentITSAStatus = ITSAStatus.Voluntary) {
             getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"For the $currentTaxYear to ${currentTaxYear + 1} tax year you need to:")
             document.getElementsByClass("govuk-list govuk-list--bullet").first().text() shouldBe "use Making Tax Digital for Income Tax submit a tax return"
           }
-          "has text for reporting quarterly(mandated)" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Mandated) {
+          "has text for reporting quarterly(mandated)" in new TestSetup(user = testMtdItUserMigrated, currentITSAStatus = ITSAStatus.Mandated) {
             getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"For the $currentTaxYear to ${currentTaxYear + 1} tax year you need to:")
             document.getElementsByClass("govuk-list govuk-list--bullet").first().text() shouldBe "use Making Tax Digital for Income Tax submit a tax return"
           }
-          "has text for reporting annually" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true, currentITSAStatus = ITSAStatus.Annual) {
+          "has text for reporting annually" in new TestSetup(user = testMtdItUserMigrated, currentITSAStatus = ITSAStatus.Annual) {
             getElementById("current-itsa-status").map(_.text()) shouldBe Some(s"For the $currentTaxYear to ${currentTaxYear + 1} tax year you need to submit a tax return")
           }
 
-          "has a link to the reporting obligations page" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = true) {
+          "has a link to the reporting obligations page" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("reporting-obligations-link").map(_.text()) shouldBe Some("View and manage your reporting obligations")
             getElementById("reporting-obligations-link").map(_.attr("href")) shouldBe Some(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url)
-          }
-        }
-
-        "the reporting frequency page FS is disabled" which {
-          "does not have the Reporting Obligations tile" in new TestSetup(user = testMtdItUserMigrated, reportingFrequencyEnabled = false) {
-            getElementById("reporting-obligations-tile") shouldBe None
           }
         }
       }

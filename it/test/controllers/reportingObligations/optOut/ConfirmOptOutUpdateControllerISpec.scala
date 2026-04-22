@@ -23,7 +23,7 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, OptOutFs}
 import models.itsaStatus.ITSAStatus.*
 import models.reportingObligations.optOut.OptOutSessionData
 import play.api.http.Status
@@ -64,7 +64,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
 
           s"render check opt-out update answers page" in {
-            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            enable(OptOutFs, OptInOptOutContentUpdateR17)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -87,7 +87,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 
         "has already completed the journey (according to session data)" should {
           s"redirect to the cannot go back page" in {
-            enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+            enable(OptOutFs, OptInOptOutContentUpdateR17)
             stubAuthorised(mtdUserRole)
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -120,7 +120,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "redirect to the completion page" when {
             "user confirms opt-out for one-year scenario" in {
-              enable(OptOutFs, ReportingFrequencyPage, OptInOptOutContentUpdateR17)
+              enable(OptOutFs, OptInOptOutContentUpdateR17)
               stubAuthorised(mtdUserRole)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
