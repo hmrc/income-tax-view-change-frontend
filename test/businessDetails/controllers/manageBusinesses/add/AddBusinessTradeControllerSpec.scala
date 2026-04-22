@@ -19,7 +19,7 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.controllers.manageBusinesses.add.AddBusinessTradeController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType, Manage}
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
@@ -34,7 +34,7 @@ import play.api.http.Status
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
-import testConstants.BusinessDetailsTestConstants.{address, business1}
+import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
