@@ -20,7 +20,7 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.admin.{FeatureSwitch, ReportingFrequencyPage}
+import models.admin.{FeatureSwitch, FeatureSwitchName, ReportingFrequencyPage}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
@@ -43,7 +43,9 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
     IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
     .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, true)))
 
-  val nextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
+  val nextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)     {
+    override def isEnabled(featureSwitch: FeatureSwitchName) (implicit user: MtdItUser[_]): Boolean = true
+  }
 
   "NextUpdatesViewUtils" when {
 
@@ -54,9 +56,6 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
         "any optout model is used" should {
 
           "return the correct content" in {
-
-            enable(ReportingFrequencyPage)
-
             val isAgent = false
             
             val reportingFrequencyLink = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
