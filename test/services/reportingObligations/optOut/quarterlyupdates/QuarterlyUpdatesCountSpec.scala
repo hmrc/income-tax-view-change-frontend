@@ -19,8 +19,8 @@ package services.reportingObligations.optOut.quarterlyupdates
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import connectors.ObligationsConnector
-import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.obligations.ObligationsConnector
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import mocks.MockHttpV2
 import org.mockito.Mockito.mock

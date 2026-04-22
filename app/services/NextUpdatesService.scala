@@ -17,11 +17,12 @@
 package services
 
 import auth.MtdItUser
-import connectors._
+import connectors.*
+import connectors.obligations.ObligationsConnector
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.viewmodels.*
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
-import models.obligations._
+import models.obligations.*
 import play.api.Logger
 import services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}

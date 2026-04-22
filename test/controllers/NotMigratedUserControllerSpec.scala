@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector,ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import mocks.services.MockDateService
 import implicits.ImplicitDateFormatter

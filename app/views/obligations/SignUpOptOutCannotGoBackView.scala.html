@@ -21,7 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
-
+@import controllers.obligations.{routes => obligationsRoutes}
 
 @this(
     mainTemplate: unifiedLayout,
@@ -67,8 +67,8 @@
             @link(
                 id=Some("links-section-upcoming-deadlines-link"),
                 link =
-                    if(isAgent) s"${controllers.routes.NextUpdatesController.showAgent()}"
-                    else s"${controllers.routes.NextUpdatesController.show()}",
+                    if(isAgent) s"${obligationsRoutes.NextUpdatesController.showAgent()}"
+                    else s"${obligationsRoutes.NextUpdatesController.show()}",
                 messageKey = getMessages("linkText1")
             )
         </li>

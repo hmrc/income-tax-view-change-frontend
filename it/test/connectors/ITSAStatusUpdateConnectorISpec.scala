@@ -17,9 +17,8 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import connectors.constants.ITSAStatusUpdateConnectorConstants._
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
-import connectors.itsastatus.{ITSAStatusUpdateConnector, ITSAStatusUpdateRequest}
+import connectors.constants.ITSAStatusUpdateConnectorConstants.*
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{BAD_REQUEST, NO_CONTENT, OK}
 import play.api.libs.json.Json

@@ -16,7 +16,7 @@
 
 package controllers.reportingObligations.signUp
 
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -26,6 +26,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
+import obligations.controllers.reportingObligations.signUp.SignUpTaxYearQuestionController
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
