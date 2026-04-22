@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
-import models.admin.{FeatureSwitchName, OptInOptOutContentUpdateR17}
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, Mandated, Voluntary}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
