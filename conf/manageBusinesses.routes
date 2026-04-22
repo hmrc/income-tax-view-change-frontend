@@ -179,9 +179,6 @@ GET          /manage-your-businesses/cannot-go-back                             
 GET          /agents/manage-your-businesses/cannot-go-back                                              controllers.manageBusinesses.manage.CannotGoBackErrorController.noJourneySessionShow(isAgent: Boolean = true)
 
 # Income Sources - Cease
-# TODO should this be remved
-GET          /manage-your-businesses/cease/cease-an-income-source                 controllers.manageBusinesses.cease.CeaseIncomeSourceController.show()
-GET          /agents/manage-your-businesses/cease/cease-an-income-source          controllers.manageBusinesses.cease.CeaseIncomeSourceController.showAgent()
 
 GET          /manage-your-businesses/cease/business-confirm-cease              controllers.manageBusinesses.cease.DeclareIncomeSourceCeasedController.show(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)
 GET          /agents/manage-your-businesses/cease/business-confirm-cease       controllers.manageBusinesses.cease.DeclareIncomeSourceCeasedController.showAgent(id: Option[String], incomeSourceType: IncomeSourceType = SelfEmployment, isTriggeredMigration: Boolean ?= false)
