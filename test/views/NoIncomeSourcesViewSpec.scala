@@ -24,10 +24,10 @@ class NoIncomeSourcesViewSpec extends ViewSpec {
 
   lazy val view: NoIncomeSourcesView = app.injector.instanceOf[NoIncomeSourcesView]
 
-  val testUrl = "/contact-hmrc"
+  val testContanctHmrcUrl = "/contact-hmrc"
 
   def render(isAgent: Boolean = false): Html =
-    view(isAgent, testUrl)
+    view(isAgent, testContanctHmrcUrl)
 
   "No Income Sources page" should {
 
@@ -63,7 +63,7 @@ class NoIncomeSourcesViewSpec extends ViewSpec {
     "have the contact button with correct link" in new Setup(render()) {
       val button = document.getElementById("no-income-sources-contact-button")
       button.text() shouldBe messages("noIncomeSources.error.button")
-      button.attr("href") shouldBe testUrl
+      button.attr("href") shouldBe testContanctHmrcUrl
     }
   }
 }

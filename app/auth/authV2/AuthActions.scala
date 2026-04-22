@@ -17,11 +17,11 @@
 package auth.authV2
 
 import auth.MtdItUser
-import auth.authV2.actions._
+import auth.authV2.actions.*
 import auth.authV2.models.AuthorisedUserRequest
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import play.api.mvc._
+import play.api.mvc.*
 
 import javax.inject.{Inject, Singleton}
 
@@ -42,7 +42,8 @@ class AuthActions @Inject()(
                              val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
                              val authoriseAndRetrieveIndividualForNrs: AuthoriseAndRetrieveIndividualForNrs,
                              val authoriseAndRetrieveAgentForNrs: AuthoriseAndRetrieveAgentForNrs,
-                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction
+                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction,
+                             val redirectIfNoIncomeSourcesAction: RedirectIfNoIncomeSourcesAction
                            ) extends FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
@@ -51,6 +52,7 @@ class AuthActions @Inject()(
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
+      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
       retrieveNavBar andThen
@@ -61,6 +63,7 @@ class AuthActions @Inject()(
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividualForNrs andThen
       incomeSourceRetrievalAction andThen
+      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
       retrieveNavBar
@@ -76,6 +79,7 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
       incomeSourceRetrievalAction andThen
+      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen
       itsaStatusRetrievalAction andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
@@ -97,6 +101,7 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
+      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen
       itsaStatusRetrievalAction andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
@@ -109,8 +114,25 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
+      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen
       itsaStatusRetrievalAction
+  }
+
+  def asMTDIndividualWithoutIncomeSourcesCheck: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      authoriseAndRetrieveIndividual andThen
+      incomeSourceRetrievalAction andThen
+      retrieveNavBar
+  }
+
+  def asMTDAgentWithConfirmedClientWithoutIncomeSourcesCheck: ActionBuilder[MtdItUser, AnyContent] = {
+    checkSessionTimeout andThen
+      authoriseAndRetrieveAgent.authorise() andThen
+      retrieveClientData.authorise() andThen
+      authoriseAndRetrieveMtdAgent andThen
+      agentHasConfirmedClientAction andThen
+      incomeSourceRetrievalAction
   }
 
   def asMTDIndividualOrAgentWithClient(isAgent: Boolean, triggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
