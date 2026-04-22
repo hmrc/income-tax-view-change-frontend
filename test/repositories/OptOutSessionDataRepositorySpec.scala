@@ -17,7 +17,7 @@
 package repositories
 
 import auth.MtdItUser
-import connectors.itsastatus.ITSAStatusUpdateConnector
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
 import enums.JourneyType.OptOutJourney
 import mocks.services.*
 import models.UIJourneySessionData

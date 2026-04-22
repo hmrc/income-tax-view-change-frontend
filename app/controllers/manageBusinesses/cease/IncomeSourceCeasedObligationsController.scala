@@ -39,6 +39,8 @@ import views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import controllers.obligations.{routes => obligationsRoutes}
+import controllers.obligations.reportingObligations.{routes => reportingObligationsRoutes}
 
 class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,
                                                         val itvcErrorHandler: ItvcErrorHandler,
@@ -72,7 +74,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
   }
 
   private def viewReportingObligationsLink(isAgent: Boolean): String =
-    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
@@ -105,9 +107,9 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
 
   def viewUpcomingUpdatesLink(isAgent: Boolean): String =
     if (isAgent) {
-      controllers.routes.NextUpdatesController.showAgent().url
+      obligationsRoutes.NextUpdatesController.showAgent().url
     } else {
-      controllers.routes.NextUpdatesController.show().url
+      obligationsRoutes.NextUpdatesController.show().url
     }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {

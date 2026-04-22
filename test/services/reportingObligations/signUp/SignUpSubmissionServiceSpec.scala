@@ -17,8 +17,8 @@
 package services.reportingObligations.signUp
 
 import audit.AuditingService
-import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.JourneyType.{Opt, SignUpJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear

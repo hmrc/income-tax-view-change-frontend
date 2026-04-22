@@ -17,6 +17,8 @@
 package models.reportingObligations.signUp
 
 import models.incomeSourceDetails.TaxYear
+import controllers.obligations.{routes => obligationsRoutes}
+import controllers.obligations.reportingObligations.{routes => reportingObligationsRoutes}
 
 case class SignUpCompletedViewModel(isAgent: Boolean,
                                     signUpTaxYear: TaxYear,
@@ -31,11 +33,11 @@ case class SignUpCompletedViewModel(isAgent: Boolean,
   val nextYear: String = signUpTaxYear.nextYear.endYear.toString
 
   val updatesAndDeadlinesLink: String = {
-    if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
-    else controllers.routes.NextUpdatesController.show().url
+    if (isAgent) obligationsRoutes.NextUpdatesController.showAgent().url
+    else obligationsRoutes.NextUpdatesController.show().url
   }
 
-  val reportingObligationsLink: String = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+  val reportingObligationsLink: String = reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 
 }
 

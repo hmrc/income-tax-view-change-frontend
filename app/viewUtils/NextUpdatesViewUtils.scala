@@ -19,28 +19,32 @@ package viewUtils
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import models.admin.ReportingFrequencyPage
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.components.link
 
 import javax.inject.Inject
+import controllers.obligations.reportingObligations.{routes => reportingObligationsRoutes}
 
 class NextUpdatesViewUtils @Inject()(link: link)(
                                       implicit val appConfig: FrontendAppConfig
                                     ) extends FeatureSwitching {
-  def whatTheUserCanDo(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Html = {
-    val reportingFrequencyLink = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
-    
-    HtmlFormat.fill(
-      Seq(
-        Html(messages("nextUpdates.reporting.obligations.p.message")),
-        link(
-          link = reportingFrequencyLink,
-          messageKey = "nextUpdates.reporting.obligations.p.link",
-          id = Some("reporting-frequency-link"),
-          outerMessage = messages("base.fullstop")
+  def whatTheUserCanDo(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Option[Html] = {
+
+    val reportingFrequencyLink = reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
+
+    val reportingFrequencyHtml: Html =
+      HtmlFormat.fill(
+        Seq(
+          Html(messages("nextUpdates.reporting.obligations.p.message")),
+          link(
+            link = reportingFrequencyLink,
+            messageKey = "nextUpdates.reporting.obligations.p.link",
+            id = Some("reporting-frequency-link"),
+            outerMessage = messages("base.fullstop")
+          )
         )
       )
-    )
   }
 }

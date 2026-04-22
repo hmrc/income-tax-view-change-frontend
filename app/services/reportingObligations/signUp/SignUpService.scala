@@ -21,8 +21,8 @@ import audit.models.OptInAuditModel
 import auth.MtdItUser
 import cats.data.OptionT
 import cats.implicits.*
-import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import enums.JourneyType.{Opt, SignUpJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear

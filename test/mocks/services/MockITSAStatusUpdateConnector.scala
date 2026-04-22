@@ -16,8 +16,8 @@
 
 package mocks.services
 
-import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, optOutUpdateReason}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, optOutUpdateReason}
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations.signUp
+package controllers.obligations.reportingObligations.signUp
 
 import auth.authV2.AuthActions
 import com.google.inject.Inject
@@ -23,7 +23,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.DateService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.reportingObligations.signUp.YouMustWaitToSignUpView
+import views.html.obligations.reportingObligations.signUp.YouMustWaitToSignUpView
 
 import scala.concurrent.Future
 

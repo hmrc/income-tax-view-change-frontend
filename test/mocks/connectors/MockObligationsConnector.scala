@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.ObligationsConnector
+import connectors.obligations.ObligationsConnector
 import models.obligations.ObligationsResponseModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._

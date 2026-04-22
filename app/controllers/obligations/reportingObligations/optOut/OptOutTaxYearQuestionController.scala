@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations.optOut
+package controllers.obligations.reportingObligations.optOut
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import controllers.obligations.errors.routes as errorRoutes
+import controllers.obligations.reportingObligations.optOut.routes
+import controllers.obligations.reportingObligations.routes as reportingObligationsRoutes
 import forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -29,7 +32,7 @@ import play.api.mvc.*
 import services.reportingObligations.optOut.{OptOutService, OptOutSubmissionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerOptOut
-import views.html.reportingObligations.optOut.OptOutTaxYearQuestionView
+import views.html.obligations.reportingObligations.optOut.OptOutTaxYearQuestionView
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
@@ -52,7 +55,7 @@ class OptOutTaxYearQuestionController @Inject()(
     else itvcErrorHandler
 
   private def reportingObligationsRedirectUrl(isAgent: Boolean): String =
-    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 
   def show(isAgent: Boolean, taxYear: Option[String]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
@@ -67,14 +70,14 @@ class OptOutTaxYearQuestionController @Inject()(
                       isAgent,
                       viewModel,
                       OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear),
-                      controllers.reportingObligations.optOut.routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
+                      routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
                     )
                   ))
                 }
               case None => Future(Redirect(reportingObligationsRedirectUrl(isAgent)))
             }
           }
-          else Future.successful(Redirect(controllers.reportingObligations.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
+          else Future.successful(Redirect(reportingObligationsRoutes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
         })
       }
   }
@@ -92,15 +95,15 @@ class OptOutTaxYearQuestionController @Inject()(
     formResponse match {
       case Some(OptOutTaxYearQuestionForm.responseYes) =>
         if (redirectToConfirmUpdatesPage) {
-          Future(Redirect(controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.show(isAgent, taxYear.getOrElse(""))))
+          Future(Redirect(routes.ConfirmOptOutUpdateController.show(isAgent, taxYear.getOrElse(""))))
         } else {
           optOutSubmissionService.updateTaxYearsITSAStatusRequest().map {
             case List() =>
-              Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
+              Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
             case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
-              Redirect(controllers.reportingObligations.optOut.routes.ConfirmedOptOutController.show(isAgent))
+              Redirect(routes.ConfirmedOptOutController.show(isAgent))
             case _ =>
-              Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
+              Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
           }
         }
       case Some(OptOutTaxYearQuestionForm.responseNo) =>
@@ -124,7 +127,7 @@ class OptOutTaxYearQuestionController @Inject()(
                       isAgent,
                       viewModel,
                       formWithErrors,
-                      controllers.reportingObligations.optOut.routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
+                      routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
                     )
                   )
                 }

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations.signUp
+package controllers.obligations.reportingObligations.signUp
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.obligations.reportingObligations.routes as reportingObligationsRoutes
+import controllers.obligations.reportingObligations.signUp.routes
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -28,7 +30,7 @@ import services.DateServiceInterface
 import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerSignUp
-import views.html.reportingObligations.signUp.SignUpStartView
+import views.html.obligations.reportingObligations.signUp.SignUpStartView
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}
@@ -66,12 +68,12 @@ class SignUpStartController @Inject()(authActions: AuthActions,
                   )
                 }
               } else {
-                Future.successful(Redirect(controllers.reportingObligations.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(true))))
+                Future.successful(Redirect(reportingObligationsRoutes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(true))))
               }
             }
           case None =>
             Logger("application").warn("[SignUpStartController.show] chosen tax year intent not found. Redirecting to reporting obligations page.")
-            Future.successful(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent)))
+            Future.successful(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent)))
         }
       }
     }
