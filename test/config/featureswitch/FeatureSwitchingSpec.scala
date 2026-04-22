@@ -33,9 +33,7 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     new FrontendAppConfig(
       app.injector.instanceOf[ServicesConfig],
       app.injector.instanceOf[Configuration]
-    ) {
-      override lazy val readFeatureSwitchesFromMongo: Boolean = false
-    }
+    )
 
   override protected def beforeEach(): Unit = {
     super.beforeEach()
@@ -43,6 +41,12 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
   }
 
   val mtdItUser: MtdItUser[_] = defaultMTDITUser(None, IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil))
+
+  private def setFeatureSwitch(fs: FeatureSwitchName, enabled: Boolean): MtdItUser[_] = {
+    sys.props += fs.name -> enabled.toString
+    mtdItUser.copy(featureSwitches = List(FeatureSwitch(fs, isEnabled = enabled)))
+  }
+
   val allFeatureSwitches: Set[FeatureSwitchName] = Set(
     ITSASubmissionIntegration,
     ChargeHistory,
@@ -74,7 +78,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       "return a list of all feature switches" in {
 
-        enable(ReportingFrequencyPage)
         val featureSwitchList = FeatureSwitchName.allFeatureSwitches
 
         featureSwitchList shouldBe allFeatureSwitches
@@ -88,39 +91,41 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       s"enable and disable feature switches by setting system properties for FS: ${featureSwitchName.name}" in {
 
-        enable(featureSwitchName)
+        setFeatureSwitch(featureSwitchName, enabled = true)
         sys.props(featureSwitchName.name) shouldBe "true"
 
-        disable(featureSwitchName)
+        setFeatureSwitch(featureSwitchName, enabled = false)
         sys.props(featureSwitchName.name) shouldBe "false"
       }
 
       s"return true if a feature switch is enabled in system properties for FS: ${featureSwitchName.name}" in {
 
-        enable(featureSwitchName)
+        setFeatureSwitch(featureSwitchName, enabled = true)
 
         isEnabledFromConfig(featureSwitchName) shouldBe true
       }
 
       s"return false if a feature switch is disabled in system properties for FS: ${featureSwitchName.name}" in {
 
-        enable(featureSwitchName)
-        disable(featureSwitchName)
+        setFeatureSwitch(featureSwitchName, enabled = true)
+        setFeatureSwitch(featureSwitchName, enabled = false)
 
         isEnabledFromConfig(featureSwitchName) shouldBe false
       }
 
       s"provide a fold function that branches based on feature state for FS: ${featureSwitchName.name}" in {
 
-        enable(featureSwitchName)
+        {
+          implicit val user: MtdItUser[_] = setFeatureSwitch(featureSwitchName, enabled = true)
+          val actual = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
+          actual shouldBe "enabled"
+        }
 
-        val resultEnabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
-        resultEnabled shouldBe "enabled"
-
-        disable(featureSwitchName)
-
-        val resultDisabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
-        resultDisabled shouldBe "disabled"
+        {
+          implicit val user: MtdItUser[_] = setFeatureSwitch(featureSwitchName, enabled = false)
+          val actual = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
+          actual shouldBe "disabled"
+        }
       }
     }
   }
@@ -149,11 +154,11 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(false)
 
-      enable(featureSwitchName)
+      setFeatureSwitch(featureSwitchName, enabled = true)
 
       MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser) shouldBe true
 
-      disable(featureSwitchName)
+      setFeatureSwitch(featureSwitchName, enabled = false)
 
       MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser) shouldBe false
     }
