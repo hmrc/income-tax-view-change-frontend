@@ -136,7 +136,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         status(result) shouldBe Status.SEE_OTHER
 
-        await(result) shouldBe Redirect(controllers.routes.HandleYourTasksController.show().url)
+        await(result) shouldBe Redirect(controllers.newHomePage.routes.HandleYourTasksController.show().url)
       }
     }
     "an authenticated user" should {

@@ -186,11 +186,12 @@
 
         @p(id=Some("account-updated")) {
             @messages("income.source.added.scenario.one.account.updated.p.a")
-            @linkComponent(
-                id = Some("updates-and-deadlines-link"),
-                url = getNextUpdatesUrl,
-                message = messages("income.source.added.scenario.three.account.updated.p.link")
-            )
+        @linkComponent(
+            id = Some("updates-and-deadlines-link"),
+            url = getNextUpdatesUrl,
+            message = messages("income.source.added.scenario.one.account.updated.p.link"),
+            additionalMessage = if(messages.lang.code == "cy") { Some(",") } else { None }
+        )
             @messages("income.source.added.scenario.one.account.updated.p.b")
         }
 
@@ -234,7 +235,8 @@
             @linkComponent(
                 id = Some("updates-and-deadlines-link"),
                 url = getNextUpdatesUrl,
-                message = messages("income.source.added.scenario.three.account.updated.p.link")
+                message = messages("income.source.added.scenario.two.account.updated.p.link"),
+                additionalMessage = if(messages.lang.code == "cy") { Some(",") } else { None }
             )
             @messages("income.source.added.scenario.two.account.updated.p.b")
         }
@@ -279,12 +281,13 @@
 
         @govukInsetText(InsetText(id = Some("few-minutes-warning"), content = Text(messages("income.source.added.few.minutes.inset"))))
 
-        @p(id = Some("account-updated")) {
+        @p(id=Some("account-updated")) {
             @messages("income.source.added.scenario.three.account.updated.p.a")
             @linkComponent(
                 id = Some("updates-and-deadlines-link"),
                 url = getNextUpdatesUrl,
-                message = messages("income.source.added.scenario.three.account.updated.p.link")
+                message = messages("income.source.added.scenario.three.account.updated.p.link"),
+                additionalMessage = if(messages.lang.code == "cy") { Some(",") } else { None }
             )
             @messages("income.source.added.scenario.three.account.updated.p.b")
         }
@@ -328,7 +331,8 @@
             @linkComponent(
                 id = Some("updates-and-deadlines-link"),
                 url = getNextUpdatesUrl,
-                message = messages("income.source.added.scenario.three.account.updated.p.link")
+                message = messages("income.source.added.scenario.four.account.updated.p.link"),
+                additionalMessage = if(messages.lang.code == "cy") { Some(",") } else { None }
             )
             @messages("income.source.added.scenario.four.account.updated.p.b")
         }
@@ -336,7 +340,12 @@
         @if(reportingFrequencyEnabled) {
             @p(id=Some("view-reporting-obligations")) {
                 @messages("income.source.added.scenario.four.view.reporting.obligations.p")
-                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.four.view.reporting.obligations.link"))
+                @linkComponent(
+                    id = Some("reporting-obligations-link"),
+                    url = getReportingFrequencyUrl,
+                    message = messages("income.source.added.scenario.four.view.reporting.obligations.link"),
+                    additionalMessage = Some(".")
+                )
             }
         }
 

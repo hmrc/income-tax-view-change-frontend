@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.newHomePage
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
+import controllers.newHomePage.routes
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
@@ -32,6 +33,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.*
+import services.newHomePage.HandleYourTasksService
 import services.reportingObligations.optOut.OptOutService
 import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -170,9 +172,9 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       }
   }
 
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HandleYourTasksController.showAgent().url else controllers.routes.HandleYourTasksController.show().url
+  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.newHomePage.routes.HandleYourTasksController.showAgent().url else controllers.newHomePage.routes.HandleYourTasksController.show().url
 
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleRecentActivity(origin, isAgent).url
+  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = routes.RecentActivityController.show(isAgent, origin).url
 
   def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package services.newHomePage
 
 import auth.MtdItUser
 import config.FrontendAppConfig
@@ -28,8 +28,9 @@ import models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import models.newHomePage.YourTasksCard.*
 
 import java.time.LocalDate
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 
+@Singleton
 class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
   private val chargesSet: Set[TransactionType] = Set(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit, BalancingCharge, MfaDebitCharge, ITSAReturnAmendment)

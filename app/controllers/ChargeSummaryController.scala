@@ -190,7 +190,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
           documentDetailWithDueDate.documentDetail,
           financialDetailsForCharge)
 
-        if (chargeItem.isPenalty && !isEnabled(PenaltiesAndAppeals)){
+        if (chargeItem.isPenalty && !isEnabled(PenaltiesAndAppeals)) {
           Future.successful(onError("Charge type prohibited by feature switches", isAgent, showInternalServerError = true))
         } else {
 
@@ -243,29 +243,30 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                   val LSPUrl = appConfig.incomeTaxPenaltiesFrontend
                   val LPPUrl = if (isAgent) appConfig.incomeTaxPenaltiesFrontendLPP1CalculationAgent(chargeRef) else appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeRef)
 
-                  val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
-                    currentDate = dateService.getCurrentDate,
-                    chargeItem = chargeItem,
-                    backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
-                    gatewayPage = sessionGatewayPage,
-                    paymentBreakdown = paymentBreakdown,
-                    paymentAllocations = paymentAllocations,
-                    payments = paymentsForAllYears,
-                    chargeHistoryEnabled = isEnabled(ChargeHistory),
-                    creditsRefundRepayEnabled = isEnabled(CreditsRefundsRepay),
-                    latePaymentInterestCharge = isInterestCharge,
-                    penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-                    reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear),
-                    btaNavPartial = user.btaNavPartial,
-                    serviceNavigationPartial = user.serviceNavigationPartial,
-                    isAgent = isAgent,
-                    adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
-                    poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
-                    poaOneChargeUrl = poaOneChargeUrl,
-                    poaTwoChargeUrl = poaTwoChargeUrl,
-                    LSPUrl = LSPUrl,
-                    LPPUrl = LPPUrl
-                  )
+                  val viewModel: ChargeSummaryViewModel =
+                    ChargeSummaryViewModel(
+                      currentDate = dateService.getCurrentDate,
+                      chargeItem = chargeItem,
+                      backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+                      gatewayPage = sessionGatewayPage,
+                      paymentBreakdown = paymentBreakdown,
+                      paymentAllocations = paymentAllocations,
+                      payments = paymentsForAllYears,
+                      chargeHistoryEnabled = isEnabled(ChargeHistory),
+                      creditsRefundRepayEnabled = isEnabled(CreditsRefundsRepay),
+                      latePaymentInterestCharge = isInterestCharge,
+                      penaltiesEnabled = isEnabled(PenaltiesAndAppeals),
+                      reviewAndReconcileCredit = chargeHistoryService.getReviewAndReconcileCredit(chargeItem, chargeDetailsforTaxYear),
+                      btaNavPartial = user.btaNavPartial,
+                      serviceNavigationPartial = user.serviceNavigationPartial,
+                      isAgent = isAgent,
+                      adjustmentHistory = chargeHistoryService.getAdjustmentHistory(chargeHistory, documentDetailWithDueDate.documentDetail),
+                      poaExtraChargeLink = checkForPoaExtraChargeLink(chargeDetailsforTaxYear, documentDetailWithDueDate, isAgent),
+                      poaOneChargeUrl = poaOneChargeUrl,
+                      poaTwoChargeUrl = poaTwoChargeUrl,
+                      LSPUrl = LSPUrl,
+                      LPPUrl = LPPUrl
+                    )
 
                   getPaymentAllocation(chargeItem).map { allocationData =>
 
@@ -290,9 +291,12 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def checkForPoaExtraChargeLink(chargeDetailsForTaxYear: FinancialDetailsModel,
-                                         documentDetailWithDueDate: DocumentDetailWithDueDate,
-                                         isAgent: Boolean): Option[String] = {
+  private def checkForPoaExtraChargeLink(
+                                          chargeDetailsForTaxYear: FinancialDetailsModel,
+                                          documentDetailWithDueDate: DocumentDetailWithDueDate,
+                                          isAgent: Boolean
+                                        ): Option[String] = {
+
     val chargeItem: Option[ChargeItem] = getChargeItemOpt(chargeDetailsForTaxYear.financialDetails)(documentDetailWithDueDate.documentDetail)
 
     chargeItem match {

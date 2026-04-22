@@ -20,7 +20,7 @@
 
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean, userMandatedOrVoluntary: Boolean)(implicit messages: Messages)
+@(isAgent: Boolean)(implicit messages: Messages)
 
 @viewUpdatesUrl: String = @{
     if(isAgent){
@@ -38,10 +38,8 @@
 
 <div id="deadlines-overview-section">
     <h2 class="govuk-heading-m">@messages("new.home.overview.deadlines.sub-heading")</h2>
-    @if(userMandatedOrVoluntary){
-        @overviewCard(messages("new.home.overview.deadlines.mandated.view-updates"), viewUpdatesUrl)
-    }else {
-        @overviewCard(messages("new.home.overview.deadlines.view-updates"), viewUpdatesUrl)
-    }
+    
+    @overviewCard(messages("new.home.overview.deadlines.view-updates"), viewUpdatesUrl)
+    
     @overviewCard(messages("new.home.overview.deadlines.check-obligations"), reportingFreqUrl)
 </div>

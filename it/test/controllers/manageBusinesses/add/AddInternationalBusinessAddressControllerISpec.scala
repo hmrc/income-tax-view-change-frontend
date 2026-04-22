@@ -20,9 +20,7 @@ import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.WiremockHelper
 import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
-import models.admin.{NavBarFs, OverseasBusinessAddress}
-import models.core.CorrelationId
-import models.core.CorrelationId.correlationId
+import models.admin.OverseasBusinessAddress
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import testConstants.AddressLookupTestConstants

@@ -97,7 +97,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         ctaViewModel,
         chargeItems,
         useRebrand,
-        false,
         true,
         isRecentActivityEnabled,
         creditsRefundsRepayEnabled
@@ -212,7 +211,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
 
           document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
-          document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "View updates and deadlines"
+          document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "View submission deadlines"
           document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/report-quarterly/income-and-expenses/view/submission-deadlines")
 
           document.select(".govuk-summary-card-no-border").get(4).text() shouldBe "Check your reporting obligations"
@@ -285,7 +284,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/payment-refund-history")
 
           document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
-          document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "View updates and deadlines"
+          document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "View submission deadlines"
           document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/submission-deadlines")
 
           document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "Check your reporting obligations"
@@ -313,7 +312,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       val deadlinesSection: Element = document.selectById("deadlines-overview-section")
       deadlinesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Deadlines and reporting obligations"
       deadlinesSection.hasCorrectOverviewCardLink(
-        linkText = "View updates and deadlines",
+        linkText = "View submission deadlines",
         linkHref = "/report-quarterly/income-and-expenses/view/submission-deadlines"
       )
       deadlinesSection.hasCorrectOverviewCardLink(
@@ -486,7 +485,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
 
           document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
-          document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "View updates and deadlines"
+          document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "View submission deadlines"
           document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
 
           document.select(".govuk-summary-card-no-border").get(4).text() shouldBe "Check your reporting obligations"
@@ -558,7 +557,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/payment-refund-history")
 
           document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
-          document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "View updates and deadlines"
+          document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "View submission deadlines"
           document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
 
           document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "Check your reporting obligations"
@@ -587,7 +586,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       val deadlinesSection: Element = document.selectById("deadlines-overview-section")
       deadlinesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Deadlines and reporting obligations"
       deadlinesSection.hasCorrectOverviewCardLink(
-        linkText = "View updates and deadlines",
+        linkText = "View submission deadlines",
         linkHref = "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
       )
       deadlinesSection.hasCorrectOverviewCardLink(
@@ -642,7 +641,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       val deadlinesSection: Element = document.selectById("deadlines-overview-section")
       deadlinesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Deadlines and reporting obligations"
       deadlinesSection.hasCorrectOverviewCardLink(
-        linkText = "View updates and deadlines",
+        linkText = "View submission deadlines",
         linkHref = "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
       )
       deadlinesSection.hasCorrectOverviewCardLink(

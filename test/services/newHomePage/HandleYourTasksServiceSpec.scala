@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package services.newHomePage
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
@@ -28,6 +28,7 @@ import models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
 import models.newHomePage.{HandleYourTasksViewModel, NoTaskCard, SubmissionDeadlinesViewModel}
 import models.obligations.{SingleObligationModel, StatusOpen}
+import services.newHomePage.HandleYourTasksService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

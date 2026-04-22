@@ -55,6 +55,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                      ) extends BaseController with I18nSupport with FeatureSwitching {
 
   final val trigMigUser = "TR000001A"
+  final val recentActivityUserPrefix = "HP"
 
   // Logging page functionality
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
@@ -68,7 +69,6 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       formWithErrors =>
         Future.successful(BadRequest(s"Invalid form submission: $formWithErrors")),
       (postedUser: PostedUser) => {
-
         userRepository.findUser(postedUser.nino).flatMap(
           user =>
             customAuthConnector.login(user.nino, postedUser.isAgent, postedUser.isSupporting).flatMap {
@@ -90,7 +90,11 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                     cyItsaStatus = postedUser.cyItsaStatus.get,
                     cyPlusOneItsaStatus = postedUser.cyPlusOneItsaStatus.get
                   ).map {
-                    _ => successRedirect(bearer, auth, homePage)
+                    _ =>
+                      if (user.nino.take(2) == recentActivityUserPrefix) {
+                        updateTestDataForRecentActivityUser(user.nino)
+                      }
+                      successRedirect(bearer, auth, homePage)
                   }.recover {
                     case ex =>
                       val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -119,8 +123,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   Future.successful(successRedirect(bearer, auth, homePage))
                 }
 
-              case code =>
-                Future.successful(InternalServerError("something went wrong.." + code))
+              case code => Future.successful(InternalServerError("something went wrong.." + code))
             }
         )
       }
@@ -136,6 +139,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   private def updateTestDataForTrigMigUser(mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier) = {
     dynamicStubService.overwriteBusinessData(mtdid, trigMigUser)
+  }
+
+  private def updateTestDataForRecentActivityUser(nino: String)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteObligationsData(nino)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,
