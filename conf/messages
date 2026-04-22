@@ -2056,7 +2056,7 @@ income.source.added.scenario.four.account.updated.p.link                        
 income.source.added.scenario.four.account.updated.p.b                                       = page, your account has been updated.
 
 income.source.added.scenario.four.view.reporting.obligations.p                              = This new business is opted out of Making Tax Digital for Income Tax. Find out more about
-income.source.added.scenario.four.view.reporting.obligations.link                           = your reporting obligations.
+income.source.added.scenario.four.view.reporting.obligations.link                           = your reporting obligations
 
 income.source.added.scenario.four.view.businesses.link                                      = View your businesses
 income.source.added.scenario.four.view.businesses.p                                         = to add, manage or cease a business or income source.
@@ -2088,16 +2088,9 @@ business.added.sole-trader.obligation.view.upcoming.updates.text          = View
 business.added.sole-trader.next.quarterly.obligation.text                 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.sole-trader.final.dec.text                                 = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 
-business.added.sole-trader.quarterly.opt.out.text.1                       = You can decide at any time to opt out of quarterly reporting and report annually for all your businesses on
-business.added.sole-trader.quarterly.opt.out.link                         = your reporting frequency
-business.added.sole-trader.quarterly.opt.out.text.2                       = page.
-
 business.added.sole-trader.quarterly.annual.reporting.frequency.a         = Depending on your circumstances, you may be able to
 business.added.sole-trader.quarterly.annual.reporting.frequency.link      = view and change your reporting frequency
 business.added.sole-trader.quarterly.annual.reporting.frequency.b         = for all your businesses.
-
-business.added.sole-trader.annual.reporting.frequency.text                = You are set to report annually for your new business. Find out more about
-business.added.sole-trader.annual.reporting.frequency.link                = your reporting frequency.
 
 
 business.added.sole-trader.submit.tax.return                              = Submit your tax return
@@ -2133,16 +2126,9 @@ business.added.uk-property.obligation.view.upcoming.updates.text          = View
 business.added.uk-property.next.quarterly.obligation.text                 = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.uk-property.final.dec.text                                 = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 
-business.added.uk-property.quarterly.opt.out.text.1                       = You can decide at any time to opt out of quarterly reporting and report annually for all your properties on
-business.added.uk-property.quarterly.opt.out.link                         = your reporting frequency
-business.added.uk-property.quarterly.opt.out.text.2                       = page.
-
 business.added.uk-property.quarterly.annual.reporting.frequency.a         = Depending on your circumstances, you may be able to
 business.added.uk-property.quarterly.annual.reporting.frequency.link      = view and change your reporting frequency
 business.added.uk-property.quarterly.annual.reporting.frequency.b         = for all your properties.
-
-business.added.uk-property.annual.reporting.frequency.text                = You are set to report annually for your new property. Find out more about
-business.added.uk-property.annual.reporting.frequency.link                = your reporting frequency.
 
 
 business.added.uk-property.submit.tax.return                              = Submit your tax return
@@ -2178,16 +2164,10 @@ business.added.foreign-property.obligation.view.upcoming.updates.text           
 business.added.foreign-property.next.quarterly.obligation.text               = Your next quarterly update for the {0} to {1} tax year is due by <b>{2}</b> for the quarterly period {3} to {4}
 business.added.foreign-property.final.dec.text                               = Your tax return for the {0} to {1} tax year is due by <b>{2}</b>
 
-business.added.foreign-property.quarterly.opt.out.text.1                     = You can decide at any time to opt out of quarterly reporting and report annually for all your properties on
-business.added.foreign-property.quarterly.opt.out.link                       = your reporting frequency
-business.added.foreign-property.quarterly.opt.out.text.2                     = page.
-
 business.added.foreign-property.quarterly.annual.reporting.frequency.a       = Depending on your circumstances, you may be able to
 business.added.foreign-property.quarterly.annual.reporting.frequency.link    = view and change your reporting frequency
 business.added.foreign-property.quarterly.annual.reporting.frequency.b       = for all your properties.
 
-business.added.foreign-property.annual.reporting.frequency.text              = You are set to report annually for your new property. Find out more about
-business.added.foreign-property.annual.reporting.frequency.link              = your reporting frequency.
 
 business.added.foreign-property.submit.tax.return                            = Submit your tax return
 business.added.foreign-property.submit.tax.return.text                       = When reporting annually, you can submit your tax return directly through your HMRC online account or
@@ -2401,7 +2381,7 @@ incomeSources.cease.error.UK.notCeased.text                       = Your UK prop
 incomeSources.cease.error.FP.notCeased.text                       = Your foreign property business could not be ceased. We have not saved your answers. Please try again later.
 incomeSources.cease.error.SE.notCeased.text                       = Your sole trader business could not be ceased. We have not saved your answers. Please try again later.
 incomeSources.cease.error.notCeased.link.prefix                   = Back to
-incomeSources.cease.error.notCeased.link.text                     = cease an income source.
+incomeSources.cease.error.notCeased.link.text                     = cease an income source
 
 incomeSources.manage.reportingMethodError.hyperlink1            = manage your details
 incomeSources.manage.reportingMethodError.hyperlink2            = view and manage income sources
