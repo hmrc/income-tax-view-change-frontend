@@ -274,7 +274,7 @@ new.home.recentActivity.submissions.quarterly.link.text         = Gweld eich cry
 new.home.recentActivity.submissions.quarterly.content.text      = Gwnaethoch gyflwyno diweddariad chwarterol.
 new.home.recentActivity.submissions.quarterly.date.content.text = Anfonwyd ar {0}
 
-new.home.recentActivity.recentRefunds.link.text                 = Gweld hanes ad-daliadau
+new.home.recentActivity.recentRefund.link.text                 = Gweld hanes ad-daliadau
 new.home.recentActivity.recentRefund.content.text               = Mae CThEF wedi talu’ch ad-daliad o {0}.
 new.home.recentActivity.recentRefund.date.content.text          = Talwyd erbyn {0}
 
