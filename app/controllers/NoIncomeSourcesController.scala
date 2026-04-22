@@ -37,14 +37,14 @@ class NoIncomeSourcesController @Inject()(
                                          ) extends FrontendController(mcc) with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
-    if (isAgent){
-      authActions.asMTDAgentWithConfirmedClientWithoutIncomeSourcesCheck.async { implicit user =>
-        Future.successful(Ok(noIncomeSourcesView(isAgent = true, appConfig.noIncomeSourcesContactUrl)))
-      }
-    } else {
-      authActions.asMTDIndividualWithoutIncomeSourcesCheck.async { implicit user =>
-        Future.successful(Ok(noIncomeSourcesView(isAgent = false, appConfig.noIncomeSourcesContactUrl)))
-      } 
+    val action =
+      if (isAgent) authActions.asMTDAgentWithConfirmedClientForNoIncomeSourcesPage
+      else authActions.asMTDIndividualForNoIncomeSourcesPage
+
+    action.async { implicit user =>
+      Future.successful(
+        Ok(noIncomeSourcesView(isAgent, appConfig.noIncomeSourcesContactUrl))
+      )
     }
   }
 }

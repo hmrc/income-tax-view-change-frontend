@@ -52,7 +52,6 @@ class AuthActions @Inject()(
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
-      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
       retrieveNavBar andThen
@@ -63,7 +62,6 @@ class AuthActions @Inject()(
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividualForNrs andThen
       incomeSourceRetrievalAction andThen
-      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
       itsaStatusRetrievalAction andThen
       retrieveNavBar
@@ -79,7 +77,6 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
       incomeSourceRetrievalAction andThen
-      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen
       itsaStatusRetrievalAction andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
@@ -101,7 +98,6 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
-      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen
       itsaStatusRetrievalAction andThen
       triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
@@ -114,19 +110,38 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
-      redirectIfNoIncomeSourcesAction andThen
       retrieveFeatureSwitches andThen
       itsaStatusRetrievalAction
   }
 
-  def asMTDIndividualWithoutIncomeSourcesCheck: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividualWithIncomeSources(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] =
+    asMTDIndividual(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
+
+  def asMTDAgentWithConfirmedClientWithIncomeSources(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] =
+    asMTDAgentWithConfirmedClient(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
+
+  def asMTDPrimaryAgentWithIncomeSources(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] =
+    asMTDPrimaryAgent(isTriggeredMigrationPage) andThen redirectIfNoIncomeSourcesAction
+
+  def asMTDIndividualOrAgentWithClientWithIncomeSources(
+                                                         isAgent: Boolean,
+                                                         triggeredMigrationPage: Boolean = false
+                                                       ): ActionBuilder[MtdItUser, AnyContent] = {
+    if (isAgent) {
+      asMTDAgentWithConfirmedClientWithIncomeSources(triggeredMigrationPage)
+    } else {
+      asMTDIndividualWithIncomeSources(triggeredMigrationPage)
+    }
+  }
+
+  def asMTDIndividualForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
       retrieveNavBar
   }
 
-  def asMTDAgentWithConfirmedClientWithoutIncomeSourcesCheck: ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDAgentWithConfirmedClientForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveAgent.authorise() andThen
       retrieveClientData.authorise() andThen
