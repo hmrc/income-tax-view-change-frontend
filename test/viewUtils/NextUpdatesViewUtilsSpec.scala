@@ -44,9 +44,8 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
     .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, true)))
 
   val nextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)     {
-    override def isEnabled(featureSwitch: FeatureSwitchName) (implicit user: MtdItUser[_]): Boolean = false
+    override def isEnabled(featureSwitch: FeatureSwitchName) (implicit user: MtdItUser[_]): Boolean = true
   }
-
 
   "NextUpdatesViewUtils" when {
 
