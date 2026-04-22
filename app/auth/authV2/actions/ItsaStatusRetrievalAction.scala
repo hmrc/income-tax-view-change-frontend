@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.DateServiceInterface
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-
+import controllers.obligations.reportingObligations.signUp.routes.YouMustWaitToSignUpController
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -82,13 +82,13 @@ class ItsaStatusRetrievalAction @Inject()(
           req.authUserDetails.affinityGroup match {
             case Some(Individual) =>
               Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Non-Agent/Individual's YouMustWaitToSignUp page")
-              Left(Redirect(controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(isAgent = false)))
+              Left(Redirect(YouMustWaitToSignUpController.show(isAgent = false)))
             case Some(Organisation) =>
               Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Non-Agent/Organisation's YouMustWaitToSignUp page")
-              Left(Redirect(controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(isAgent = false)))
+              Left(Redirect(YouMustWaitToSignUpController.show(isAgent = false)))
             case Some(Agent) =>
               Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Agent YouMustWaitToSignUp page")
-              Left(Redirect(controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(isAgent = true)))
+              Left(Redirect(YouMustWaitToSignUpController.show(isAgent = true)))
             case None =>
               Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
               Left(internalServerErrorFor(req, "affinity-group", None))

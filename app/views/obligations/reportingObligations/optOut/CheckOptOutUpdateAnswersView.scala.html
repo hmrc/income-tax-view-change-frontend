@@ -35,7 +35,7 @@ formWithCSRF: FormWithCSRF
 @(viewModel: CheckOptOutUpdateAnswersViewModel, isAgent: Boolean, reportingObligationsURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getPostAction = @{
-    controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.submit(isAgent, viewModel.startYear)
+    controllers.obligations.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.submit(isAgent, viewModel.startYear)
 }
 
 @mainTemplate(

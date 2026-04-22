@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.obligations
 
 import audit.AuditingService
 import audit.models.NextUpdatesResponseAuditModel
 import auth.MtdItUser
 import config.FrontendAppConfig
+import connectors.RawResponseReads
 import models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import play.api.Logger
 import play.api.http.Status

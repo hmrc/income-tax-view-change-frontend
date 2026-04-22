@@ -24,7 +24,7 @@ import models.admin.NavBarFs
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers.{charset, contentType, _}
+import play.api.test.Helpers.*
 import services.{CalculationService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful

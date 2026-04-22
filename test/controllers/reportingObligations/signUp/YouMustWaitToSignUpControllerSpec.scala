@@ -20,6 +20,7 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSignUpService
+import obligations.controllers.reportingObligations.signUp.YouMustWaitToSignUpController
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api

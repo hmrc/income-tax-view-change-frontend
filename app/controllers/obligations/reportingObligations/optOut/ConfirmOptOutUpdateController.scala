@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations.optOut
+package controllers.obligations.reportingObligations.optOut
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.*
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import controllers.obligations.errors.routes as errorRoutes
+import controllers.obligations.reportingObligations.routes as reportingObligationsRoutes
 import models.incomeSourceDetails.TaxYear
 import models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
 import play.api.Logger
@@ -29,7 +31,7 @@ import play.api.mvc.*
 import services.reportingObligations.optOut.{OptOutService, OptOutSubmissionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerOptOut
-import views.html.reportingObligations.optOut.CheckOptOutUpdateAnswersView
+import views.html.obligations.reportingObligations.optOut.CheckOptOutUpdateAnswersView
 
 import javax.inject.Inject
 import scala.annotation.unused
@@ -77,13 +79,13 @@ class ConfirmOptOutUpdateController @Inject()(
                     Some(selectedTaxYear)
                   )
                 } yield {
-                  val reportingObligationsURL = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+                  val reportingObligationsURL = reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
                   Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
                 }
               }
             }
           }
-          else Future.successful(Redirect(controllers.reportingObligations.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
+          else Future.successful(Redirect(reportingObligationsRoutes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
         })
       }
   }
@@ -96,11 +98,11 @@ class ConfirmOptOutUpdateController @Inject()(
             updateTaxYearsITSAStatusRequest: List[ITSAStatusUpdateResponse] <- optOutSubmissionService.updateTaxYearsITSAStatusRequest()
             result = updateTaxYearsITSAStatusRequest match {
               case List() =>
-                Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
+                Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
               case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
-                Redirect(controllers.reportingObligations.optOut.routes.ConfirmedOptOutController.show(isAgent))
+                Redirect(routes.ConfirmedOptOutController.show(isAgent))
               case listOfUpdateRequestsMade if listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
-                Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
+                Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
               case _ =>
                 itvcErrorHandler.showInternalServerError()
             }

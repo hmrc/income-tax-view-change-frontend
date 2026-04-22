@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations.signUp
+package controllers.obligations.reportingObligations.signUp
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.{JourneyCheckerSignUp, ReportingObligationsUtils}
-import views.html.reportingObligations.signUp.SignUpCompletedView
+import views.html.obligations.reportingObligations.signUp.SignUpCompletedView
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}

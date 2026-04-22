@@ -24,6 +24,7 @@ import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUp
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.reportingObligations.signUp.{SignUpSessionData, SignUpTaxYearQuestionViewModel}
+import obligations.controllers.reportingObligations.signUp.SignUpStartController
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api

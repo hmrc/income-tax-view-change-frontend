@@ -25,6 +25,7 @@ import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPa
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.reportingObligations.ReportingFrequencyViewModel
+import obligations.controllers.reportingObligations.ReportingFrequencyPageController
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{when, mock as mMock}
 import org.scalatestplus.mockito.MockitoSugar

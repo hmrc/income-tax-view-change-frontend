@@ -19,7 +19,7 @@
 @import views.html.layouts.unifiedLayout
 @import models.reportingObligations.optOut.*
 @import viewUtils.ExternalUrlHelper
-
+@import controllers.obligations.{routes => obligationsRoutes}
 @this(
     mainTemplate: unifiedLayout,
     h1: h1,
@@ -286,7 +286,7 @@
 
 
 @yourReportingFrequencyBlock = @{
-    val reportingFrequencyUrl = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    val reportingFrequencyUrl = controllers.obligations.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
     val reportingFrequencyLink = link(
         id = Some("your-reporting-frequency-link"),
         link = reportingFrequencyUrl,
@@ -305,7 +305,7 @@
         @p(id = Some("view-upcoming-updates")) {
             @link(
                 id = Some("view-upcoming-updates-link"),
-                link = if(isAgent) controllers.routes.NextUpdatesController.showAgent().url else controllers.routes.NextUpdatesController.show().url,
+                link = if(isAgent) obligationsRoutes.NextUpdatesController.showAgent().url else obligationsRoutes.NextUpdatesController.show().url,
                 messageKey = "optout.confirmedOptOut.viewUpcomingDeadlines.text"
             )
         }

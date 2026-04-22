@@ -21,6 +21,8 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary, isExemptionStatus, isNonExemptStatus}
 import services.DateServiceInterface
 import services.reportingObligations.optOut.OptOutProposition
+import controllers.obligations.reportingObligations.optOut.{routes => optOutRoutes}
+import controllers.obligations.reportingObligations.signUp.{routes => signUpRoutes}
 
 case class ReportingFrequencyViewModel(
                                         isAgent: Boolean,
@@ -81,9 +83,9 @@ case class ReportingFrequencyViewModel(
 
   def getOptOutSignUpLink(taxYear: TaxYear, suffix: String): String = {
     if (suffix.contains("optOut")) {
-      controllers.reportingObligations.optOut.routes.OptOutTaxYearQuestionController.show(isAgent, Some(taxYear.startYear.toString)).url
+      optOutRoutes.OptOutTaxYearQuestionController.show(isAgent, Some(taxYear.startYear.toString)).url
     } else {
-      controllers.reportingObligations.signUp.routes.SignUpStartController.show(isAgent, Some(taxYear.startYear.toString)).url
+      signUpRoutes.SignUpStartController.show(isAgent, Some(taxYear.startYear.toString)).url
     }
   }
 

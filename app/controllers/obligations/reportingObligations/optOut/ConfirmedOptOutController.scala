@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations.optOut
+package controllers.obligations.reportingObligations.optOut
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import controllers.obligations.reportingObligations.routes as reportingObligationsRoutes
 import enums.*
 import models.admin.ReportingFrequencyPage
 import models.itsaStatus.ITSAStatus
@@ -31,7 +32,7 @@ import services.reportingObligations.optOut.{MultiYearOptOutProposition, OptOutS
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.reportingObligations.optOut.ConfirmedOptOutView
+import views.html.obligations.reportingObligations.optOut.ConfirmedOptOutView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -109,7 +110,7 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
             (viewScenarioContent, viewModel) match {
               case (_, None) =>
                 Logger("application").error(s"[ConfirmedOptOutController][show] Cannot create opt-out confirmation view model. Redirecting to cannot-go-back page")
-                Redirect(controllers.reportingObligations.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)))
+                Redirect(reportingObligationsRoutes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)))
               case (viewScenario, Some(viewModel)) =>
                 Logger("application").debug(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
                 Ok(view(

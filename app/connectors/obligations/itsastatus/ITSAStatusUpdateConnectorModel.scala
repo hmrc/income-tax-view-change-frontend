@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.itsastatus
+package connectors.obligations.itsastatus
 
 import play.api.libs.json.{Format, Json, OFormat}
 import play.mvc.Http.Status.NO_CONTENT

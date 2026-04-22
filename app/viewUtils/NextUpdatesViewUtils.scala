@@ -25,13 +25,14 @@ import play.twirl.api.{Html, HtmlFormat}
 import views.html.components.link
 
 import javax.inject.Inject
+import controllers.obligations.reportingObligations.{routes => reportingObligationsRoutes}
 
 class NextUpdatesViewUtils @Inject()(link: link)(
                                       implicit val appConfig: FrontendAppConfig
                                     ) extends FeatureSwitching {
   def whatTheUserCanDo(isAgent: Boolean)(implicit user: MtdItUser[_], messages: Messages): Option[Html] = {
 
-    val reportingFrequencyLink = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    val reportingFrequencyLink = reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 
     val reportingFrequencyHtml: Html =
       HtmlFormat.fill(

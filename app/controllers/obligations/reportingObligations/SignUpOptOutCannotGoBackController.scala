@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations
+package controllers.obligations.reportingObligations
 
 import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import controllers.obligations.reportingObligations.routes
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.ReportingObligationsUtils
-import views.html.SignUpOptOutCannotGoBackView
+import views.html.obligations.SignUpOptOutCannotGoBackView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -43,7 +44,7 @@ class SignUpOptOutCannotGoBackController @Inject()(
     isSignUpJourney match {
       case Some(true) => Future.successful(Ok(view(isAgent, isSignUp = true)))
       case Some(false) => Future.successful(Ok(view(isAgent, isSignUp = false)))
-      case _ => Future.successful(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent)))
+      case _ => Future.successful(Redirect(routes.ReportingFrequencyPageController.show(isAgent)))
     }
   }
 }

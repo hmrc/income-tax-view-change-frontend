@@ -23,6 +23,7 @@ import mocks.services.MockSignUpService
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import obligations.controllers.reportingObligations.signUp.SignUpCompletedController
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api

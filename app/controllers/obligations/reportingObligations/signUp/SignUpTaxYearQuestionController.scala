@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations.signUp
+package controllers.obligations.reportingObligations.signUp
 
 import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
+import controllers.obligations.errors.routes as errorRoutes
+import controllers.obligations.reportingObligations.routes as reportingObligationsRoutes
+import controllers.obligations.reportingObligations.signUp.routes
 import forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -27,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.reportingObligations.JourneyCheckerSignUp
-import views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
+import views.html.obligations.reportingObligations.signUp.SignUpTaxYearQuestionView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -65,11 +68,11 @@ class SignUpTaxYearQuestionController @Inject()(
                   ))
                 }
               } else {
-                Future.successful(Redirect(controllers.reportingObligations.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(true))))
+                Future.successful(Redirect(reportingObligationsRoutes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(true))))
               }
             }
           case None =>
-            Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url))
+            Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url))
         }
       }
   }
@@ -94,12 +97,12 @@ class SignUpTaxYearQuestionController @Inject()(
                   case Some(SignUpTaxYearQuestionForm.responseYes) =>
                     signUpSubmissionService.triggerSignUpRequest().map {
                       case response if response.isInstanceOf[ITSAStatusUpdateResponseFailure] =>
-                        Redirect(controllers.errors.routes.CannotUpdateReportingObligationsController.show(isAgent))
+                        Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
                       case _ =>
-                        Redirect(controllers.reportingObligations.signUp.routes.SignUpCompletedController.show(isAgent))
+                        Redirect(routes.SignUpCompletedController.show(isAgent))
                     }
                   case Some(SignUpTaxYearQuestionForm.responseNo) =>
-                    Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url))
+                    Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url))
                   case _ =>
                     Logger("application").error("[SignUpTaxYearQuestionController.submit] Invalid form response")
                     Future(errorHandler(isAgent).showInternalServerError())
@@ -107,7 +110,7 @@ class SignUpTaxYearQuestionController @Inject()(
               }
             )
           case None =>
-            Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url))
+            Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url))
         }
       }
   }

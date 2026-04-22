@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.reportingObligations
+package controllers.obligations.reportingObligations
 
 import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import controllers.obligations.routes as obligationsRoutes
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import models.reportingObligations.ReportingFrequencyViewModel
 import play.api.i18n.I18nSupport
@@ -31,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.MtdConstants
 import viewUtils.ReportingFrequencyViewUtils
 import views.html.errorPages.templates.ErrorTemplate
-import views.html.reportingObligations.ReportingFrequencyView
+import views.html.obligations.reportingObligations.ReportingFrequencyView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -75,8 +76,8 @@ class ReportingFrequencyPageController @Inject()(
             isOptOutEnabled = isEnabled(OptOutFs)
           )
         nextUpdatesLink =
-          if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
-          else controllers.routes.NextUpdatesController.show().url
+          if (isAgent) obligationsRoutes.NextUpdatesController.showAgent().url
+          else obligationsRoutes.NextUpdatesController.show().url
         result <-
           if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
             reportingObligationsAuditService

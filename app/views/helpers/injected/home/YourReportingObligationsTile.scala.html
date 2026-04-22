@@ -18,6 +18,7 @@
 @import java.time.LocalDate
 @import models.homePage.YourReportingObligationsTileViewModel
 @import models.itsaStatus.ITSAStatus
+@import controllers.obligations.reportingObligations.{routes => reportingObligationsRoutes}
 
 @this(
     home_tile: home_tile,
@@ -29,7 +30,7 @@
 @(yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel, isAgent: Boolean)(implicit messages: Messages)
 
 @reportingObligationsURL = @{
-    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 }
 
 @reportingObligationsLink = @{

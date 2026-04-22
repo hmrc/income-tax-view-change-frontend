@@ -20,17 +20,17 @@ import audit.AuditingService
 import audit.models.OptOutAuditModel
 import auth.MtdItUser
 import cats.data.OptionT
-import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import enums.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
-import models.reportingObligations.optOut.{OptOutTaxYearQuestionViewModel, *}
+import models.reportingObligations.optOut.*
 import play.api.Logger
 import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import OptOutProposition.createOptOutProposition
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
 import services.reportingObligations.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -125,7 +125,6 @@ class OptOutService @Inject()(
               case _ => Future(ITSAStatusUpdateResponseFailure.defaultFailure())
             }
           case _ => Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
-
         }.getOrElse {
           Future(ITSAStatusUpdateResponseFailure.defaultFailure())
         }

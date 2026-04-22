@@ -19,14 +19,14 @@ package services.reportingObligations.optOut
 import audit.AuditingService
 import audit.models.OptOutNewAuditModel
 import auth.MtdItUser
-import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
 import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.reportingObligations.optOut.{OptOutSessionData, OptOutYearToUpdate}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optOutUpdateReason}
 import play.api.Logging
 import repositories.{OptOutContextData, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier

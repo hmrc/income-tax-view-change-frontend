@@ -18,8 +18,8 @@ package services.reportingObligations.optOut
 
 import audit.AuditingService
 import auth.MtdItUser
-import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus

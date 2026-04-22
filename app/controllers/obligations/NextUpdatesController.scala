@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.obligations
 
 import audit.AuditingService
 import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
@@ -22,6 +22,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import controllers.obligations.routes
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.obligations.*
 import play.api.Logger
@@ -32,7 +33,7 @@ import services.reportingObligations.optOut.OptOutService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewUtils.NextUpdatesViewUtils
-import views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
+import views.html.obligations.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -138,8 +139,8 @@ class NextUpdatesController @Inject()(
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
     if (isAgent) {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.showAgent().url))
+      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(routes.NextUpdatesController.showAgent().url))
     } else {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(controllers.routes.NextUpdatesController.show(origin).url))
+      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(routes.NextUpdatesController.show(origin).url))
     }
 }

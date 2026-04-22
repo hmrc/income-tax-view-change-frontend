@@ -16,7 +16,7 @@
 
 package controllers.reportingObligations.optOut
 
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -25,6 +25,7 @@ import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPa
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
+import obligations.controllers.reportingObligations.optOut.OptOutTaxYearQuestionController
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api

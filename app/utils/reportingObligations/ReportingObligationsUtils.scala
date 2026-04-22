@@ -25,6 +25,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import scala.concurrent.Future
+import controllers.obligations.reportingObligations.{routes => reportingObligationsRoutes}
 
 trait ReportingObligationsUtils extends FeatureSwitching {
 
@@ -68,8 +69,8 @@ trait ReportingObligationsUtils extends FeatureSwitching {
 
   protected def redirectReportingFrequency(userType: Option[AffinityGroup]): Future[Result] =
     userType match {
-      case Some(Agent) => Future.successful(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true)))
-      case _ => Future.successful(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false)))
+      case Some(Agent) => Future.successful(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(true)))
+      case _ => Future.successful(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(false)))
     }
 
 }

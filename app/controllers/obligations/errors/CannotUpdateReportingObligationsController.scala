@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.errors
+package controllers.obligations.errors
 
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.CannotUpdateReportingObligations
+import views.html.obligations.errorPages.CannotUpdateReportingObligations
 
 import scala.concurrent.Future
 

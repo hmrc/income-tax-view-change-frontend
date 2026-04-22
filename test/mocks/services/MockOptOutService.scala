@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponse
 import models.incomeSourceDetails.TaxYear
 import models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import org.mockito.ArgumentMatchers.any

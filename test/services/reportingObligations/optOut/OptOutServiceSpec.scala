@@ -17,8 +17,8 @@
 package services.reportingObligations.optOut
 
 import audit.AuditingService
-import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
+import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.services.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
