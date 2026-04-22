@@ -55,8 +55,7 @@
     getReportingFrequencyUrl: String,
     getNextUpdatesUrl: String,
     getManageBusinessUrl: String,
-    scenario: SignedUpForMTD,
-    reportingFrequencyEnabled: Boolean
+    scenario: SignedUpForMTD
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
@@ -195,12 +194,10 @@
             @messages("income.source.added.scenario.one.account.updated.p.b")
         }
 
-        @if(reportingFrequencyEnabled) {
-            @p(id=Some("view-reporting-obligations")) {
-                @messages("income.source.added.scenario.one.view.reporting.obligations.p.a")
-                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.one.view.reporting.obligations.link"))
-                @messages("income.source.added.scenario.one.view.reporting.obligations.p.b")
-            }
+        @p(id=Some("view-reporting-obligations")) {
+            @messages("income.source.added.scenario.one.view.reporting.obligations.p.a")
+            @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.one.view.reporting.obligations.link"))
+            @messages("income.source.added.scenario.one.view.reporting.obligations.p.b")
         }
 
         @p(id=Some("view-businesses")) {
@@ -241,16 +238,14 @@
             @messages("income.source.added.scenario.two.account.updated.p.b")
         }
 
-        @if(reportingFrequencyEnabled) {
-            @p(id=Some("view-reporting-obligations")) {
-                @messages("income.source.added.scenario.two.view.reporting.obligations.p.a")
-                @linkComponent(
-                    id = Some("reporting-obligations-link"),
-                    url = getReportingFrequencyUrl,
-                    message = messages("income.source.added.scenario.two.view.reporting.obligations.link"),
-                    additionalMessage = Some(messages("base.fullstop"))
-                )
-            }
+        @p(id=Some("view-reporting-obligations")) {
+            @messages("income.source.added.scenario.two.view.reporting.obligations.p.a")
+            @linkComponent(
+                id = Some("reporting-obligations-link"),
+                url = getReportingFrequencyUrl,
+                message = messages("income.source.added.scenario.two.view.reporting.obligations.link"),
+                additionalMessage = Some(messages("base.fullstop"))
+            )
         }
 
         @p(id=Some("view-businesses")) {
@@ -292,12 +287,10 @@
             @messages("income.source.added.scenario.three.account.updated.p.b")
         }
 
-        @if(reportingFrequencyEnabled) {
-            @p(id=Some("view-reporting-obligations")) {
-                @messages("income.source.added.scenario.three.view.reporting.obligations.p.a")
-                @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.three.view.reporting.obligations.link"))
-                @messages("income.source.added.scenario.three.view.reporting.obligations.p.b")
-            }
+        @p(id=Some("view-reporting-obligations")) {
+            @messages("income.source.added.scenario.three.view.reporting.obligations.p.a")
+            @linkComponent(id = Some("reporting-obligations-link"), url = getReportingFrequencyUrl, message = messages("income.source.added.scenario.three.view.reporting.obligations.link"))
+            @messages("income.source.added.scenario.three.view.reporting.obligations.p.b")
         }
 
         @p(id=Some("view-businesses")) {
@@ -337,16 +330,14 @@
             @messages("income.source.added.scenario.four.account.updated.p.b")
         }
 
-        @if(reportingFrequencyEnabled) {
-            @p(id=Some("view-reporting-obligations")) {
-                @messages("income.source.added.scenario.four.view.reporting.obligations.p")
-                @linkComponent(
-                    id = Some("reporting-obligations-link"),
-                    url = getReportingFrequencyUrl,
-                    message = messages("income.source.added.scenario.four.view.reporting.obligations.link"),
-                    additionalMessage = Some(".")
-                )
-            }
+        @p(id=Some("view-reporting-obligations")) {
+            @messages("income.source.added.scenario.four.view.reporting.obligations.p")
+            @linkComponent(
+                id = Some("reporting-obligations-link"),
+                url = getReportingFrequencyUrl,
+                message = messages("income.source.added.scenario.four.view.reporting.obligations.link"),
+                additionalMessage = Some(".")
+            )
         }
 
         @p(id=Some("view-businesses")) {

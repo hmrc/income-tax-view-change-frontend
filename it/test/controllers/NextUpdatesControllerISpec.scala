@@ -21,7 +21,7 @@ import auth.MtdItUser
 import enums.MTDIndividual
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks._
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
@@ -234,7 +234,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
       "the user has a Opt Out R17 Feature Switch Enabled" in {
         enable(OptOutFs)
-        enable(ReportingFrequencyPage)
         enable(OptInOptOutContentUpdateR17)
 
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
@@ -302,7 +301,6 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
       "the user has a Opt Out R17 Feature Switch Enabled - All ceased businesses" in {
         enable(OptOutFs)
-        enable(ReportingFrequencyPage)
         enable(OptInOptOutContentUpdateR17)
 
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
@@ -377,10 +375,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
     "one year opt-out scenarios" when {
 
-      "show reporting frequency message if reporting frequency FS is enabled" in {
+      "show reporting frequency message if opt out FS is enabled" in {
 
         enable(OptOutFs)
-        enable(ReportingFrequencyPage)
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd

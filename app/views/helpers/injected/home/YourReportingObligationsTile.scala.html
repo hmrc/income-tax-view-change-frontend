@@ -75,10 +75,8 @@
     }
 }
 
-@if(yourReportingObligationsTileViewModel.reportingObligationsEnabled) {
-    @home_tile("reporting-obligations-tile", messages("home.reportingObligations.heading")) {
-        @p(id = Some("current-itsa-status")) {@ITSAText}
-        @p(id = Some("reporting-obligations-bullet-points")) {@bulletPoints}
-        @p(classes = "govuk-!-margin-bottom-4") {@reportingObligationsLink}
-    }
+@home_tile("reporting-obligations-tile", messages("home.reportingObligations.heading")) {
+    @p(id = Some("current-itsa-status")) {@ITSAText}
+    @p(id = Some("reporting-obligations-bullet-points")) {@bulletPoints}
+    @p(classes = "govuk-!-margin-bottom-4") {@reportingObligationsLink}
 }

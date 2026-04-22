@@ -21,7 +21,6 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.*
-import models.admin.ReportingFrequencyPage
 import models.itsaStatus.ITSAStatus
 import models.reportingObligations.optOut.*
 import play.api.Logger
@@ -100,7 +99,6 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
     implicit user =>
       withOptOutFS {
         withRecover(isAgent) {
-          val showReportingFrequencyContent = isEnabled(ReportingFrequencyPage)
           for {
             viewModel: Option[ConfirmedOptOutViewModel] <- optOutService.optOutConfirmedPageViewModel()
             viewScenarioContent: ConfirmedOptOutViewScenarios <- viewScenarioHandler()
@@ -115,7 +113,6 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
                 Ok(view(
                   viewModel = viewModel,
                   isAgent = isAgent,
-                  showReportingFrequencyContent = showReportingFrequencyContent,
                   confirmedOptOutViewScenarios = viewScenario,
                   selfAssessmentTaxReturnLink = appConfig.logInFileSelfAssessmentTaxReturnLink,
                   compatibleSoftwareLink = appConfig.compatibleSoftwareLink

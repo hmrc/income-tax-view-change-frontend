@@ -19,7 +19,6 @@ package viewUtils
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.ReportingFrequencyPage
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
 import views.html.components.link
@@ -45,6 +44,6 @@ class NextUpdatesViewUtils @Inject()(link: link)(
           )
         )
       )
-    if (isEnabled(ReportingFrequencyPage)) Some(reportingFrequencyHtml) else None
+    Some(reportingFrequencyHtml)
   }
 }

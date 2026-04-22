@@ -526,7 +526,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -657,7 +657,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -794,7 +794,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
-            enable(ReportingFrequencyPage)
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -821,7 +820,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
         "states that the user is reporting quarterly" when {
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
-            enable(ReportingFrequencyPage)
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
@@ -846,7 +844,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
-            enable(ReportingFrequencyPage)
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))

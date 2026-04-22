@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{NavBarFs, ReportingFrequencyPage}
+import models.admin.{NavBarFs}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -606,7 +606,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
           "Reporting Frequency feature switches are enabled" in {
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-            enable(ReportingFrequencyPage)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,

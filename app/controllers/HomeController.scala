@@ -118,14 +118,13 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     } yield {
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
         currentDate = dateService.getCurrentDate,
-        isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
         showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
         currentYearITSAStatus = currentITSAStatus,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
 
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
-      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
 
       auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel))
       Ok(
@@ -167,7 +166,6 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         NextUpdatesTileViewModel(
           dueDates = nextUpdatesDueDates,
           currentDate = getCurrentDate,
-          isReportingFrequencyEnabled = isEnabled(ReportingFrequencyPage),
           showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
           currentYearITSAStatus = currentITSAStatus,
           nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
@@ -187,7 +185,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
 
       val yourReportingObligationsTileViewModel =
-        YourReportingObligationsTileViewModel(currentTaxYear, isEnabled(ReportingFrequencyPage), currentITSAStatus)
+        YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
 
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
 

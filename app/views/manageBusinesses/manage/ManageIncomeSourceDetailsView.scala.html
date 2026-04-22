@@ -49,7 +49,6 @@
         isAgent: Boolean,
         showStartDate: Boolean,
         showOptInOptOutContentUpdateR17: Boolean,
-        showReportingFrequencyLink: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
@@ -347,23 +346,21 @@ val rows = {
         }
     }
 
-    @if(showReportingFrequencyLink) {
-        @p(id = Some("reportingFrequency")) {
-            @if(showOptInOptOutContentUpdateR17) {
-                @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix")
-                @link(
-                    link = reportingFrequencyURL(isAgent),
-                    messageKey = messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink"),
-                    id = Some("reportingFrequency-link"),
-                    outerMessage = "."
-                )
-            } else {
-                @link(
-                    link = reportingFrequencyURL(isAgent),
-                    messageKey = messages("incomeSources.manage.new.business.details.reporting.frequency"),
-                    id = Some("reportingFrequency-link")
-                )
-            }
+    @p(id = Some("reportingFrequency")) {
+        @if(showOptInOptOutContentUpdateR17) {
+            @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix")
+            @link(
+                link = reportingFrequencyURL(isAgent),
+                messageKey = messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink"),
+                id = Some("reportingFrequency-link"),
+                outerMessage = "."
+            )
+        } else {
+            @link(
+                link = reportingFrequencyURL(isAgent),
+                messageKey = messages("incomeSources.manage.new.business.details.reporting.frequency"),
+                id = Some("reportingFrequency-link")
+            )
         }
     }
 
