@@ -117,14 +117,14 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
         {
           implicit val user: MtdItUser[_] = setFeatureSwitch(featureSwitchName, enabled = true)
-          val actual = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
-          actual shouldBe "enabled"
+          val resultEnabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
+          resultEnabled shouldBe "enabled"
         }
 
         {
           implicit val user: MtdItUser[_] = setFeatureSwitch(featureSwitchName, enabled = false)
-          val actual = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
-          actual shouldBe "disabled"
+          val resultDisabled = featureSwitchName.fold(ifEnabled = "enabled", ifDisabled = "disabled")
+          resultDisabled shouldBe "disabled"
         }
       }
     }
