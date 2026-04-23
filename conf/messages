@@ -283,6 +283,10 @@ new.home.recentActivity.submissions.quarterly.link.text         = View your tax 
 new.home.recentActivity.submissions.quarterly.content.text      = You submitted a quarterly update.
 new.home.recentActivity.submissions.quarterly.date.content.text = Sent {0}
 
+new.home.recentActivity.payments.link.text                      = View payment history
+new.home.recentActivity.payments.content.text                   = You made a payment of {0}.
+new.home.recentActivity.payments.date.content.text              = Paid {0}
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed
