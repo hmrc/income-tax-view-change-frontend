@@ -22,12 +22,13 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.RecentActivity
+import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService}
+import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService}
 import services.newHomePage.RecentActivityService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RecentActivityController @Inject()(val newHomeRecentActivityView: views.html.newHomePage.NewHomeRecentActivityView,
                                          val authActions: AuthActions,
                                          recentActivityService: RecentActivityService,
+                                         paymentHistoryService: PaymentHistoryService,
                                          val ITSAStatusService: ITSAStatusService,
                                          val dateService: DateServiceInterface)
                                         (implicit val ec: ExecutionContext,
@@ -46,7 +48,7 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
 
   def show(isAgent: Boolean, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      if(isEnabled(RecentActivity)) {
+      if (isEnabled(RecentActivity)) {
         handleShowRequest(origin)
       } else {
         if (isAgent) {
@@ -67,7 +69,9 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
       }
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       recentSubmissionActivities = recentActivityService.getRecentSubmissionActivity(fulfilledObligations, currentItsaStatus)
-      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities)
+      payments <- paymentHistoryService.getPaymentHistory().map(_.getOrElse(List.empty[Payment]))
+      recentPayment = recentActivityService.getRecentPaymentActivity(payments)
+      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPayment)
     } yield {
       Ok(newHomeRecentActivityView(
         origin,
