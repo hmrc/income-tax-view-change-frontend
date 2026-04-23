@@ -123,7 +123,8 @@ case class ChargeSummaryViewModel(
     )
   }
 
-  val reviewAndReconcileCreditList: Option[ChargeHistoryItem] = reviewAndReconcileCredit.collect {
+  val reviewAndReconcileCreditList: Option[ChargeHistoryItem] = {
+    reviewAndReconcileCredit.collect {
       case charge if chargeHistoryEnabled =>
         ChargeHistoryItem(
           date = charge.getDueDate,
@@ -131,6 +132,7 @@ case class ChargeSummaryViewModel(
           amount = charge.originalAmount.abs
         )
     }
+  }
 
   private def getReviewAndReconcileCreditDescription(charge: ChargeItem): Html = {
     val link: String = RepaymentHistoryUtils.getChargeLinkUrl(isAgent, charge.taxYear.endYear, charge.transactionId)
@@ -167,9 +169,11 @@ case class ChargeSummaryViewModel(
   }
 
   private def getPaymentAllocationDescription(allocation: PaymentHistoryAllocations, payment: PaymentHistoryAllocation): Html = {
+    println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxyy getPaymentAllocationDescription \n\n\n\n\n\n\n" + chargeItem.transactionType + "\n" + chargeItem.transactionId)
     val matchingPayment = payment.clearingId
     matchingPayment match {
       case Some(paymentId) => {
+//      case Some(paymentId) if(!listChargeTypes) => {
         val link: String = if (isAgent) {
           PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
         } else {
@@ -179,7 +183,7 @@ case class ChargeSummaryViewModel(
         val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
         else if (payment.isCutoverCredit) messages("paymentHistory.cutOver")
         else messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
-        if (payment.isCutoverCredit) {
+        if (payment.isCutoverCredit || allocation.iSnonRRorPFACredit) {
           Html(
             s"""
                |<p class="govuk-body">

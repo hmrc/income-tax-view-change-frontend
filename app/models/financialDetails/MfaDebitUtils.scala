@@ -24,7 +24,6 @@ object MfaDebitUtils {
     (4001 -> "ITSA Calc Error Correction"),
     (4002 -> "ITSA Manual Penalty Pre CY-4"),
     (4003 -> "ITSA Misc Charge"))
-
   def isMFADebitMainTransaction(mainTransaction: Option[String]): Boolean = {
     mainTransaction
       .flatMap(t => Try(t.toInt).toOption)

@@ -17,7 +17,7 @@
 package models.chargeSummary
 
 import exceptions.MissingFieldException
-import models.financialDetails.{FinancialDetail, MfaDebitUtils}
+import models.financialDetails.{FinancialDetail, MfaCreditUtils, MfaDebitUtils}
 
 import java.time.LocalDate
 
@@ -26,11 +26,16 @@ case class PaymentHistoryAllocations (allocations: Seq[PaymentHistoryAllocation]
     val paymentAllocationTextInChargeSummary = if (MfaDebitUtils.isMFADebitMainType(chargeMainType)) {
       Some("chargeSummary.paymentAllocations.mfaDebit")
     } else {
+      println("yyyyyyyyyyyyyyyyyyyyyyyyy \n" + chargeMainType + "\n" + chargeType)
       FinancialDetail.getMessageKeyByTypes(chargeMainType, chargeType)
         .map(typesKey => s"chargeSummary.paymentAllocations.$typesKey")
     }
     paymentAllocationTextInChargeSummary.getOrElse(throw MissingFieldException("Allocation link text missing"))
   }
+  def iSnonRRorPFACredit: Boolean = {
+    MfaCreditUtils.validMFACreditType(chargeMainType) || MfaCreditUtils.validCreditTypeWithNoPaymentLink(chargeMainType)
+  }
+
 }
 
 case class PaymentHistoryAllocation (dueDate: Option[LocalDate], amount: Option[BigDecimal], clearingSAPDocument: Option[String], clearingId: Option[String], taxYear: Option[String], isCredit: Boolean = false, isCutoverCredit: Boolean = false) {

@@ -40,9 +40,21 @@ object MfaCreditUtils {
     4023 -> "ITSA Misc Credit"
   )
 
+  private val otherCreditsLinkedToChargeNoPaymentDescription: Map[Int, String] = Map(
+    4905 -> "SA Balancing Charge Credit",
+    6020 -> "SA Repayment Supplement Credit",
+    6110 -> "ITSA Cutover Credits"
+  )
+  
   def validMFACreditType(mainType: Option[String]): Boolean = {
     mainType
       .map(mfaCreditDescription.values.toList.contains(_))
+      .getOrElse(false)
+  }
+
+  def validCreditTypeWithNoPaymentLink(mainType: Option[String]): Boolean = {
+    mainType
+      .map(otherCreditsLinkedToChargeNoPaymentDescription.values.toList.contains(_))
       .getOrElse(false)
   }
 }
