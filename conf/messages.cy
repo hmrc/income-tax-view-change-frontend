@@ -210,6 +210,16 @@ home.penaltiesAndAppeals.view                                   = Gwirio cosbau 
 home.penaltiesAndAppeals.twoPenaltiesTag                        = 2 Bwynt cosb
 home.penaltiesAndAppeals.fourPenaltiesTag                       = 4 Pwynt cosb
 
+## No Income Sources Error Page ##
+noIncomeSources.error.title                                     = Mae angen i chi gysylltu â ni er mwyn defnyddio’r gwasanaeth hwn
+noIncomeSources.error.p1                                        = Mae angen newid cyn y gallwch gael mynediad at y gwasanaeth rheoli’ch Hunanasesiad. Nid yw hyn yn golygu bod unrhyw beth o’i le gyda’ch cofnodion CThEF.
+noIncomeSources.error.contact.heading                           = Y ffordd o gysylltu â ni:
+noIncomeSources.error.step1                                     = Agorwch y ffurflen gyswllt.
+noIncomeSources.error.step2                                     = Nodwch eich enw a’ch cyfeiriad e-bost.
+noIncomeSources.error.step3                                     = Yn y blwch sydd wedi’i labelu “Gyda beth ydych angen help?”, nodwch “Rwyf angen help i gael mynediad at y gwasanaeth Rheoli’ch Hunanasesiad”.
+noIncomeSources.error.p2                                        = Byddwn yn cysylltu â chi i rannu unrhyw ddiweddariadau ac i roi gwybod i chi pryd y gallwch gael mynediad at y gwasanaeth hwn.
+noIncomeSources.error.button                                    = Ffurflen gyswllt
+
 ## New Home Page ##
 ### Your New Tasks Tab
 

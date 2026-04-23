@@ -10,6 +10,10 @@ GET         /assets/*file                                                 contro
 GET        /language/:lang                                                controllers.LocalLanguageController.switchToLanguage(lang: String)
 
 
+# No Income Sources Error page
+GET         /cannot-access-service                                          controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
+GET         /agents/cannot-access-service                                   controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
+
 #Home Controller
 GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   controllers.HomeController.show(origin: Option[String] ?= None)
