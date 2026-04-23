@@ -18,7 +18,7 @@ package controllers.newHomePage
 
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockITSAStatusService}
+import mocks.services.{MockDateService, MockFinancialDetailsService, MockITSAStatusService}
 import models.admin.{NewHomePage, RecentActivity}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.newHomePage.RecentActivityViewModel
@@ -30,23 +30,28 @@ import play.api.http.Status
 import play.api.inject
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.newHomePage.RecentActivityService
-import services.{DateService, DateServiceInterface, ITSAStatusService}
+import services.{DateService, DateServiceInterface, ITSAStatusService, PaymentHistoryService}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class RecentActivityControllerSpec extends MockAuthActions with MockDateService with MockITSAStatusService {
+class RecentActivityControllerSpec extends MockAuthActions
+  with MockDateService
+  with MockITSAStatusService
+  with MockFinancialDetailsService {
 
   lazy val mockDateServiceInjected: DateService = mMock(classOfDateService)
   lazy val mockRecentActivityService: RecentActivityService = mMock(classOf[RecentActivityService])
+  lazy val mockPaymentHistoryService: PaymentHistoryService = mMock(classOf[PaymentHistoryService])
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[RecentActivityService].toInstance(mockRecentActivityService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected),
+      api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
     ).build()
 
   override def beforeEach(): Unit = {
@@ -71,9 +76,10 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
+            when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
-            when(mockRecentActivityService.recentActivityCards(any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+            when(mockRecentActivityService.recentActivityCards(any(), any())(any(), any())).thenReturn(RecentActivityViewModel(Seq.empty))
             setupMockSuccess(mtdRole)
 
             val result = action(fakeRequest)
@@ -89,9 +95,10 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
+            when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
-            when(mockRecentActivityService.recentActivityCards(any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+            when(mockRecentActivityService.recentActivityCards(any(), any())(any(), any())).thenReturn(RecentActivityViewModel(Seq.empty))
             setupMockSuccess(mtdRole)
 
             val result = action(fakeRequest)

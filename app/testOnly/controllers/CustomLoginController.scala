@@ -81,7 +81,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   s"report-quarterly/income-and-expenses/view?origin=$origin"
                 }
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-                
+                  updateEffectiveDateOfPayment().failed.foreach(ex => {
+                    Logger("application").error("Failed to update effectiveDateOfPayment", ex)
+                  })
+
                 if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes) && user.nino != "OP000009A") {
                   updateTestDataForOptOut(
                     nino = user.nino,
@@ -172,4 +175,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   }
 
+  private def updateEffectiveDateOfPayment()(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteEffectiveDateOfPaymentUrl()
+  }
 }
