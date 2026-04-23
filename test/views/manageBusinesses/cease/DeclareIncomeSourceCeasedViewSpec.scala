@@ -17,8 +17,8 @@
 package views.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm.declaration
 import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
+import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm.declaration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -36,8 +36,8 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, error: Boolean = false, businessName: Option[String] = None) {
 
     val backUrl: String = {
-      if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent()
-      else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show()
+      if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
+      else         controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
     }.url
 
     lazy val view: HtmlFormat.Appendable = declarePropertyCeasedView(
@@ -97,8 +97,8 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
       "render the back link with the correct URL" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
         document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe(
-          if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url
-          else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
+          if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+          else         controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
         )
       }
 
