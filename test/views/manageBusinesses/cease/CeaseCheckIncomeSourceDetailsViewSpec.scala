@@ -46,7 +46,7 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
   val viewModelFP: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
     mkIncomeSourceId(testPropertyIncomeId), None, None, None, testEndDate, ForeignProperty)
 
-  val testBackUrl: String = routes.CeaseIncomeSourceController.show().url
+  val testBackUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val testCeaseDateLong: String = "1 January 2023"
   val businessAddressAsString = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
 
