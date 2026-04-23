@@ -18,6 +18,7 @@ package services.reportingObligations.optOut
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import org.scalatest.prop.TableDrivenPropertyChecks.*
 import services.reportingObligations.optOut
 import testUtils.UnitSpec

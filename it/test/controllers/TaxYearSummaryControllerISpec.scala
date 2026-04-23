@@ -16,7 +16,7 @@
 
 package controllers
 
-import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
+import audit.models.TaxYearSummaryResponseAuditModel
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
@@ -24,8 +24,8 @@ import models.admin.*
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{IsMTD, LiabilityCalculationError}
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import obligations.models.audit.NextUpdatesResponseAuditModel
 import org.jsoup.Jsoup
 import play.api.http.Status.*
 import play.api.libs.json.Json

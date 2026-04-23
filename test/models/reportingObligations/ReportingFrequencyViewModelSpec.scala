@@ -19,10 +19,11 @@ package models.reportingObligations
 import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
+import obligations.models.reportingObligations.ReportingFrequencyViewModel
+import obligations.services.reportingObligations.optOut.OptOutProposition
 import org.mockito.Mockito.mock
 import org.scalatest.Assertion
 import services.DateService
-import services.reportingObligations.optOut.OptOutProposition
 import services.reportingObligations.optOut.OptOutTestSupport
 import testUtils.{TestSupport, UnitSpec}
 

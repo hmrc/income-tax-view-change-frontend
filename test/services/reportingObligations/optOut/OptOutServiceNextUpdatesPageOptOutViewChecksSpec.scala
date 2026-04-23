@@ -18,16 +18,17 @@ package services.reportingObligations.optOut
 
 import audit.AuditingService
 import auth.MtdItUser
-import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
-import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockITSAStatusUpdateConnector}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
-import models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
+import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
+import obligations.repositories.OptOutSessionDataRepository
+import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, OptOutService, PreviousOptOutTaxYear}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
-import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService
 import services.reportingObligations.optOut
 import testUtils.UnitSpec

@@ -28,7 +28,7 @@ import utils.TriggeredMigrationUtils
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
-import controllers.obligations.{routes => obligationsRoutes}
+import obligations.controllers.{routes => obligationsRoutes}
 
 @Singleton
 class CheckCompleteController @Inject()(view: CheckCompleteView,

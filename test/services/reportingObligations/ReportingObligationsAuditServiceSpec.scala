@@ -23,17 +23,18 @@ import enums.MTDIndividual
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
+import obligations.services.reportingObligations.ReportingObligationsAuditService
+import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
+import obligations.viewUtils.ReportingFrequencyViewUtils
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
 import services.DateService
-import services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import viewUtils.ReportingFrequencyViewUtils
 
 import java.time.LocalDate
 import scala.concurrent.Future

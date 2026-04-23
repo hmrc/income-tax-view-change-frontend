@@ -17,7 +17,7 @@
 package views.reportingObligations.signUp
 
 import models.incomeSourceDetails.TaxYear
-import models.reportingObligations.signUp.SignUpCompletedViewModel
+import obligations.models.reportingObligations.signUp.SignUpCompletedViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
