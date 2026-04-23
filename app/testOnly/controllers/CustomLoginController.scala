@@ -81,7 +81,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   s"report-quarterly/income-and-expenses/view?origin=$origin"
                 }
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-                
+
+                updateEstimatedRepaymentDate().failed.foreach(ex => {
+                  Logger("application").error("Failed to update estimatedRepaymentDate", ex)
+                })
                 if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes) && user.nino != "OP000009A") {
                   updateTestDataForOptOut(
                     nino = user.nino,
@@ -135,6 +138,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       .withSession(
         SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
           sessionAuthorityUri = auth)))
+  }
+
+  private def updateEstimatedRepaymentDate()(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteEstimatedRepaymentDate()
   }
 
   private def updateTestDataForTrigMigUser(mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier) = {
