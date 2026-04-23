@@ -1,47 +1,47 @@
 #NextUpdates
-GET         /submission-deadlines                                         controllers.obligations.NextUpdatesController.show(origin: Option[String] ?= None)
-GET         /agents/submission-deadlines                                  controllers.obligations.NextUpdatesController.showAgent()
+GET         /submission-deadlines                                         obligations.controllers.NextUpdatesController.show(origin: Option[String] ?= None)
+GET         /agents/submission-deadlines                                  obligations.controllers.NextUpdatesController.showAgent()
 
 #Reporting Obligations
-GET         /reporting-frequency                                          controllers.obligations.reportingObligations.ReportingFrequencyPageController.show(isAgent:Boolean = false)
-GET         /agents/reporting-frequency                                   controllers.obligations.reportingObligations.ReportingFrequencyPageController.show(isAgent:Boolean = true)
+GET         /reporting-frequency                                          obligations.controllers.reportingObligations.ReportingFrequencyPageController.show(isAgent:Boolean = false)
+GET         /agents/reporting-frequency                                   obligations.controllers.reportingObligations.ReportingFrequencyPageController.show(isAgent:Boolean = true)
 
 #OptOut
-GET         /optout/confirmed                                             controllers.obligations.reportingObligations.optOut.ConfirmedOptOutController.show(isAgent: Boolean = false)
-GET         /agents/optout/confirmed                                      controllers.obligations.reportingObligations.optOut.ConfirmedOptOutController.show(isAgent: Boolean = true)
+GET         /optout/confirmed                                             obligations.controllers.reportingObligations.optOut.ConfirmedOptOutController.show(isAgent: Boolean = false)
+GET         /agents/optout/confirmed                                      obligations.controllers.reportingObligations.optOut.ConfirmedOptOutController.show(isAgent: Boolean = true)
 
-GET         /optout                                                       controllers.obligations.reportingObligations.optOut.OptOutTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/optout                                                controllers.obligations.reportingObligations.optOut.OptOutTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-POST        /optout                                                       controllers.obligations.reportingObligations.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-POST        /agents/optout                                                controllers.obligations.reportingObligations.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+GET         /optout                                                       obligations.controllers.reportingObligations.optOut.OptOutTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+GET         /agents/optout                                                obligations.controllers.reportingObligations.optOut.OptOutTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+POST        /optout                                                       obligations.controllers.reportingObligations.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+POST        /agents/optout                                                obligations.controllers.reportingObligations.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
 
-GET         /optout/check-your-answers/:taxYear                           controllers.obligations.reportingObligations.optOut.ConfirmOptOutUpdateController.show(isAgent: Boolean = false, taxYear: String)
-GET         /agents/optout/check-your-answers/:taxYear                    controllers.obligations.reportingObligations.optOut.ConfirmOptOutUpdateController.show(isAgent: Boolean = true, taxYear: String)
-POST        /optout/check-your-answers/:taxYear                           controllers.obligations.reportingObligations.optOut.ConfirmOptOutUpdateController.submit(isAgent: Boolean = false, taxYear: String)
-POST        /agents/optout/check-your-answers/:taxYear                    controllers.obligations.reportingObligations.optOut.ConfirmOptOutUpdateController.submit(isAgent: Boolean = true, taxYear: String)
+GET         /optout/check-your-answers/:taxYear                           obligations.controllers.reportingObligations.optOut.ConfirmOptOutUpdateController.show(isAgent: Boolean = false, taxYear: String)
+GET         /agents/optout/check-your-answers/:taxYear                    obligations.controllers.reportingObligations.optOut.ConfirmOptOutUpdateController.show(isAgent: Boolean = true, taxYear: String)
+POST        /optout/check-your-answers/:taxYear                           obligations.controllers.reportingObligations.optOut.ConfirmOptOutUpdateController.submit(isAgent: Boolean = false, taxYear: String)
+POST        /agents/optout/check-your-answers/:taxYear                    obligations.controllers.reportingObligations.optOut.ConfirmOptOutUpdateController.submit(isAgent: Boolean = true, taxYear: String)
 
 # Sign Up
-GET         /sign-up/start                                                controllers.obligations.reportingObligations.signUp.SignUpStartController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/sign-up/start                                         controllers.obligations.reportingObligations.signUp.SignUpStartController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+GET         /sign-up/start                                                obligations.controllers.reportingObligations.signUp.SignUpStartController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+GET         /agents/sign-up/start                                         obligations.controllers.reportingObligations.signUp.SignUpStartController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
 
-GET         /sign-up                                                      controllers.obligations.reportingObligations.signUp.SignUpTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/sign-up                                               controllers.obligations.reportingObligations.signUp.SignUpTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-POST        /sign-up                                                      controllers.obligations.reportingObligations.signUp.SignUpTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-POST        /agents/sign-up                                               controllers.obligations.reportingObligations.signUp.SignUpTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+GET         /sign-up                                                      obligations.controllers.reportingObligations.signUp.SignUpTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+GET         /agents/sign-up                                               obligations.controllers.reportingObligations.signUp.SignUpTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
+POST        /sign-up                                                      obligations.controllers.reportingObligations.signUp.SignUpTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
+POST        /agents/sign-up                                               obligations.controllers.reportingObligations.signUp.SignUpTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
 
-GET         /sign-up/completed                                            controllers.obligations.reportingObligations.signUp.SignUpCompletedController.show(isAgent: Boolean = false)
-GET         /agents/sign-up/completed                                     controllers.obligations.reportingObligations.signUp.SignUpCompletedController.show(isAgent: Boolean = true)
+GET         /sign-up/completed                                            obligations.controllers.reportingObligations.signUp.SignUpCompletedController.show(isAgent: Boolean = false)
+GET         /agents/sign-up/completed                                     obligations.controllers.reportingObligations.signUp.SignUpCompletedController.show(isAgent: Boolean = true)
 
 #You Must Wait Page
-GET          /access-service-from-next-tax-year                           controllers.obligations.reportingObligations.signUp.YouMustWaitToSignUpController.show(isAgent: Boolean = false)
-GET          /agents/view-client-from-next-tax-year                       controllers.obligations.reportingObligations.signUp.YouMustWaitToSignUpController.show(isAgent: Boolean = true)
+GET          /access-service-from-next-tax-year                           obligations.controllers.reportingObligations.signUp.YouMustWaitToSignUpController.show(isAgent: Boolean = false)
+GET          /agents/view-client-from-next-tax-year                       obligations.controllers.reportingObligations.signUp.YouMustWaitToSignUpController.show(isAgent: Boolean = true)
 
 #Sign-up/Opt-out Cannot Go Back
-GET         /signup/cannot-go-back                                        controllers.obligations.reportingObligations.SignUpOptOutCannotGoBackController.show(isAgent: Boolean = false, isSignUpJourney: Option[Boolean] ?= None)
-GET         /agents/signup/cannot-go-back                                 controllers.obligations.reportingObligations.SignUpOptOutCannotGoBackController.show(isAgent: Boolean = true, isSignUpJourney: Option[Boolean] ?= None)
+GET         /signup/cannot-go-back                                        obligations.controllers.errors.SignUpOptOutCannotGoBackController.show(isAgent: Boolean = false, isSignUpJourney: Option[Boolean] ?= None)
+GET         /agents/signup/cannot-go-back                                 obligations.controllers.errors.SignUpOptOutCannotGoBackController.show(isAgent: Boolean = true, isSignUpJourney: Option[Boolean] ?= None)
 
 
 #Cannot Change Reporting Obligations
-GET         /cannot-update-reporting-obligations                          controllers.obligations.errors.CannotUpdateReportingObligationsController.show(isAgent: Boolean = false)
-GET         /agents/cannot-update-reporting-obligations                   controllers.obligations.errors.CannotUpdateReportingObligationsController.show(isAgent: Boolean = true)
+GET         /cannot-update-reporting-obligations                          obligations.controllers.errors.CannotUpdateReportingObligationsController.show(isAgent: Boolean = false)
+GET         /agents/cannot-update-reporting-obligations                   obligations.controllers.errors.CannotUpdateReportingObligationsController.show(isAgent: Boolean = true)
 

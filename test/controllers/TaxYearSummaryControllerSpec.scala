@@ -27,7 +27,6 @@ import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.obligations.*
 import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any

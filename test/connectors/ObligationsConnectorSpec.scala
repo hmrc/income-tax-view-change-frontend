@@ -36,7 +36,7 @@ import audit.mocks.MockAuditingService
 import audit.models.*
 import config.FrontendAppConfig
 import mocks.MockHttpV2
-import models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
+import obligations.models.audit.NextUpdatesResponseAuditModel
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
 import play.api.libs.json.Json

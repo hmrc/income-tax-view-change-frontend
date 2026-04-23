@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.DateServiceInterface
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import controllers.obligations.reportingObligations.signUp.routes.YouMustWaitToSignUpController
+import obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

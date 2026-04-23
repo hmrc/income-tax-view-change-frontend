@@ -16,10 +16,11 @@
 
 package views.html.helpers.injected.obligations
 
-import models.obligations._
+import models.obligations.*
+import obligations.models.{DeadlineViewModel, GroupedObligationsModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testMtdItUser
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}

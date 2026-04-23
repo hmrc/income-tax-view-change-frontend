@@ -20,8 +20,9 @@ import enums.JourneyType.OptOutJourney
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.reportingObligations.optOut.OptOutSessionData
-import repositories.{OptOutContextData, UIJourneySessionDataRepository}
+import obligations.models.reportingObligations.optOut.OptOutSessionData
+import obligations.repositories.OptOutContextData
+import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.testSessionId
 
 class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) extends CustomMatchers {

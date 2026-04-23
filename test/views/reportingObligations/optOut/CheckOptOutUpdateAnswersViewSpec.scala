@@ -18,7 +18,7 @@ package views.reportingObligations.optOut
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
-import models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
+import obligations.models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
