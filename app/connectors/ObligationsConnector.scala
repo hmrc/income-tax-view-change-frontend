@@ -46,7 +46,7 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
   }
 
   def getFulfilledObligationsUrl(nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-obligations"
+    s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/$nino/fulfilled-obligations"
   }
 
   def getOpenObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
