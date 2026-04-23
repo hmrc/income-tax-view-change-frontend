@@ -53,7 +53,7 @@ object IncomeSourceDetailsTestConstants {
   val businessAndPropertyAligned = IncomeSourceDetailsModel(testNino, testMtditid, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(alignedBusiness), List(propertyDetails))
   val singleBusinessAndPropertyMigrat2019 = IncomeSourceDetailsModel(testNino, testMtditid, Some(testMigrationYear2019), List(alignedBusiness), List(propertyDetails))
-  val noIncomeDetails = IncomeSourceDetailsModel(testNino, testMtditid, None, List(), Nil)
+  val noIncomeDetails = IncomeSourceDetailsModel(nino = testNino, mtdbsa = testMtditid, yearOfMigration = None, businesses = List(), properties = Nil)
   val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)
   val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business2018, business2019), List(propertyDetails))
   val businessInternational = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business1International), List(propertyDetails))

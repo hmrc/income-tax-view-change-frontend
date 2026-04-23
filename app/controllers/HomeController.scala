@@ -20,14 +20,13 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.featureswitch.*
 import config.*
+import config.featureswitch.*
 import controllers.agent.sessionUtils.SessionKeys
-import controllers.newHomePage.routes
 import enums.MTDSupportingAgent
 import models.admin.*
-import models.financialDetails.*
 import models.core.Nino
+import models.financialDetails.*
 import models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -37,8 +36,8 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.*
-import services.reportingObligations.signUp.SignUpService
 import services.reportingObligations.optOut.OptOutService
+import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -73,12 +72,12 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
                                mcc: MessagesControllerComponents,
                                val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
-  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
+  def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualWithIncomeSources().async {
     implicit user =>
       handleShowRequest(origin)
   }
 
-  def showAgent(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async {
+  def showAgent(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClientWithIncomeSources().async {
     implicit mtdItUser =>
       handleShowRequest(origin)
   }
