@@ -25,11 +25,12 @@ import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.UIJourneySessionData
 import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.itsaStatus.ITSAStatus.*
-import models.reportingObligations.optOut.OptOutSessionData
+import obligations.models.reportingObligations.optOut.OptOutSessionData
+import obligations.repositories.OptOutContextData
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.mvc.Http.Status.SEE_OTHER
-import repositories.{OptOutContextData, UIJourneySessionDataRepository}
+import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 

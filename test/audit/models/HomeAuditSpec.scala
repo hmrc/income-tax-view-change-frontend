@@ -20,7 +20,7 @@ import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.itsaStatus.ITSAStatus
-import models.obligations.NextUpdatesTileViewModel
+import obligations.models.NextUpdatesTileViewModel
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike

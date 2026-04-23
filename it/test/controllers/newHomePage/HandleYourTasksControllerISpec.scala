@@ -27,7 +27,6 @@ import models.creditsandrefunds.CreditsModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.obligations.*
 import play.api.http.Status.OK
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino, testYear}

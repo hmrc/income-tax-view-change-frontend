@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.CannotGoBackPage
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.admin.ReportingFrequencyPage
@@ -28,10 +28,12 @@ import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
+import obligations.controllers.routes as obligationsRoutes
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services.{NextUpdatesService, SessionService}
+import play.api.mvc.*
+import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
@@ -40,14 +42,11 @@ import views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import controllers.obligations.{routes => obligationsRoutes}
-import controllers.obligations.reportingObligations.{routes => reportingObligationsRoutes}
 
 class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                         val obligationsView: IncomeSourceCeasedObligationsView,
-                                                        val nextUpdatesService: NextUpdatesService,
                                                         val sessionService: SessionService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         val mcc: MessagesControllerComponents,

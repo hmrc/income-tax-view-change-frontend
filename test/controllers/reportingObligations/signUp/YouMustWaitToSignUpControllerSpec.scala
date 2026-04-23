@@ -21,6 +21,7 @@ import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSignUpService
 import obligations.controllers.reportingObligations.signUp.YouMustWaitToSignUpController
+import obligations.services.reportingObligations.signUp.SignUpService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
@@ -28,7 +29,6 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.DateServiceInterface
-import services.reportingObligations.signUp.SignUpService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

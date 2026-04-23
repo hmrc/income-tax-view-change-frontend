@@ -39,8 +39,8 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import controllers.obligations.{routes => obligationRoutes}
-import controllers.obligations.reportingObligations.{routes => reportingObligationsRoutes}
+import obligations.controllers.{routes => obligationRoutes}
+import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
 
 
 class IncomeSourceAddedController @Inject()(

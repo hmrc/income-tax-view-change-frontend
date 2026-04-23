@@ -23,6 +23,8 @@ import enums.MTDSupportingAgent
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -35,9 +37,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.reportingObligations.signUp.SignUpService
 import services.{CreditService, NextUpdatesService}
-import services.reportingObligations.optOut.OptOutService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.HomeView
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}

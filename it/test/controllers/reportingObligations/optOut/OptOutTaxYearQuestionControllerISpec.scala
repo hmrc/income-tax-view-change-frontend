@@ -16,7 +16,6 @@
 
 package controllers.reportingObligations.optOut
 
-import audit.models.OptOutNewAuditModel
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
@@ -28,13 +27,15 @@ import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
-import models.obligations.*
-import models.reportingObligations.optOut.OptOutSessionData
+import obligations.models.audit.OptOutNewAuditModel
+import obligations.models.reportingObligations.optOut.OptOutSessionData
+import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
+import obligations.repositories.OptOutContextData
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.{OptOutContextData, UIJourneySessionDataRepository}
+import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}

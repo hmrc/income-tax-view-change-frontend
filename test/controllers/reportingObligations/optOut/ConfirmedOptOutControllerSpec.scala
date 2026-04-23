@@ -24,8 +24,9 @@ import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.reportingObligations.optOut.{ConfirmedOptOutViewModel, CurrentYearNYMandatedScenario, CurrentYearNYQuarterlyOrAnnualScenario, DefaultValidScenario, NextYearCYAnnualScenario, NextYearCYMandatedOrQuarterlyScenario, PreviousAndNoStatusValidScenario}
 import obligations.controllers.reportingObligations.optOut.ConfirmedOptOutController
+import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, CurrentYearNYMandatedScenario, CurrentYearNYQuarterlyOrAnnualScenario, DefaultValidScenario, NextYearCYAnnualScenario, NextYearCYMandatedOrQuarterlyScenario, PreviousAndNoStatusValidScenario}
+import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutProposition, OptOutService, OptOutTaxYear}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
@@ -33,7 +34,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
-import services.reportingObligations.optOut.{CurrentOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutProposition, OptOutService, OptOutTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

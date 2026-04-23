@@ -18,13 +18,14 @@ package views.html.helpers.injected.obligations
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
-import models.obligations._
+import models.obligations.*
+import obligations.models.{DeadlineViewModel, GroupedObligationsModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
+import obligations.services.reportingObligations.optOut.OptOutProposition
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import services.reportingObligations.optOut.OptOutProposition
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}
 import testUtils.TestSupport

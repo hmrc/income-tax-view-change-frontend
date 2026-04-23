@@ -23,7 +23,6 @@ import mocks.auth.MockAuthActions
 import mocks.connectors.MockObligationsConnector
 import mocks.services.MockCalculationService
 import models.incomeSourceDetails.TaxYear
-import models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import play.api
 import play.api.Application
 import play.api.http.Status

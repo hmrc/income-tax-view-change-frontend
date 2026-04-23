@@ -29,7 +29,7 @@ import models.newHomePage.YourTasksCard.*
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import controllers.obligations.{routes => obligationsRoutes}
+import obligations.controllers.{routes => obligationsRoutes}
 
 @Singleton
 class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {

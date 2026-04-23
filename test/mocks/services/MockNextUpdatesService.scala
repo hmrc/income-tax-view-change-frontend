@@ -17,7 +17,7 @@
 package mocks.services
 
 import implicits.ImplicitDateFormatter
-import models.obligations.{ObligationsErrorModel, ObligationsResponseModel}
+import obligations.models.{ObligationsErrorModel, ObligationsResponseModel}
 import org.mockito.ArgumentMatchers.{any, eq as matches}
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

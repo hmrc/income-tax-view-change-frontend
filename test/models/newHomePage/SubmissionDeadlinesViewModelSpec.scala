@@ -16,7 +16,7 @@
 
 package models.newHomePage
 
-import models.obligations.{SingleObligationModel, StatusOpen}
+import obligations.models.{SingleObligationModel, StatusOpen}
 import testUtils.UnitSpec
 
 import java.time.LocalDate

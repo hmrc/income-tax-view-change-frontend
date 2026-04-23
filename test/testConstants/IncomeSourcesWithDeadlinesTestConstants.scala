@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.obligations.ObligationsModel
+import obligations.models.ObligationsModel
 import testConstants.BusinessDetailsTestConstants.{business2, obligationsDataSuccessModel}
 import testConstants.NextUpdatesTestConstants.nextUpdatesDataPropertySuccessModel
 

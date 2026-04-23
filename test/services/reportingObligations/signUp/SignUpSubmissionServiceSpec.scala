@@ -17,13 +17,15 @@
 package services.reportingObligations.signUp
 
 import audit.AuditingService
-import connectors.obligations.itsastatus.ITSAStatusUpdateConnector
-import connectors.obligations.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.JourneyType.{Opt, SignUpJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Voluntary}
-import models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
+import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
+import obligations.services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
+import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
@@ -31,7 +33,6 @@ import play.mvc.Http.Status.NO_CONTENT
 import repositories.UIJourneySessionDataRepository
 import services.DateService
 import services.reportingObligations.signUp
-import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import testConstants.BaseTestConstants.testSessionId
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

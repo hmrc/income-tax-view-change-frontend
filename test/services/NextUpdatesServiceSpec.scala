@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockObligationsConnector
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import models.obligations.*
+import obligations.models.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.INTERNAL_SERVER_ERROR

@@ -19,9 +19,9 @@ package views.reportingObligations.signUp
 import forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
+import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
+import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
 import testUtils.TestSupport
 import views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
 

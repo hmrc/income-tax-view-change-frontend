@@ -23,8 +23,8 @@ import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, Docume
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.scalatest.wordspec.AnyWordSpecLike
 import testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}

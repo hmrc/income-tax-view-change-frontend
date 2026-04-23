@@ -17,9 +17,9 @@
 package models
 
 import models.incomeSourceDetails.*
-import models.reportingObligations.signUp.SignUpSessionData
-import models.reportingObligations.optOut.OptOutSessionData
 import models.triggeredMigration.TriggeredMigrationSessionData
+import obligations.models.reportingObligations.optOut.OptOutSessionData
+import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.*
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}

@@ -19,7 +19,8 @@ package views.reportingObligations.optOut
 import forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
-import models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
+import obligations.models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
+import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear, NextYearOptOut, OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, OptOutState, PreviousOptOutTaxYear}
 import org.jsoup.Jsoup
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services.reportingObligations.optOut.*
