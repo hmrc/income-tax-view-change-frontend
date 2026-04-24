@@ -22,13 +22,12 @@ import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.reportingObligations.optOut.OptOutSessionData
-import obligations.repositories.OptOutContextData
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
+import play.api.Logger
 import play.api.libs.json.{Json, OFormat}
 import repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import play.api.Logger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -18,7 +18,7 @@ package views.html.helpers.injected.obligations
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
-import models.obligations.*
+import obligations.models.*
 import obligations.models.{DeadlineViewModel, GroupedObligationsModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import org.jsoup.Jsoup

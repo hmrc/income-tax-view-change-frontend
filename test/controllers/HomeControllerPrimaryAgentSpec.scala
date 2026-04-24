@@ -24,6 +24,7 @@ import models.admin.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
@@ -36,7 +37,7 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
-import services.{CreditService, NextUpdatesService}
+import services.CreditService
 import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
 import views.html.HomeView

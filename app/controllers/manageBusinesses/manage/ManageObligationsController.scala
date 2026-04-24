@@ -25,10 +25,11 @@ import enums.{AnnualReportingMethod, CannotGoBackPage, QuarterlyReportingMethod}
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
+import obligations.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{DateService, IncomeSourceDetailsService, NextUpdatesService, SessionService}
+import services.{DateService, IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses

@@ -36,7 +36,7 @@ import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import views.html.HomeView
-
+import obligations.models.NextUpdatesTileViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.util.Random
@@ -546,7 +546,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
         "has a link to the reporting obligations page" in new Setup(user = testMtdItUserMigrated()) {
           getElementById("reporting-obligations-link").map(_.text()) shouldBe Some("View and manage your reporting obligations")
-          getElementById("reporting-obligations-link").map(_.attr("href")) shouldBe Some(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url)
+          getElementById("reporting-obligations-link").map(_.attr("href")) shouldBe Some(obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url)
         }
       }
     }

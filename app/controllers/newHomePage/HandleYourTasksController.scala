@@ -29,6 +29,7 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.newHomePage.SubmissionDeadlinesViewModel
 import obligations.models.{ObligationsModel, SingleObligationModel}
+import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger

@@ -20,7 +20,6 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
-import mocks.connectors.MockObligationsConnector
 import mocks.services.MockCalculationService
 import models.incomeSourceDetails.TaxYear
 import play.api
@@ -30,6 +29,9 @@ import play.api.test.Helpers.*
 import services.{CalculationService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import obligations.models.*
+import obligations.connectors.ObligationsConnector
+import obligations.mocks.connectors.MockObligationsConnector
 
 import java.time.LocalDate
 

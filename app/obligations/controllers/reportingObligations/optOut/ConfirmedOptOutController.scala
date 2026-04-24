@@ -20,19 +20,18 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import obligations.controllers.errors.routes as obligationsErrorRoutes
 import enums.*
 import models.itsaStatus.ITSAStatus
+import obligations.controllers.errors.routes as obligationsErrorRoutes
 import obligations.models.reportingObligations.optOut.*
-import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, ConfirmedOptOutViewScenarios, CurrentYearNYMandatedScenario, CurrentYearNYQuarterlyOrAnnualScenario, DefaultValidScenario, NextYearCYAnnualScenario, NextYearCYMandatedOrQuarterlyScenario, PreviousAndNoStatusValidScenario}
 import obligations.services.reportingObligations.optOut.{MultiYearOptOutProposition, OptOutService}
 import obligations.utils.reportingObligations.ReportingObligationsUtils
+import obligations.views.html.reportingObligations.optOut.ConfirmedOptOutView
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import obligations.views.html.reportingObligations.optOut.ConfirmedOptOutView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

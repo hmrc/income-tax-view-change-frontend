@@ -38,7 +38,7 @@ case class OptInAuditModel(
     val outcome = resolvedOutcome match {
       case response: ITSAStatusUpdateResponseFailure => Json.obj("isSuccessful" -> false, "failureCategory" -> response.failures.head.code, "failureReason" -> response.failures.head.reason)
       case _: ITSAStatusUpdateResponseSuccess => Json.obj("isSuccessful" -> true)
-      case _ => Json.obj("isSuccessful" -> false, "failureCategory" -> "Unknown failure reason", "failureReason" -> "Unknown failure category")
+//      case _ => Json.obj("isSuccessful" -> false, "failureCategory" -> "Unknown failure reason", "failureReason" -> "Unknown failure category")
     }
     Json.obj("outcome" -> outcome)
   }

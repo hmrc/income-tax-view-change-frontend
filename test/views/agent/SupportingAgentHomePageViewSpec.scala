@@ -319,7 +319,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
           "has a link to the reporting obligations page" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("reporting-obligations-link").map(_.text()) shouldBe Some("View and manage your reporting obligations")
-            getElementById("reporting-obligations-link").map(_.attr("href")) shouldBe Some(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url)
+            getElementById("reporting-obligations-link").map(_.attr("href")) shouldBe Some(obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url)
           }
         }
       }

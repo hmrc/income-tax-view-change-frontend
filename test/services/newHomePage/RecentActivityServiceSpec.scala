@@ -17,13 +17,12 @@
 package services.newHomePage
 
 import auth.MtdItUser
-import mocks.connectors.MockObligationsConnector
 import mocks.services.MockDateService
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel}
-import models.obligations.*
+import obligations.models.*
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import testUtils.TestSupport

@@ -16,7 +16,6 @@
 
 package views.html.helpers.injected.obligations
 
-import models.obligations.*
 import obligations.models.{DeadlineViewModel, GroupedObligationsModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

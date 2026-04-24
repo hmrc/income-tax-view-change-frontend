@@ -24,7 +24,7 @@ import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.obligations.*
+import obligations.models.*
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}

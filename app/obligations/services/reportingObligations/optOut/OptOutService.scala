@@ -16,24 +16,20 @@
 
 package obligations.services.reportingObligations.optOut
 
-import audit.AuditingService
 import auth.MtdItUser
 import cats.data.OptionT
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import enums.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import obligations.models.reportingObligations.optOut.*
-import play.api.Logger
-import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import OptOutProposition.createOptOutProposition
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
-import obligations.models.audit.OptOutAuditModel
-import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import obligations.repositories.OptOutSessionDataRepository
+import obligations.services.NextUpdatesService
+import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService, NextUpdatesService}
+import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
+import play.api.Logger
+import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -41,16 +37,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class OptOutService @Inject()(
-                               itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                                itsaStatusService: ITSAStatusService,
                                calculationListService: CalculationListService,
                                nextUpdatesService: NextUpdatesService,
                                dateService: DateServiceInterface,
-                               optOutRepository: OptOutSessionDataRepository,
-                               auditingService: AuditingService
+                               optOutRepository: OptOutSessionDataRepository
                              ) {
-
-  private val logger = Logger("application")
 
   def fetchOptOutProposition()(implicit user: MtdItUser[_],
                                hc: HeaderCarrier,

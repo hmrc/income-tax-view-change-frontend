@@ -31,7 +31,7 @@ import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWith
 import testConstants.NextUpdatesTestConstants.*
 import testUtils.ViewSpec
 import views.html.TaxYearSummaryView
-
+import obligations.models.*
 import java.time.LocalDate
 
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {

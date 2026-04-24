@@ -21,11 +21,10 @@ import auth.authV2.AuthActions
 import com.google.inject.Inject
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import obligations.controllers.errors.routes as errorRoutes
-import obligations.controllers.reportingObligations.optOut.routes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
+import obligations.forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import obligations.services.reportingObligations.optOut.{OptOutService, OptOutSubmissionService}
 import obligations.utils.reportingObligations.JourneyCheckerOptOut
 import obligations.views.html.reportingObligations.optOut.OptOutTaxYearQuestionView
