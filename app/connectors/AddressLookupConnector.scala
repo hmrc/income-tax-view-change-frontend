@@ -195,7 +195,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "confirmPageConfig" -> JsObject(
               Seq(
                 "showChangeLink" -> JsBoolean(true),
-                "showSearchAgainLink" -> JsBoolean(true),
+                "showSearchAgainLink" -> JsBoolean(false),
                 "showConfirmChangeText" -> JsBoolean(true)
               )
             ),
