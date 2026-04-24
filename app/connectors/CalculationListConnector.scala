@@ -32,37 +32,8 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
                                          val appConfig: FrontendAppConfig
                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  def getLegacyCalculationListUrl(nino: String, taxYearEnd: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd"
-  }
-
   def getCalculationListUrl(nino: String, taxYearRange: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange"
-  }
-
-  def getLegacyCalculationList(nino: String, taxYearEnd: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
-
-    http.get(url"${getLegacyCalculationListUrl(nino, taxYearEnd)}")
-      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
-      .execute[HttpResponse] map { response =>
-      response.status match {
-        case OK =>
-          response.json.validate[CalculationListModel].fold(
-            invalid => {
-              Logger("application").error("" +
-                s"Json validation error parsing legacy calculation list response, error $invalid")
-              CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing legacy calculation list response")
-            },
-            valid => valid
-          )
-        case status if status >= INTERNAL_SERVER_ERROR =>
-          Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
-          CalculationListErrorModel(response.status, response.body)
-        case _ =>
-          Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
-          CalculationListErrorModel(response.status, response.body)
-      }
-    }
+    s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
   }
 
   def getCalculationList(nino: Nino, taxYearRange: String)
