@@ -16,6 +16,9 @@
 
 package controllers.manageBusinesses.add
 
+import auth.MtdItUser
+import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType, Manage}
@@ -24,19 +27,23 @@ import forms.manageBusinesses.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
-import models.admin.OverseasBusinessAddress
+import models.admin.{FeatureSwitch, FeatureSwitchName, OverseasBusinessAddress}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
+import org.mockito.ArgumentMatchers.{any, same}
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.mvc.{Action, AnyContent, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.{address, business1}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import views.html.manageBusinesses.add.AddBusinessTradeView
 
-import scala.concurrent.Future
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionService {
@@ -56,11 +63,28 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
   lazy val testAddBusinessTradeController: AddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
 
+  def mockIsEnabled(name: FeatureSwitchName, isEnabled: Boolean): Unit = {
+    when(mockFeatureSwitching.isEnabled(any())(any())).thenReturn(true)
+    //when(mockFeatureSwitching.isEnabledFromConfig(any())).thenReturn(true)
+    //when(sys.props.get(any())).thenReturn(true)
+  }
+
+//  def mockGetSuccessURL(): Unit = {
+//    when(testAddBusinessTradeController.getSuccessURL(any(), any(), any(), any(), any())).thenReturn("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add-sole-trader/business-address")
+//  }
+
   def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false): Action[AnyContent] = mtdRole match {
     case MTDIndividual if isPost => testAddBusinessTradeController.submit(mode, false)
     case MTDIndividual => testAddBusinessTradeController.show(mode, false)
     case _ if isPost => testAddBusinessTradeController.submitAgent(mode, false)
     case _ => testAddBusinessTradeController.showAgent(mode, false)
+  }
+
+  val featureEnabled: List[FeatureSwitch] = {
+    FeatureSwitchName.allFeatureSwitches.map {
+      case name@OverseasBusinessAddress => FeatureSwitch(name, true)
+      case name => FeatureSwitch(name, false)
+    }.toList
   }
 
   Seq(CheckMode, NormalMode).foreach { mode =>
@@ -77,6 +101,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                 .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
+              mockGetAllFeatureSwitches(allFeaturesDisabled)
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe OK
@@ -89,6 +114,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
+              mockGetAllFeatureSwitches(allFeaturesDisabled)
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
@@ -105,6 +131,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetMongo(Right(Some(addedIncomeSourceUIJourneySessionData(SelfEmployment))))
+              mockGetAllFeatureSwitches(allFeaturesDisabled)
 
               val result: Future[Result] = action(fakeRequest)
               status(result) shouldBe SEE_OTHER
@@ -139,6 +166,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
                 setupMockSetMongoData(true)
+                mockGetAllFeatureSwitches(allFeaturesDisabled)
 
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> validBusinessTrade))
@@ -164,6 +192,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                   setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                     .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
                   setupMockSetMongoData(true)
+                  mockGetAllFeatureSwitches(allFeaturesDisabled)
 
                   val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                     BusinessTradeForm.businessTrade -> validBusinessTrade))
@@ -180,7 +209,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               "redirect to the choose sole trader business address page" when {
                 "the OverseasBusinessAddress FS is on" when {
                   "the individual is authenticated and the business trade entered is valid" in {
-                    enable(OverseasBusinessAddress)
                     setupMockSuccess(mtdRole)
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -188,6 +216,11 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                     setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                       .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
                     setupMockSetMongoData(true)
+                    mockGetAllFeatureSwitches(featureEnabled)
+                    mockIsEnabled(OverseasBusinessAddress, true)
+//                    mockGetSuccessURL()
+//                    when(testAddBusinessTradeController.get)
+//                    mockGetAll(featureEnabled)
 
                     val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                       BusinessTradeForm.businessTrade -> validBusinessTrade))
@@ -205,7 +238,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               "redirect to the is the new address in the UK page" when {
                 "the OverseasBusinessAddress FS is on" when {
                   "the individual is authenticated and the business trade entered is valid" in {
-                    enable(OverseasBusinessAddress)
                     setupMockSuccess(mtdRole)
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
@@ -213,6 +245,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                     setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                       .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
                     setupMockSetMongoData(true)
+                    mockGetAllFeatureSwitches(featureEnabled)
 
                     val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                       BusinessTradeForm.businessTrade -> validBusinessTrade))
@@ -233,8 +266,9 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
                 setupMockCreateSession(true)
+                mockGetAllFeatureSwitches(allFeaturesDisabled)
+
                 val businessNameAsTrade: String = "Test Name"
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(businessNameAsTrade),
@@ -256,6 +290,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
                     businessTrade = Some(invalidBusinessTradeChar)))))))
+                mockGetAllFeatureSwitches(allFeaturesDisabled)
 
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> invalidBusinessTradeChar))
@@ -273,6 +308,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
                     businessTrade = Some(invalidBusinessTradeEmpty)))))))
+                mockGetAllFeatureSwitches(allFeaturesDisabled)
 
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty))
@@ -290,6 +326,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
                     businessTrade = Some(invalidBusinessTradeShort)))))))
+                mockGetAllFeatureSwitches(allFeaturesDisabled)
 
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> invalidBusinessTradeShort))
@@ -307,6 +344,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
                     businessTrade = Some(invalidBusinessTradeLong)))))))
+                mockGetAllFeatureSwitches(allFeaturesDisabled)
 
                 val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
                   BusinessTradeForm.businessTrade -> invalidBusinessTradeLong))
