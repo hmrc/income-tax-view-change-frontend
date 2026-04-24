@@ -23,7 +23,6 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
-import models.admin.ReportingFrequencyPage
 import models.core.IncomeSourceId
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
@@ -208,8 +207,7 @@ class IncomeSourceAddedController @Inject()(
               getReportingFrequencyUrl = getReportingFrequencyUrl(isAgent),
               getNextUpdatesUrl = getNextUpdatesUrl(isAgent),
               getManageBusinessUrl = getManageBusinessUrl(isAgent),
-              scenario = signedUpForMTD,
-              reportingFrequencyEnabled = isEnabled(ReportingFrequencyPage)
+              scenario = signedUpForMTD
             )
           )
         case None =>

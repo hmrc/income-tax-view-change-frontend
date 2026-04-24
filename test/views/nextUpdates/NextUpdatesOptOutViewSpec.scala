@@ -18,7 +18,6 @@ package views.nextUpdates
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import models.obligations.*
@@ -49,16 +48,12 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
   class Setup(quarterlyUpdateContentShow: Boolean = true,
               isSupportingAgent: Boolean = false,
-              reportingFrequencyPageFsEnabled: Boolean = true,
               optInOptOutContentR17Enabled: Boolean = false) {
 
     val currentYear: TaxYear = TaxYear(2025, 2026)
 
     val user: MtdItUser[_] =
       getIndividualUser(FakeRequest())
-        .addFeatureSwitches(List(
-          FeatureSwitch(ReportingFrequencyPage, reportingFrequencyPageFsEnabled)
-        ))
 
     val checks: NextUpdatesQuarterlyReportingContentChecks =
       if (quarterlyUpdateContentShow) NextUpdatesQuarterlyReportingContentChecks(
@@ -82,8 +77,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
     def nextUpdatesViewUtils: NextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
 
-    def whatTheUserCanDoContentMulti: Option[Html] =
-      nextUpdatesViewUtils.whatTheUserCanDo(isSupportingAgent)(user, implicitly)
+    def whatTheUserCanDoContentMulti: Html = nextUpdatesViewUtils.whatTheUserCanDo(isSupportingAgent)(user, implicitly)
 
     lazy val obligationsModel: NextUpdatesViewModel =
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(

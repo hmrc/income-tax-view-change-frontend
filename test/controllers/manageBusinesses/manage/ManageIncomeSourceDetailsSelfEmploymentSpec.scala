@@ -19,7 +19,7 @@ package controllers.manageBusinesses.manage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import org.jsoup.Jsoup
@@ -56,7 +56,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
       s"the user is authenticated as a $mtdUserRole" should {
         "render the appropriate IncomeSourceDetails page" when {
           "the user has a valid id parameter and no latency information" in {
-            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate)
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
             setupMockCreateSession(true)
@@ -88,7 +88,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter and latency information but user is not in latency period" in {
-            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate)
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
             setupMockCreateSession(true)
@@ -120,7 +120,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
-            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate)
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
@@ -160,7 +160,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
 
           "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is Q" in {
 
-            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate)
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
@@ -192,7 +192,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual but Latency TY2 is A" in {
-            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate)
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyAnnual)
             setupMockCreateSession(true)
@@ -224,7 +224,6 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter, valid latency information and two tax years crystallised" in {
-            enable(ReportingFrequencyPage)
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
@@ -255,7 +254,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter, but non eligible itsa status" in {
-            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate)
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
             setupMockCreateSession(true)
@@ -293,7 +292,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter, latency expired" in {
-            enable(DisplayBusinessStartDate, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate)
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
@@ -322,7 +321,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
-            enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage)
+            enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17)
 
             setupMockSuccess(mtdUserRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)

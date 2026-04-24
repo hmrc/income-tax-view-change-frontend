@@ -70,40 +70,28 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     allBusinessesCeased = false
   )
 
-  val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink))
-  val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink))
-  val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink))
-  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink))
+  val validUKPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = UkProperty), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink)
+  val validForeignPropertyBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(incomeSourceType = ForeignProperty), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink)
+  val validSoleTreaderBusinessCall: Html = view(incomeSourceCeasedObligationsViewModel.copy(businessName = Some("Test Name")), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink)
+  val validSoleTreaderBusinessWithNoBusinessNameCall: Html = view(incomeSourceCeasedObligationsViewModel, viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink)
   val validCallWithData: Html = view(
     incomeSourceCeasedObligationsViewModel.copy(
       businessName = Some("Test Name")
-    ), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink)
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink
   )
   val validCallWithDataRemainingLatent: Html = view(
     incomeSourceCeasedObligationsViewModel.copy(
       businessName = Some("Test Name"),
       isLastActiveBusinessAndIsInLatency = true
-    ), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink)
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink
   )
   val validCallWithDataAllCeased: Html = view(
     incomeSourceCeasedObligationsViewModel.copy(
       businessName = Some("Test Name"),
       allBusinessesCeased = true
-    ), viewAllBusinessLink, viewUpcomingUpdatesLink, Some(viewReportingObligationsLink)
+    ), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink
   )
-  val validCallWithDataRemainingLatentWithNoRfLink: Html = view(
-    incomeSourceCeasedObligationsViewModel.copy(
-      businessName = Some("Test Name"),
-      isLastActiveBusinessAndIsInLatency = true
-    ), viewAllBusinessLink, viewUpcomingUpdatesLink, None
-  )
-  val validCallWithDataAllCeasedWithNoRfLink: Html = view(
-    incomeSourceCeasedObligationsViewModel.copy(
-      businessName = Some("Test Name"),
-      allBusinessesCeased = true
-    ), viewAllBusinessLink, viewUpcomingUpdatesLink, None
-  )
-
+  
   val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
   val viewUpcomingUpdatesURL: String = controllers.routes.NextUpdatesController.show().url
 
@@ -193,7 +181,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       link.hasCorrectLink("submission deadlines", viewUpcomingUpdatesURL)
     }
 
-    "show conditional paragraph with obligations link if remaining latent business and Reporting frequency FS is ON" in new Setup(
+    "show conditional paragraph with obligations link if remaining latent business" in new Setup(
       validCallWithDataRemainingLatent) {
       val p: Element = document.getElementById("remaining-business")
       val link: Element = document.getElementById("remaining-business-link")
@@ -202,13 +190,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       link.hasCorrectLink("your reporting obligations", viewReportingObligationsLink)
     }
 
-    "show conditional paragraph with obligations link if remaining latent business and Reporting frequency FS is OFF" in new Setup(
-      validCallWithDataRemainingLatentWithNoRfLink) {
-      val p: Element = document.getElementById("remaining-business")
-      p.text shouldBe "Because your remaining business is new, it is set to be opted out of Making Tax Digital for Income Tax for up to 2 tax years."
-    }
-
-    "show conditional paragraph with obligations link if all businesses are ceased and Reporting frequency FS is ON" in new Setup(
+    "show conditional paragraph with obligations link if all businesses are ceased" in new Setup(
       validCallWithDataAllCeased) {
       val p: Element = document.getElementById("all-business-ceased")
       val link: Element = document.getElementById("all-business-ceased-link")
@@ -216,13 +198,6 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
         " Find out more about your reporting obligations."
       link.hasCorrectLink("your reporting obligations", viewReportingObligationsLink)
     }
-
-    "show conditional paragraph with obligations link if all businesses are ceased and Reporting frequency FS is OFF" in new Setup(
-      validCallWithDataAllCeasedWithNoRfLink) {
-      val p: Element = document.getElementById("all-business-ceased")
-      p.text shouldBe "In future, any new business you add will be opted out of Making Tax Digital for Income Tax."
-    }
-
 
     "show second paragraph with 'View your businesses' link" in new Setup(validCallWithData) {
       val p: Element = document.getElementById("view-your-businesses")

@@ -462,7 +462,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -590,7 +590,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View your deadlines"
         }
       }
 

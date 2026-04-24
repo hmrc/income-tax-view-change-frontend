@@ -28,35 +28,35 @@ import scala.concurrent.Future
 
 trait ReportingObligationsUtils extends FeatureSwitching {
 
-  def withOptOutFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+  def withOptOutFS(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
     if (!isEnabled(OptOutFs)) {
       redirectHome(user.userType)
     } else {
-      comeBlock
+      codeBlock
     }
   }
 
   def withOptOutRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(OptOutFs), isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
-      case (true, true, true) => codeBlock
-      case (true, true, false) => redirectReportingFrequency(user.userType)
+    (isEnabled(OptOutFs), isEnabled(OptInOptOutContentUpdateR17)) match {
+      case (true, true) => codeBlock
+      case (true, false) => redirectReportingFrequency(user.userType)
       case _ => redirectHome(user.userType)
     }
   }
 
   def withSignUpRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(SignUpFs), isEnabled(ReportingFrequencyPage), isEnabled(OptInOptOutContentUpdateR17)) match {
-      case (true, true, true)  => codeBlock
-      case (true, true, false) | (false, true, _) => redirectReportingFrequency(user.userType)
+    (isEnabled(SignUpFs), isEnabled(OptInOptOutContentUpdateR17)) match {
+      case (true, true)  => codeBlock
+      case (true, false) | (false, _) => redirectReportingFrequency(user.userType)
       case _ => redirectHome(user.userType)
     }
   }
 
-  def withOptInRFChecks(comeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(SignUpFs), isEnabled(ReportingFrequencyPage)) match {
-      case (true, true) => comeBlock
-      case (false, true) => redirectReportingFrequency(user.userType)
-      case _ => redirectHome(user.userType)
+  def withOptInRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
+    if (isEnabled(SignUpFs)) {
+      codeBlock
+    } else {
+      redirectReportingFrequency(user.userType)
     }
   }
 
