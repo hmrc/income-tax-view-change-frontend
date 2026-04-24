@@ -45,7 +45,7 @@
     isAgent: Boolean = false,
     isSupportingAgent: Boolean = false,
     origin: Option[String] = None,
-    whatTheUserCanDo: Option[Html],
+    whatTheUserCanDo: Html,
     optInOptOutContentR17Enabled: Boolean,
     taxYearStatusesCyNy: (ITSAStatus, ITSAStatus)
 )(implicit messages: Messages, user: auth.MtdItUser[_])
@@ -66,9 +66,7 @@
         }
     }
 
-    @whatTheUserCanDo.map { content =>
-        @p(id = Some("what-the-user-can-do")) { @content }
-    }
+    @p(id = Some("what-the-user-can-do")) { @whatTheUserCanDo }
 
     @if(optInOptOutContentR17Enabled) {
         @nextUpdatesHelperR17(isAgent, viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))

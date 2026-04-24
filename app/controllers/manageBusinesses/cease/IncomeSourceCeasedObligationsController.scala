@@ -132,7 +132,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
               source = incomeSourceCeasedObligationsViewModel,
               viewAllBusinessLink = viewAllBusinessLink(isAgent),
               viewUpcomingUpdatesLink = viewUpcomingUpdatesLink(isAgent),
-              reportingObligationsLink = Some(viewReportingObligationsLink(isAgent))
+              reportingObligationsLink = viewReportingObligationsLink(isAgent)
             )))
         case (Some(_), None) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

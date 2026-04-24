@@ -55,9 +55,9 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
         "any optout model is used" should {
 
           "return the correct content" in {
-            
+
             val isAgent = false
-            
+
             val reportingFrequencyLink = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
             val actual = nextUpdatesViewUtils.whatTheUserCanDo(isAgent)
@@ -74,7 +74,7 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
                 )
               )
 
-            actual shouldBe Some(expected)
+            actual shouldBe expected
           }
         }
 
