@@ -26,7 +26,7 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import forms.manageBusinesses.add.BusinessTradeForm
 import models.admin.OverseasBusinessAddress
 import models.core.{Mode, NormalMode}
-import models.incomeSourceDetails.Address
+import models.incomeSourceDetails.{Address, BusinessDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -120,7 +120,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
       val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
-      val isNoAddressOnFile: Boolean = user.incomeSources.businesses.flatMap(_.address).isEmpty
+      val validAddressOnFile: Boolean = isValidAddressOnFile(user.incomeSources.businesses)
 
       BusinessTradeForm
         .checkBusinessTradeWithBusinessName(BusinessTradeForm.form.bindFromRequest(), businessNameOpt).fold(
@@ -146,7 +146,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                   )
               )
             ) flatMap {
-              case true  => Future.successful(Redirect(getSuccessURL(isAgent, mode, isTriggeredMigration, isEnabled(OverseasBusinessAddress), isNoAddressOnFile)))
+              case true  => Future.successful(Redirect(getSuccessURL(isAgent, mode, isTriggeredMigration, isEnabled(OverseasBusinessAddress), !validAddressOnFile)))
               case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
             }
         )
@@ -155,5 +155,18 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
     case ex =>
       Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
+  }
+
+  private def isValidAddressOnFile(businesses: List[BusinessDetailsModel]): Boolean = {
+    businesses.exists { business =>
+      business.address match {
+        case None => false
+        case Some(address) =>
+          address.countryCode.exists {
+            case "GB" => address.addressLine1.isDefined && address.postCode.isDefined
+            case _    => address.addressLine1.isDefined
+          }
+      }
+    }
   }
 }

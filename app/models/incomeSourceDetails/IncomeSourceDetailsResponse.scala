@@ -190,44 +190,24 @@ case class IncomeSourceDetailsModel(
     val allAddresses = businesses.flatMap { thisBusiness =>
       thisBusiness.address.map { address =>
         (address.addressLine1, address.postCode, address.countryCode) match {
-          case (Some(addressLine1), postCode, Some("GB")) =>
+          case (Some(addressLine1), Some(postCode), Some("GB")) =>
             Some(ChooseSoleTraderAddressUserAnswer(
               Some(addressLine1),
               address.addressLine2,
               address.addressLine3,
               address.addressLine4,
-              postCode,
+              Some(postCode),
               Some("GB"),
               false
             ))
-          case (Some(addressLine1), postCode, countryCode) =>
+          case (Some(addressLine1), postCode, Some(countryCode)) if countryCode != "GB" =>
             Some(ChooseSoleTraderAddressUserAnswer(
               Some(addressLine1),
               address.addressLine2,
               address.addressLine3,
               address.addressLine4,
               postCode,
-              countryCode,
-              false
-            ))
-          case (Some(addressLine1), None, countryCode) =>
-            Some(ChooseSoleTraderAddressUserAnswer(
-              Some(addressLine1),
-              address.addressLine2,
-              address.addressLine3,
-              address.addressLine4,
-              None,
-              countryCode,
-              false
-            ))
-          case (Some(addressLine1), postCode, None) =>
-            Some(ChooseSoleTraderAddressUserAnswer(
-              Some(addressLine1),
-              address.addressLine2,
-              address.addressLine3,
-              address.addressLine4,
-              postCode,
-              None,
+              Some(countryCode),
               false
             ))
           case _ => None
