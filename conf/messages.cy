@@ -151,8 +151,7 @@ home.overdue.date.update.count                                  = {0} Ddiweddari
 home.overdue.date.payment.count                                 = {0} Daliadau am fod yn hwyr
 home.overdue.date                                               = Yn hwyr
 home.updates.heading                                            = Eich dyddiadau cau ar gyfer cyflwyno
-home.updates.view                                               = Bwrw golwg dros ddyddiadau cau diweddariadau
-home.updates.view.reportingFrequency                            = Bwrw golwg dros eich dyddiadau cau
+    home.updates.view.reportingFrequency                            = Bwrw golwg dros eich dyddiadau cau
 home.tax-years.heading                                          = Ffurflenni Treth
 home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
 home.your-returns.description                                   = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
@@ -195,7 +194,6 @@ home.updates.overdue.updates                                    = {0} Ddiweddari
 home.updates.R17.heading                                        = Eich dyddiadau cau ar gyfer cyflwyno
 home.updates.R17.nextUpdateDue                                  = Diweddariad nesaf i’w gyflwyno erbyn: {0}
 home.updates.R17.nextTaxReturnDue                               = Ffurflen Dreth nesaf i’w chyflwyno erbyn: {0}
-home.updates.R17.linkText                                       = Bwrw golwg dros eich dyddiadau cau
 
 home.agent.supporting.paymentAndReturns                         = Taliadau a Ffurflenni Treth
 home.agent.supporting.cannotAccess                              = Ni all asiantau ategol gael mynediad at gofnodion sy’n dangos:

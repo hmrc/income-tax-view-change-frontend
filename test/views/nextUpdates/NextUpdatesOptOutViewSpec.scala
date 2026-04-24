@@ -77,8 +77,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
     def nextUpdatesViewUtils: NextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
 
-    def whatTheUserCanDoContentMulti: Option[Html] =
-      nextUpdatesViewUtils.whatTheUserCanDo(isSupportingAgent)(user, implicitly)
+    def whatTheUserCanDoContentMulti: Html = nextUpdatesViewUtils.whatTheUserCanDo(isSupportingAgent)(user, implicitly)
 
     lazy val obligationsModel: NextUpdatesViewModel =
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
