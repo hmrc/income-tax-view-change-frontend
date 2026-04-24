@@ -38,15 +38,15 @@ class ObligationsConnector @Inject()(val http: HttpClientV2,
                                     )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getOpenObligationsUrl(nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/open-obligations"
+    s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/$nino/open-obligations"
   }
 
   def getAllObligationsDateRangeUrl(fromDate: LocalDate, toDate: LocalDate, nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/obligations/from/$fromDate/to/$toDate"
+    s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/$nino/obligations/from/$fromDate/to/$toDate"
   }
 
   def getFulfilledObligationsUrl(nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/$nino/fulfilled-obligations"
+    s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/$nino/fulfilled-obligations"
   }
 
   def getOpenObligations()(implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
