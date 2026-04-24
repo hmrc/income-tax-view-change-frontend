@@ -41,7 +41,10 @@ class SigninSessionDataRepository @Inject()(val repository: UIJourneySessionData
     OptionT(fetchExistingUIJourneySessionDataOrInit()).
       map(journeySd => journeySd.copy(signUpSessionData = journeySd.signUpSessionData.map(_.copy(selectedSignUpYear = Some(intent.toString))))).
       flatMap(journeySd => OptionT.liftF(repository.set(journeySd))).
-      getOrElse(false)
+      getOrElse({
+        Logger("application").error(s"Failed to collect session data for sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} when trying to save sign up. Tax year intent was: ${intent.toString}. From referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+        false
+      })
   }
   
   def fetchSigninSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpSessionData]] = {
