@@ -16,8 +16,6 @@
 
 package services
 
-import auth.MtdItUser
-import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import mocks.connectors.MockObligationsConnector
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}

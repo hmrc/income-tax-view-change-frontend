@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import enums.CodingOutType.CODING_OUT_CLASS2_NICS
 import exceptions.MissingFieldException
 import models.financialDetails.ChargeItem.filterAllowedCharges
-import play.api.libs.json.Json
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
