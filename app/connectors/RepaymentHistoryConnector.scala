@@ -33,11 +33,11 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
                                            )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getAllRepaymentHistoryUrl(nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino"
+    s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/repayments/$nino"
   }
 
   def getRepaymentHistoryByIdUrl(nino: String, repaymentId: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId"
+    s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId"
   }
 
   def getRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)

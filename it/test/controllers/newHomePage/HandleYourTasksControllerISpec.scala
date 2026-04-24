@@ -721,7 +721,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val testCreditModel = CreditsModel(0.0, 0.0, 0.0, creditAmount, None, None, Nil)
     val response: String = Json.toJson(testCreditModel).toString()
 
-    val url = s"/income-tax-view-change/$testNino/financial-details/credits/from/2022-04-06/to/2023-04-05"
+    val url = s"/income-tax-financial-details/$testNino/financial-details/credits/from/2022-04-06/to/2023-04-05"
 
     stubAuthorised(mtdUserRole)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)

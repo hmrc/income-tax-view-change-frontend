@@ -97,20 +97,20 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
             )
           )
 
-          WiremockHelper.stubGet(s"/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId", OK, responseBody)
+           WiremockHelper.stubGet(s"/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId", OK, responseBody)
 
           val result = connector.getRepaymentHistoryByRepaymentId(Nino(nino), repaymentId).futureValue
 
-          result shouldBe responseModel
-          WiremockHelper.verifyGet(s"/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId")
+           result shouldBe responseModel
+           WiremockHelper.verifyGet(s"/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId")
         }
-        "return an error when the request fails" in {
-          WiremockHelper.stubGet(s"/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId", INTERNAL_SERVER_ERROR, "{}")
+         "return an error when the request fails" in {
+           WiremockHelper.stubGet(s"/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId", INTERNAL_SERVER_ERROR, "{}")
 
           val result = connector.getRepaymentHistoryByRepaymentId(Nino(nino), repaymentId).futureValue
 
-          result shouldBe RepaymentHistoryErrorModel(500, "{}")
-          WiremockHelper.verifyGet(s"/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId")
+           result shouldBe RepaymentHistoryErrorModel(500, "{}")
+           WiremockHelper.verifyGet(s"/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId")
         }
       }
     }
@@ -171,20 +171,20 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
             )
           )
 
-          WiremockHelper.stubGet(s"/income-tax-view-change/repayments/$nino", OK, responseBody)
+           WiremockHelper.stubGet(s"/income-tax-financial-details/repayments/$nino", OK, responseBody)
 
           val result = connector.getRepaymentHistoryByNino(Nino(nino)).futureValue
 
-          result shouldBe responseModel
-          WiremockHelper.verifyGet(s"/income-tax-view-change/repayments/$nino")
+           result shouldBe responseModel
+           WiremockHelper.verifyGet(s"/income-tax-financial-details/repayments/$nino")
         }
-        "return an error when the request fails" in {
-          WiremockHelper.stubGet(s"/income-tax-view-change/repayments/$nino", INTERNAL_SERVER_ERROR, "{}")
+         "return an error when the request fails" in {
+           WiremockHelper.stubGet(s"/income-tax-financial-details/repayments/$nino", INTERNAL_SERVER_ERROR, "{}")
 
           val result = connector.getRepaymentHistoryByNino(Nino(nino)).futureValue
 
-          result shouldBe RepaymentHistoryErrorModel(500, "{}")
-          WiremockHelper.verifyGet(s"/income-tax-view-change/repayments/$nino")
+           result shouldBe RepaymentHistoryErrorModel(500, "{}")
+           WiremockHelper.verifyGet(s"/income-tax-financial-details/repayments/$nino")
         }
       }
     }

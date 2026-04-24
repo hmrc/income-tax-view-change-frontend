@@ -32,7 +32,7 @@ class ChargeHistoryConnector @Inject()(val httpV2: HttpClientV2,
                                       )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getChargeHistoryUrl(nino: String, chargeReference: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/charge-history/$nino/chargeReference/$chargeReference"
+    s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/charge-history/$nino/chargeReference/$chargeReference"
   }
 
   def getChargeHistory(nino: String, chargeRef: Option[String])
