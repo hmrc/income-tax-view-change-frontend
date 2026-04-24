@@ -24,7 +24,7 @@ import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import scala.concurrent.{ExecutionContext, Future}
 
 trait JourneyCheckerOptOut extends ReportingObligationsUtils {
@@ -43,7 +43,7 @@ trait JourneyCheckerOptOut extends ReportingObligationsUtils {
         case true => codeBlock
         case false =>
           Logger("application").error(s"[JourneyCheckerOptOut][withSessionData] - Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer","No Referer"))._2}")
-          Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(user.isAgent)))
+          Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent)))
       }
     } else {
       optOutService.recallSavedIntent().flatMap {
