@@ -19,8 +19,8 @@ package models.liabilitycalculation.viewmodels
 import auth.MtdItUser
 import models.financialDetails.SecondLatePaymentPenalty
 import models.incomeSourceDetails.TaxYear
-import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import obligations.models.ObligationsModel
 
 import java.time.LocalDate
 

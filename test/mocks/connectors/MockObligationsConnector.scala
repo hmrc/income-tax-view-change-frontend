@@ -16,8 +16,8 @@
 
 package mocks.connectors
 
-import connectors.ObligationsConnector
-import models.obligations.ObligationsResponseModel
+import obligations.connectors.ObligationsConnector
+import obligations.models.ObligationsResponseModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

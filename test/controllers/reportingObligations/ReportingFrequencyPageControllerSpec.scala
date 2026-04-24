@@ -24,7 +24,11 @@ import mocks.services.{MockDateService, MockOptOutService, MockSignUpService}
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.reportingObligations.ReportingFrequencyViewModel
+import obligations.controllers.reportingObligations.ReportingFrequencyPageController
+import obligations.models.reportingObligations.ReportingFrequencyViewModel
+import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutService}
+import obligations.services.reportingObligations.signUp.SignUpService
+import obligations.services.reportingObligations.signUp.core.SignUpProposition
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{when, mock as mMock}
 import org.scalatestplus.mockito.MockitoSugar
@@ -33,9 +37,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.reportingObligations.optOut.{OptOutProposition, OptOutService}
-import services.reportingObligations.signUp.SignUpService
-import services.reportingObligations.signUp.core.SignUpProposition
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1

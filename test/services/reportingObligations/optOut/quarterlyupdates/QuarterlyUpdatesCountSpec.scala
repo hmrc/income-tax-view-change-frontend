@@ -19,18 +19,18 @@ package services.reportingObligations.optOut.quarterlyupdates
 import audit.AuditingService
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import connectors.ObligationsConnector
-import connectors.itsastatus.ITSAStatusUpdateConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import mocks.MockHttpV2
+import obligations.connectors.ObligationsConnector
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
+import obligations.repositories.OptOutSessionDataRepository
+import obligations.services.reportingObligations.optOut.OptOutService
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
-import repositories.OptOutSessionDataRepository
 import services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
-import services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import services.reportingObligations.optOut.OptOutTestSupport
 import services.{DateService, NextUpdatesService}
 import testConstants.BaseTestConstants.testNino

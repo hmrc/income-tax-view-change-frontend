@@ -25,7 +25,7 @@ import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, ReportingFrequencyPa
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
-import models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
+import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository

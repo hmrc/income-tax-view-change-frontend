@@ -27,6 +27,7 @@
 @import config.FrontendAppConfig
 @import viewUtils.ExternalUrlHelper
 @import play.twirl.api.HtmlFormat
+@import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
 
 @this(
         mainTemplate: unifiedLayout,
@@ -276,7 +277,7 @@ val rows = {
 }
 
 @reportingFrequencyURL(isAgent: Boolean) = @{
-    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 }
 
 @getQuarterlyType = @{

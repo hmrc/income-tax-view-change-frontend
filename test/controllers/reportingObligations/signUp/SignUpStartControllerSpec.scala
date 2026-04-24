@@ -23,7 +23,10 @@ import mocks.services.MockSignUpService
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
-import models.reportingObligations.signUp.{SignUpSessionData, SignUpTaxYearQuestionViewModel}
+import obligations.controllers.reportingObligations.signUp.SignUpStartController
+import obligations.models.reportingObligations.signUp.{SignUpSessionData, SignUpTaxYearQuestionViewModel}
+import obligations.services.reportingObligations.signUp.SignUpService
+import obligations.services.reportingObligations.signUp.core.CurrentSignUpTaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
@@ -31,8 +34,6 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
-import services.reportingObligations.signUp.SignUpService
-import services.reportingObligations.signUp.core.CurrentSignUpTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

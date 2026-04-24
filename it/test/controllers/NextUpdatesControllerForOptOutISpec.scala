@@ -16,23 +16,22 @@
 
 package controllers
 
-import audit.models.NextUpdatesAuditing.NextUpdatesAuditModel
+import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import auth.MtdItUser
 import enums.MTDIndividual
 import helpers.ComponentSpecBase
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks._
+import helpers.servicemocks.*
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.obligations.ObligationsModel
 import org.mongodb.scala.bson.BsonDocument
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
+import play.api.http.Status.*
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.NextUpdatesIntegrationTestConstants._
-import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
+import testConstants.IncomeSourceIntegrationTestConstants.*
+import testConstants.NextUpdatesIntegrationTestConstants.*
+import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 

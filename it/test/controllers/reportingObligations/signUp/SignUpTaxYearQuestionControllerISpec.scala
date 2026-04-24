@@ -16,7 +16,6 @@
 
 package controllers.reportingObligations.signUp
 
-import audit.models.SignUpAuditModel
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import controllers.constants.ConfirmOptOutControllerConstants.emptyBodyString
@@ -28,7 +27,8 @@ import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
+import obligations.models.audit.SignUpAuditModel
+import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

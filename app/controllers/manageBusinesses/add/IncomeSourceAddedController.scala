@@ -39,6 +39,9 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
+import obligations.controllers.{routes => obligationRoutes}
+import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
+
 
 class IncomeSourceAddedController @Inject()(
                                              authActions: AuthActions,
@@ -57,9 +60,9 @@ class IncomeSourceAddedController @Inject()(
 
   private[controllers] def getNextUpdatesUrl(isAgent: Boolean) =
     if (isAgent) {
-      controllers.routes.NextUpdatesController.showAgent().url
+      obligationRoutes.NextUpdatesController.showAgent().url
     } else {
-      controllers.routes.NextUpdatesController.show().url
+      obligationRoutes.NextUpdatesController.show().url
     }
 
   private[controllers] def getManageBusinessUrl(isAgent: Boolean) =
@@ -70,7 +73,7 @@ class IncomeSourceAddedController @Inject()(
     }
 
   private[controllers] def getReportingFrequencyUrl(isAgent: Boolean) =
-    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 
   private[controllers] def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
 

@@ -17,9 +17,8 @@
 package connectors.optout
 
 import connectors.BaseConnectorSpec
-import connectors.itsastatus.ITSAStatusUpdateConnector
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel._
 import models.incomeSourceDetails.TaxYear
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.BAD_REQUEST

@@ -17,12 +17,13 @@
 package audit.models
 
 import auth.MtdItUser
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, NoStatus, Voluntary}
+import obligations.models.audit.{OptOutAuditModel, Outcome}
+import obligations.services.reportingObligations.optOut.OptOutProposition
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import services.reportingObligations.optOut.OptOutProposition
 import services.reportingObligations.optOut.OptOutTestSupport
 import testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport

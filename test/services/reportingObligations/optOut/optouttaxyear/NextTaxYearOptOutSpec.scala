@@ -18,7 +18,7 @@ package services.reportingObligations.optOut.optouttaxyear
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear}
+import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear}
 import testUtils.UnitSpec
 
 class NextTaxYearOptOutSpec extends UnitSpec {

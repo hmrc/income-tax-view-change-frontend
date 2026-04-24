@@ -31,8 +31,8 @@ import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import obligations.models.ObligationsModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*

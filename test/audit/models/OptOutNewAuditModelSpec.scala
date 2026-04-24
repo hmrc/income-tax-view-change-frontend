@@ -19,8 +19,9 @@ package audit.models
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
+import obligations.models.audit.OptOutNewAuditModel
+import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import play.api.libs.json.Json
-import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import testUtils.TestSupport
 
 class OptOutNewAuditModelSpec extends TestSupport {

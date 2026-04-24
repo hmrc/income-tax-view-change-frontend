@@ -17,21 +17,21 @@
 package controllers
 
 import audit.AuditingService
-import audit.models._
+import audit.models.*
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import connectors.ObligationsConnector
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.TaxYear
-import models.liabilitycalculation.viewmodels._
+import models.liabilitycalculation.viewmodels.*
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
-import models.obligations.{ObligationsErrorModel, ObligationsModel}
+import obligations.connectors.ObligationsConnector
+import obligations.models.{ObligationsErrorModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

@@ -24,7 +24,7 @@ import config.featureswitch.FeatureSwitching
 import models.admin.RecentActivity
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.obligations.ObligationsModel
+import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, ITSAStatusService}

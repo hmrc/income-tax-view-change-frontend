@@ -17,11 +17,11 @@
 package services
 
 import auth.MtdItUser
-import connectors._
+import obligations.connectors.ObligationsConnector
 import models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.viewmodels._
+import models.incomeSourceDetails.viewmodels.*
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
-import models.obligations._
+import obligations.models.{DeadlineViewModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, ObligationsResponseModel, QuarterlyObligation}
 import play.api.Logger
 import services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -55,24 +55,24 @@ class NextUpdatesService @Inject()(
     }
   }
 
-  def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[Either[(LocalDate, Boolean), Int]] = {
-    getOpenObligations().map {
-
-      case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) =>
-        val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
-        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate)
-        val nextDueDates = dueDates.diff(overdueDates)
-        val overdueDatesCount = overdueDates.size
-
-        overdueDatesCount match {
-          case 0 => Left(nextDueDates.head -> false)
-          case 1 => Left(overdueDates.head -> true)
-          case _ => Right(overdueDatesCount)
-        }
-      case _ =>
-        throw new InternalServerException("Unexpected Exception getting obligation due dates")
-    }
-  }
+//  def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[Either[(LocalDate, Boolean), Int]] = {
+//    getOpenObligations().map {
+//
+//      case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) =>
+//        val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
+//        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate)
+//        val nextDueDates = dueDates.diff(overdueDates)
+//        val overdueDatesCount = overdueDates.size
+//
+//        overdueDatesCount match {
+//          case 0 => Left(nextDueDates.head -> false)
+//          case 1 => Left(overdueDates.head -> true)
+//          case _ => Right(overdueDatesCount)
+//        }
+//      case _ =>
+//        throw new InternalServerException("Unexpected Exception getting obligation due dates")
+//    }
+//  }
 
 
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {

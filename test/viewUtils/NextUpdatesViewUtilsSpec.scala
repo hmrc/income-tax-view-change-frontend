@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.admin.{FeatureSwitch, FeatureSwitchName, ReportingFrequencyPage}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import obligations.viewUtils.NextUpdatesViewUtils
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest

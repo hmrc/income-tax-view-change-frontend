@@ -17,19 +17,20 @@
 package repositories
 
 import auth.MtdItUser
-import connectors.itsastatus.ITSAStatusUpdateConnector
 import enums.JourneyType.OptOutJourney
 import mocks.services.*
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
-import models.reportingObligations.optOut.OptOutSessionData
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
+import obligations.models.reportingObligations.optOut.OptOutSessionData
+import obligations.repositories.{OptOutContextData, OptOutSessionDataRepository}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest, Succeeded}
 import services.NextUpdatesService
-import services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
+import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import services.reportingObligations.optOut.OptOutTestSupport.buildOneYearOptOutPropositionForPreviousYear
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

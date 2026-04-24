@@ -21,19 +21,19 @@ import config.FrontendAppConfig
 import models.admin.{FeatureSwitch, ReportingFrequencyPage}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
-import models.obligations.*
-import models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
+import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
+import obligations.models.{DeadlineViewModel, GroupedObligationsModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
+import obligations.services.reportingObligations.optOut.OptOutProposition
+import obligations.viewUtils.NextUpdatesViewUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
-import services.reportingObligations.optOut.OptOutProposition
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.NextUpdatesTestConstants
 import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
-import viewUtils.NextUpdatesViewUtils
 import views.html.components.link
 import views.html.nextUpdates.NextUpdatesOptOutView
 

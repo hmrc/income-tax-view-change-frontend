@@ -21,8 +21,8 @@ import auth.MtdItUser
 import implicits.ImplicitDateParser
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
-import models.obligations.ObligationWithIncomeType
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import obligations.models.ObligationWithIncomeType
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent

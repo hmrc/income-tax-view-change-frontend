@@ -23,6 +23,8 @@ import mocks.services.MockSignUpService
 import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import obligations.controllers.reportingObligations.signUp.SignUpCompletedController
+import obligations.services.reportingObligations.signUp.SignUpService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
@@ -31,8 +33,7 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
-import services.reportingObligations.signUp.SignUpService
-import services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
+import obligations.services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

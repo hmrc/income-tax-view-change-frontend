@@ -16,7 +16,7 @@
 
 package controllers.reportingObligations.signUp
 
-import connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -25,7 +25,11 @@ import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage, SignUp
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
+import obligations.controllers.reportingObligations.signUp.SignUpTaxYearQuestionController
+import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
+import obligations.services.reportingObligations.optOut.MultiYearOptOutDefault
+import obligations.services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
+import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, SignUpProposition}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
@@ -33,9 +37,6 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
-import services.reportingObligations.optOut.MultiYearOptOutDefault
-import services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, SignUpProposition}
-import services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

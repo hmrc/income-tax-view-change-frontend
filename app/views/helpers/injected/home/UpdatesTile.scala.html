@@ -17,9 +17,10 @@
 @import views.html.components._
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.obligations.NextUpdatesTileViewModel
+@import obligations.models.NextUpdatesTileViewModel
 @import models.itsaStatus.ITSAStatus
 @import views.html.layouts.unifiedLayout
+@import obligations.controllers.{routes => obligationsRoutes}
 
 
 @this(
@@ -35,9 +36,9 @@
 
 @nextUpdatesControllerURL = @{
     if(isAgent) {
-        controllers.routes.NextUpdatesController.showAgent().url
+        obligationsRoutes.NextUpdatesController.showAgent().url
     } else {
-        controllers.routes.NextUpdatesController.show(optOrigin).url
+        obligationsRoutes.NextUpdatesController.show(optOrigin).url
     }
 }
 

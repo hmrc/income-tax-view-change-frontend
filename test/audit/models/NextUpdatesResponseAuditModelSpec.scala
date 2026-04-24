@@ -18,9 +18,10 @@ package audit.models
 
 import authV2.AuthActionsTestData.getMinimalMTDITUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
+import obligations.models.audit.NextUpdatesResponseAuditModel
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants._
-import testConstants.NextUpdatesTestConstants._
+import testConstants.BaseTestConstants.*
+import testConstants.NextUpdatesTestConstants.*
 import testUtils.TestSupport
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {

@@ -16,7 +16,7 @@
 
 package controllers.manageBusinesses.manage
 
-import connectors.{ITSAStatusConnector, BusinessDetailsConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
 import enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
 import enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError

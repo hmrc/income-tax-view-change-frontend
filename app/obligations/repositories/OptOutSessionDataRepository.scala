@@ -1,0 +1,149 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package obligations.repositories
+
+import cats.data.OptionT
+import enums.JourneyType.{Opt, OptOutJourney}
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus
+import obligations.models.reportingObligations.optOut.OptOutSessionData
+import obligations.repositories.OptOutContextData
+import obligations.services.reportingObligations.optOut.OptOutProposition
+import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
+import play.api.libs.json.{Json, OFormat}
+import repositories.UIJourneySessionDataRepository
+import uk.gov.hmrc.http.HeaderCarrier
+import play.api.Logger
+
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
+
+class OptOutSessionDataRepository @Inject()(val repository: UIJourneySessionDataRepository) {
+
+  def saveIntent(intent: TaxYear)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    OptionT(repository.get(hc.sessionId.get.value, Opt(OptOutJourney)))
+      .map(journeySd => journeySd.copy(optOutSessionData = journeySd.optOutSessionData.map(_.copy(selectedOptOutYear = Some(intent.toString)))))
+      .flatMap(journeySd => OptionT.liftF(repository.set(journeySd)))
+      .getOrElse({
+        Logger("application").error(s"Failed to collect session data for sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} when trying to save opt out. Tax year intent was: ${intent.toString}. From referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+        false
+      })
+  }
+
+  def buildResult(contextData: OptOutContextData, selectedOptOutYear: Option[String]): Option[(OptOutProposition, Option[TaxYear])] = {
+    val currentYearOpt = TaxYear.getTaxYearModel(contextData.currentYear)
+    currentYearOpt.map { currentYear =>
+      val proposition = createOptOutProposition(
+        currentYear = currentYear,
+        previousYearCrystallised = contextData.crystallisationStatus,
+        previousYearItsaStatus = ITSAStatus.fromString(contextData.previousYearITSAStatus),
+        currentYearItsaStatus = ITSAStatus.fromString(contextData.currentYearITSAStatus),
+        nextYearItsaStatus = ITSAStatus.fromString(contextData.nextYearITSAStatus)
+      )
+      val selectedTaxYear = selectedOptOutYear match {
+        case Some(year) => TaxYear.getTaxYearModel(year)
+        case None => None
+      }
+      (proposition, selectedTaxYear)
+    }
+  }
+
+  def recallOptOutPropositionWithIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[(OptOutProposition, Option[TaxYear])]] = {
+
+    repository.get(hc.sessionId.get.value, Opt(OptOutJourney)).map { sessionData =>
+      for {
+        data <- sessionData
+        optOutData <- data.optOutSessionData
+        contextData <- optOutData.optOutContextData
+      } yield buildResult(contextData, optOutData.selectedOptOutYear)
+    }.map(_.flatten)
+  }
+
+  def fetchJourneyCompleteStatus()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    repository.get(hc.sessionId.get.value, Opt(OptOutJourney)) map { optSessionData =>
+      optSessionData.exists(_.journeyIsComplete.getOrElse(false))
+    }
+  }
+
+  def setJourneyCompleteStatus(journeyComplete: Boolean)
+                              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
+    OptionT(repository.get(hc.sessionId.get.value, Opt(OptOutJourney))).
+      map(journeySd => journeySd.copy(journeyIsComplete = Some(journeyComplete))).
+      flatMap(journeySd => OptionT.liftF(repository.set(journeySd))).
+      getOrElse(false)
+  }
+
+  def fetchSavedIntent()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[TaxYear]] = {
+    repository.get(hc.sessionId.get.value, Opt(OptOutJourney)) map { sessionData =>
+      for {
+        data <- sessionData
+        optOutData <- data.optOutSessionData
+        selected <- optOutData.selectedOptOutYear
+        parsed <- TaxYear.getTaxYearModel(selected)
+      } yield parsed
+    }
+  }
+
+  def initialiseOptOutJourney(oop: OptOutProposition, shouldResetIntent: Boolean = true)(implicit hc: HeaderCarrier, executionContext: ExecutionContext): Future[Boolean] = {
+    val data = UIJourneySessionData(
+      sessionId = hc.sessionId.get.value,
+      journeyType = OptOutJourney.toString,
+      optOutSessionData = Some(OptOutSessionData(Some(buildOptOutContextData(oop)), selectedOptOutYear = None))
+    )
+    if (shouldResetIntent) {
+      val dataWithResetIntent = data.copy(
+        optOutSessionData = data.optOutSessionData.map(_.copy(selectedOptOutYear = None))
+      )
+      repository.set(dataWithResetIntent)
+    } else {
+      fetchSavedIntent().flatMap {
+        case Some(taxYear) =>
+          val dataWithPreservedIntent = data.copy(
+            optOutSessionData = data.optOutSessionData.map(_.copy(selectedOptOutYear = Some(taxYear.toString)))
+          )
+          repository.set(dataWithPreservedIntent)
+        case None =>
+          repository.set(data)
+      }
+    }
+
+  }
+
+  private def buildOptOutContextData(oop: OptOutProposition): OptOutContextData = {
+    OptOutContextData(
+      oop.currentTaxYear.taxYear.toString,
+      oop.previousTaxYear.crystallised,
+      oop.previousTaxYear.status.toString,
+      oop.currentTaxYear.status.toString,
+      oop.nextTaxYear.status.toString
+    )
+  }
+
+}
+
+case class OptOutContextData(
+                              currentYear: String,
+                              crystallisationStatus: Boolean,
+                              previousYearITSAStatus: String,
+                              currentYearITSAStatus: String,
+                              nextYearITSAStatus: String
+                            )
+
+object OptOutContextData {
+  implicit val format: OFormat[OptOutContextData] = Json.format[OptOutContextData]
+}

@@ -18,12 +18,13 @@ package repositories
 
 import helpers.ComponentSpecBase
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
+import models.itsaStatus.ITSAStatus.*
+import obligations.repositories.OptOutSessionDataRepository
 import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
-import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
+import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
+import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 class OptOutSessionDataRepositoryISpec extends ComponentSpecBase with ScalaFutures {
 

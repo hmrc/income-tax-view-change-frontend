@@ -28,14 +28,14 @@ import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.newHomePage.SubmissionDeadlinesViewModel
-import models.obligations.{ObligationsModel, SingleObligationModel}
+import obligations.models.{ObligationsModel, SingleObligationModel}
+import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.*
 import services.newHomePage.HandleYourTasksService
-import services.reportingObligations.optOut.OptOutService
-import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.newHomePage.NewHomeYourTasksView

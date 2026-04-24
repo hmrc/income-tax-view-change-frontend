@@ -27,7 +27,6 @@ import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.obligations.*
 import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -42,7 +41,7 @@ import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{financialDetails, *}
+import testConstants.FinancialDetailsTestConstants.*
 import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import views.html.TaxYearSummaryView

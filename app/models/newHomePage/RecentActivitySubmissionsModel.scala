@@ -16,6 +16,6 @@
 
 package models.newHomePage
 
-import models.obligations.SingleObligationModel
+import obligations.models.SingleObligationModel
 
 case class RecentActivitySubmissionsModel(mostRecentAnnualSubmission: Option[SingleObligationModel], mostRecentQuarterlySubmission: Option[SingleObligationModel])

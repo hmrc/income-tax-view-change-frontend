@@ -33,16 +33,16 @@
 package connectors
 
 import audit.mocks.MockAuditingService
-import audit.models._
+import audit.models.*
 import config.FrontendAppConfig
 import mocks.MockHttpV2
-import models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
+import obligations.models.audit.NextUpdatesResponseAuditModel
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants._
-import testConstants.NextUpdatesTestConstants._
+import testConstants.BaseTestConstants.*
+import testConstants.NextUpdatesTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

@@ -20,7 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.CannotGoBackPage
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.admin.ReportingFrequencyPage
@@ -28,10 +28,12 @@ import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
+import obligations.controllers.routes as obligationsRoutes
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services.{NextUpdatesService, SessionService}
+import play.api.mvc.*
+import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
@@ -45,7 +47,6 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
                                                         val itvcErrorHandler: ItvcErrorHandler,
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                         val obligationsView: IncomeSourceCeasedObligationsView,
-                                                        val nextUpdatesService: NextUpdatesService,
                                                         val sessionService: SessionService)
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         val mcc: MessagesControllerComponents,
@@ -73,7 +74,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
   }
 
   private def viewReportingObligationsLink(isAgent: Boolean): String =
-    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
@@ -106,9 +107,9 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
 
   def viewUpcomingUpdatesLink(isAgent: Boolean): String =
     if (isAgent) {
-      controllers.routes.NextUpdatesController.showAgent().url
+      obligationsRoutes.NextUpdatesController.showAgent().url
     } else {
-      controllers.routes.NextUpdatesController.show().url
+      obligationsRoutes.NextUpdatesController.show().url
     }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {

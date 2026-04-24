@@ -16,6 +16,7 @@
 
 package models.reportingObligations.optOut
 
+import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import testUtils.TestSupport
 
 class NextUpdatesQuarterlyReportingContentChecksSpec extends TestSupport {
