@@ -47,15 +47,15 @@ class IncomeSourceNotCeasedController @Inject()(val authActions: AuthActions,
     val linkText = messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.text")
     val linkUrl = {
       (isAgent, isTriggeredMigration) match {
-        case (false, false)  => routes.CeaseIncomeSourceController.show().url
-        case (true, false)   => routes.CeaseIncomeSourceController.showAgent().url
+        case (false, false)  => controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+        case (true, false)   => controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
         case (isAgent, true) => controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent).url
       }
     }
     val linkPrefix = Some(messagesApi.preferred(user)("incomeSources.cease.error.notCeased.link.prefix"))
 
     Future.successful {
-      Ok(errorTemplate(pageTitle, heading, message, linkPrefix, linkText, linkUrl, isAgent = isAgent))
+      Ok(errorTemplate(pageTitle, heading, message, linkPrefix, linkText, linkUrl, isAgent = isAgent, optLinkPunct = Some(".")))
     }
   }
 }

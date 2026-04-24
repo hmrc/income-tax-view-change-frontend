@@ -54,8 +54,8 @@ class CeaseCheckIncomeSourceDetailsController @Inject()(
                                                         val itvcErrorHandlerAgent: AgentItvcErrorHandler)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
 
-  private lazy val backUrl: Boolean => String = (isAgent: Boolean) => if (isAgent) routes.CeaseIncomeSourceController.showAgent().url
-  else routes.CeaseIncomeSourceController.show().url
+  private lazy val backUrl: Boolean => String = (isAgent: Boolean) => if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
 
   private def getRedirectCall(isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean): Call = {
     (isAgent, isTriggeredMigration) match {

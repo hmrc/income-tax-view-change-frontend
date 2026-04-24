@@ -21,7 +21,7 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockOptOutService, MockSignUpService}
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.reportingObligations.ReportingFrequencyViewModel
@@ -84,7 +84,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(fixedTaxYear)
             when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
-            enable(ReportingFrequencyPage, SignUpFs, OptOutFs)
+            enable(SignUpFs, OptOutFs)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -149,7 +149,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
-            enable(ReportingFrequencyPage, SignUpFs, OptOutFs, OptInOptOutContentUpdateR17)
+            enable(SignUpFs, OptOutFs, OptInOptOutContentUpdateR17)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -213,54 +213,6 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
           }
         }
 
-        "render the error page" when {
-          "the reporting frequency feature switch is disabled" in {
-
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-
-            disable(ReportingFrequencyPage)
-            setupMockSuccess(mtdRole)
-            mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
-            mockUpdateOptOutJourneyStatusInSessionData()
-            mockFetchOptOutJourneyCompleteStatus()
-            mockFetchSavedSignUpSessionData()
-            mockUpdateOptInJourneyStatusInSessionData()
-
-            val optOutProposition: OptOutProposition =
-              OptOutProposition.createOptOutProposition(
-                currentYear = TaxYear(2024, 2025),
-                previousYearCrystallised = false,
-                previousYearItsaStatus = Mandated,
-                currentYearItsaStatus = Voluntary,
-                nextYearItsaStatus = Mandated
-              )
-
-            val optInProposition: SignUpProposition =
-              SignUpProposition.createSignUpProposition(
-                currentYear = TaxYear(2024, 2025),
-                currentYearItsaStatus = Voluntary,
-                nextYearItsaStatus = Mandated
-              )
-
-            when(mockSignUpService.fetchSignUpProposition()(any(), any(), any()))
-              .thenReturn(Future(optInProposition))
-
-            when(mockSignUpService.availableSignUpTaxYear()(any(), any(), any())).thenReturn(
-              Future(Seq(TaxYear(2024, 2025)))
-            )
-            when(mockOptOutService.initialiseJourneyWithProposition()(any(), any(), any())).thenReturn(
-              Future((optOutProposition))
-            )
-            when(
-              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())
-            ).thenReturn(Future(singleBusinessIncome))
-
-            val result = action(fakeRequest)
-
-            status(result) shouldBe INTERNAL_SERVER_ERROR
-            contentAsString(result).contains("Sorry, there is a problem with the service") shouldBe true
-          }
-        }
       }
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
     }

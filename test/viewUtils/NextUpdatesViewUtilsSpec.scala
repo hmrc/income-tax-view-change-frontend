@@ -20,7 +20,7 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.admin.{FeatureSwitch, ReportingFrequencyPage}
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
@@ -41,9 +41,10 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
 
   override implicit val individualUser: MtdItUser[_] = defaultMTDITUser(Some(testUserTypeIndividual),
     IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
-    .addFeatureSwitches(List(FeatureSwitch(ReportingFrequencyPage, true)))
 
-  val nextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)
+  val nextUpdatesViewUtils = new NextUpdatesViewUtils(linkComponent)     {
+    override def isEnabled(featureSwitch: FeatureSwitchName) (implicit user: MtdItUser[_]): Boolean = true
+  }
 
   "NextUpdatesViewUtils" when {
 
@@ -55,10 +56,8 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
 
           "return the correct content" in {
 
-            enable(ReportingFrequencyPage)
-
             val isAgent = false
-            
+
             val reportingFrequencyLink = controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
             val actual = nextUpdatesViewUtils.whatTheUserCanDo(isAgent)
@@ -75,7 +74,7 @@ class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDa
                 )
               )
 
-            actual shouldBe Some(expected)
+            actual shouldBe expected
           }
         }
 

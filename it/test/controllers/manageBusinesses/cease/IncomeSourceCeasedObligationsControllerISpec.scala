@@ -22,7 +22,7 @@ import enums.JourneyType.Cease
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, ReportingFrequencyPage}
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -95,7 +95,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
           "is authenticated, with a valid enrolment" should {
             "render the Business Ceased obligations page with remaining business content when only one business in latency exists and RF FS is turned on" in {
               stubAuthorised(mtdUserRole)
-              enable(ReportingFrequencyPage)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
@@ -111,26 +110,8 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
                 elementTextByID("remaining-business-link")("your reporting obligations")
               )
             }
-            "render the Business Ceased obligations page with remaining business content when only one business in latency exists and RF FS is turned OFF" in {
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
-              IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-              setupTestMongoData(incomeSourceType)
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType)),
-                elementTextByID("remaining-business")("Because your remaining business is new, it is set to be opted out of" +
-                  " Making Tax Digital for Income Tax for up to 2 tax years."),
-                elementTextByID("remaining-business-link")("")
-              )
-            }
             "render the Business Ceased obligations page with remaining business content when  all business ceased and RF FS is turned on" in {
               stubAuthorised(mtdUserRole)
-              enable(ReportingFrequencyPage)
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
               IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
@@ -144,22 +125,6 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
                 elementTextByID("all-business-ceased")("In future, any new business you add will be opted out of Making Tax Digital for Income Tax." +
                   " Find out more about your reporting obligations."),
                 elementTextByID("all-business-ceased-link")("your reporting obligations")
-              )
-            }
-            "render the Business Ceased obligations page with remaining business content when  all business ceased and RF FS is turned OFF" in {
-              stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
-              IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-              setupTestMongoData(incomeSourceType)
-
-              val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-              result should have(
-                httpStatus(OK),
-                pageTitle(mtdUserRole, getExpectedTitle(incomeSourceType, true)),
-                elementTextByID("all-business-ceased")("In future, any new business you add will be opted out of Making Tax Digital for Income Tax."),
-                elementTextByID("all-business-ceased-link")("")
               )
             }
           }

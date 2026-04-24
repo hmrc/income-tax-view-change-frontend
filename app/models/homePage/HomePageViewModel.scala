@@ -63,7 +63,7 @@ case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrati
 
 case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean)
 
-case class YourReportingObligationsTileViewModel(currentTaxYear: TaxYear, reportingObligationsEnabled: Boolean, currentYearITSAStatus: ITSAStatus)
+case class YourReportingObligationsTileViewModel(currentTaxYear: TaxYear, currentYearITSAStatus: ITSAStatus)
 
 case class PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean, submissionFrequency: String, penaltyPoints: Int) {
 

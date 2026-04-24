@@ -42,7 +42,7 @@ import services.reportingObligations.signUp.SignUpService
 import services.{CreditService, NextUpdatesService}
 import services.reportingObligations.optOut.OptOutService
 import testConstants.ANewCreditAndRefundModel
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
 import views.html.HomeView
 import views.html.newHomePage.*
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
@@ -526,7 +526,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -657,7 +657,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -794,7 +794,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
-            enable(ReportingFrequencyPage)
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -821,7 +820,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
         "states that the user is reporting quarterly" when {
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
-            enable(ReportingFrequencyPage)
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
@@ -846,7 +844,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
-            enable(ReportingFrequencyPage)
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
@@ -957,5 +954,15 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       val document = Jsoup.parse(contentAsString(result))
       document.title shouldBe homePageTitle
       document.select("#payments-tile p:nth-child(2)").text shouldBe "1 January 2100"    }
+  }
+
+  "redirect to the no income sources page when the user has no income sources" in new Setup {
+    setupMockUserAuth
+    mockNoIncomeSources()
+
+    val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
+
+    status(result) shouldBe SEE_OTHER
+    redirectLocation(result) shouldBe Some(controllers.routes.NoIncomeSourcesController.show(false).url)
   }
 }

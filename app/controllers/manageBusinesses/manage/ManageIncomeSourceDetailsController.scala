@@ -22,7 +22,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import enums.IncomeSourceJourney.*
 import enums.InitialPage
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -161,7 +161,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         isAgent = isAgent,
         showStartDate = isEnabled(DisplayBusinessStartDate),
         showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
-        showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
         backUrl = backUrl
       ))
     }
@@ -191,7 +190,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             isAgent = isAgent,
             showStartDate = isEnabled(DisplayBusinessStartDate),
             showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
-            showReportingFrequencyLink = isEnabled(ReportingFrequencyPage),
             backUrl = backUrl
           ))
         }.recover {

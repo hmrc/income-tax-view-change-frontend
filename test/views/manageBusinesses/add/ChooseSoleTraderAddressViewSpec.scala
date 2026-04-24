@@ -18,9 +18,10 @@ package views.manageBusinesses.add
 
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
+import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
@@ -33,6 +34,7 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
   class Setup(isAgent: Boolean, form: Form[ChooseSoleTraderAddressForm], isInternational: Boolean = false) {
 
     val postAction: Call = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent)
+    val backUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(NormalMode).url
 
     val businessAddress: Seq[(String, Int)] = Seq(("some address line 1, TTT6AB", 0), ("some other address line 1, RRR6AB", 1))
     val businessAddressInternational: Seq[(String, Int)] = Seq(("some international address", 0), ("no postcode address", 1))
@@ -45,7 +47,7 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
           form = form,
           chooseSoleTraderAddressRadioOptionsWithIndex =
             if (isInternational) businessAddressInternational else businessAddress,
-          backUrl = controllers.routes.HomeController.show().url
+          backUrl = backUrl
         )
       )
     )
@@ -84,10 +86,15 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
       s"$user | render the continue button" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.getElementById("choose-sole-trader-address-continue-button").text() shouldBe "Continue"
       }
-      s"$user | render the correct back link with the correct URL" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
-        //TODO this will need to be changed with the nav ticket
+      s"$user | render the correct back link with the correct Add Business Trade URL" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq("0"))) {
         pageDocument.getElementById("back-fallback").text() shouldBe "Back"
-        pageDocument.getElementById("back-fallback").attr("href") shouldBe controllers.routes.HomeController.show().url
+        pageDocument.getElementById("back-fallback").attr("href") shouldBe backUrl
+      }
+      s"$user | render the the input error summary with correct link" in new Setup(isAgent, ChooseSoleTraderAddressForm.form(Seq.empty).withError(FormError("value", "manageBusinesses.add.chooseSoleTraderAddress.radio.option.error"))) {
+        pageDocument.getElementsByClass("govuk-error-summary__title").text() shouldBe messages("base.error_summary.heading")
+        pageDocument.getElementsByClass("govuk-list govuk-error-summary__list").select("a").text() shouldBe
+          messages("manageBusinesses.add.chooseSoleTraderAddress.radio.option.error")
+        pageDocument.getElementsByClass("govuk-list govuk-error-summary__list").select("a").attr("href") shouldBe "#choose-sole-trader-address-radios-new-address"
       }
     }
   }

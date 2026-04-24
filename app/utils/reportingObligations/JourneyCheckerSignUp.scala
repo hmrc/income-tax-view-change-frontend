@@ -21,6 +21,7 @@ import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.{JourneyCompleted, JourneyState}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
+import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -46,12 +47,12 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
             signUpService.saveIntent(taxYear).flatMap {
               case true => codeBlock
               case false =>
-                Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session")
-                showInternalServerError(user.isAgent)
+                Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+                Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(user.isAgent)))
             }
           case false =>
-            Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not initialise opt-in context data in session")
-            showInternalServerError(user.isAgent)
+            Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not initialise opt-in context data in session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+            Future(Redirect(controllers.reportingObligations.routes.ReportingFrequencyPageController.show(user.isAgent)))
         }
       case (false, None) =>
         signUpService.fetchSavedChosenTaxYear().flatMap {

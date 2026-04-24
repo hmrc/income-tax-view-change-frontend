@@ -52,7 +52,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     OptOutFs,
     SignUpFs,
     FilterCodedOutPoas,
-    ReportingFrequencyPage,
     DisplayBusinessStartDate,
     PenaltiesAndAppeals,
     PenaltiesBackendEnabled,
@@ -74,7 +73,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
 
       "return a list of all feature switches" in {
 
-        enable(ReportingFrequencyPage)
         val featureSwitchList = FeatureSwitchName.allFeatureSwitches
 
         featureSwitchList shouldBe allFeatureSwitches

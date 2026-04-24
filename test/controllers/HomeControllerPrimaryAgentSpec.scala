@@ -38,7 +38,7 @@ import services.reportingObligations.signUp.SignUpService
 import services.{CreditService, NextUpdatesService}
 import services.reportingObligations.optOut.OptOutService
 import testConstants.ANewCreditAndRefundModel
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
 import views.html.HomeView
 import views.html.newHomePage.*
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
@@ -462,7 +462,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -590,7 +590,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -710,6 +710,16 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             val document: Document = Jsoup.parse(contentAsString(result))
             Option(document.getElementById("available-credit")).isDefined shouldBe false
           }
+        }
+
+        "redirect to the no income sources page when the agent user has no income sources" in new Setup {
+          setupMockAgentWithClientAuth(false)
+          mockNoIncomeSources()
+
+          val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient(isSupportingAgent = false))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.NoIncomeSourcesController.show(true).url)
         }
       }
     }

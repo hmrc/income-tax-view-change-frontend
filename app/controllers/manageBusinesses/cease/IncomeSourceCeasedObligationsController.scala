@@ -23,7 +23,6 @@ import enums.CannotGoBackPage
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import models.UIJourneySessionData
-import models.admin.ReportingFrequencyPage
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -133,7 +132,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
               source = incomeSourceCeasedObligationsViewModel,
               viewAllBusinessLink = viewAllBusinessLink(isAgent),
               viewUpcomingUpdatesLink = viewUpcomingUpdatesLink(isAgent),
-              reportingObligationsLink = if (isEnabled(ReportingFrequencyPage)) Some(viewReportingObligationsLink(isAgent)) else None
+              reportingObligationsLink = viewReportingObligationsLink(isAgent)
             )))
         case (Some(_), None) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

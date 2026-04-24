@@ -19,7 +19,7 @@ package controllers.reportingObligations
 import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage, SignUpFs}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
 import models.reportingObligations.ReportingFrequencyViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -78,7 +78,7 @@ class ReportingFrequencyPageController @Inject()(
           if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
           else controllers.routes.NextUpdatesController.show().url
         result <-
-          if (isEnabled(ReportingFrequencyPage) && reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
+          if (reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {
             reportingObligationsAuditService
               .sendAuditEvent(optOutProposition, viewModel.getSummaryCardSuffixes)
               .map { _ =>
