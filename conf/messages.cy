@@ -1475,6 +1475,7 @@ submissionsTab.due                                                   = Yn ddyled
 submissionsTab.submission                                            = Cyflwyniad
 submissionsTab.incomeSource                                          = Ffynhonnell incwm
 submissionsTab.dateSubmitted                                         = Dyddiad cyflwyno
+submissionsTab.notReceived                                           = Heb ddod i law
 submissionsTab.dateToDate                                            = {0} i {1}
 submissionsTab.updatePeriodDateToDate                                = Y cyfnod diweddaru o {0} i {1}
 submissionsTab.obligationType.property                               = Incwm o eiddo
