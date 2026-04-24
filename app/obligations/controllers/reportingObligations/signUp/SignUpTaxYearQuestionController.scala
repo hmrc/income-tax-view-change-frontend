@@ -22,15 +22,14 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowI
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import obligations.controllers.errors.routes as errorRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
-import obligations.controllers.reportingObligations.signUp.routes
-import forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
+import obligations.forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
 import obligations.services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
 import obligations.utils.reportingObligations.JourneyCheckerSignUp
+import obligations.views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import obligations.views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
 
 import scala.concurrent.{ExecutionContext, Future}
 

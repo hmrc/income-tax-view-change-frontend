@@ -16,7 +16,6 @@
 
 package obligations.services.reportingObligations.signUp
 
-import audit.AuditingService
 import auth.MtdItUser
 import cats.data.OptionT
 import cats.implicits.*
@@ -24,9 +23,8 @@ import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.models.reportingObligations.signUp.*
-import obligations.repositories.SigninSessionDataRepository
+import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.SignUpProposition.*
 import obligations.services.reportingObligations.signUp.core.{SignUpInitialState, SignUpProposition}
 import play.api.Logger
@@ -37,11 +35,9 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SignUpService @Inject()(
-                               itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                                itsaStatusService: ITSAStatusService,
                                dateService: DateServiceInterface,
-                               repository: SigninSessionDataRepository,
-                               auditingService: AuditingService
+                               repository: SignUpSessionDataRepository,
                             ) {
 
   def saveIntent(intent: TaxYear)(implicit user: MtdItUser[_],

@@ -24,7 +24,7 @@ import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import obligations.models.audit.SignUpAuditModel
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
-import obligations.repositories.SigninSessionDataRepository
+import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.SignUpProposition
 import play.api.Logging
 import services.DateServiceInterface
@@ -38,7 +38,7 @@ class SignUpSubmissionService @Inject()(
                                          dateService: DateServiceInterface,
                                          itsaStatusUpdateConnector: ITSAStatusUpdateConnector,
                                          optInService: SignUpService,
-                                         repository: SigninSessionDataRepository
+                                         repository: SignUpSessionDataRepository
                                        ) extends Logging {
 
   private[services] def getOptInSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpSessionData]] = {

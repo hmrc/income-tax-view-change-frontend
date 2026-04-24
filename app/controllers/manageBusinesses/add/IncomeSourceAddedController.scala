@@ -24,12 +24,12 @@ import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.core.IncomeSourceId
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services._
+import services.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
@@ -38,8 +38,9 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import obligations.controllers.{routes => obligationRoutes}
-import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
+import obligations.controllers.routes as obligationRoutes
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
+import obligations.services.NextUpdatesService
 
 
 class IncomeSourceAddedController @Inject()(

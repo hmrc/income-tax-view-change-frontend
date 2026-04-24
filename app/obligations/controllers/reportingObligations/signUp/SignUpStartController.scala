@@ -23,15 +23,14 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import obligations.controllers.errors.routes as errorRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
-import obligations.controllers.reportingObligations.signUp.routes
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.utils.reportingObligations.JourneyCheckerSignUp
+import obligations.views.html.reportingObligations.signUp.SignUpStartView
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import obligations.views.html.reportingObligations.signUp.SignUpStartView
 
 import javax.inject.Singleton
 import scala.concurrent.{ExecutionContext, Future}

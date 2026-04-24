@@ -24,13 +24,13 @@ import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import obligations.models.ObligationsModel
+import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.viewUtils.NextUpdatesViewUtils
 import obligations.views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.NextUpdatesService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

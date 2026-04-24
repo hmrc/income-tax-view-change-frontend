@@ -27,8 +27,8 @@ class CheckCompleteViewSpec extends TestSupport {
 
   val view: CheckCompleteView = app.injector.instanceOf[CheckCompleteView]
   def nextUpdatesLink(isAgent: Boolean): String =
-    if(isAgent)controllers.routes.NextUpdatesController.showAgent().url
-    else controllers.routes.NextUpdatesController.show().url
+    if(isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url
+    else obligations.controllers.routes.NextUpdatesController.show().url
   val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   class Setup(isAgent: Boolean) {

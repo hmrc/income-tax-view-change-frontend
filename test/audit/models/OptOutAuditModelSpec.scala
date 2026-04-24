@@ -24,7 +24,7 @@ import obligations.models.audit.{OptOutAuditModel, Outcome}
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import services.reportingObligations.optOut.OptOutTestSupport
+import obligations.services.reportingObligations.optOut.OptOutTestSupport
 import testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

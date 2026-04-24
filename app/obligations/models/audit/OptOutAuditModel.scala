@@ -17,7 +17,6 @@
 package obligations.models.audit
 
 import audit.models.ExtendedAuditModel
-import obligations.models.audit.{OptOutAuditModel, OptOutCompleteAuditModel, Outcome}
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -105,8 +104,8 @@ object OptOutAuditModel {
         Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
       case _: ITSAStatusUpdateResponseSuccess =>
         Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
-      case _ =>
-        Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
+//      case _ =>
+ //       Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
     }
   }
 

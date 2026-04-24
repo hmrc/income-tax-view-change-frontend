@@ -36,6 +36,7 @@ import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2Cessati
 import testConstants.NextUpdatesIntegrationTestConstants.*
 import testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
 import testConstants.messages.HomeMessages.*
+import obligations.models.*
 
 import java.time.LocalDate
 

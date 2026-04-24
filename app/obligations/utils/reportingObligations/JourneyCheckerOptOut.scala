@@ -19,12 +19,13 @@ package obligations.utils.reportingObligations
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import models.incomeSourceDetails.TaxYear
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.optOut.OptOutService
 import play.api.Logger
+import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
-import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
+
 import scala.concurrent.{ExecutionContext, Future}
 
 trait JourneyCheckerOptOut extends ReportingObligationsUtils {
@@ -53,11 +54,11 @@ trait JourneyCheckerOptOut extends ReportingObligationsUtils {
     }
   }
 
-  private def showInternalServerError(isAgent: Boolean)(implicit request: Request[_]): Future[Result] = {
-    val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-    Future.successful(errorHandler(isAgent).showInternalServerError())
-  }
+//  private def showInternalServerError(isAgent: Boolean)(implicit request: Request[_]): Future[Result] = {
+//    val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+//
+//    Future.successful(errorHandler(isAgent).showInternalServerError())
+//  }
 
   def retrieveIsJourneyComplete(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     optOutService.fetchJourneyCompleteStatus()
