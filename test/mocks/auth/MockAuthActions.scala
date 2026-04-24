@@ -21,17 +21,18 @@ import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
 import config.featureswitch.FeatureSwitching
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{BusinessDetailsConnector, FeatureSwitchConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.services.{MockClientDetailsService, MockCustomerFactsUpdateService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
+import models.admin.{FeatureSwitch, FeatureSwitchName}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.*
 import models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import org.jsoup.Jsoup
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq, same}
 import org.mockito.Mockito.*
 import org.mockito.stubbing.OngoingStubbing
 import play.api
@@ -41,6 +42,7 @@ import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
+import services.admin.FeatureSwitchService
 
 import scala.concurrent.Future
 import services.agent.ClientDetailsService
@@ -84,6 +86,9 @@ trait MockAuthActions
   lazy val mockItsaStatusConnector = sMock[ITSAStatusConnector]
   lazy val mockBusinessDetailsConnector = sMock[BusinessDetailsConnector]
   lazy val mockDateServiceInterface = sMock[DateServiceInterface]
+  lazy val mockFeatureSwitchConnector: FeatureSwitchConnector = sMock[FeatureSwitchConnector]
+  lazy val mockFeatureSwitching: FeatureSwitching = sMock[FeatureSwitching]
+  lazy val mockFeatureSwitchService: FeatureSwitchService = sMock[FeatureSwitchService]
 
   lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
@@ -93,8 +98,15 @@ trait MockAuthActions
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
-        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService)
+        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService),
+        api.inject.bind[FeatureSwitchConnector].toInstance(mockFeatureSwitchConnector),
+        api.inject.bind[FeatureSwitching].toInstance(mockFeatureSwitching)
+//        api.inject.bind[FeatureSwitchService].toInstance(mockFeatureSwitchService)
       )
+  }
+
+  lazy val allFeaturesDisabled: List[FeatureSwitch] = {
+    FeatureSwitchName.allFeatureSwitches.map(name => new FeatureSwitch(name, false)).toList
   }
 
   def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false): Unit = {
@@ -164,6 +176,18 @@ trait MockAuthActions
       )))
   }
 
+  def mockGetAllFeatureSwitches(featureSwitches: List[FeatureSwitch]): Unit = {
+    when(mockFeatureSwitchConnector.getAllSwitches()(any())).thenReturn(Future(featureSwitches))
+  }
+
+//  def mockIsEnabled(name: FeatureSwitchName, isEnabled: Boolean): Unit = {
+//    when(mockFeatureSwitching.isEnabled(same(name))(any())).thenReturn(isEnabled)
+//    when(mockFeatureSwitching.isEnabled(any())(any())).thenReturn(false)
+//  }
+
+//  def mockGetAllFeatureSwitches(featureSwitches: List[FeatureSwitch]): Unit = {
+//    when(mockFeatureSwitchService.getAll()(any())).thenReturn(Future(featureSwitches))
+//  }
 
   def setupMockUserAuth: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = true)

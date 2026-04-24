@@ -344,7 +344,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
                 setupMockCreateSession(true)
                 val businessNameAsTrade: String = "Test Name"
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
