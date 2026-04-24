@@ -80,6 +80,11 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     dynamicStubConnector.overwriteObligationsData(nino)
   }
 
+  def overwriteEstimatedRepaymentDate()(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+    Logger("application").debug("Overwriting estimatedRepaymentDate the via dynamic stub")
+    dynamicStubConnector.overwriteEstimatedRepaymentDate()
+  }
+
   def addData(dataModel: DataModel)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     dynamicStubConnector.addData(dataModel).map { response =>
       Logger("application").info(s"${response.status} " + response.body)

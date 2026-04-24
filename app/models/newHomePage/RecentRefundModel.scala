@@ -16,15 +16,6 @@
 
 package models.newHomePage
 
-import models.incomeSourceDetails.TaxYear
+import models.repaymentHistory.RepaymentHistory
 
-import java.time.LocalDate
-
-case class RecentActivityCard(linkContentText: String,
-                              linkUrl: String,
-                              contentText: String,
-                              dateContentText: String,
-                              cardDate: LocalDate,
-                              cardTaxYear: Option[TaxYear] = None,
-                              cardAmount: Option[BigDecimal] = None
-)
+case class RecentRefundModel(recentRefund: Option[RepaymentHistory])

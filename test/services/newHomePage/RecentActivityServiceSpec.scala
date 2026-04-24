@@ -21,8 +21,9 @@ import mocks.connectors.MockObligationsConnector
 import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.newHomePage.{RecentActivitySubmissionsModel, RecentActivityViewModel}
+import models.newHomePage.{RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import models.obligations.*
+import models.repaymentHistory.{RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import testUtils.TestSupport
@@ -112,6 +113,68 @@ class RecentActivityServiceSpec
     }
   }
 
+  "getRecentRefundActivity" should {
+    "return the most recent refund within 90 days" in {
+      when(mockDateService.getCurrentDate).thenReturn(today)
+
+      val recentRefund = models.repaymentHistory.RepaymentHistory(
+        amountApprovedforRepayment = Some(705.2),
+        amountRequested = 800.0,
+        repaymentMethod = Some("CARD"),
+        totalRepaymentAmount = Some(705.2),
+        repaymentItems = Some(Seq(RepaymentItem(
+          repaymentSupplementItem = Seq(RepaymentSupplementItem(
+            parentCreditReference = Some("ref"),
+            amount = Some(500.23),
+            fromDate = Some(LocalDate.of(2023, 4, 6)),
+            toDate = Some(LocalDate.of(2024, 4, 5)),
+            rate = Some(20.0)
+          ))
+        ))),
+        estimatedRepaymentDate = Some(within90Days),
+        creationDate = Some(LocalDate.of(2023, 4, 6)),
+        repaymentRequestNumber = "123",
+        status = RepaymentHistoryStatus("A")
+      )
+
+      val oldRefund = recentRefund.copy(estimatedRepaymentDate = Some(outside90Days))
+      val repaymentHistoryModel = models.repaymentHistory.RepaymentHistoryModel(List(recentRefund, oldRefund))
+      val result = service.getRecentRefundActivity(repaymentHistoryModel, mockDateService)
+
+      result.recentRefund shouldBe Some(recentRefund)
+    }
+
+    "return None if there are no refunds within 90 days" in {
+      when(mockDateService.getCurrentDate).thenReturn(today)
+
+      val oldRefund = models.repaymentHistory.RepaymentHistory(
+        amountApprovedforRepayment = Some(705.2),
+        amountRequested = 800.0,
+        repaymentMethod = Some("CARD"),
+        totalRepaymentAmount = Some(705.2),
+        repaymentItems = Some(Seq(RepaymentItem(
+          repaymentSupplementItem = Seq(RepaymentSupplementItem(
+            parentCreditReference = Some("ref"),
+            amount = Some(500.23),
+            fromDate = Some(LocalDate.of(2023, 4, 6)),
+            toDate = Some(LocalDate.of(2024, 4, 5)),
+            rate = Some(20.0)
+          ))
+        ))),
+        estimatedRepaymentDate = Some(outside90Days),
+        creationDate = Some(LocalDate.of(2023, 4, 6)),
+        repaymentRequestNumber = "123",
+        status = RepaymentHistoryStatus("A")
+      )
+
+      val repaymentHistoryModel = models.repaymentHistory.RepaymentHistoryModel(List(oldRefund))
+      val result = service.getRecentRefundActivity(repaymentHistoryModel, mockDateService)
+
+      result.recentRefund shouldBe None
+    }
+  }
+
+
   "recentActivityCards" should {
 
     "return no cards for supporting agents" in {
@@ -120,7 +183,8 @@ class RecentActivityServiceSpec
       when(supportingAgentUser.isSupportingAgent).thenReturn(true)
 
       val submissions = RecentActivitySubmissionsModel(None, None)
-      val result = service.recentActivityCards(submissions)
+      val refunds = RecentRefundModel(None)
+      val result = service.recentActivityCards(submissions, refunds)
 
       result shouldBe RecentActivityViewModel(Seq.empty)
     }
@@ -134,10 +198,79 @@ class RecentActivityServiceSpec
       val annual = obligation("Crystallisation", LocalDate.of(2023, 4, 6), Some(within90Days))
       val quarterly = obligation("Quarterly", LocalDate.of(2023, 4, 6), Some(within90Days))
       val submissions = RecentActivitySubmissionsModel(Some(annual), Some(quarterly))
-      val result = service.recentActivityCards(submissions)
+      val refunds = RecentRefundModel(None)
+      val result = service.recentActivityCards(submissions, refunds)
 
       result.recentActivityCards.size shouldBe 2
       result.recentActivityCards.head.cardTaxYear.value shouldBe TaxYear.getTaxYear(annual.start)
+    }
+
+    "return a refund card when a recent refund is present" in {
+      implicit val user: MtdItUser[_] = MockitoSugar.mock[MtdItUser[_]]
+
+      when(user.isSupportingAgent).thenReturn(false)
+      when(user.isAgent).thenReturn(false)
+
+      val recentRefund = models.repaymentHistory.RepaymentHistory(
+        amountApprovedforRepayment = Some(705.2),
+        amountRequested = 800.0,
+        repaymentMethod = Some("CARD"),
+        totalRepaymentAmount = Some(705.2),
+        repaymentItems = Some(Seq(RepaymentItem(
+          repaymentSupplementItem = Seq(RepaymentSupplementItem(
+            parentCreditReference = Some("ref"),
+            amount = Some(500.23),
+            fromDate = Some(LocalDate.of(2023, 4, 6)),
+            toDate = Some(LocalDate.of(2024, 4, 5)),
+            rate = Some(20.0)
+          ))
+        ))),
+        estimatedRepaymentDate = Some(within90Days),
+        creationDate = Some(LocalDate.of(2023, 4, 6)),
+        repaymentRequestNumber = "123",
+        status = RepaymentHistoryStatus("A")
+      )
+
+      val submissions = RecentActivitySubmissionsModel(None, None)
+      val refunds = RecentRefundModel(Some(recentRefund))
+      val result = service.recentActivityCards(submissions, refunds)
+
+      result.recentActivityCards.size shouldBe 1
+      result.recentActivityCards.head.linkContentText shouldBe "new.home.recentActivity.recentRefund.link.text"
+    }
+
+    "return both recent refund and submission cards when both are present" in {
+      implicit val user: MtdItUser[_] = MockitoSugar.mock[MtdItUser[_]]
+
+      when(user.isSupportingAgent).thenReturn(false)
+      when(user.isAgent).thenReturn(false)
+
+      val annual = obligation("Crystallisation", LocalDate.of(2023, 4, 6), Some(within90Days))
+      val recentRefund = models.repaymentHistory.RepaymentHistory(
+        amountApprovedforRepayment = Some(705.2),
+        amountRequested = 800.0,
+        repaymentMethod = Some("CARD"),
+        totalRepaymentAmount = Some(705.2),
+        repaymentItems = Some(Seq(RepaymentItem(
+          repaymentSupplementItem = Seq(RepaymentSupplementItem(
+            parentCreditReference = Some("ref"),
+            amount = Some(500.23),
+            fromDate = Some(LocalDate.of(2023, 4, 6)),
+            toDate = Some(LocalDate.of(2024, 4, 5)),
+            rate = Some(20.0)
+          ))
+        ))),
+        estimatedRepaymentDate = Some(within90Days),
+        creationDate = Some(LocalDate.of(2023, 4, 6)),
+        repaymentRequestNumber = "123",
+        status = RepaymentHistoryStatus("A")
+      )
+
+      val submissions = RecentActivitySubmissionsModel(Some(annual), None)
+      val refunds = RecentRefundModel(Some(recentRefund))
+      val result = service.recentActivityCards(submissions, refunds)
+
+      result.recentActivityCards.size shouldBe 2
     }
   }
 }
