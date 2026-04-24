@@ -46,7 +46,7 @@
             value = Some(status.toString),
             text = status.toString
         )
-    }.toSeq
+    }.toSeq.sortBy(_.text).sortBy(item => item.text != ITSAStatus.Voluntary.toString)
 }
 
 @ObligationsOptions = @{

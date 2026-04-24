@@ -90,7 +90,6 @@ class NextUpdatesController @Inject()(
                 viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
               } yield {
                 val whatTheUserCanDoContent = nextUpdatesViewUtils.whatTheUserCanDo(isAgent)
-
                 Ok(
                   nextUpdatesOptOutView(
                     viewModel = viewModel,
