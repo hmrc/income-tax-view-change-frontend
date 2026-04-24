@@ -20,11 +20,6 @@ import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 
-case class RecentActivityCard(linkContentText: String,
-                              linkUrl: String,
-                              contentText: String,
-                              dateContentText: String,
-                              cardDate: LocalDate,
-                              cardTaxYear: Option[TaxYear] = None,
-                              cardAmount: Option[BigDecimal] = None
-)
+case class RecentActivityPaymentModel(amount: BigDecimal, dateOfPayment: LocalDate){
+  val taxYear: TaxYear = TaxYear.getTaxYear(dateOfPayment)
+}
