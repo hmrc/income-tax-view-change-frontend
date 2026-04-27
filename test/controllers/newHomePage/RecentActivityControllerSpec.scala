@@ -76,9 +76,8 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
             when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
-            when(mockRecentActivityService.recentActivityCards(any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
             when(mockPaymentHistoryService.getRepaymentHistory(any())(any(), any())).thenReturn(Future(Right(Seq.empty)))
-            when(mockRecentActivityService.recentActivityCards(any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+            when(mockRecentActivityService.recentActivityCards(any(), any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
             setupMockSuccess(mtdRole)
 
             val result = action(fakeRequest)
@@ -97,9 +96,8 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
             when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
-            when(mockRecentActivityService.recentActivityCards(any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
             when(mockPaymentHistoryService.getRepaymentHistory(any())(any(), any())).thenReturn(Future(Right(Seq.empty)))
-            when(mockRecentActivityService.recentActivityCards(any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+            when(mockRecentActivityService.recentActivityCards(any(), any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
             setupMockSuccess(mtdRole)
 
             val result = action(fakeRequest)

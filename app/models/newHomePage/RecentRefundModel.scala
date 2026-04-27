@@ -18,4 +18,4 @@ package models.newHomePage
 
 import models.repaymentHistory.RepaymentHistory
 
-case class RecentRefundModel(recentRefund: Option[RepaymentHistory])
+case class RecentRefundModel(recentRefund: RepaymentHistory)

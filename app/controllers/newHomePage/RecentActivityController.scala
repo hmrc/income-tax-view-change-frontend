@@ -42,7 +42,6 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
                                          recentActivityService: RecentActivityService,
                                          paymentHistoryService: PaymentHistoryService,
                                          val ITSAStatusService: ITSAStatusService,
-                                         val paymentHistoryService: PaymentHistoryService,
                                          val dateService: DateServiceInterface)
                                         (implicit val ec: ExecutionContext,
                                          mcc: MessagesControllerComponents,
@@ -79,9 +78,8 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
       recentSubmissionActivities = recentActivityService.getRecentSubmissionActivity(fulfilledObligations, currentItsaStatus)
       payments <- paymentHistoryService.getPaymentHistory().map(_.getOrElse(List.empty[Payment]))
       recentPayment = recentActivityService.getRecentPaymentActivity(payments)
-      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPayment)
       recentRefunds = recentActivityService.getRecentRefundActivity(repaymentHistoryData, dateService)
-      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentRefunds)
+      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPayment, recentRefunds)
     } yield {
       Ok(newHomeRecentActivityView(
         origin,

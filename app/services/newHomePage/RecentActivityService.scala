@@ -70,22 +70,23 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       }
   }
 
-  def getRecentRefundActivity(repaymentHistoryModel: RepaymentHistoryModel, dateService: DateServiceInterface): RecentRefundModel = {
+  def getRecentRefundActivity(repaymentHistoryModel: RepaymentHistoryModel, dateService: DateServiceInterface): Option[RecentRefundModel] = {
     val today = dateService.getCurrentDate
     val recentActivityDate = today.minusDays(90)
 
     val mostRecentRefundWithin90days = repaymentHistoryModel.repaymentsViewerDetails
-      .filter { refund =>
-        refund.estimatedRepaymentDate.exists { date =>
-          !date.isBefore(recentActivityDate) && !date.isAfter(today)
+      .flatMap { refund =>
+        refund.estimatedRepaymentDate.collect {
+          case date if !date.isBefore(recentActivityDate) && !date.isAfter(today) => refund
         }
-      }.maxByOption(_.estimatedRepaymentDate)
+      }
+      .maxByOption(_.estimatedRepaymentDate)
 
-    RecentRefundModel(mostRecentRefundWithin90days)
+    mostRecentRefundWithin90days.map(RecentRefundModel(_))
   }
 
-  def recentActivityCards(recentSubmissionActivity: RecentActivitySubmissionsModel, recentPayment: Option[RecentActivityPaymentModel])(implicit mtdUser: MtdItUser[_]): RecentActivityViewModel = {
-    if(mtdUser.isSupportingAgent) {
+  def recentActivityCards(recentSubmissionActivity: RecentActivitySubmissionsModel, recentPayment: Option[RecentActivityPaymentModel], recentRefundModel: Option[RecentRefundModel])(implicit mtdUser: MtdItUser[_]): RecentActivityViewModel = {
+    if (mtdUser.isSupportingAgent) {
       RecentActivityViewModel(Seq.empty)
     } else {
       val submissionsCards = getRecentSubmissionsCards(recentSubmissionActivity.mostRecentAnnualSubmission, recentSubmissionActivity.mostRecentQuarterlySubmission)
@@ -152,7 +153,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
     }
   }
 
-  private def getRecentRefundCard(recentRefundModel: RecentRefundModel)(implicit mtdItUser: MtdItUser[_]): Option[RecentActivityCard] = {
+  private def getRecentRefundCard(recentRefundModel: Option[RecentRefundModel])(implicit mtdItUser: MtdItUser[_]): Option[RecentActivityCard] = {
 
     val paymentCreditRefundUrl = if (mtdItUser.isAgent) {
       controllers.routes.PaymentHistoryController.showAgent().url
@@ -160,19 +161,15 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       controllers.routes.PaymentHistoryController.show().url
     }
 
-    val recentRefundCard = recentRefundModel.recentRefund.flatMap { refund =>
-      refund.estimatedRepaymentDate.map { date =>
-        RecentActivityCard(
-          linkContentText = "new.home.recentActivity.recentRefund.link.text",
-          linkUrl = paymentCreditRefundUrl,
-          contentText = "new.home.recentActivity.recentRefund.content.text",
-          dateContentText = "new.home.recentActivity.recentRefund.date.content.text",
-          cardDate = date,
-          cardAmount = refund.totalRepaymentAmount
-        )
-      }
+    recentRefundModel.map { refund =>
+      RecentActivityCard(
+        linkContentText = "new.home.recentActivity.recentRefund.link.text",
+        linkUrl = paymentCreditRefundUrl,
+        contentText = "new.home.recentActivity.recentRefund.content.text",
+        dateContentText = "new.home.recentActivity.recentRefund.date.content.text",
+        cardDate = refund.recentRefund.estimatedRepaymentDate.get,
+        cardAmount = refund.recentRefund.totalRepaymentAmount
+      )
     }
-
-    recentRefundCard
   }
 }
