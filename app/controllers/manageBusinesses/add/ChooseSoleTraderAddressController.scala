@@ -152,17 +152,10 @@ class ChooseSoleTraderAddressController @Inject()(
 
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent = isAgent).async { implicit user =>
 
-    /*TODO currently if there are no business addresses then this will redirect the user to the home page.
-    * in the nav ticket we will want to likely redirect to the enter business address page instead
-    */
-
     if (isEnabled(OverseasBusinessAddress)) {
       val chooseSoleTraderAddressRadioOptionsWithIndex: Seq[(String, Int)] = buildAddressOptions(user)
-
-      // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
-      // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
-      val radioButtonValues =
-        chooseSoleTraderAddressRadioOptionsWithIndex.map { case (_, id) => id.toString }
+      
+      val radioButtonValues = chooseSoleTraderAddressRadioOptionsWithIndex.map { case (_, id) => id.toString }
 
       val form = ChooseSoleTraderAddressForm.form(radioButtonValues)
 
@@ -185,13 +178,9 @@ class ChooseSoleTraderAddressController @Inject()(
 
   def submit(isAgent: Boolean): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
-      // TODO: we need to save the user address to the ui session data
       val addressOptions: Seq[(String, Int)] = buildAddressOptions(user)
-
-      // radios to be labelled 0, 1, 2, 3, 4, 5 etc. for each user business address or
-      // if user selects 'None of these, I want to add a new address' then the radio id will be set to 'new-address'
-      val radioButtonValues =
-        addressOptions.map { case (_, id) => id.toString }
+      
+      val radioButtonValues = addressOptions.map { case (_, id) => id.toString }
 
       ChooseSoleTraderAddressForm.form(radioButtonValues)
         .bindFromRequest()
