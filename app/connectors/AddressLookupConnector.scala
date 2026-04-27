@@ -89,7 +89,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                     "postcode" -> JsBoolean(true)
                   )
                 ),
-                "showOrganisationName" -> JsBoolean(false)
+                "showOrganisationName" -> JsBoolean(false),
+                "line1MaxLength" -> JsNumber(35),
+                "line2MaxLength" -> JsNumber(35),
+                "line3MaxLength" -> JsNumber(35),
+                "townMaxLength" -> JsNumber(35)
               )
             ),
             "confirmPageConfig" -> JsObject(
@@ -207,7 +211,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                     "addressLine2" -> JsBoolean(true)
                   )
                 ),
-                "showOrganisationName" -> JsBoolean(false)
+                "showOrganisationName" -> JsBoolean(false),
+                "line1MaxLength" -> JsNumber(35),
+                "line2MaxLength" -> JsNumber(35),
+                "line3MaxLength" -> JsNumber(35),
+                "townMaxLength" -> JsNumber(35)
               )
             ),
             "phaseFeedbackLink" -> JsString(appConfig.itvcFrontendEnvironment + feedbackUrl),
