@@ -104,8 +104,6 @@ object OptOutAuditModel {
         Outcome(isSuccessful = false, failureCategory = Some(response.failures.head.code), failureReason = Some(response.failures.head.reason))
       case _: ITSAStatusUpdateResponseSuccess =>
         Outcome(isSuccessful = true, failureCategory = None, failureReason = None)
-//      case _ =>
- //       Outcome(isSuccessful = false, failureCategory = Some("Unknown failure reason"), failureReason = Some("Unknown failure category"))
     }
   }
 
