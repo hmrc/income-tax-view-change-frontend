@@ -16,6 +16,7 @@
 
 package authV2
 
+import auth.MtdItUser
 import auth.authV2.actions.TriggeredMigrationRetrievalAction
 import authV2.AuthActionsTestData.{defaultIncomeSourcesData, getMtdItUser}
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
@@ -24,7 +25,7 @@ import enums.JourneyType.TriggeredMigrationJourney
 import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
-import models.admin.TriggeredMigration
+import models.admin.{FeatureSwitchName, TriggeredMigration}
 import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}
@@ -62,7 +63,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
   lazy val itvcErrorHandler = app.injector.instanceOf[ItvcErrorHandler]
   lazy val agentErrorHandler = app.injector.instanceOf[AgentItvcErrorHandler]
 
-  val action = new TriggeredMigrationRetrievalAction(
+  def actionWithSwitch(enabledSwitches: Set[FeatureSwitchName]) = new TriggeredMigrationRetrievalAction(
     appConfig,
     mockItsaStatusService,
     mockIncomeTaxCalculationConnector,
@@ -74,7 +75,10 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
     itvcErrorHandler,
     agentErrorHandler,
     mcc
-  )
+  ) {
+    override def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean =
+      enabledSwitches.contains(featureSwitch)
+  }
 
   def defaultAsyncBody(
                         requestTestCase: Request[_] => Assertion
@@ -133,7 +137,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
     "redirect to the home page" when {
       "an individual user has a channel of confirmed and is on a triggered migration page and is not recently confirmed" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
 
@@ -146,8 +150,8 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
 
       "an individual user has a channel of confirmed and is on a triggered migration page and is not recently confirmed (Set to None)" in {
-        enable(TriggeredMigration)
-
+        val action = actionWithSwitch(Set(TriggeredMigration))
+        
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(None)))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
@@ -159,8 +163,8 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
 
       "an individual user has a channel of customer led and is on a triggered migration page and is not recently confirmed" in {
-        enable(TriggeredMigration)
-
+        val action = actionWithSwitch(Set(TriggeredMigration))
+        
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
@@ -171,8 +175,8 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view")
       }
       "an agent user has a channel of confirmed and is on a triggered migration page and is not recently confirmed" in {
-        enable(TriggeredMigration)
-
+        val action = actionWithSwitch(Set(TriggeredMigration))
+        
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
 
         val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
@@ -183,7 +187,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
       }
       "an agent user has a channel of customer led and is on a triggered migration page and is not recently confirmed" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
 
@@ -195,7 +199,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
       }
       "the user is unconfirmed and their CY ITSA status is missing but their CY+1 ITSA status is available" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -217,7 +221,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
     "allow the request to proceed" when {
 
       "the user is unconfirmed, they have an ITSA status of Voluntary or Mandated and their calculation is not crystallised while being on a triggered migration page" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val unconfirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -234,7 +238,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user has a channel of confirmed and is not on the triggered migration page" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
 
@@ -245,7 +249,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user has a channel of customer led and is not on the triggered migration page" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
 
@@ -257,7 +261,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
 
       "the user is unconfirmed and their ITSA status is not voluntary or mandated and they arent on a triggered migration page" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -272,7 +276,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
 
       "the user is unconfirmed, their ITSA status is voluntary, and their calculation is crystallised and not on a triggered migration page" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -288,7 +292,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         verify(mockCustomerFactsUpdateService, times(1)).updateCustomerFacts(eqTo(confirmedMtdUser.mtditid))(any(), any())
       }
       "the user is unconfirmed, their ITSA status is mandatory, and their calculation is crystallised and not on a triggered migration page" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -305,7 +309,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
 
       "the triggered migration feature switch is disabled" in {
-        disable(TriggeredMigration)
+        val action = actionWithSwitch(Set.empty)
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -316,7 +320,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "an individual user has a channel of confirmed and is on a triggered migration page and is recently confirmed" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(true)))))
 
@@ -330,7 +334,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
 
       "an individual user has a channel of customer led and is on a triggered migration page and is recently confirmed" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(true)))))
 
@@ -343,7 +347,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "an agent user has a channel of confirmed and is on a triggered migration page and is recently confirmed" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(true)))))
 
@@ -356,7 +360,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "an agent user has a channel of customer led and is on a triggered migration page and is recently confirmed" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(true)))))
 
@@ -372,7 +376,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
     "redirect the user to the triggered migration check HMRC records page" when {
       "the user is unconfirmed, their ITSA status is voluntary, and their calculation is not crystallised and they arent on a triggered migration page" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -389,7 +393,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
         verify(mockCustomerFactsUpdateService, times(0)).updateCustomerFacts(any())(any(), any())
       }
       "the user is unconfirmed, their ITSA status is mandatory, and their calculation is not crystallised and they arent on a triggered migration page" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -410,7 +414,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
     "return an error result" when {
 
       "there is an error retrieving the user's calculation during triggered migration retrieval" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -426,7 +430,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
 
       "the user has no ITSA statuses available" in {
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcUnconfirmed.getValue))
 
@@ -447,7 +451,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
       "Agent - the user is has no incomeSources startingTaxYear and no triggered migration tax year - return 400 bad request" in {
 
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val unconfirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithNoAccountingPeriodEndDate(HmrcUnconfirmed.getValue))
 
@@ -463,8 +467,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
 
       "Individual - the user is has no incomeSources startingTaxYear and no triggered migration tax year - return 400 bad request" in {
-
-        enable(TriggeredMigration)
+        val action = actionWithSwitch(Set(TriggeredMigration))
 
         val unconfirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithNoAccountingPeriodEndDate(HmrcUnconfirmed.getValue))
 

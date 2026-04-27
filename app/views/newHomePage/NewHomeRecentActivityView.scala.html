@@ -113,7 +113,7 @@
     }
 }
 
-@getLinkText(linkContentText: String, taxYear: Option[TaxYear] = None, cardAmount: Option[BigDecimal] = None) = @{
+@getLinkText(linkContentText: String, taxYear: Option[TaxYear]= None, cardAmount: Option[BigDecimal] = None) = @{
     (taxYear, cardAmount) match {
         case (None, None) => messages(linkContentText)
         case (Some(cardTaxYear), None) => {

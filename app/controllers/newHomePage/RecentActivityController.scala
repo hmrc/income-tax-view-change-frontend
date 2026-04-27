@@ -22,6 +22,8 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.{PaymentHistoryRefunds, RecentActivity}
+import models.admin.RecentActivity
+import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.obligations.ObligationsModel
@@ -38,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RecentActivityController @Inject()(val newHomeRecentActivityView: views.html.newHomePage.NewHomeRecentActivityView,
                                          val authActions: AuthActions,
                                          recentActivityService: RecentActivityService,
+                                         paymentHistoryService: PaymentHistoryService,
                                          val ITSAStatusService: ITSAStatusService,
                                          val paymentHistoryService: PaymentHistoryService,
                                          val dateService: DateServiceInterface)
@@ -47,7 +50,7 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
 
   def show(isAgent: Boolean, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      if(isEnabled(RecentActivity)) {
+      if (isEnabled(RecentActivity)) {
         handleShowRequest(origin)
       } else {
         if (isAgent) {
@@ -74,6 +77,9 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
 
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       recentSubmissionActivities = recentActivityService.getRecentSubmissionActivity(fulfilledObligations, currentItsaStatus)
+      payments <- paymentHistoryService.getPaymentHistory().map(_.getOrElse(List.empty[Payment]))
+      recentPayment = recentActivityService.getRecentPaymentActivity(payments)
+      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPayment)
       recentRefunds = recentActivityService.getRecentRefundActivity(repaymentHistoryData, dateService)
       recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentRefunds)
     } yield {

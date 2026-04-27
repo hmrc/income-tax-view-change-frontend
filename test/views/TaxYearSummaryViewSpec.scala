@@ -654,6 +654,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val submission: String = "Submission"
     val updateIncomeSource: String = "Income source"
     val updateDateSubmitted: String = "Date submitted"
+    val updateDateNotReceived: String = "Not received"
     val lpiPaymentOnAccount1: String = "Late payment interest on first payment on account"
     val lpiPaymentOnAccount2: String = "Late payment interest on second payment on account"
     val lpiRemainingBalance: String = "Late payment interest on balancing payment"
@@ -1187,7 +1188,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
               val row = divAccordion.selectHead("tbody").selectHead("tr")
               row.selectNth("td", 1).text shouldBe updateType(testObligation.obligation.obligationType)
               row.selectNth("td", 2).text shouldBe incomeType(testObligation.incomeType)
-              row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
+              row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse(updateDateNotReceived)
           }
         }
       }

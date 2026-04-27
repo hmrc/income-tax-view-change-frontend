@@ -19,9 +19,10 @@ package services.newHomePage
 import auth.MtdItUser
 import mocks.connectors.MockObligationsConnector
 import mocks.services.MockDateService
+import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.newHomePage.{RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
+import models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import models.obligations.*
 import models.repaymentHistory.{RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import org.mockito.Mockito.when
@@ -55,6 +56,20 @@ class RecentActivityServiceSpec
       periodKey = "#001",
       status = StatusFulfilled
     )
+
+  private def payment(amount: BigDecimal, paymentDate: Option[LocalDate]): Payment = {
+    Payment(
+      reference = Some("reference"),
+      amount = Some(amount),
+      outstandingAmount = Some(0.00),
+      method = Some("method"),
+      documentDescription = Some("docDescription"),
+      lot = Some("lot"), lotItem = Some("lotItem"),
+      dueDate = paymentDate,
+      documentDate = LocalDate.parse("2022-08-16"),
+      transactionId = Some("transactionId")
+    )
+  }
 
   private def obligationsModel(
                                 obligations: List[SingleObligationModel]
@@ -111,6 +126,40 @@ class RecentActivityServiceSpec
 
       result.mostRecentQuarterlySubmission shouldBe None
     }
+  }
+
+  "getRecentPaymentActivity" should {
+    "return the most recent payment made within 90 days" in {
+      when(mockDateService.getCurrentDate).thenReturn(today)
+      val recentPayment = payment(BigDecimal(50), Some(within90Days))
+      val mostRecentPayment = payment(BigDecimal(100), Some(within90Days.plusDays(5)))
+
+      val result = service.getRecentPaymentActivity(
+        List(recentPayment, mostRecentPayment),
+      )
+      result shouldBe Some(RecentActivityPaymentModel(BigDecimal(100), within90Days.plusDays(5)))
+    }
+    "ignore payments made more than 90 days ago" in {
+      when(mockDateService.getCurrentDate).thenReturn(today)
+      val oldPayment = payment(BigDecimal(50), Some(outside90Days))
+
+      val result = service.getRecentPaymentActivity(
+        List(oldPayment)
+      )
+      result shouldBe None
+    }
+
+    "ignore payments without 'effectiveDateOfPayment' field" in {
+      when(mockDateService.getCurrentDate).thenReturn(today)
+      val noDatePayment = payment(BigDecimal(50), None)
+
+      val result = service.getRecentPaymentActivity(
+        List(noDatePayment)
+      )
+
+      result shouldBe None
+    }
+
   }
 
   "getRecentRefundActivity" should {
@@ -183,8 +232,7 @@ class RecentActivityServiceSpec
       when(supportingAgentUser.isSupportingAgent).thenReturn(true)
 
       val submissions = RecentActivitySubmissionsModel(None, None)
-      val refunds = RecentRefundModel(None)
-      val result = service.recentActivityCards(submissions, refunds)
+      val result = service.recentActivityCards(submissions, None, None)
 
       result shouldBe RecentActivityViewModel(Seq.empty)
     }
@@ -198,11 +246,23 @@ class RecentActivityServiceSpec
       val annual = obligation("Crystallisation", LocalDate.of(2023, 4, 6), Some(within90Days))
       val quarterly = obligation("Quarterly", LocalDate.of(2023, 4, 6), Some(within90Days))
       val submissions = RecentActivitySubmissionsModel(Some(annual), Some(quarterly))
-      val refunds = RecentRefundModel(None)
-      val result = service.recentActivityCards(submissions, refunds)
+      val result = service.recentActivityCards(submissions, None, None)
 
       result.recentActivityCards.size shouldBe 2
       result.recentActivityCards.head.cardTaxYear.value shouldBe TaxYear.getTaxYear(annual.start)
+    }
+
+    "return payment card for primary agents" in {
+      implicit val agentUser: MtdItUser[_] = MockitoSugar.mock[MtdItUser[_]]
+
+      when(agentUser.isSupportingAgent).thenReturn(false)
+      when(agentUser.isAgent).thenReturn(true)
+      val submissions = RecentActivitySubmissionsModel(None, None)
+      val payment = RecentActivityPaymentModel(BigDecimal(123.45), within90Days)
+      val result = service.recentActivityCards(submissions, Some(payment))
+
+      result.recentActivityCards.size shouldBe 1
+      result.recentActivityCards.head.cardDate shouldBe within90Days
     }
 
     "return a refund card when a recent refund is present" in {

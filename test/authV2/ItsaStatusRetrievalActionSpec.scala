@@ -18,10 +18,10 @@ package authV2
 
 import auth.MtdItUser
 import auth.authV2.actions.ItsaStatusRetrievalAction
-import authV2.AuthActionsTestData._
+import authV2.AuthActionsTestData.*
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import connectors.ITSAStatusConnector
-import models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
+import models.admin.{FeatureSwitchName, `CY+1YouMustWaitToSignUpPageEnabled`}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.MtdItsaOptOut
@@ -39,7 +39,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import services.DateServiceInterface
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import org.scalatest.EitherValues._
+import org.scalatest.EitherValues.*
 
 import scala.concurrent.Future
 
@@ -61,7 +61,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
   lazy val agentErrorHandler =
     app.injector.instanceOf[AgentItvcErrorHandler]
 
-  val action =
+  def actionWithSwitch(enabledSwitches: Set[FeatureSwitchName]) = 
     new ItsaStatusRetrievalAction(
       appConfig,
       mockItsaStatusConnector,
@@ -71,7 +71,10 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       itvcErrorHandler,
       agentErrorHandler,
       mcc
-    )
+    ) {
+    override def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean =
+      enabledSwitches.contains(featureSwitch)
+  }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -84,7 +87,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - Agent" in {
 
-        enable(`CY+1YouMustWaitToSignUpPageEnabled`)
+        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
 
         val itsaStatusResponse =
           ITSAStatusResponseModel(
@@ -112,7 +115,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - Individual" in {
 
-        enable(`CY+1YouMustWaitToSignUpPageEnabled`)
+        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
 
         val itsaStatusResponse =
           ITSAStatusResponseModel(
@@ -140,7 +143,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - SupportingAgent" in {
 
-        enable(`CY+1YouMustWaitToSignUpPageEnabled`)
+        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
 
         val itsaStatusResponse =
           ITSAStatusResponseModel(
@@ -167,6 +170,8 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       }
 
       "return an MtdItUser when valid ITSA status exists for current and future years" in {
+        
+        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
 
         val itsaStatusResponses = List(
           ITSAStatusResponseModel(
@@ -203,7 +208,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       "return Individual error page" in {
 
-        enable(`CY+1YouMustWaitToSignUpPageEnabled`)
+        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
 
         val itsaStatusResponseError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "some random failure")
 
@@ -234,7 +239,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       "return Agent error page" in {
 
-        enable(`CY+1YouMustWaitToSignUpPageEnabled`)
+        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
 
         val itsaStatusResponseError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "some random failure")
 
@@ -265,7 +270,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       "redirect to error page when user's affinity group is 'Organisation'" in {
 
-        enable(`CY+1YouMustWaitToSignUpPageEnabled`)
+        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
 
         val itsaStatusResponse =
           ITSAStatusResponseModel(
@@ -297,7 +302,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
       "return the request unmodified" in {
 
-        disable(`CY+1YouMustWaitToSignUpPageEnabled`)
+        val action = actionWithSwitch(Set.empty)
 
         val mtdAgentUser = getMtdItUser(Agent)
 

@@ -49,6 +49,7 @@
 }
 @tableRows(input: Seq[ObligationWithIncomeType]) = @{
     input.map(nextUpdateWithIncomeType => {
+        val dateContent = nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort).fold(HtmlContent(messages("submissionsTab.notReceived")))(value => HtmlContent(value))
         Seq(
             TableRow(classes = "govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third",
                 content = HtmlContent(updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType))),
@@ -57,7 +58,8 @@
                     messages(nextUpdateWithIncomeType.incomeType)
                 })),
             TableRow(classes = "govuk-table__cell govuk-!-width-one-third",
-                content = nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort).fold(HtmlContent(""))(value => HtmlContent(value)))
+                content = dateContent
+            )
         )
     })
 }

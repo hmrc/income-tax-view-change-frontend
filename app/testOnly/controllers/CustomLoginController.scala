@@ -82,6 +82,11 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                 }
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
 
+                updateEffectiveDateOfPayment().failed.foreach(ex => {
+                  Logger("application").error("Failed to update effectiveDateOfPayment", ex)
+                })
+
+
                 updateEstimatedRepaymentDate().failed.foreach(ex => {
                   Logger("application").error("Failed to update estimatedRepaymentDate", ex)
                 })
@@ -177,6 +182,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       _ <- combinedItsaStatusFutureYear
     } yield ()
 
+  }
+
+  private def updateEffectiveDateOfPayment()(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteEffectiveDateOfPaymentUrl()
   }
 
 }
