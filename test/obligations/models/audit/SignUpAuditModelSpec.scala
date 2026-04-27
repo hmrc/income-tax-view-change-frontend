@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package audit.models
+package obligations.models.audit
 
 import auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.Annual
-import obligations.models.audit.SignUpAuditModel
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import play.api.libs.json.Json
 import testUtils.TestSupport

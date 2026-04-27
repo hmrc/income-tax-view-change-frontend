@@ -20,9 +20,8 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import obligations.viewUtils.NextUpdatesViewUtils
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest

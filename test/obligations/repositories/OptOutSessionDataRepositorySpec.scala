@@ -25,14 +25,13 @@ import models.itsaStatus.ITSAStatus.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.mocks.connectors.MockITSAStatusUpdateConnector
 import obligations.models.reportingObligations.optOut.OptOutSessionData
-import obligations.repositories.{OptOutContextData, OptOutSessionDataRepository}
 import obligations.services.NextUpdatesService
+import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
+import obligations.services.reportingObligations.optOut.OptOutTestSupport.buildOneYearOptOutPropositionForPreviousYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest, Succeeded}
-import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
-import obligations.services.reportingObligations.optOut.OptOutTestSupport.buildOneYearOptOutPropositionForPreviousYear
 import repositories.UIJourneySessionDataRepository
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

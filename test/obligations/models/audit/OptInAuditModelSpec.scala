@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package audit.models
+package obligations.models.audit
 
 import auth.MtdItUser
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
-import obligations.models.audit.OptInAuditModel
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import play.api.http.Status.OK
 import play.api.libs.json.Json

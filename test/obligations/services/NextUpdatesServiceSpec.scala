@@ -16,21 +16,18 @@
 
 package obligations.services
 
-import auth.MtdItUser
-import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.mocks.connectors.MockObligationsConnector
 import obligations.models.*
+import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.optOut.OptOutTestSupport
+import obligations.testConstants.NextUpdatesTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
-import testConstants.NextUpdatesTestConstants.*
 import testUtils.TestSupport
-import uk.gov.hmrc.http.InternalServerException
 
 import java.time.LocalDate
 import scala.concurrent.Future

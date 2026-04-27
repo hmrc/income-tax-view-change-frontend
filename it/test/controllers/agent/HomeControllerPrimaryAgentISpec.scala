@@ -35,7 +35,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import testConstants.NextUpdatesIntegrationTestConstants.currentDate
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
 

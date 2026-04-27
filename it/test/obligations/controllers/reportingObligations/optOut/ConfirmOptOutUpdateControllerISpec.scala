@@ -21,10 +21,10 @@ import controllers.constants.ConfirmOptOutUpdateControllerConstants.*
 import enums.JourneyType.OptOutJourney
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.UIJourneySessionData
 import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, OptOutFs}
 import models.itsaStatus.ITSAStatus.*
+import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.repositories.OptOutContextData
 import play.api.http.Status

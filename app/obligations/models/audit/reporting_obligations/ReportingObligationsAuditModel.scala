@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package audit.reporting_obligations
+package obligations.models.audit.reporting_obligations
 
 import enums.MTDUserRole
 import play.api.libs.json.{JsObject, Json, OFormat}

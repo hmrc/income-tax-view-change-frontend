@@ -26,7 +26,6 @@ import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, Mandated, Voluntary}
 import obligations.services.reportingObligations.optOut.OptOutProposition
-import obligations.viewUtils.ReportingFrequencyViewUtils
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest

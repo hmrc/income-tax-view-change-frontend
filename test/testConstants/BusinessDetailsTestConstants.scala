@@ -23,7 +23,7 @@ import models.incomeSourceDetails.viewmodels.*
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import testConstants.BaseTestConstants.*
-import testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
+import obligations.testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 
 import java.time.{LocalDate, Month}
 

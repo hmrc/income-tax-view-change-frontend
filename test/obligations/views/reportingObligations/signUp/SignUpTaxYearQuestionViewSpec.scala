@@ -21,9 +21,9 @@ import models.itsaStatus.ITSAStatus
 import obligations.forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
+import obligations.views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import obligations.views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
 
 class SignUpTaxYearQuestionViewSpec extends TestSupport {
 

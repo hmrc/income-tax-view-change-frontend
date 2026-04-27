@@ -17,14 +17,14 @@
 package obligations.views.nextUpdates
 
 import config.FrontendAppConfig
+import obligations.testConstants.NextUpdatesTestConstants
+import obligations.views.html.nextUpdates.NoNextUpdatesView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
-import testConstants.NextUpdatesTestConstants
 import testUtils.TestSupport
-import obligations.views.html.nextUpdates.NoNextUpdatesView
 
 class NoNextUpdatesViewSpec extends TestSupport {
 

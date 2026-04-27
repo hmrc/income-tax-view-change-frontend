@@ -16,27 +16,20 @@
 
 package obligations.services.reportingObligations.signUp
 
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.JourneyType.{Opt, SignUpJourney}
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import mocks.services.{MockDateService, MockITSAStatusService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import models.itsaStatus.{StatusDetail, StatusReason}
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
-import obligations.mocks.connectors.MockITSAStatusUpdateConnector
-import obligations.models.audit.OptInAuditModel
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData, SignUpTaxYearQuestionViewModel}
-import obligations.services.NextUpdatesService
-import obligations.services.reportingObligations.signUp.SignUpService
+import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
-import org.mockito.{ArgumentCaptor, ArgumentMatchers}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
-import play.api.http.Status.OK
-import obligations.repositories.SignUpSessionDataRepository
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 

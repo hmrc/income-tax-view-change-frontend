@@ -32,7 +32,7 @@ import play.api.http.Status.*
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.NextUpdatesIntegrationTestConstants.*
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants
+package obligations.testConstants
 
 import obligations.models.{GroupedObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.libs.json.{JsValue, Json}

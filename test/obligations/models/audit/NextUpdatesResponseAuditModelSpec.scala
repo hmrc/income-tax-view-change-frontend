@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package audit.models
+package obligations.models.audit
 
 import authV2.AuthActionsTestData.getMinimalMTDITUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import obligations.models.audit.NextUpdatesResponseAuditModel
+import obligations.testConstants.NextUpdatesTestConstants.*
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.*
-import testConstants.NextUpdatesTestConstants.*
 import testUtils.TestSupport
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {

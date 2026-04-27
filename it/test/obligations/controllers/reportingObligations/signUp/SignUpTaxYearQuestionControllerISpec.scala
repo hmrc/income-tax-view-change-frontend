@@ -21,12 +21,12 @@ import controllers.ControllerISpecHelper
 import controllers.constants.ConfirmOptOutControllerConstants.emptyBodyString
 import enums.JourneyType.{Opt, SignUpJourney}
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.ITSAStatusUpdateConnectorStub
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import obligations.helpers.ITSAStatusUpdateConnectorStub
 import obligations.models.audit.SignUpAuditModel
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

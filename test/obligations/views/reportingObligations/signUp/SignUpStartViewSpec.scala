@@ -16,11 +16,11 @@
 
 package obligations.views.reportingObligations.signUp
 
+import obligations.views.html.reportingObligations.signUp.SignUpStartView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import obligations.views.html.reportingObligations.signUp.SignUpStartView
 
 class SignUpStartViewSpec extends TestSupport {
 

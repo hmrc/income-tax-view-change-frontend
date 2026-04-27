@@ -21,20 +21,20 @@ import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
-import obligations.models.{DeadlineViewModel, GroupedObligationsModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
+import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
+import obligations.testConstants.NextUpdatesTestConstants
+import obligations.testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import obligations.viewUtils.NextUpdatesViewUtils
+import obligations.views.html.nextUpdates.NextUpdatesOptOutView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import testConstants.BusinessDetailsTestConstants.business1
-import testConstants.NextUpdatesTestConstants
-import testConstants.NextUpdatesTestConstants.twoObligationsSuccessModel
 import testUtils.TestSupport
 import views.html.components.link
-import obligations.views.html.nextUpdates.NextUpdatesOptOutView
 
 import java.time.LocalDate
 

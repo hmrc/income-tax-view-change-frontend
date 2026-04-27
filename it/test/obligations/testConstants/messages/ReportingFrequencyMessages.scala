@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants.messages
+package obligations.testConstants.messages
 
 object ReportingFrequencyMessages {
 

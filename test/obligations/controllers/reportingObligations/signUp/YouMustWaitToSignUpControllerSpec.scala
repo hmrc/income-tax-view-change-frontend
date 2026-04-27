@@ -19,7 +19,6 @@ package obligations.controllers.reportingObligations.signUp
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import obligations.controllers.reportingObligations.signUp.YouMustWaitToSignUpController
 import obligations.mocks.services.MockSignUpService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.mockito.ArgumentMatchers.any

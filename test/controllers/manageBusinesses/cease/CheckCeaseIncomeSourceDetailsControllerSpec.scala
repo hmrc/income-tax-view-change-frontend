@@ -24,6 +24,7 @@ import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.IncomeSourceId
+import obligations.testConstants.UpdateIncomeSourceTestConstants
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -34,7 +35,6 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.testMtditid
-import testConstants.UpdateIncomeSourceTestConstants
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 
 import java.time.LocalDate

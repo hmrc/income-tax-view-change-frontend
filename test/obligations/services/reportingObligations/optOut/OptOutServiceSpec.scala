@@ -16,28 +16,22 @@
 
 package obligations.services.reportingObligations.optOut
 
-import audit.AuditingService
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import mocks.services.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import models.itsaStatus.{StatusDetail, StatusReason}
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService
+import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import obligations.services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
-import play.mvc.Http.Status.NO_CONTENT
-import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import obligations.services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
-import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
-import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear, NextYearOptOut, OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, OptOutProposition, OptOutService, OptOutState, OptOutTaxYear, PreviousOptOutTaxYear}
-import obligations.services.reportingObligations.optOut.OptOutTestSupport.*
-import services.{DateService}
+import services.DateService
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 

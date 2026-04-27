@@ -28,7 +28,7 @@ import obligations.models.*
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import testConstants.NextUpdatesIntegrationTestConstants.currentDate
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 
 import java.time.LocalDate
 

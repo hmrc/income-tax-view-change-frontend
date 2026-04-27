@@ -17,15 +17,14 @@
 package obligations.services.reportingObligations.optOut
 
 import audit.AuditingService
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.models.reportingObligations.optOut.{OptOutSessionData, OptOutYearToUpdate}
 import obligations.repositories.OptOutContextData
-import obligations.services.reportingObligations.optOut.OptOutSubmissionService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package views.html.helpers.injected.obligations
+package obligations.views.helpers.injected
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
 import obligations.models.*
-import obligations.models.{DeadlineViewModel, GroupedObligationsModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
 import obligations.services.reportingObligations.optOut.OptOutProposition
+import obligations.testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}
+import obligations.views.html.helpers.injected.NextUpdatesHelperR17
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.BusinessDetailsTestConstants.business1
-import testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}
 import testUtils.TestSupport
 
 import java.time.LocalDate

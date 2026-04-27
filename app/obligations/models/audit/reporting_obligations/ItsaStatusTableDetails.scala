@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package audit.reporting_obligations
+package obligations.models.audit.reporting_obligations
 
-sealed trait JourneyType
+import play.api.libs.json.{Json, OFormat}
 
-case object SignUp extends JourneyType
-case object OptOut extends JourneyType
+case class ItsaStatusTableDetails(
+                                   taxYearPeriod: String,
+                                   taxYear: String,
+                                   usingMakingTaxDigitalForIncomeTax: Option[String],
+                                   userCurrentItsaStatus: String
+                                 )
 
 
+object ItsaStatusTableDetails {
+
+  implicit val format: OFormat[ItsaStatusTableDetails] = Json.format[ItsaStatusTableDetails]
+}

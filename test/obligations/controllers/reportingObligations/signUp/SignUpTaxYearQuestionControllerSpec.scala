@@ -16,21 +16,19 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import obligations.mocks.services.MockSignUpService
 import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import obligations.controllers.reportingObligations.signUp.SignUpTaxYearQuestionController
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockSignUpService
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
 import obligations.services.reportingObligations.optOut.MultiYearOptOutDefault
-import obligations.services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, SignUpProposition}
+import obligations.services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api

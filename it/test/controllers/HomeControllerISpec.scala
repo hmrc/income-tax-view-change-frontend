@@ -22,7 +22,7 @@ import enums.MTDIndividual
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{NavBarFs}
+import models.admin.NavBarFs
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -33,7 +33,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import testConstants.NextUpdatesIntegrationTestConstants.*
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 import testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
 import testConstants.messages.HomeMessages.*
 import obligations.models.*

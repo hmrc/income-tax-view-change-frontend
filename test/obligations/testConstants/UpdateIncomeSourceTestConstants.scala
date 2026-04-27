@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package testConstants
+package obligations.testConstants
 
-import models.updateIncomeSource._
+import models.updateIncomeSource.*
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants.testNino

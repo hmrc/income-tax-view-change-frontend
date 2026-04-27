@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package helpers
+package obligations.models.audit.reporting_obligations
 
-object ITSAStatusUpdateConnectorStub {
-  def stubItsaStatusUpdate(taxableEntityId: String, status: Int, responseBody: String, headers: Map[String, String] = Map()): Unit =
-    WiremockHelper.stubPutWithHeaders(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", status = status, responseBody = responseBody, headers)
-}
+sealed trait JourneyType
+
+case object SignUp extends JourneyType
+case object OptOut extends JourneyType
+
+

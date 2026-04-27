@@ -16,14 +16,13 @@
 
 package obligations.services.reportingObligations
 
-import audit.reporting_obligations.*
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import enums.MTDIndividual
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
-import obligations.services.reportingObligations.ReportingObligationsAuditService
+import obligations.models.audit.reporting_obligations.*
 import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import obligations.viewUtils.ReportingFrequencyViewUtils
 import org.mockito.ArgumentMatchers.any

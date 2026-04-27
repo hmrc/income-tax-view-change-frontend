@@ -17,16 +17,15 @@
 package obligations.controllers.reportingObligations.optOut
 
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{CurrentTaxYear, MTDIndividual, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
+import enums.*
 import mocks.auth.MockAuthActions
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import obligations.controllers.reportingObligations.optOut.ConfirmedOptOutController
 import obligations.mocks.services.MockOptOutService
-import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, CurrentYearNYMandatedScenario, CurrentYearNYQuarterlyOrAnnualScenario, DefaultValidScenario, NextYearCYAnnualScenario, NextYearCYMandatedOrQuarterlyScenario, PreviousAndNoStatusValidScenario}
-import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, OneYearOptOutFollowedByMandated, OptOutProposition, OptOutService, OptOutTaxYear}
+import obligations.models.reportingObligations.optOut.*
+import obligations.services.reportingObligations.optOut.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api

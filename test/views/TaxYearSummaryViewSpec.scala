@@ -28,7 +28,7 @@ import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
-import testConstants.NextUpdatesTestConstants.*
+import obligations.testConstants.NextUpdatesTestConstants.*
 import testUtils.ViewSpec
 import views.html.TaxYearSummaryView
 import obligations.models.*

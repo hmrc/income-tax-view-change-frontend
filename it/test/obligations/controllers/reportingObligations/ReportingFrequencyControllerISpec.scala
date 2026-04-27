@@ -27,7 +27,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.messages.ReportingFrequencyMessages.PageMessages.*
+import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 

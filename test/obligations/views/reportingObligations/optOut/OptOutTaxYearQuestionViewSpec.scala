@@ -21,10 +21,10 @@ import models.itsaStatus.ITSAStatus.*
 import obligations.forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import obligations.models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
 import obligations.services.reportingObligations.optOut.*
+import obligations.views.html.reportingObligations.optOut.OptOutTaxYearQuestionView
 import org.jsoup.Jsoup
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import obligations.views.html.reportingObligations.optOut.OptOutTaxYearQuestionView
 import views.messages.OptOutTaxYearQuestionMessages
 
 class OptOutTaxYearQuestionViewSpec extends TestSupport {

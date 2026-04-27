@@ -22,11 +22,11 @@ import controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, e
 import enums.JourneyType.{Opt, OptOutJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
+import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.audit.OptOutNewAuditModel
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}

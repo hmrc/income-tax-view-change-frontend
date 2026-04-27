@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package audit.reporting_obligations
+package obligations.models.audit.reporting_obligations
 
-import play.api.libs.json.{Json, OFormat}
+case class ReportingObligationCard(
+                                     journeyType: JourneyType,
+                                     taxYear: String,
+                                     singleYearOrOnwards: SingleYearOrOnwards
+                                   ) {
 
-case class ItsaStatusTableDetails(
-                                   taxYearPeriod: String,
-                                   taxYear: String,
-                                   usingMakingTaxDigitalForIncomeTax: Option[String],
-                                   userCurrentItsaStatus: String
-                                 )
-
-
-object ItsaStatusTableDetails {
-
-  implicit val format: OFormat[ItsaStatusTableDetails] = Json.format[ItsaStatusTableDetails]
+  def auditModelToString(): String = {
+    s"$journeyType$taxYear$singleYearOrOnwards"
+  }
 }

@@ -18,11 +18,11 @@ package obligations.views.reportingObligations.signUp
 
 import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.YouMustWaitToSignUpViewModel
+import obligations.views.html.reportingObligations.signUp.YouMustWaitToSignUpView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
-import obligations.views.html.reportingObligations.signUp.YouMustWaitToSignUpView
 
 class YouMustWaitToSignUpViewSpec extends TestSupport {
 

@@ -16,7 +16,6 @@
 
 package obligations.services.reportingObligations
 
-import audit.reporting_obligations.*
 import auth.MtdItUser
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
@@ -25,13 +24,13 @@ import enums.{AuditType, TransactionName}
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, UnknownStatus, Voluntary}
-import obligations.services.reportingObligations.optOut.OptOutProposition
+import obligations.models.audit.reporting_obligations.*
+import obligations.services.reportingObligations.optOut.*
+import obligations.viewUtils.ReportingFrequencyViewUtils
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import services.DateServiceInterface
-import obligations.services.reportingObligations.optOut.*
-import obligations.viewUtils.ReportingFrequencyViewUtils
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}

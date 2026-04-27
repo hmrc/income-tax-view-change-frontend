@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package views.html.helpers.injected.obligations
+package obligations.views.helpers.injected
 
-import obligations.models.{DeadlineViewModel, GroupedObligationsModel, NextUpdatesViewModel, ObligationWithIncomeType, ObligationsModel, QuarterlyObligation}
+import obligations.models.*
+import obligations.testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
+import obligations.views.html.helpers.injected.NextUpdatesHelper
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.testMtdItUser
 import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
-import testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
 import testUtils.TestSupport
 
 import java.time.LocalDate

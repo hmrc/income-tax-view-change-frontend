@@ -16,26 +16,23 @@
 
 package obligations.controllers.reportingObligations.optOut
 
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure.defaultFailure
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseSuccess}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import obligations.mocks.services.MockOptOutService
 import mocks.services.MockSessionService
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import obligations.controllers.reportingObligations.optOut.ConfirmOptOutUpdateController
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure.defaultFailure
+import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockOptOutService
-import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, OptOutProposition, OptOutService, OptOutSubmissionService}
+import obligations.services.reportingObligations.optOut.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import obligations.services.reportingObligations.optOut.*
 import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 

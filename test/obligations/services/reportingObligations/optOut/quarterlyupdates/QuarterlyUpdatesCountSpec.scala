@@ -18,23 +18,21 @@ package obligations.services.reportingObligations.optOut.quarterlyupdates
 
 import audit.mocks.MockAuditingService
 import config.FrontendAppConfig
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import mocks.MockHttpV2
+import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import obligations.connectors.ObligationsConnector
-import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService
-import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
+import obligations.services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
+import obligations.services.reportingObligations.optOut.{OptOutService, OptOutTestSupport}
+import obligations.testConstants.NextUpdatesTestConstants.obligationsDataFromJson
 import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
-import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
-import obligations.services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
-import obligations.services.reportingObligations.optOut.OptOutTestSupport
-import services.{DateService}
+import services.DateService
 import testConstants.BaseTestConstants.testNino
-import testConstants.NextUpdatesTestConstants.obligationsDataFromJson
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

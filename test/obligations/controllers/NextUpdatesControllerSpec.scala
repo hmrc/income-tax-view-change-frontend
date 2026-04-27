@@ -22,10 +22,12 @@ import mocks.services.{MockDateService, MockNextUpdatesService}
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import obligations.controllers.NextUpdatesController
 import obligations.mocks.services.MockOptOutService
 import obligations.models.*
 import obligations.models.reportingObligations.optOut.*
+import obligations.services.NextUpdatesService
+import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutService}
+import obligations.testConstants.NextUpdatesTestConstants
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -36,10 +38,8 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
 import services.{DateService, DateServiceInterface}
-import obligations.services.NextUpdatesService
-import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutService}
+import testConstants.BaseTestConstants
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
-import testConstants.{BaseTestConstants, NextUpdatesTestConstants}
 
 import java.time.LocalDate
 import scala.concurrent.Future

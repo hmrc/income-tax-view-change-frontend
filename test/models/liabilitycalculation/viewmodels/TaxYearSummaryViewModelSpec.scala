@@ -23,7 +23,7 @@ import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.ObligationsModel
 import services.DateService
 import testConstants.ChargeConstants
-import testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
+import obligations.testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
 import testUtils.UnitSpec
 
 import java.time.LocalDate

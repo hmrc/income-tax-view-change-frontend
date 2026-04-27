@@ -19,11 +19,11 @@ package obligations.views.reportingObligations.optOut
 import config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
+import obligations.views.html.reportingObligations.optOut.CheckOptOutUpdateAnswersView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
 import testUtils.TestSupport
-import obligations.views.html.reportingObligations.optOut.CheckOptOutUpdateAnswersView
 import views.messages.CheckOptOutUpdateAnswersMessages as viewMessages
 
 class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
