@@ -178,7 +178,7 @@ object AddressLookupTestConstants {
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
-      |      "showSearchAgainLink": true,
+      |      "showSearchAgainLink": false,
       |      "showConfirmChangeText": true
       |    },
       |    "manualAddressEntryConfig": {
@@ -260,7 +260,7 @@ object AddressLookupTestConstants {
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
-      |      "showSearchAgainLink": true,
+      |      "showSearchAgainLink": false,
       |      "showConfirmChangeText": true
       |    },
       |    "manualAddressEntryConfig": {
