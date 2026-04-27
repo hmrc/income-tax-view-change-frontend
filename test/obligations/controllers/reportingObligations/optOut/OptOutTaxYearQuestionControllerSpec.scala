@@ -182,7 +182,6 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
-//          mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()
 
@@ -210,7 +209,6 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
             numberOfQuarterlyUpdates = 2,
             optOutState = Some(OneYearOptOutFollowedByMandated)
           ))))
-//          mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseSuccess()))
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()
 
@@ -260,7 +258,6 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
           when(mockOptOutSubmissionService.updateTaxYearsITSAStatusRequest()(any(), any(), any()))
             .thenReturn(Future(List(ITSAStatusUpdateResponseFailure.defaultFailure())))
- //         mockMakeOptOutUpdateRequest(Future.successful(ITSAStatusUpdateResponseFailure(List())))
           mockUpdateOptOutJourneyStatusInSessionData()
           mockFetchOptOutJourneyCompleteStatus()
 

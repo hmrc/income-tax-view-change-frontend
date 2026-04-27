@@ -53,14 +53,6 @@ trait ReportingObligationsUtils extends FeatureSwitching {
     }
   }
 
-//  def withOptInRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-//    if (isEnabled(SignUpFs)) {
-//      codeBlock
-//    } else {
-//      redirectReportingFrequency(user.userType)
-//    }
-//  }
-
   private def redirectHome(userType: Option[AffinityGroup]): Future[Result] =
     userType match {
       case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))

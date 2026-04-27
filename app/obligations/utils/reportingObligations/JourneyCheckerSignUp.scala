@@ -78,10 +78,4 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
   def setJourneyComplete(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Boolean] = {
     signUpService.updateJourneyStatusInSessionData(journeyComplete = true)
   }
-
-//  private def showInternalServerError(isAgent: Boolean)(implicit request: Request[_]): Future[Result] = {
-//    val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-//
-//    Future.successful(errorHandler(isAgent).showInternalServerError())
-//  }
 }

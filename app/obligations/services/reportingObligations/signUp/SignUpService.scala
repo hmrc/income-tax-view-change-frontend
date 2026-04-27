@@ -56,24 +56,7 @@ class SignUpService @Inject()(
     fetchSignUpProposition().map(_.availableSignUpYears.map(_.taxYear))
 
 
-
-//  def makeOptInCall()(implicit user: MtdItUser[_],
-//                      hc: HeaderCarrier,
-//                      ec: ExecutionContext): Future[ITSAStatusUpdateResponse] = {
-//
-//    fetchSavedChosenTaxYear() flatMap {
-//      case Some(intentTaxYear) => itsaStatusUpdateConnector.signUp(taxYear = intentTaxYear, user.nino)
-//        .map { res =>
-//          fetchSignUpProposition().map { proposition =>
-//            auditingService.extendedAudit(OptInAuditModel(proposition, intentTaxYear, res))
-//          }
-//          res
-//        }
-//      case None =>
-//        Future.successful(ITSAStatusUpdateResponseFailure.defaultFailure())
-//    }
-//  }
-
+  
   def fetchSavedSignUpSessionData()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpSessionData]] = {
 
     val savedOptInSessionData = for {
@@ -154,9 +137,6 @@ class SignUpService @Inject()(
     }
   }
   
-//  @unused //TODO: this method is flagging as unused, but leaving in as unsure of accuracy of IDE
-//  private def isNextTaxYear(currentTaxYear: TaxYear, candidate: TaxYear): Boolean = currentTaxYear.nextYear == candidate
-
   def isSignUpTaxYearValid(taxYear: Option[String])(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpTaxYearQuestionViewModel]] = {
     taxYear match {
       case Some(year) =>

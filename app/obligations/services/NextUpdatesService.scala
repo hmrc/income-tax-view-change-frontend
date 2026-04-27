@@ -56,26 +56,6 @@ class NextUpdatesService @Inject()(
     }
   }
 
-//  def getObligationDueDates(implicit hc: HeaderCarrier, ec: ExecutionContext, mtdItUser: MtdItUser[_]): Future[Either[(LocalDate, Boolean), Int]] = {
-//    getOpenObligations().map {
-//
-//      case deadlines: ObligationsModel if deadlines.obligations.forall(_.obligations.nonEmpty) =>
-//        val dueDates = deadlines.obligations.flatMap(_.obligations.map(_.due)).sortWith(_ isBefore _)
-//        val overdueDates = dueDates.filter(_ isBefore dateService.getCurrentDate)
-//        val nextDueDates = dueDates.diff(overdueDates)
-//        val overdueDatesCount = overdueDates.size
-//
-//        overdueDatesCount match {
-//          case 0 => Left(nextDueDates.head -> false)
-//          case 1 => Left(overdueDates.head -> true)
-//          case _ => Right(overdueDatesCount)
-//        }
-//      case _ =>
-//        throw new InternalServerException("Unexpected Exception getting obligation due dates")
-//    }
-//  }
-
-
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
     val allDeadlines =
       obligationsModel.obligationsByDate(isR17ContentEnabled).flatMap { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
@@ -205,10 +185,6 @@ class NextUpdatesService @Inject()(
       case error: ObligationsErrorModel =>
         Logger("application").warn(s"[getNextDueDates] Failed to fetch obligations: ${error.message}")
         (None, Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31)))
-//
-//      case unexpected =>
-//        Logger("application").error(s"[getNextDueDates] Unexpected response: $unexpected")
-//        (None, Some(LocalDate.of(dateService.getCurrentTaxYear.endYear + 1, 1, 31)))
     }
   }
 }
