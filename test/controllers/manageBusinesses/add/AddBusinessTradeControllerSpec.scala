@@ -25,7 +25,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
-import models.core.{CheckMode, Mode, NormalMode}
+import models.core.{AddressModel, CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api
 import play.api.Application
@@ -44,6 +44,34 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
   val validBusinessTrade: String = "Test Business Trade"
   val validBusinessName: String = "Test Business Name"
   val journeyType: JourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+
+  val baseAddress = AddressModel(
+    addressLine1 = None,
+    addressLine2 = None,
+    addressLine3 = None,
+    addressLine4 = None,
+    postCode = None,
+    countryCode = None
+  )
+
+  val minimumInternationalAddress = baseAddress.copy(
+    addressLine1 = Some("Test Address Line 1"),
+    countryCode = Some("FR")
+  )
+
+  val ukAddressNoAddressLine1 = baseAddress.copy(
+    postCode = Some("AA1 1AA"),
+    countryCode = Some("GB")
+  )
+
+  val ukAddressNoPostcode = baseAddress.copy(
+    addressLine1 = Some("Test Address Line 1"),
+    countryCode = Some("GB")
+  )
+
+  val internationalAddressNoAddressLine1 = baseAddress.copy(
+    countryCode = Some("FR")
+  )
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
@@ -179,11 +207,32 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
               "redirect to the choose sole trader business address page" when {
                 "the OverseasBusinessAddress FS is on" when {
-                  "the individual is authenticated and the business trade entered is valid" in {
+                  "the individual is authenticated and the business trade entered is valid with a valid address on file - UK" in {
                     enable(OverseasBusinessAddress)
                     setupMockSuccess(mtdRole)
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(false).url
+                    } else {
+                      controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+
+                  "the individual is authenticated and the business trade entered is valid with a valid address on file - International" in {
+                    enable(OverseasBusinessAddress)
+                    setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(minimumInternationalAddress)))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(minimumInternationalAddress)))))
                     setupMockCreateSession(true)
                     setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                       .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
@@ -204,11 +253,71 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
               "redirect to the is the new address in the UK page" when {
                 "the OverseasBusinessAddress FS is on" when {
-                  "the individual is authenticated and the business trade entered is valid" in {
+                  "the individual is authenticated and the business trade entered is valid and theres no addresses on file" in {
                     enable(OverseasBusinessAddress)
                     setupMockSuccess(mtdRole)
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(false).url
+                    } else {
+                      controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+                  "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no address line 1 UK" in {
+                    enable(OverseasBusinessAddress)
+                    setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoAddressLine1)))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoAddressLine1)))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(false).url
+                    } else {
+                      controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+                  "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no postcode UK" in {
+                    enable(OverseasBusinessAddress)
+                    setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoPostcode)))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoPostcode)))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(false).url
+                    } else {
+                      controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+                  "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no address line 1 international" in {
+                    enable(OverseasBusinessAddress)
+                    setupMockSuccess(mtdRole)
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(internationalAddressNoAddressLine1)))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(internationalAddressNoAddressLine1)))))
                     setupMockCreateSession(true)
                     setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
                       .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
