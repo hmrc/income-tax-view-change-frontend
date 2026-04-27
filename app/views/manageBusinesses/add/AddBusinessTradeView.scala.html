@@ -47,9 +47,9 @@
 }
 
 @hintContent = {
-@p(classes = "govuk-hint") {
-    @messages("add-trade.trade-info-2")
-}
+    @p(classes = "govuk-hint") {
+        @messages("add-trade.trade-info-2")
+    }
 }
 
 @mainTemplate(pageTitle = messages("add-business-trade.heading"),
@@ -63,8 +63,8 @@
 
     @form(action = postAction, Symbol("id") -> "business-trade-form") {
 
-        <span class="govuk-caption-xl", id="caption">
-        @messages("incomeSources.add.sole-trader")
+        <span class="govuk-caption-xl" id="caption">
+            @messages("incomeSources.add.sole-trader")
         </span>
 
         <h1 class="govuk-label-wrapper">
