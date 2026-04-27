@@ -20,7 +20,7 @@ import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSASta
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.MockOptOutService
+import obligations.mocks.services.MockOptOutService
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
