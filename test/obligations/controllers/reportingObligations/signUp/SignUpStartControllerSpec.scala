@@ -19,7 +19,7 @@ package obligations.controllers.reportingObligations.signUp
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.MockSignUpService
+import obligations.mocks.services.MockSignUpService
 import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
@@ -105,9 +105,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
 
           val redirectUrl = if (isAgent) {
-            controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
+            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
           } else {
-            controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
+            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
           }
 
           when(mockSignUpService.fetchSavedSignUpSessionData()(any(), any(), any()))

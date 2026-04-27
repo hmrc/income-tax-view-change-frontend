@@ -21,7 +21,7 @@ import controllers.ControllerISpecHelper
 import enums.MTDIndividual
 import helpers.servicemocks.*
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, ReportingFrequencyPage}
+import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import helpers.servicemocks._
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear

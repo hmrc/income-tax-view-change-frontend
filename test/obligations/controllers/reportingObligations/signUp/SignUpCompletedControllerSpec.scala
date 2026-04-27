@@ -19,7 +19,7 @@ package obligations.controllers.reportingObligations.signUp
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.MockSignUpService
+import obligations.mocks.services.MockSignUpService
 import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
