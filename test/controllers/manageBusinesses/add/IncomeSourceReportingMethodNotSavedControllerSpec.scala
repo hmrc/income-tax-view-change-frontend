@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.IncomeSourceReportingMethodNotSavedController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
@@ -23,11 +24,11 @@ import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.matchers.must.Matchers._
+import org.scalatest.matchers.must.Matchers.*
 import play.api
 import play.api.Application
 import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderNoLatency
 

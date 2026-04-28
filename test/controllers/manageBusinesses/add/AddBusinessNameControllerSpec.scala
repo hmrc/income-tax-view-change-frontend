@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.AddBusinessNameController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -28,14 +29,14 @@ import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.matchers.must.Matchers._
+import org.scalatest.matchers.must.Matchers.*
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 

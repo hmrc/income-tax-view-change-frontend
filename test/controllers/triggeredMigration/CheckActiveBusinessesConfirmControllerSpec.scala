@@ -16,6 +16,7 @@
 
 package controllers.triggeredMigration
 
+import businessDetails.controllers.triggeredMigration.CheckActiveBusinessesConfirmController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions

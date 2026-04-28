@@ -16,14 +16,15 @@
 
 package controllers.manageBusinesses.manage
 
+import businessDetails.controllers.manageBusinesses.manage.ManageObligationsController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney._
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockDateService, MockNextUpdatesService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import obligations.services.NextUpdatesService

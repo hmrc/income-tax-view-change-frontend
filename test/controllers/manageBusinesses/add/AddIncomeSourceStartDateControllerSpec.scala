@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.AddIncomeSourceStartDateController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -32,7 +33,7 @@ import org.jsoup.nodes.Document
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{noIncomeDetails, notCompletedUIJourneySessionData}

@@ -17,14 +17,14 @@
 package models.triggeredMigration.viewModels
 import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased, TriggeredMigrationState}
 import models.core.IncomeSourceId
-
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],
                                      hasActiveUkProperty: Boolean,
                                      hasActiveForeignProperty: Boolean,
                                      triggeredMigrationState: Option[TriggeredMigrationState],
                                      numberOfCeasedBusinesses: Int = 0
                                     ) {
-  def checkActiveBusinessesLink(isAgent: Boolean): String = controllers.triggeredMigration.routes.CheckActiveBusinessesConfirmController.show(isAgent).url
+  def checkActiveBusinessesLink(isAgent: Boolean): String = triggeredMigrationRoutes.CheckActiveBusinessesConfirmController.show(isAgent).url
 
   def showCeasedBanner: Boolean = triggeredMigrationState match {
     case Some(TriggeredMigrationCeased) => true

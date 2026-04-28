@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.AddBusinessAddressController
 import config.FrontendAppConfig
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}

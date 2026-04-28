@@ -22,6 +22,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -45,18 +46,18 @@
 
 @getChangeHref = @{
     val url = incomeSourceType match {
-        case SelfEmployment => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(SelfEmployment, isAgent).url
-        case UkProperty => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(UkProperty, isAgent).url
-        case _ => controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.showChange(ForeignProperty, isAgent).url
+        case SelfEmployment => manageYourBusinessRoutes.ManageIncomeSourceDetailsController.showChange(SelfEmployment, isAgent).url
+        case UkProperty => manageYourBusinessRoutes.ManageIncomeSourceDetailsController.showChange(UkProperty, isAgent).url
+        case _ => manageYourBusinessRoutes.ManageIncomeSourceDetailsController.showChange(ForeignProperty, isAgent).url
     }
     url
 }
 
 @getSubmitHref = @{
     val url = incomeSourceType match {
-        case SelfEmployment => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, SelfEmployment)
-        case UkProperty => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, UkProperty)
-        case _ => controllers.manageBusinesses.manage.routes.CheckYourAnswersController.submit(isAgent, ForeignProperty)
+        case SelfEmployment => manageYourBusinessRoutes.CheckYourAnswersController.submit(isAgent, SelfEmployment)
+        case UkProperty => manageYourBusinessRoutes.CheckYourAnswersController.submit(isAgent, UkProperty)
+        case _ => manageYourBusinessRoutes.CheckYourAnswersController.submit(isAgent, ForeignProperty)
     }
     url
 }

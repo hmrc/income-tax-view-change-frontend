@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.IncomeSourceRFCheckDetailsController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.MTDIndividual

@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.IsTheNewAddressInTheUKController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}

@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.AddBusinessTradeController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType, Manage}

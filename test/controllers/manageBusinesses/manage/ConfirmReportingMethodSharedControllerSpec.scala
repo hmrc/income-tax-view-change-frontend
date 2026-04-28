@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.manage
 
+import businessDetails.controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
 import enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError

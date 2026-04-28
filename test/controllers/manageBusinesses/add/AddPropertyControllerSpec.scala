@@ -16,11 +16,12 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.AddPropertyController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.MTDIndividual
 import forms.manageBusinesses.add.AddProprertyForm
-import forms.manageBusinesses.add.AddProprertyForm._
+import forms.manageBusinesses.add.AddProprertyForm.*
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.NormalMode

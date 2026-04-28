@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
+import businessDetails.controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
@@ -32,7 +33,7 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.{DateServiceInterface, SessionService}
-import testConstants.BusinessDetailsTestConstants._
+import testConstants.BusinessDetailsTestConstants.*
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}
 

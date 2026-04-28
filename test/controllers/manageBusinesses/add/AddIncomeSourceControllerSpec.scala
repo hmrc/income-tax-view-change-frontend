@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.AddIncomeSourceController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
@@ -29,7 +30,7 @@ import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
 import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}

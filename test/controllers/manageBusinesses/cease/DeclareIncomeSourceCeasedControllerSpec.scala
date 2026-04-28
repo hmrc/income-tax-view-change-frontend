@@ -16,6 +16,7 @@
 
 package controllers.manageBusinesses.cease
 
+import businessDetails.controllers.manageBusinesses.cease.DeclareIncomeSourceCeasedController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
