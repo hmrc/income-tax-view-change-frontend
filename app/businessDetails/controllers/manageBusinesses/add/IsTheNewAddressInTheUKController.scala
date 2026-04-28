@@ -71,7 +71,6 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
         addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(
           addressId = None,
           address = None,
-          countryCode = None,
           addressLookupId = None)
         )
       )
