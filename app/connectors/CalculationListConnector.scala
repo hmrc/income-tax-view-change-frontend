@@ -34,7 +34,7 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getCalculationListUrl(nino: String, taxYearRange: String): String = {
-    s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
+    s"${appConfig.incomeTaxCalculationService}/calculation-list/$nino/$taxYearRange"
   }
 
   def getCalculationList(nino: Nino, taxYearRange: String)
