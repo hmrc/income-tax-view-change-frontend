@@ -29,7 +29,6 @@ import models.newHomePage.HandleYourTasksViewModel
 import models.newHomePage.MaturityLevel.Upcoming
 import models.newHomePage.YourTaskCardType.FINANCIALS
 import models.newHomePage.YourTasksCard.UpcomingTaskCard
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusOpen}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -41,10 +40,12 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
 import services.*
 import services.newHomePage.HandleYourTasksService
-import services.reportingObligations.optOut.OptOutService
-import services.reportingObligations.signUp.SignUpService
+import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.signUp.SignUpService
 import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
 import views.html.newHomePage.NewHomeYourTasksView
+import obligations.models.*
+import obligations.services.NextUpdatesService
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future

@@ -21,12 +21,12 @@ import config.featureswitch.FeatureSwitching
 import enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import enums.MTDUserRole
 import models.admin.NavBarFs
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import obligations.models.*
 
 import java.time.LocalDate
 

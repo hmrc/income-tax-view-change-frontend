@@ -23,6 +23,9 @@ import enums.MTDSupportingAgent
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import obligations.services.NextUpdatesService
+import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -35,9 +38,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.reportingObligations.signUp.SignUpService
-import services.{CreditService, NextUpdatesService}
-import services.reportingObligations.optOut.OptOutService
+import services.CreditService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.HomeView
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
@@ -209,7 +210,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
+        link.attr("href") shouldBe obligations.controllers.routes.NextUpdatesController.showAgent().url
       }
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
@@ -243,7 +244,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
+        link.attr("href") shouldBe obligations.controllers.routes.NextUpdatesController.showAgent().url
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
@@ -273,7 +274,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
+        link.attr("href") shouldBe obligations.controllers.routes.NextUpdatesController.showAgent().url
       }
 
       "render the home page with the Your Businesses tile with link" when {

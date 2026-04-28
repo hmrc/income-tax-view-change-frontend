@@ -18,12 +18,12 @@ package services.newHomePage
 
 import auth.MtdItUser
 import com.google.inject.Inject
-import connectors.ObligationsConnector
+import obligations.connectors.ObligationsConnector
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.newHomePage.{RecentActivityCard, RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel}
-import models.obligations.{ObligationsModel, SingleObligationModel}
+import obligations.models.{ObligationsModel, SingleObligationModel}
 import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 

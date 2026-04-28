@@ -28,6 +28,7 @@ import utils.TriggeredMigrationUtils
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
+import obligations.controllers.{routes => obligationsRoutes}
 
 @Singleton
 class CheckCompleteController @Inject()(view: CheckCompleteView,
@@ -39,8 +40,8 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
   extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
   private def nextUpdatesLink(isAgent: Boolean): String =
-    if (isAgent) controllers.routes.NextUpdatesController.showAgent().url
-    else controllers.routes.NextUpdatesController.show().url
+    if (isAgent) obligationsRoutes.NextUpdatesController.showAgent().url
+    else obligationsRoutes.NextUpdatesController.show().url
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
     withTriggeredMigrationFS {

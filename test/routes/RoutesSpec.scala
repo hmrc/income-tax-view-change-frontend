@@ -39,7 +39,7 @@ class RoutesSpec extends TestSupport {
   //Next Updates route
   "The URL for the NextUpdatesController.getNextObligation action" should {
     s"be equal to $contextRoute/submission-deadlines" in {
-      controllers.routes.NextUpdatesController.show().url shouldBe s"$contextRoute/submission-deadlines"
+      obligations.controllers.routes.NextUpdatesController.show().url shouldBe s"$contextRoute/submission-deadlines"
     }
   }
 

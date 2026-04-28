@@ -41,7 +41,7 @@ import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import play.api.Configuration
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, notFoundHttpResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.client.RequestBuilder
