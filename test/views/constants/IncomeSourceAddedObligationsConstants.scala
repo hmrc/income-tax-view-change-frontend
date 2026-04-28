@@ -18,6 +18,8 @@ package views.constants
 
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants._
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 import java.time.LocalDate
 
@@ -27,16 +29,16 @@ object IncomeSourceAddedObligationsConstants {
   val jan31st2025 = "31 January 2025"
   val jan31st2026 = "31 January 2026"
 
-  val addIncomeSourceShowURL: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.show().url
-  val addIncomeSourceShowAgentURL: String = controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent().url
+  val addIncomeSourceShowURL: String = addBusinessRoutes.AddIncomeSourceController.show().url
+  val addIncomeSourceShowAgentURL: String = addBusinessRoutes.AddIncomeSourceController.showAgent().url
 
   val nextUpdatesUrl: String = obligations.controllers.routes.NextUpdatesController.show().url
   val nextUpdatesAgentUrl: String = obligations.controllers.routes.NextUpdatesController.showAgent().url
 
   def reportingFrequencyPageUrl(isAgent: Boolean): String = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
-  val manageBusinessesUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-  val manageBusinessesAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  val manageBusinessesUrl: String = manageBusinessRoutes.ManageYourBusinessesController.show().url
+  val manageBusinessesAgentUrl: String = manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
 
   val testId: String = "XAIS00000000005"
   val submitSoftwareUrl = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"

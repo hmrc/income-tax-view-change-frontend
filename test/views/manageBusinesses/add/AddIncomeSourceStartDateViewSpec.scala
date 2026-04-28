@@ -28,6 +28,7 @@ import testUtils.TestSupport
 import views.html.manageBusinesses.add.AddIncomeSourceStartDateView
 
 import java.time.LocalDate
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
@@ -116,23 +117,23 @@ class AddIncomeSourceStartDateViewSpec extends TestSupport {
 
   def getBackUrl(isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, UkProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
-      case (true, UkProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-      case (false, ForeignProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.show()
-      case (true, ForeignProperty) => controllers.manageBusinesses.add.routes.AddIncomeSourceController.showAgent()
-      case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = NormalMode)
-      case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = NormalMode)
+      case (false, UkProperty) => addBusinessRoutes.AddIncomeSourceController.show()
+      case (true, UkProperty) => addBusinessRoutes.AddIncomeSourceController.showAgent()
+      case (false, ForeignProperty) => addBusinessRoutes.AddIncomeSourceController.show()
+      case (true, ForeignProperty) => addBusinessRoutes.AddIncomeSourceController.showAgent()
+      case (false, SelfEmployment) => addBusinessRoutes.AddBusinessNameController.show(mode = NormalMode)
+      case (true, SelfEmployment) => addBusinessRoutes.AddBusinessNameController.showAgent(mode = NormalMode)
     }).url
   }
 
   def getBackUrlChange(isAgent: Boolean, incomeSourceType: IncomeSourceType): String = {
     ((isAgent, incomeSourceType) match {
-      case (false, UkProperty) => controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(UkProperty)
-      case (true, UkProperty) => controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
-      case (false, ForeignProperty) => controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(ForeignProperty)
-      case (true, ForeignProperty) => controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
-      case (false, SelfEmployment) => controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
-      case (true, SelfEmployment) => controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
+      case (false, UkProperty) => addBusinessRoutes.IncomeSourceCheckDetailsController.show(UkProperty)
+      case (true, UkProperty) => addBusinessRoutes.IncomeSourceCheckDetailsController.showAgent(UkProperty)
+      case (false, ForeignProperty) => addBusinessRoutes.IncomeSourceCheckDetailsController.show(ForeignProperty)
+      case (true, ForeignProperty) => addBusinessRoutes.IncomeSourceCheckDetailsController.showAgent(ForeignProperty)
+      case (false, SelfEmployment) => addBusinessRoutes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+      case (true, SelfEmployment) => addBusinessRoutes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
     }).url
   }
 

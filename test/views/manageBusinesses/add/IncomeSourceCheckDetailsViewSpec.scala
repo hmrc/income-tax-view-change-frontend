@@ -26,6 +26,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 import java.time.LocalDate
 
@@ -182,7 +183,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     )
 
   def postAction(incomeSourceType: IncomeSourceType): Call = {
-    controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
+    addBusinessRoutes.IncomeSourceCheckDetailsController.submit(incomeSourceType)
   }
 
   class Setup(isAgent: Boolean,
@@ -197,7 +198,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
 
     val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else
       controllers.routes.HomeController.show().url
-    val postAction: Call = controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, mode = NormalMode)
+    val postAction: Call = addBusinessRoutes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, mode = NormalMode)
 
 
     lazy val view: HtmlFormat.Appendable = {

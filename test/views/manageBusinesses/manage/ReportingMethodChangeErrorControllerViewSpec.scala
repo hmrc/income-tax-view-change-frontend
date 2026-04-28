@@ -22,10 +22,12 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.manageBusinesses.manage.ReportingMethodChangeErrorView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 
 class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
 
-  private lazy val manageIncomeSourceDetailsController = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController
+  private lazy val manageIncomeSourceDetailsController = manageYourBusinessRoutes.ManageIncomeSourceDetailsController
 
   val reportingMethodChangeErrorView: ReportingMethodChangeErrorView = app.injector.instanceOf[ReportingMethodChangeErrorView]
 
@@ -89,8 +91,8 @@ class ReportingMethodChangeErrorControllerViewSpec extends TestSupport {
   }
 
   def getManageIncomeSourcesUrl(isAgent: Boolean): String = {
-    if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
-    else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+    if(isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+    else manageBusinessRoutes.ManageYourBusinessesController.show().url
   }
 
   for {
