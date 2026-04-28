@@ -23,6 +23,7 @@ import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._
+import utils.Converters.OptionExtension
 
 case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                         viewModel: CheckDetailsViewModel,
@@ -64,10 +65,10 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
          Json.obj("businessName"-> Some(businessDetailsViewModel.businessName)) ++
           Json.obj("dateStarted"-> Some(businessDetailsViewModel.businessStartDate)) ++
           Json.obj("businessDescription" -> businessDetailsViewModel.businessTrade) ++
-          Json.obj("addressLine1" -> businessDetailsViewModel.businessAddressLine1) ++
-          Json.obj("addressLine2"-> businessDetailsViewModel.businessAddressLine2) ++
-          Json.obj("addressLine3"-> businessDetailsViewModel.businessAddressLine3) ++
-          Json.obj("addressTownOrCity"-> businessDetailsViewModel.businessAddressLine4) ++
+          Json.obj("addressLine1" -> businessDetailsViewModel.businessAddressLine1.trim()) ++
+          Json.obj("addressLine2"-> businessDetailsViewModel.businessAddressLine2.map(_.trim).flattenEmptyString()) ++
+          Json.obj("addressLine3"-> businessDetailsViewModel.businessAddressLine3.map(_.trim).flattenEmptyString()) ++
+          Json.obj("addressTownOrCity"-> businessDetailsViewModel.businessAddressLine4.map(_.trim).flattenEmptyString()) ++
           Json.obj("addressPostcode"-> businessDetailsViewModel.businessPostalCode) ++
           Json.obj("addressCountry"-> businessDetailsViewModel.businessCountryCode)
 

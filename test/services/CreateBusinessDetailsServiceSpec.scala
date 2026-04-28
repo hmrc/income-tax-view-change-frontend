@@ -84,12 +84,25 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
       }
     }
     "convertToCreateBusinessIncomeSourceRequest" should {
-      "convert to correct CreateBusinessIncomeSourceRequest model " in {
+      "convert to correct CreateBusinessIncomeSourceRequest model" in {
         val viewModel = createBusinessViewModel
         val result = UnderTestCreateBusinessDetailsService.convertToCreateBusinessIncomeSourceRequest(viewModel)
         result shouldBe Right(CreateBusinessIncomeSourceRequest(testMtditid,
           List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
             AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
+            Some("someBusinessTrade"), "2022-11-11", None, None))))
+      }
+
+      "convert to correct CreateBusinessIncomeSourceRequest model with trimmed address lines" in {
+        val viewModel = createBusinessViewModel.copy(
+          businessAddressLine2 = Some(" Address Place 2 "),
+          businessAddressLine3 = Some(" "),
+          businessAddressLine4 = None
+        )
+        val result = UnderTestCreateBusinessDetailsService.convertToCreateBusinessIncomeSourceRequest(viewModel)
+        result shouldBe Right(CreateBusinessIncomeSourceRequest(testMtditid,
+          List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
+            AddressDetails("businessAddressLine1", Some("Address Place 2"), None, None, Some("GB"), Some("SE15 4ER")),
             Some("someBusinessTrade"), "2022-11-11", None, None))))
       }
     }

@@ -51,6 +51,12 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     businessCountryName = Some("United Kingdom"),
     addressId = None
   )
+  
+  val createBusinessViewModelTrailing: CheckBusinessDetailsViewModel = createBusinessViewModel.copy(
+    businessAddressLine2 = Some("Test Unit "),
+    businessAddressLine3 = Some("    "),
+    businessAddressLine4 = Some(" Test City")
+  )
 
   val createForeignPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
@@ -60,11 +66,17 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     tradingStartDate = LocalDate.of(2022, 1, 1),
     incomeSourceType = UkProperty)
 
-  def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType, mtdUserRole: MTDUserRole, isError: Boolean, isTrigMig: Boolean = false): CreateIncomeSourceAuditModel = {
+  def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
+                                      mtdUserRole: MTDUserRole,
+                                      isError: Boolean,
+                                      isTrigMig: Boolean = false,
+                                      trailingSpace: Boolean = false): CreateIncomeSourceAuditModel = {
+    val createBusinessVM = if (trailingSpace) createBusinessViewModelTrailing else createBusinessViewModel
+    
     (incomeSourceType, mtdUserRole, isError) match {
-      case (SelfEmployment, MTDIndividual, true) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, Some(failureCategory), Some(failureReason), None, isTrigMig)
-      case (SelfEmployment, MTDIndividual, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)), isTrigMig)
-      case (SelfEmployment, ur, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)), isTrigMig)(agentUserConfirmedClient(ur == MTDSupportingAgent))
+      case (SelfEmployment, MTDIndividual, true) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessVM, Some(failureCategory), Some(failureReason), None, isTrigMig)
+      case (SelfEmployment, MTDIndividual, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessVM, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)), isTrigMig)
+      case (SelfEmployment, ur, false) => CreateIncomeSourceAuditModel(incomeSourceType, createBusinessVM, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)), isTrigMig)(agentUserConfirmedClient(ur == MTDSupportingAgent))
       case _ => CreateIncomeSourceAuditModel(incomeSourceType, createForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(incomeSourceId)), isTrigMig)
     }
   }
@@ -138,6 +150,9 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     }
     "user is an Individual and when income source type is Self Employment and is triggered migration journey" in {
       assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false, isTrigMig = true).detail, detailIndividualSETrigMig)
+    }
+    "user is an Individual and when income source type is Self Employment with trailing spaces" in {
+      assertJsonEquals(getCreateIncomeSourceAuditModel(SelfEmployment, MTDIndividual, isError = false, trailingSpace = true).detail, detailIndividualSE)
     }
 
     "user is an primary Agent and when income source type is Self Employment" in {
