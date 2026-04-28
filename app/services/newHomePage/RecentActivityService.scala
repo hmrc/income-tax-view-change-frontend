@@ -22,8 +22,9 @@ import obligations.connectors.ObligationsConnector
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
-import models.newHomePage.{RecentActivityCard, RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel}
+import models.newHomePage.{RecentActivityCard, RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import obligations.models.{ObligationsModel, SingleObligationModel}
+import models.repaymentHistory.RepaymentHistoryModel
 import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -69,13 +70,29 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       }
   }
 
-  def recentActivityCards(recentSubmissionActivity: RecentActivitySubmissionsModel, recentPayment: Option[RecentActivityPaymentModel])(implicit mtdUser: MtdItUser[_]): RecentActivityViewModel = {
-    if(mtdUser.isSupportingAgent) {
+  def getRecentRefundActivity(repaymentHistoryModel: RepaymentHistoryModel, dateService: DateServiceInterface): Option[RecentRefundModel] = {
+    val today = dateService.getCurrentDate
+    val recentActivityDate = today.minusDays(90)
+
+    val mostRecentRefundWithin90days = repaymentHistoryModel.repaymentsViewerDetails
+      .flatMap { refund =>
+        refund.estimatedRepaymentDate.collect {
+          case date if !date.isBefore(recentActivityDate) && !date.isAfter(today) => refund
+        }
+      }
+      .maxByOption(_.estimatedRepaymentDate)
+
+    mostRecentRefundWithin90days.map(RecentRefundModel(_))
+  }
+
+  def recentActivityCards(recentSubmissionActivity: RecentActivitySubmissionsModel, recentPayment: Option[RecentActivityPaymentModel], recentRefundModel: Option[RecentRefundModel])(implicit mtdUser: MtdItUser[_]): RecentActivityViewModel = {
+    if (mtdUser.isSupportingAgent) {
       RecentActivityViewModel(Seq.empty)
     } else {
       val submissionsCards = getRecentSubmissionsCards(recentSubmissionActivity.mostRecentAnnualSubmission, recentSubmissionActivity.mostRecentQuarterlySubmission)
       val paymentCard = getRecentPaymentCard(recentPayment)
-      RecentActivityViewModel(submissionsCards ++ paymentCard)
+      val refundCard = getRecentRefundCard(recentRefundModel).toList
+      RecentActivityViewModel(submissionsCards ++ paymentCard ++ refundCard)
     }
   }
 
@@ -133,6 +150,26 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       date.getYear + 1
     } else {
       TaxYear.getTaxYear(date).endYear
+    }
+  }
+
+  private def getRecentRefundCard(recentRefundModel: Option[RecentRefundModel])(implicit mtdItUser: MtdItUser[_]): Option[RecentActivityCard] = {
+
+    val paymentCreditRefundUrl = if (mtdItUser.isAgent) {
+      controllers.routes.PaymentHistoryController.showAgent().url
+    } else {
+      controllers.routes.PaymentHistoryController.show().url
+    }
+
+    recentRefundModel.map { refund =>
+      RecentActivityCard(
+        linkContentText = "new.home.recentActivity.recentRefund.link.text",
+        linkUrl = paymentCreditRefundUrl,
+        contentText = "new.home.recentActivity.recentRefund.content.text",
+        dateContentText = "new.home.recentActivity.recentRefund.date.content.text",
+        cardDate = refund.recentRefund.estimatedRepaymentDate.get,
+        cardAmount = refund.recentRefund.totalRepaymentAmount
+      )
     }
   }
 }

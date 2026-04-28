@@ -21,6 +21,7 @@ import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import models.admin.{PaymentHistoryRefunds, RecentActivity}
 import models.admin.RecentActivity
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
@@ -67,11 +68,18 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
         case obligations: ObligationsModel => obligations
         case _ => ObligationsModel(Nil)
       }
+
+      repaymentHistoryData <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds)).map {
+        case Right(repaymentHistory) => models.repaymentHistory.RepaymentHistoryModel(repaymentHistory)
+        case Left(value) => models.repaymentHistory.RepaymentHistoryModel(Nil)
+      }
+
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       recentSubmissionActivities = recentActivityService.getRecentSubmissionActivity(fulfilledObligations, currentItsaStatus)
       payments <- paymentHistoryService.getPaymentHistory().map(_.getOrElse(List.empty[Payment]))
       recentPayment = recentActivityService.getRecentPaymentActivity(payments)
-      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPayment)
+      recentRefunds = recentActivityService.getRecentRefundActivity(repaymentHistoryData, dateService)
+      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPayment, recentRefunds)
     } yield {
       Ok(newHomeRecentActivityView(
         origin,
