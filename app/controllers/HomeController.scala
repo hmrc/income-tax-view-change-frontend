@@ -31,7 +31,6 @@ import models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
-import obligations.models.NextUpdatesTileViewModel
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService

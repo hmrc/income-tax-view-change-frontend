@@ -42,7 +42,7 @@ class SignUpSubmissionService @Inject()(
                                        ) extends Logging {
 
   private[services] def getOptInSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpSessionData]] = {
-    repository.fetchSigninSessionData()
+    repository.fetchSignUpSessionData()
   }
 
   private[services] def getAllSignUpTaxYears(

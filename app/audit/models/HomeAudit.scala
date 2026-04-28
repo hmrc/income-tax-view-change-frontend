@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import obligations.models.NextUpdatesTileViewModel
+import models.homePage.NextUpdatesTileViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate

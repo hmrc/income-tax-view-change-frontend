@@ -41,7 +41,7 @@ class SignUpSessionDataRepository @Inject()(val repository: UIJourneySessionData
       })
   }
   
-  def fetchSigninSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpSessionData]] = {
+  def fetchSignUpSessionData()(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SignUpSessionData]] = {
     repository.get(hc.sessionId.get.value, Opt(SignUpJourney)).map(_.flatMap(_.signUpSessionData))
   }
 

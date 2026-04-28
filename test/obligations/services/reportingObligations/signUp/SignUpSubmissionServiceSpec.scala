@@ -77,7 +77,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
           val selectedOptInYear = Some("2025-2026")
           val optInSessionData = SignUpSessionData(Some(optInContextData), selectedSignUpYear = selectedOptInYear)
 
-          when(mockSignUpSessionDataRepository.fetchSigninSessionData()(hc, ec))
+          when(mockSignUpSessionDataRepository.fetchSignUpSessionData()(hc, ec))
             .thenReturn(Future(Some(optInSessionData)))
 
           val request = service.getOptInSessionData()
@@ -89,7 +89,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
 
         "return None" in {
 
-          when(mockSignUpSessionDataRepository.fetchSigninSessionData()(hc, ec))
+          when(mockSignUpSessionDataRepository.fetchSignUpSessionData()(hc, ec))
             .thenReturn(Future(None))
 
           val request = service.getOptInSessionData()
@@ -177,7 +177,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
             when(mockDateService.getCurrentTaxYear)
               .thenReturn(currentTaxYear)
 
-            when(mockSignUpSessionDataRepository.fetchSigninSessionData()(hc, ec))
+            when(mockSignUpSessionDataRepository.fetchSignUpSessionData()(hc, ec))
               .thenReturn(Future(Some(optInSessionData)))
 
             when(mockOptInService.fetchSignUpProposition()(any(), any(), any()))
@@ -226,7 +226,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
             when(mockDateService.getCurrentTaxYear)
               .thenReturn(currentTaxYear)
 
-            when(mockSignUpSessionDataRepository.fetchSigninSessionData()(hc, ec))
+            when(mockSignUpSessionDataRepository.fetchSignUpSessionData()(hc, ec))
               .thenReturn(Future(Some(optInSessionData)))
 
             when(mockOptInService.fetchSignUpProposition()(any(), any(), any()))
@@ -276,7 +276,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
             when(mockDateService.getCurrentTaxYear)
               .thenReturn(currentTaxYear)
 
-            when(mockSignUpSessionDataRepository.fetchSigninSessionData()(hc, ec))
+            when(mockSignUpSessionDataRepository.fetchSignUpSessionData()(hc, ec))
               .thenReturn(Future(Some(optInSessionData)))
 
             when(mockItsaStatusUpdateConnector.signUp(any(), any())(any()))
@@ -322,7 +322,7 @@ class SignUpSubmissionServiceSpec extends UnitSpec
             when(mockDateService.getCurrentTaxYear)
               .thenReturn(currentTaxYear)
 
-            when(mockSignUpSessionDataRepository.fetchSigninSessionData()(hc, ec))
+            when(mockSignUpSessionDataRepository.fetchSignUpSessionData()(hc, ec))
               .thenReturn(Future(Some(optInSessionData)))
 
             when(mockItsaStatusUpdateConnector.signUp(any(), any())(any()))

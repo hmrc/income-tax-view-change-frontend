@@ -136,7 +136,7 @@ class SignUpSessionDataRepositorySpec extends UnitSpec
         when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney)))
           .thenReturn(Future(Some(retrievedUiSessionData)))
 
-        val request = signupRepository.fetchSigninSessionData()
+        val request = signupRepository.fetchSignUpSessionData()
         whenReady(request) { result => result shouldBe Some(optInSessionData) }
       }
     }
@@ -147,7 +147,7 @@ class SignUpSessionDataRepositorySpec extends UnitSpec
         when(repository.get(hc.sessionId.get.value, Opt(SignUpJourney)))
           .thenReturn(Future(None))
 
-        val request = signupRepository.fetchSigninSessionData()
+        val request = signupRepository.fetchSignUpSessionData()
         whenReady(request) { result => result shouldBe None }
       }
     }

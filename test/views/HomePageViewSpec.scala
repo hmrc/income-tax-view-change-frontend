@@ -36,7 +36,6 @@ import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import views.html.HomeView
-import obligations.models.NextUpdatesTileViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.util.Random
