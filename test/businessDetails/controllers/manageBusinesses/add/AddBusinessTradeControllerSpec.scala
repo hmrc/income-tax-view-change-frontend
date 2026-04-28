@@ -28,6 +28,8 @@ import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{AddressModel, CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
+import org.mockito.ArgumentMatchers.{any, same}
+import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -209,9 +211,8 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
               "redirect to the choose sole trader business address page" when {
                 "the OverseasBusinessAddress FS is on" when {
-                  "the individual is authenticated and the business trade entered is valid with a valid address on file - UK" in {
-                    enable(OverseasBusinessAddress)
-                    setupMockSuccess(mtdRole)
+                  "the individual is authenticated and the business trade entered is valid" in {
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                     setupMockCreateSession(true)
@@ -255,9 +256,8 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
 
               "redirect to the is the new address in the UK page" when {
                 "the OverseasBusinessAddress FS is on" when {
-                  "the individual is authenticated and the business trade entered is valid and theres no addresses on file" in {
-                    enable(OverseasBusinessAddress)
-                    setupMockSuccess(mtdRole)
+                  "the individual is authenticated and the business trade entered is valid" in {
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                     setupMockCreateSession(true)
