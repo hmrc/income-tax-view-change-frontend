@@ -22,7 +22,7 @@ import mocks.services.{MockDateService, MockITSAStatusService}
 import models.admin.{NewHomePage, RecentActivity}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.newHomePage.RecentActivityViewModel
-import models.obligations.ObligationsModel
+import obligations.models.ObligationsModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{when, mock as mMock}
 import play.api

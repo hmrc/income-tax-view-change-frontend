@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testPropertyIncomeId, testSelfEmploymentId}
 
 import java.time.LocalDate

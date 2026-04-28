@@ -16,21 +16,22 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, ObligationsConnector}
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
-import mocks.connectors.MockObligationsConnector
 import mocks.services.MockCalculationService
 import models.incomeSourceDetails.TaxYear
-import models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.{CalculationService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import obligations.models.*
+import obligations.connectors.ObligationsConnector
+import obligations.mocks.connectors.MockObligationsConnector
 
 import java.time.LocalDate
 

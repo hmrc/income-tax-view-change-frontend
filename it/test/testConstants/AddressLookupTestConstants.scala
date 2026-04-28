@@ -39,7 +39,11 @@ object AddressLookupTestConstants {
       |      "mandatoryFields": {
       |        "postcode": true
       |      },
-      |      "showOrganisationName": false
+      |      "showOrganisationName": false,
+      |      "line1MaxLength": 35,
+      |      "line2MaxLength": 35,
+      |      "line3MaxLength": 35,
+      |      "townMaxLength": 35
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
@@ -109,7 +113,11 @@ object AddressLookupTestConstants {
       |      "mandatoryFields": {
       |        "postcode": true
       |      },
-      |      "showOrganisationName": false
+      |      "showOrganisationName": false,
+      |      "line1MaxLength": 35,
+      |      "line2MaxLength": 35,
+      |      "line3MaxLength": 35,
+      |      "townMaxLength": 35
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
@@ -186,7 +194,11 @@ object AddressLookupTestConstants {
       |       "addressLine1": true,
       |       "addressLine2": true
       |      },
-      |      "showOrganisationName": false
+      |      "showOrganisationName": false,
+      |      "line1MaxLength": 35,
+      |      "line2MaxLength": 35,
+      |      "line3MaxLength": 35,
+      |      "townMaxLength": 35
       |    },
       |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
@@ -268,7 +280,11 @@ object AddressLookupTestConstants {
       |       "addressLine1": true,
       |       "addressLine2": true
       |      },
-      |      "showOrganisationName": false
+      |      "showOrganisationName": false,
+      |      "line1MaxLength": 35,
+      |      "line2MaxLength": 35,
+      |      "line3MaxLength": 35,
+      |      "townMaxLength": 35
       |    },
       |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",

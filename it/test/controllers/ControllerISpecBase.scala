@@ -20,6 +20,7 @@ import auth.HeaderExtractor
 import config.FrontendAppConfig
 import helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
 import implicits.ImplicitDateFormatterImpl
+import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -31,7 +32,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.{Application, Environment, Mode}
-import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
+import repositories.UIJourneySessionDataRepository
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.testSessionId
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

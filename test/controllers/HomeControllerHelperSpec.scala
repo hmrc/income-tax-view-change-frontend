@@ -24,6 +24,7 @@ import _root_.config.ItvcErrorHandler
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
+import obligations.services.NextUpdatesService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

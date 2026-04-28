@@ -26,6 +26,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.{MockITSAStatusService, MockNextUpdatesService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.*
+import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api

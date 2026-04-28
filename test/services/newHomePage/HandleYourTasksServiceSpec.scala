@@ -27,7 +27,7 @@ import models.newHomePage.MaturityLevel.Upcoming
 import models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
 import models.newHomePage.{HandleYourTasksViewModel, NoTaskCard, SubmissionDeadlinesViewModel}
-import models.obligations.{SingleObligationModel, StatusOpen}
+import obligations.models.{SingleObligationModel, StatusOpen}
 import services.newHomePage.HandleYourTasksService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
