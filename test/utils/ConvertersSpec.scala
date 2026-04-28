@@ -22,13 +22,13 @@ import testUtils.TestSupport
 class ConvertersSpec extends TestSupport {
   import Converters.OptionExtension
   "OptionExtension" when {
-    "call trim method" should {
+    "call flattenEmptyString method" should {
       "Some('') return None" in {
-        Some("").trim() shouldBe None
+        Some("").flattenEmptyString() shouldBe None
       }
       "Some('anyString') return Some(_)" in {
         val underTest = Gen.oneOf( ('A' to 'Z') ++ ('a' to 'z') ).sample.get.toString
-        Some(underTest).trim().isDefined shouldBe true
+        Some(underTest).flattenEmptyString().isDefined shouldBe true
       }
     }
   }
