@@ -157,3 +157,11 @@ case object OptOutTaxYearsPage extends TransactionName {
 case object ReportingObligationsPage extends TransactionName {
   val name = "reporting-obligations-page"
 }
+
+case object TriggeredMigrationStart extends TransactionName {
+  val name = "triggered-migration-start"
+}
+
+case object TriggeredMigrationComplete extends TransactionName {
+  val name = "triggered-migration-complete"
+}
