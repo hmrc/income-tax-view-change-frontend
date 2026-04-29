@@ -61,7 +61,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
 
   "getCalculationListUrl" should {
     "return the correct url" in new Setup {
-      connector.getCalculationListUrl(testNino, testTaxYear.toString) shouldBe s"http://localhost:9999/calculation-list/$testNino/$testTaxYear"
+      connector.getCalculationListUrl(testNino, testTaxYear.toString) shouldBe s"http://localhost:9999/income-tax-calculation/calculation-list/$testNino/$testTaxYear"
     }
   }
 

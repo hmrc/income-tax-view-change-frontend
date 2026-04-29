@@ -43,7 +43,9 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
     calculationListConnector.getCalculationList(Nino(user.nino), taxYear.toString).flatMap {
       case res: CalculationListModel => Future.successful(res.crystallised)
       case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
-      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+      case err: CalculationListErrorModel =>
+        Logger("application").error(s"CalculationListService#getLegacyCrystallisationResult: error received: ${err.code} - ${err.message}")
+        Future.successful(None) // treat as non-crystallised instead of throwing
     }
   }
 
@@ -52,7 +54,9 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
     calculationListConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
       case res: CalculationListModel => Future.successful(res.crystallised)
       case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
-      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+      case err: CalculationListErrorModel =>
+        Logger("application").error(s"CalculationListService#getTYSCrystallisationResult: error received: ${err.code} - ${err.message}")
+        Future.successful(None) // treat as non-crystallised instead of throwing
     }
   }
 

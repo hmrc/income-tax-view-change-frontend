@@ -132,8 +132,8 @@ trait ClaimToAdjustHelper {
           Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")
           Future.successful(false)
         case err: CalculationListErrorModel =>
-          Logger("application").error("getCalculationList returned a non-valid response")
-          Future.failed(new InternalServerException(err.message))
+          Logger("application").error(s"getCalculationList returned a non-valid response: ${err.code} - ${err.message}")
+          Future.successful(false) // treat as non-crystallised instead of throwing
       }.map(!_)
     }
   }
