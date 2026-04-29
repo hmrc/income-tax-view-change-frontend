@@ -17,10 +17,19 @@
 package helpers.servicemocks
 
 import audit.models.ExtendedAuditModel
+import org.scalatest.concurrent.Eventually
+import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.{JsValue, Json}
 
-object AuditStub extends WiremockMethods {
+object AuditStub extends WiremockMethods with Eventually {
+
+  override implicit val patienceConfig =
+    PatienceConfig(
+      timeout  = Span(5, Seconds),
+      interval = Span(50, Millis)
+    )
+
 
   def stubAuditing(): Unit = {
     when(method = POST, uri = "/write/audit/merged")
@@ -33,30 +42,40 @@ object AuditStub extends WiremockMethods {
   def verifyAudit(): Unit = {
     //We cannot verify content of audit body without string matching/regex
     //It is tested in more detail at unit level
-    verify(method = POST, uri = "/write/audit")
+    eventually {
+      verify(method = POST, uri = "/write/audit")
+    }
   }
 
   def verifyAuditContains(body: JsValue): Unit = {
-    verifyContains(method = POST, uri = "/write/audit", body)
+    eventually {
+      verifyContains(method = POST, uri = "/write/audit", body)
+    }
   }
 
   def verifyAuditContainsDetail(body: JsValue): Unit = {
-    verifyContainsJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
+    eventually {
+      verifyContainsJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
+    }
   }
 
   def verifyAuditDoesNotContainsDetail(body: JsValue): Unit = {
-    verifyDoesNotContainJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
+    eventually {
+      verifyDoesNotContainJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
+    }
   }
 
   def verifyAuditEvent(auditEvent: ExtendedAuditModel,
                        auditSource: String = "income-tax-view-change-frontend"): Unit = {
-    val expectedAuditJson =
-      Json.obj(
-        "auditSource" -> auditSource,
-        "auditType" -> auditEvent.auditType,
-        "tags" -> Json.obj("transactionName" -> auditEvent.transactionName),
-        "detail" -> auditEvent.detail
-      )
-    verifyContainsJson(method = POST, uri = "/write/audit", expectedAuditJson)
+    eventually {
+      val expectedAuditJson =
+        Json.obj(
+          "auditSource" -> auditSource,
+          "auditType" -> auditEvent.auditType,
+          "tags" -> Json.obj("transactionName" -> auditEvent.transactionName),
+          "detail" -> auditEvent.detail
+        )
+      verifyContainsJson(method = POST, uri = "/write/audit", expectedAuditJson)
+    }
   }
 }

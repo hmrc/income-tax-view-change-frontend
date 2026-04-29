@@ -831,10 +831,9 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
+                mockGetReviewAndReconcileCredit(PoaTwoReconciliationCredit)
 
                 val result: Future[Result] = action(id1040000126)(fakeRequest)
-
-                mockGetReviewAndReconcileCredit(PoaTwoReconciliationCredit)
 
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
