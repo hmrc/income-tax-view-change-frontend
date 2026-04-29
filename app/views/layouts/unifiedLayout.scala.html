@@ -63,7 +63,8 @@
     useFallbackBackLink: Boolean = true,
     showServiceName: Boolean = true,
     isErrorPage: Boolean = false,
-    gatewayPage: Option[GatewayPage] = None
+    gatewayPage: Option[GatewayPage] = None,
+    showGetHelpLink: Boolean = true
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 
@@ -196,12 +197,14 @@
         @contentBlock
     </div>
 
-    <div class="govuk-body app-get-help-link">
-        <a lang="en" hreflang="en" class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{appConfig.reportAProblemNonJSUrl}">
-            @messages("getpagehelp.linkText")
-            @messages("pagehelp.opensInNewTabText")
-        </a>
-    </div>
+    @if(showGetHelpLink) {
+        <div class="govuk-body app-get-help-link">
+            <a lang="en" hreflang="en" class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{appConfig.reportAProblemNonJSUrl}">
+                @messages("getpagehelp.linkText")
+                @messages("pagehelp.opensInNewTabText")
+            </a>
+        </div>
+    }
 
 }
 
