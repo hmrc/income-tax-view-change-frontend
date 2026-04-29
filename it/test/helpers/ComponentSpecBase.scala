@@ -26,10 +26,10 @@ import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import obligations.repositories.OptOutSessionDataRepository
-import org.scalatest._
+import org.scalatest.*
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.i18n.{Lang, MessagesApi}
@@ -40,7 +40,7 @@ import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -48,7 +48,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Await, ExecutionContext}
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -232,7 +232,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     super.beforeEach()
     WireMock.reset()
     AuditStub.stubAuditing()
-    cache.removeAll()
+    Await.result(cache.removeAll(), 5.seconds)
     FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
