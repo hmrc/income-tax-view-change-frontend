@@ -90,4 +90,12 @@ object ChargeType {
   case object SL extends ChargeType {
     override val name: String = "SL"
   }
+
+  case object CC extends ChargeType {
+    override val name: String = "Cutover Credits"
+  }
+
+  case object SARepaymentSC extends ChargeType {
+    override val name: String = "SA Rept Supp Crdt Eng & NI"
+  }
 }

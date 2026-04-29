@@ -169,11 +169,9 @@ case class ChargeSummaryViewModel(
   }
 
   private def getPaymentAllocationDescription(allocation: PaymentHistoryAllocations, payment: PaymentHistoryAllocation): Html = {
-    println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxyy getPaymentAllocationDescription \n\n\n\n\n\n\n" + chargeItem.transactionType + "\n" + chargeItem.transactionId)
     val matchingPayment = payment.clearingId
     matchingPayment match {
-      case Some(paymentId) => {
-//      case Some(paymentId) if(!listChargeTypes) => {
+      case Some(paymentId) if(!allocation.iSnonRRorPFACredit) =>
         val link: String = if (isAgent) {
           PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
         } else {
@@ -183,7 +181,7 @@ case class ChargeSummaryViewModel(
         val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
         else if (payment.isCutoverCredit) messages("paymentHistory.cutOver")
         else messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
-        if (payment.isCutoverCredit || allocation.iSnonRRorPFACredit) {
+        if (payment.isCutoverCredit) {
           Html(
             s"""
                |<p class="govuk-body">
@@ -200,7 +198,8 @@ case class ChargeSummaryViewModel(
                |</a>
              """.stripMargin)
         }
-      }
+      case Some(_) =>
+        Html(messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut))
       case None => {
         Html(messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut))
       }

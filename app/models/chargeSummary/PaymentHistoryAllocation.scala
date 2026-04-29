@@ -26,7 +26,6 @@ case class PaymentHistoryAllocations (allocations: Seq[PaymentHistoryAllocation]
     val paymentAllocationTextInChargeSummary = if (MfaDebitUtils.isMFADebitMainType(chargeMainType)) {
       Some("chargeSummary.paymentAllocations.mfaDebit")
     } else {
-      println("yyyyyyyyyyyyyyyyyyyyyyyyy \n" + chargeMainType + "\n" + chargeType)
       FinancialDetail.getMessageKeyByTypes(chargeMainType, chargeType)
         .map(typesKey => s"chargeSummary.paymentAllocations.$typesKey")
     }

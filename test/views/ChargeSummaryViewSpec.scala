@@ -146,6 +146,9 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
   object Messages {
     val mfaCredit = "ITSA Overpayment Relief"
+    val saBalancingChargeCredit = "SA Balancing Charge Credit"
+    val saRepaymentSupplementCredit = "SA Repayment Supplement Credit"
+    val cutoverCredit = "ITSA Cutover Credits"
     val typePOA1 = "SA Payment on Account 1"
     val typePOA2 = "SA Payment on Account 2"
     val typeBalCharge = "SA Balancing Charge"
@@ -1360,19 +1363,20 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             paymentsForCharge(typeBalCharge, VOLUNTARY_NIC2_GB, "2019-12-15", 3900.0, Some("023456789012"), Some("PAYID01")),
           )
 
-          val paymentAllocationsNoPayments = List(
-//            paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
-//            paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("223456789012"), Some("PAYID01")),
-
-//            paymentsForCharge(typePOA2, ITSA_WALES, "2018-04-01", 2400.0, Some("323456789012"), Some("PAYID01")),
-//            paymentsForCharge(typePOA2, NIC4_GB, "2018-04-15", 2500.0, Some("423456789012"), Some("PAYID01")),
-
+          val paymentAllocationsWithSomeNoPayments = List(
+            paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01")),
+            paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", 1600.0, Some("223456789012"), Some("PAYID01")),
             paymentsForCharge(mfaCredit, ITSA_ENGLAND_AND_NI, "2019-12-10", 3400.0, Some("523456789012"), Some("PAYID01")),
             paymentsForCharge(mfaCredit, NIC4_NI, "2019-12-11", 3500.0, Some("623456789012"), Some("PAYID01")),
             paymentsForCharge(mfaCredit, NIC2_WALES, "2019-12-12", 3600.0, Some("723456789012"), Some("PAYID01")),
             paymentsForCharge(mfaCredit, CGT, "2019-12-13", 3700.0, Some("823456789012"), Some("PAYID01")),
-            paymentsForCharge(mfaCredit, SL, "2019-12-14", 3800.0, Some("923456789012"), Some("PAYID01")),
-            paymentsForCharge(mfaCredit, VOLUNTARY_NIC2_GB, "2019-12-15", 3900.0, Some("023456789012"), Some("PAYID01")),
+            paymentsForCharge(saBalancingChargeCredit, ITSA_ENGLAND_AND_NI, "2019-12-14", 3400.0, Some("523456789012"), Some("PAYID01")),
+            paymentsForCharge(saBalancingChargeCredit, NIC4_NI, "2019-12-15", 3500.0, Some("623456789012"), Some("PAYID01")),
+            paymentsForCharge(saBalancingChargeCredit, NIC2_WALES, "2019-12-16", 3600.0, Some("723456789012"), Some("PAYID01")),
+            paymentsForCharge(saBalancingChargeCredit, CGT, "2019-12-17", 3700.0, Some("823456789012"), Some("PAYID01")),
+            paymentsForCharge(cutoverCredit, CC, "2019-12-18", 3700.0, Some("823456789012"), Some("PAYID01")),
+            paymentsForCharge(saRepaymentSupplementCredit, SARepaymentSC, "2019-12-19", 3700.0, Some("823456789012"), Some("PAYID01")),
+            paymentsForCharge(saRepaymentSupplementCredit, SARepaymentSC, "2019-12-20", 3700.0, Some("823456789012"), Some("PAYID01"))
           )
 
           val expectedPaymentAllocationRows = List(
@@ -1389,12 +1393,19 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           )
 
           val expectedPaymentAllocationNoPaymentRows = List(
-            "10 Dec 2019 Payment allocated to Income Tax for Balancing payment 2018 £3,400.00",
-            "11 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment 2018 £3,500.00",
-            "12 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment 2018 £3,600.00",
-            "13 Dec 2019 Payment allocated to Capital Gains Tax for Balancing payment 2018 £3,700.00",
-            "14 Dec 2019 Payment allocated to Student Loans for Balancing payment 2018 £3,800.00",
-            "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for Balancing payment 2018 £3,900.00"
+            "30 Mar 2018 Payment allocated to Income Tax for first payment on account 2018 £1,500.00",
+            "31 Mar 2018 Payment allocated to Class 4 National Insurance for first payment on account 2018 £1,600.00",
+            "10 Dec 2019 Payment allocated to Income Tax for Balancing payment £3,400.00",
+            "11 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment £3,500.00",
+            "12 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment £3,600.00",
+            "13 Dec 2019 Payment allocated to Capital Gains Tax for Balancing payment £3,700.00",
+            "14 Dec 2019 Payment allocated to Income Tax for Balancing payment £3,400.00",
+            "15 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment £3,500.00",
+            "16 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment £3,600.00",
+            "17 Dec 2019 Payment allocated to Capital Gains Tax for Balancing payment £3,700.00",
+            "18 Dec 2019 Payment allocated for balancing payment £3,700.00",
+            "19 Dec 2019 Payment allocated for balancing payment £3,700.00",
+            "20 Dec 2019 Payment allocated for balancing payment £3,700.00"
           )
 
           "chargeHistory enabled, having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
@@ -1408,10 +1419,12 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
           }
 
-          "chargeHistory enabled without a matching link to the payment allocations page for a MFACredit" in new TestSetup(chargeItem = chargeItemModel(transactionType=MfaCreditType),
-            chargeHistoryEnabled = true, paymentAllocations = paymentAllocationsNoPayments) {
-            document.select(Selectors.table).select("a").size shouldBe 6
-            document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe false
+          "chargeHistory enabled without a matching link to the payment allocations page for a MFACredit" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocationsWithSomeNoPayments) {
+            verifyPaymentHistoryContent(historyRowPOA1Created :: expectedPaymentAllocationNoPaymentRows: _*)
+            document.select(Selectors.table).select("a").size shouldBe 2
+            document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
+            document.select(Selectors.table).select("td").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe false
           }
 
           "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),

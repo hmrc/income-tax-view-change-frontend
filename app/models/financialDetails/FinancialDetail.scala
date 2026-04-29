@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import models.financialDetails.FinancialDetail.Types.*
+import models.financialDetails.FinancialDetail.Types.{MainTypeITSAOverpaymentRelief, *}
 import play.api.libs.json.{Format, Json}
 import services.DateServiceInterface
 
@@ -110,6 +110,30 @@ object FinancialDetail {
         case MTypePOA2 => "poa2"
         case MTypeBCD => "bcd"
         case MainTypeOnAccount => "onAccount"
+
+        case MainTypeITSAOverpaymentRelief => "bcd"
+        case MainTypeITSAStandaloneClaim => "bcd"
+        case MainTypeITSAAveragingAdjustment => "bcd"
+        case MainTypeITSALiteraryArtisticSpread => "bcd"
+        case MainTypeITSALossReliefClaim => "bcd"
+        case MainTypeITSAPostCessationClaim => "bcd"
+        case MainTypeITSAPAYEinyearRepayment => "bcd"
+        case MainTypeITSANPSOverpayment => "bcd"
+        case MainTypeITSAInyearReptpensionschm => "bcd"
+        case MainTypeITSAIncreaseinPAYECredit => "bcd"
+        case MainTypeITSACISNonResidentSubbie => "bcd"
+        case MainTypeITSACISIncorrectDeductions => "bcd"
+        case MainTypeITSAStandAloneAssessment => "bcd"
+        case MainTypeITSAInfmlDschrgCntrctSett => "bcd"
+        case MainTypeITSAThirdPartyReptFIS => "bcd"
+        case MainTypeITSAEISCarryBackClaims => "bcd"
+        case MainTypeITSACalcErrorCorrection => "bcd"
+        case MainTypeITSAMiscCredit => "bcd"
+        case MainTypeITSACGTAdjustments => "bcd"
+        case MainTypeITSAPensionReliefClaim => "bcd"
+        case MainTypeSABalancingChargeCredit => "bcd"
+        case MainTypeSARepaymentSupplementCredit => "bcd"
+        case MainTypeITSACutoverCredits => "bcd"
       }
 
   def getMessageKeyForChargeType(chargeType: Option[String]): Option[String] =
@@ -133,7 +157,31 @@ object FinancialDetail {
     val MTypePOA2 = "SA Payment on Account 2"
     val MTypeBCD = "SA Balancing Charge"
     val MainTypeOnAccount = "On Account"
-
+    
+    val MainTypeITSAOverpaymentRelief = "ITSA Overpayment Relief"
+    val MainTypeITSAStandaloneClaim = "ITSA Standalone Claim"
+    val MainTypeITSAAveragingAdjustment = "ITSA Averaging Adjustment"
+    val MainTypeITSALiteraryArtisticSpread = "ITSA Literary Artistic Spread"
+    val MainTypeITSALossReliefClaim = "ITSA Loss Relief Claim"
+    val MainTypeITSAPostCessationClaim = "ITSA Post Cessation Claim"
+    val MainTypeITSAPAYEinyearRepayment = "ITSA PAYE in year Repayment"
+    val MainTypeITSANPSOverpayment = "ITSA NPS Overpayment"
+    val MainTypeITSAInyearReptpensionschm = "ITSA In year Rept pension schm"
+    val MainTypeITSAIncreaseinPAYECredit = "ITSA Increase in PAYE Credit"
+    val MainTypeITSACISNonResidentSubbie = "ITSA CIS Non Resident Subbie"
+    val MainTypeITSACISIncorrectDeductions = "ITSA CIS Incorrect Deductions"
+    val MainTypeITSAStandAloneAssessment = "ITSA Stand Alone Assessment"
+    val MainTypeITSAInfmlDschrgCntrctSett = "ITSA Infml Dschrg Cntrct Sett"
+    val MainTypeITSAThirdPartyReptFIS = "ITSA Third Party Rept - FIS"
+    val MainTypeITSAEISCarryBackClaims = "ITSA EIS Carry Back Claims"
+    val MainTypeITSACalcErrorCorrection = "ITSA Calc Error Correction"
+    val MainTypeITSAMiscCredit = "ITSA Misc Credit"
+    val MainTypeITSACGTAdjustments = "ITSA CGT Adjustments"
+    val MainTypeITSAPensionReliefClaim = "ITSA Pension Relief Claim"
+    val MainTypeSABalancingChargeCredit = "SA Balancing Charge Credit"
+    val MainTypeSARepaymentSupplementCredit = "SA Repayment Supplement Credit"
+    val MainTypeITSACutoverCredits = "ITSA Cutover Credits"
+    
     // Sub Charge Types / Partials
     val CTypePartITSA = "ITSA"
     val CTypePartNIC4 = "NIC4"
@@ -143,10 +191,17 @@ object FinancialDetail {
     val CTypeCGT = "CGT"
     val CTypeCancelled = "Cancelled"
     val CTypeAccepted = "Balancing for payment collected through PAYE tax code"
+    val CTypePartCutoverCredits = "Cutover Credits"
+    val CtypeINTTGPen = "INT-TG PEN"
+    val CtypeSAReptSupp = "SA Rept Supp Crdt"
+    val CtypeRPITGPen = "RPI-TG PEN"
+    val CtypeITSAPenaltyRPI = "ITSA Penalty RPI"
+    
     val CTypeInvalid = ""
+    
 
     val subChargePOAPaymentOnAccount = "ITSA POA(Payment On Account)"
-
+    val supportedSAReptSuppCType = Set(CtypeSAReptSupp, CtypeRPITGPen, CtypeITSAPenaltyRPI)
     val supportedPOA1CTypeParts, supportedPOA2CTypeParts = Set(CTypePartITSA, CTypePartNIC4)
 
     val supportedBCDCTypeParts =
@@ -165,12 +220,44 @@ object FinancialDetail {
     val subChargeOnAccount =
       Set(subChargePOAPaymentOnAccount)
 
+    val itsa5Type2CreditChargeTypes =
+      Set (CTypePartITSA, CTypePartNIC4, CTypePartNIC2, CTypeCGT, CTypeSL)
+      
+    val itsa4Type2CreditChargeTypes =
+          Set (CTypePartITSA, CTypePartNIC4, CTypePartNIC2, CTypeCGT)
+
+    val itsa3Type2CreditChargeTypes =
+      Set(CTypePartITSA, CTypePartNIC2, CTypeCGT)
+
     val supportedCTypePartsByMainType =
       Map(
         MTypePOA1 -> supportedPOA1CTypeParts,
         MTypePOA2 -> supportedPOA2CTypeParts,
         MTypeBCD -> supportedBCDCTypeParts,
-        MainTypeOnAccount -> subChargeOnAccount
+        MainTypeOnAccount -> subChargeOnAccount,
+        MainTypeITSAOverpaymentRelief -> itsa4Type2CreditChargeTypes, 
+        MainTypeITSAStandaloneClaim -> itsa4Type2CreditChargeTypes,
+        MainTypeITSAAveragingAdjustment -> itsa4Type2CreditChargeTypes,
+        MainTypeITSALiteraryArtisticSpread -> itsa4Type2CreditChargeTypes,
+        MainTypeITSALossReliefClaim -> itsa4Type2CreditChargeTypes,
+        MainTypeITSAPostCessationClaim -> itsa3Type2CreditChargeTypes,
+        MainTypeITSAPAYEinyearRepayment -> itsa3Type2CreditChargeTypes,
+        MainTypeITSANPSOverpayment -> itsa3Type2CreditChargeTypes,
+        MainTypeITSAInyearReptpensionschm -> itsa3Type2CreditChargeTypes,
+        MainTypeITSAIncreaseinPAYECredit -> itsa3Type2CreditChargeTypes,
+        MainTypeITSACISNonResidentSubbie -> itsa3Type2CreditChargeTypes,
+        MainTypeITSACISIncorrectDeductions -> itsa3Type2CreditChargeTypes,
+        MainTypeITSAStandAloneAssessment -> itsa4Type2CreditChargeTypes,
+        MainTypeITSAInfmlDschrgCntrctSett -> itsa3Type2CreditChargeTypes,
+        MainTypeITSAThirdPartyReptFIS -> itsa3Type2CreditChargeTypes,
+        MainTypeITSAEISCarryBackClaims -> itsa3Type2CreditChargeTypes,
+        MainTypeITSACalcErrorCorrection -> itsa4Type2CreditChargeTypes,
+        MainTypeITSAMiscCredit -> itsa4Type2CreditChargeTypes,
+        MainTypeITSACGTAdjustments -> itsa3Type2CreditChargeTypes,
+        MainTypeITSAPensionReliefClaim -> itsa3Type2CreditChargeTypes,
+        MainTypeSABalancingChargeCredit -> itsa5Type2CreditChargeTypes,
+        MainTypeSARepaymentSupplementCredit -> supportedSAReptSuppCType,
+        MainTypeITSACutoverCredits -> Set(CTypePartCutoverCredits)
       )
   }
 }
