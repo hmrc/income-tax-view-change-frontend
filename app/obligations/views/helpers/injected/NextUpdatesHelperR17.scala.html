@@ -25,6 +25,7 @@
 @import models.itsaStatus.ITSAStatus.ITSAStatus
 @import models.itsaStatus.ITSAStatus
 @import obligations.services.reportingObligations.optOut.OptOutProposition
+@import _root_.implicits.HtmlFormatter.NbspString
 
 @this(
         govukTabs: GovukTabs,
@@ -266,12 +267,12 @@
 
         Seq(
             TableRow(
-                content = Text(deadlineDate.toLongDateShort),
+                content = HtmlContent(deadlineDate.toLongDateShort.toNonBreaking),
                 attributes = Map("id" -> s"quarterly-deadline-date-$idSuffix-$index"),
                 classes = "govuk-!-font-weight-bold"
             ),
             TableRow(
-                content = Text(allValidObligations.headOption.map(obl => periodMessage(obl.obligation)).getOrElse("")),
+                content = HtmlContent(allValidObligations.headOption.map(obl => periodMessage(obl.obligation).toNonBreaking).getOrElse(Html(""))),
                 attributes = Map("id" -> s"quarterly-period-$idSuffix-$index")
             ),
             TableRow(
