@@ -24,7 +24,7 @@
 @import views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
 @import models.core._
-
+@import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -63,17 +63,17 @@
 
 @changeBusinessNameURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = CheckMode, isTriggeredMigration).url
+        addBusinessRoutes.AddBusinessNameController.showAgent(mode = CheckMode, isTriggeredMigration).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = CheckMode, isTriggeredMigration).url
+        addBusinessRoutes.AddBusinessNameController.show(mode = CheckMode, isTriggeredMigration).url
     }
 }
 
 @changeBusinessTradeURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessTradeController.showAgent(mode = CheckMode, isTriggeredMigration).url
+        addBusinessRoutes.AddBusinessTradeController.showAgent(mode = CheckMode, isTriggeredMigration).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(mode = CheckMode, isTriggeredMigration).url
+        addBusinessRoutes.AddBusinessTradeController.show(mode = CheckMode, isTriggeredMigration).url
     }
 }
 
@@ -82,15 +82,15 @@
         val isNoAddressOnFile = businessDetailsViewModel.exists(_.isNoAddressOnFile)
 
         if (isNoAddressOnFile) {
-            controllers.manageBusinesses.add.routes.IsTheNewAddressInTheUKController.show(isAgent, isTriggeredMigration).url
+            addBusinessRoutes.IsTheNewAddressInTheUKController.show(isAgent, isTriggeredMigration).url
         } else {
-            controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.show(isAgent).url
+            addBusinessRoutes.ChooseSoleTraderAddressController.show(isAgent).url
         }
     } else {
         if (isAgent) {
-            controllers.manageBusinesses.add.routes.AddBusinessAddressController.showAgent(mode = CheckMode, isTriggeredMigration).url
+            addBusinessRoutes.AddBusinessAddressController.showAgent(mode = CheckMode, isTriggeredMigration).url
         } else {
-            controllers.manageBusinesses.add.routes.AddBusinessAddressController.show(mode = CheckMode, isTriggeredMigration).url
+            addBusinessRoutes.AddBusinessAddressController.show(mode = CheckMode, isTriggeredMigration).url
         }
     }
 }
@@ -119,7 +119,7 @@
 
 
 @changeStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = CheckMode, viewModel.incomeSourceType, isTriggeredMigration).url
+    addBusinessRoutes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = CheckMode, viewModel.incomeSourceType, isTriggeredMigration).url
 }
 
 @extractName = @{

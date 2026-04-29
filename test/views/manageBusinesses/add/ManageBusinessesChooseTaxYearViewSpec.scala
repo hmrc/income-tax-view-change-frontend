@@ -27,6 +27,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.manageBusinesses.add.ChooseTaxYearView
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class ManageBusinessesChooseTaxYearViewSpec extends TestSupport {
 
@@ -46,7 +47,7 @@ class ManageBusinessesChooseTaxYearViewSpec extends TestSupport {
     }
 
     val postAction: Call =
-      controllers.manageBusinesses.add.routes.ChooseTaxYearController.submit(
+      addBusinessRoutes.ChooseTaxYearController.submit(
         isAgent = false,
         isChange = false,
         incomeSourceType = incomeSourceType

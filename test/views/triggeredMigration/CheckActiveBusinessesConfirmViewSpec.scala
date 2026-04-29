@@ -23,6 +23,7 @@ import play.api.data.Form
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.triggeredMigration.CheckActiveBusinessesConfirmView
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 
 class CheckActiveBusinessesConfirmViewSpec extends TestSupport{
 
@@ -45,7 +46,7 @@ class CheckActiveBusinessesConfirmViewSpec extends TestSupport{
     val pageDocument: Document = Jsoup.parse(contentAsString(
       view(
         form = form,
-        postAction = controllers.triggeredMigration.routes.CheckActiveBusinessesConfirmController.submit(isAgent),
+        postAction = triggeredMigrationRoutes.CheckActiveBusinessesConfirmController.submit(isAgent),
         backUrl = "/check-hmrc-records",
         isAgent = isAgent
       )

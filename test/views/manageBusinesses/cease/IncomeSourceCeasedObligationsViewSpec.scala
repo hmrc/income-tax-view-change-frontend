@@ -22,6 +22,7 @@ import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 import java.time.LocalDate
 
@@ -92,7 +93,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
     ), viewAllBusinessLink, viewUpcomingUpdatesLink, viewReportingObligationsLink
   )
   
-  val manageYourBusinessShowURL: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  val manageYourBusinessShowURL: String = manageBusinessRoutes.ManageYourBusinessesController.show().url
   val viewUpcomingUpdatesURL: String = obligations.controllers.routes.NextUpdatesController.show().url
 
   "Income Source Ceased Obligations " should {

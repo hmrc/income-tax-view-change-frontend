@@ -24,6 +24,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.manageBusinesses.add.IncomeSourceAddedBackErrorView
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
 
@@ -31,8 +32,8 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 
-    lazy val postCall: Call = if (isAgent) controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
-    else controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
+    lazy val postCall: Call = if (isAgent) addBusinessRoutes.IncomeSourceAddedBackErrorController.submitAgent(incomeSourceType)
+    else addBusinessRoutes.IncomeSourceAddedBackErrorController.submit(incomeSourceType)
     lazy val view: HtmlFormat.Appendable = errorView(isAgent, incomeSourceType, postCall)
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 

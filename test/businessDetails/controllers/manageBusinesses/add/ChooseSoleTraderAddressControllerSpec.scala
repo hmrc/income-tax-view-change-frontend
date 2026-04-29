@@ -1,0 +1,203 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package businessDetails.controllers.manageBusinesses.add
+
+import businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController
+import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.MTDIndividual
+import mocks.auth.MockAuthActions
+import mocks.services.MockSessionService
+import models.UIJourneySessionData
+import models.admin.OverseasBusinessAddress
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import play.api
+import play.api.Application
+import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.{DateServiceInterface, SessionService}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2018and2019AndProp, businessInternational}
+
+import scala.annotation.unused
+import scala.concurrent.Future
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+
+class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
+
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+    ).build()
+
+  lazy val testController = app.injector.instanceOf[ChooseSoleTraderAddressController]
+
+
+  def getRequest(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {
+    if (isAgent) fakeRequestConfirmedClient()
+    else fakeRequestWithActiveSession
+  }
+
+  def postRequest(isAgent: Boolean): FakeRequest[AnyContentAsEmpty.type] = {
+    if (isAgent) fakePostRequestConfirmedClient()
+    else fakePostRequestWithActiveSession
+  }
+
+  private def getIncomeSourceCheckDetailsControllerUrlByType(isAgent: Boolean) =
+    if isAgent then addBusinessRoutes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+    else addBusinessRoutes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+
+  mtdAllRoles.foreach { mtdRole =>
+
+    val isAgent = mtdRole != MTDIndividual
+
+    s"show${if (mtdRole != MTDIndividual) "Agent" else ""}" when {
+
+      val action = testController.show(isAgent)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+
+      s"the user is authenticated as a $mtdRole" should {
+
+        "display the ChooseSoleTraderAddress page when OverseasBusinessAddress FS is enabled" when {
+
+          "user has active UK business addresses" in {
+            enable(OverseasBusinessAddress)
+            setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
+            mockNoIncomeSources()
+            val result = action(fakeRequest)
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
+            val backUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+            document.getElementById("back-fallback").attr("href") shouldBe backUrl
+            status(result) shouldBe OK
+          }
+          "user has an active international business address" in {
+            enable(OverseasBusinessAddress)
+            setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessInternational)
+            mockNoIncomeSources()
+            val result = action(fakeRequest)
+
+            val document: Document = Jsoup.parse(contentAsString(result))
+            document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
+            val backUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+            document.getElementById("back-fallback").attr("href") shouldBe backUrl
+            status(result) shouldBe OK
+          }
+        }
+
+        "redirect to the homepage" when {
+
+          "OverseasBusinessAddress FS is disabled" in {
+            disable(OverseasBusinessAddress)
+            setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
+            mockNoIncomeSources()
+            val result = action(fakeRequest)
+
+            status(result) shouldBe SEE_OTHER
+            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+      }
+
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+    }
+
+    s"submit() - isAgent == $isAgent" when {
+
+      val action = testController.submit(isAgent)
+      @unused val actionTrigMig = testController.submit(isAgent)
+      val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+
+      s"the user is authenticated as a $mtdRole" should {
+
+        s"return 303: reload the page" when {
+
+          "existing address selected" in {
+
+            enable(OverseasBusinessAddress)
+            setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
+
+            when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              .thenReturn(Future.successful(businessIncome2018and2019AndProp))
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(Right(
+                  Some(UIJourneySessionData("some fake session id", "ADD-SE"))
+                ))
+              )
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            val result =
+              action(fakeRequest.withFormUrlEncodedBody(
+                "value" -> "0"
+              ))
+
+            val redirectUrl = getIncomeSourceCheckDetailsControllerUrlByType(isAgent)
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+
+          "new address selected" in {
+
+            enable(OverseasBusinessAddress)
+            setupMockSuccess(mtdRole)
+            mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
+
+            mockNoIncomeSources()
+
+            when(mockSessionService.getMongo(any())(any(), any()))
+              .thenReturn(
+                Future(Right(
+                  Some(UIJourneySessionData("some fake session id", "ADD-SE"))
+                ))
+              )
+
+            when(mockSessionService.setMongoData(any()))
+              .thenReturn(Future(true))
+
+            val result = action(fakeRequest.withFormUrlEncodedBody(
+              "value" -> "new-address"
+            ))
+
+            val redirectUrl = addBusinessRoutes.IsTheNewAddressInTheUKController.show(isAgent).url
+
+            status(result) shouldBe SEE_OTHER
+            redirectLocation(result) shouldBe Some(redirectUrl)
+          }
+        }
+      }
+      testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
+    }
+  }
+}

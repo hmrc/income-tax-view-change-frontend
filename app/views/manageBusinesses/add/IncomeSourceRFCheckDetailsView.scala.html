@@ -24,6 +24,7 @@
 @import play.twirl.api.HtmlFormat
 @import models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
 @import services.DateServiceInterface
+@import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -65,12 +66,12 @@
 }
 
 @changeReportingFrequencyURL = @{
-    controllers.manageBusinesses.add.routes.IncomeSourceReportingFrequencyController.show(isAgent = isAgent, isChange = true, incomeSourceType = viewModel.incomeSourceType).url
+    addBusinessRoutes.IncomeSourceReportingFrequencyController.show(isAgent = isAgent, isChange = true, incomeSourceType = viewModel.incomeSourceType).url
 
 }
 
 @changeChooseTaxYearURL = @{
-    controllers.manageBusinesses.add.routes.ChooseTaxYearController.show(isAgent = isAgent, isChange = true, incomeSourceType = viewModel.incomeSourceType).url
+    addBusinessRoutes.ChooseTaxYearController.show(isAgent = isAgent, isChange = true, incomeSourceType = viewModel.incomeSourceType).url
 }
 
 @extractChangeRFRow = @{

@@ -43,6 +43,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesA
 import views.html.HomeView
 import views.html.newHomePage.*
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 import java.time.LocalDate
 import scala.annotation.unused
@@ -619,7 +620,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           document.title shouldBe homePageTitle
           document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
           document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.newJourney.view")
-          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
         }
       }
 

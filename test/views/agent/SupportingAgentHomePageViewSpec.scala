@@ -38,6 +38,7 @@ import views.html.agent.SupportingAgentHomeView
 import java.time.{LocalDate, Month}
 import scala.annotation.unused
 import scala.util.Try
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
@@ -294,7 +295,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
           }
           "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some(messages("home.incomeSources.newJourney.view"))
-            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(manageBusinessRoutes.ManageYourBusinessesController.showAgent().url)
           }
         }
       }
