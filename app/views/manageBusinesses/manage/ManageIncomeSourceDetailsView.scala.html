@@ -56,7 +56,7 @@
 @import implicitDateFormatter.longDate
 
 @changeReportingMethodUrl(taxYear: String, changeTo: String) = @{
-    controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, viewModel.incomeSourceType).url
+    businessDetails.controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, viewModel.incomeSourceType).url
 }
 
 @changeToValue(currentMethod: String) = @{

@@ -24,17 +24,19 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.manageBusinesses.add.AddPropertyView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class AddPropertyViewSpec extends TestSupport{
 
   val pageView: AddPropertyView = app.injector.instanceOf[AddPropertyView]
 
   class Setup(isAgent: Boolean, hasError: Boolean, isTrigMig: Boolean = false) {
-    lazy val postCall: Call = controllers.manageBusinesses.add.routes.AddPropertyController.submit(isAgent, isTrigMig)
+    lazy val postCall: Call = addBusinessRoutes.AddPropertyController.submit(isAgent, isTrigMig)
     lazy val backUrl: String = if(isAgent) {
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+      manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
     } else {
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+      manageBusinessRoutes.ManageYourBusinessesController.show().url
     }
     lazy val document: Document = {
       Jsoup.parse(
@@ -67,9 +69,9 @@ class AddPropertyViewSpec extends TestSupport{
       }
       "render the back link with the correct URL" in new Setup(isAgent, hasError = false) {
         val manageBusinessesUrl: String = if(isAgent) {
-          controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+          manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
         } else {
-          controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+          manageBusinessRoutes.ManageYourBusinessesController.show().url
         }
         document.getElementById("back-fallback").text() shouldBe messages("base.back")
         document.getElementById("back-fallback").attr("href") shouldBe manageBusinessesUrl

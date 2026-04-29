@@ -18,7 +18,7 @@ package services.manageBusinesses
 
 import auth.MtdItUser
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import controllers.manageBusinesses.add.routes
+import businessDetails.controllers.manageBusinesses.add.routes
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyState
 import enums.JourneyType.IncomeSourceJourneyType

@@ -68,20 +68,6 @@ GET         /agents/what-your-client-owes                                 contro
 GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
 GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)
 
-#Triggered Migration
-GET         /check-your-active-businesses/hmrc-record                     controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = false, state: Option[String] ?= None)
-GET         /agents/check-your-active-businesses/hmrc-record              controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = true, state: Option[String] ?= None)
-GET         /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = false)
-GET         /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = true)
-POST        /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.submit(isAgent: Boolean = false)
-POST        /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.submit(isAgent: Boolean = true)
-
-# Triggered migration – confirm active businesses
-GET   /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.show(isAgent: Boolean = false)
-GET   /agents/check-your-active-businesses/confirm   controllers.triggeredMigration.CheckActiveBusinessesConfirmController.show(isAgent: Boolean = true)
-POST  /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = false)
-POST  /agents/check-your-active-businesses/confirm   controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = true)
-
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show()
 GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
@@ -175,5 +161,5 @@ GET          /how-to-claim-refund-external                                contro
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
 ->          /                                                             obligations.Routes
-->          /                                                             manageBusinesses.Routes
+->          /                                                             businessDetails.Routes
 ->          /                                                             claimToAdjustPoa.Routes

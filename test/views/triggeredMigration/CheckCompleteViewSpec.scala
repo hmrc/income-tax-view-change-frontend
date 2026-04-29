@@ -22,6 +22,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.triggeredMigration.CheckCompleteView
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 
 class CheckCompleteViewSpec extends TestSupport {
 
@@ -33,7 +34,7 @@ class CheckCompleteViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean) {
     val homeCall: Call = if(isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
-    val postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
+    val postAction = triggeredMigrationRoutes.CheckCompleteController.submit(isAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent), postAction)))
   }
 

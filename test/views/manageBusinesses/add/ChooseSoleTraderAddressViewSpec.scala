@@ -26,6 +26,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.manageBusinesses.add.ChooseSoleTraderAddressView
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class ChooseSoleTraderAddressViewSpec extends TestSupport {
 
@@ -33,8 +34,8 @@ class ChooseSoleTraderAddressViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, form: Form[ChooseSoleTraderAddressForm], isInternational: Boolean = false) {
 
-    val postAction: Call = controllers.manageBusinesses.add.routes.ChooseSoleTraderAddressController.submit(isAgent)
-    val backUrl: String = controllers.manageBusinesses.add.routes.AddBusinessTradeController.show(NormalMode).url
+    val postAction: Call = addBusinessRoutes.ChooseSoleTraderAddressController.submit(isAgent)
+    val backUrl: String = addBusinessRoutes.AddBusinessTradeController.show(NormalMode).url
 
     val businessAddress: Seq[(String, Int)] = Seq(("some address line 1, TTT6AB", 0), ("some other address line 1, RRR6AB", 1))
     val businessAddressInternational: Seq[(String, Int)] = Seq(("some international address", 0), ("no postcode address", 1))

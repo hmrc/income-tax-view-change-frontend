@@ -28,6 +28,7 @@ import testUtils.ViewSpec
 import views.constants.IncomeSourceAddedObligationsConstants._
 import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import views.messages.IncomeSourceAddedMessages._
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 import java.time.LocalDate
 
@@ -56,7 +57,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
   val getReportingFrequencyUrl = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
   val getNextUpdatesUrl = obligations.controllers.routes.NextUpdatesController.show().url
-  val getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  val getManageBusinessUrl = manageBusinessRoutes.ManageYourBusinessesController.show().url
   val softwareLink = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
@@ -404,7 +405,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
                 getReportingFrequencyUrl = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url,
                 getNextUpdatesUrl = obligations.controllers.routes.NextUpdatesController.show().url,
-                getManageBusinessUrl = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url,
+                getManageBusinessUrl = manageBusinessRoutes.ManageYourBusinessesController.show().url,
                 scenario = SignUpNextYearOnly
               )
 
