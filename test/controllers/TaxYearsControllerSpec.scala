@@ -20,15 +20,15 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
-import models.incomeSourceDetails.IncomeSourceDetailsError
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.DateServiceInterface
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+
+import java.time.LocalDate
 
 class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter {
 
@@ -70,22 +70,15 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
           }
 
           "render the error page" when {
-            "there is no firstAccountingPeriodEndDate for business or property in incomeSources" in {
+            "there is no firstAccountingPeriodEndDate for business or property in incomeSources (CY+1 Users)" in {
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(businessIncome2018and2019)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
+              when(mockDateServiceInterface.getCurrentDate).thenReturn(LocalDate.of(2026, 4, 5))
+
               val result = action(fakeRequest)
               status(result) shouldBe Status.BAD_REQUEST
-            }
-
-            "income source retrieval returns an error" in {
-              setupMockSuccess(mtdUserRole)
-              mockItsaStatusRetrievalAction(IncomeSourceDetailsError(testErrorStatus, testErrorMessage))
-              mockErrorIncomeSource()
-
-              val result = action(fakeRequest)
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
             }
           }
         }

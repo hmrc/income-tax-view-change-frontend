@@ -312,6 +312,13 @@ taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
 taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 taxYears.r18.amendment.text                                    = Gallwch fwrw golwg dros dudalennau yn crynhoi blwyddyn dreth i hefyd gael gweld beth yw eich opsiynau o ran diwygio’r ffurflen dreth rydych eisoes wedi’i chyflwyno’r flwyddyn honno.
 
+## Tax Years Page - Error ##
+taxYears.error.subheading                                      = Ni all yr wybodaeth am eich Ffurflenni Treth gael ei harddangos yma ar hyn o bryd
+taxYears.error.preLinkText                                     = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fynd i’ch
+taxYears.error.linkText                                        = cyfrif Hunanasesiad ar-lein blaenorol
+taxYears.error.agentPreLinkText                                = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fewngofnodi i’ch
+taxYears.error.agentPostLinkText                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
+
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
 tax-year-summary.heading-secondary                             = 6 Ebrill {0} i 5 Ebrill {1}

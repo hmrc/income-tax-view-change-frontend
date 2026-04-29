@@ -27,6 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.TaxYearsView
+import models.incomeSourceDetails.TaxYear
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -66,8 +67,20 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
         )))
       case _ =>
         Logger("application").error(s"[TaxYearsController][handleRequest] failed to render taxYearsView for taxYears due to no orderedTaxYearsByAccountingPeriods returned")
-        val errorHandler = if (isAgent) agentItvcErrorHandler.showBadRequestError() else itvcErrorHandler.showBadRequestError()
-        Future.successful(errorHandler)
+        Future(BadRequest(taxYearsView(
+          taxYears = List(),
+          backUrl = backUrl,
+          isAgent = isAgent,
+          utr = user.saUtr,
+          itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+          isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
+          earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
+          btaNavPartial = user.btaNavPartial,
+          serviceNavigationPartial = user.serviceNavigationPartial,
+          origin = origin,
+          errorTaxYear = Some(TaxYear.getCYPlusOneTaxYear),
+          selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent)
+        )))
     }
   }
 
