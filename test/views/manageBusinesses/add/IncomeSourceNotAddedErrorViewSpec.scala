@@ -24,14 +24,15 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.manageBusinesses.add.IncomeSourceNotAddedErrorView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 class IncomeSourceNotAddedErrorViewSpec extends TestSupport {
 
   val incomeSourceNotAddedErrorView: IncomeSourceNotAddedErrorView = app.injector.instanceOf[IncomeSourceNotAddedErrorView]
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType) {
 
-    val continueAction: Call = if(isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent() else
-      controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
+    val continueAction: Call = if(isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent() else
+      manageBusinessRoutes.ManageYourBusinessesController.show()
 
     lazy val view: HtmlFormat.Appendable = incomeSourceNotAddedErrorView(isAgent = isAgent, incomeSourceType = incomeSourceType, continueAction = continueAction)
     lazy val document: Document = Jsoup.parse(contentAsString(view))

@@ -17,6 +17,7 @@
 package auth.authV2.actions
 
 import auth.MtdItUser
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxCalculationConnector
@@ -80,7 +81,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                           Future.successful(Right(req))
                         } else {
                           Future.successful(
-                            Left(Redirect(controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(req.isAgent)))
+                            Left(Redirect(triggeredMigrationRoutes.CheckHmrcRecordsController.show(req.isAgent)))
                           )
                         }
                       case Left(errorResult) =>

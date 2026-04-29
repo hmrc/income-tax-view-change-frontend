@@ -17,6 +17,11 @@
 package utils
 
 import auth.MtdItUser
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessesRoutes
+import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessesRoutes
+import businessDetails.controllers.manageBusinesses.manage.routes as manageBusinessesRoutes
+import businessDetails.controllers.manageBusinesses.routes as manageYourBusinessRoutes
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import enums.*
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.UIJourneySessionData
@@ -43,31 +48,31 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       (incomeSources.operation, isAgent(user), useDefault) match {
         case (Add, true, true) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.showAgent(incomeSources.businessType))
+            Redirect(addBusinessesRoutes.ReportingMethodSetBackErrorController.showAgent(incomeSources.businessType))
           }
         case (Add, true, false) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.showAgent(incomeSources.businessType))
+            Redirect(addBusinessesRoutes.IncomeSourceAddedBackErrorController.showAgent(incomeSources.businessType))
           }
         case (Add, false, true) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.ReportingMethodSetBackErrorController.show(incomeSources.businessType))
+            Redirect(addBusinessesRoutes.ReportingMethodSetBackErrorController.show(incomeSources.businessType))
           }
         case (Add, false, false) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.add.routes.IncomeSourceAddedBackErrorController.show(incomeSources.businessType))
+            Redirect(addBusinessesRoutes.IncomeSourceAddedBackErrorController.show(incomeSources.businessType))
           }
         case (Manage, _, _) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.manage.routes.CannotGoBackErrorController.show(isAgent(user), incomeSources.businessType))
+            Redirect(manageBusinessesRoutes.CannotGoBackErrorController.show(isAgent(user), incomeSources.businessType))
           }
         case (Cease, true, _) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.showAgent(incomeSources.businessType))
+            Redirect(ceaseBusinessesRoutes.IncomeSourceCeasedBackErrorController.showAgent(incomeSources.businessType))
           }
         case (Cease, false, _) =>
           Future.successful {
-            Redirect(controllers.manageBusinesses.cease.routes.IncomeSourceCeasedBackErrorController.show(incomeSources.businessType))
+            Redirect(ceaseBusinessesRoutes.IncomeSourceCeasedBackErrorController.show(incomeSources.businessType))
           }
         case (e, _, _) =>
           throw new Exception(s"Invalid operation found: ${e.operationType}")
@@ -78,9 +83,9 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
     user => {
       Future.successful {
         lazy val manageBusinessesCall = (isAgent(user), isTriggeredMigration) match {
-          case (false, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.show()
-          case (true, false) => controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent()
-          case (isAgent, true) => controllers.triggeredMigration.routes.CheckHmrcRecordsController.show(isAgent)
+          case (false, false) => manageYourBusinessRoutes.ManageYourBusinessesController.show()
+          case (true, false) => manageYourBusinessRoutes.ManageYourBusinessesController.showAgent()
+          case (isAgent, true) => triggeredMigrationRoutes.CheckHmrcRecordsController.show(isAgent)
         }
 
         Redirect(manageBusinessesCall)

@@ -18,6 +18,7 @@
 @import views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 @this(
     mainTemplate: unifiedLayout,
@@ -40,9 +41,9 @@
 
 @getManageUrl = @{
     if(isAgent) {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+        manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
     } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+        manageBusinessRoutes.ManageYourBusinessesController.show().url
     }
 }
 

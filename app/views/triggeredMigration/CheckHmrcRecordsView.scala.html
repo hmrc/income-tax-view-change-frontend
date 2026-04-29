@@ -22,6 +22,9 @@
 @import models.core.NormalMode
 @import enums.IncomeSourceJourney.{UkProperty, ForeignProperty, SelfEmployment}
 @import enums.TriggeredMigration.TriggeredMigrationState
+@import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
+@import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+
 
 @this(
     mainTemplate: unifiedLayout,
@@ -42,25 +45,25 @@
 
 @addSoleTraderBusinessURL() = @{
     if(user.isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = NormalMode, isTriggeredMigration = true).url
+        addBusinessRoutes.AddBusinessNameController.showAgent(mode = NormalMode, isTriggeredMigration = true).url
     } else {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = NormalMode, isTriggeredMigration = true).url
+        addBusinessRoutes.AddBusinessNameController.show(mode = NormalMode, isTriggeredMigration = true).url
     }
 }
 
 @ceaseSoleTraderBusinessURL(incomeSourceIdHash: String) = @{
-    if(user.isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
-    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
+    if(user.isAgent) ceaseBusinessRoutes.DeclareIncomeSourceCeasedController.showAgent(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
+    else ceaseBusinessRoutes.DeclareIncomeSourceCeasedController.show(Some(incomeSourceIdHash), SelfEmployment, isTriggeredMigration = true).url
 }
 
 @ceaseUKPropertyBusinessURL() = @{
-    if(user.isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, UkProperty, isTriggeredMigration = true).url
-    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, UkProperty, isTriggeredMigration = true).url
+    if(user.isAgent) ceaseBusinessRoutes.DeclareIncomeSourceCeasedController.showAgent(None, UkProperty, isTriggeredMigration = true).url
+    else ceaseBusinessRoutes.DeclareIncomeSourceCeasedController.show(None, UkProperty, isTriggeredMigration = true).url
 }
 
 @ceaseForeignPropertyBusinessURL() = @{
-    if(user.isAgent) controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.showAgent(None, ForeignProperty, isTriggeredMigration = true).url
-    else controllers.manageBusinesses.cease.routes.DeclareIncomeSourceCeasedController.show(None, ForeignProperty, isTriggeredMigration = true).url
+    if(user.isAgent) ceaseBusinessRoutes.DeclareIncomeSourceCeasedController.showAgent(None, ForeignProperty, isTriggeredMigration = true).url
+    else ceaseBusinessRoutes.DeclareIncomeSourceCeasedController.show(None, ForeignProperty, isTriggeredMigration = true).url
 }
 
 @soleTraderSection = {
@@ -108,9 +111,9 @@
     @link(link = addSoleTraderBusinessURL(), messageKey = "triggered-migration.check-hmrc-records.soleTrader.add.link", id = Some("sole-trader-add-link"))
 }
 
-@addPropertyURL() = @{controllers.manageBusinesses.add.routes.AddPropertyController.show(user.isAgent, isTrigMig = true).url}
-@addForeignPropertyURL() = @{controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = true).url}
-@addUKPropertyURL() = @{controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = true).url}
+@addPropertyURL() = @{addBusinessRoutes.AddPropertyController.show(user.isAgent, isTrigMig = true).url}
+@addForeignPropertyURL() = @{addBusinessRoutes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, ForeignProperty, isTriggeredMigration = true).url}
+@addUKPropertyURL() = @{addBusinessRoutes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, UkProperty, isTriggeredMigration = true).url}
 
 @addUKPropertyLink() = { @p(id = Some("add-uk-property-link")){@link(link = addUKPropertyURL(), messageKey = "manage.your.businesses.addIncomeSources.ukProperty.link")}}
 @addForeignPropertyLink() = { @p(id = Some("add-foreign-property-link")){@link(link = addForeignPropertyURL(), messageKey = "manage.your.businesses.addIncomeSources.foreignProperty.link")}}
@@ -184,7 +187,7 @@
 @ceasedBusinessSection = {
     @h2(messages("triggered-migration.check-hmrc-records.cessation-section.heading"), classes = "govuk-heading-l", optId = Some("ceased-section-heading"))
     <p id="ceased-section-text" class="govuk-body">@messages("triggered-migration.check-hmrc-records.cessation-section.text")</p>
-    <a class="govuk-link govuk-body" id="ceased-section-link" href=@controllers.manageBusinesses.cease.routes.ViewAllCeasedBusinessesController.show(isAgent, isTriggeredMigration = true)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
+    <a class="govuk-link govuk-body" id="ceased-section-link" href=@ceaseBusinessRoutes.ViewAllCeasedBusinessesController.show(isAgent, isTriggeredMigration = true)>@messages("triggered-migration.check-hmrc-records.cessation-section.text-link")</a>
 }
 
 @ceasedBannerContent(state: TriggeredMigrationState) = {

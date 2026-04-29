@@ -28,6 +28,8 @@ import testUtils.{TestSupport, ViewSpec}
 import views.constants.ManageIncomeSourceDetailsViewConstants.*
 import views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import views.messages.ManageIncomeSourceDetailsViewMessages.*
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
@@ -36,9 +38,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   def reportingFrequencyLink(isAgent: Boolean): String =
     obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
-  def backUrl(isAgent: Boolean): String = if (isAgent) controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  def backUrl(isAgent: Boolean): String = if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
 
-  else controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+  else manageBusinessRoutes.ManageYourBusinessesController.show().url
 
   def summaryListRowKeys()(implicit document: Document) = document.getElementsByClass("govuk-summary-list__key")
 
@@ -52,7 +54,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class SelfEmploymentSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, SelfEmployment).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, SelfEmployment).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -72,7 +74,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class SelfEmploymentUnknownsSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -92,7 +94,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class SelfEmploymentCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -128,7 +130,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class UkSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -147,7 +149,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class UkSetupUnknowns(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -166,7 +168,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class UkCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -202,7 +204,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class ForeignSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, ForeignProperty).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, ForeignProperty).url
     }
 
     lazy val view: HtmlFormat.Appendable = {
@@ -221,7 +223,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class ForeignSetupUnknowns(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, ForeignProperty).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, ForeignProperty).url
     }
 
     val view: HtmlFormat.Appendable = {
@@ -240,7 +242,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   class ForeignCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
-      controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
     }
 
     lazy val view: HtmlFormat.Appendable = {

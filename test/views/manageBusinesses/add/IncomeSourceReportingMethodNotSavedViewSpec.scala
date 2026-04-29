@@ -24,12 +24,14 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSavedView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
   val incomeSourceReportingMethodNotSaved: IncomeSourceReportingMethodNotSavedView = app.injector.instanceOf[IncomeSourceReportingMethodNotSavedView]
 
-  val getManageBusinessUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
-  val getManageBusinessAgentUrl: String = controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+  val getManageBusinessUrl: String = manageBusinessRoutes.ManageYourBusinessesController.show().url
+  val getManageBusinessAgentUrl: String = manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
 
   def getMessage(incomeSourceType: IncomeSourceType, key:String): String = {
     incomeSourceType match {
@@ -49,13 +51,13 @@ class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
 
     val action: Call = incomeSourceType match {
       case UkProperty =>
-        val controller = controllers.manageBusinesses.add.routes.IncomeSourceAddedController
+        val controller = addBusinessRoutes.IncomeSourceAddedController
         if (isAgent) controller.show(UkProperty) else controller.showAgent(UkProperty)
       case ForeignProperty =>
-        val controller = controllers.manageBusinesses.add.routes.IncomeSourceAddedController
+        val controller = addBusinessRoutes.IncomeSourceAddedController
         if (isAgent) controller.show(ForeignProperty) else controller.showAgent(ForeignProperty)
       case SelfEmployment =>
-        val controller = controllers.manageBusinesses.add.routes.IncomeSourceAddedController
+        val controller = addBusinessRoutes.IncomeSourceAddedController
         if (isAgent) controller.show(SelfEmployment) else controller.showAgent(SelfEmployment)
     }
     lazy val view: HtmlFormat.Appendable = incomeSourceReportingMethodNotSaved(isAgent = isAgent, incomeSourceType = incomeSourceType, continueAction = action)
