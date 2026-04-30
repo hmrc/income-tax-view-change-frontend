@@ -92,7 +92,6 @@ class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with Mock
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
         s"the user is authenticated as a $mtdRole" should {
           s"return ${Status.SEE_OTHER} and redirect to $incomeSourceType reporting method page" in {
-            disableAllSwitches()
 
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)

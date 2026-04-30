@@ -164,7 +164,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
 
     when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
     when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
@@ -216,9 +215,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
                   BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(300.00), None, None, Some(350.00), None, None, None), List.empty)
 
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
                 mockItsaStatusRetrievalAction()
-                enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
@@ -360,9 +358,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "user has a second late payment penalty with a chargeReference, so url can be generated" in {
-              enable(PenaltiesAndAppeals)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
@@ -405,9 +402,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
-              enable(PenaltiesAndAppeals)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))

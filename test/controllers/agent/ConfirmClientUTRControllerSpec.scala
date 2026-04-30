@@ -117,6 +117,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
 
         "is fully authenticated" should {
           "return OK and display confirm Client details page" in {
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
             mockItsaStatusRetrievalAction()
             mockConfirmClientResponse(HtmlFormat.empty)
@@ -200,6 +201,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
 
         "is fully authenticated" should {
           "redirect to Home page and relevant data added to session or sent to session data service successfully" in {
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
             mockItsaStatusRetrievalAction()
 

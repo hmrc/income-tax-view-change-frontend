@@ -47,7 +47,6 @@ class IncomeSummaryControllerSpec extends MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
   }
 
   mtdAllRoles.foreach { mtdUserRole =>

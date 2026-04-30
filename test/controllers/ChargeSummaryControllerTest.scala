@@ -72,7 +72,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
         val isLatePaymentCharge: Boolean = false
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
 
-        enable(ChargeHistory)
+        setupMockFeatureSwitches(ChargeHistory)
 
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
         when(documentDetail.isPayeSelfAssessment).thenReturn(false)
@@ -97,7 +97,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
+        setupMockFeatureSwitches(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -120,7 +120,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
+        setupMockFeatureSwitches(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -142,7 +142,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
+        setupMockFeatureSwitches(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -165,7 +165,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = true
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
+        setupMockFeatureSwitches(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)
@@ -193,7 +193,7 @@ class ChargeSummaryControllerTest extends MockAuthActions
 
         val isLatePaymentCharge: Boolean = false
         val documentDetailWithDueDate: DocumentDetailWithDueDate = mock(classOf[DocumentDetailWithDueDate])
-        enable(ChargeHistory)
+        setupMockFeatureSwitches(ChargeHistory)
 
         val documentDetail: DocumentDetail = mock(classOf[DocumentDetail])
         when(documentDetailWithDueDate.documentDetail).thenReturn(documentDetail)

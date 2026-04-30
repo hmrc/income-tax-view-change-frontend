@@ -23,7 +23,7 @@ import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
-import models.admin.DisplayBusinessStartDate
+import models.admin.{DisplayBusinessStartDate, FeatureSwitchName}
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -55,7 +55,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
         "the IncomeSources FS in enabled and the DisplayBusinessStartDate FS is enabled" in {
           setupMockUserAuth
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-          enable(DisplayBusinessStartDate)
+          setupMockFeatureSwitches(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession()
@@ -81,7 +81,6 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
         "the DisplayBusinessStartDate FS is disabled" in {
           setupMockUserAuth
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-          disable(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession()
@@ -107,7 +106,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
         "the call to get income source view model fails" in {
           setupMockUserAuth
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-          enable(DisplayBusinessStartDate)
+          setupMockFeatureSwitches(DisplayBusinessStartDate)
           mockBothIncomeSources()
           when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
             .thenReturn(
@@ -121,7 +120,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
         "the header carrier is missing the X-sessionId" in {
           setupMockUserAuth
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-          enable(DisplayBusinessStartDate)
+          setupMockFeatureSwitches(DisplayBusinessStartDate)
           mockBothIncomeSources()
           setupMockCreateSession(true)
           setupMockClearSession()
@@ -158,7 +157,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            enable(DisplayBusinessStartDate)
+            setupMockFeatureSwitches(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession()
@@ -184,7 +183,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
           "the call to get income source view model fails" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            enable(DisplayBusinessStartDate)
+            setupMockFeatureSwitches(DisplayBusinessStartDate)
             mockBothIncomeSources()
             when(mockIncomeSourceDetailsService.getViewIncomeSourceViewModel(any(), any()))
               .thenReturn(
@@ -198,7 +197,7 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
           "the header carrier is missing the X-sessionId" in {
             setupMockAgentWithClientAuth(isSupportingAgent)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            enable(DisplayBusinessStartDate)
+            setupMockFeatureSwitches(DisplayBusinessStartDate)
             mockBothIncomeSources()
             setupMockCreateSession(true)
             setupMockClearSession()

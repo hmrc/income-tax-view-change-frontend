@@ -57,7 +57,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
   }
 
   lazy val creditsSummaryView: CreditsSummaryView = app.injector.instanceOf[CreditsSummaryView]

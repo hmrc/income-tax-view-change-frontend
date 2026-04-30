@@ -75,7 +75,6 @@ class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFor
 
         "render the add income source page with no tables or table paragraph text" when {
           "user has no businesses or properties" in {
-            disableAllSwitches()
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()

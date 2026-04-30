@@ -31,7 +31,7 @@ trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
 
   lazy val mockFeatureSwitchService: FeatureSwitchService = mock(classOf[FeatureSwitchService])
 
-//  def mockEnable(featureSwitch: FeatureSwitchName): Unit = {
+//  override def enable(featureSwitch: FeatureSwitchName): Unit = {
 //    when(mockFeatureSwitchService.getAll()(any())).thenReturn(Future(
 //      FeatureSwitchName.allFeatureSwitches.map { fsName =>
 //        fsName.name match
@@ -40,8 +40,13 @@ trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
 //      }.toList
 //    ))
 //  }
+//
+//  override def disableAllSwitches(): Unit =
+//    when(mockFeatureSwitchService.getAll()(any())).thenReturn(
+//      Future(FeatureSwitchName.allFeatureSwitches.map(fsName => FeatureSwitch(fsName, false)).toList)
+//    )
 
-  def mockEnableMultiple(featureSwitches: FeatureSwitchName*): Unit = {
+  def setupMockFeatureSwitches(featureSwitches: FeatureSwitchName*): Unit = {
     when(mockFeatureSwitchService.getAll()(any())).thenReturn(Future(
       FeatureSwitchName.allFeatureSwitches.map { fsName =>
         fsName.name match
@@ -50,9 +55,4 @@ trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
       }.toList
     ))
   }
-
-//  def mockGetAll(): Future[List[FeatureSwitch]] = {
-//    Future(FeatureSwitchName.allFeatureSwitches.map(fsName => FeatureSwitch(fsName, false)).toList)
-//  }
-
- }
+}
