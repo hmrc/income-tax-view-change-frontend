@@ -97,8 +97,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
@@ -149,8 +148,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
 
@@ -199,8 +197,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
@@ -249,8 +246,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             s"redirect to business will report (completion) page" when {
               "called with a valid form (OptInOptOutContentUpdateR17 FS enabled)" in {
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -299,8 +295,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS enabled)" when {
               "called with a valid form" in {
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -347,8 +342,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
           "is authenticated, with a valid enrolment" should {
             s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS enabled)" when {
               "called with a valid form" in {
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 

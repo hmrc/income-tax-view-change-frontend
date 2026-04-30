@@ -31,7 +31,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.PaymentAllocationIntegrationTestConstants.*
 
-class PaymentAllocationControllerISpec extends ControllerISpecHelper with FeatureSwitching {
+class PaymentAllocationControllerISpec extends ControllerISpecHelper {
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),

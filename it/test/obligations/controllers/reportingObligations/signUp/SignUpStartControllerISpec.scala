@@ -57,8 +57,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the sign up start page" in {
-            enable(OptInOptOutContentUpdateR17, SignUpFs)
-            stubAuthorised(mtdUserRole)
+            stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear)
@@ -87,8 +86,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
           }
 
           "render the sign up start page with CY only description" in {
-            enable(OptInOptOutContentUpdateR17, SignUpFs)
-            stubAuthorised(mtdUserRole)
+            stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear)
@@ -109,8 +107,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
           }
 
           "be redirected to the reporting frequency page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
-            enable(SignUpFs)
-            stubAuthorised(mtdUserRole)
+            stubAuthorised(mtdUserRole, List(SignUpFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -130,8 +127,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
 
         "has already completed the sign-up journey (according to session data)" should {
           "redirect to the cannot go back page" in {
-            enable(OptInOptOutContentUpdateR17, SignUpFs)
-            stubAuthorised(mtdUserRole)
+            stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear, journeyComplete = true)

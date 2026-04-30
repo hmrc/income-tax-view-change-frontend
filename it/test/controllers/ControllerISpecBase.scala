@@ -102,6 +102,8 @@ trait ControllerISpecBase
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.income-tax-view-change.host" -> mockHost,
     "microservice.services.income-tax-view-change.port" -> mockPort,
+    "microservice.services.itvc-dynamic-stub.host" -> mockHost,
+    "microservice.services.itvc-dynamic-stub.port" -> mockPort,
     "microservice.services.self-assessment-api.host" -> mockHost,
     "microservice.services.self-assessment-api.port" -> mockPort,
     "microservice.services.business-account.host" -> mockHost,
@@ -121,11 +123,9 @@ trait ControllerISpecBase
     "encryption.isEnabled" -> "false",
     "microservice.services.contact-frontend.host" -> mockHost,
     "microservice.services.contact-frontend.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false",
+    "feature-switches.read-from-mongo" -> "true",
     "feature-switch.enable-time-machine" -> "false",
     "time-machine.add-years" -> "0",
     "time-machine.add-days" -> "0"
   )
-
-
 }

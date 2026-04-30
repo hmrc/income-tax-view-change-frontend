@@ -30,7 +30,7 @@ import obligations.models.*
 
 import java.time.LocalDate
 
-trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching {
+trait TaxSummaryISpecHelper extends ControllerISpecHelper {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

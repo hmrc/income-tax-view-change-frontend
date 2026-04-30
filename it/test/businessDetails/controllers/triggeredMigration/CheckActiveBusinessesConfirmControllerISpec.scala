@@ -73,8 +73,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
     s"GET $path" when {
       s"user is $mtdRole" should {
         "render the page when TriggeredMigration FS is enabled - With Year of Migration" in {
-          enable(TriggeredMigration)
-          stubAuthorised(mtdRole)
+          stubAuthorised(mtdRole, List(TriggeredMigration))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeWithYearOfMigration)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
@@ -87,8 +86,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
         }
 
         "render the page when TriggeredMigration FS is enabled - With no Year of Migration" in {
-          enable(TriggeredMigration)
-          stubAuthorised(mtdRole)
+          stubAuthorised(mtdRole, List(TriggeredMigration))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
@@ -118,8 +116,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
     s"POST $path" when {
       s"user is $mtdRole" should {
         "redirect to the complete page when 'Yes' is selected" in {
-          enable(TriggeredMigration)
-          stubAuthorised(mtdRole)
+          stubAuthorised(mtdRole, List(TriggeredMigration))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
@@ -146,8 +143,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
         }
 
         "redirect to Check HMRC Records when 'No' is selected" in {
-          enable(TriggeredMigration)
-          stubAuthorised(mtdRole)
+          stubAuthorised(mtdRole, List(TriggeredMigration))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
@@ -170,8 +166,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
         }
 
         "return BAD_REQUEST when no option is selected" in {
-          enable(TriggeredMigration)
-          stubAuthorised(mtdRole)
+          stubAuthorised(mtdRole, List(TriggeredMigration))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(

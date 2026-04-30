@@ -99,7 +99,7 @@ class TestDateService extends DateServiceInterface {
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
-  with FeatureSwitching with SessionCookieBaker {
+  with SessionCookieBaker {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -174,6 +174,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.income-tax-calculation.port" -> mockPort,
     "microservice.services.income-tax-penalties-stub.host" -> mockHost,
     "microservice.services.income-tax-penalties-stub.port" -> mockPort,
+    "microservice.services.itvc-dynamic-stub.host" -> mockHost,
+    "microservice.services.itvc-dynamic-stub.port" -> mockPort,
     "microservice.services.penalties.host" -> mockHost,
     "microservice.services.penalties.port" -> mockPort,
     "microservice.services.penalties.host" -> mockHost,
@@ -200,7 +202,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.citizen-details.port" -> mockPort,
     "microservice.services.set-up-a-payment-plan.host" -> mockHost,
     "microservice.services.set-up-a-payment-plan.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false",
+    "feature-switches.read-from-mongo" -> "true",
     "feature-switch.enable-time-machine" -> "false",
     "time-machine.add-years" -> "0",
     "time-machine.add-days" -> "0"
@@ -234,12 +236,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     WireMock.reset()
     AuditStub.stubAuditing()
     Await.result(cache.removeAll(), 5.seconds)
-    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
-    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 }

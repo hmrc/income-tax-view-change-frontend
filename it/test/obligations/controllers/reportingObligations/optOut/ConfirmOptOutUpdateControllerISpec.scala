@@ -65,8 +65,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
 
           s"render check opt-out update answers page" in {
-            enable(OptOutFs, OptInOptOutContentUpdateR17)
-            stubAuthorised(mtdUserRole)
+            stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             helper.stubOptOutInitialState(currentTaxYear(dateService),
@@ -88,8 +87,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 
         "has already completed the journey (according to session data)" should {
           s"redirect to the cannot go back page" in {
-            enable(OptOutFs, OptInOptOutContentUpdateR17)
-            stubAuthorised(mtdUserRole)
+            stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             helper.stubOptOutInitialState(currentTaxYear(dateService),
@@ -121,8 +119,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "redirect to the completion page" when {
             "user confirms opt-out for one-year scenario" in {
-              enable(OptOutFs, OptInOptOutContentUpdateR17)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
