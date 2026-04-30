@@ -76,7 +76,8 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             nextUpdateOrOverdue = Right(2)
           ).detail mustBe commonAuditDetails(Agent) ++ Json.obj(
             "overduePayments" -> 2,
-            "overdueUpdates" -> 2
+            "overdueUpdates" -> 2,
+            "userIsCYPlusOne" -> false
           )
         }
         "there is are payments and updates due which are not overdue" in {
@@ -86,7 +87,8 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             nextUpdateOrOverdue = Left(fixedDate -> false)
           ).detail, commonAuditDetails(Individual) ++ Json.obj(
             "nextPaymentDeadline" -> fixedDate.toString,
-            "nextUpdateDeadline" -> fixedDate.toString
+            "nextUpdateDeadline" -> fixedDate.toString,
+            "userIsCYPlusOne" -> false
           ))
         }
       }
@@ -94,7 +96,24 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
         assertJsonEquals(homeAuditMin.detail, Json.obj(
           "nino" -> testNino,
           "mtditid" -> testMtditid,
-          "overdueUpdates" -> 2
+          "overdueUpdates" -> 2,
+          "userIsCYPlusOne" -> false
+        ))
+      }
+
+      "the user is a CY+1 user" in {
+        val homeAudit = HomeAudit(
+          defaultMTDITUser(
+            Some(Individual),
+            IncomeSourceDetailsModel("nino", "mtditid", Some("2025"), Nil, Nil, "1")
+          ),
+          nextPaymentOrOverdue = None,
+          nextUpdateOrOverdue = Right(2)
+        )
+
+        assertJsonEquals(homeAudit.detail, commonAuditDetails(Individual) ++ Json.obj(
+          "overdueUpdates" -> 2,
+          "userIsCYPlusOne" -> true
         ))
       }
     }
@@ -113,7 +132,8 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             nextQuarterlyUpdateDueDate = None,
             nextTaxReturnDueDate = None)
           HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
-            "nextUpdateDeadline" -> fixedDate.toString
+            "nextUpdateDeadline" -> fixedDate.toString,
+            "userIsCYPlusOne" -> false
           )
         }
 
@@ -126,7 +146,8 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             nextQuarterlyUpdateDueDate = None,
             nextTaxReturnDueDate = None)
           HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
-            "nextUpdateDeadline" -> fixedDate.toString
+            "nextUpdateDeadline" -> fixedDate.toString,
+            "userIsCYPlusOne" -> false
           )
         }
       }
@@ -140,7 +161,8 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
           nextQuarterlyUpdateDueDate = None,
           nextTaxReturnDueDate = None)
         HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
-          "overdueUpdates" -> 2
+          "overdueUpdates" -> 2,
+          "userIsCYPlusOne" -> false
         )
       }
     }
