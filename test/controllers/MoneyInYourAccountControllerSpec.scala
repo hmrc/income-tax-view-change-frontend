@@ -75,10 +75,7 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
           "render the credit and refund page" when {
 
             "MFACreditsAndDebits disabled: credit charges are returned" in {
-
-              disableAllSwitches()
-              enable(CreditsRefundsRepay)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
               mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -102,9 +99,7 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
   //TODO: Re-enable these tests as part of MISUV-10631
 //            "credit charges are returned" in {
 //
-//              disableAllSwitches()
-//              enable(CreditsRefundsRepay)
-//              setupMockSuccess(mtdUserRole)
+//              setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
 //              mockItsaStatusRetrievalAction()
 //              mockSingleBISWithCurrentYearAsMigrationYear()
 //
@@ -119,8 +114,7 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
 //
 //            "credit charges are returned in sorted order of credits" in {
 //
-//              enable(CreditsRefundsRepay)
-//              setupMockSuccess(mtdUserRole)
+//              setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
 //              mockItsaStatusRetrievalAction()
 //              mockSingleBISWithCurrentYearAsMigrationYear()
 //
@@ -179,8 +173,6 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
           "render the custom not found error page" when {
 
             "CreditsRefundsRepay feature is disabled" in {
-
-              disableAllSwitches()
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
@@ -215,10 +207,7 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
           "render the start refund process" when {
 
             "RepaymentJourneyModel is returned" in {
-
-              disableAllSwitches()
-              enable(CreditsRefundsRepay)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
               mockItsaStatusRetrievalAction(singleBusinessIncomeWithCurrentYear)
               mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -238,9 +227,7 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
           "not start refund process" when {
 
             "RepaymentJourneyErrorResponse is returned" in {
-              disableAllSwitches()
-              enable(CreditsRefundsRepay)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
               mockSingleBISWithCurrentYearAsMigrationYear()
               when(mockCreditService.getAllCredits(any(), any())).thenReturn(Future.successful(
                 ANewCreditAndRefundModel()
@@ -254,7 +241,6 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
             }
 
             "CreditsRefundsRepay FS is disabled" in {
-              disableAllSwitches()
               setupMockSuccess(mtdUserRole)
 
               mockSingleBISWithCurrentYearAsMigrationYear()
@@ -263,7 +249,7 @@ class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditSe
             }
           }
         }
-                testMTDIndividualAuthFailures(action)
+        testMTDIndividualAuthFailures(action)
       }
     }
   }

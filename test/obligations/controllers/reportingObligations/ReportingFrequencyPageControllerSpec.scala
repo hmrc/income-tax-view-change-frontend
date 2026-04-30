@@ -58,7 +58,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
-    ).configure(Map("feature-switches.read-from-mongo" -> "false"))
+    ).configure(Map("feature-switches.read-from-mongo" -> "true"))
     .build()
 
   lazy val testController: ReportingFrequencyPageController = app.injector.instanceOf[ReportingFrequencyPageController]
@@ -66,7 +66,6 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
     when(mockDateServiceInterface.getCurrentDate).thenReturn(LocalDate.of(2023, 1, 1))
     when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(2024)
   }
@@ -84,8 +83,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
             when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(fixedTaxYear)
             when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
-            enable(SignUpFs, OptOutFs)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs))
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
@@ -114,7 +112,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               .thenReturn(Future(Seq(TaxYear(2024, 2025))))
 
             when(mockOptOutService.initialiseJourneyWithProposition()(any(), any(), any()))
-              .thenReturn(Future((optOutProposition)))
+              .thenReturn(Future(optOutProposition))
 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
               .thenReturn(Future(singleBusinessIncome))
@@ -149,8 +147,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
-            enable(SignUpFs, OptOutFs, OptInOptOutContentUpdateR17)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs, OptInOptOutContentUpdateR17))
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
@@ -180,7 +177,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               Future(Seq(TaxYear(2024, 2025)))
             )
             when(mockOptOutService.initialiseJourneyWithProposition()(any(), any(), any())).thenReturn(
-              Future((optOutProposition))
+              Future(optOutProposition)
             )
             when(
               mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())

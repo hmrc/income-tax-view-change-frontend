@@ -45,7 +45,6 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(NavBarFs)
   }
 
   val view: ForecastIncomeSummaryView = app.injector.instanceOf[ForecastIncomeSummaryView]

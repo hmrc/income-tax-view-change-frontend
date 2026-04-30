@@ -70,9 +70,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
       s"the user is authenticated as a $mtdRole" should {
 
         "render the page when the TriggeredMigration FS is enabled" in {
-
-          enable(TriggeredMigration)
-          setupMockSuccess(mtdRole)
+          setupMockSuccess(mtdRole, false, List(TriggeredMigration))
           mockItsaStatusRetrievalAction()
           mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
@@ -83,8 +81,6 @@ class CheckCompleteControllerSpec extends MockAuthActions {
         }
 
         "redirect to the home page when the TriggeredMigration FS is disabled" in {
-
-          disable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()

@@ -60,7 +60,7 @@ trait MockAuthActions
     with MockIncomeSourceDetailsService
     with MockAgentAuthorisedFunctions
     with MockUserAuthorisedFunctions
-    with MockAuditingService // extends TestSupport extends FeatureSwitching
+    with MockAuditingService
     with MockSessionDataService
     with MockClientDetailsService
     with MockCustomerFactsUpdateService
@@ -114,7 +114,7 @@ trait MockAuthActions
         case _ => setupMockAgentWithClientAuth(true)
       }
     }
-    mockEnableMultiple(enabledFeatures*)
+    setupMockFeatureSwitches(enabledFeatures*)
   }
 
   def mockItsaStatusRetrievalAction(

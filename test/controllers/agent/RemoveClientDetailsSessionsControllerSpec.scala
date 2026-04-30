@@ -59,6 +59,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
         "redirect to the session timeout page" in {
 
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired())
           mockItsaStatusRetrievalAction()
 
@@ -77,6 +78,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
         "remove client details session keys and redirect to the enter client UTR page" in {
 
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent = isSupportingAgent)
           mockItsaStatusRetrievalAction()
 

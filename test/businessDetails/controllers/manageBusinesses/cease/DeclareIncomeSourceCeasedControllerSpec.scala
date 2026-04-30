@@ -108,7 +108,6 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             "journey is complete" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              disableAllSwitches()
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))

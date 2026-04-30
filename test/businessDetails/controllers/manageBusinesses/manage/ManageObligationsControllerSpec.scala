@@ -164,9 +164,7 @@ class ManageObligationsControllerSpec
         s"the user is authenticated as a $mtdRole" should {
 
           "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
-
-            enable(OptInOptOutContentUpdateR17)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
             mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))
