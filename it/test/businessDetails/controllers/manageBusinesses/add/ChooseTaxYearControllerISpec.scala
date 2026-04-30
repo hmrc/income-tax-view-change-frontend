@@ -115,9 +115,8 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
             "OptInOptOutContentUpdateR17 is enabled" when {
 
               "using the manage businesses journey" in {
-
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
                 val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
 
@@ -181,8 +180,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
               "submit the reporting frequency for the income source" in {
                 val isAgent = !(mtdUserRole == MTDIndividual)
 
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                 await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
@@ -202,8 +200,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
               "return an error if the form is invalid" in {
 
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                 val journeyType = incomeSourceType match {

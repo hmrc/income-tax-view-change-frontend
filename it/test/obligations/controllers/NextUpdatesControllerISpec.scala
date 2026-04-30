@@ -22,7 +22,8 @@ import enums.MTDIndividual
 import helpers.servicemocks.*
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
-import helpers.servicemocks._
+import helpers.servicemocks.*
+import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -50,6 +51,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
     "renderViewNextUpdates" when {
       "the user has no obligations" in {
+        stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -71,6 +73,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a quarterly property income obligation only" in {
+        stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -102,6 +105,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a quarterly business income obligation only" in {
+        stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -135,6 +139,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has multiple quarterly business income obligations only" in {
+        stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
@@ -164,6 +169,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Crystallised obligation only" in {
+        stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
@@ -187,7 +193,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out Feature Switch Enabled" in {
-        enable(OptOutFs)
+        stubGetFeatureSwitches(List(OptOutFs))
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -236,8 +242,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out R17 Feature Switch Enabled" in {
-        enable(OptOutFs)
-        enable(OptInOptOutContentUpdateR17)
+        stubGetFeatureSwitches(List(OptOutFs, OptInOptOutContentUpdateR17))
 
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -303,8 +308,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out R17 Feature Switch Enabled - All ceased businesses" in {
-        enable(OptOutFs)
-        enable(OptInOptOutContentUpdateR17)
+        stubGetFeatureSwitches(List(OptOutFs, OptInOptOutContentUpdateR17))
 
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -344,6 +348,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out Feature Switch Disabled" in {
+        stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
@@ -379,8 +384,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
     "one year opt-out scenarios" when {
 
       "show reporting frequency message if opt out FS is enabled" in {
-
-        enable(OptOutFs)
+        stubGetFeatureSwitches(List(OptOutFs))
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
         val currentTaxYear = dateService.getCurrentTaxYearEnd
@@ -416,7 +420,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
     "show internal server error page" when {
       "Opt Out feature switch is enabled" when {
         "ITSA Status API Failure" in {
-          enable(OptOutFs)
+          stubGetFeatureSwitches(List(OptOutFs))
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
@@ -445,7 +449,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         }
 
         "Calculation API Failure" in {
-          enable(OptOutFs)
+          stubGetFeatureSwitches(List(OptOutFs))
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
@@ -475,7 +479,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         }
 
         "ITSA Status API Failure and Calculation API Failure" in {
-          enable(OptOutFs)
+          stubGetFeatureSwitches(List(OptOutFs))
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)

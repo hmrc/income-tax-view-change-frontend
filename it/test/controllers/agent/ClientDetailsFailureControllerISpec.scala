@@ -22,7 +22,7 @@ import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status._
 import play.api.libs.ws.WSResponse
 
-class ClientDetailsFailureControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
 
   val path = "/agents/not-authorised-to-view-client"
 

@@ -150,8 +150,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               }
 
               "valid url parameters provided and change to is annual when OptInOptOutContentUpdateR17 is enabled" in {
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
@@ -172,8 +171,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
               }
 
               "valid url parameters provided and change to is quarterly when OptInOptOutContentUpdateR17 is enabled" in {
-                enable(OptInOptOutContentUpdateR17)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",

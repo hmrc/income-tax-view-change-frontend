@@ -583,7 +583,6 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has a Coding out banner" when {
                 "CodingOut FS is enabled" in {
-                  isEnabled(FilterCodedOutPoas)
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
@@ -733,8 +732,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   "has a money in your account section" when {
                     "CreditsRefundsRepay FS is enabled and a user" that {
                       "has available credits" in {
-                        enable(CreditsRefundsRepay)
-                        stubAuthorised(mtdUserRole)
+                        stubAuthorised(mtdUserRole, List(CreditsRefundsRepay))
                         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                         val mixedJson = Json.obj(
                           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00, "totalCreditAvailableForRepayment" -> 300.00, "totalCredit" -> 300.00),

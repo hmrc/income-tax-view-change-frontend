@@ -21,7 +21,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status._
 
-class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class UTRErrorControllerISpec extends ComponentSpecBase {
   val path = "/agents/cannot-view-client"
 
   s"GET $path" should {

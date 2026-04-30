@@ -32,7 +32,7 @@ import testConstants.NewCalcDataIntegrationTestConstants._
 import testConstants.messages.TaxDueSummaryMessages._
 
 
-class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwitching {
+class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
   def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)
 

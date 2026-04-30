@@ -259,9 +259,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
       s"a $mtdUserRole user" should {
 
         "render Address row and no overseas rows when user selects an existing address from their address on file" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -290,14 +288,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           val body = result.body
           body should include("Address")
           body should not include "Added address for this business"
-
-          disable(OverseasBusinessAddress)
         }
 
         "render the correct rows when user adds a new UK address via postcode lookup" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -326,14 +320,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           val body = result.body
           body should include("Added address for this business")
           body should not include "Added international address for this business"
-
-          disable(OverseasBusinessAddress)
         }
 
         "render the correct rows when user adds a new international address" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -360,14 +350,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             pageTitle(mtdUserRole, "check-details.title")
           )
-
-          disable(OverseasBusinessAddress)
         }
 
         "render the correct rows when user has no address on file and finds a UK address via postcode lookup" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -389,14 +375,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           val body = result.body
           body should include("Added address for this business")
           body should not include "Added international address for this business"
-
-          disable(OverseasBusinessAddress)
         }
 
         "render the correct rows when user has no address on file and manually enters a UK address" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -418,13 +400,9 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           val body = result.body
           body should include("Added address for this business")
           body should not include "Added international address for this business"
-
-          disable(OverseasBusinessAddress)
         }
 
         "render only the legacy Address row and no overseas rows when OverseasBusinessAddress feature is disabled" in {
-          disable(OverseasBusinessAddress)
-          disable(NavBarFs)
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 

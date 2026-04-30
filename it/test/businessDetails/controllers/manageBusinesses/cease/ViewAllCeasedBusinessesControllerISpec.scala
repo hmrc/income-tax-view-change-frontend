@@ -50,8 +50,7 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the Cease Income Source page" when {
             "the user has multipleBusinessesWithBothPropertiesAndCeasedBusiness" in {
-              stubAuthorised(mtdUserRole)
-              enable(DisplayBusinessStartDate)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -85,8 +84,7 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the user has foreignPropertyAndCeasedBusiness " in {
-              stubAuthorised(mtdUserRole)
-              enable(DisplayBusinessStartDate)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
               IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
