@@ -16,11 +16,15 @@
 
 package models.repaymentHistory
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json._
 
 case class RepaymentItem(repaymentSupplementItem: Seq[RepaymentSupplementItem])
 
 object RepaymentItem {
 
-  implicit val format: Format[RepaymentItem] = Json.format[RepaymentItem]
+  implicit val reads: Reads[RepaymentItem] =
+    (__ \ "repaymentSupplementItem").readNullable[Seq[RepaymentSupplementItem]]
+      .map(items => RepaymentItem(items.getOrElse(Seq.empty)))
+
+  implicit val writes: OWrites[RepaymentItem] = Json.writes[RepaymentItem]
 }
