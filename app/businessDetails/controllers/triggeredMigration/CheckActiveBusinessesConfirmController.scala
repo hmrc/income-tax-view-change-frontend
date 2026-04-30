@@ -16,7 +16,9 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import audit.AuditingService
 import auth.authV2.AuthActions
+import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import forms.triggeredMigration.CheckActiveBusinessesConfirmForm
@@ -35,6 +37,7 @@ class CheckActiveBusinessesConfirmController @Inject()(
                                                         view: CheckActiveBusinessesConfirmView,
                                                         triggeredMigrationService: TriggeredMigrationService,
                                                         customerFactsUpdateService: CustomerFactsUpdateService,
+                                                        auditingService: AuditingService,
                                                         val auth: AuthActions
                                                       )(
                                                         mcc: MessagesControllerComponents,
@@ -80,7 +83,10 @@ class CheckActiveBusinessesConfirmController @Inject()(
               val mtdId = user.mtditid
               customerFactsUpdateService.updateCustomerFacts(mtdId).flatMap { _ =>
                 triggeredMigrationService.saveConfirmedData().flatMap {
-                  _ => Future.successful(Redirect(routes.CheckCompleteController.show(isAgent)))
+                  _ => {
+                    auditingService.extendedAudit(TriggeredMigrationCompleteAuditModel())
+                    Future.successful(Redirect(routes.CheckCompleteController.show(isAgent)))
+                  }
                 }
               }
             case _ =>
