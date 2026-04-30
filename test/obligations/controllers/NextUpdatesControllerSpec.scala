@@ -106,14 +106,12 @@ class NextUpdatesControllerSpec extends MockAuthActions
   /* INDIVIDUAL **/
   "The NextUpdatesController.show function" when {
 
-    disableAllSwitches()
-
     "the Next Updates feature switch is disabled" should {
 
       "called with an Authenticated HMRC-MTD-IT user with NINO" which {
 
         "successfully retrieves a set of Business NextUpdates and Previous Obligations from the NextUpdates service" should {
-
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -133,7 +131,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         }
 
         "successfully retrieves a set of Property obligations from the NextUpdates service" should {
-
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockPropertyIncomeSource()
@@ -151,7 +149,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         }
 
         "successfully retrieves a set of both Business & Property NextUpdates and Previous Obligations from the NextUpdates service" should {
-
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockBothIncomeSourcesBusinessAligned()
@@ -169,7 +167,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         }
 
         "successfully retrieves a set of only Business NextUpdates and no Previous Obligations from the NextUpdates service" should {
-
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -186,7 +184,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         }
 
         "successfully retrieves a set of only Property NextUpdates and no Previous from the NextUpdates service" should {
-
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockPropertyIncomeSource()
@@ -203,7 +201,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         }
 
         "successfully retrieves a set of only both Business & Property NextUpdates and no Previous Obligations from the NextUpdates service" should {
-
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockViewModel
@@ -223,6 +221,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         "receives an Error from the NextUpdates Service" should {
 
           "return Status ISE (500) with error page" in {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
@@ -239,7 +238,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         "doesn't have any Income Source" should {
 
           "return Status OK (200) with right html content" in {
-
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction(noIncomeDetails)
             mockNoIncomeSources()
@@ -261,6 +260,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
       "Called with an Unauthenticated User" should {
 
         "return redirect SEE_OTHER (303)" in {
+          setupMockFeatureSwitches()
           mockItsaStatusRetrievalAction()
           setupMockUserAuthorisationException()
           val result = testNextUpdatesController.show()(fakeRequestWithActiveSession)
@@ -276,7 +276,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         "failed to retrieve a set of Business NextUpdates" should {
 
           "return Status ERROR (500)" in {
-
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction(errorResponse)
             mockSingleBusinessIncomeSourceError()
@@ -294,8 +294,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
     "the opt out feature switch is enabled and optOutService returns failed future" should {
 
       s"show an INTERNAL SERVER ERROR page with HTTP ${Status.INTERNAL_SERVER_ERROR} Status " in {
-
-        enable(OptOutFs)
+        setupMockFeatureSwitches(OptOutFs)
         setupMockUserAuth
         mockItsaStatusRetrievalAction()
         mockSingleBusinessIncomeSourceError()
@@ -316,8 +315,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
 
       s"the $agentType has all correct details" should {
         "return Status OK (200) when we have obligations" in {
-
-          disableAllSwitches()
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuth(isSupportingAgent)
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -335,7 +333,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
         }
 
         "return Status INTERNAL_SERVER_ERROR (500) when we have no obligations" in {
-
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -349,8 +347,6 @@ class NextUpdatesControllerSpec extends MockAuthActions
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
       }
-
-      //      testMTDAgentAuthFailures(testNextUpdatesController.showAgent(), isSupportingAgent)
     }
   }
 }

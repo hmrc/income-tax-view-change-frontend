@@ -113,7 +113,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           }
           if (incomeSourceType == SelfEmployment) {
             "render the check details page with overseas address rows when OverseasBusinessAddress is enabled" in {
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(noIncomeDetails)
               mockNoIncomeSources()
               setupMockCreateSession(true)
@@ -136,7 +136,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
               )
 
               setupMockGetMongo(Right(Some(sessionDataWithNewAddress)))
-              enable(OverseasBusinessAddress)
 
               val result: Future[Result] = action(fakeRequest)
 
@@ -147,7 +146,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
                 include("Added address for this business") or
                   include("Added international address for this business")
                 )
-              disable(OverseasBusinessAddress)
             }
 
             "render the check details page without overseas address rows when OverseasBusinessAddress is disabled" in {
@@ -172,7 +170,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
                 )
               )
               setupMockGetMongo(Right(Some(sessionDataWithNewAddress)))
-              disable(OverseasBusinessAddress)
 
               val result: Future[Result] = action(fakeRequest)
 

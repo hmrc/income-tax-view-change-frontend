@@ -93,7 +93,6 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
   }
 
   mtdAllRoles.foreach { mtdRole =>

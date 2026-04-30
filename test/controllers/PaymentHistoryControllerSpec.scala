@@ -124,8 +124,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
     s"the is an authenticated Individual" should {
       "redirect to next url" when {
         "repayment service call is successful and PaymentHistoryRefunds Fs enabled" in {
-          enable(PaymentHistoryRefunds)
-          setupMockSuccess(MTDIndividual)
+          setupMockSuccess(MTDIndividual, false, List(PaymentHistoryRefunds))
           mockItsaStatusRetrievalAction()
           mockSingleBISWithCurrentYearAsMigrationYear()
 
@@ -140,7 +139,6 @@ class PaymentHistoryControllerSpec extends MockAuthActions
 
       "render the custom not found view" when {
         "PaymentHistoryRefunds Fs is disabled" in {
-          disable(PaymentHistoryRefunds)
           setupMockSuccess(MTDIndividual)
           mockItsaStatusRetrievalAction()
           mockSingleBISWithCurrentYearAsMigrationYear()
@@ -152,8 +150,7 @@ class PaymentHistoryControllerSpec extends MockAuthActions
 
       "render the error page" when {
         "the repayment service returns an error" in {
-          enable(PaymentHistoryRefunds)
-          setupMockSuccess(MTDIndividual)
+          setupMockSuccess(MTDIndividual, false, List(PaymentHistoryRefunds))
           mockItsaStatusRetrievalAction()
           mockSingleBISWithCurrentYearAsMigrationYear()
 

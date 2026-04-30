@@ -35,7 +35,6 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
 
     when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
     when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
@@ -65,9 +64,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
           "render the appropriate IncomeSourceDetails page" when {
 
             "the user has a valid id parameter and no latency information" in {
-
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
@@ -92,8 +89,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter and latency period expired" in {
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               setupMockCreateSession(true)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
@@ -115,10 +111,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
-
-              enable(DisplayBusinessStartDate, OptInOptOutContentUpdateR17)
-
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate, OptInOptOutContentUpdateR17))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
@@ -157,9 +150,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
-
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
@@ -189,9 +180,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "valid latency information and two tax years not crystallised and ITSA status for TY2 is Annual" in {
-
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
@@ -216,8 +205,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               manageDetailsSummaryValues.eq(3).size() shouldBe 1
             }
             "the user has a valid id parameter, valid latency information and tax year1 crystallised and tax year not crystallised" in {
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
@@ -243,8 +231,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter, valid latency information and two tax years crystallised" in { //I think this scenario is not possible
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
@@ -270,9 +257,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter, but non eligable itsa status" in {
-
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
@@ -298,8 +283,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
             }
 
             "the user has a valid id parameter, latency expired" in {
-              enable(DisplayBusinessStartDate)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))

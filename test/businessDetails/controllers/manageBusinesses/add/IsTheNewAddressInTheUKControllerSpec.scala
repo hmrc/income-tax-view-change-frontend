@@ -52,7 +52,6 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
 
     when(mockSessionService.setMongoData(any()))
       .thenReturn(Future(true))
@@ -90,8 +89,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
           "display the is the new address in the uk page" when {
             "fs is enabled" when {
               "using the manage businesses journey" in {
-                enable(OverseasBusinessAddress)
-                setupMockSuccess(mtdRole)
+                setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                 setupMockCreateSession(true)
@@ -108,8 +106,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
             }
             "display the is the address of your sole trader business in the UK page" when {
               "when user has no addresses on file using the manage businesses journey" in {
-                enable(OverseasBusinessAddress)
-                setupMockSuccess(mtdRole)
+                setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                 setupMockCreateSession(true)
@@ -123,8 +120,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 verifySetMongoData()
               }
               "when user has invalid UK addresses without post code on file using the manage businesses journey" in {
-                enable(OverseasBusinessAddress)
-                setupMockSuccess(mtdRole)
+                setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(invalidUKAddressNoPostCode)))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(invalidUKAddressNoPostCode)))))
                 setupMockCreateSession(true)
@@ -138,8 +134,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 verifySetMongoData()
               }
               "when user has no UK addresses on file using the manage businesses journey" in {
-                enable(OverseasBusinessAddress)
-                setupMockSuccess(mtdRole)
+                setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(foreignAddress)))))
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(foreignAddress)))))
                 setupMockCreateSession(true)
@@ -156,17 +151,16 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
           }
           "redirect to the home page page" when {
             "fs is disables using the manage businesses journey" in {
-              disable(OverseasBusinessAddress)
-              setupMockSuccess(mtdRole)
-              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-              setupMockCreateSession(true)
-              val result = action(fakeRequest)
-              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
-                .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
-
-              status(result) shouldBe SEE_OTHER
-              redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                val result = action(fakeRequest)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
+                
+                status(result) shouldBe SEE_OTHER
+                redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
             }
           }
         }

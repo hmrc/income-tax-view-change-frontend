@@ -70,8 +70,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
         "render the Check HMRC Records page" when {
           "state is None" in {
             val action = testController.show(isAgent)
-            enable(TriggeredMigration)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(TriggeredMigration))
             mockItsaStatusRetrievalAction()
             mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
@@ -87,8 +86,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
 
           "state is TriggeredMigrationCeased" in {
             val action = testController.show(isAgent, Some(TriggeredMigrationCeased.toString))
-            enable(TriggeredMigration)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(TriggeredMigration))
             mockItsaStatusRetrievalAction()
             mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationCeased)))
@@ -104,8 +102,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
 
           "state is TriggeredMigrationAdded" in {
             val action = testController.show(isAgent, Some(TriggeredMigrationAdded(SelfEmployment).toString))
-            enable(TriggeredMigration)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(TriggeredMigration))
             mockItsaStatusRetrievalAction()
             mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment))))
@@ -122,7 +119,6 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
         "redirect to the home page" when {
           val action = testController.show(isAgent)
           "the triggered migration feature switch is disabled" in {
-            disable(TriggeredMigration)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()
 

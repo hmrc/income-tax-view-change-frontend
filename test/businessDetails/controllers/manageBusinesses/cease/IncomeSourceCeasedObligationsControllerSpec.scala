@@ -199,7 +199,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
     reset(mockIncomeSourceDetailsService)
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
-    disableAllSwitches()
   }
 
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
