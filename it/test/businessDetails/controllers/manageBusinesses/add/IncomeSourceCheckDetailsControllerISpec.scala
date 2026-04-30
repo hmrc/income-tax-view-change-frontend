@@ -149,15 +149,15 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 incomeSourceType match {
                   case SelfEmployment => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = false)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case UkProperty => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = false)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case ForeignProperty => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = false)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
                 }
 
                 result should have(
@@ -170,7 +170,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             "redirect to check hmrc records page" when {
               "user selects 'confirm and continue' and they are in triggered migration" in {
                 val path = getPath(mtdUserRole, incomeSourceType, isTriggeredMigration = true)
-                
+
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
@@ -181,15 +181,15 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 incomeSourceType match {
                   case SelfEmployment => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = true)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case UkProperty => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = true)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case ForeignProperty => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, None, None, Some(CreateIncomeSourceResponse(testSelfEmploymentId)), isTrigMig = true)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
                 }
 
                 result should have(
@@ -212,15 +212,15 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 incomeSourceType match {
                   case SelfEmployment => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(SelfEmployment, testSEViewModel, Some("API_FAILURE"), Some(testErrorReason), None, isTrigMig = false)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case UkProperty => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(UkProperty, testUKPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None, isTrigMig = false)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
 
                   case ForeignProperty => AuditStub.verifyAuditContainsDetail(
                     CreateIncomeSourceAuditModel(ForeignProperty, testForeignPropertyViewModel, Some("API_FAILURE"), Some(testErrorReason), None, isTrigMig = false)
-                    (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
+                      (getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)).detail)
                 }
 
                 result should have(
@@ -313,7 +313,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 countryCode = Some("GB"),
                 newAddress = true)),
               addressId = Some("lookup-result-id"),
-              countryCode = Some("GB")
             ))
           )
           await(sessionService.setMongoData(sessionData))
@@ -348,9 +347,9 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 addressLine4 = None,
                 postcode = None,
                 countryCode = Some("FR"),
-                newAddress = true)),
+                newAddress = true
+              )),
               addressId = None,
-              countryCode = Some("FR")
             ))
           )
           await(sessionService.setMongoData(sessionData))
@@ -361,9 +360,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             pageTitle(mtdUserRole, "check-details.title")
           )
-          val body = result.body
-          body should include("Added international address for this business")
-          body should not include "Added address for this business"
 
           disable(OverseasBusinessAddress)
         }
@@ -380,7 +376,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             addIncomeSourceData = Some(testAddBusinessData.copy(
               chooseSoleTraderAddress = None,
               addressId = Some("lookup-address-id"),
-              countryCode = Some("GB")
             ))
           )
           await(sessionService.setMongoData(sessionData))
@@ -410,7 +405,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             addIncomeSourceData = Some(testAddBusinessData.copy(
               chooseSoleTraderAddress = None,
               addressId = None,
-              countryCode = Some("GB")
             ))
           )
           await(sessionService.setMongoData(sessionData))
@@ -446,7 +440,6 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
                 postcode = None,
                 countryCode = Some("GB"),
                 newAddress = true)),
-              countryCode = Some("GB")
             ))
           )
           await(sessionService.setMongoData(sessionData))

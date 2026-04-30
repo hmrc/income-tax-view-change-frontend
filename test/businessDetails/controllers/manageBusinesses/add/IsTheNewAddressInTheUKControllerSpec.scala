@@ -25,7 +25,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
-import models.core.{AddressModel, CheckMode, Mode, NormalMode}
+import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -34,7 +34,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import play.api
 import play.api.Application
-import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
@@ -49,7 +48,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
 
   private val addBusinessIsTheNewAddressInTheUKHeading = "add-business-is.the.new.address.in.the.uk.heading"
   private val addBusinessIsTheAddressOfYourSoleTraderBusinessInTheUKHeading = "add-business-is.the.address.of.your.sole.trader.business.in.the.uk.heading"
-  private val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = None, addressId = None, addressLookupId = None, countryCode = None))
+  private val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = None, addressId = None, addressLookupId = None))
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -157,17 +156,17 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
           }
           "redirect to the home page page" when {
             "fs is disables using the manage businesses journey" in {
-                disable(OverseasBusinessAddress)
-                setupMockSuccess(mtdRole)
-                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-                setupMockCreateSession(true)
-                val result = action(fakeRequest)
-                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
-                  .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
-                
-                status(result) shouldBe SEE_OTHER
-                redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+              disable(OverseasBusinessAddress)
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+              setupMockCreateSession(true)
+              val result = action(fakeRequest)
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
             }
           }
         }

@@ -76,7 +76,6 @@ object IncomeSourceCheckDetailsConstants {
       dateStarted = Some(testBusinessStartDate),
       incomeSourceId = Some(testBusinessId),
       address = Some(testBusinessAddress),
-      countryCode = Some(testCountryCode),
       accountingPeriodEndDate = Some(testAccountingPeriodEndDate)
     )
 
@@ -87,7 +86,6 @@ object IncomeSourceCheckDetailsConstants {
       dateStarted = None,
       incomeSourceId = Some(testBusinessId),
       address = Some(testBusinessAddress),
-      countryCode = Some(testCountryCode),
       accountingPeriodEndDate = Some(testAccountingPeriodEndDate)
     )
 

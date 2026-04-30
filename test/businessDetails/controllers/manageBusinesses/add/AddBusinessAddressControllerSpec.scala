@@ -27,13 +27,13 @@ import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, Country}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{clearInvocations, mock, never, verify, when}
+import org.mockito.Mockito.*
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.*
-import services.{AddressLookupService, DateService, DateServiceInterface, IncomeSourceDetailsService, SessionService}
+import services.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
@@ -62,7 +62,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
   lazy val frontendAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   val testBusinessAddressModel: BusinessAddressModel = BusinessAddressModel("auditRef", Address(Seq("Line 1", "Line 2"), Some("AA1 1AA"), Some(Country(Some("GB"), Some("United Kingdom")))))
-  val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), countryCode = Some("GB"), addressLookupId = Some("123")))
+  val testAddIncomeSourceSessionData: Option[AddIncomeSourceData] = Some(AddIncomeSourceData(address = Some(testBusinessAddressModel.address), addressLookupId = Some("123")))
   val testUIJourneySessionData: UIJourneySessionData = UIJourneySessionData("", "", testAddIncomeSourceSessionData)
 
   val testUIJourneySessionDataNoLookupId: UIJourneySessionData = testUIJourneySessionData.copy(
@@ -217,7 +217,7 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the business check answers page" when {
             "valid data received" in {
-              val checkAnswersUrl = if(mtdRole == MTDIndividual) {
+              val checkAnswersUrl = if (mtdRole == MTDIndividual) {
                 "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-check-answers"
               } else {
                 "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add-sole-trader/business-check-answers"
