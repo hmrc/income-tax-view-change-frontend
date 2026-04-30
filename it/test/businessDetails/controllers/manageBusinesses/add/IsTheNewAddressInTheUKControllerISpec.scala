@@ -66,8 +66,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the IsTheNewAddressInTheUK page" when {
             "OverseasBusinessAddress FS is enabled" in {
-              enable(OverseasBusinessAddress)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -88,8 +87,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
       s"user is ${if (mtdUserRole != MTDSupportingAgent) "an" else "a"} $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "form response is Yes" in {
-            enable(OverseasBusinessAddress)
-            stubAuthorised(mtdUserRole)
+            stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
             await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -103,8 +101,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
           }
           "form response is No" in {
             val isAgent: Boolean = mtdUserRole != MTDIndividual
-            enable(OverseasBusinessAddress)
-            stubAuthorised(mtdUserRole)
+            stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
             await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -118,8 +115,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
           }
           "return a BAD_REQUEST" when {
             "form is empty" in {
-              enable(OverseasBusinessAddress)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
@@ -131,8 +127,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
               )
             }
             "form is invalid" in {
-              enable(OverseasBusinessAddress)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))

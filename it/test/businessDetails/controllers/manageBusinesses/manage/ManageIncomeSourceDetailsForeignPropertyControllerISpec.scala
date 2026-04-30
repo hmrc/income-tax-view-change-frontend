@@ -54,9 +54,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
           "render the Manage Foreign Property page" when {
 
             "URL contains a valid income source ID and user has no latency information" in {
-
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
@@ -74,8 +72,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               )
             }
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
               // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
@@ -97,8 +94,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               )
             }
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
@@ -124,8 +120,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
             }
 
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
 
@@ -149,8 +144,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
             }
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")

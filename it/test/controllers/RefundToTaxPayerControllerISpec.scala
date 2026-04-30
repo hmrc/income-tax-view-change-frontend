@@ -90,8 +90,7 @@ class RefundToTaxPayerControllerISpec extends ControllerISpecHelper {
 
             s"audit and render the refund to tax payer page" when {
               "the payment history refunds feature switch is enabled" in {
-                enable(PaymentHistoryRefunds)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(PaymentHistoryRefunds))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
                 IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
 

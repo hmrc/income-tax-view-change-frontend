@@ -69,8 +69,6 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
     s"GET $path" when {
       s"user is $mtdRole" should {
         "render the page when TriggeredMigration FS is enabled" in {
-          enable(TriggeredMigration)
-
           eventually {
             repository.set(
               UIJourneySessionData(testSessionId,
@@ -80,7 +78,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
             ))
           }
 
-          stubAuthorised(mtdRole)
+          stubAuthorised(mtdRole, List(TriggeredMigration))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
@@ -110,8 +108,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
     s"POST $path" when {
       s"user is $mtdRole" should {
         "redirect to home page when form is valid and 'Continue' is selected" in {
-          enable(TriggeredMigration)
-          stubAuthorised(mtdRole)
+          stubAuthorised(mtdRole, List(TriggeredMigration))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(

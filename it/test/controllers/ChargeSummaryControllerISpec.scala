@@ -113,8 +113,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                 }
 
                 "when charge history is enabled" in {
-                  enable(ChargeHistory)
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(ChargeHistory))
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                   val json = testAuditFinancialDetailsModelJson(123.45, 1.2,
                     dunningLock = oneDunningLock, interestLocks = twoInterestLocks, accruingInterestAmount = None, dueDate =
@@ -149,8 +148,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                             "includes late payment interest" when {
                               "late payment interest flag is true and chargeHistory FS is enabled" in {
-                                enable(ChargeHistory)
-                                stubAuthorised(mtdUserRole)
+                                stubAuthorised(mtdUserRole, List(ChargeHistory))
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
                                   123.45, 1.2, latePaymentInterestAmount = Some(54.32)))
@@ -239,8 +237,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                             "has coding out details" when {
                               "coding out is enabled and a coded out documentDetail id is passed" in {
-                                enable(ChargeHistory)
-                                stubAuthorised(mtdUserRole)
+                                stubAuthorised(mtdUserRole, List(ChargeHistory))
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
                                   "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
@@ -303,8 +300,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
 
                             "has balancing payment title" when {
                               s"ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
-                                enable(ChargeHistory)
-                                stubAuthorised(mtdUserRole)
+                                stubAuthorised(mtdUserRole, List(ChargeHistory))
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
                                 IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(NOT_FOUND, Json.parse(
@@ -323,8 +319,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 )
                               }
                               s"ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
-                                enable(ChargeHistory)
-                                stubAuthorised(mtdUserRole)
+                                stubAuthorised(mtdUserRole, List(ChargeHistory))
                                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
                                 IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(FORBIDDEN, Json.parse(
@@ -345,8 +340,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                             }
 
                             "has an UNPAID MFADebit" in {
-                              enable(ChargeHistory)
-                              stubAuthorised(mtdUserRole)
+                              stubAuthorised(mtdUserRole, List(ChargeHistory))
                               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                               IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsUnpaidMFA)
                               IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
@@ -380,8 +374,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                             }
 
                             "has a PAID MFADebit" in {
-                              enable(ChargeHistory)
-                              stubAuthorised(mtdUserRole)
+                              stubAuthorised(mtdUserRole, List(ChargeHistory))
                               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                               IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsPaidMFA)
                               IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
@@ -419,8 +412,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
             }
                         "return a technical difficulties page to the user" when {
                           "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
-                            enable(ChargeHistory)
-                            stubAuthorised(mtdUserRole)
+                            stubAuthorised(mtdUserRole, List(ChargeHistory))
                             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                             IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
                             IncomeTaxViewChangeStub.stubChargeHistoryResponse(testNino, "ABCD1234")(INTERNAL_SERVER_ERROR, Json.parse(
@@ -440,8 +432,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                           }
 
                           "When Original Amount value is missing from financial details / document details" in {
-                            enable(ChargeHistory)
-                            stubAuthorised(mtdUserRole)
+                            stubAuthorised(mtdUserRole, List(ChargeHistory))
                             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                             IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testFinancialDetailsModelWithMissingOriginalAmountJson())
 

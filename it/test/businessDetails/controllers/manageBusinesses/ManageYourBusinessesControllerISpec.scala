@@ -51,8 +51,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the manage your businesses page" when {
             "the user has multiple businesses and uk property with display business start date enabled" in {
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -74,8 +73,7 @@ class ManageYourBusinessesControllerISpec extends ControllerISpecHelper {
             }
 
             "the user has foreign property and ceased business with display business start date enabled" in {
-              enable(DisplayBusinessStartDate)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
