@@ -16,13 +16,12 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks._
+import helpers.servicemocks.*
 import models.admin.PostFinalisationAmendmentsR18
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import play.api.http.Status.*
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 
 class TaxYearsControllerISpec extends ControllerISpecHelper {
 

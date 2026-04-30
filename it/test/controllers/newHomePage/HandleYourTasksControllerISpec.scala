@@ -18,9 +18,9 @@ package controllers.newHomePage
 
 import controllers.ControllerISpecHelper
 import enums.ChargeType.ITSA_NI
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.WiremockHelper
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.creditsandrefunds.CreditsModel
@@ -28,11 +28,11 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import obligations.models.*
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.OK
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino, testYear}
+import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 
 import java.time.LocalDate
 

@@ -23,15 +23,15 @@ import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, OptInOptOutContentUpdateR17}
+import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 
 import java.time.LocalDate
 import java.time.Month.APRIL
