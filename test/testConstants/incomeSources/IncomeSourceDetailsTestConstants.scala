@@ -188,7 +188,6 @@ object IncomeSourceDetailsTestConstants {
             accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
             incomeSourceId = Some(testSelfEmploymentId),
             address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"), Some(Country(Some("GB"), Some("United Kingdom"))))),
-            countryCode = Some("A Country"),
             reportingMethodTaxYear1 = None,
             reportingMethodTaxYear2 = None,
             incomeSourceCreatedJourneyComplete = None
