@@ -239,8 +239,8 @@ object AddressLookupTestConstants {
       |        "heading": "Nodwch gyfeiriad eich busnes"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Nodwch y wlad neu’r diriogaeth ar gy",
-      |        "title": "Nodwch y wlad neu’r diriogaeth ar gy"
+      |        "heading": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
+      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
       |      },
       |      "international": {
       |        "editPageLabels": {
@@ -325,8 +325,8 @@ object AddressLookupTestConstants {
       |        "heading": "Nodwch gyfeiriad eich busnes"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Nodwch y wlad neu’r diriogaeth ar gy",
-      |        "title": "Nodwch y wlad neu’r diriogaeth ar gy"
+      |        "heading": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
+      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
       |      },
       |      "international": {
       |        "editPageLabels": {
