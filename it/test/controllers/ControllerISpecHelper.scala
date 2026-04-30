@@ -20,19 +20,16 @@ import audit.models.AccessDeniedForSupportingAgentAuditModel
 import config.FrontendAppConfig
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.ComponentSpecBase
+import helpers.servicemocks.*
 import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
 import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
-import helpers.servicemocks.*
+import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import models.admin.FeatureSwitchName
-import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.extensions.FinancialDetailsModelExtension
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
 import testOnly.repository.FeatureSwitchRepository
-
-import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
 
 trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModelExtension {
 
@@ -47,13 +44,14 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
     case _ => controllers.routes.HomeController.showAgent().url
   }
 
-  def stubAuthorised(mtdRole: MTDUserRole): Unit = {
+  def stubAuthorised(mtdRole: MTDUserRole, featureSwitches: List[FeatureSwitchName] = List()): Unit = {
     if(mtdRole != MTDIndividual) {
       SessionDataStub.stubGetSessionDataResponseSuccess()
       stubGetCitizenDetails()
       stubGetBusinessDetails()()
     }
     stubAuthCalls(mtdRole)
+    stubGetFeatureSwitches(featureSwitches)
   }
 
   def stubAuthCalls(mtdUserRole: MTDUserRole): Unit = mtdUserRole match {
@@ -260,23 +258,4 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
       }
     }
   }
-
-  def disableAllSwitches(): Unit =
-    if (appConfig.readFeatureSwitchesFromMongo)
-      Await.result(featureSwitchRepository.setFeatureSwitches(allFeatureSwitches.map(_ -> false).toMap), 5.seconds)
-    else
-      allFeatureSwitches.foreach(switch => disable(switch))
-
-  override def enable(featureSwitch: FeatureSwitchName): Unit =
-    if (appConfig.readFeatureSwitchesFromMongo)
-      Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, true), 5.seconds)
-    else
-      sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
-
-  override def disable(featureSwitch: FeatureSwitchName): Unit =
-    if (appConfig.readFeatureSwitchesFromMongo)
-      Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, false), 5.seconds)
-    else
-      sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
-
 }

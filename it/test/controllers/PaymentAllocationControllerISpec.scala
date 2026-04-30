@@ -18,11 +18,9 @@ package controllers
 
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.NavBarFs
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -31,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.PaymentAllocationIntegrationTestConstants.*
 
-class PaymentAllocationControllerISpec extends ControllerISpecHelper with FeatureSwitching {
+class PaymentAllocationControllerISpec extends ControllerISpecHelper {
 
   val singleTestPaymentAllocationCharge: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetail),

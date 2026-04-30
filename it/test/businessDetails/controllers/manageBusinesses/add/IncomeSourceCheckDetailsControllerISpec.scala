@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import audit.models.CreateIncomeSourceAuditModel
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -25,7 +26,7 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.IncomeSourceCheckDetailsConstants.*
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, OverseasBusinessAddress, TriggeredMigration}
+import models.admin.OverseasBusinessAddress
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -33,8 +34,6 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySessionData, multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
@@ -259,9 +258,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
       s"a $mtdUserRole user" should {
 
         "render Address row and no overseas rows when user selects an existing address from their address on file" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -290,14 +287,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           val body = result.body
           body should include("Address")
           body should not include "Added address for this business"
-
-          disable(OverseasBusinessAddress)
         }
 
         "render the correct rows when user adds a new UK address via postcode lookup" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -326,14 +319,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           val body = result.body
           body should include("Added address for this business")
           body should not include "Added international address for this business"
-
-          disable(OverseasBusinessAddress)
         }
 
         "render the correct rows when user adds a new international address" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -360,14 +349,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
             httpStatus(OK),
             pageTitle(mtdUserRole, "check-details.title")
           )
-
-          disable(OverseasBusinessAddress)
         }
 
         "render the correct rows when user has no address on file and finds a UK address via postcode lookup" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -389,14 +374,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           val body = result.body
           body should include("Added address for this business")
           body should not include "Added international address for this business"
-
-          disable(OverseasBusinessAddress)
         }
 
         "render the correct rows when user has no address on file and manually enters a UK address" in {
-          enable(OverseasBusinessAddress)
-          disable(NavBarFs)
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
@@ -418,13 +399,9 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
           val body = result.body
           body should include("Added address for this business")
           body should not include "Added international address for this business"
-
-          disable(OverseasBusinessAddress)
         }
 
         "render only the legacy Address row and no overseas rows when OverseasBusinessAddress feature is disabled" in {
-          disable(OverseasBusinessAddress)
-          disable(NavBarFs)
           stubAuthorised(mtdUserRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 

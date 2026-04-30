@@ -93,8 +93,7 @@ class PaymentHistoryControllerISpec extends ControllerISpecHelper {
               "has payment and refund history title" when {
 
                 "the payment is from an earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
-                  enable(PaymentHistoryRefunds)
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(PaymentHistoryRefunds))
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
                   IncomeTaxViewChangeStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 

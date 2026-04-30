@@ -17,20 +17,18 @@
 package controllers
 
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
 import enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import enums.MTDUserRole
-import models.admin.NavBarFs
 import models.financialDetails.*
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import obligations.models.*
+import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 import java.time.LocalDate
 
-trait TaxSummaryISpecHelper extends ControllerISpecHelper with FeatureSwitching {
+trait TaxSummaryISpecHelper extends ControllerISpecHelper {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

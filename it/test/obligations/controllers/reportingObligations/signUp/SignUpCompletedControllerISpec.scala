@@ -21,7 +21,7 @@ import enums.JourneyType.{Opt, SignUpJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, SignUpFs}
+import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, Mandated}
@@ -112,8 +112,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the completed page" that {
             "is for the current tax year (CY+1 not mandated)" in {
-              enable(OptInOptOutContentUpdateR17, SignUpFs)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
 
@@ -144,8 +143,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
               )
             }
             "is for the current tax year (CY+1 mandated)" in {
-              enable(OptInOptOutContentUpdateR17, SignUpFs)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
 
@@ -179,8 +177,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
               )
             }
             "is for the next tax year" in {
-              enable(OptInOptOutContentUpdateR17, SignUpFs)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
               val intent = currentTaxYear.nextYear
@@ -210,8 +207,7 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
               )
             }
             "is for the next tax year (CY is not annual)" in {
-              enable(OptInOptOutContentUpdateR17, SignUpFs)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
               val intent = currentTaxYear.nextYear
