@@ -22,12 +22,11 @@ import helpers.WiremockHelper
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
-import org.jsoup.Jsoup
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
+import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.*
-import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 

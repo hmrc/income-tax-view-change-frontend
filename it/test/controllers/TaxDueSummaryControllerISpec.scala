@@ -18,18 +18,17 @@ package controllers
 
 import audit.models.TaxDueResponseAuditModel
 import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import helpers.servicemocks.*
 import helpers.servicemocks.AuditStub.verifyAuditEvent
-import helpers.servicemocks._
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import play.api.http.Status.*
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import testConstants.NewCalcDataIntegrationTestConstants._
-import testConstants.messages.TaxDueSummaryMessages._
+import testConstants.NewCalcDataIntegrationTestConstants.*
+import testConstants.messages.TaxDueSummaryMessages.*
 
 
 class TaxDueSummaryControllerISpec extends ControllerISpecHelper {

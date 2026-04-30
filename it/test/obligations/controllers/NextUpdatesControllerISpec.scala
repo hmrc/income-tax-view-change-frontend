@@ -20,20 +20,18 @@ import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.MTDIndividual
 import helpers.servicemocks.*
-import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
-import helpers.servicemocks.*
 import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.ObligationsModel
 import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 import play.api.http.Status.*
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.CalculationListIntegrationTestConstants
 import testConstants.IncomeSourceIntegrationTestConstants.*
-import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 
 class NextUpdatesControllerISpec extends ControllerISpecHelper {
 

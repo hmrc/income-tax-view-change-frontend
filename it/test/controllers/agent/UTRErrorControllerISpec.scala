@@ -16,10 +16,9 @@
 
 package controllers.agent
 
-import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks.MTDAgentAuthStub
-import play.api.http.Status._
+import play.api.http.Status.*
 
 class UTRErrorControllerISpec extends ComponentSpecBase {
   val path = "/agents/cannot-view-client"
