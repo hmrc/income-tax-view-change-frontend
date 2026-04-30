@@ -20,15 +20,14 @@ import enums.JourneyType.Manage
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
-import models.incomeSourceDetails.ManageIncomeSourceData
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.BusinessDetailsIntegrationTestConstants.business1
-import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.IncomeSourceIntegrationTestConstants.*
 import businessDetails.testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -58,38 +57,28 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
     await(sessionService.deleteSession(Manage))
   }
 
-  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType) = {
+  def getIncomeSourceDetailsResponse(incomeSourceType: IncomeSourceType): IncomeSourceDetailsModel = {
     incomeSourceType match {
-      case SelfEmployment => businessOnlyResponse
-      case UkProperty => ukPropertyOnlyResponse
-      case ForeignProperty => foreignPropertyOnlyResponse
+      case SelfEmployment   => businessOnlyResponse
+      case UkProperty       => ukPropertyOnlyResponse
+      case ForeignProperty  => foreignPropertyOnlyResponse
     }
   }
 
   def getExpectedHeading(
                           incomeSourceType: IncomeSourceType,
-                          isAnnualChange: Boolean,
-                          useOptInOptOutR17: Boolean
+                          isAnnualChange: Boolean
                         ): String = {
     val tradingNameOrPropertyMessage = incomeSourceType match {
       case SelfEmployment => business1.tradingName.getOrElse("")
       case _ => messagesAPI(s"$prefix.${incomeSourceType.messagesSuffix}")
     }
 
-    val (messageKey, changeVerb) =
-      if (useOptInOptOutR17) {
-        val verb = if (isAnnualChange) messagesAPI(s"$prefix.OptInOptOutContentUpdateR17.panel.optedOut")
-        else messagesAPI(s"$prefix.OptInOptOutContentUpdateR17.panel.signedUp")
-        (s"$prefix.OptInOptOutContentUpdateR17.title", verb)
-      } else {
-        val frequency = if (isAnnualChange) "annually" else "quarterly"
-        (s"$prefix.title", frequency)
-      }
+    val changeVerb = if (isAnnualChange) messagesAPI(s"$prefix.OptInOptOutContentUpdateR17.panel.optedOut")
+    else messagesAPI(s"$prefix.OptInOptOutContentUpdateR17.panel.signedUp")
 
-    messagesAPI(messageKey, tradingNameOrPropertyMessage, changeVerb, "2023", "2024")
+    messagesAPI(s"$prefix.OptInOptOutContentUpdateR17.title", tradingNameOrPropertyMessage, changeVerb, "2023", "2024")
   }
-
-
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
@@ -121,11 +110,9 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
                 val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
                 IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
 
-
-
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = true, useOptInOptOutR17 = false)),
+                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = true)),
                   elementTextByID("continue-button")(continueButtonText)
                 )
               }
@@ -144,51 +131,10 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = false, useOptInOptOutR17 = false)),
+                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = false)),
                   elementTextByID("continue-button")(continueButtonText)
                 )
               }
-
-              "valid url parameters provided and change to is annual when OptInOptOutContentUpdateR17 is enabled" in {
-                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
-                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024), Some(true))))))
-                IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-
-                val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
-                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = true, useOptInOptOutR17 = true)
-                  ),
-                )
-              }
-
-              "valid url parameters provided and change to is quarterly when OptInOptOutContentUpdateR17 is enabled" in {
-                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
-                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(quarterly), Some(2024), Some(true))))))
-                IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, testObligationsModel)
-
-                val pathWithValidQueryParams = path + s"?changeTo=$quarterly&taxYear=$taxYear"
-                val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, getExpectedHeading(incomeSourceType, isAnnualChange = false, useOptInOptOutR17 = true)
-                  ),
-                )
-              }
-
             }
 
             "render the error page" when {

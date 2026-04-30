@@ -144,8 +144,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               val currentTaxYear = dateService.getCurrentTaxYearStart
               val taxYear1: Int = currentTaxYear.getYear
               val taxYear2: Int = taxYear1 + 1
-              val taxYear1TYS: String = s"Reporting frequency $taxYear1 to $taxYear2"
-              val taxYear2TYS: String = s"Reporting frequency $taxYear2 to ${taxYear2+1}"
               "user is within latency period (before 23/24) - tax year 1 not crystallised" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
@@ -157,9 +155,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.h1"),
-                  elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
-                  elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
+                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.r17.h1")
                 )
 
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
@@ -176,9 +172,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.h1"),
-                  elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
-                  elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
+                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.r17.h1")
                 )
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
@@ -192,9 +186,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.h1"),
-                  elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
-                  elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
+                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.r17.h1")
                 )
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }
@@ -209,9 +201,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
 
                 result should have(
                   httpStatus(OK),
-                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.h1"),
-                  elementTextByID("reporting-frequency-table-row-1")(taxYear1TYS),
-                  elementTextByID("reporting-frequency-table-row-3")(taxYear2TYS)
+                  pageTitle(mtdUserRole, "incomeSources.add.reportingFrequency.r17.h1")
                 )
                 sessionService.getMongoKey(AddIncomeSourceData.incomeSourceAddedField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue shouldBe Right(Some(true))
               }

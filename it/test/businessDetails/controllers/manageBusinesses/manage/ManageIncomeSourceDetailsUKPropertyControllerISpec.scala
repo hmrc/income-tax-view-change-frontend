@@ -109,8 +109,8 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextByID("change-link-1")(""),
-                elementTextByID("change-link-2")(messagesChangeLinkText)
+                elementTextByID("sign-up-link-1")(""),
+                elementTextByID("opt-out-link-2")(messagesOptOutLinkText)
               )
             }
 

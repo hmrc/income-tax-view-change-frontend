@@ -28,12 +28,8 @@ object IncomeSourceReportingFrequencyForm extends Constraints {
   val responseNo = "false"
   val yesNoAnswer = "reporting-quarterly-form"
 
-  def apply(isR17ContentEnabled: Boolean): Form[IncomeSourceReportingFrequencyForm] = {
-    val noResponseErrorMessageKey = if (isR17ContentEnabled) {
-      "incomeSources.add.reportingFrequency.r17.form.no-select.error"
-    } else {
-      "incomeSources.add.reportingFrequency.form.no-select.error"
-    }
+  def apply(): Form[IncomeSourceReportingFrequencyForm] = {
+    val noResponseErrorMessageKey = "incomeSources.add.reportingFrequency.r17.form.no-select.error"
 
     Form[IncomeSourceReportingFrequencyForm](
       mapping(

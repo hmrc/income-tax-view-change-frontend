@@ -19,7 +19,7 @@ package obligations.controllers.reportingObligations.optOut
 import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
@@ -93,7 +93,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -111,7 +111,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(None))
@@ -162,7 +162,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
@@ -184,7 +184,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel.copy(
@@ -209,7 +209,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
@@ -229,7 +229,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
@@ -253,7 +253,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))
@@ -274,7 +274,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsOptOutTaxYearValid(Future.successful(Some(viewModel)))

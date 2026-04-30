@@ -116,7 +116,6 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     } yield {
       val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
         currentDate = dateService.getCurrentDate,
-        showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
         currentYearITSAStatus = currentITSAStatus,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
@@ -172,7 +171,6 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
         NextUpdatesTileViewModel(
           dueDates = nextUpdatesDueDates,
           currentDate = getCurrentDate,
-          showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
           currentYearITSAStatus = currentITSAStatus,
           nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
           nextTaxReturnDueDate = nextTaxReturnDueDate
@@ -270,11 +268,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
   private def getNextDueDatesIfEnabled()
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
-    if (isEnabled(OptInOptOutContentUpdateR17)) {
-      nextUpdatesService.getNextDueDates()
-    } else {
-      Future.successful((None, None))
-    }
+    nextUpdatesService.getNextDueDates()
   }
 
   private def handleYourTasks(@unused origin: Option[String] = None, isAgent: Boolean)

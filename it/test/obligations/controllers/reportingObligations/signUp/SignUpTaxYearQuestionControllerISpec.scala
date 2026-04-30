@@ -24,7 +24,7 @@ import enums.JourneyType.{Opt, SignUpJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
+import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.helpers.ITSAStatusUpdateConnectorStub
@@ -93,11 +93,10 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "is authenticated with valid enrolment" should {
 
         "render the sign up tax year question page - CY onwards following annual" in {
-
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
 
-          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+          stubAuthorised(mtdUserRole, List(SignUpFs))
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -152,10 +151,9 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         }
 
         "render the sign up tax year question page - CY onwards if CY+1 voluntary" in {
-
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
+          
           await(
             repository.set(
               UIJourneySessionData(
@@ -175,7 +173,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+          stubAuthorised(mtdUserRole, List(SignUpFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -209,6 +208,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the sign up tax year question page - CY onwards following mandated" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
+          
 
           await(
             repository.set(
@@ -229,7 +229,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+          stubAuthorised(mtdUserRole, List(SignUpFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -261,7 +262,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         }
 
         "render the sign up tax year question page - CY+1 onwards if CY is annual" in {
-
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
 
@@ -284,7 +284,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+          stubAuthorised(mtdUserRole, List(SignUpFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -305,7 +306,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         }
 
         "render the sign up tax year question page - CY+1 onwards if CY is mandated" in {
-
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
 
@@ -328,7 +328,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+          stubAuthorised(mtdUserRole, List(SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -349,7 +349,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         }
 
         "render the sign up tax year question page - CY+1 onwards if CY is voluntary" in {
-
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
 
@@ -372,7 +371,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+          stubAuthorised(mtdUserRole, List(SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -393,10 +392,9 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         }
 
         "redirect back to the reporting obligations page if the user has no annual CY or CY+1" in {
-
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
+          
           await(
             repository.set(
               UIJourneySessionData(
@@ -416,7 +414,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+          stubAuthorised(mtdUserRole, List(SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -443,7 +441,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       }
 
       "submit the answer to the sign up tax year question - SingleYear" in {
-        stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+        stubAuthorised(mtdUserRole, List(SignUpFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val currentYear = "2022"
@@ -492,7 +490,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       }
 
       "submit the answer to the sign up tax year question - MultiYear" in {
-        stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+        stubAuthorised(mtdUserRole, List(SignUpFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val currentYear = "2022"
@@ -543,8 +541,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "get an error message if the user incorrectly submits to the form" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-
-        stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+        stubAuthorised(mtdUserRole, List(SignUpFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
@@ -567,8 +564,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "redirect to the cannot go back page" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+          stubAuthorised(mtdUserRole, List(SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,

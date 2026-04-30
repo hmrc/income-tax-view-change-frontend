@@ -21,6 +21,5 @@ import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 case class ReportingFrequencyCheckDetailsViewModel(incomeSourceType: IncomeSourceType,
                                                    changeReportingFrequency: Boolean,
                                                    isReportingQuarterlyCurrentYear: Boolean,
-                                                   isReportingQuarterlyForNextYear: Boolean,
-                                                   displayR17Content: Boolean)
+                                                   isReportingQuarterlyForNextYear: Boolean)
 

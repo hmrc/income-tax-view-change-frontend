@@ -19,7 +19,7 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
+import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import org.jsoup.Jsoup
@@ -81,7 +81,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryRows.get(1).getElementsByTag("dd").text() shouldBe businessWithLatencyAddress
             manageDetailsSummaryRows.eq(6).isEmpty
             manageDetailsSummaryRows.eq(7).isEmpty
-            document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+            document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
             Option(document.getElementById("up-to-two-tax-years")) shouldBe None
           }
 
@@ -113,7 +113,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
             manageDetailsSummaryRows.eq(5).isEmpty
             manageDetailsSummaryRows.eq(6).isEmpty
             manageDetailsSummaryRows.eq(7).isEmpty
-            document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+            document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
           }
 
           "the user has a valid id parameter, valid latency information and two tax years not crystallised" in {
@@ -312,7 +312,7 @@ class ManageIncomeSourceDetailsSelfEmploymentSpec extends ManageIncomeSourceDeta
           }
 
           "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
-            setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate, OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
             setupMockCreateSession(true)
             setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))

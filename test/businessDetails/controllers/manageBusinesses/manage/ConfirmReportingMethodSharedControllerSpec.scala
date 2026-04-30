@@ -16,16 +16,16 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import connectors.ITSAStatusConnector
+import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
 import businessDetails.enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import implicits.ImplicitDateFormatter
-import org.mockito.Mockito.mock
 import mocks.services.{MockDateService, MockSessionService}
-import models.admin.OptInOptOutContentUpdateR17
+import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -34,7 +34,6 @@ import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
-import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.mocks.auth.MockAuthActions
 
@@ -99,11 +98,11 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
         val fakeRequest = fakeGetRequestBasedOnMTDUserType(testMtdRole).withMethod("GET")
         s"the user is authenticated as s$testMtdRole" should {
           s"return ${Status.OK}" when {
-            "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in new SetupGET {
+            "all query parameters are valid" in new SetupGET {
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
 
-              setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+              setupMockSuccess(mtdRole, false, List())
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               mockBothPropertyBothBusinessWithLatency()
 
@@ -141,7 +140,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
 
-              setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+              setupMockSuccess(mtdRole, false, List())
               mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusinessWithLatency()
 
@@ -271,12 +270,12 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
       s"submit${if (testMtdRole != MTDIndividual) "Agent" else ""}($testIncomeSourceType)" when {
         val fakeRequest = fakePostRequestBasedOnMTDUserType(testMtdRole).withMethod("POST")
         s"the user is authenticated as s$testMtdRole" should {
-          s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a property (OptInOptOutContentUpdateR17 FS enabled)" when {
+          s"return ${Status.SEE_OTHER} and redirect to the Manage Obligations page for a property" when {
             "the user's property reporting method is updated to annual" in new SetupPOST {
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
 
-              setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+              setupMockSuccess(mtdRole, false, List())
               mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
@@ -324,7 +323,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val incomeSourceType: IncomeSourceType = testIncomeSourceType
               override val mtdRole: MTDUserRole = testMtdRole
               override val changeTo: String = "quarterly"
-              setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+              setupMockSuccess(mtdRole, false, List())
               mockItsaStatusRetrievalAction()
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)

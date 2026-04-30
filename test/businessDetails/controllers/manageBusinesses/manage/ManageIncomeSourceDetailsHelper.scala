@@ -46,8 +46,8 @@ trait ManageIncomeSourceDetailsHelper
   lazy val unknown: String = "Unknown"
   lazy val annually: String = "Annually"
   lazy val quarterly: String = "Quarterly"
-  lazy val annuallyGracePeriod: String = "Annual"
-  lazy val quarterlyGracePeriod: String = "Quarterly"
+  lazy val annuallyGracePeriod: String = "No"
+  lazy val quarterlyGracePeriod: String = "Yes"
   lazy val reportingMethod: String = "Reporting frequency"
 
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
@@ -67,9 +67,15 @@ trait ManageIncomeSourceDetailsHelper
 
   def getHeading(document: Document): String = document.select("h1:nth-child(1)").text
 
-  def hasChangeFirstYearReportingMethodLink(document: Document): Boolean = Option(document.getElementById("change-link-1")).isDefined
+  def hasChangeFirstYearReportingMethodLink(document: Document): Boolean =
+    Option(document.getElementById("change-link-1")).isDefined ||
+    Option(document.getElementById("opt-out-link-1")).isDefined ||
+    Option(document.getElementById("sign-up-link-1")).isDefined
 
-  def hasChangeSecondYearReportingMethodLink(document: Document): Boolean = Option(document.getElementById("change-link-2")).isDefined
+  def hasChangeSecondYearReportingMethodLink(document: Document): Boolean =
+    Option(document.getElementById("change-link-2")).isDefined ||
+    Option(document.getElementById("opt-out-link-2")).isDefined ||
+    Option(document.getElementById("sign-up-link-2")).isDefined
 
   def hasGracePeriodInfo(document: Document): Boolean = Option(document.getElementById("graceperiodinfo")).isDefined
 

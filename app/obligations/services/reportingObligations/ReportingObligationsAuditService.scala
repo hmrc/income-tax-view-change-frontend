@@ -16,12 +16,8 @@
 
 package obligations.services.reportingObligations
 
-import common.auth.MtdItUser
-import common.config.FrontendAppConfig
-import common.config.featureswitch.FeatureSwitching
 import enums.AuditType.IncomeSourceDetailsResponse as _
 import enums.{AuditType, TransactionName}
-import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, UnknownStatus, Voluntary}
 import obligations.models.audit.reporting_obligations.*
@@ -43,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReportingObligationsAuditService @Inject()(
                                                   auditConnector: AuditConnector,
                                                   reportingFrequencyViewUtils: ReportingFrequencyViewUtils
-                                                )(implicit val appConfig: FrontendAppConfig, val dateService: DateServiceInterface) extends Logging with MtdConstants with FeatureSwitching {
+                                                )(implicit val appConfig: FrontendAppConfig, val dateService: DateServiceInterface) extends Logging with MtdConstants {
 
   def buildCards(summaryCardSuffixes: List[Option[String]]): List[ReportingObligationCard] = {
     summaryCardSuffixes.flatMap { suffix =>
@@ -101,20 +97,11 @@ class ReportingObligationsAuditService @Inject()(
   }
 
   private def tableContentToItsaStatus(content: Option[String])(implicit messages: Messages, user: MtdItUser[_]): ITSAStatus = {
-    if (isEnabled(OptInOptOutContentUpdateR17)) {
-      content match {
-        case Some(tableContent) if tableContent == messages("reporting.frequency.table.mandated.r17") => Mandated
-        case Some(tableContent) if tableContent == messages("reporting.frequency.table.voluntary.r17") => Voluntary
-        case Some(tableContent) if tableContent == messages("reporting.frequency.table.annual.r17") => Annual
-        case _ => UnknownStatus
-      }
-    } else {
-      content match {
-        case Some(tableContent) if tableContent == messages("reporting.frequency.table.mandated") => Mandated
-        case Some(tableContent) if tableContent == messages("reporting.frequency.table.voluntary") => Voluntary
-        case Some(tableContent) if tableContent == messages("reporting.frequency.table.annual") => Annual
-        case _ => UnknownStatus
-      }
+    content match {
+      case Some(tableContent) if tableContent == messages("reporting.frequency.table.mandated.r17") => Mandated
+      case Some(tableContent) if tableContent == messages("reporting.frequency.table.voluntary.r17") => Voluntary
+      case Some(tableContent) if tableContent == messages("reporting.frequency.table.annual.r17") => Annual
+      case _ => UnknownStatus
     }
   }
 

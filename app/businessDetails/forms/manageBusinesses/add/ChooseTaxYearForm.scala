@@ -18,7 +18,6 @@ package businessDetails.forms.manageBusinesses.add
 
 import businessDetails.forms.models.ChooseTaxYearFormModel
 import common.config.FrontendAppConfig
-import common.config.featureswitch.FeatureSwitching
 import forms.mappings.Constraints
 import play.api.data.Form
 import play.api.data.Forms.{boolean, mapping, optional}
@@ -26,27 +25,25 @@ import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}
 
 import javax.inject.Inject
 
-class ChooseTaxYearForm @Inject()(val appConfig: FrontendAppConfig) extends Constraints with FeatureSwitching {
+class ChooseTaxYearForm @Inject()(val appConfig: FrontendAppConfig) extends Constraints {
 
   private val currentYearCheckbox = "current-year-checkbox"
   private val nextYearCheckbox = "next-year-checkbox"
 
-  private def atLeastOneChecked(isOptInOptOutContentUpdateR17: Boolean): Constraint[ChooseTaxYearFormModel] =
+  private def atLeastOneChecked: Constraint[ChooseTaxYearFormModel] =
     Constraint("constraints.atLeastOneChecked") {
       data =>
         if (data.currentTaxYear.getOrElse(false) || data.nextTaxYear.getOrElse(false)) {
           Valid
         } else {
-          Invalid(Seq(ValidationError(noResponseErrorMessageKey(isOptInOptOutContentUpdateR17))))
+          Invalid(Seq(ValidationError(noResponseErrorMessageKey)))
         }
     }
 
-  def noResponseErrorMessageKey(isOptInOptOutContentUpdateR17: Boolean): String = {
-    if (isOptInOptOutContentUpdateR17) "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched"
-    else "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description"
-  }
+  val noResponseErrorMessageKey: String =
+    "manageBusinesses.add.addReportingFrequency.soleTrader.chooseTaxYear.error.description.feature.switched"
 
-  def apply(isOptInOptOutContentUpdateR17: Boolean): Form[ChooseTaxYearFormModel] = {
+  def apply(): Form[ChooseTaxYearFormModel] = {
     Form[ChooseTaxYearFormModel](
       mapping(
         currentYearCheckbox -> optional(boolean),
@@ -66,7 +63,7 @@ class ChooseTaxYearForm @Inject()(val appConfig: FrontendAppConfig) extends Cons
             )
           )
       )
-        .verifying(atLeastOneChecked(isOptInOptOutContentUpdateR17))
+        .verifying(atLeastOneChecked)
     )
 
   }

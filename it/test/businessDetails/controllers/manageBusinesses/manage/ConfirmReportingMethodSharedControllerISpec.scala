@@ -24,7 +24,7 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.OptInOptOutContentUpdateR17
+import models.admin.NavBarFs
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -96,8 +96,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
-              "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
+              "all query parameters are valid" in {
+                stubAuthorised(mtdUserRole)
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
@@ -112,26 +112,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                   httpStatus(OK),
                   pageTitle(mtdUserRole, mainPageTitle(reportingMethod)),
                   elementTextByID("continue-button")(continueButtonText)
-
-                )
-              }
-
-              "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                stubAuthorised(mtdUserRole)
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, oldMainPageTitle(reportingMethod)),
-                  elementTextByID("confirm-button")(oldConfirmButtonText)
 
                 )
               }
@@ -147,9 +127,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
-              "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
-
+              "all query parameters are valid" in {
+                stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
 
                 IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
@@ -163,25 +142,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                   httpStatus(OK),
                   pageTitle(mtdUserRole, mainPageTitle(reportingMethod)),
                   elementTextByID("continue-button")(continueButtonText)
-                )
-              }
-
-              "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-                val result = buildGETMTDClient(pathUK, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, oldMainPageTitle(reportingMethod)),
-                  elementTextByID("confirm-button")(oldConfirmButtonText)
                 )
               }
             }
@@ -196,8 +156,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             "render the Confirm Reporting Method page" when {
-              "all query parameters are valid (OptInOptOutContentUpdateR17 FS enabled)" in {
-                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
+              "all query parameters are valid" in {
+                stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
@@ -212,24 +172,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                   httpStatus(OK),
                   pageTitle(mtdUserRole, mainPageTitle(reportingMethod)),
                   elementTextByID("continue-button")(continueButtonText)
-                )
-              }
-              "all query parameters are valid (OptInOptOutContentUpdateR17 FS disabled)" in {
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
-
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
-
-                await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-                val result = buildGETMTDClient(pathFP, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, oldMainPageTitle(reportingMethod)),
-                  elementTextByID("confirm-button")(oldConfirmButtonText)
                 )
               }
 
@@ -245,8 +187,8 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             s"redirect to business will report (completion) page" when {
-              "called with a valid form (OptInOptOutContentUpdateR17 FS enabled)" in {
-                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
+              "called with a valid form" in {
+                stubAuthorised(mtdUserRole)
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
@@ -264,23 +206,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                   redirectURI(manageObligationsController.show(isAgent, SelfEmployment).url)
                 )
               }
-              "called with a valid form (OptInOptOutContentUpdateR17 FS disabled)" in {
-                stubAuthorised(mtdUserRole)
-
-                await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
-                  manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-
-                await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
-
-                val result = buildPOSTMTDPostClient(pathSE, additionalCookies, body = Map()).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, SelfEmployment).url)
-                )
-              }
             }
           }
 
@@ -293,9 +218,9 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       s"POST $pathUK" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS enabled)" when {
+            s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
-                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
+                stubAuthorised(mtdUserRole)
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
@@ -311,24 +236,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 )
               }
             }
-            s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS disabled)" when {
-              "called with a valid form" in {
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-
-                await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
-
-                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
-
-                val result = buildPOSTMTDPostClient(pathUK, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, UkProperty).url)
-                )
-              }
-            }
 
             testAuthFailures(pathUK, mtdUserRole, optBody = Some(Map
             (ChangeReportingMethodForm.response -> Seq("Yes")
@@ -340,10 +247,9 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
       s"POST $pathFP" when {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
-            s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS enabled)" when {
+            s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
-                stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17))
-
+                stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
                 await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
@@ -355,24 +261,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 result should have(
                   httpStatus(SEE_OTHER),
                   redirectURI(manageObligationsController.show(isAgent, ForeignProperty).url)
-                )
-              }
-            }
-            s"redirect to business will report (completion) page (OptInOptOutContentUpdateR17 FS disabled)" when {
-              "called with a valid form" in {
-                stubAuthorised(mtdUserRole)
-
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-
-                await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
-
-                val formData = Map(ChangeReportingMethodForm.response -> Seq("Yes"))
-
-                val result = buildPOSTMTDPostClient(pathFP, additionalCookies, body = formData).futureValue
-
-                result should have(
-                  httpStatus(SEE_OTHER),
-                  redirectURI(checkYourAnswersController.show(isAgent, ForeignProperty).url)
                 )
               }
             }

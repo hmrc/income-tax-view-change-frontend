@@ -21,7 +21,7 @@ import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import mocks.services.MockDateService
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
+import models.admin.{OptOutFs, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import obligations.mocks.services.{MockOptOutService, MockSignUpService}
@@ -78,10 +78,12 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
         "render the reporting frequency page" when {
-          "the reporting frequency feature switch is enabled" in {
+          "the reporting frequency feature switches are enabled" in {
+
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-            when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(fixedTaxYear)
-            when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
+
+            when(mockDateServiceInjected.getCurrentDate).thenReturn(LocalDate.of(2023, 1, 1))
+            when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(TaxYear(2023, 2024))
             setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs))
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -203,7 +205,6 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   isSignUpEnabled = true,
                   isOptOutEnabled = true
                 ),
-                optInOptOutContentUpdateR17IsEnabled = true,
                 nextUpdatesLink = if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url else obligations.controllers.routes.NextUpdatesController.show().url
               ).toString
           }

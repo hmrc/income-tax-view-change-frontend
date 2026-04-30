@@ -21,7 +21,7 @@ import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployme
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.InitialPage
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
+import models.admin.DisplayBusinessStartDate
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -160,7 +160,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         viewModel = viewModel,
         isAgent = isAgent,
         showStartDate = isEnabled(DisplayBusinessStartDate),
-        showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
         backUrl = backUrl
       ))
     }
@@ -189,7 +188,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             viewModel = viewModel,
             isAgent = isAgent,
             showStartDate = isEnabled(DisplayBusinessStartDate),
-            showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
             backUrl = backUrl
           ))
         }.recover {

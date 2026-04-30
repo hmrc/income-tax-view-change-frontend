@@ -25,7 +25,6 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.CannotGoBackPage
-import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import obligations.services.NextUpdatesService
@@ -114,7 +113,6 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                   changeTo = changeTo,
                   isAgent = isAgent,
                   postAction = successPostUrl(isAgent),
-                  showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
                   isCurrentTaxYear = dateService.getCurrentTaxYearStart.getYear == years.startYear
                 ))
               }

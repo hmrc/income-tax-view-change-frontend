@@ -21,7 +21,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.services.AuditingService
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.OptOutFs
 import obligations.models.ObligationsModel
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
@@ -73,7 +73,6 @@ class NextUpdatesController @Inject()(
           case obligations: ObligationsModel => obligations
           case _ => ObligationsModel(Nil)
         }
-        isR17ContentEnabled = isEnabled(OptInOptOutContentUpdateR17)
         isOptOutEnabled = isEnabled(OptOutFs)
 
         result <- nextUpdates.obligations match {
@@ -86,7 +85,7 @@ class NextUpdatesController @Inject()(
             val optOutSetup = {
               for {
                 (checks, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
-                viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
+                viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates)
               } yield {
                 val whatTheUserCanDoContent = nextUpdatesViewUtils.whatTheUserCanDo(isAgent)
 
@@ -100,7 +99,6 @@ class NextUpdatesController @Inject()(
                     isSupportingAgent = user.isSupportingAgent,
                     origin = origin,
                     whatTheUserCanDo = whatTheUserCanDoContent,
-                    optInOptOutContentR17Enabled = isR17ContentEnabled,
                   taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status))
                 )
               }

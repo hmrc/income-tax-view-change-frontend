@@ -19,7 +19,7 @@ package obligations.controllers.reportingObligations.signUp
 import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
+import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
@@ -85,7 +85,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -102,7 +102,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -130,7 +130,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List())
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -157,7 +157,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
               nextYearItsaStatus = Mandated
             )
 
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -183,7 +183,9 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          enable(SignUpFs)
+
+          setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -206,7 +208,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -226,7 +228,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 

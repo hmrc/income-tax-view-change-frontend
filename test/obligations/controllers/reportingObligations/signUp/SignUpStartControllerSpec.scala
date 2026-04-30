@@ -19,7 +19,7 @@ package obligations.controllers.reportingObligations.signUp
 import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
+import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
 import obligations.mocks.services.MockSignUpService
@@ -44,7 +44,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
       api.inject.bind[SignUpService].toInstance(mockSignUpService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
-  ).build()
+    ).build()
 
   lazy val testController = app.injector.instanceOf[SignUpStartController]
 
@@ -55,7 +55,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
       val action = testController.show(isAgent, Some("2025"))
       s"the user is authenticated as a $mtdRole" should {
         "render the sign up start page" in {
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
@@ -73,7 +73,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
         }
 
         "be redirected to the reporting frequency page if the chosen tax year intent is not found" in {
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(None))
@@ -92,7 +92,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
         }
 
         "be redirected to the reporting frequency page if the sign up feature switch is disabled" in {
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List())
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
@@ -135,7 +135,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
         }
 
         "be redirected to the reporting frequency page if the Sign Up feature switch is disabled" in {
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List())
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
