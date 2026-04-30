@@ -16,10 +16,11 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import businessDetails.models.audit.TriggeredMigrationStartAuditModel
 import controllers.ControllerISpecHelper
 import enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -93,10 +94,10 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
-
                 checkActiveSoleTrader(result)
                 checkActiveForeignProperty(result)
                 checkActiveUkProperty(result)
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
             "has an active sole trader business and uk property only" in {
@@ -111,9 +112,9 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result:WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
-
                 checkActiveSoleTrader(result)
                 checkActiveUkProperty(result)
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
             "has an active sole trader business and foreign property only" in {
@@ -131,6 +132,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 checkActiveSoleTrader(result)
                 checkActiveForeignProperty(result)
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
             "has an active uk property and foreign property only" in {
@@ -147,6 +149,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkCommonContent(result, mtdUserRole)
                 checkActiveForeignProperty(result)
                 checkActiveUkProperty(result)
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
             "has an active sole trader business only" in {
@@ -165,6 +168,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkActiveSoleTrader(result)
                 checkPropertyLink(result)
                 checkNoProperty(result)
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
             "has an active uk property only" in {
@@ -180,6 +184,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveUkProperty(result)
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
             "has an active foreign property only" in {
@@ -195,6 +200,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveForeignProperty(result)
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
             "has no active businesses" in {
@@ -211,6 +217,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 checkCommonContent(result, mtdUserRole)
                 checkNoProperty(result)
                 checkPropertyLink(result)
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
 
@@ -235,6 +242,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                   elementTextByID("sole-trader-business-state-value-0")(CheckHmrcRecordsMessages.activeText),
                   elementTextByID("sole-trader-cease-link-0")(CheckHmrcRecordsMessages.ceaseSoleTraderUnknownText)
                 )
+
+                AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
             }
           }
