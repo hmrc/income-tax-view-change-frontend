@@ -161,7 +161,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
           businessAddressLine3 = address.lines.lift(2),
           businessAddressLine4 = address.lines.lift(3),
           businessPostalCode = address.postcode,
-          businessCountryCode = addIncomeSourceData.countryCode,
+          businessCountryCode = addIncomeSourceData.address.flatMap(_.country.flatMap(_.code)),
           businessCountryName = address.country.flatMap(_.name),
           addressId = addIncomeSourceData.addressLookupId.orElse(addIncomeSourceData.addressId),
           isAddingNewAddress = isAddingNewAddress,

@@ -34,7 +34,6 @@ class AddIncomeSourceDataSpec extends UnitSpec{
         accountingPeriodEndDate = Some(LocalDate.of(2021, 4, 5)),
         incomeSourceId = Some("abc-123"),
         address = Some(Address(Seq("123 Test Street", "Testville"), Some("AB1 2CD"), Some(Country(Some("GB"), Some("United Kingdom"))))),
-        countryCode = Some("GB"),
         changeReportingFrequency = Some(true),
         reportingMethodTaxYear1 = Some("Quarterly"),
         reportingMethodTaxYear2 = Some("Annual"),

@@ -32,7 +32,6 @@ import play.api.mvc.*
 import services.{AddressLookupService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.IncomeSourcesUtils
-import businessDetails.controllers.manageBusinesses.add.{routes as AddBusinessRoutes}
 
 import javax.inject.Inject
 import scala.annotation.unused
@@ -55,7 +54,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
     handleRequest(isAgent = false, mode = mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
   }
 
-  def showAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
+  def showAgent(mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
     implicit mtdItUser =>
       handleRequest(isAgent = true, mode = mode, isTriggeredMigration)(implicitly, itvcErrorHandlerAgent)
   }
@@ -129,7 +128,6 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
             val oldAddIncomeSourceSessionData = sessionData.addIncomeSourceData.getOrElse(AddIncomeSourceData())
             val updatedAddIncomeSourceSessionData = oldAddIncomeSourceSessionData.copy(
               address = Some(value.address),
-              countryCode = Some("GB"),
               addressLookupId = id
             )
             val uiJourneySessionData: UIJourneySessionData = sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceSessionData))
@@ -165,7 +163,7 @@ class AddBusinessAddressController @Inject()(val authActions: AuthActions,
       handleSubmitRequest(isAgent = false, id, mode = mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
   }
 
-  def agentSubmit(id: Option[String], mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async  {
+  def agentSubmit(id: Option[String], mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient(isTriggeredMigration).async {
     implicit mtdItUser =>
       handleSubmitRequest(isAgent = true, id, mode = mode, isTriggeredMigration)(implicitly, itvcErrorHandlerAgent)
   }
