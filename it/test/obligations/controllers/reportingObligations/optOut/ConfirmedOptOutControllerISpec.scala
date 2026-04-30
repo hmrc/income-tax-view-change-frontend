@@ -18,11 +18,11 @@ package obligations.controllers.reportingObligations.optOut
 
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.WiremockHelper
-import models.admin.{NavBarFs, OptOutFs}
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
+import models.itsaStatus.ITSAStatus.*
 import obligations.helpers.OptOutSessionRepositoryHelper
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{OK, SEE_OTHER}

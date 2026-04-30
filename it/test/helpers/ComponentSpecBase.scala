@@ -20,11 +20,9 @@ import auth.authV2.models.AuthorisedAndEnrolledRequest
 import auth.{HeaderExtractor, MtdItUser}
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
-import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*
