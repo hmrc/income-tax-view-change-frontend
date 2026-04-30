@@ -16,9 +16,10 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -75,8 +76,8 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeWithYearOfMigration)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
-          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
@@ -89,8 +90,8 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
-          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
@@ -120,8 +121,8 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
-          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
@@ -140,14 +141,16 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             httpStatus(SEE_OTHER),
             redirectURI(s"/report-quarterly/income-and-expenses/view$completePath")
           )
+          
+          AuditStub.verifyAuditEvent(TriggeredMigrationCompleteAuditModel()(getTestUser(mtdRole, singleBusinessIncomeUnconfirmed)))
         }
 
         "redirect to Check HMRC Records when 'No' is selected" in {
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
-          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
@@ -170,8 +173,8 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           enable(TriggeredMigration)
           stubAuthorised(mtdRole)
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
-          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
-          IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )

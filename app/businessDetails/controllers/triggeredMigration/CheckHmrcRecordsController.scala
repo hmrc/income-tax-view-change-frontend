@@ -16,7 +16,9 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import audit.AuditingService
 import auth.authV2.AuthActions
+import businessDetails.models.audit.TriggeredMigrationStartAuditModel
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import enums.TriggeredMigration.TriggeredMigrationState
@@ -34,7 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
                                            val auth: AuthActions,
                                            triggeredMigrationService: TriggeredMigrationService,
-                                           sessionService: SessionService)
+                                           sessionService: SessionService,
+                                           auditingService: AuditingService)
                                           (mcc: MessagesControllerComponents,
                                            implicit val appConfig: FrontendAppConfig,
                                            implicit val ec: ExecutionContext)
@@ -50,6 +53,10 @@ class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
       }
 
       val viewModel = triggeredMigrationService.getCheckHmrcRecordsViewModel(user.incomeSources, TriggeredMigrationState.getStateFromString(state))
+
+      val referer: String = user.headers.get(REFERER).getOrElse("-")
+
+      auditingService.extendedAudit(TriggeredMigrationStartAuditModel(referer))
 
       Future.successful(Ok(view(viewModel, isAgent)))
     }
