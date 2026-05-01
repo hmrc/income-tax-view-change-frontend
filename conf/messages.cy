@@ -1734,6 +1734,7 @@ add-business-address.edit.heading           = Nodwch gyfeiriad eich busnes
 add-international-business-address.heading = Nodwch gyfeiriad rhyngwladol eich busnes
 add-international-business-address.postcode =  Cod post neu god ‘zip’
 add-international-business-address.countryPicker.heading = Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes
+add-international-business-address.countryPicker.hint = Nodwch wlad neu diriogaeth
 
 shortMonth.1     = Ion
 shortMonth.2     = Chwe
