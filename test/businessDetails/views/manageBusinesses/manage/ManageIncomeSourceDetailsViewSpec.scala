@@ -1,0 +1,923 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package businessDetails.views.manageBusinesses.manage
+
+import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
+import models.itsaStatus.ITSAStatus
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.twirl.api.{Html, HtmlFormat}
+import testConstants.BusinessDetailsTestConstants.*
+import testUtils.{TestSupport, ViewSpec}
+import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
+import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.*
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.views.constants.ManageIncomeSourceDetailsViewConstants.*
+
+class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
+
+  val manageIncomeSourceDetailsView: ManageIncomeSourceDetailsView = app.injector.instanceOf[ManageIncomeSourceDetailsView]
+
+  def reportingFrequencyLink(isAgent: Boolean): String =
+    obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+
+  def backUrl(isAgent: Boolean): String = if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+
+  else manageBusinessRoutes.ManageYourBusinessesController.show().url
+
+  def summaryListRowKeys()(implicit document: Document) = document.getElementsByClass("govuk-summary-list__key")
+
+  def summaryListRowValues()(implicit document: Document) = document.getElementsByClass("govuk-summary-list__value")
+
+  def h1()(implicit document: Document) = document.getElementsByClass("govuk-heading-xl")
+
+  def changeLink(i: Int)(implicit document: Document) = document.getElementById(s"change-link-$i")
+
+
+  class SelfEmploymentSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, SelfEmployment).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModel,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class SelfEmploymentUnknownsSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModelWithUnknowns,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class SelfEmploymentCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModelOneYearCrystallised,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class SelfEmploymentCYLatencyUnknownSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModelCYUnknown,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class UkSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        ukViewModel,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+  }
+
+  class UkSetupUnknowns(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        ukViewModelUnknowns,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+  }
+
+  class UkCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, UkProperty).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        ukPropertyViewModelOneYearCrystallised,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class UkCYLatencyUnknownSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        ukPropertyViewModelCYUnknown,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class ForeignSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, ForeignProperty).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        foreignViewModel,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+  }
+
+  class ForeignSetupUnknowns(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, ForeignProperty).url
+    }
+
+    val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        foreignViewModelUnknowns,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+  }
+
+  class ForeignCrystallisedSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    def changeReportingMethodUrl(taxYear: String, changeTo: String): String = {
+      manageYourBusinessRoutes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, incomeSourceType = SelfEmployment).url
+    }
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        foreignPropertyViewModelOneYearCrystallised,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class ForeignCYLatencyUnknownSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
+
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        foreignPropertyLatencyYearTwoUnknown,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = false
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+  }
+
+  class SelfEmploymentSetupWithOptInContentR17(isAgent: Boolean, startDateEnabled: Boolean = true) {
+    lazy val view: HtmlFormat.Appendable = {
+      manageIncomeSourceDetailsView(
+        selfEmploymentViewModel,
+        isAgent,
+        backUrl = backUrl(isAgent),
+        showStartDate = startDateEnabled,
+        showOptInOptOutContentUpdateR17 = true
+      )(messages, implicitly)
+    }
+
+    implicit val document: Document = Jsoup.parse(contentAsString(view))
+  }
+
+  "ManageSelfEmployment - Individual" should {
+
+    "render the heading" in new SelfEmploymentSetup(false) {
+      h1().text shouldBe heading
+    }
+
+    "render the back correct back Url" in new SelfEmploymentSetup(false) {
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
+    }
+
+    "render the whole page" in new SelfEmploymentSetup(false) {
+
+      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
+
+      summaryListRowKeys().eq(0).text() shouldBe businessName
+      summaryListRowKeys().eq(1).text() shouldBe businessAddress
+      summaryListRowKeys().eq(2).text() shouldBe dateStarted
+      summaryListRowKeys().eq(3).text() shouldBe typeOfTrade
+      summaryListRowKeys().eq(4).text() shouldBe quarterlyPeriodType
+      summaryListRowKeys().eq(5).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(6).text() shouldBe reportingMethod2
+
+      changeLink(1).text() shouldBe change
+      changeLink(2).text() shouldBe change
+
+      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
+      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
+
+      summaryListRowValues().eq(0).text() shouldBe expectedBusinessName
+      summaryListRowValues().eq(1).text() shouldBe expectedViewAddressString1
+      summaryListRowValues().eq(2).text() shouldBe expectedBusinessStartDate
+      summaryListRowValues().eq(4).text() shouldBe standard
+      summaryListRowValues().eq(5).text() shouldBe annuallyGracePeriod
+      summaryListRowValues().eq(6).text() shouldBe quarterlyGracePeriod
+      document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
+    }
+
+    "render the whole page with unknowns and no change links or inset text" in new SelfEmploymentUnknownsSetup(false) {
+
+      summaryListRowKeys().eq(0).text() shouldBe businessName
+      summaryListRowKeys().eq(1).text() shouldBe businessAddress
+      summaryListRowKeys().eq(2).text() shouldBe dateStarted
+      summaryListRowKeys().eq(3).text() shouldBe typeOfTrade
+
+      summaryListRowValues().eq(0).text() shouldBe unknown
+      summaryListRowValues().eq(1).text() shouldBe unknown
+      summaryListRowValues().eq(2).text() shouldBe unknown
+      summaryListRowValues().eq(3).text() shouldBe unknown
+    }
+
+    "do not render the reporting frequency rows when NO latency details" in new SelfEmploymentUnknownsSetup(false) {
+      summaryListRowKeys().eq(6).isDefined shouldBe false
+      summaryListRowKeys().eq(7).isDefined shouldBe false
+    }
+
+    "do not render the latency paragraph when no latency details are present" in new SelfEmploymentUnknownsSetup(false) {
+      Option(document.getElementById("up-to-two-tax-years")) shouldBe None
+    }
+
+    "render the reporting frequency rows and content IF there are latency details" in new SelfEmploymentSetup(false) {
+      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2024, you could be required to report quarterly."
+      summaryListRowKeys().eq(5).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(6).text() shouldBe reportingMethod2
+    }
+
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new SelfEmploymentCrystallisedSetup(false) {
+      summaryListRowKeys().eq(5).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(6).text() shouldBe reportingMethod2
+    }
+
+    "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false) {
+      Option(changeLink(1)) shouldBe None
+      changeLink(2).text() shouldBe change
+    }
+
+    "do not display change link when CY & CY-1 ITSA Status are unknown" in new SelfEmploymentUnknownsSetup(false) {
+      Option(changeLink(1)) shouldBe None
+      Option(changeLink(2)) shouldBe None
+    }
+
+    "do not display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(false, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+
+    "render the correct text when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
+
+      def insetText()(implicit document: Document) = document.getElementsByClass("up-to-two-tax-years").text()
+
+      insetText() shouldBe ""
+    }
+
+    "render the updated reporting frequency sentence when OptInOptOutContentUpdateR17 feature is enabled" in new SelfEmploymentSetupWithOptInContentR17(false) {
+
+      document.getElementById("reportingFrequency").text shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
+      document.getElementById("reportingFrequency-link").text shouldBe "view and change your reporting obligations for all your businesses"
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(false)
+
+    }
+
+    "render the MTD opt-in rows correctly with 'Yes/No' status and 'Opt-out/Sign up' links when OptInOptOutContentUpdateR17 is enabled" in {
+
+      val taxYear1 = "2025"
+      val taxYear2 = "2026"
+
+      val testViewModel = selfEmploymentViewModel.copy(
+        latencyYearsQuarterly = LatencyYearsQuarterly(Some(true), Some(true)),
+        latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(false)),
+        latencyDetails =
+          Some(
+            testLatencyDetails3.copy(
+              taxYear1 = "2025",
+              latencyIndicator1 = "Q",
+              taxYear2 = "2026",
+              latencyIndicator2 = "A"
+            )
+          )
+      )
+
+
+      val view: Html = manageIncomeSourceDetailsView(
+        testViewModel,
+        isAgent = false,
+        showStartDate = true,
+        showOptInOptOutContentUpdateR17 = true,
+        backUrl = backUrl(false)
+      )(messages, implicitly)
+
+      implicit val document: Document = Jsoup.parse(contentAsString(view))
+
+      val expectedRow1 = s"Using Making Tax Digital for Income Tax for ${taxYear1.toInt - 1} to $taxYear1"
+      val expectedRow2 = s"Using Making Tax Digital for Income Tax for ${taxYear2.toInt - 1} to $taxYear2"
+
+      summaryListRowKeys().text() should include(expectedRow1)
+      summaryListRowKeys().text() should include(expectedRow2)
+
+      summaryListRowValues().eq(5).text() shouldBe "Yes"
+
+      val actionLinks = document.select(".govuk-summary-list__actions a")
+      actionLinks.eq(0).text() shouldBe "Opt out"
+      actionLinks.eq(1).text() shouldBe "Sign up"
+    }
+
+    "not render an MTD opt-in row if one of the latency years is crystallised" in {
+
+      val taxYear1 = "2025"
+      val taxYear2 = "2026"
+
+      val annualLatencyIndicator = "Q"
+      val quarterlyLatencyIndicator = "A"
+
+      val testViewModel = selfEmploymentViewModel.copy(
+        latencyYearsQuarterly = LatencyYearsQuarterly(Some(true), Some(true)),
+        latencyYearsCrystallised = LatencyYearsCrystallised(Some(false), Some(true)),
+        latencyDetails = Some(testLatencyDetails3.copy(
+          taxYear1 = taxYear1, latencyIndicator1 = annualLatencyIndicator,
+          taxYear2 = taxYear2, latencyIndicator2 = quarterlyLatencyIndicator
+        ))
+      )
+
+
+      val view: Html = manageIncomeSourceDetailsView(
+        testViewModel,
+        isAgent = false,
+        showStartDate = true,
+        showOptInOptOutContentUpdateR17 = true,
+        backUrl = backUrl(false)
+      )(messages, implicitly)
+
+      val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+      implicit val document: Document = parsedDocument
+
+
+      val allRows = summaryListRowKeys().eachText()
+
+      val expectedRow1 = s"Using Making Tax Digital for Income Tax for ${taxYear1.toInt - 1} to $taxYear1"
+      val expectedRow2 = s"Using Making Tax Digital for Income Tax for ${taxYear2.toInt - 1} to $taxYear2"
+
+      allRows should contain(expectedRow1)
+      allRows should contain(expectedRow2)
+
+      val values = document.getElementsByClass("govuk-summary-list__value").eachText()
+      values should contain("Yes")
+
+      val actions = document.select(".govuk-summary-list__actions a").eachText()
+      actions should contain("Opt out")
+      actions should not contain ("Sign up")
+    }
+
+    "render the update period dropdown and field" when {
+      "update period is calendar and user is reporting quarterly" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Voluntary, quarterReportingType = Some(QuarterTypeCalendar), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        document.getElementById("expandable-standard-update-period").text() shouldBe "This business is currently reporting from 1 April using calendar update periods."
+        document.getElementById("software-support").text() shouldBe "You can change to use standard update periods, in line with the tax year, so you report from 6 April. This change can only be made in your compatible software."
+        document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+        document.getElementById("standard-update-period-dropdown").text().contains("What is a calendar update period?") shouldBe true
+      }
+
+      "update period is standard and user is reporting quarterly" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Voluntary, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        document.getElementById("expandable-standard-update-period").text() shouldBe "This business is reporting from 6 April in line with the tax year, also known as using standard update periods."
+        document.getElementById("software-support").text() shouldBe "If your software supports it, you can choose to report using calendar update periods which end on the last day of the month."
+        document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
+        document.getElementById("standard-update-period-dropdown").text().contains("What is a standard update period?") shouldBe true
+      }
+    }
+    "not render the update period dropdown and field" when {
+      "user doesn't have an update period" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Voluntary, quarterReportingType = None, latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+      "user's business is in latency" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Voluntary, quarterReportingType = Some(QuarterTypeStandard))
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+
+      "user's ITSA status is Annual" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Annual, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+
+      "user's ITSA status is Exempt" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.Exempt, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+
+      "user's ITSA status is Digitally Exempt" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.DigitallyExempt, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+
+      "user's ITSA status is No Status" in {
+        val testViewModel = selfEmploymentViewModel.copy(currentItsaStatus = ITSAStatus.NoStatus, quarterReportingType = Some(QuarterTypeStandard), latencyDetails = None)
+
+        val view: Html = manageIncomeSourceDetailsView(
+          testViewModel,
+          isAgent = false,
+          showStartDate = true,
+          showOptInOptOutContentUpdateR17 = true,
+          backUrl = backUrl(false)
+        )(messages, implicitly)
+
+        val parsedDocument: Document = Jsoup.parse(contentAsString(view))
+        implicit val document: Document = parsedDocument
+
+        Option(document.getElementById("expandable-standard-update-period")) shouldBe None
+        Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("learn-about-quarters-link")) shouldBe None
+        Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
+      }
+    }
+  }
+
+  "ManageSelfEmployment - Agent" should {
+
+    "render the heading" in new SelfEmploymentSetup(true) {
+      h1().text shouldBe heading
+    }
+
+    "render the back correct back Url" in new SelfEmploymentSetup(true) {
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
+    }
+
+    "render the whole page" in new SelfEmploymentSetup(true) {
+
+      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
+
+      summaryListRowKeys().eq(0).text() shouldBe businessName
+      summaryListRowKeys().eq(1).text() shouldBe businessAddress
+      summaryListRowKeys().eq(2).text() shouldBe dateStarted
+      summaryListRowKeys().eq(3).text() shouldBe typeOfTrade
+      summaryListRowKeys().eq(4).text() shouldBe quarterlyPeriodType
+      summaryListRowKeys().eq(5).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(6).text() shouldBe reportingMethod2
+
+      changeLink(1).text() shouldBe change
+      changeLink(2).text() shouldBe change
+
+      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
+      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
+      summaryListRowValues().eq(0).text() shouldBe expectedBusinessName
+      summaryListRowValues().eq(1).text() shouldBe expectedViewAddressString1
+      summaryListRowValues().eq(2).text() shouldBe expectedBusinessStartDate
+      summaryListRowValues().eq(4).text() shouldBe standard
+      summaryListRowValues().eq(5).text() shouldBe annuallyGracePeriod
+      summaryListRowValues().eq(6).text() shouldBe quarterlyGracePeriod
+      document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
+      document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(true)
+
+    }
+
+    "do not display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(true, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+  }
+
+  "Manage Uk Property - Individual" should {
+
+    "render the heading" in new UkSetup(false) {
+      h1().text shouldBe heading
+    }
+
+    "render the back correct back Url" in new UkSetup(false) {
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
+    }
+
+    "render the whole page" in new UkSetup(false) {
+
+      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
+
+      summaryListRowKeys().eq(0).text() shouldBe dateStarted
+      summaryListRowKeys().eq(1).text() shouldBe quarterlyPeriodType
+      summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
+
+      changeLink(1).text() shouldBe change
+      changeLink(2).text() shouldBe change
+
+      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
+      summaryListRowValues().eq(1).text() shouldBe calendar
+      summaryListRowValues().eq(2).text() shouldBe annuallyGracePeriod
+      summaryListRowValues().eq(3).text() shouldBe quarterlyGracePeriod
+    }
+
+    "render the whole page with unknowns and no change links" in new UkSetupUnknowns(false) {
+      summaryListRowKeys().eq(0).text() shouldBe dateStarted
+
+      summaryListRowValues().eq(0).text() shouldBe unknown
+    }
+
+    "Do not render the reporting frequency rows when NO latency details" in new UkSetupUnknowns(false) {
+      summaryListRowKeys().eq(2).isDefined shouldBe false
+      summaryListRowKeys().eq(3).isDefined shouldBe false
+    }
+
+    "do not render the latency paragraph when no latency details are present" in new UkSetupUnknowns(false) {
+      Option(document.getElementById("up-to-two-tax-years")) shouldBe None
+    }
+
+    "render the reporting frequency rows IF there are latency details" in new UkSetup(false) {
+      summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
+    }
+
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new UkCrystallisedSetup(false) {
+      summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
+    }
+
+    "render the change links where status is Quarterly" in new UkCrystallisedSetup(false) {
+      Option(changeLink(1)) shouldBe None
+      changeLink(2).text() shouldBe change
+    }
+
+    "dont display change link when CY & CY-1 ITSA Status are unknown" in new UkSetupUnknowns(false) {
+      Option(changeLink(1)) shouldBe None
+      Option(changeLink(2)) shouldBe None
+    }
+
+    "do not display start date if DisplayBusinessStartDate is disabled" in new UkSetup(false, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+
+  }
+
+  "Manage Uk Property - Agent" should {
+
+    "render the heading" in new UkSetup(true) {
+      h1().text shouldBe heading
+    }
+
+    "render the back correct back Url" in new UkSetup(true) {
+
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
+    }
+
+    "render the whole page" in new UkSetup(true) {
+
+      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
+
+      summaryListRowKeys().eq(0).text() shouldBe dateStarted
+      summaryListRowKeys().eq(1).text() shouldBe quarterlyPeriodType
+      summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
+
+      changeLink(1).text() shouldBe change
+      changeLink(2).text() shouldBe change
+
+      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
+      summaryListRowValues().eq(1).text() shouldBe calendar
+      summaryListRowValues().eq(2).text() shouldBe annuallyGracePeriod
+      summaryListRowValues().eq(3).text() shouldBe quarterlyGracePeriod
+
+    }
+
+    "render the whole page with unknowns and no change links" in new UkSetupUnknowns(true) {
+
+      summaryListRowKeys().eq(0).text() shouldBe dateStarted
+
+      summaryListRowValues().eq(0).text() shouldBe unknown
+    }
+
+    "do not display start date if DisplayBusinessStartDate is disabled" in new UkSetup(false, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+  }
+
+  "Manage Foreign Property - Individual" should {
+
+    "render the heading" in new ForeignSetup(false) {
+      h1().text shouldBe heading
+    }
+
+    "render the back correct back Url" in new ForeignSetup(false) {
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(false)
+    }
+
+    "render the whole page" in new ForeignSetup(false) {
+      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
+
+      summaryListRowKeys().eq(0).text() shouldBe dateStarted
+      summaryListRowKeys().eq(1).text() shouldBe quarterlyPeriodType
+      summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
+
+      changeLink(1).text() shouldBe change
+      changeLink(2).text() shouldBe change
+
+      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
+      summaryListRowValues().eq(1).text() shouldBe calendar
+      summaryListRowValues().eq(2).text() shouldBe annuallyGracePeriod
+      summaryListRowValues().eq(3).text() shouldBe quarterlyGracePeriod
+
+    }
+
+    "render the whole page with unknowns and no change links or inset text" in new ForeignSetupUnknowns(false) {
+
+      summaryListRowKeys().eq(0).text() shouldBe dateStarted
+      summaryListRowValues().eq(0).text() shouldBe unknown
+    }
+
+    "Do not render the reporting frequency rows when NO latency details" in new ForeignSetupUnknowns(false) {
+      summaryListRowKeys().eq(3).isDefined shouldBe false
+      summaryListRowKeys().eq(4).isDefined shouldBe false
+    }
+
+    "do not render the latency paragraph when no latency details are present" in new ForeignSetupUnknowns(false) {
+      Option(document.getElementById("up-to-two-tax-years")) shouldBe None
+    }
+
+    "render the reporting frequency rows IF there are latency details" in new ForeignSetup(false) {
+      summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
+    }
+
+    "render the reporting frequency rows per NON CRYSTALLISED YEAR" in new ForeignCrystallisedSetup(false) {
+      summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
+    }
+
+    "render the change links where status is Quarterly" in new ForeignCrystallisedSetup(false) {
+      Option(changeLink(1)) shouldBe None
+      changeLink(2).text() shouldBe change
+    }
+
+    "dont display change link when CY & CY-1 ITSA Status are unknown" in new ForeignSetupUnknowns(false) {
+      Option(changeLink(1)) shouldBe None
+      Option(changeLink(2)) shouldBe None
+    }
+
+    "do not display start date if DisplayBusinessStartDate is disabled" in new ForeignSetup(false, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+  }
+
+  "Manage Foreign Property - Agent" should {
+
+    "render the heading" in new ForeignSetup(true) {
+      h1().text shouldBe heading
+    }
+
+    "render the back correct back Url" in new ForeignSetup(true) {
+      document.getElementById("back-fallback").text() shouldBe messages("base.back")
+      document.getElementById("back-fallback").attr("href") shouldBe backUrl(true)
+    }
+
+    "render the whole page" in new ForeignSetup(true) {
+
+      document.getElementById("up-to-two-tax-years").text() shouldBe newBusinessInsetText
+
+      summaryListRowKeys().eq(0).text() shouldBe dateStarted
+      summaryListRowKeys().eq(1).text() shouldBe quarterlyPeriodType
+      summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
+      summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
+
+      changeLink(1).text() shouldBe change
+      changeLink(2).text() shouldBe change
+
+      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+
+      summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
+      summaryListRowValues().eq(1).text() shouldBe calendar
+      summaryListRowValues().eq(2).text() shouldBe annuallyGracePeriod
+      summaryListRowValues().eq(3).text() shouldBe quarterlyGracePeriod
+    }
+
+    "render the whole page with unknowns and no change links or inset text" in new ForeignSetupUnknowns(true) {
+
+      summaryListRowKeys().eq(0).text() shouldBe dateStarted
+
+      summaryListRowValues().eq(0).text() shouldBe unknown
+
+      Option(document.getElementById("up-to-two-tax-years")) shouldBe None
+    }
+
+    "do not display start date if DisplayBusinessStartDate is disabled" in new ForeignSetup(true, startDateEnabled = false) {
+      Option(document.getElementById("manage-details-table")).mkString("").contains("Date started") shouldBe false
+    }
+
+  }
+}

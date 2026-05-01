@@ -16,9 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.controllers.manageBusinesses.add.IsTheNewAddressInTheUKController
+import connectors.{ITSAStatusConnector}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
@@ -42,6 +41,8 @@ import testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, in
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
 
 import scala.concurrent.Future
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -60,7 +61,6 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -157,7 +157,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                 val result = action(fakeRequest)
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, SelfEmployment))
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
-                
+
                 status(result) shouldBe SEE_OTHER
                 redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
             }

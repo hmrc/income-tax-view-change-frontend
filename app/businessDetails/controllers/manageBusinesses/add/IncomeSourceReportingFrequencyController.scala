@@ -18,12 +18,15 @@ package businessDetails.controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import businessDetails.utils.JourneyCheckerManageBusinesses
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import enums.AfterSubmissionPage
-import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -32,12 +35,11 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.*
-import services.manageBusinesses.IncomeSourceRFService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{JourneyCheckerManageBusinesses, MtdConstants}
+import utils.MtdConstants
 import views.html.errorPages.templates.ErrorTemplate
-import views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
+import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 
 import javax.inject.Inject
 import scala.annotation.unused

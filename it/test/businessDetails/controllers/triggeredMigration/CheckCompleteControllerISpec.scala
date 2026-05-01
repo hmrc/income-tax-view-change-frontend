@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import controllers.ControllerISpecHelper
 import enums.JourneyType.TriggeredMigrationJourney
 import enums.{MTDIndividual, MTDUserRole}

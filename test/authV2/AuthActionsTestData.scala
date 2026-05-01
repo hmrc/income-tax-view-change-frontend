@@ -21,7 +21,7 @@ import auth.authV2.models._
 import controllers.agent.AuthUtils._
 import controllers.agent.sessionUtils.SessionKeys
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
+import businessDetails.forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import models.sessionData.SessionCookieData

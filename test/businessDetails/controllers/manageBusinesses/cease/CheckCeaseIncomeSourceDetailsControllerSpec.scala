@@ -18,10 +18,11 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationCeased
+import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.TriggeredMigration.TriggeredMigrationCeased
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -35,7 +36,7 @@ import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import services.*
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
@@ -54,9 +55,10 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
-    ).build()
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+      api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService)
+
+  ).build()
 
   lazy val testCeaseCheckIncomeSourceDetailsController =
     app.injector.instanceOf[CeaseCheckIncomeSourceDetailsController]

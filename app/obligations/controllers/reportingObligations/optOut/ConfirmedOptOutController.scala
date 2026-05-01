@@ -23,6 +23,7 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.*
 import models.itsaStatus.ITSAStatus
 import obligations.controllers.errors.routes as obligationsErrorRoutes
+import obligations.enums.{CurrentTaxYear, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
 import obligations.models.reportingObligations.optOut.*
 import obligations.services.reportingObligations.optOut.{MultiYearOptOutProposition, OptOutService}
 import obligations.utils.reportingObligations.ReportingObligationsUtils

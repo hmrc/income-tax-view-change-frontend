@@ -19,8 +19,9 @@ package businessDetails.controllers.manageBusinesses.manage
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.utils.JourneyCheckerManageBusinesses
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.*
 import enums.InitialPage
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
@@ -38,8 +39,7 @@ import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
+import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused
