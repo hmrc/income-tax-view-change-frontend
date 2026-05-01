@@ -39,7 +39,11 @@ object AddressLookupTestConstants {
       |      "mandatoryFields": {
       |        "postcode": true
       |      },
-      |      "showOrganisationName": false
+      |      "showOrganisationName": false,
+      |      "line1MaxLength": 35,
+      |      "line2MaxLength": 35,
+      |      "line3MaxLength": 35,
+      |      "townMaxLength": 35
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
@@ -109,7 +113,11 @@ object AddressLookupTestConstants {
       |      "mandatoryFields": {
       |        "postcode": true
       |      },
-      |      "showOrganisationName": false
+      |      "showOrganisationName": false,
+      |      "line1MaxLength": 35,
+      |      "line2MaxLength": 35,
+      |      "line3MaxLength": 35,
+      |      "townMaxLength": 35
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
@@ -178,7 +186,7 @@ object AddressLookupTestConstants {
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
-      |      "showSearchAgainLink": true,
+      |      "showSearchAgainLink": false,
       |      "showConfirmChangeText": true
       |    },
       |    "manualAddressEntryConfig": {
@@ -186,7 +194,11 @@ object AddressLookupTestConstants {
       |       "addressLine1": true,
       |       "addressLine2": true
       |      },
-      |      "showOrganisationName": false
+      |      "showOrganisationName": false,
+      |      "line1MaxLength": 35,
+      |      "line2MaxLength": 35,
+      |      "line3MaxLength": 35,
+      |      "townMaxLength": 35
       |    },
       |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
@@ -202,8 +214,8 @@ object AddressLookupTestConstants {
       |        "heading": "What is your business address?"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Select the country or territory for your business address",
-      |        "title": "Select the country or territory for your business address"
+      |        "heading": "Enter the country or territory for your business address",
+      |        "title": "Enter the country or territory for your business address"
       |      },
       |      "editPageLabels": {
       |        "heading": "Enter your business address"
@@ -227,8 +239,8 @@ object AddressLookupTestConstants {
       |        "heading": "Nodwch gyfeiriad eich busnes"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
-      |        "title": "Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
+      |        "heading": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
+      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
       |      },
       |      "international": {
       |        "editPageLabels": {
@@ -260,7 +272,7 @@ object AddressLookupTestConstants {
       |    },
       |    "confirmPageConfig": {
       |      "showChangeLink": true,
-      |      "showSearchAgainLink": true,
+      |      "showSearchAgainLink": false,
       |      "showConfirmChangeText": true
       |    },
       |    "manualAddressEntryConfig": {
@@ -268,7 +280,11 @@ object AddressLookupTestConstants {
       |       "addressLine1": true,
       |       "addressLine2": true
       |      },
-      |      "showOrganisationName": false
+      |      "showOrganisationName": false,
+      |      "line1MaxLength": 35,
+      |      "line2MaxLength": 35,
+      |      "line3MaxLength": 35,
+      |      "townMaxLength": 35
       |    },
       |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
@@ -284,8 +300,8 @@ object AddressLookupTestConstants {
       |        "heading": "What is your business address?"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Select the country or territory for your business address",
-      |        "title": "Select the country or territory for your business address"
+      |        "heading": "Enter the country or territory for your business address",
+      |        "title": "Enter the country or territory for your business address"
       |      },
       |      "editPageLabels": {
       |        "heading": "Enter your business address"
@@ -309,8 +325,8 @@ object AddressLookupTestConstants {
       |        "heading": "Nodwch gyfeiriad eich busnes"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
-      |        "title": "Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
+      |        "heading": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
+      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
       |      },
       |      "international": {
       |        "editPageLabels": {

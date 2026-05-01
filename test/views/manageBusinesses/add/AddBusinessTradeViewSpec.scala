@@ -23,6 +23,7 @@ import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
 import views.html.manageBusinesses.add.AddBusinessTradeView
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class AddBusinessTradeViewSpec extends ViewSpec {
 
@@ -42,10 +43,10 @@ class AddBusinessTradeViewSpec extends ViewSpec {
   }
 
   val backUrl: String = {
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, mode = NormalMode).url
+    addBusinessRoutes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = false, mode = NormalMode).url
   }
   val agentBackUrl: String = {
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, mode = NormalMode).url
+    addBusinessRoutes.AddIncomeSourceStartDateController.show(incomeSourceType = SelfEmployment, isAgent = true, mode = NormalMode).url
   }
 
   val addBusinessTradeView: AddBusinessTradeView = app.injector.instanceOf[AddBusinessTradeView]

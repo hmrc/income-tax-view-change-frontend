@@ -56,7 +56,6 @@ class FeatureSwitchingSpec extends TestSupport with FeatureSwitching with Mockit
     OptOutFs,
     SignUpFs,
     FilterCodedOutPoas,
-    ReportingFrequencyPage,
     DisplayBusinessStartDate,
     PenaltiesAndAppeals,
     PenaltiesBackendEnabled,

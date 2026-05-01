@@ -22,18 +22,19 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.triggeredMigration.CheckCompleteView
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 
 class CheckCompleteViewSpec extends TestSupport {
 
   val view: CheckCompleteView = app.injector.instanceOf[CheckCompleteView]
   def nextUpdatesLink(isAgent: Boolean): String =
-    if(isAgent)controllers.routes.NextUpdatesController.showAgent().url
-    else controllers.routes.NextUpdatesController.show().url
+    if(isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url
+    else obligations.controllers.routes.NextUpdatesController.show().url
   val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   class Setup(isAgent: Boolean) {
     val homeCall: Call = if(isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
-    val postAction = controllers.triggeredMigration.routes.CheckCompleteController.submit(isAgent)
+    val postAction = triggeredMigrationRoutes.CheckCompleteController.submit(isAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent), postAction)))
   }
 

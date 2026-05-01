@@ -24,6 +24,9 @@ import models.admin.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import obligations.services.NextUpdatesService
+import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -34,14 +37,13 @@ import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
-import services.reportingObligations.signUp.SignUpService
-import services.{CreditService, NextUpdatesService}
-import services.reportingObligations.optOut.OptOutService
+import services.CreditService
 import testConstants.ANewCreditAndRefundModel
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
 import views.html.HomeView
 import views.html.newHomePage.*
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 import java.time.LocalDate
 import scala.annotation.unused
@@ -462,7 +464,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -590,7 +592,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
@@ -618,7 +620,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           document.title shouldBe homePageTitle
           document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
           document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.newJourney.view")
-          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
         }
       }
 
@@ -710,6 +712,16 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
             val document: Document = Jsoup.parse(contentAsString(result))
             Option(document.getElementById("available-credit")).isDefined shouldBe false
           }
+        }
+
+        "redirect to the no income sources page when the agent user has no income sources" in new Setup {
+          setupMockAgentWithClientAuth(false)
+          mockNoIncomeSources()
+
+          val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient(isSupportingAgent = false))
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(controllers.routes.NoIncomeSourcesController.show(true).url)
         }
       }
     }

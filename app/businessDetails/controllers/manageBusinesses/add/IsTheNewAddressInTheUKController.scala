@@ -1,0 +1,161 @@
+/*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package businessDetails.controllers.manageBusinesses.add
+
+import auth.MtdItUser
+import auth.authV2.AuthActions
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import enums.BeforeSubmissionPage
+import enums.IncomeSourceJourney.SelfEmployment
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
+import models.UIJourneySessionData
+import models.admin.OverseasBusinessAddress
+import models.core.{Mode, NormalMode}
+import play.api.Logger
+import play.api.i18n.I18nSupport
+import play.api.mvc.*
+import services.SessionService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
+import views.html.errorPages.CustomNotFoundErrorView
+import views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
+
+import javax.inject.{Inject, Singleton}
+import scala.annotation.unused
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
+                                                 val isTheNewAddressInTheUKView: IsTheNewAddressInTheUKView,
+                                                 val sessionService: SessionService,
+                                                 val customNotFoundErrorView: CustomNotFoundErrorView)
+                                                (implicit val appConfig: FrontendAppConfig,
+                                                 val itvcErrorHandler: ItvcErrorHandler,
+                                                 val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                                 val mcc: MessagesControllerComponents,
+                                                 val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+
+  def show(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async {
+    implicit user =>
+      if isEnabled(OverseasBusinessAddress) then
+        handleRequest(isAgent, mode, isTriggeredMigration)
+      else
+        Future.successful(Redirect(controllers.routes.HomeController.show().url))
+  }
+
+  def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+      
+      val backURL = getBackURL(isAgent)
+      val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
+
+      // we need to clean up session data when Overseas Business Address journey does not reset when switching from International to UK Address MISUV-11153
+      val resetAddressUpdateData: UIJourneySessionData = sessionData.copy(
+        addIncomeSourceData = sessionData.addIncomeSourceData.map(_.copy(
+          addressId = None,
+          address = None,
+          addressLookupId = None)
+        )
+      )
+
+      sessionService.setMongoData(resetAddressUpdateData).flatMap {
+        case true =>
+          Future.successful {
+            Ok(isTheNewAddressInTheUKView(form.apply(hasUKAddress(user)), isAgent, hasUKAddress(user), postAction, backURL))
+          }
+
+        case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+      }
+    }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+      errorHandler.showInternalServerError()
+  }
+
+  def submit(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async {
+    implicit request =>
+      handleSubmitRequest(isAgent, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
+  }
+  
+  def handleSubmitRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
+        form.apply(hasUKAddress(user)).bindFromRequest().fold(
+          formWithErrors =>
+            Future.successful {
+              BadRequest(
+                isTheNewAddressInTheUKView(
+                  form = formWithErrors,
+                  postAction = getPostAction(isAgent, mode, isTriggeredMigration),
+                  isAgent = isAgent,
+                  hasUKAddress = hasUKAddress(user),
+                  backUrl = getBackURL(isAgent)
+                )
+              )
+            },
+          validForm =>
+            handleValidForm(validForm, isAgent, isTriggeredMigration)
+        )
+    }
+  }.recover {
+    case ex =>
+      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      errorHandler.showInternalServerError()
+  }
+
+  private def handleValidForm(validForm: form,
+                              isAgent: Boolean,
+                              isTrigMig: Boolean = false)
+                             (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    val formResponse: Option[String] = validForm.toFormMap(form.response).headOption
+    val ukPropertyUrl: String = if isAgent then routes.AddBusinessAddressController.showAgent(NormalMode, isTrigMig).url
+      else routes.AddBusinessAddressController.show(NormalMode, isTrigMig).url
+    val foreignPropertyUrl: String = routes.AddInternationalBusinessAddressController.show(isAgent, isTrigMig).url
+    
+    formResponse match {
+      case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
+      case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
+      case _ =>
+        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
+        val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Future.successful(errorHandler.showInternalServerError())
+    }
+  }
+
+  private def hasUKAddress(user: MtdItUser[?]): Boolean = {
+    val ukCountryCodes = Seq("UK", "United Kingdom", "GB", "Great Britain")
+    val validUKAddress = for {
+      b <- user.incomeSources.businesses
+      a <- b.address
+      countryCode <- a.countryCode
+      if ukCountryCodes.contains(countryCode) && a.addressLine1.isDefined && a.postCode.isDefined
+    } yield a
+    validUKAddress.nonEmpty
+  }
+  
+  private def getBackURL(isAgent: Boolean): String = {
+    routes.ChooseSoleTraderAddressController.show(isAgent).url
+  }
+
+  private def getPostAction(isAgent: Boolean, @unused mode: Mode, isTriggeredMigration: Boolean): Call =
+    routes.IsTheNewAddressInTheUKController.submit(isAgent, isTriggeredMigration)
+
+}

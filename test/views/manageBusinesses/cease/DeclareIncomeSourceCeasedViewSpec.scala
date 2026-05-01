@@ -17,8 +17,8 @@
 package views.manageBusinesses.cease
 
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm.declaration
 import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
+import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm.declaration
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -26,6 +26,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
 
@@ -36,8 +37,8 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, error: Boolean = false, businessName: Option[String] = None) {
 
     val backUrl: String = {
-      if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent()
-      else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show()
+      if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent()
+      else         manageBusinessRoutes.ManageYourBusinessesController.show()
     }.url
 
     lazy val view: HtmlFormat.Appendable = declarePropertyCeasedView(
@@ -97,8 +98,8 @@ class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
       "render the back link with the correct URL" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
         document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe(
-          if (isAgent) controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.showAgent().url
-          else         controllers.manageBusinesses.cease.routes.CeaseIncomeSourceController.show().url
+          if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+          else         manageBusinessRoutes.ManageYourBusinessesController.show().url
         )
       }
 

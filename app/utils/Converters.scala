@@ -19,7 +19,7 @@ package utils
 package object Converters {
 
   implicit class OptionExtension(in: Option[String]) {
-    def trim(): Option[String] = {
+    def flattenEmptyString(): Option[String] = {
       in match {
         case Some("") => None
         case _ => in

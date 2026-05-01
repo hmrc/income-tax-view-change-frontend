@@ -82,10 +82,10 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
             accountingPeriodEndDate = viewModel.accountingPeriodEndDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
             tradingName = viewModel.businessName.get,
             address = AddressDetails(
-              addressLine1 = viewModel.businessAddressLine1,
-              addressLine2 = viewModel.businessAddressLine2.trim(),
-              addressLine3 = viewModel.businessAddressLine3.trim(),
-              addressLine4 = viewModel.businessAddressLine4.trim(),
+              addressLine1 = viewModel.businessAddressLine1.trim(),
+              addressLine2 = viewModel.businessAddressLine2.map(_.trim).flattenEmptyString(),
+              addressLine3 = viewModel.businessAddressLine3.map(_.trim).flattenEmptyString(),
+              addressLine4 = viewModel.businessAddressLine4.map(_.trim).flattenEmptyString(),
               countryCode = if viewModel.businessCountryCode.isDefined then viewModel.businessCountryCode else Some("GB"), // required to be GB by API when postcode present
               postalCode = viewModel.businessPostalCode
             ),

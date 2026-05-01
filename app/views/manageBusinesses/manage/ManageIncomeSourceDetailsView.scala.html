@@ -27,6 +27,7 @@
 @import config.FrontendAppConfig
 @import viewUtils.ExternalUrlHelper
 @import play.twirl.api.HtmlFormat
+@import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
 
 @this(
         mainTemplate: unifiedLayout,
@@ -49,14 +50,13 @@
         isAgent: Boolean,
         showStartDate: Boolean,
         showOptInOptOutContentUpdateR17: Boolean,
-        showReportingFrequencyLink: Boolean,
         backUrl: String
 )(implicit messages: Messages, user: auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 
 @changeReportingMethodUrl(taxYear: String, changeTo: String) = @{
-    controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, viewModel.incomeSourceType).url
+    businessDetails.controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, viewModel.incomeSourceType).url
 }
 
 @changeToValue(currentMethod: String) = @{
@@ -276,7 +276,7 @@ val rows = {
 }
 
 @reportingFrequencyURL(isAgent: Boolean) = @{
-    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 }
 
 @getQuarterlyType = @{
@@ -347,23 +347,21 @@ val rows = {
         }
     }
 
-    @if(showReportingFrequencyLink) {
-        @p(id = Some("reportingFrequency")) {
-            @if(showOptInOptOutContentUpdateR17) {
-                @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix")
-                @link(
-                    link = reportingFrequencyURL(isAgent),
-                    messageKey = messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink"),
-                    id = Some("reportingFrequency-link"),
-                    outerMessage = "."
-                )
-            } else {
-                @link(
-                    link = reportingFrequencyURL(isAgent),
-                    messageKey = messages("incomeSources.manage.new.business.details.reporting.frequency"),
-                    id = Some("reportingFrequency-link")
-                )
-            }
+    @p(id = Some("reportingFrequency")) {
+        @if(showOptInOptOutContentUpdateR17) {
+            @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix")
+            @link(
+                link = reportingFrequencyURL(isAgent),
+                messageKey = messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink"),
+                id = Some("reportingFrequency-link"),
+                outerMessage = "."
+            )
+        } else {
+            @link(
+                link = reportingFrequencyURL(isAgent),
+                messageKey = messages("incomeSources.manage.new.business.details.reporting.frequency"),
+                id = Some("reportingFrequency-link")
+            )
         }
     }
 

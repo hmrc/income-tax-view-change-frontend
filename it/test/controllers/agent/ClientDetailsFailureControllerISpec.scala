@@ -16,13 +16,12 @@
 
 package controllers.agent
 
-import config.featureswitch.FeatureSwitching
 import helpers.ComponentSpecBase
 import helpers.servicemocks.MTDAgentAuthStub
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.ws.WSResponse
 
-class ClientDetailsFailureControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
 
   val path = "/agents/not-authorised-to-view-client"
 

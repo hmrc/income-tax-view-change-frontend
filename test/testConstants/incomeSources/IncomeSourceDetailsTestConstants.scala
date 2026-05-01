@@ -34,8 +34,8 @@ object IncomeSourceDetailsTestConstants {
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(business1, business2), List(propertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-  val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)
-  val singleBusinessIncomeNoYearOfMigration = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business1), Nil)
+  val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)
+  val singleBusinessIncomeNoYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, None, List(business1), Nil)
   val singleBusinessIncomeUnconfirmed = singleBusinessIncomeNoYearOfMigration.copy(channel = HmrcUnconfirmed.getValue)
   val dualBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1, business1), Nil)
   val singleBusinessIncomeNoLatency = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1NoLatency), Nil)
@@ -53,7 +53,7 @@ object IncomeSourceDetailsTestConstants {
   val businessAndPropertyAligned = IncomeSourceDetailsModel(testNino, testMtditid, Some(getCurrentTaxYearEnd.minusYears(1).getYear.toString),
     List(alignedBusiness), List(propertyDetails))
   val singleBusinessAndPropertyMigrat2019 = IncomeSourceDetailsModel(testNino, testMtditid, Some(testMigrationYear2019), List(alignedBusiness), List(propertyDetails))
-  val noIncomeDetails = IncomeSourceDetailsModel(testNino, testMtditid, None, List(), Nil)
+  val noIncomeDetails = IncomeSourceDetailsModel(nino = testNino, mtdbsa = testMtditid, yearOfMigration = None, businesses = List(), properties = Nil)
   val errorResponse = IncomeSourceDetailsError(testErrorStatus, testErrorMessage)
   val businessIncome2018and2019AndProp = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business2018, business2019), List(propertyDetails))
   val businessInternational = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business1International), List(propertyDetails))
@@ -188,7 +188,6 @@ object IncomeSourceDetailsTestConstants {
             accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
             incomeSourceId = Some(testSelfEmploymentId),
             address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"), Some(Country(Some("GB"), Some("United Kingdom"))))),
-            countryCode = Some("A Country"),
             reportingMethodTaxYear1 = None,
             reportingMethodTaxYear2 = None,
             incomeSourceCreatedJourneyComplete = None

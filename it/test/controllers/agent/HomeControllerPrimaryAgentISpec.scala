@@ -16,25 +16,26 @@
 
 package controllers.agent
 
-import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
+import audit.models.HomeAudit
 import auth.MtdItUser
 import controllers.ControllerISpecHelper
 import enums.MTDPrimaryAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{NavBarFs, ReportingFrequencyPage}
+import models.admin.NavBarFs
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import obligations.models.audit.NextUpdatesResponseAuditModel
+import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import testConstants.NextUpdatesIntegrationTestConstants.currentDate
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import testConstants.OutstandingChargesIntegrationTestConstants._
 import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
 
@@ -594,7 +595,6 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "Reporting Frequency feature switches are enabled" in {
               stubAuthorised(mtdUserRole)
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-              enable(ReportingFrequencyPage)
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,

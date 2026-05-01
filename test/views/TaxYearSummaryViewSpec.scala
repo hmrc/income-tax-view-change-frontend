@@ -23,16 +23,15 @@ import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
-import models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
-import testConstants.NextUpdatesTestConstants.*
+import obligations.testConstants.NextUpdatesTestConstants.*
 import testUtils.ViewSpec
 import views.html.TaxYearSummaryView
-
+import obligations.models.*
 import java.time.LocalDate
 
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
@@ -654,6 +653,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val submission: String = "Submission"
     val updateIncomeSource: String = "Income source"
     val updateDateSubmitted: String = "Date submitted"
+    val updateDateNotReceived: String = "Not received"
     val lpiPaymentOnAccount1: String = "Late payment interest on first payment on account"
     val lpiPaymentOnAccount2: String = "Late payment interest on second payment on account"
     val lpiRemainingBalance: String = "Late payment interest on balancing payment"
@@ -1187,7 +1187,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
               val row = divAccordion.selectHead("tbody").selectHead("tr")
               row.selectNth("td", 1).text shouldBe updateType(testObligation.obligation.obligationType)
               row.selectNth("td", 2).text shouldBe incomeType(testObligation.incomeType)
-              row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse("")
+              row.selectNth("td", 3).text shouldBe testObligation.obligation.dateReceived.map(_.toLongDateShort).getOrElse(updateDateNotReceived)
           }
         }
       }

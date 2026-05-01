@@ -16,7 +16,7 @@
 
 package controllers
 
-import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
+import audit.models.TaxYearSummaryResponseAuditModel
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
@@ -24,8 +24,8 @@ import models.admin.*
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{IsMTD, LiabilityCalculationError}
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import obligations.models.audit.NextUpdatesResponseAuditModel
 import org.jsoup.Jsoup
 import play.api.http.Status.*
 import play.api.libs.json.Json
@@ -37,6 +37,7 @@ import testConstants.NewCalcBreakdownItTestConstants.*
 import testConstants.messages.TaxYearSummaryMessages.*
 
 import java.time.LocalDate
+import obligations.models.*
 
 class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
@@ -56,8 +57,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
           } else {
             "render the tax summary page" that {
               "includes the latest and previous calculations tab - previous calc amended" in {
-                enable(PostFinalisationAmendmentsR18)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(PostFinalisationAmendmentsR18))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -94,9 +94,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "includes the latest and previous calculations tab - previous calc finalised" in {
 
-                enable(PostFinalisationAmendmentsR18)
-
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(PostFinalisationAmendmentsR18))
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 

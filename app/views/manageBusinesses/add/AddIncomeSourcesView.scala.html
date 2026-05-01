@@ -21,6 +21,7 @@
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
 @import models.core._
+@import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 
 @this(
@@ -51,19 +52,19 @@
 
 @addBusinessNameURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.showAgent(mode = NormalMode).url
+        addBusinessRoutes.AddBusinessNameController.showAgent(mode = NormalMode).url
     }
     else {
-        controllers.manageBusinesses.add.routes.AddBusinessNameController.show(mode = NormalMode).url
+        addBusinessRoutes.AddBusinessNameController.show(mode = NormalMode).url
     }
 }
 
 @addUKPropertyStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, UkProperty).url
+    addBusinessRoutes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, UkProperty).url
 }
 
 @addForeignPropertyBusinessStartDateURL = @{
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, ForeignProperty).url
+    addBusinessRoutes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = NormalMode, ForeignProperty).url
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),

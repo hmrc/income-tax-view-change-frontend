@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
 @import uk.gov.hmrc.govukfrontend.views.Aliases.WarningText
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+@import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -45,9 +46,9 @@
 
 @getManageUrl = @{
     if(isAgent) {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+        manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
     } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+        manageBusinessRoutes.ManageYourBusinessesController.show().url
     }
 }
 

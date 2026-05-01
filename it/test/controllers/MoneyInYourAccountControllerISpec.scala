@@ -230,9 +230,10 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                                        enableCreditAndRefunds: Boolean = true) {
 
     if(enableCreditAndRefunds) {
-      enable(CreditsRefundsRepay)
+      stubAuthorised(mtdUserRole, List(CreditsRefundsRepay))
+    } else {
+      stubAuthorised(mtdUserRole)
     }
-    stubAuthorised(mtdUserRole)
 
     val incomeSources = multipleBusinessesAndPropertyResponse
       .copy(yearOfMigration = Some(s"${responses.map(_.taxYear).min}"))

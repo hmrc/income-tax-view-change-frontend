@@ -16,7 +16,7 @@
 
 package views.manageBusinesses.cease
 
-import controllers.manageBusinesses.cease.routes
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
@@ -29,6 +29,7 @@ import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmployment
 import testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testIncomeSource, testTradeName}
 import testUtils.TestSupport
 import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
+import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 
 class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
 
@@ -46,7 +47,7 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
   val viewModelFP: CheckCeaseIncomeSourceDetailsViewModel = CheckCeaseIncomeSourceDetailsViewModel(
     mkIncomeSourceId(testPropertyIncomeId), None, None, None, testEndDate, ForeignProperty)
 
-  val testBackUrl: String = routes.CeaseIncomeSourceController.show().url
+  val testBackUrl: String = manageBusinessRoutes.ManageYourBusinessesController.show().url
   val testCeaseDateLong: String = "1 January 2023"
   val businessAddressAsString = "64 Zoo Lane Happy Place Magical Land England ZL1 064 United Kingdom"
 
@@ -55,13 +56,13 @@ class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
     val messagesPrefix: String = incomeSourceType.ceaseCheckAnswersPrefix
 
     val redirectAction: Call = (isAgent, incomeSourceType) match {
-      case (true, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment)
-      case (false, SelfEmployment) => routes.IncomeSourceCeasedObligationsController.show(SelfEmployment)
-      case (true, UkProperty) => routes.IncomeSourceCeasedObligationsController.showAgent(UkProperty)
-      case (false, UkProperty) => routes.IncomeSourceCeasedObligationsController.show(UkProperty)
-      case (true, ForeignProperty) => routes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty)
-      case (false, ForeignProperty) => routes.IncomeSourceCeasedObligationsController.show(ForeignProperty)
-      case _ => routes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType)
+      case (true, SelfEmployment) => ceaseBusinessRoutes.IncomeSourceCeasedObligationsController.showAgent(SelfEmployment)
+      case (false, SelfEmployment) => ceaseBusinessRoutes.IncomeSourceCeasedObligationsController.show(SelfEmployment)
+      case (true, UkProperty) => ceaseBusinessRoutes.IncomeSourceCeasedObligationsController.showAgent(UkProperty)
+      case (false, UkProperty) => ceaseBusinessRoutes.IncomeSourceCeasedObligationsController.show(UkProperty)
+      case (true, ForeignProperty) => ceaseBusinessRoutes.IncomeSourceCeasedObligationsController.showAgent(ForeignProperty)
+      case (false, ForeignProperty) => ceaseBusinessRoutes.IncomeSourceCeasedObligationsController.show(ForeignProperty)
+      case _ => ceaseBusinessRoutes.IncomeSourceNotCeasedController.show(isAgent, incomeSourceType)
     }
 
     lazy val view: HtmlFormat.Appendable = ceaseCheckIncomeSourceDetailsView(isAgent, testBackUrl, viewModel, messagesPrefix, false)

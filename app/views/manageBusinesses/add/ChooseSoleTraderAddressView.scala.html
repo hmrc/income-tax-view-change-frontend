@@ -72,7 +72,7 @@
     @formWithCSRF(action = postAction, Symbol("id") -> "choose-sole-trader-address-form") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form))
+            @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("value" -> "choose-sole-trader-address-radios-new-address")))
         }
 
         @govukRadios(Radios(

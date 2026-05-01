@@ -29,6 +29,7 @@ import models.newHomePage.YourTasksCard.*
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
+import obligations.controllers.{routes => obligationsRoutes}
 
 @Singleton
 class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
@@ -79,9 +80,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
   private def getSubmissionTasks(viewModel: SubmissionDeadlinesViewModel, isAgent: Boolean, isQuarterly: Boolean): Seq[YourTasksCard] = {
     val submissionsLink = if(isAgent) {
-      controllers.routes.NextUpdatesController.showAgent().url
+      obligationsRoutes.NextUpdatesController.showAgent().url
     } else {
-      controllers.routes.NextUpdatesController.show().url
+      obligationsRoutes.NextUpdatesController.show().url
     }
 
     val submissionsLinkTextKey = "new.home.yourTasks.updates-and-deadlines"

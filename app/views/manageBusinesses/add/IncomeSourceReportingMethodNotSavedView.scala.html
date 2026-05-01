@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.components._
 @import views.html.layouts.unifiedLayout
+@import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 @this(
     mainTemplate: unifiedLayout,
@@ -41,9 +42,9 @@
 
 @manageBusinessesControllerURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+        manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
     } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+        manageBusinessRoutes.ManageYourBusinessesController.show().url
     }
 }
 
@@ -73,7 +74,8 @@ btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
         @linkComponent(
             id = Some("your-businesses-link"),
             url = manageBusinessesControllerURL,
-            message = messages("incomeSources.add.error.reportingMethodNotSaved.p3.linkText")
+            message = messages("incomeSources.add.error.reportingMethodNotSaved.p3.linkText"),
+            additionalMessage = if(messages.lang.code == "cy") { Some(".") } else { None }
         )
         @messages("incomeSources.add.error.reportingMethodNotSaved.p3.secondHalf")
 

@@ -21,6 +21,8 @@
 @import models.incomeSourceDetails.TaxYear
 @import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 @import models.incomeSourceDetails.viewmodels.DatesModel
+@import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+@import obligations.controllers.{routes => obligationsRoutes}
 
 @this(
         mainTemplate: unifiedLayout,
@@ -103,17 +105,17 @@ s"${getMessage("table.heading.1")} ${quarterly.head.inboundCorrespondenceFrom.ge
 
 @manageBusinessesControllerURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+        manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
     } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+        manageBusinessRoutes.ManageYourBusinessesController.show().url
     }
 }
 
 @nextUpdatesControllerURL = @{
     if(isAgent) {
-        controllers.routes.NextUpdatesController.showAgent().url
+        obligationsRoutes.NextUpdatesController.showAgent().url
     } else {
-        controllers.routes.NextUpdatesController.show().url
+        obligationsRoutes.NextUpdatesController.show().url
     }
 }
 

@@ -27,6 +27,8 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import testUtils.ViewSpec
 import views.html.manageBusinesses.add.AddBusinessNameView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class AddBusinessNameViewSpec extends ViewSpec {
 
@@ -41,27 +43,27 @@ class AddBusinessNameViewSpec extends ViewSpec {
     val postAction: Call = {
       if (isChange) {
         if (isAgent) {
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(mode = CheckMode)
+          addBusinessRoutes.AddBusinessNameController.submitAgent(mode = CheckMode)
         } else {
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(mode = CheckMode)
+          addBusinessRoutes.AddBusinessNameController.submit(mode = CheckMode)
         }
       } else {
-        if (isAgent) controllers.manageBusinesses.add.routes.AddBusinessNameController.submitAgent(mode = NormalMode) else
-          controllers.manageBusinesses.add.routes.AddBusinessNameController.submit(mode = NormalMode)
+        if (isAgent) addBusinessRoutes.AddBusinessNameController.submitAgent(mode = NormalMode) else
+          addBusinessRoutes.AddBusinessNameController.submit(mode = NormalMode)
       }
     }
 
     val backUrl: String = {
       if (isChange) {
         if (isAgent) {
-          controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+          addBusinessRoutes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
         } else {
-          controllers.manageBusinesses.add.routes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+          addBusinessRoutes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
         }
       } else if(isAgent) {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+        manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
       } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+        manageBusinessRoutes.ManageYourBusinessesController.show().url
       }
     }
 

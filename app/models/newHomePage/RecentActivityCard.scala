@@ -25,5 +25,6 @@ case class RecentActivityCard(linkContentText: String,
                               contentText: String,
                               dateContentText: String,
                               cardDate: LocalDate,
-                              cardTaxYear: Option[TaxYear] = None
+                              cardTaxYear: Option[TaxYear] = None,
+                              cardAmount: Option[BigDecimal] = None
 )

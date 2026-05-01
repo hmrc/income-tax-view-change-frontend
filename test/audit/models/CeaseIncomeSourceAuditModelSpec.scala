@@ -21,7 +21,7 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants._
-import testConstants.UpdateIncomeSourceTestConstants.failureResponse
+import obligations.testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
