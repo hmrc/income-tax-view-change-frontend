@@ -34,6 +34,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeig
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.manageBusinesses.manage.ConfirmReportingMethodView
+import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 
 class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
@@ -45,7 +46,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, newReportingMethod: String, isCYPlus: Boolean, contentFeatureSwitchEnabled: Boolean) {
 
-    private lazy val manageIncomeSourceDetailsController = controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController
+    private lazy val manageIncomeSourceDetailsController = manageYourBusinessRoutes.ManageIncomeSourceDetailsController
 
     val testChangeToAnnual = "annual"
 
@@ -151,7 +152,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         contentFeatureSwitchEnabled = true
       ) {
         document.getElementById("back-fallback").text() shouldBe "Back"
-        document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = isAgent, incomeSourceType, selfEmploymentId).url
+        document.getElementById("back-fallback").attr("href") shouldBe manageYourBusinessRoutes.ManageIncomeSourceDetailsController.show(isAgent = isAgent, incomeSourceType, selfEmploymentId).url
       }
 
       "render the sub-heading" in new Setup(
@@ -267,7 +268,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         contentFeatureSwitchEnabled = false
       ) {
         document.getElementById("back-fallback").text() shouldBe "Back"
-        document.getElementById("back-fallback").attr("href") shouldBe controllers.manageBusinesses.manage.routes.ManageIncomeSourceDetailsController.show(isAgent = isAgent, incomeSourceType, selfEmploymentId).url
+        document.getElementById("back-fallback").attr("href") shouldBe manageYourBusinessRoutes.ManageIncomeSourceDetailsController.show(isAgent = isAgent, incomeSourceType, selfEmploymentId).url
       }
 
       "render the sub-heading" in new Setup(

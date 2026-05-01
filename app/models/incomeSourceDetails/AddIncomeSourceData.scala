@@ -33,7 +33,6 @@ case class AddIncomeSourceData(
                                 incomeSourceId: Option[String] = None,
                                 chooseSoleTraderAddress: Option[ChooseSoleTraderAddressUserAnswer] = None,
                                 address: Option[Address] = None,
-                                countryCode: Option[String] = None,
                                 addressId: Option[String] = None,
                                 addressLookupId: Option[String] = None,
                                 changeReportingFrequency: Option[Boolean] = None,
@@ -85,7 +84,6 @@ case class AddIncomeSourceData(
           newAddress
         )
       },
-      countryCode.map(SensitiveString.apply),
       addressId.map(SensitiveString.apply),
       addressLookupId.map(SensitiveString.apply),
       changeReportingFrequency.map(SensitiveBoolean.apply),
@@ -125,7 +123,6 @@ case class SensitiveAddIncomeSourceData(
                                          incomeSourceId: Option[SensitiveString] = None,
                                          address: Option[SensitiveAddress] = None,
                                          chooseSoleTraderAddress: Option[SensitiveChooseSoleTraderAddressRadioAnswer] = None,
-                                         countryCode: Option[SensitiveString] = None,
                                          addressId: Option[SensitiveString] = None,
                                          addressLookupId: Option[SensitiveString] = None,
                                          changeReportingFrequency: Option[SensitiveBoolean] = None,
@@ -146,7 +143,6 @@ case class SensitiveAddIncomeSourceData(
       incomeSourceId = incomeSourceId.map(_.decryptedValue),
       address = address.map(_.decrypted),
       chooseSoleTraderAddress = chooseSoleTraderAddress.map(_.decrypted),
-      countryCode = countryCode.map(_.decryptedValue),
       addressId = addressId.map(_.decryptedValue),
       addressLookupId = addressLookupId.map(_.decryptedValue),
       changeReportingFrequency = changeReportingFrequency.map(_.decryptedValue),

@@ -286,6 +286,10 @@ new.home.recentActivity.payments.link.text                      = Gweld hanes ta
 new.home.recentActivity.payments.content.text                   = Gwnaethoch dalu {0}.
 new.home.recentActivity.payments.date.content.text              = Talwyd erbyn {0}
 
+new.home.recentActivity.recentRefund.link.text                 = Gweld hanes ad-daliadau
+new.home.recentActivity.recentRefund.content.text               = Mae CThEF wedi talu’ch ad-daliad o {0}.
+new.home.recentActivity.recentRefund.date.content.text          = Talwyd erbyn {0}
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
@@ -1729,7 +1733,7 @@ add-business-address.edit.heading           = Nodwch gyfeiriad eich busnes
 ## Add international business address page
 add-international-business-address.heading = Nodwch gyfeiriad rhyngwladol eich busnes
 add-international-business-address.postcode =  Cod post neu god ‘zip’
-add-international-business-address.countryPicker.heading = Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes
+add-international-business-address.countryPicker.heading = Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes
 
 shortMonth.1     = Ion
 shortMonth.2     = Chwe

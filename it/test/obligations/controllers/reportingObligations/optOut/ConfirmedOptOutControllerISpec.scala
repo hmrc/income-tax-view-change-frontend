@@ -18,11 +18,11 @@ package obligations.controllers.reportingObligations.optOut
 
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import helpers.WiremockHelper
-import models.admin.{NavBarFs, OptOutFs}
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus._
+import models.itsaStatus.ITSAStatus.*
 import obligations.helpers.OptOutSessionRepositoryHelper
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -61,8 +61,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
         s"a user is a $mtdUserRole" that {
           "is authenticated, with a valid enrolment" should {
             s"render confirm single year opt out page" in {
-              enable(OptOutFs)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OptOutFs))
 
               IncomeTaxViewChangeStub.stubGetAllObligations(
                 nino = testNino,
@@ -123,8 +122,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
             }
 
             s"redirect to cannot-go-back page when session data are invalid" in {
-              enable(OptOutFs)
-              stubAuthorised(mtdUserRole)
+              stubAuthorised(mtdUserRole, List(OptOutFs))
 
               helper.stubOptOutInitialState(
                 currentTaxYear = currentTaxYear,

@@ -214,8 +214,8 @@ object AddressLookupTestConstants {
       |        "heading": "What is your business address?"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Select the country or territory for your business address",
-      |        "title": "Select the country or territory for your business address"
+      |        "heading": "Enter the country or territory for your business address",
+      |        "title": "Enter the country or territory for your business address"
       |      },
       |      "editPageLabels": {
       |        "heading": "Enter your business address"
@@ -239,8 +239,8 @@ object AddressLookupTestConstants {
       |        "heading": "Nodwch gyfeiriad eich busnes"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
-      |        "title": "Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
+      |        "heading": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
+      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
       |      },
       |      "international": {
       |        "editPageLabels": {
@@ -300,8 +300,8 @@ object AddressLookupTestConstants {
       |        "heading": "What is your business address?"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Select the country or territory for your business address",
-      |        "title": "Select the country or territory for your business address"
+      |        "heading": "Enter the country or territory for your business address",
+      |        "title": "Enter the country or territory for your business address"
       |      },
       |      "editPageLabels": {
       |        "heading": "Enter your business address"
@@ -325,8 +325,8 @@ object AddressLookupTestConstants {
       |        "heading": "Nodwch gyfeiriad eich busnes"
       |      },
       |      "countryPickerLabels": {
-      |        "heading": "Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
-      |        "title": "Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
+      |        "heading": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
+      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
       |      },
       |      "international": {
       |        "editPageLabels": {

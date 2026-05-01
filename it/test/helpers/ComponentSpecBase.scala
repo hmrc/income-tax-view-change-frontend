@@ -20,16 +20,15 @@ import auth.authV2.models.AuthorisedAndEnrolledRequest
 import auth.{HeaderExtractor, MtdItUser}
 import com.github.tomakehurst.wiremock.client.WireMock
 import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
-import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.repositories.OptOutSessionDataRepository
-import org.scalatest._
+import org.scalatest.*
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.cache.AsyncCacheApi
 import play.api.i18n.{Lang, MessagesApi}
@@ -40,7 +39,7 @@ import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
 import services.{DateService, DateServiceInterface}
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -48,7 +47,7 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Await, ExecutionContext}
 
 @Singleton
 class TestHeaderExtractor extends HeaderExtractor {
@@ -98,7 +97,7 @@ class TestDateService extends DateServiceInterface {
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually
-  with FeatureSwitching with SessionCookieBaker {
+  with SessionCookieBaker {
 
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
@@ -173,6 +172,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.income-tax-calculation.port" -> mockPort,
     "microservice.services.income-tax-penalties-stub.host" -> mockHost,
     "microservice.services.income-tax-penalties-stub.port" -> mockPort,
+    "microservice.services.itvc-dynamic-stub.host" -> mockHost,
+    "microservice.services.itvc-dynamic-stub.port" -> mockPort,
     "microservice.services.penalties.host" -> mockHost,
     "microservice.services.penalties.port" -> mockPort,
     "microservice.services.penalties.host" -> mockHost,
@@ -199,7 +200,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.citizen-details.port" -> mockPort,
     "microservice.services.set-up-a-payment-plan.host" -> mockHost,
     "microservice.services.set-up-a-payment-plan.port" -> mockPort,
-    "feature-switches.read-from-mongo" -> "false",
+    "feature-switches.read-from-mongo" -> "true",
     "feature-switch.enable-time-machine" -> "false",
     "time-machine.add-years" -> "0",
     "time-machine.add-days" -> "0"
@@ -232,14 +233,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     super.beforeEach()
     WireMock.reset()
     AuditStub.stubAuditing()
-    cache.removeAll()
-    FeatureSwitchName.allFeatureSwitches foreach disable
+    Await.result(cache.removeAll(), 5.seconds)
   }
 
   override def afterAll(): Unit = {
     stopWiremock()
     super.afterAll()
-    FeatureSwitchName.allFeatureSwitches foreach disable
   }
 }
-

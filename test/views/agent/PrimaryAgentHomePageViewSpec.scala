@@ -35,6 +35,7 @@ import testConstants.BaseTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.agent.PrimaryAgentHomeView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 import java.time.{LocalDate, Month}
 import scala.annotation.unused
@@ -471,7 +472,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           }
           "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
-            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url)
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(manageBusinessRoutes.ManageYourBusinessesController.showAgent().url)
           }
         }
       }

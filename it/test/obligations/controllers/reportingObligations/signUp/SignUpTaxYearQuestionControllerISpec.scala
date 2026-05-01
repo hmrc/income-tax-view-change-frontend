@@ -95,9 +95,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
@@ -155,8 +154,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17, SignUpFs)
-
 
           await(
             repository.set(
@@ -177,7 +174,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -211,7 +208,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the sign up tax year question page - CY onwards following mandated" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           await(
             repository.set(
@@ -232,7 +228,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -268,8 +264,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
 
-          enable(OptInOptOutContentUpdateR17, SignUpFs)
-
           await(
             repository.set(
               UIJourneySessionData(
@@ -289,7 +283,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -313,7 +307,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           await(
             repository.set(
@@ -334,7 +327,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -358,7 +351,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           await(
             repository.set(
@@ -379,7 +371,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -403,7 +395,6 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
           await(
             repository.set(
@@ -424,7 +415,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             )
           )
 
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -451,10 +442,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       }
 
       "submit the answer to the sign up tax year question - SingleYear" in {
-
-        enable(OptInOptOutContentUpdateR17, SignUpFs)
-
-        stubAuthorised(mtdUserRole)
+        stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val currentYear = "2022"
@@ -503,10 +491,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       }
 
       "submit the answer to the sign up tax year question - MultiYear" in {
-
-        enable(OptInOptOutContentUpdateR17, SignUpFs)
-
-        stubAuthorised(mtdUserRole)
+        stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val currentYear = "2022"
@@ -557,9 +542,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "get an error message if the user incorrectly submits to the form" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-        enable(OptInOptOutContentUpdateR17, SignUpFs)
 
-        stubAuthorised(mtdUserRole)
+        stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
@@ -582,9 +566,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "redirect to the cannot go back page" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-          enable(OptInOptOutContentUpdateR17, SignUpFs)
 
-          stubAuthorised(mtdUserRole)
+          stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,

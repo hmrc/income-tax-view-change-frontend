@@ -133,8 +133,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           }
 
           "has obligations and the Opt Out feature switch enabled" in {
-            stubAuthorised(mtdUserRole)
-            enable(OptOutFs)
+            stubAuthorised(mtdUserRole, List(OptOutFs))
             val currentTaxYear = dateService.getCurrentTaxYearEnd
             val previousYear = currentTaxYear - 1
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
@@ -222,8 +221,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
             "take the user to an error page" when {
 
               "there is an ITSA Status API failure" in {
-                stubAuthorised(mtdUserRole)
-                enable(OptOutFs)
+                stubAuthorised(mtdUserRole, List(OptOutFs))
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
                 val previousYear = currentTaxYear.addYears(-1)
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
@@ -259,8 +257,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               }
 
               "there is an Calculation API failure" in {
-                stubAuthorised(mtdUserRole)
-                enable(OptOutFs)
+                stubAuthorised(mtdUserRole, List(OptOutFs))
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
                 val previousYear = currentTaxYear.addYears(-1)
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(
@@ -296,8 +293,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
               }
 
               "there is both an ITSA Status and Calculation API failure" in {
-                stubAuthorised(mtdUserRole)
-                enable(OptOutFs)
+                stubAuthorised(mtdUserRole, List(OptOutFs))
                 val currentTaxYear = TaxYear.forYearEnd(dateService.getCurrentTaxYearEnd)
                 val previousYear = currentTaxYear.addYears(-1)
                 val currentObligations: ObligationsModel = ObligationsModel(Seq(

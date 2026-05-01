@@ -57,8 +57,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
           } else {
             "render the tax summary page" that {
               "includes the latest and previous calculations tab - previous calc amended" in {
-                enable(PostFinalisationAmendmentsR18)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(PostFinalisationAmendmentsR18))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -95,9 +94,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "includes the latest and previous calculations tab - previous calc finalised" in {
 
-                enable(PostFinalisationAmendmentsR18)
-
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(PostFinalisationAmendmentsR18))
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 

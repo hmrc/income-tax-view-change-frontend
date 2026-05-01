@@ -17,6 +17,7 @@
 package connectors
 
 import auth.MtdItUser
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessesRoutes
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.core.Mode
@@ -48,8 +49,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def continueUrl(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): String = {
-    if(isAgent) controllers.manageBusinesses.add.routes.AddBusinessAddressController.agentSubmit(None, mode = mode, isTriggeredMigration).url
-    else controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode, isTriggeredMigration).url
+    if(isAgent) addBusinessesRoutes.AddBusinessAddressController.agentSubmit(None, mode = mode, isTriggeredMigration).url
+    else addBusinessesRoutes.AddBusinessAddressController.submit(None, mode = mode, isTriggeredMigration).url
   }
 
   lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url

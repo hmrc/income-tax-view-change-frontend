@@ -26,6 +26,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 import java.time.LocalDate
 
@@ -102,7 +103,7 @@ class AddIncomeSourceStartDateCheckViewSpec extends TestSupport {
   }
 
   def getBackUrl(isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType): String = {
-    controllers.manageBusinesses.add.routes.AddIncomeSourceStartDateController
+    addBusinessRoutes.AddIncomeSourceStartDateController
       .show(isAgent, mode, incomeSourceType).url
   }
 
