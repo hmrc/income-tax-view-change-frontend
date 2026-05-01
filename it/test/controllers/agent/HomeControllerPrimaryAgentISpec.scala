@@ -145,7 +145,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   testUser,
                   Some(Left(currentDate -> false)),
                   Left(currentDate -> false),
-                  userIsCYPlusOne = false).detail)
+                  userIsCYPlusOne = true).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
@@ -219,7 +219,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   testUser,
                   None,
                   Left(currentDate -> false),
-                  userIsCYPlusOne = false).detail)
+                  userIsCYPlusOne = true).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
@@ -295,7 +295,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   testUser,
                   Some(Left(currentDate.minusDays(1) -> true)),
                   Left(currentDate.minusDays(1) -> true),
-                  userIsCYPlusOne = false).detail)
+                  userIsCYPlusOne = true).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
 
@@ -369,7 +369,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   testUser,
                   Some(Right(2)),
                   Left(currentDate.minusDays(1) -> true),
-                  userIsCYPlusOne = false).detail)
+                  userIsCYPlusOne = true).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
@@ -465,7 +465,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   testUser,
                   Some(Right(2)),
                   Right(2),
-                  userIsCYPlusOne = false).detail)
+                  userIsCYPlusOne = true).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
