@@ -16,9 +16,9 @@
 
 package testConstants.incomeSources
 
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import models.UIJourneySessionData
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._

@@ -17,8 +17,7 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.manage.ReportingMethodChangeErrorController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -28,10 +27,12 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService}
+import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.services.UpdateIncomeSourceService
 
 import scala.concurrent.Future
 
@@ -44,7 +45,6 @@ class ReportingMethodChangeErrorControllerSpec extends MockAuthActions with Mock
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourcesService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

@@ -84,7 +84,6 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       supportingAgentHomeView,
       authActions,
       mockedNextUpdatesService,
-      mockIncomeSourceDetailsService,
       mockFinancialDetailsService,
       mockDateServiceInjected,
       mockWhatYouOweService,

@@ -17,8 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.IsTheNewAddressInTheUKController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.SelfEmployment
+import connectors.{ITSAStatusConnector}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
@@ -43,6 +42,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesA
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -62,7 +62,6 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

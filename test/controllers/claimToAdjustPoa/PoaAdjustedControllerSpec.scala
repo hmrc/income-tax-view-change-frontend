@@ -16,7 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockDateService, MockPaymentOnAccountSessionService}
@@ -46,7 +46,6 @@ class PoaAdjustedControllerSpec extends MockAuthActions
         api.inject.bind[PaymentOnAccountSessionService].toInstance(mockPaymentOnAccountSessionService),
         api.inject.bind[DateService].toInstance(mockDateService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

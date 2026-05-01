@@ -17,8 +17,8 @@
 package testConstants
 
 import auth.authV2.models.{AgentClientDetails, AuthUserDetails}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import controllers.agent.sessionUtils.SessionKeys
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId

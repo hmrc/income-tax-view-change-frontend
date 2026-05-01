@@ -17,8 +17,8 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.ReportingMethodSetBackErrorController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import connectors.{ITSAStatusConnector}
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -40,7 +40,6 @@ class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with Moc
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

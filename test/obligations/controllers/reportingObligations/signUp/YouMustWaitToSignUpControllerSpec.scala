@@ -16,7 +16,7 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import obligations.mocks.services.MockSignUpService
@@ -39,7 +39,6 @@ class YouMustWaitToSignUpControllerSpec extends MockAuthActions with MockSignUpS
       .overrides(
         api.inject.bind[SignUpService].toInstance(mockSignUpService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

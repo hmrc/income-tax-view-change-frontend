@@ -18,7 +18,7 @@ package controllers
 
 import audit.models.IvOutcomeSuccessAuditModel
 import authV2.AuthActionsTestData.defaultIncomeSourcesData
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -42,7 +42,6 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -78,16 +77,16 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
           )
         )
 
-        when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
+        when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
           .thenReturn(Future(defaultIncomeSourcesData))
 
         when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
           .thenReturn(Future(Right(itsaStatusResponses)))
 
-        when(mockBusinessDetailsConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        when(mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
           .thenReturn(Future(incomeSourcesResponse))
 
-        when(mockBusinessDetailsConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
+        when(mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any()))
           .thenReturn(Future(incomeSourcesResponse))
 
         when(mockDateServiceInterface.getCurrentTaxYear)

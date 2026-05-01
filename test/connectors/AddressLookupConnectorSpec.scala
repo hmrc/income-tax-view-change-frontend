@@ -16,6 +16,7 @@
 
 package connectors
 
+import businessDetails.services.AddressLookupConnector
 import config.featureswitch.FeatureSwitching
 import mocks.MockHttpV2
 import models.core.{CheckMode, NormalMode}

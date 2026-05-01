@@ -18,6 +18,7 @@ package auth.authV2.actions
 
 import auth.MtdItUser
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import businessDetails.services.CustomerFactsUpdateService
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxCalculationConnector
@@ -28,7 +29,7 @@ import models.admin.TriggeredMigration
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
-import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, SessionService}
+import services.{DateServiceInterface, ITSAStatusService, SessionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 

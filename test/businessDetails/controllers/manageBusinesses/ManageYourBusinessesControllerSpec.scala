@@ -17,7 +17,7 @@
 package businessDetails.controllers.manageBusinesses
 
 import businessDetails.controllers.manageBusinesses.ManageYourBusinessesController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
@@ -42,7 +42,6 @@ class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDa
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

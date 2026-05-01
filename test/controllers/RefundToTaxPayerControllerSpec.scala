@@ -17,7 +17,7 @@
 package controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, RepaymentHistoryConnector}
+import connectors.{ITSAStatusConnector, RepaymentHistoryConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.connectors.MockRepaymentHistoryConnector
@@ -40,7 +40,6 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
     .overrides(
       api.inject.bind[RepaymentHistoryConnector].toInstance(mockRepaymentHistoryConnector),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

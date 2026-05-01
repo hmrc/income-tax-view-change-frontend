@@ -16,13 +16,14 @@
 
 package obligations.controllers.reportingObligations.optOut
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.*
 import mocks.auth.MockAuthActions
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import obligations.enums.{CurrentTaxYear, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
 import obligations.mocks.services.MockOptOutService
 import obligations.models.reportingObligations.optOut.*
 import obligations.services.reportingObligations.optOut.*
@@ -43,7 +44,6 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
     .overrides(
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

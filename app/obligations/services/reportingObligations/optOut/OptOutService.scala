@@ -22,6 +22,7 @@ import enums.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import obligations.enums.{ChosenTaxYear, CurrentTaxYear, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
 import obligations.models.reportingObligations.optOut.*
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService

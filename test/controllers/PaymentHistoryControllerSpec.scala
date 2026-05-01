@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
@@ -46,7 +46,6 @@ class PaymentHistoryControllerSpec extends MockAuthActions
       api.inject.bind[PaymentHistoryService].toInstance(paymentHistoryService),
       api.inject.bind[RepaymentService].toInstance(mockRepaymentService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

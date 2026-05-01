@@ -86,7 +86,6 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
       supportingAgentHomeView,
       authActions,
       mockedNextUpdatesService,
-      mockIncomeSourceDetailsService,
       mockFinancialDetailsService,
       mockDateServiceInjected,
       mockWhatYouOweService,

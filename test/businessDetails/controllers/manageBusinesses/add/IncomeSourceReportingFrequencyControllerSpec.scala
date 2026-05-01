@@ -17,15 +17,13 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions
-import mocks.services.{MockIncomeSourceRFService, MockSessionService}
+import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -35,7 +33,6 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.*
-import services.manageBusinesses.IncomeSourceRFService
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 import models.itsaStatus.StatusDetail
@@ -43,6 +40,11 @@ import models.itsaStatus.StatusDetail
 import java.time.LocalDate
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.MockIncomeSourceRFService
+import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.services.manageBusinesses.IncomeSourceRFService
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 
@@ -67,7 +69,6 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
       api.inject.bind[CalculationListService].toInstance(mockCalculationListService),
       api.inject.bind[DateService].toInstance(mockDateService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

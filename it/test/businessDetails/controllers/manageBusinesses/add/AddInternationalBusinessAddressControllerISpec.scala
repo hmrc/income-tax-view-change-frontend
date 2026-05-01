@@ -16,10 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.helpers.servicemocks.AddressLookupStub
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.WiremockHelper
-import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.OverseasBusinessAddress
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json

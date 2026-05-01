@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services.*
@@ -24,6 +24,7 @@ import _root_.config.ItvcErrorHandler
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
+import obligations.mocks.services.MockNextUpdatesService
 import obligations.services.NextUpdatesService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -63,7 +64,6 @@ trait HomeControllerHelperSpec extends MockAuthActions
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
       api.inject.bind[PenaltyDetailsService].toInstance(mockPenaltyDetailsService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
