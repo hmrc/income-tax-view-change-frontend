@@ -16,7 +16,7 @@
 
 package services.agent
 
-import connectors.BusinessDetailsConnector
+import businessDetails.connectors.BusinessDetailsConnector
 import connectors.agent.CitizenDetailsConnector
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}

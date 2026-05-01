@@ -21,7 +21,6 @@ import auth.authV2.AuthActions
 import com.google.inject.Singleton
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.core.Mode
@@ -29,9 +28,11 @@ import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{AddressLookupService, SessionService}
+import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.IncomeSourcesUtils
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.services.AddressLookupService
+import businessDetails.utils.IncomeSourcesUtils
 
 import javax.inject.Inject
 import scala.annotation.unused

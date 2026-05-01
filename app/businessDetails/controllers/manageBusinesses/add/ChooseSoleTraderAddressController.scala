@@ -18,11 +18,12 @@ package businessDetails.controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
+import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import jakarta.inject.Singleton
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
@@ -32,8 +33,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.add.ChooseSoleTraderAddressView
+import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

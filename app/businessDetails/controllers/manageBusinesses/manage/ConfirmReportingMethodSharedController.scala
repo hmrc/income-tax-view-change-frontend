@@ -19,12 +19,15 @@ package businessDetails.controllers.manageBusinesses.manage
 import audit.AuditingService
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import businessDetails.enums.ReportingMethod
+import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
+import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{AfterSubmissionPage, BeforeSubmissionPage, ReportingMethod}
-import forms.manageBusinesses.manage.ChangeReportingMethodForm
+import enums.{AfterSubmissionPage, BeforeSubmissionPage}
 import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
@@ -34,10 +37,9 @@ import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{DateService, SessionService, UpdateIncomeSourceService}
+import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.manage.ConfirmReportingMethodView
+import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethodView
 
 import javax.inject.Inject
 import scala.annotation.unused

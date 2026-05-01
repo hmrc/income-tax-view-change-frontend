@@ -16,8 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import businessDetails.controllers.manageBusinesses.cease.IncomeSourceCeasedBackErrorController
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -33,7 +34,6 @@ class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with Moc
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

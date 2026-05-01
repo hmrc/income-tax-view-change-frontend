@@ -16,8 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.controllers.manageBusinesses.add.AddIncomeSourceStartDateController
+import connectors.{ITSAStatusConnector}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
@@ -39,6 +39,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{noIncomeDet
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 
 class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
@@ -49,7 +50,6 @@ class AddIncomeSourceStartDateControllerSpec extends MockAuthActions
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

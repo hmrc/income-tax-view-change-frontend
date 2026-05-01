@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import enums.IncomeSourceJourney.UkProperty
+import businessDetails.enums.IncomeSourceJourney.UkProperty
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import models.admin.*

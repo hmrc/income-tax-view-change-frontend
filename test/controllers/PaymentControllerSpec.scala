@@ -17,7 +17,7 @@
 package controllers
 
 import audit.models.InitiatePayNowAuditModel
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, PayApiConnector}
+import connectors.{ITSAStatusConnector, PayApiConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
@@ -42,7 +42,6 @@ class PaymentControllerSpec extends MockAuthActions {
     .overrides(
       api.inject.bind[PayApiConnector].toInstance(mockPayApiConnector),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

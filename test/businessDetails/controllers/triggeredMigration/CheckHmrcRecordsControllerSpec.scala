@@ -16,21 +16,22 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
-import enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.controllers.triggeredMigration.CheckHmrcRecordsController
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
+import businessDetails.mocks.services.MockTriggeredMigrationService
+import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
+import businessDetails.services.triggeredMigration.TriggeredMigrationService
+import connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
-import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import mocks.auth.MockAuthActions
-import mocks.services.MockTriggeredMigrationService
 import models.admin.TriggeredMigration
 import models.core.IncomeSourceId
-import models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.DateServiceInterface
-import services.triggeredMigration.TriggeredMigrationService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeUnconfirmed
 
 import scala.concurrent.Future
@@ -41,7 +42,6 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
     .overrides(
       api.inject.bind[TriggeredMigrationService].toInstance(mockTriggeredMigrationService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
       api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
     ).build()
@@ -75,7 +75,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
 
             when(
-              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncomeUnconfirmed))
 
             val result = action(fakeRequest)
@@ -91,7 +91,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationCeased)))
 
             when(
-              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncomeUnconfirmed))
 
             val result = action(fakeRequest)
@@ -107,7 +107,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment))))
 
             when(
-              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncomeUnconfirmed))
 
             val result = action(fakeRequest)
@@ -122,7 +122,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             mockItsaStatusRetrievalAction()
 
             when(
-              mockIncomeSourceDetailsService.getIncomeSourceDetails()(ArgumentMatchers.any(), ArgumentMatchers.any())
+              mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
             ).thenReturn(Future(singleBusinessIncomeUnconfirmed))
 
             val result = action(fakeRequest)

@@ -16,12 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.controllers.manageBusinesses.cease.DeclareIncomeSourceCeasedController
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.NormalMode
@@ -37,6 +35,9 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
+import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 
 class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -45,7 +46,6 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface))
       .build()
 

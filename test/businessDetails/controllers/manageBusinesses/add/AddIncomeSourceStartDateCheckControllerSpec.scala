@@ -16,11 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import services.DateServiceInterface
@@ -57,7 +57,6 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with I
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[DateService].toInstance(mockDateServiceInjected),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
       ).build()
 

@@ -16,7 +16,7 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
@@ -43,7 +43,6 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
     .overrides(
       api.inject.bind[SignUpService].toInstance(mockSignUpService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
   ).build()
 

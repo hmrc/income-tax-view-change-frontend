@@ -18,12 +18,13 @@ package businessDetails.controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
+import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
-import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{Mode, NormalMode}
@@ -32,9 +33,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.errorPages.CustomNotFoundErrorView
-import views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
+import businessDetails.views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused
