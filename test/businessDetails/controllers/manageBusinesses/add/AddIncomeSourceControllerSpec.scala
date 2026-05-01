@@ -16,8 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.AddIncomeSourceController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import businessDetails.services.IncomeSourceDetailsService
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
@@ -43,8 +43,9 @@ class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFor
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+      api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService)
+
     ).build()
 
   lazy val controller = app.injector.instanceOf[AddIncomeSourceController]

@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import enums.IncomeSourceJourney.IncomeSourceType
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear
 

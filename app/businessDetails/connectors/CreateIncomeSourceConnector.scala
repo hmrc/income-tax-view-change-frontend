@@ -1,0 +1,78 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package businessDetails.connectors
+
+import config.FrontendAppConfig
+import businessDetails.models.createIncomeSource.*
+import play.api.Logger
+import play.api.http.Status.OK
+import play.api.libs.json.{JsError, Json}
+import play.api.libs.ws.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class CreateIncomeSourceConnector @Inject()(val http: HttpClientV2,
+                                            val appConfig: FrontendAppConfig
+                                           )(implicit val ec: ExecutionContext) {
+
+  def createBusinessIncomeSourcesUrl(): String =
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/create-income-source/business"
+
+  def createBusiness(request: CreateBusinessIncomeSourceRequest)
+                        (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
+    val url = createBusinessIncomeSourcesUrl()
+    val jsonRequest = Json.toJson(request)
+    Logger("application").debug("createBusinessRequest json: " + jsonRequest)
+    http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
+  }
+
+  def createForeignProperty(request: CreateForeignPropertyIncomeSourceRequest)
+                    (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
+    val url = createBusinessIncomeSourcesUrl()
+    val jsonRequest = Json.toJson(request)
+    http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
+  }
+
+  def createUKProperty(request: CreateUKPropertyIncomeSourceRequest)
+                           (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
+    val url = createBusinessIncomeSourcesUrl()
+    val jsonRequest = Json.toJson(request)
+
+    http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
+  }
+
+
+  private def handleResponse(response: HttpResponse): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
+    if (response.status == OK) {
+      response.json.validate[List[CreateIncomeSourceResponse]].fold(
+        errors => {
+          Logger("application").error(s"Json validation error parsing business income sources response, error ${JsError.toJson(errors)}")
+          Future.successful(Left(CreateIncomeSourceErrorResponse(response.status, s"Not valid json: ${response.body}")))
+        },
+        valid => Future.successful(Right(valid))
+      )
+    } else {
+      Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+      Future.successful(Left(CreateIncomeSourceErrorResponse(response.status, s"Error creating incomeSource: ${response.json}")))
+    }
+  }
+}

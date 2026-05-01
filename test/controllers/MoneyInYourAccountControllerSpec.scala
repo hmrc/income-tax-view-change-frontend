@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCreditService, MockRepaymentService}
@@ -40,16 +40,13 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class MoneyInYourAccountControllerSpec extends MockAuthActions with MockCreditService with MockRepaymentService {
-
-  override lazy val mockBusinessDetailsConnector: BusinessDetailsConnector = mock[BusinessDetailsConnector]
-
+  
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[CreditService].toInstance(mockCreditService),
         api.inject.bind[RepaymentService].toInstance(mockRepaymentService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

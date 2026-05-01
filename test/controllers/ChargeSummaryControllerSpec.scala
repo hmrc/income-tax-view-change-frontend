@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
@@ -44,7 +44,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
       api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

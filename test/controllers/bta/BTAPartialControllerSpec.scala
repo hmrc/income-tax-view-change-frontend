@@ -16,7 +16,7 @@
 
 package controllers.bta
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import play.api
@@ -32,7 +32,6 @@ class BTAPartialControllerSpec extends MockAuthActions {
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

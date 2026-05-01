@@ -17,8 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.IncomeSourceNotAddedController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
@@ -28,11 +27,13 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{CreateBusinessDetailsService, DateServiceInterface}
+import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, foreignPropertyIncome, ukPropertyIncome}
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.services.CreateBusinessDetailsService
 
 class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
 
@@ -42,7 +43,6 @@ class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
     .overrides(
       api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

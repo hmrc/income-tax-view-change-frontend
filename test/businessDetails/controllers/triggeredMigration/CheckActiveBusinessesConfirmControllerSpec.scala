@@ -16,7 +16,8 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
+import businessDetails.controllers.triggeredMigration.CheckActiveBusinessesConfirmController
+import connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
@@ -36,7 +37,6 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
         api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
       )
@@ -46,7 +46,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
     app.injector.instanceOf[CheckActiveBusinessesConfirmController]
 
   private def stubIncomeSourceDetails(): Unit =
-    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+    when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
       .thenReturn(Future.successful(singleBusinessIncome.copy(channel = "Hmrc-led-unconfirmed")))
 
   mtdAllRoles.foreach { mtdRole =>

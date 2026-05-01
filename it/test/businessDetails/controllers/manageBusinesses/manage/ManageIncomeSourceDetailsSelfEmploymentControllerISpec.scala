@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}

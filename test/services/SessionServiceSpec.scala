@@ -16,7 +16,7 @@
 
 package services
 
-import enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.UIJourneySessionData

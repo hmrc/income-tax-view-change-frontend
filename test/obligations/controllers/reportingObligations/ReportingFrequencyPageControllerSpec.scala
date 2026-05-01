@@ -17,7 +17,7 @@
 package obligations.controllers.reportingObligations
 
 import config.FrontendAppConfig
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockDateService
@@ -56,7 +56,6 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[SignUpService].toInstance(mockSignUpService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).configure(Map("feature-switches.read-from-mongo" -> "false"))
     .build()
@@ -116,7 +115,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
             when(mockOptOutService.initialiseJourneyWithProposition()(any(), any(), any()))
               .thenReturn(Future((optOutProposition)))
 
-            when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+            when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
               .thenReturn(Future(singleBusinessIncome))
 
             val result = action(fakeRequest)
@@ -183,7 +182,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
               Future((optOutProposition))
             )
             when(
-              mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())
+              mockIncomeSourceConnector.getIncomeSources()(any(), any())
             ).thenReturn(Future(singleBusinessIncome))
 
             val result = action(fakeRequest)

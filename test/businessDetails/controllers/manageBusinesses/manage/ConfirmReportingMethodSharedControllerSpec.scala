@@ -17,11 +17,10 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
-import enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
-import enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import connectors.{ITSAStatusConnector}
+import businessDetails.enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
+import businessDetails.enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import implicits.ImplicitDateFormatter
@@ -38,6 +37,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 import scala.concurrent.Future
 
@@ -54,7 +54,6 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[DateService].toInstance(mockDateServiceInjected),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
       ).build()
 

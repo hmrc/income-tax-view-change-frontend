@@ -94,7 +94,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       supportingAgentHomeView,
       authActions,
       mockedNextUpdatesService,
-      mockIncomeSourceDetailsService,
       mockFinancialDetailsService,
       mockDateServiceInjected,
       mockWhatYouOweService,

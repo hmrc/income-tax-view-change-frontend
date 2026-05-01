@@ -16,12 +16,12 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.AddBusinessTradeController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType, Manage}
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import connectors.ITSAStatusConnector
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import forms.manageBusinesses.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
@@ -34,11 +34,10 @@ import play.api.http.Status
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
-import testConstants.BusinessDetailsTestConstants.{address, business1}
+import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 
 class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionService {
@@ -80,7 +79,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

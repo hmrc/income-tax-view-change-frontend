@@ -17,8 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.SelfEmployment
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -40,6 +39,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessInc
 import scala.annotation.unused
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -47,7 +47,6 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -144,7 +143,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
 
-            when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+            when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
               .thenReturn(Future.successful(businessIncome2018and2019AndProp))
 
             when(mockSessionService.getMongo(any())(any(), any()))

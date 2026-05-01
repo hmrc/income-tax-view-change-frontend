@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
@@ -55,7 +55,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
       api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
