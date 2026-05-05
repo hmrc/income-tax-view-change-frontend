@@ -121,12 +121,12 @@ trait ClaimToAdjustHelper {
   }
 
   protected def isTaxYearNonCrystallised(taxYear: TaxYear, nino: Nino)
-                                        (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
+                                        (implicit hc: HeaderCarrier, dateService: DateServiceInterface, user: MtdItUser[_],
                                          calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Boolean] = {
     if (taxYear.isFutureTaxYear(dateService)) {
       Future.successful(true)
     } else {
-      calculationListConnector.getCalculationList(nino, taxYear.formatAsShortYearRange).flatMap {
+      calculationListConnector.getCalculationList(nino, taxYear.formatAsShortYearRange, user.mtditid).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
         case err: CalculationListErrorModel if err.code == 404 =>
           Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")
@@ -139,12 +139,12 @@ trait ClaimToAdjustHelper {
   }
 
   protected def checkCrystallisation(nino: Nino, taxYearList: List[TaxYear])
-                                    (implicit hc: HeaderCarrier, dateService: DateServiceInterface,
+                                    (implicit hc: HeaderCarrier, dateService: DateServiceInterface, user: MtdItUser[_],
                                      calculationListConnector: CalculationListConnector, ec: ExecutionContext): Future[Option[TaxYear]] = {
     taxYearList.foldLeft(Future.successful(Option.empty[TaxYear])) { (acc, item) =>
       acc.flatMap {
         case Some(_) => acc
-        case None => isTaxYearNonCrystallised(item, nino)(hc, dateService, calculationListConnector, ec) map {
+        case None => isTaxYearNonCrystallised(item, nino)(hc, dateService, user, calculationListConnector, ec) map {
           case true => Some(item)
           case false => None
         }

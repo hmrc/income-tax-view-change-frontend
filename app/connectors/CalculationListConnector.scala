@@ -37,13 +37,13 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
     s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
   }
 
-  def getCalculationList(nino: Nino, taxYearRange: String)
+  def getCalculationList(nino: Nino, taxYearRange: String, mtditid: String)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
     val url = getCalculationListUrl(nino.value, taxYearRange)
 
     http.get(url"$url")
-      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .setHeader("mtditid" -> mtditid)
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>

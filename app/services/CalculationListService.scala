@@ -33,14 +33,14 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
                                       (implicit ec: ExecutionContext) {
 
   def getCalculationList(nino: Nino, taxYearRange: String)
-                        (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
+                        (implicit headerCarrier: HeaderCarrier, user: MtdItUser[_]): Future[CalculationListResponseModel] = {
     Logger("application").debug("" +
       s"Requesting calculation list (1896) data from the backend with nino / taxYearRange: ${nino.value} - $taxYearRange")
-    calculationListConnector.getCalculationList(nino, taxYearRange)
+    calculationListConnector.getCalculationList(nino, taxYearRange, user.mtditid)
   }
 
   private def getLegacyCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
-    calculationListConnector.getCalculationList(Nino(user.nino), taxYear.toString).flatMap {
+    calculationListConnector.getCalculationList(Nino(user.nino), taxYear.toString,user.mtditid).flatMap {
       case res: CalculationListModel => Future.successful(res.crystallised)
       case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
@@ -49,7 +49,7 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
 
   private def getTYSCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
     val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
-    calculationListConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
+    calculationListConnector.getCalculationList(Nino(user.nino), taxYearRange, user.mtditid).flatMap {
       case res: CalculationListModel => Future.successful(res.crystallised)
       case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
       case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
