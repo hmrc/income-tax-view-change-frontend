@@ -52,7 +52,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
     } //this code produces either a Future[Left[Error]] if there was an error getting the finDetails, or a List (of 0-2) valid tax years with POAs
     validTaxYearsWithPoas.flatMap {
       case Left(error) => Future.successful(Left(error))
-      case Right(taxYearsList) => checkCrystallisation(nino, taxYearsList)(hc, dateService, calculationListConnector, ec).map {
+      case Right(taxYearsList) => checkCrystallisation(nino, taxYearsList)(hc, dateService, user, calculationListConnector, ec).map {
         case None => Right(None)
         case Some(taxYear: TaxYear) => Right(Some(taxYear))
       }
@@ -115,7 +115,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
   @unused
   private def getNonCrystallisedFinancialDetails(nino: Nino)
                                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, Option[FinancialDetailsModel]]] = {
-    checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
+    checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, user, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(None))
       case Some(taxYear: TaxYear) => financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {
         case financialDetails: FinancialDetailsModel => Right(Some(financialDetails))
@@ -127,7 +127,7 @@ class ClaimToAdjustService @Inject()(val financialDetailsConnector: FinancialDet
 
   private def getPoaModelAndFinancialDetailsForNonCrystallised(nino: Nino)
                                                               (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Throwable, FinancialDetailsAndPoaModel]] = {
-    checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, calculationListConnector, ec).flatMap {
+    checkCrystallisation(nino, getPoaAdjustableTaxYears)(hc, dateService, user, calculationListConnector, ec).flatMap {
       case None => Future.successful(Right(FinancialDetailsAndPoaModel(None, None)))
       case Some(taxYear: TaxYear) =>
         financialDetailsConnector.getFinancialDetails(taxYear.endYear, nino.value).map {

@@ -72,7 +72,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
       val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
       setupMockHttpV2Get(itvc1896Url)(successResponse)
 
-      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
+      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange, testMtditid)
       result.futureValue shouldBe CalculationListTestConstants.calculationListFull
     }
     "return a valid CalculationListResponseModel (excluding optional field `crystallised`)" in new Setup {
@@ -80,7 +80,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
       val successResponse: HttpResponse = HttpResponse(status = OK, json = CalculationListTestConstants.jsonResponseFull, headers = Map.empty)
       setupMockHttpV2Get(itvc1896Url)(successResponse)
 
-      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
+      val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange, testMtditid)
       result.futureValue shouldBe CalculationListTestConstants.calculationListFull
     }
     "return an error" when {
@@ -89,7 +89,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
         val successResponse: HttpResponse = HttpResponse(status = OK, json = Json.obj(), headers = Map.empty)
         setupMockHttpV2Get(itvc1896Url)(successResponse)
 
-        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
+        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange, testMtditid)
         result.futureValue shouldBe CalculationListErrorModel(500, "Json validation error parsing calculation list response")
       }
     }
@@ -99,7 +99,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
         val errorResponse: HttpResponse = HttpResponse(status = IM_A_TEAPOT, """I'm a teapot""", headers = Map.empty)
         setupMockHttpV2Get(itvc1896Url)(errorResponse)
 
-        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
+        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange, testMtditid)
         result.futureValue shouldBe CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
       }
       "receiving a 500-599 response" in new Setup {
@@ -107,7 +107,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
         val errorResponse: HttpResponse = HttpResponse(status = SERVICE_UNAVAILABLE, """Dependent systems are currently not responding.""", headers = Map.empty)
         setupMockHttpV2Get(itvc1896Url)(errorResponse)
 
-        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange)
+        val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), testTaxYearRange, testMtditid)
         result.futureValue shouldBe CalculationListErrorModel(SERVICE_UNAVAILABLE, "Dependent systems are currently not responding.")
       }
     }

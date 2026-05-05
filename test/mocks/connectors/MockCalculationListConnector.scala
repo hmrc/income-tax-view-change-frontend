@@ -37,8 +37,8 @@ trait MockCalculationListConnector extends UnitSpec with BeforeAndAfterEach {
     reset(mockCalculationListConnector)
   }
 
-  def setupGetCalculationList(nino: String, taxYearRange: String)(response: CalculationListResponseModel): OngoingStubbing[Future[CalculationListResponseModel]] = {
-    when(mockCalculationListConnector.getCalculationList(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(taxYearRange))(any()))
+  def setupGetCalculationList(nino: String, taxYearRange: String, mtditid: String)(response: CalculationListResponseModel): OngoingStubbing[Future[CalculationListResponseModel]] = {
+    when(mockCalculationListConnector.getCalculationList(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(taxYearRange), ArgumentMatchers.eq(mtditid))(any()))
       .thenReturn(Future.successful(response))
   }
 }

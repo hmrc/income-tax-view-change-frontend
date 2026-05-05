@@ -21,7 +21,7 @@ import models.calculationList.CalculationListErrorModel
 import models.core.Nino
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
-import testConstants.BaseTestConstants.{testNino, testTaxYear, testTaxYearRange}
+import testConstants.BaseTestConstants.{testMtditid, testNino, testTaxYear, testTaxYearRange}
 import testConstants.CalculationListTestConstants
 import testUtils.TestSupport
 
@@ -39,18 +39,18 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
   
   "getCalculationList (API 1896)" should {
     "a success response is received from the connector (including optional field `crystallised`)" in {
-      setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFull)
+      setupGetCalculationList(testNino, testTaxYearRange, testMtditid)(CalculationListTestConstants.calculationListFull)
       TestCalculationListService.getCalculationList(Nino(testNino), testTaxYearRange).futureValue shouldBe
         CalculationListTestConstants.calculationListFull
     }
     "a success response is received from the connector (excluding optional field `crystallised`)" in {
-      setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListMin)
+      setupGetCalculationList(testNino, testTaxYearRange, testMtditid)(CalculationListTestConstants.calculationListMin)
       TestCalculationListService.getCalculationList(Nino(testNino), testTaxYearRange).futureValue shouldBe
         CalculationListTestConstants.calculationListMin
     }
     "return a CalculationListErrorModel" when {
       "an error response is received from the connector" in {
-        setupGetCalculationList(testNino, testTaxYearRange)(CalculationListErrorModel(NOT_FOUND, notFoundText))
+        setupGetCalculationList(testNino, testTaxYearRange, testMtditid)(CalculationListErrorModel(NOT_FOUND, notFoundText))
         TestCalculationListService.getCalculationList(Nino(testNino), testTaxYearRange).futureValue shouldBe
           CalculationListErrorModel(NOT_FOUND, notFoundText)
       }
@@ -61,25 +61,25 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
     "for year 2022-23" should {
       val taxYearEnd = "2023"
       "returns Some(true)" in {
-        setupGetCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListFull)
+        setupGetCalculationList(testNino, taxYearEnd, testMtditid)(CalculationListTestConstants.calculationListFull)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe true
       }
       "returns Some(false)" in {
-        setupGetCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListFalseFull)
+        setupGetCalculationList(testNino, taxYearEnd, testMtditid)(CalculationListTestConstants.calculationListFalseFull)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns None" in {
-        setupGetCalculationList(testNino, taxYearEnd)(CalculationListTestConstants.calculationListMin)
+        setupGetCalculationList(testNino, taxYearEnd, testMtditid)(CalculationListTestConstants.calculationListMin)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns Some(false) given 404 response from 1404" in {
         val error = CalculationListErrorModel(NOT_FOUND, "not found")
-        setupGetCalculationList(testNino, taxYearEnd)(error)
+        setupGetCalculationList(testNino, taxYearEnd, testMtditid)(error)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
-        setupGetCalculationList(testNino, taxYearEnd)(error)
+        setupGetCalculationList(testNino, taxYearEnd, testMtditid)(error)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).failed.futureValue.getMessage shouldBe error.message
       }
     }
@@ -88,25 +88,25 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
       val taxYearEnd = "2024"
       val testTaxYearRange = "23-24"
       "returns Some(true)" in {
-        setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFull)
+        setupGetCalculationList(testNino, testTaxYearRange, testMtditid)(CalculationListTestConstants.calculationListFull)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe true
       }
       "returns Some(false)" in {
-        setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListFalseFull)
+        setupGetCalculationList(testNino, testTaxYearRange, testMtditid)(CalculationListTestConstants.calculationListFalseFull)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns None" in {
-        setupGetCalculationList(testNino, testTaxYearRange)(CalculationListTestConstants.calculationListMin)
+        setupGetCalculationList(testNino, testTaxYearRange, testMtditid)(CalculationListTestConstants.calculationListMin)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns Some(false) given 404 response from 1896" in {
         val error = CalculationListErrorModel(NOT_FOUND, "not found")
-        setupGetCalculationList(testNino, testTaxYearRange)(error)
+        setupGetCalculationList(testNino, testTaxYearRange, testMtditid)(error)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns InternalServerException" in {
         val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
-        setupGetCalculationList(testNino, testTaxYearRange)(error)
+        setupGetCalculationList(testNino, testTaxYearRange, testMtditid)(error)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).failed.futureValue.getMessage shouldBe error.message
       }
     }
