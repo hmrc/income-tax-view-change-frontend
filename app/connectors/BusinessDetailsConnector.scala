@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package businessDetails.connectors
+package connectors
 
 import config.FrontendAppConfig
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}

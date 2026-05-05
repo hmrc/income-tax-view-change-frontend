@@ -19,10 +19,9 @@ package authV2
 import auth.MtdItUser
 import auth.authV2.actions.IncomeSourceRetrievalAction
 import authV2.AuthActionsTestData.*
-import businessDetails.connectors.BusinessDetailsConnector
 import businessDetails.services.IncomeSourceDetailsService
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.IncomeSourceConnector
+import connectors.{BusinessDetailsConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

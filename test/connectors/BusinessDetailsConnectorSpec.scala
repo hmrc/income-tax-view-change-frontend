@@ -30,13 +30,12 @@
  * limitations under the License.
  */
 
-package businessDetails.connectors
+package connectors
 
 import audit.AuditingService
 import auth.authV2.models.AuthorisedAndEnrolledRequest
-import businessDetails.connectors.BusinessDetailsConnector
 import config.FrontendAppConfig
-import connectors.BaseConnectorSpec
+import connectors.{BaseConnectorSpec, BusinessDetailsConnector}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

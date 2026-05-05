@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants
+package businessDetails.testConstants
 
 import play.api.libs.json.Json
 
