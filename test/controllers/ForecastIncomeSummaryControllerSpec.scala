@@ -20,7 +20,6 @@ import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
-import models.admin.NavBarFs
 import play.api
 import play.api.Application
 import play.api.http.Status
