@@ -219,7 +219,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
   }
 
   private def getCrystallisationInformation(latencyDetails: Option[LatencyDetails])
-                                           (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Option[List[Boolean]]] = {
+                                           (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Option[List[Boolean]]] = {
     latencyDetails match {
       case Some(x) =>
         for {

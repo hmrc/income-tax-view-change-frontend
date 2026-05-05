@@ -40,7 +40,12 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
   def getCalculationList(nino: Nino, taxYearRange: String, mtditid: String)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
-    val url = getCalculationListUrl(nino.value, taxYearRange)
+    val normalisedTaxYear = taxYearRange match {
+      case s if s.matches("""\d{2}-\d{2}""") => s"20${s.takeRight(2)}"
+      case other => other
+    }
+
+    val url = getCalculationListUrl(nino.value, normalisedTaxYear)
 
     http.get(url"$url")
       .setHeader("mtditid" -> mtditid)
@@ -49,9 +54,12 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
         case OK =>
           response.json.validate[CalculationListModel].fold(
             invalid => {
-              Logger("application").error("" +
-                s"Json validation error parsing calculation list response, error $invalid")
-              CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
+              (response.json \ "calculations").validate[Seq[CalculationListModel]].asOpt.flatMap(_.headOption)
+                .getOrElse {
+                Logger("application").error("" +
+                  s"Json validation error parsing calculation list response, error $invalid")
+                CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
+              }
             },
             valid => valid
           )
