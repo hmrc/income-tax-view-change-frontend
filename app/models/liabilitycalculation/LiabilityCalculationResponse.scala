@@ -125,7 +125,7 @@ object Messages {
   def translateMessageDateVariables(messages: Seq[Message])(implicit message: play.api.i18n.Messages, implicitDateFormatter: ImplicitDateFormatter): Seq[Message] = {
 
     val pattern = DateTimeFormatter.ofPattern("d/MM/yyyy")
-    val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013")
+    val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013", "C55007", "C55007")
     // lang conversion for date (GB,CY)
     val errorMessages = messages.map(msg => {
       errorMessagesDateFormat.contains(msg.id) match {
