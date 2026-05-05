@@ -25,7 +25,6 @@ import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
-import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import services.DateServiceInterface
 import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
@@ -128,7 +127,7 @@ trait ClaimToAdjustHelper {
     if (taxYear.isFutureTaxYear(dateService)) {
       Future.successful(true)
     } else {
-      calculationListConnector.getCalculationList(nino, taxYear.formatAsShortYearRange, user.mtditid).flatMap {
+      calculationListConnector.getCalculationList(nino, taxYear.endYear.toString, user.mtditid).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
         case err: CalculationListErrorModel if err.code == 404 =>
           Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")
