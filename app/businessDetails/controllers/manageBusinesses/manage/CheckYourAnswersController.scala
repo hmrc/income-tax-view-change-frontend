@@ -17,13 +17,13 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import audit.AuditingService
-import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import businessDetails.enums.IncomeSourceJourney.*
+import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.JourneyCheckerManageBusinesses

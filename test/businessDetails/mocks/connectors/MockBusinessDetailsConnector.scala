@@ -16,7 +16,7 @@
 
 package businessDetails.mocks.connectors
 
-import businessDetails.connectors.BusinessDetailsConnector
+import connectors.BusinessDetailsConnector
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*

@@ -27,7 +27,6 @@ import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import models.itsaStatus.ITSAStatus
 import play.api.http.Status
-import testConstants.PropertyDetailsIntegrationTestConstants.propertyTradingStartDate
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
@@ -36,8 +35,17 @@ import java.time.LocalDate
 
 object BaseIntegrationTestConstants {
 
+  val getCurrentTaxYearEnd: LocalDate = {
+    val currentDate: LocalDate = LocalDate.of(2023, 4, 5)
+    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
+    else LocalDate.of(currentDate.getYear + 1, 4, 5)
+  }
   val testDate: LocalDate = LocalDate.of(2018, 5, 5)
   val futureDate: LocalDate = LocalDate.of(2100, 1, 1)
+  val startYear = getCurrentTaxYearEnd.getYear - 5
+
+  val propertyTradingStartDate = Some(LocalDate.parse((startYear - 1).toString + "-01-01"))
+
 
   val testUserTypeIndividual = Individual
   val testUserTypeAgent = Agent
@@ -178,12 +186,6 @@ object BaseIntegrationTestConstants {
     } else {
       clientDetailsWithoutConfirmation ++ Map(SessionKeys.isSupportingAgent -> isSupportingAgent.toString)
     }
-  }
-
-  val getCurrentTaxYearEnd: LocalDate = {
-    val currentDate: LocalDate = LocalDate.of(2023, 4, 5)
-    if (currentDate.isBefore(LocalDate.of(currentDate.getYear, 4, 6))) LocalDate.of(currentDate.getYear, 4, 5)
-    else LocalDate.of(currentDate.getYear + 1, 4, 5)
   }
 
   val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
