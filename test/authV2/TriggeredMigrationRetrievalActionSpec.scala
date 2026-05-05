@@ -151,7 +151,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
       "an individual user has a channel of confirmed and is on a triggered migration page and is not recently confirmed (Set to None)" in {
         val action = actionWithSwitch(Set(TriggeredMigration))
-        
+
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(None)))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
@@ -164,7 +164,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
 
       "an individual user has a channel of customer led and is on a triggered migration page and is not recently confirmed" in {
         val action = actionWithSwitch(Set(TriggeredMigration))
-        
+
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
 
         val confirmedMtdUser = getMtdItUser(Individual, incomeSources = incomeSourcesWithChannel(CustomerLed.getValue))
@@ -176,7 +176,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport with MockSession
       }
       "an agent user has a channel of confirmed and is on a triggered migration page and is not recently confirmed" in {
         val action = actionWithSwitch(Set(TriggeredMigration))
-        
+
         when(mockSessionService.getMongo(any())(any(), any())).thenReturn(Future.successful(Right(Some(triggeredMigrationSessionData(false)))))
 
         val confirmedMtdUser = getMtdItUser(Agent, incomeSources = incomeSourcesWithChannel(HmrcConfirmed.getValue))
