@@ -247,22 +247,6 @@ class IncomeSourceDetailsService @Inject()()(
     }
   }
 
-//  def getReportingMethod(maybeAddIncomeSourceData: Option[AddIncomeSourceData]): ChosenReportingMethod = {
-//    val (reportingMethodTaxYear1, reportingMethodTaxYear2) =
-//      (
-//        maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear1).orElse(None),
-//        maybeAddIncomeSourceData.flatMap(_.reportingMethodTaxYear2).orElse(None)
-//      )
-//
-//    (reportingMethodTaxYear1, reportingMethodTaxYear2) match {
-//      case (Some("A"), Some("A")) | (None, Some("A")) => ChosenReportingMethod.Annual
-//      case (Some("Q"), Some("Q")) | (None, Some("Q")) => ChosenReportingMethod.Quarterly
-//      case (Some("A"), Some("Q")) | (Some("Q"), Some("A")) => ChosenReportingMethod.Hybrid
-//      case (None, None) => ChosenReportingMethod.DefaultAnnual
-//      case _ => ChosenReportingMethod.Unknown
-//    }
-//  }
-
   def getLatencyDetailsFromUser(incomeSourceType: IncomeSourceType, incomeSourceDetailsModel: IncomeSourceDetailsModel): Option[LatencyDetails] = {
     incomeSourceType match {
       case SelfEmployment => incomeSourceDetailsModel.businesses.flatMap(_.latencyDetails).headOption
