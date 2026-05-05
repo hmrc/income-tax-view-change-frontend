@@ -473,8 +473,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
     implicit hc: HeaderCarrier,
     user: MtdItUser[_]
   ): Future[ITSAStatus.ITSAStatus] = {
-    println("%%%%%%%%%%%%%%%%%%%FFFFF")
-    println(currentTaxYear)
     itsaStatusService
       .getITSAStatusDetail(currentTaxYear, false, false)
       .map { statusDetailList =>
