@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.audit.models.CreateIncomeSourceAuditModel
+import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import controllers.ControllerISpecHelper
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -25,7 +25,7 @@ import businessDetails.helpers.IncomeSourceCheckDetailsConstants.*
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.{NavBarFs, OverseasBusinessAddress, TriggeredMigration}
-import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
+import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
