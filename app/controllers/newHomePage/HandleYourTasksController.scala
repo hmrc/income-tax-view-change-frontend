@@ -21,7 +21,6 @@ import auth.authV2.AuthActions
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import controllers.agent.sessionUtils.SessionKeys
-import controllers.newHomePage.routes
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*

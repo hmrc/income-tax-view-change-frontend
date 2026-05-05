@@ -89,7 +89,7 @@ class ItsaStatusRetrievalAction @Inject()(
             case Some(Agent) =>
               Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Agent YouMustWaitToSignUp page")
               Left(Redirect(YouMustWaitToSignUpController.show(isAgent = true)))
-            case None =>
+            case _ =>
               Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
               Left(internalServerErrorFor(req, "affinity-group", None))
           }

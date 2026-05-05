@@ -22,15 +22,14 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.{PaymentHistoryRefunds, RecentActivity}
-import models.admin.RecentActivity
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService}
 import services.newHomePage.RecentActivityService
+import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
