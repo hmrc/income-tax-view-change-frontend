@@ -16,8 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import controllers.ControllerISpecHelper
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}

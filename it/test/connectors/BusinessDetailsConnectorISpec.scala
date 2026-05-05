@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package businessDetails.connectors
+package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import businessDetails.connectors.BusinessDetailsConnector
+import connectors.BusinessDetailsConnector
 import models.core.{AccountingPeriodModel, AddressModel}
 import models.incomeSourceDetails.*
 import org.scalatest.wordspec.AnyWordSpec
