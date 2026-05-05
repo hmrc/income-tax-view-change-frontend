@@ -143,7 +143,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
             )
 
-            verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false), userIsCYPlusOne = true).detail)
+            verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false), userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
@@ -216,7 +216,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
             )
 
-            verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false), userIsCYPlusOne = true).detail)
+            verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false), userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
@@ -295,7 +295,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
               testUser,
               Some(Left(currentDate.minusDays(1) -> true)),
               Left(currentDate.minusDays(1) -> true),
-              userIsCYPlusOne = true).detail)
+              userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
 
@@ -372,7 +372,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
               testUser,
               Some(Right(2)),
               Left(currentDate.minusDays(1) -> true),
-              userIsCYPlusOne = true).detail)
+              userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
@@ -467,7 +467,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
             )
 
-            verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2), userIsCYPlusOne = true).detail)
+            verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2), userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }

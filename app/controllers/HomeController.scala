@@ -124,7 +124,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
-      val userIsCYPlusOne = currentITSAStatus != ITSAStatus.NoStatus
+      val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
       
       auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel, userIsCYPlusOne))
       Ok(
@@ -208,7 +208,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
             if (mandation) SessionKeys.mandationStatus -> "on"
             else SessionKeys.mandationStatus -> "off"
 
-          val userIsCYPlusOne = currentITSAStatus != ITSAStatus.NoStatus
+          val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
 
           auditingService.extendedAudit(
             HomeAudit(
