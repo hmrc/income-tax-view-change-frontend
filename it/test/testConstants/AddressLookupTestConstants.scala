@@ -215,7 +215,8 @@ object AddressLookupTestConstants {
       |      },
       |      "countryPickerLabels": {
       |        "heading": "Enter the country or territory for your business address",
-      |        "title": "Enter the country or territory for your business address"
+      |        "title": "Enter the country or territory for your business address",
+      |        "countryLabel": "Enter country or territory"
       |      },
       |      "editPageLabels": {
       |        "heading": "Enter your business address"
@@ -240,7 +241,8 @@ object AddressLookupTestConstants {
       |      },
       |      "countryPickerLabels": {
       |        "heading": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
-      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
+      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
+      |        "countryLabel": "Nodwch wlad neu diriogaeth"
       |      },
       |      "international": {
       |        "editPageLabels": {
@@ -301,7 +303,8 @@ object AddressLookupTestConstants {
       |      },
       |      "countryPickerLabels": {
       |        "heading": "Enter the country or territory for your business address",
-      |        "title": "Enter the country or territory for your business address"
+      |        "title": "Enter the country or territory for your business address",
+      |        "countryLabel": "Enter country or territory"
       |      },
       |      "editPageLabels": {
       |        "heading": "Enter your business address"
@@ -326,7 +329,8 @@ object AddressLookupTestConstants {
       |      },
       |      "countryPickerLabels": {
       |        "heading": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
-      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes"
+      |        "title": "Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes",
+      |        "countryLabel": "Nodwch wlad neu diriogaeth"
       |      },
       |      "international": {
       |        "editPageLabels": {
