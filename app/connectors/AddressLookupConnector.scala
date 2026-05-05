@@ -242,7 +242,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 "countryPickerLabels" -> JsObject(
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.countryPicker.heading")),
-                    "title" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.countryPicker.heading"))
+                    "title" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.countryPicker.heading")),
+                    "countryLabel" -> JsString(messagesApi.preferred(Seq(Lang("en")))("add-international-business-address.countryPicker.hint"))
                   )
                 ),
                 "editPageLabels" -> JsObject(
@@ -283,7 +284,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 "countryPickerLabels" -> JsObject(
                   Seq(
                     "heading" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.countryPicker.heading")),
-                    "title" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.countryPicker.heading"))
+                    "title" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.countryPicker.heading")),
+                    "countryLabel" -> JsString(messagesApi.preferred(Seq(Lang("cy")))("add-international-business-address.countryPicker.hint"))
                   )
                 ),
                 "international" -> JsObject(
