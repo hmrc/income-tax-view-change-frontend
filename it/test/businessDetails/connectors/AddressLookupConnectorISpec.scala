@@ -19,6 +19,7 @@ package businessDetails.connectors
 import _root_.helpers.servicemocks.AuditStub
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import businessDetails.services.AddressLookupConnector
+import businessDetails.testConstants.AddressLookupTestConstants
 import com.github.tomakehurst.wiremock.client.WireMock
 import models.core.NormalMode
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
@@ -27,7 +28,6 @@ import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting
-import testConstants.AddressLookupTestConstants
 
 class AddressLookupConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
 

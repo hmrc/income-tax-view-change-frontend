@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.ManageIncomeSourceDetailsController
 import connectors.{ITSAStatusConnector}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}

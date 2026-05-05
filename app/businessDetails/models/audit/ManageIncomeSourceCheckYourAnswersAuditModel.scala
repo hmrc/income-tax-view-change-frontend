@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package audit.models
+package businessDetails.models.audit
 
 import audit.Utilities
+import audit.models.ExtendedAuditModel
 import auth.MtdItUser
 import play.api.libs.json.{JsObject, JsValue, Json}
 

@@ -20,8 +20,6 @@ import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
-import businessDetails.connectors.BusinessDetailsConnector
-import businessDetails.mocks.connectors.MockBusinessDetailsConnector
 import businessDetails.mocks.services.{MockCustomerFactsUpdateService, MockIncomeSourceDetailsService}
 import config.featureswitch.FeatureSwitching
 import connectors.{ITSAStatusConnector, IncomeSourceConnector}
