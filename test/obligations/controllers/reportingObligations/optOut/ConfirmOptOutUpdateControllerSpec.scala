@@ -167,22 +167,6 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
-          "the content update R17 feature switch is disabled" in {
-            setupMockSuccess(mtdRole, false, List(OptOutFs))
-            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-            val result = action(fakeRequest)
-
-            val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
-            } else {
-              "/report-quarterly/income-and-expenses/view/reporting-frequency"
-            }
-
-            status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(redirectUrl)
-          }
         }
       }
       testMTDAuthFailuresForRole(action, mtdRole)(fakeRequest)
@@ -270,22 +254,6 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
               "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
             } else {
               "/report-quarterly/income-and-expenses/view"
-            }
-
-            status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(redirectUrl)
-          }
-          "the content update R17 feature switch is disabled" in {
-            setupMockSuccess(mtdRole, false, List(OptOutFs))
-            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-            val result = action(fakeRequest)
-
-            val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
-            } else {
-              "/report-quarterly/income-and-expenses/view/reporting-frequency"
             }
 
             status(result) shouldBe Status.SEE_OTHER

@@ -163,7 +163,7 @@ class ManageObligationsControllerSpec
 
           "render the page with current tax year" in {
 
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List())
             mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))

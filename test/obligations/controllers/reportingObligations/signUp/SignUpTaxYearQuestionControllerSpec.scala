@@ -80,7 +80,9 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
     val isAgent = mtdRole != MTDIndividual
 
     s"show(isAgent = $isAgent)" when {
+
       s"the user is authenticated as a $mtdRole" should {
+
         s"render the Sign Up Tax Year Question page when returning a valid view model" in {
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
@@ -147,6 +149,8 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
 
         "redirect the user when they select 'Yes' - to the completion page" in {
 
+          enable(SignUpFs)
+
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
@@ -180,12 +184,8 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
         }
 
         "redirect the user when they select 'Yes' - submit fails" in {
-          val action = testController.submit(isAgent, currentYear)
-          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
-          enable(SignUpFs)
-
-          setupMockSuccess(mtdRole)
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -194,9 +194,10 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
 
           mockIsSignUpTaxYearValid(Future(Some(viewModel)))
 
-          val formData = Map(
-            "sign-up-tax-year-question" -> "Yes",
-          )
+          val formData = Map("sign-up-tax-year-question" -> "Yes")
+
+          val action = testController.submit(isAgent, currentYear)
+          val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
           val result = action(fakeRequest.withFormUrlEncodedBody(formData.toSeq: _*))
 

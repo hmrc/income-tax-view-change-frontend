@@ -138,22 +138,6 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe homeLink(isAgent)
         }
-
-        "redirect the user to the reporting obligations page when only the OptOutOptInContentR17 feature switch is disabled" in {
-          val action = testController.show(isAgent, currentYear)
-          val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
-
-          setupMockSuccess(mtdRole, false, List(OptOutFs))
-          mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-          setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-          mockUpdateOptOutJourneyStatusInSessionData()
-          mockFetchOptOutJourneyCompleteStatus()
-
-          val result = action(fakeRequest)
-
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe reportingObligationsLink(isAgent)
-        }
       }
     }
     s"submit(isAgent = $isAgent)" when {

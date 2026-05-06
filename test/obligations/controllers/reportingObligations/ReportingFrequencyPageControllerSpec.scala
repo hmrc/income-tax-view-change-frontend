@@ -129,9 +129,9 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   signUpTaxYears = Seq(TaxYear(2024, 2025)),
                   itsaStatusTable =
                     Seq(
-                      ("2023 to 2024", None, Some("Quarterly (mandatory)")),
-                      ("2024 to 2025", None, Some("Quarterly")),
-                      ("2025 to 2026", None, Some("Quarterly (mandatory)"))
+                      ("2023 to 2024", Some("Yes"), Some("Required")),
+                      ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
+                      ("2025 to 2026", Some("Yes"), Some("Required"))
                     ),
                   isAnyOfBusinessLatent = true,
                   displayCeasedBusinessWarning = false,
@@ -140,15 +140,16 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   isSignUpEnabled = true,
                   isOptOutEnabled = true
                 ),
-                optInOptOutContentUpdateR17IsEnabled = false,
-                nextUpdatesLink = if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url else obligations.controllers.routes.NextUpdatesController.show().url
+                nextUpdatesLink =
+                  if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url
+                  else obligations.controllers.routes.NextUpdatesController.show().url
               ).toString
           }
           "the reporting frequency and the R17 content feature switches are enabled" in {
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
-            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs, OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs))
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
