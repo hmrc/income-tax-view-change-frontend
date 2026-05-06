@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.IncomeSourceReportingFrequencyController
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -25,6 +25,7 @@ import mocks.auth.MockAuthActions
 import mocks.services.{MockIncomeSourceRFService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
+import models.itsaStatus.StatusDetail
 import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -38,11 +39,9 @@ import services.*
 import services.manageBusinesses.IncomeSourceRFService
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
-import models.itsaStatus.StatusDetail
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 
@@ -86,7 +85,7 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
     CURRENT_TAX_YEAR_IN_LATENCY_YEARS, LATENCY_PERIOD_EXPIRED, CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS = Value
   }
 
-  import Scenario._
+  import Scenario.*
 
   def setupMockDateServiceCall(scenario: Scenario): OngoingStubbing[LocalDate] = scenario match {
     case LATENCY_PERIOD_EXPIRED | CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS => {

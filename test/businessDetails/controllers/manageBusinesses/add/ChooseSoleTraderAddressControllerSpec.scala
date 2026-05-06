@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.MTDIndividual
@@ -39,7 +39,6 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessInc
 
 import scala.annotation.unused
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 

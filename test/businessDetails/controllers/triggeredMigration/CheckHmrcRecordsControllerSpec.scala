@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import businessDetails.controllers.triggeredMigration.CheckHmrcRecordsController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.MTDIndividual

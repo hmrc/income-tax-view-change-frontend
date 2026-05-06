@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.IncomeSourceCheckDetailsController
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -41,11 +41,10 @@ import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData}
 
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSessionService {
 
-  import testConstants.IncomeSourceCheckDetailsConstants._
+  import testConstants.IncomeSourceCheckDetailsConstants.*
   lazy val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings

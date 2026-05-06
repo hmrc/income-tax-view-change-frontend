@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.CheckYourAnswersController
+import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
@@ -36,7 +36,6 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
-import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 
 import scala.concurrent.Future
 
