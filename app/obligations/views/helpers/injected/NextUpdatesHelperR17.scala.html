@@ -267,12 +267,12 @@
 
         Seq(
             TableRow(
-                content = HtmlContent(deadlineDate.toLongDateShort.toNonBreaking),
+                content = Text(deadlineDate.toLongDateShort),
                 attributes = Map("id" -> s"quarterly-deadline-date-$idSuffix-$index"),
                 classes = "govuk-!-font-weight-bold"
             ),
             TableRow(
-                content = HtmlContent(allValidObligations.headOption.map(obl => periodMessage(obl.obligation).toNonBreaking).getOrElse(Html(""))),
+                content = Text(allValidObligations.headOption.map(obl => periodMessage(obl.obligation)).getOrElse("")),
                 attributes = Map("id" -> s"quarterly-period-$idSuffix-$index")
             ),
             TableRow(
