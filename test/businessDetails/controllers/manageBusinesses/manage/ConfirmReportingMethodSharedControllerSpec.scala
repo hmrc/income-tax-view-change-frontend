@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.ConfirmReportingMethodSharedController
+import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
 import enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
@@ -26,9 +26,9 @@ import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
-import org.mockito.Mockito.mock
 import mocks.services.{MockDateService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
+import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -37,7 +37,6 @@ import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
-import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 
 import scala.concurrent.Future
 

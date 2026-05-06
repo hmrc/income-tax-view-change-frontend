@@ -16,9 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.IncomeSourceCeasedObligationsController
-import enums.IncomeSourceJourney.*
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -26,7 +25,7 @@ import mocks.services.{MockDateService, MockNextUpdatesService, MockSessionServi
 import models.UIJourneySessionData
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import obligations.models.{GroupedObligationsModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
+import obligations.models.*
 import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

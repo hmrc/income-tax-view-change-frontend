@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.AddPropertyController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.MTDIndividual

@@ -18,6 +18,7 @@ package controllers
 
 import audit.AuditingService
 import auth.authV2.AuthActions
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
@@ -41,14 +42,13 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.{CreditService}
+import services.CreditService
 import testConstants.ANewCreditAndRefundModel
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.HomeView
-import views.html.newHomePage.*
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.helpers.injected.home.YourReportingObligationsTile
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import views.html.newHomePage.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -808,7 +808,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
-            setupMockFeatureSwitches(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -835,7 +835,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
         "states that the user is reporting quarterly" when {
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
-            setupMockFeatureSwitches(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
@@ -860,7 +860,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
-            setupMockFeatureSwitches(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))

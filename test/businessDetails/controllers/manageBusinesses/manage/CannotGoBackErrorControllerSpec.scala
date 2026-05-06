@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.CannotGoBackErrorController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}

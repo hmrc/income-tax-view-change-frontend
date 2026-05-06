@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import businessDetails.controllers.triggeredMigration.CheckCompleteController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
