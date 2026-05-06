@@ -224,14 +224,14 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
           addIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate), accountingPeriodEndDate = Some(accountingPeriodEndDate))
         val journeySessionData: UIJourneySessionData =
           sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
-
-        sessionService.setMongoData(journeySessionData).flatMap(_ => Future.successful(Redirect(successUrl)))
+        
+        sessionService.setMongoData(journeySessionData).flatMap {
+          case true  => Future.successful(Redirect(successUrl))
+          case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+        }
 
       case None =>
         Logger("application").error("Unable to find addIncomeSourceData in session data")
-        Future(errorHandler(isAgent).showInternalServerError())
-      case _ =>
-        Logger("application").error("Unable to retrieve session data from Mongo")
         Future(errorHandler(isAgent).showInternalServerError())
     }
   }

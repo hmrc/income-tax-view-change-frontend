@@ -16,7 +16,8 @@
 
 package models.penalties.appealInformation
 
-import play.api.libs.json._
+import models.penalties.appealInformation.AppealLevelEnum.HmrcAppealLevel
+import play.api.libs.json.*
 
 case class AppealInformationType(
                                   appealStatus: Option[AppealStatusEnum],

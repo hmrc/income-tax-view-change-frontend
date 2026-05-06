@@ -16,6 +16,7 @@
 
 package models.penalties.appealInformation
 
+import models.penalties.appealInformation.AppealLevelEnum.HmrcAppealLevel
 import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
 

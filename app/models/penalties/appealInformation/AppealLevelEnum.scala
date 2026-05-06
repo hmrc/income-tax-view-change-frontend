@@ -16,32 +16,21 @@
 
 package models.penalties.appealInformation
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
-sealed trait AppealLevelEnum {
-  val value: String
-  override def toString: String = value
-}
+enum AppealLevelEnum(val value: String):
+  case HmrcAppealLevel extends AppealLevelEnum("01")
+  case TribunalAppealLevel extends AppealLevelEnum("02")
+  case ThirdAppealLevel extends AppealLevelEnum("03")
 
-case object HmrcAppealLevel extends AppealLevelEnum {
-  override val value: String = "01"
-}
-
-case object TribunalAppealLevel extends AppealLevelEnum {
-  override val value: String = "02"
-}
-
-case object ThirdAppealLevel extends AppealLevelEnum {
-  override val value: String = "03"
-}
-
-object AppealLevelEnum {
-  implicit val writes: Writes[AppealLevelEnum] = Writes {
+object AppealLevelEnum:
+  given writes: Writes[AppealLevelEnum] = Writes {
     case HmrcAppealLevel => JsString(HmrcAppealLevel.value)
     case TribunalAppealLevel => JsString(TribunalAppealLevel.value)
+    case ThirdAppealLevel => JsString(ThirdAppealLevel.value)
   }
 
-  implicit val reads: Reads[AppealLevelEnum] = Reads {
+  given reads: Reads[AppealLevelEnum] = Reads {
     case JsString(value) => value.toUpperCase match {
       case "01" => JsSuccess(HmrcAppealLevel)
       case "02" => JsSuccess(TribunalAppealLevel)
@@ -51,5 +40,4 @@ object AppealLevelEnum {
     case _ => JsError("Invalid JSON value")
   }
 
-  implicit val format: Format[AppealLevelEnum] = Format(reads, writes)
-}
+  given format: Format[AppealLevelEnum] = Format(reads, writes)
