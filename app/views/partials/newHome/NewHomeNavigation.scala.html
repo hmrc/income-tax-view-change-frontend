@@ -33,7 +33,8 @@
 
 @govukServiceNavigation(ServiceNavigation(
     navigation = if(isRecentActivityEnabled) NavigationTabItems else NavigationTabItems.filterNot(_.content == Text(messages("new.home.navigation.tabs.recentActivity"))),
-    attributes = Map("style" -> "background-color: white;")
+    attributes = Map("style" -> "background-color: white;"),
+    navigationLabel = Some("Self Assessment Menu")
 ))
 
 
