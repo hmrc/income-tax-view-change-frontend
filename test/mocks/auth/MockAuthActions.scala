@@ -98,6 +98,7 @@ trait MockAuthActions
         api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService),
         api.inject.bind[FeatureSwitchService].toInstance(mockFeatureSwitchService)
       )
+      .configure(Map("feature-switches.read-from-mongo" -> true))
   }
 
   def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false, enabledFeatures: List[FeatureSwitchName] = List()): Unit = {
