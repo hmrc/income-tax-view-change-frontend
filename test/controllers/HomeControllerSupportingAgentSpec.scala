@@ -302,7 +302,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
-            setupMockFeatureSwitches(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuth(isSupportingAgent)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             mockGetDueDates(Right(Seq.empty))
@@ -320,7 +320,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         }
         "states that the user is reporting quarterly" when {
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
-            setupMockFeatureSwitches(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuth(isSupportingAgent)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
 
@@ -336,7 +336,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
-            setupMockFeatureSwitches(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuth(isSupportingAgent)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
             mockGetDueDates(Right(Seq.empty))

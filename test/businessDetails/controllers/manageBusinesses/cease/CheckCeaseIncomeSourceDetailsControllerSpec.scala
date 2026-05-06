@@ -16,7 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsController
+import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
@@ -36,12 +37,10 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.testMtditid
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
-import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 
 class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with MockSessionService {
 

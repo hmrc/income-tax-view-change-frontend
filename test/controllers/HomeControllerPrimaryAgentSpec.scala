@@ -18,6 +18,7 @@ package controllers
 
 import audit.AuditingService
 import auth.authV2.AuthActions
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.MTDPrimaryAgent
 import mocks.services.admin.MockFeatureSwitchService
@@ -40,11 +41,10 @@ import play.api.test.Helpers.*
 import play.api.test.Injecting
 import services.CreditService
 import testConstants.ANewCreditAndRefundModel
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.HomeView
-import views.html.newHomePage.*
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import views.html.newHomePage.*
 
 import java.time.LocalDate
 import scala.annotation.unused

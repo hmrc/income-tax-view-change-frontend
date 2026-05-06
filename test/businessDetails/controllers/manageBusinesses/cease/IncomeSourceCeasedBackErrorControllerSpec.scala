@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.IncomeSourceCeasedBackErrorController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.MTDIndividual

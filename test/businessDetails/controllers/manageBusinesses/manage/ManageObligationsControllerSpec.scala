@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.ManageObligationsController
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
@@ -40,7 +40,6 @@ import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import utils.IncomeSourcesUtils
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import auth.authV2.AuthActions
-import businessDetails.controllers.manageBusinesses.add.IncomeSourceAddedController
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.*

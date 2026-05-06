@@ -70,7 +70,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
           "render the appropriate IncomeSourceDetails page" when {
 
             "the user has a valid id parameter and no latency information" in {
-              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate, ReportingFrequencyPage))
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
@@ -94,7 +94,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
             "the user has a valid id parameter and latency information expired" in {
-              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate, ReportingFrequencyPage))
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockCreateSession(true)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))

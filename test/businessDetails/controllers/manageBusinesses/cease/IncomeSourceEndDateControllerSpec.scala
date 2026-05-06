@@ -16,20 +16,21 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.IncomeSourceEndDateController
-import enums.IncomeSourceJourney.*
+import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
-import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.*
+import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.Mockito.{mock, when}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
 import play.api.http.Status.*
@@ -41,8 +42,6 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 
 class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService with MockDateService{
 
