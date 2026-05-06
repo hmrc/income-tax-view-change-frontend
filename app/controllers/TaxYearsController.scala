@@ -79,7 +79,6 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
           serviceNavigationPartial = user.serviceNavigationPartial,
           origin = origin,
           errorTaxYear = Some(TaxYear.getCYPlusOneTaxYear),
-          selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent)
         )))
     }
   }

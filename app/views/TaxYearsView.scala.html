@@ -41,7 +41,6 @@
     serviceNavigationPartial: Option[ServiceNavigation] = None,
     origin: Option[String] = None,
     errorTaxYear: Option[TaxYear] = None,
-    selfAssessmentLink: String = ""
 )(implicit request: Request[_], messages: Messages)
 
 @getReturnHref(year: Int) = @{
@@ -87,8 +86,12 @@
 
 @errorLink() = {
     @linkComponent(
-        url = selfAssessmentLink,
-        message = messages("taxYears.error.linkText"),
+        url = if(isAgent) {
+            viewUtils.ExternalUrlHelper.saForAgents
+        } else {
+            appConfig.saViewLandPService(utr.getOrElse(throw Exception("Can not provide SA link: UTR is missing")))
+        },
+        message = if(isAgent) messages("taxYears.oldSa.agent.content.2") else messages("taxYears.error.linkText"),
         id = Some("error-link"),
         target = Some("_blank"),
         additionalMessage = Some("."),

@@ -70,6 +70,7 @@ class TaxYearsViewSpec extends ViewSpec {
     val errorSubheading: String = "Your tax return information cannot currently be displayed here"
     val errorPreLinkText: String = s"To see information from before the ${TaxYear.getCYPlusOneTaxYear.startYear} to ${TaxYear.getCYPlusOneTaxYear.endYear} tax year, you need to visit your previous"
     val errorLinkTest: String = "Self Assessment online account (opens in new tab)."
+    val agentErrorLinkText: String = "Self Assessment for Agents account (opens in new tab)."
     val errorAgentPreLinkText: String = s"To see information from before the ${TaxYear.getCYPlusOneTaxYear.startYear} to ${TaxYear.getCYPlusOneTaxYear.endYear} tax year, you need to log in to your"
     val errorAgentPostLinkText: String = "This will be a different Government Gateway ID and password to your Agent Services account."
   }
@@ -203,7 +204,7 @@ class TaxYearsViewSpec extends ViewSpec {
       }
     }
 
-    "Display the Individuals error content for CY+1 users" in new TestSetup(List(), isAgent = false, isErrorContent = true) {
+    "Display the Individuals error content for CY+1 users" in new TestSetup(List(), isAgent = false, isErrorContent = true, utr = Some("1234567890")) {
       document.title shouldBe pageContent.title
       document.getElementById("heading").text shouldBe pageContent.errorHeading
       document.getElementById("error-subHeading").text shouldBe pageContent.errorSubheading
@@ -231,7 +232,7 @@ class TaxYearsViewSpec extends ViewSpec {
       document.getElementById("heading").text shouldBe pageContent.errorHeading
       document.getElementById("error-subHeading").text shouldBe pageContent.errorSubheading
       assert(document.getElementById("agent-error-content").text.contains(pageContent.errorAgentPreLinkText))
-      assert(document.getElementById("agent-error-content").text.contains(pageContent.errorLinkTest))
+      assert(document.getElementById("agent-error-content").text.contains(pageContent.agentErrorLinkText))
       assert(document.getElementById("agent-error-content").text.contains(pageContent.errorAgentPostLinkText))
     }
   }
