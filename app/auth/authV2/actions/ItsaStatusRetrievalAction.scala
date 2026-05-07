@@ -70,7 +70,6 @@ class ItsaStatusRetrievalAction @Inject()(
   override def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
 
     implicit val req: MtdItUser[A] = request
-
     lazy val authAction: Future[Either[Result, MtdItUser[A]]] =
       itsaStatusConnector.getITSAStatusDetail(
         nino = req.nino,

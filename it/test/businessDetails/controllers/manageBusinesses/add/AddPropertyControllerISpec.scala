@@ -16,10 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import controllers.ControllerISpecHelper
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import forms.manageBusinesses.add.AddProprertyForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
 import models.core.NormalMode

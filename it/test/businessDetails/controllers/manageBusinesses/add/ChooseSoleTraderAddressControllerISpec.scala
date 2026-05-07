@@ -16,10 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import controllers.ControllerISpecHelper
-import enums.IncomeSourceJourney.SelfEmployment
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import forms.manageBusinesses.add.AddProprertyForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.OverseasBusinessAddress
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

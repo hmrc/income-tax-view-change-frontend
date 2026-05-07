@@ -17,11 +17,9 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.AddPropertyController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import forms.manageBusinesses.add.AddProprertyForm
-import forms.manageBusinesses.add.AddProprertyForm.*
+import businessDetails.forms.manageBusinesses.add.AddProprertyForm.*
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.NormalMode
@@ -38,6 +36,8 @@ import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 
 class AddPropertyControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -45,7 +45,6 @@ class AddPropertyControllerSpec extends MockAuthActions with MockSessionService 
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

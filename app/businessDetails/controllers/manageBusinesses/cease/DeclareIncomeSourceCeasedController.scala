@@ -19,11 +19,12 @@ package businessDetails.controllers.manageBusinesses.cease
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
+import businessDetails.utils.JourneyCheckerManageBusinesses
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.InitialPage
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{Mode, NormalMode}
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -34,8 +35,7 @@ import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
+import businessDetails.views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

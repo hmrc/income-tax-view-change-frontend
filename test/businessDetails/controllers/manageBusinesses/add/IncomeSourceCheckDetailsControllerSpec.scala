@@ -16,15 +16,16 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.IncomeSourceCheckDetailsController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
+import businessDetails.services.CreateBusinessDetailsService
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.OverseasBusinessAddress
-import models.createIncomeSource.CreateIncomeSourceResponse
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -36,16 +37,15 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CreateBusinessDetailsService, DateServiceInterface, SessionService}
+import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData}
 
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSessionService {
 
-  import testConstants.IncomeSourceCheckDetailsConstants._
+  import businessDetails.testConstants.IncomeSourceCheckDetailsConstants.*
   lazy val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
@@ -53,7 +53,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -113,7 +112,7 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
           }
           if (incomeSourceType == SelfEmployment) {
             "render the check details page with overseas address rows when OverseasBusinessAddress is enabled" in {
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(noIncomeDetails)
               mockNoIncomeSources()
               setupMockCreateSession(true)
@@ -136,7 +135,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
               )
 
               setupMockGetMongo(Right(Some(sessionDataWithNewAddress)))
-              enable(OverseasBusinessAddress)
 
               val result: Future[Result] = action(fakeRequest)
 
@@ -147,7 +145,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
                 include("Added address for this business") or
                   include("Added international address for this business")
                 )
-              disable(OverseasBusinessAddress)
             }
 
             "render the check details page without overseas address rows when OverseasBusinessAddress is disabled" in {
@@ -172,7 +169,6 @@ class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSe
                 )
               )
               setupMockGetMongo(Right(Some(sessionDataWithNewAddress)))
-              disable(OverseasBusinessAddress)
 
               val result: Future[Result] = action(fakeRequest)
 

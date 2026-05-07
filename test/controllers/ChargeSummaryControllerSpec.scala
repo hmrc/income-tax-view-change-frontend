@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
@@ -44,7 +44,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
       api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
       api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -58,7 +57,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
 
     when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
     when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
@@ -83,8 +81,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
           "render the charge summary page" when {
             "charge history feature switch is enabled and there is a user" that {
               "provided with an id associated to a POA1 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo(), docId = id1040000125) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -100,8 +97,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA2 Debit" in new Setup(financialDetailsModelWithPoaOneAndTwo(), docId = id1040000126) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -117,8 +113,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA1 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid(), docId = id1040000125) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -133,8 +128,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA2 Debit that has been paid in full" in new Setup(financialDetailsModelWithPoaOneAndTwoFullyPaid(), docId = id1040000126) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -149,8 +143,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2017 to 2018 tax bill."
               }
               "provided with an id associated to a POA1 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -166,8 +159,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
               "provided with an id associated to a POA1 Debit that has been fully collected through PAYE tax code" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA1FullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -183,8 +175,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
               "provided with an id associated to a POA2 Debit that has been coded out" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -200,8 +191,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
               "provided with an id associated to a POA2 Debit that has been fully collected through PAYE tax code" in new Setup(testFinancialDetailsModelWithPayeSACodingOutPOA2FullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -217,8 +207,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("charge-history-caption").text() shouldBe "This charge goes towards your 2020 to 2021 tax bill."
               }
               "provided with an id associated to a POA1 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaOneWithLpi(), docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -239,8 +228,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               }
               "provided with an id associated to a POA1 Debit with crystallised interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithCrystallisedInterest(), docId = id1040000125) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -259,8 +247,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select(".govuk-warning-text__text").size().equals(0) shouldBe true
               }
               "provided with an id associated to a POA2 Debit with accruing interest" in new Setup(financialDetailsModelWithPoaTwoWithLpi(), docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -281,8 +268,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               }
               "provided with an id associated to a POA2 Debit with crystallised interest" in new Setup(financialDetailsModelWithPoaOneAndTwoWithCrystallisedInterest(), docId = id1040000126) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -301,8 +287,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.select(".govuk-warning-text__text").size().equals(0) shouldBe true
               }
               "provided with an id associated to a Balancing payment" in new Setup(testValidFinancialDetailsModelWithBalancingCharge, docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -320,8 +305,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               }
               "provided with an id associated to a Balancing payment with accruing interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest, docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -344,8 +328,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               }
               "provided with an id associated to a Balancing payment with crystallised interest" in new Setup(testValidFinancialDetailsModelWithBalancingChargeWithCrystallisedInterest, docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -365,8 +348,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a charge for Class 2 National Insurance" in new Setup(testFinancialDetailsModelWithCodingOutNics2(), docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -383,8 +365,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a coded out Balancing Payment" in new Setup(testFinancialDetailsModelWithPayeSACodingOut(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -404,8 +385,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a fully collected coded out Balancing Payment" in new Setup(testFinancialDetailsModelWithPayeSACodingOutFullyCollected(), adjustmentHistoryModel = codedOutAdjustmentHistory, docId = codingout) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -425,8 +405,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to an ITSA Return Amendment charge" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment, docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -447,8 +426,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to outstanding interest on a paid ITSA Return Amendment charge" in new Setup(testValidFinancialDetailsModelWithITSAReturnAmendment, docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -468,8 +446,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "provided with an id associated to an ITSA Return Amendment credit" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarAndAmendmentCredits(), paymentAllocations = Right(paymentAllocationResponse), docId = id1040000127) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -488,8 +465,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty, docId = id1040000123) {
-                enable(ChargeHistory, PenaltiesAndAppeals)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory, PenaltiesAndAppeals))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -514,8 +490,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Late Submission Penalty with crystallised interest" in new Setup(testValidFinancialDetailsModelWithLspCrystallisedInterest, docId = id1040000123) {
-                enable(ChargeHistory, PenaltiesAndAppeals)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory, PenaltiesAndAppeals))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -536,10 +511,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Late payment penalty" in new Setup(testValidFinancialDetailsModelWithLatePaymentPenalty, docId = id1040000123) {
-
-                enable(ChargeHistory, PenaltiesAndAppeals)
-
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory, PenaltiesAndAppeals))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -557,8 +529,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "provided with an id associated to a Review & Reconcile Debit Charge for POA1" in new Setup(
                 testFinancialDetailsModelWithReviewAndReconcileAndPoas, docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -589,8 +560,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to a Review & Reconcile Debit Charge for POA2" in new Setup(testFinancialDetailsModelWithReviewAndReconcileAndPoas, docId = id1040000124) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
                 val result: Future[Result] = action(id1040000124)(fakeRequest)
@@ -620,8 +590,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id associated to interest on a Review & Reconcile Debit Charge for POA" in new Setup(testFinancialDetailsModelWithReviewAndReconcileInterest, docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -642,8 +611,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(accruingInterestAmount = Some(0.0)), docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
                 val result: Future[Result] = action(id1040000123)(fakeRequest)
@@ -661,8 +629,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "the late payment interest flag is enabled" in new Setup(
                 financialDetailsModel(lpiWithDunningLock = None, outstandingAmount = 0), docId = id1040000123) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -679,7 +646,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             "charge history feature is disabled and there is a user" that {
               "provided with dunning locks and late payment interest flag, not showing the locks banner" in new Setup(
                 financialDetailsModel(lpiWithDunningLock = None).copy(financialDetails = financialDetailsWithLocks(testTaxYear)), docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -694,7 +660,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "provided with dunning locks, showing the locks banner" in new Setup(
                 financialDetailsModel().copy(financialDetails = financialDetailsWithLocks(testTaxYear)), docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -709,7 +674,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "allocations present" in new Setup(
                 chargesWithAllocatedPaymentModel(), docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -734,7 +698,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "without allocations" in new Setup(
                 chargesWithAllocatedPaymentModel(), docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -751,7 +714,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "displays link to poa extra charge on poa page when reconciliation charge exists" in new Setup(financialDetailsModelWithPoaExtraCharge(), docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -767,7 +729,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 JsoupParse(result).toHtmlDocument.select("#poa-extra-charge-link").attr("href") shouldBe chargeSummaryUrl
               }
               "not display link to poa extra charge if no charge exists" in new Setup(financialDetailsModel(), docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -780,7 +741,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "display the payment processing info if the charge is not Review & Reconcile" in new Setup(
                 financialDetailsModel(mainTransaction = "4910"), docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -792,7 +752,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
               }
 
               "hide payment processing info" in new Setup(financialDetailsReviewAndReconcile, docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -809,8 +768,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "display the Review & Reconcile credit for POA1 when present in the user's financial details" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarAndAmendmentCredits(), docId = id1040000125) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
 
@@ -827,8 +785,7 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "display the Review & Reconcile credit for POA2 when present in the user's financial details (old view)" in new Setup(
                 financialDetailsModelWithPoaOneAndTwoWithRarAndAmendmentCredits(), docId = id1040000126) {
-                enable(ChargeHistory)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
                 mockGetReviewAndReconcileCredit(PoaTwoReconciliationCredit)
@@ -844,7 +801,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
               "the charge is an MFA Debit" in new Setup(
                 financialDetailsModelWithMFADebit(), docId = id1040000123) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()
@@ -858,7 +814,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
           }
           "Redirect the user to NotFoundDocumentIDLookup" when {
             "the charge id provided does not match any charges in the response" in new Setup(financialDetailsModel(), docId = "fakeId") {
-              disable(ChargeHistory)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
@@ -878,8 +833,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
           "render the error page" when {
             "the charge history response is an error" in new Setup(
               financialDetailsModel(), chargeHistoryHasError = true, docId = id1040000123) {
-              enable(ChargeHistory)
-              disable(ChargeHistory)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
@@ -891,7 +844,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             }
 
             "the financial details response is an error" in new Setup(testFinancialDetailsErrorModelParsing, docId = id1040000123) {
-              disable(ChargeHistory)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
@@ -914,8 +866,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
             }
 
             "the charge type is forbidden by current feature switches" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty, docId = id1040000123) {
-
-              disable(PenaltiesAndAppeals)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               mockBothIncomeSources()
@@ -928,7 +878,6 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
 
             if (mtdUserRole == MTDIndividual) {
               "no related tax year financial details found" in new Setup(testFinancialDetailsModelWithPayeSACodingOut(), docId = codingout) {
-                disable(ChargeHistory)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 mockBothIncomeSources()

@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.ManageIncomeSourceDetailsController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -61,7 +60,6 @@ trait ManageIncomeSourceDetailsHelper
         api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
         api.inject.bind[CalculationListService].toInstance(mockCalculationListService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
       ).build()
 

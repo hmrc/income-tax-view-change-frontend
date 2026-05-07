@@ -17,7 +17,7 @@
 package repositories
 
 
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import helpers.ComponentSpecBase
 import models.UIJourneySessionData

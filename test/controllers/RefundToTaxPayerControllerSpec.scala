@@ -17,7 +17,7 @@
 package controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, RepaymentHistoryConnector}
+import connectors.{ITSAStatusConnector, RepaymentHistoryConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.connectors.MockRepaymentHistoryConnector
@@ -40,7 +40,6 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
     .overrides(
       api.inject.bind[RepaymentHistoryConnector].toInstance(mockRepaymentHistoryConnector),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -143,8 +142,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
         } else {
           "render the refund to tax payer page" when {
             "PaymentHistoryRefunds FS is enabled" in {
-              enable(PaymentHistoryRefunds)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(PaymentHistoryRefunds))
               mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               setupGetRepaymentHistoryByRepaymentId(testNino, repaymentRequestNumber)(testRepaymentHistoryModel)
@@ -168,7 +166,6 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
 
           "redirect to the home page" when {
             "PaymentHistoryRefunds FS is disabled" in {
-              disable(PaymentHistoryRefunds)
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
@@ -182,8 +179,7 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
 
           "render the error page" when {
             "Failing to retrieve a user's re-payments history" in {
-              enable(PaymentHistoryRefunds)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(PaymentHistoryRefunds))
               mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
               setupGetRepaymentHistoryByRepaymentIdError(testNino, repaymentRequestNumber)(RepaymentHistoryErrorModel(404, "Not found"))

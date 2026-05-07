@@ -20,11 +20,14 @@ import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
+import businessDetails.mocks.services.{MockCustomerFactsUpdateService, MockIncomeSourceDetailsService}
 import config.featureswitch.FeatureSwitching
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import mocks.connectors.MockIncomeTaxCalculationConnector
-import mocks.services.{MockClientDetailsService, MockCustomerFactsUpdateService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
+import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
+import mocks.services.admin.MockFeatureSwitchService
+import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
@@ -40,11 +43,12 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import services.admin.FeatureSwitchService
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
-
+import businessDetails.services.{CustomerFactsUpdateService, IncomeSourceDetailsService}
 import scala.concurrent.Future
 import services.agent.ClientDetailsService
-import services.{CustomerFactsUpdateService, DateServiceInterface, IncomeSourceDetailsService, SessionDataService}
+import services.{DateServiceInterface, SessionDataService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
@@ -62,9 +66,10 @@ trait MockAuthActions
     with MockSessionDataService
     with MockClientDetailsService
     with MockCustomerFactsUpdateService
-    with FeatureSwitching
+    with MockFeatureSwitchService
     with MockITSAStatusService
-    with MockIncomeTaxCalculationConnector {
+    with MockIncomeTaxCalculationConnector
+    with MockIncomeSourceConnector {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -72,6 +77,7 @@ trait MockAuthActions
     reset(mockAuthService)
     reset(mockFAF)
     reset(mockCustomerFactsUpdateService)
+    reset(mockIncomeSourceDetailsService)
   }
 
   override def afterEach() = {
@@ -82,22 +88,23 @@ trait MockAuthActions
   lazy val mockFAF: FrontendAuthorisedFunctions = mock(classFAF)
   
   lazy val mockItsaStatusConnector = sMock[ITSAStatusConnector]
-  lazy val mockBusinessDetailsConnector = sMock[BusinessDetailsConnector]
   lazy val mockDateServiceInterface = sMock[DateServiceInterface]
 
   lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockFAF),
-        api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
+        api.inject.bind[IncomeSourceConnector].toInstance(mockIncomeSourceConnector),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
-        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService)
+        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService),
+        api.inject.bind[FeatureSwitchService].toInstance(mockFeatureSwitchService)
       )
+      .configure(Map("feature-switches.read-from-mongo" -> true))
   }
 
-  def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false): Unit = {
+  def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false, enabledFeatures: List[FeatureSwitchName] = List()): Unit = {
     if (withNrs) {
       mtdUserRole match {
         case MTDIndividual => setupMockUserAuthWithNrs
@@ -111,6 +118,7 @@ trait MockAuthActions
         case _ => setupMockAgentWithClientAuth(true)
       }
     }
+    setupMockFeatureSwitches(enabledFeatures*)
   }
 
   def mockItsaStatusRetrievalAction(
@@ -133,7 +141,7 @@ trait MockAuthActions
       )
     )
 
-    when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
+    when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
       .thenReturn(Future.successful(incomeSourceDetailsModel))
 
     when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
@@ -163,7 +171,6 @@ trait MockAuthActions
         submissionChannel = None
       )))
   }
-
 
   def setupMockUserAuth: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = true)

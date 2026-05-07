@@ -17,8 +17,8 @@
 package models.incomeSourceDetails
 
 import auth.MtdItUser
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import play.api.libs.json.{Format, JsValue, Json, OFormat}

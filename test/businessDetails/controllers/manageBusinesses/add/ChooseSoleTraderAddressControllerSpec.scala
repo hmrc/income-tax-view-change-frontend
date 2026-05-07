@@ -17,8 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.SelfEmployment
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -40,6 +39,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessInc
 import scala.annotation.unused
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -47,7 +47,6 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -82,8 +81,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
         "display the ChooseSoleTraderAddress page when OverseasBusinessAddress FS is enabled" when {
 
           "user has active UK business addresses" in {
-            enable(OverseasBusinessAddress)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
             mockNoIncomeSources()
             val result = action(fakeRequest)
@@ -95,8 +93,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             status(result) shouldBe OK
           }
           "user has an active international business address" in {
-            enable(OverseasBusinessAddress)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
             mockItsaStatusRetrievalAction(businessInternational)
             mockNoIncomeSources()
             val result = action(fakeRequest)
@@ -112,7 +109,6 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
         "redirect to the homepage" when {
 
           "OverseasBusinessAddress FS is disabled" in {
-            disable(OverseasBusinessAddress)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
             mockNoIncomeSources()
@@ -139,12 +135,10 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
         s"return 303: reload the page" when {
 
           "existing address selected" in {
-
-            enable(OverseasBusinessAddress)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
 
-            when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+            when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
               .thenReturn(Future.successful(businessIncome2018and2019AndProp))
 
             when(mockSessionService.getMongo(any())(any(), any()))
@@ -169,9 +163,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
           }
 
           "new address selected" in {
-
-            enable(OverseasBusinessAddress)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
 
             mockNoIncomeSources()

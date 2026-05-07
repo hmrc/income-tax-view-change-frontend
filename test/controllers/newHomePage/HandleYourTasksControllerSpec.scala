@@ -16,10 +16,11 @@
 
 package controllers.newHomePage
 
+import audit.AuditingService
 import auth.authV2.AuthActions
+import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.HomeController
 import controllers.agent.sessionUtils.SessionKeys
-import controllers.newHomePage.HandleYourTasksController
 import mocks.auth.MockAuthActions
 import mocks.services.*
 import models.financialDetails.*
@@ -29,6 +30,11 @@ import models.newHomePage.HandleYourTasksViewModel
 import models.newHomePage.MaturityLevel.Upcoming
 import models.newHomePage.YourTaskCardType.FINANCIALS
 import models.newHomePage.YourTasksCard.UpcomingTaskCard
+import obligations.models.*
+import obligations.services.NextUpdatesService
+import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.signUp.SignUpService
+import obligations.mocks.services.MockNextUpdatesService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -40,12 +46,8 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
 import services.*
 import services.newHomePage.HandleYourTasksService
-import obligations.services.reportingObligations.optOut.OptOutService
-import obligations.services.reportingObligations.signUp.SignUpService
 import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
 import views.html.newHomePage.NewHomeYourTasksView
-import obligations.models.*
-import obligations.services.NextUpdatesService
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future
@@ -74,15 +76,18 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   given mockedCreditService: CreditService = mock(classOf[CreditService])
   given mockedHandleYourTasksService: HandleYourTasksService = mock(classOf[HandleYourTasksService])
   given MessagesControllerComponents = app.injector.instanceOf(classOf[MessagesControllerComponents])
+  given ItvcErrorHandler = mock(classOf[ItvcErrorHandler])
+  given AgentItvcErrorHandler = mock(classOf[AgentItvcErrorHandler])
 
   val authActions: AuthActions = app.injector.instanceOf(classOf[AuthActions])
   val view: NewHomeYourTasksView = app.injector.instanceOf(classOf[NewHomeYourTasksView])
+  val auditingService: AuditingService = app.injector.instanceOf(classOf[AuditingService])
 
   val nextPaymentYear: String = "2019"
   val nextPaymentDate: LocalDate = LocalDate.of(nextPaymentYear.toInt, Month.JANUARY, 31)
   val staticTaxYear: TaxYear = TaxYear(fixedDate.getYear - 1, fixedDate.getYear)
   val baseStatusDetail: StatusDetail = StatusDetail("2023-06-15T15:38:33.960Z", ITSAStatus.Mandated, StatusReason.SignupReturnAvailable, Some(8000.25))
-  
+  val futureDueDates: Seq[LocalDate] = Seq(LocalDate.of(2100, 1, 1))
   val expectedYourTasksTitle = "Your tasks"
 
   trait Setup {
@@ -97,7 +102,8 @@ class HandleYourTasksControllerSpec extends MockAuthActions
       mockDateServiceInjected,
       mockFinancialDetailsService,
       mockNextUpdatesService,
-      mockedHandleYourTasksService)
+      mockedHandleYourTasksService,
+      auditingService)
 
     setupMockUserAuth
     mockSingleBusinessIncomeSource()
@@ -146,7 +152,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
   }
@@ -154,6 +159,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   "show()" when {
     "an authenticated use" should {
       "render the Handle your tasks page with a Your tasks tab open" in new Setup {
+        setupMockFeatureSwitches()
         setupMockUserAuth
         mockItsaStatusRetrievalAction()
         val financialDetails = List(FinancialDetailsModel(
@@ -179,11 +185,12 @@ class HandleYourTasksControllerSpec extends MockAuthActions
             ANewCreditAndRefundModel()
               .model
           ))
-        when(mockNextUpdatesService.getNextDueDates()(any(), any()))
+        when(mockNextUpdatesService.getNextDueDates(any())(any(), any()))
           .thenReturn(Future.successful(None, None))
 
         when(mockedHandleYourTasksService.getYourTasksCards(any(), any(), any(), any(), any(), any(), any())(any()))
           .thenReturn(HandleYourTasksViewModel(Seq.empty, Seq.empty, Seq(UpcomingTaskCard("", "", "", "", None, None, Upcoming, FINANCIALS)), None))
+        when(mockNextUpdatesService.getDueDates(any())(any(), any())).thenReturn(Future.successful(Right(futureDueDates)))
 
         val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 

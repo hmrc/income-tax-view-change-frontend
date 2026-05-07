@@ -18,12 +18,13 @@ package businessDetails.controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
+import businessDetails.utils.JourneyCheckerManageBusinesses
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
-import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm.*
+import AddIncomeSourceStartDateCheckForm._
 import implicits.ImplicitDateFormatter
 import models.UIJourneySessionData
 import models.core.{Mode, NormalMode}
@@ -33,8 +34,7 @@ import play.api.mvc.*
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
+import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -222,7 +222,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
           addIncomeSourceData.copy(accountingPeriodStartDate = Some(incomeSourceStartDate), accountingPeriodEndDate = Some(accountingPeriodEndDate))
         val journeySessionData: UIJourneySessionData =
           sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
-        
+
         sessionService.setMongoData(journeySessionData).flatMap {
           case true  => Future.successful(Redirect(successUrl))
           case false => Future.failed(new Exception("Mongo update call was not acknowledged"))

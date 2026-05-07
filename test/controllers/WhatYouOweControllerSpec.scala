@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
@@ -55,7 +55,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
       api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
       api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
@@ -164,7 +163,6 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
 
     when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
     when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
@@ -216,9 +214,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
                   BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(300.00), None, None, Some(350.00), None, None, None), List.empty)
 
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
                 mockItsaStatusRetrievalAction()
-                enable(CreditsRefundsRepay)
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
@@ -360,9 +357,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "user has a second late payment penalty with a chargeReference, so url can be generated" in {
-              enable(PenaltiesAndAppeals)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))
@@ -405,9 +401,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
             }
 
             "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
-              enable(PenaltiesAndAppeals)
               mockSingleBISWithCurrentYearAsMigrationYear()
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
 
               when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any(), any())(any(), any()))

@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService}
@@ -40,7 +40,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
       api.inject.bind[CreditHistoryService].toInstance(mockCreditHistoryService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -57,7 +56,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
   }
 
   lazy val creditsSummaryView: CreditsSummaryView = app.injector.instanceOf[CreditsSummaryView]

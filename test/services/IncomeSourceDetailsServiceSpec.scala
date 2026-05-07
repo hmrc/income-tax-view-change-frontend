@@ -20,14 +20,16 @@ import audit.mocks.MockAuditingService
 import auth.MtdItUser
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData.defaultMTDITUser
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import mocks.connectors.MockBusinessDetailsConnector
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.mocks.connectors.MockBusinessDetailsConnector
+import businessDetails.services.IncomeSourceDetailsService
 import mocks.services.config.MockAppConfig
-import mocks.services.{MockAsyncCacheApi, MockNextUpdatesService}
+import mocks.services.MockAsyncCacheApi
 import models.admin.{DisplayBusinessStartDate, FeatureSwitch}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.*
+import obligations.mocks.services.MockNextUpdatesService
 import play.api.cache.AsyncCacheApi
 import testConstants.BaseTestConstants.*
 import testConstants.BusinessDetailsTestConstants.*
@@ -38,7 +40,7 @@ import testUtils.TestSupport
 import scala.util.Success
 
 //scalastyle:off
-class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetailsConnector with MockNextUpdatesService
+class IncomeSourceDetailsServiceSpec extends TestSupport with MockNextUpdatesService
   with MockAuditingService with MockAsyncCacheApi with MockAppConfig {
   val cache = app.injector.instanceOf[AsyncCacheApi]
   val expectedAddressString1: Option[String] = Some("Line 1<br>Line 2<br>Line 3<br>Line 4<br>LN1 1NL<br>NI")
@@ -51,50 +53,11 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockBusinessDetail
   )
     .addFeatureSwitches(List(FeatureSwitch(DisplayBusinessStartDate, true)))
 
-  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService(mockBusinessDetailsConnector)(mockAppConfig, ec)
+  object TestIncomeSourceDetailsService extends IncomeSourceDetailsService()(mockAppConfig, ec)
 
   override def beforeEach(): Unit = {
     super.beforeEach()
     cache.removeAll()
-  }
-
-  "The IncomeSourceDetailsService.getIncomeSourceDetails method" when {
-
-    "a result with both business and property details is returned" should {
-
-      "return an IncomeSourceDetailsModel with business and property options" in {
-        setupMockIncomeSourceDetailsResponse()(businessesAndPropertyIncome)
-        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe businessesAndPropertyIncome
-      }
-    }
-
-    "a result with just business details is returned" should {
-      "return an IncomeSourceDetailsModel with just a business option" in {
-        setupMockIncomeSourceDetailsResponse()(singleBusinessIncome)
-        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe singleBusinessIncome
-      }
-    }
-
-    "a result with just property details is returned" should {
-      "return an IncomeSourceDetailsModel with just a property option" in {
-        setupMockIncomeSourceDetailsResponse()(propertyIncomeOnly)
-        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe propertyIncomeOnly
-      }
-    }
-
-    "a result with no income source details is returned" should {
-      "return an IncomeSourceDetailsModel with no options" in {
-        setupMockIncomeSourceDetailsResponse()(noIncomeDetails)
-        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe noIncomeDetails
-      }
-    }
-
-    "a result where the Income Source Details are error" should {
-      "return an IncomeSourceError" in {
-        setupMockIncomeSourceDetailsResponse()(errorResponse)
-        TestIncomeSourceDetailsService.getIncomeSourceDetails().futureValue shouldBe errorResponse
-      }
-    }
   }
 
   "The IncomeSourceDetailsService.getAddIncomeSourceViewModel method" when {

@@ -16,14 +16,28 @@
 
 package mocks.services.admin
 
+import models.admin.{FeatureSwitch, FeatureSwitchName}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import services.admin.FeatureSwitchService
 import testUtils.TestSupport
+
+import scala.concurrent.Future
 
 
 trait MockFeatureSwitchService extends TestSupport with BeforeAndAfterEach {
   self: Suite =>
 
-  lazy val featureSwitchService: FeatureSwitchService = app.injector.instanceOf[FeatureSwitchService]
+  lazy val mockFeatureSwitchService: FeatureSwitchService = mock(classOf[FeatureSwitchService])
 
- }
+  def setupMockFeatureSwitches(featureSwitches: FeatureSwitchName*): Unit = {
+    when(mockFeatureSwitchService.getAll()(any())).thenReturn(Future(
+      FeatureSwitchName.allFeatureSwitches.map { fsName =>
+        fsName.name match
+          case fs if featureSwitches.map(_.name).contains(fs) => FeatureSwitch(fsName, true)
+          case _ => FeatureSwitch(fsName, false)
+      }.toList
+    ))
+  }
+}

@@ -18,6 +18,7 @@ package controllers
 
 import audit.AuditingService
 import auth.authV2.AuthActions
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
@@ -41,14 +42,13 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.{CreditService}
+import services.CreditService
 import testConstants.ANewCreditAndRefundModel
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.HomeView
-import views.html.newHomePage.*
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.helpers.injected.home.YourReportingObligationsTile
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import views.html.newHomePage.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -94,7 +94,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       supportingAgentHomeView,
       authActions,
       mockedNextUpdatesService,
-      mockIncomeSourceDetailsService,
       mockFinancialDetailsService,
       mockDateServiceInjected,
       mockWhatYouOweService,
@@ -122,7 +121,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
   }
@@ -130,7 +128,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   "show()" when {
     "NewHomePage feature switch is enabled" should {
       "redirect to handle your tasks page" in new Setup {
-        enable(NewHomePage)
+        setupMockFeatureSwitches(NewHomePage)
         setupMockUserAuth
         mockItsaStatusRetrievalAction()
         mockSingleBusinessIncomeSource()
@@ -145,6 +143,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with a Next Payments due tile" that {
         "has payments due" when {
           "the user has overdue payments and does not owe any charges" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
@@ -183,6 +182,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "the user has payments due and has overdue payments" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
@@ -209,6 +209,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         "has the number of payments due" when {
           "the user has multiple overdue payments with dunning locks and does not owe any charges" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
@@ -254,6 +255,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "the user has multiple overdue payments without dunning locks and does not owe any charges" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
@@ -307,6 +309,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         "shows the daily interest accruing warning and tag" when {
           "the user has payments accruing interest" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
@@ -348,6 +351,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         "does not show the daily interest accruing warning and tag" when {
           "the user has overdue payments accruing interest" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockSingleBusinessIncomeSource()
@@ -390,6 +394,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
       "render the home page without a Next Payments due tile" when {
         "there is a problem getting financial details" in new Setup {
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -416,6 +421,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
 
         "There are no financial detail" in new Setup {
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -442,6 +448,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
 
         "All financial detail bill are paid" in new Setup {
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -475,6 +482,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
+          setupMockFeatureSwitches()
           mockItsaStatusRetrievalAction()
           setupNextUpdatesTests(futureDueDates, None, None)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -494,6 +502,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
 
         "there is an overdue update date to display" in new Setup {
+          setupMockFeatureSwitches()
           mockItsaStatusRetrievalAction()
           setupNextUpdatesTests(overdueDueDates, None, None)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -513,6 +522,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
 
         "there are no updates to display" in new Setup {
+          setupMockFeatureSwitches()
           mockItsaStatusRetrievalAction()
           setupNextUpdatesTests(Seq(), None, None)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -533,7 +543,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
-        enable(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
         mockItsaStatusRetrievalAction()
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
@@ -569,7 +579,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       }
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
-        enable(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
         mockItsaStatusRetrievalAction()
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val overdueDate1 = LocalDate.of(2000, 1, 1)
@@ -606,7 +616,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       }
 
       "render the home page controller with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
-        enable(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
         mockItsaStatusRetrievalAction()
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)
@@ -641,6 +651,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
       "render the home without the Next Updates tile" when {
         "the user has no updates due" in new Setup {
+          setupMockFeatureSwitches()
           setupMockUserAuth
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -699,7 +710,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           "CreditsAndRefundsRepay FS is enabled and credit is available" in new Setup {
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
-            enable(CreditsRefundsRepay)
+            setupMockFeatureSwitches(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
@@ -729,7 +740,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           "CreditsAndRefundsRepay FS is enabled and credit is not available" in new Setup {
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
-            enable(CreditsRefundsRepay)
+            setupMockFeatureSwitches(CreditsRefundsRepay)
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
             when(mockedCreditService.getAllCredits(any(), any()))
@@ -763,7 +774,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
         "does not contain available credit" when {
           "CreditsAndRefundsRepay FS is disabled" in new Setup {
-            disable(CreditsRefundsRepay)
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             mockGetDueDates(Right(Seq.empty))
@@ -796,6 +807,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -822,6 +834,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         }
         "states that the user is reporting quarterly" when {
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
@@ -846,6 +859,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
+            setupMockFeatureSwitches()
             setupMockUserAuth
             mockItsaStatusRetrievalAction()
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))

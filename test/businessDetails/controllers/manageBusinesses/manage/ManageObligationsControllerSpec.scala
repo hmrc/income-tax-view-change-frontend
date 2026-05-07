@@ -17,12 +17,11 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.manage.ManageObligationsController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.*
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockClientDetailsService, MockDateService, MockNextUpdatesService, MockSessionService}
+import mocks.services.{MockClientDetailsService, MockDateService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
@@ -39,8 +38,10 @@ import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
-import utils.IncomeSourcesUtils
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.utils.IncomeSourcesUtils
+import obligations.mocks.services.MockNextUpdatesService
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -62,7 +63,6 @@ class ManageObligationsControllerSpec
       api.inject.bind[IncomeSourcesUtils].toInstance(mockIncomeSourcesUtils),
       api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
@@ -164,9 +164,7 @@ class ManageObligationsControllerSpec
         s"the user is authenticated as a $mtdRole" should {
 
           "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
-
-            enable(OptInOptOutContentUpdateR17)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
             mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))

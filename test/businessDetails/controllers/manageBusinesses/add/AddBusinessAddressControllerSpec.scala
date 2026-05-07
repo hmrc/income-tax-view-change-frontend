@@ -17,8 +17,9 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService}
 import config.FrontendAppConfig
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
@@ -54,7 +55,6 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[AddressLookupService].toInstance(mockAddressLookupService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 

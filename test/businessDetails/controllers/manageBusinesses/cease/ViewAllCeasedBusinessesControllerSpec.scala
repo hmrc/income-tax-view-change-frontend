@@ -16,9 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.ViewAllCeasedBusinessesController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.services.IncomeSourceDetailsService
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import exceptions.MissingFieldException
@@ -45,8 +45,8 @@ class ViewAllCeasedBusinessesControllerSpec extends MockAuthActions with Implici
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+      api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[ViewAllCeasedBusinessesController]

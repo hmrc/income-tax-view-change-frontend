@@ -16,12 +16,12 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.AddBusinessTradeController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType, Manage}
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import connectors.ITSAStatusConnector
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import forms.manageBusinesses.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
@@ -34,11 +34,10 @@ import play.api.http.Status
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.*
 import services.{DateServiceInterface, SessionService}
-import testConstants.BusinessDetailsTestConstants.{address, business1}
+import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 
 class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionService {
@@ -80,7 +79,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 
@@ -210,8 +208,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               "redirect to the choose sole trader business address page" when {
                 "the OverseasBusinessAddress FS is on" when {
                   "the individual is authenticated and the business trade entered is valid with a valid address on file - UK" in {
-                    enable(OverseasBusinessAddress)
-                    setupMockSuccess(mtdRole)
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
                     setupMockCreateSession(true)
@@ -231,8 +228,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                   }
 
                   "the individual is authenticated and the business trade entered is valid with a valid address on file - International" in {
-                    enable(OverseasBusinessAddress)
-                    setupMockSuccess(mtdRole)
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(minimumInternationalAddress)))))
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(minimumInternationalAddress)))))
                     setupMockCreateSession(true)
@@ -256,8 +252,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
               "redirect to the is the new address in the UK page" when {
                 "the OverseasBusinessAddress FS is on" when {
                   "the individual is authenticated and the business trade entered is valid and theres no addresses on file" in {
-                    enable(OverseasBusinessAddress)
-                    setupMockSuccess(mtdRole)
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
                     setupMockCreateSession(true)
@@ -276,8 +271,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                     redirectLocation(result) shouldBe Some(expectedRedirectUrl)
                   }
                   "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no address line 1 UK" in {
-                    enable(OverseasBusinessAddress)
-                    setupMockSuccess(mtdRole)
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoAddressLine1)))))
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoAddressLine1)))))
                     setupMockCreateSession(true)
@@ -296,8 +290,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                     redirectLocation(result) shouldBe Some(expectedRedirectUrl)
                   }
                   "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no postcode UK" in {
-                    enable(OverseasBusinessAddress)
-                    setupMockSuccess(mtdRole)
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoPostcode)))))
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoPostcode)))))
                     setupMockCreateSession(true)
@@ -316,8 +309,7 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                     redirectLocation(result) shouldBe Some(expectedRedirectUrl)
                   }
                   "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no address line 1 international" in {
-                    enable(OverseasBusinessAddress)
-                    setupMockSuccess(mtdRole)
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
                     mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(internationalAddressNoAddressLine1)))))
                     setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(internationalAddressNoAddressLine1)))))
                     setupMockCreateSession(true)
@@ -344,7 +336,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
                 setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
                 setupMockCreateSession(true)
                 val businessNameAsTrade: String = "Test Name"
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))

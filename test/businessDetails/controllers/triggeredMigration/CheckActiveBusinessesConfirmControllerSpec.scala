@@ -16,7 +16,8 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
+import businessDetails.controllers.triggeredMigration.CheckActiveBusinessesConfirmController
+import connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
@@ -36,7 +37,6 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
         api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
       )
@@ -46,7 +46,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
     app.injector.instanceOf[CheckActiveBusinessesConfirmController]
 
   private def stubIncomeSourceDetails(): Unit =
-    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+    when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
       .thenReturn(Future.successful(singleBusinessIncome.copy(channel = "Hmrc-led-unconfirmed")))
 
   mtdAllRoles.foreach { mtdRole =>
@@ -59,9 +59,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       s"the user is authenticated as a $mtdRole" should {
 
         "render the page when the TriggeredMigration FS is enabled" in {
-
-          enable(TriggeredMigration)
-          setupMockSuccess(mtdRole)
+          setupMockSuccess(mtdRole, false, List(TriggeredMigration))
           mockItsaStatusRetrievalAction()
           mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
@@ -72,8 +70,6 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
 
         "redirect to the home page when the TriggeredMigration FS is disabled" in {
-
-          disable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()
@@ -93,10 +89,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
       s"the user is authenticated as a $mtdRole" should {
 
         "redirect to the complete page when form is valid and 'Yes' is selected" in {
-
-          enable(TriggeredMigration)
-
-          setupMockSuccess(mtdRole)
+          setupMockSuccess(mtdRole, false, List(TriggeredMigration))
           mockItsaStatusRetrievalAction()
           mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
@@ -114,9 +107,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
 
         "redirect back to the Check HMRC Records page when form is valid and 'No' is selected" in {
-
-          enable(TriggeredMigration)
-          setupMockSuccess(mtdRole)
+          setupMockSuccess(mtdRole, false, List(TriggeredMigration))
           mockItsaStatusRetrievalAction()
           mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
@@ -133,9 +124,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
 
         "return BadRequest when no option is selected" in {
-
-          enable(TriggeredMigration)
-          setupMockSuccess(mtdRole)
+          setupMockSuccess(mtdRole, false, List(TriggeredMigration))
           mockItsaStatusRetrievalAction()
           mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
@@ -150,8 +139,6 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
         }
 
         "redirect to the home page when the TriggeredMigration FS is disabled" in {
-
-          disable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()

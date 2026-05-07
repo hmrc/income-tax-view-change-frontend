@@ -17,8 +17,9 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.AddInternationalBusinessAddressController
+import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService}
 import config.FrontendAppConfig
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
@@ -53,7 +54,6 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[AddressLookupService].toInstance(mockAddressLookupService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 
@@ -85,8 +85,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
         s"the user is authenticated as a $mtdRole" should {
           "redirect to the address lookup service" when {
             "location redirect is returned by the lookup service" in {
-              enable(OverseasBusinessAddress)
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -101,8 +100,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
             }
 
             "session data exists but addressLookupId is missing" in {
-              enable(OverseasBusinessAddress)
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -117,8 +115,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
             }
 
             "mongo call fails" in {
-              enable(OverseasBusinessAddress)
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -135,8 +132,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
 
           "redirect to the address lookup confirmation page" when {
             "addressLookupId exists in session data and is still valid" in {
-              enable(OverseasBusinessAddress)
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -159,8 +155,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
 
           "redirect to the address lookup service" when {
             "addressLookupId exists in session data but journey is expired/invalid" in {
-              enable(OverseasBusinessAddress)
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -180,7 +175,6 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
 
           "redirect to home page" when {
             "overseas business address FS is disabled" in {
-              disable(OverseasBusinessAddress)
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -202,8 +196,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
 
           "return the correct error" when {
             "no location returned" in {
-              enable(OverseasBusinessAddress)
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -217,8 +210,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
             }
 
             "failure returned" in {
-              enable(OverseasBusinessAddress)
-              setupMockSuccess(mtdRole)
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 

@@ -18,7 +18,7 @@ package controllers
 
 
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockPaymentAllocationsService}
@@ -42,7 +42,6 @@ class PaymentAllocationControllerSpec extends MockAuthActions with ImplicitDateF
     .overrides(
       api.inject.bind[PaymentAllocationsService].toInstance(mockPaymentAllocationsService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 

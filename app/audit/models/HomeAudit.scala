@@ -56,10 +56,8 @@ object HomeAudit {
   def apply(mtdItUser: MtdItUser[_],
             nextPaymentDueDate: Option[LocalDate],
             overduePaymentsCount: Int,
-            nextUpdatesTileViewModel: NextUpdatesTileViewModel): HomeAudit = {
-
-    val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations
-    val nextUpdateDueDate: Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
+            overdueUpdatesCount: Int,
+            nextUpdateDueDate: Option[LocalDate]): HomeAudit = {
 
     val nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]] = nextPaymentDueDate.map { date =>
       if (overduePaymentsCount == 0) Left(date -> false)
@@ -81,11 +79,11 @@ object HomeAudit {
       nextUpdateOrOverdue = nextUpdateOrOverdue
     )
   }
+  
+  def applySupportingAgent(mtdItUser: MtdItUser[?],
+                           overdueUpdatesCount: Int,
+                           nextUpdateDueDate: Option[LocalDate]): HomeAudit = {
 
-  def applySupportingAgent(mtdItUser: MtdItUser[_],
-                           nextUpdatesTileViewModel: NextUpdatesTileViewModel): HomeAudit = {
-    val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations
-    val nextUpdateDueDate: Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
     val nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = {
       (overdueUpdatesCount, nextUpdateDueDate) match {
         case (0, Some(dueDate)) => Left(dueDate -> false)

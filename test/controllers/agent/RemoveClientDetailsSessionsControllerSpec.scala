@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import mocks.auth.MockAuthActions
 import mocks.views.agent.MockEnterClientsUTR
 import play.api
@@ -34,7 +34,6 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
     .overrides(
       api.inject.bind[EnterClientsUTRView].toInstance(enterClientsUTR),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -59,6 +58,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
         "redirect to the session timeout page" in {
 
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired())
           mockItsaStatusRetrievalAction()
 
@@ -77,6 +77,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
         "remove client details session keys and redirect to the enter client UTR page" in {
 
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent = isSupportingAgent)
           mockItsaStatusRetrievalAction()
 

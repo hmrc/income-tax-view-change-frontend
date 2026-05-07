@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import businessDetails.controllers.triggeredMigration.CheckCompleteController
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
+import connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
@@ -38,7 +37,6 @@ class CheckCompleteControllerSpec extends MockAuthActions {
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
         api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
       )
@@ -49,7 +47,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
 
   private def stubIncomeSourceDetails(): Unit =
     when(
-      mockIncomeSourceDetailsService.getIncomeSourceDetails()(
+      mockIncomeSourceConnector.getIncomeSources()(
         ArgumentMatchers.any(), ArgumentMatchers.any()
       )
     ).thenReturn(Future(singleBusinessIncome.copy(channel = "2")))
@@ -70,9 +68,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
       s"the user is authenticated as a $mtdRole" should {
 
         "render the page when the TriggeredMigration FS is enabled" in {
-
-          enable(TriggeredMigration)
-          setupMockSuccess(mtdRole)
+          setupMockSuccess(mtdRole, false, List(TriggeredMigration))
           mockItsaStatusRetrievalAction()
           mockTriggeredMigrationRetrievalAction()
           stubIncomeSourceDetails()
@@ -83,8 +79,6 @@ class CheckCompleteControllerSpec extends MockAuthActions {
         }
 
         "redirect to the home page when the TriggeredMigration FS is disabled" in {
-
-          disable(TriggeredMigration)
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction()
           stubIncomeSourceDetails()

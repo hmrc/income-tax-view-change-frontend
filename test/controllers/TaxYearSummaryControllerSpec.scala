@@ -16,18 +16,19 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, CalculationListConnector, ITSAStatusConnector}
+import connectors.{CalculationListConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.auth.MockAuthActions
 import mocks.connectors.MockIncomeTaxCalculationConnector
-import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService, MockNextUpdatesService}
+import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService}
 import models.admin.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
+import obligations.mocks.services.MockNextUpdatesService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -72,7 +73,6 @@ class TaxYearSummaryControllerSpec
         api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
         api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[CalculationListConnector].toInstance(mockCalculationListConnector),
         api.inject.bind[TaxYearSummaryService].toInstance(mockTaxYearSummaryService),
       ).build()
@@ -155,7 +155,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -183,7 +183,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccessWithAmendment(testMtditid, taxYear = testTaxYear, previousCalc = Some(liabilityCalculationModelSuccessful))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -209,7 +209,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccessWithAmendment(testMtditid, taxYear = testTaxYear, previousCalc = Some(LiabilityCalculationError(404, "not found")))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -238,7 +238,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousNotCrystallised(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -290,7 +290,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid, taxYear = testTaxYear)
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -339,7 +339,7 @@ class TaxYearSummaryControllerSpec
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
                 mockFinancialDetailsSuccess(taxYear = testTaxYear)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -386,7 +386,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -405,13 +405,12 @@ class TaxYearSummaryControllerSpec
               }
 
               "FilterCodedOutPoas FS is enabled and there are some not coded out" in {
-                enable(FilterCodedOutPoas)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(FilterCodedOutPoas))
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = None))
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -432,7 +431,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -457,7 +456,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -480,7 +479,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess()
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -498,13 +497,12 @@ class TaxYearSummaryControllerSpec
               }
 
               "FilterCodedOutPoas FS is enabled and POA charges are coded out" in {
-                enable(FilterCodedOutPoas)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(FilterCodedOutPoas))
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -530,7 +528,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithReviewAndReconcileDebits)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -563,14 +561,12 @@ class TaxYearSummaryControllerSpec
             "Penalties in the charges table" when {
 
               "the user has penalties and the penalties FS is enabled" in {
-
-                enable(PenaltiesAndAppeals)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -607,13 +603,12 @@ class TaxYearSummaryControllerSpec
             "Not show penalties in the charges table" when {
 
               "the penalties FS is disabled" in {
-                disable(PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -643,7 +638,7 @@ class TaxYearSummaryControllerSpec
                 response = testObligationsModel
               )
 
-              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                 .thenReturn(Future(singleBusinessIncome))
 
               setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -695,7 +690,7 @@ class TaxYearSummaryControllerSpec
                   )
                 )
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -750,7 +745,7 @@ class TaxYearSummaryControllerSpec
                   )
                 )
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -797,7 +792,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = MFADebitsFinancialDetails)
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -852,7 +847,7 @@ class TaxYearSummaryControllerSpec
                 mockFinancialDetailsNotFound()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -904,7 +899,7 @@ class TaxYearSummaryControllerSpec
                 mockLatestAndPreviousNotFound(testMtditid)
                 mockFinancialDetailsSuccess()
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -941,15 +936,13 @@ class TaxYearSummaryControllerSpec
 
             "show the Tax Year Summary Page with error messages" when {
               "liability Calculation has error messages" in {
-
-                disable(NavBarFs)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
                 mockLatestAndPreviousWithErrorMessages(testMtditid)
                 mockFinancialDetailsSuccess()
 
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future(singleBusinessIncome))
 
                 mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
@@ -1002,7 +995,7 @@ class TaxYearSummaryControllerSpec
               setupMockGetPoaTaxYearForEntryPointCall(Left(new Exception("TEST")))
               mockFinancialDetailsSuccess()
 
-              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                 .thenReturn(Future(singleBusinessIncome))
 
               when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -1016,7 +1009,7 @@ class TaxYearSummaryControllerSpec
               setupMockSuccess(mtdUserRole)
               mockFinancialDetailsFailed()
 
-              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                 .thenReturn(Future(singleBusinessIncome))
 
               val result = action(fakeRequest)
@@ -1030,7 +1023,7 @@ class TaxYearSummaryControllerSpec
               mockItsaStatusRetrievalAction()
               mockFinancialDetailsNotFound()
 
-              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                 .thenReturn(Future(singleBusinessIncome))
 
               when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
@@ -1071,7 +1064,7 @@ class TaxYearSummaryControllerSpec
               mockItsaStatusRetrievalAction()
               mockFinancialDetailsSuccess()
 
-              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                 .thenReturn(Future(singleBusinessIncome))
 
               mockGetNextUpdates(
@@ -1087,14 +1080,12 @@ class TaxYearSummaryControllerSpec
             }
 
             "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
-
-              enable(PenaltiesAndAppeals)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
               mockLatestAndPreviousSuccess(testMtditid)
               mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithLPP2NoChargeRef)
 
-              when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+              when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                 .thenReturn(Future(singleBusinessIncome))
 
               when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))

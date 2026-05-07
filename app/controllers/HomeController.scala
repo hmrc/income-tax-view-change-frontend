@@ -40,6 +40,7 @@ import play.api.mvc.*
 import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.HomePageUtils
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -55,7 +56,6 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
                                val supportingAgentHomeView: views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActions,
                                val nextUpdatesService: NextUpdatesService,
-                               val incomeSourceDetailsService: IncomeSourceDetailsService,
                                val financialDetailsService: FinancialDetailsService,
                                val dateService: DateServiceInterface,
                                val whatYouOweService: WhatYouOweService,
@@ -70,7 +70,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
                                val itvcErrorHandler: ItvcErrorHandler,
                                val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                mcc: MessagesControllerComponents,
-                               val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                               val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with HomePageUtils {
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualWithIncomeSources().async {
     implicit user =>
@@ -125,7 +125,8 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
 
-      auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel))
+      auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel.getNumberOfOverdueObligations, nextUpdatesTileViewModel.getNextDeadline))
+
       Ok(
         supportingAgentHomeView(
           yourBusinessesTileViewModel,
@@ -206,8 +207,16 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
           val mandationStatus =
             if (mandation) SessionKeys.mandationStatus -> "on"
             else SessionKeys.mandationStatus -> "off"
-
-          auditingService.extendedAudit(HomeAudit(user, paymentsDueMerged, overDuePaymentsCount, nextUpdatesTileViewModel))
+          
+          auditingService.extendedAudit(
+            HomeAudit(
+              user,
+              paymentsDueMerged,
+              overDuePaymentsCount,
+              nextUpdatesTileViewModel.getNumberOfOverdueObligations,
+              nextUpdatesTileViewModel.getNextDeadline
+            )
+          )
 
           if (user.isAgent) {
             Ok(primaryAgentHomeView(homeViewModel)).addingToSession(mandationStatus)
@@ -219,36 +228,6 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
           handleErrorGettingDueDates(user.isAgent)
       }
     }
-  }
-
-  private def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[LocalDate] = {
-
-    val chargesList =
-      unpaidCharges.collect {
-        case fdm: FinancialDetailsModel => fdm
-      }
-
-    val dueDatesFromChargeItems =
-      whatYouOweService.getFilteredChargesList(
-        financialDetailsList = chargesList,
-        isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
-        isPenaltiesEnabled = penaltiesEnabled,
-        remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter
-      ).flatMap(_.dueDate)
-
-    val dueDatesFromUnpaidDocumentDetails =
-      chargesList
-        .flatMap(_.unpaidDocumentDetails())
-        .filter(_.originalAmount > 0)
-        .flatMap(_.getDueDate)
-
-    val dueDates =
-      if (dueDatesFromChargeItems.nonEmpty) dueDatesFromChargeItems
-      else dueDatesFromUnpaidDocumentDetails
-
-    dueDates
-      .sortWith(_ isBefore _)
-      .sortBy(_.toEpochDay())
   }
 
   private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
@@ -265,27 +244,11 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       case _ => Nil
     }
 
-  private def calculateOverduePaymentsCount(paymentsDue: List[LocalDate], outstandingChargesModel: List[OutstandingChargeModel]): Int = {
-    val overduePaymentsCountFromDate = paymentsDue.count(_.isBefore(dateService.getCurrentDate))
-    val overdueChargesCount = outstandingChargesModel.flatMap(_.relevantDueDate).count(_.isBefore(dateService.getCurrentDate))
-
-    overduePaymentsCountFromDate + overdueChargesCount
-  }
-
-  private def mergePaymentsDue(paymentsDue: List[LocalDate], outstandingChargesDueDate: List[LocalDate]): Option[LocalDate] =
-    (paymentsDue ::: outstandingChargesDueDate)
-      .sortWith(_ isBefore _)
-      .headOption
-
   private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
     financialDetails
       .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
       .getOrElse(false)
 
-  private def getRelevantDates(outstandingCharges: List[OutstandingChargeModel]): List[LocalDate] =
-    outstandingCharges
-      .collect { case OutstandingChargeModel(_, relevantDate, _, _) => relevantDate }
-      .flatten
 
   private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
     val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
@@ -331,15 +294,10 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
     }
   }
 
-    def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
-      implicit user =>
-        Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand, isEnabled(RecentActivity))))
-    }
-
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.newHomePage.routes.RecentActivityController.show(isAgent, origin).url
-  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
-  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
+  def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
+    implicit user =>
+      Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand, isEnabled(RecentActivity))))
+  }
 
   private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {
 

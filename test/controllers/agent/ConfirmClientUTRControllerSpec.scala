@@ -17,7 +17,7 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.services.MockITSAStatusService
@@ -42,7 +42,6 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
     .overrides(
       api.inject.bind[ConfirmClientUTRView].toInstance(mockConfirmClient),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -117,6 +116,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
 
         "is fully authenticated" should {
           "return OK and display confirm Client details page" in {
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
             mockItsaStatusRetrievalAction()
             mockConfirmClientResponse(HtmlFormat.empty)
@@ -200,6 +200,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
 
         "is fully authenticated" should {
           "redirect to Home page and relevant data added to session or sent to session data service successfully" in {
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent)
             mockItsaStatusRetrievalAction()
 

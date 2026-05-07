@@ -16,7 +16,7 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
@@ -43,7 +43,6 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
     .overrides(
       api.inject.bind[SignUpService].toInstance(mockSignUpService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -60,9 +59,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
       s"the user is authenticated as a $mtdRole" should {
         s"render the signUpCompleted page" that {
           "is for the current year" in {
-            enable(OptInOptOutContentUpdateR17, SignUpFs)
-
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -77,9 +74,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             status(result) shouldBe OK
           }
           "is for next year" in {
-            enable(OptInOptOutContentUpdateR17, SignUpFs)
-
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -96,9 +91,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
         }
         "render the error page" when {
           "no proposition returned" in {
-            enable(OptInOptOutContentUpdateR17, SignUpFs)
-
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -109,9 +102,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
           "FetchSavedChosenTaxYear fails" in {
-            enable(OptInOptOutContentUpdateR17, SignUpFs)
-
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -124,10 +115,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
         }
         "render the reporting obligations page" when {
           "the sign up feature switch is disabled" in {
-            enable(OptInOptOutContentUpdateR17)
-            disable(SignUpFs)
-
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -146,8 +134,6 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
 
         "render the reporting frequency page" when {
           "the opt in opt out content R17 feature switch is disabled" in {
-            disable(OptInOptOutContentUpdateR17)
-
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)

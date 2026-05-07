@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mocks.services
+package obligations.mocks.services
 
 import implicits.ImplicitDateFormatter
 import obligations.models.{ObligationsErrorModel, ObligationsResponseModel}
@@ -70,11 +70,11 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
   }
 
   def mockGetDueDates(response: Either[Exception, Seq[LocalDate]])(using mockNextUpdateServ: NextUpdatesService): Unit = {
-    when(mockNextUpdateServ.getDueDates()(any(), any())) thenReturn Future.successful(response)
+    when(mockNextUpdateServ.getDueDates(any())(any(), any())) thenReturn Future.successful(response)
   }
 
   def mockGetNextDueDates(response: (Option[LocalDate], Option[LocalDate]))(using mockNextUpdateServ: NextUpdatesService): Unit = {
-    when(mockNextUpdateServ.getNextDueDates()(any(), any()))
+    when(mockNextUpdateServ.getNextDueDates(any())(any(), any()))
       .thenReturn(Future.successful(response))
   }
 }
