@@ -16,7 +16,7 @@
 
 package enums.JourneyType
 
-import enums.IncomeSourceJourney.IncomeSourceType
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 
 sealed trait JourneyType
 

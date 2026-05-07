@@ -16,8 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.controllers.manageBusinesses.cease.IncomeSourceNotCeasedController
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
@@ -38,7 +39,6 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

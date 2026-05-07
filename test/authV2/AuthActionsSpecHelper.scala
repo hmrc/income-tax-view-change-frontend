@@ -17,20 +17,22 @@
 package authV2
 
 import audit.AuditingService
+import businessDetails.services.IncomeSourceDetailsService
 import config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
+import connectors.{BusinessDetailsConnector, IncomeSourceConnector}
 import controllers.bta.BtaNavBarController
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
+import services.SessionDataService
 import services.admin.FeatureSwitchService
-import services.{IncomeSourceDetailsService, SessionDataService}
 import testUtils.TestSupport
 import views.html.navBar.PtaPartial
 
 trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
 
   lazy val mockAuthConnector = mock[FrontendAuthConnector]
-  lazy val mockIncomeSourceDetailsService = mock[IncomeSourceDetailsService]
+  lazy val mockIncomeSourceConnector = mock[IncomeSourceConnector]
 
   lazy val mockAppConfig = mock[FrontendAppConfig]
   lazy val mockAuditingService = mock[AuditingService]
@@ -45,7 +47,7 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   override def beforeEach(): Unit = {
     super.beforeEach()
     Mockito.reset(mockAuthConnector)
-    Mockito.reset(mockIncomeSourceDetailsService)
+    Mockito.reset(mockIncomeSourceConnector)
     Mockito.reset(mockAuditingService)
   }
 

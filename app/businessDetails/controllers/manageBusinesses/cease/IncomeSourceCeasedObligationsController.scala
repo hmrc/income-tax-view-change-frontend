@@ -20,7 +20,6 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.CannotGoBackPage
-import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.core.IncomeSourceId
@@ -35,13 +34,14 @@ import play.api.mvc.*
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
+import businessDetails.views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.utils.JourneyCheckerManageBusinesses
 
 class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,
                                                         val itvcErrorHandler: ItvcErrorHandler,

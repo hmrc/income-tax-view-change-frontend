@@ -34,6 +34,7 @@ import obligations.models.*
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
+import obligations.mocks.services.MockNextUpdatesService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any

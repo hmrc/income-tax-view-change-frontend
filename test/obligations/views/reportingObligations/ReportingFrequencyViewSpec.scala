@@ -25,7 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
 import testUtils.TestSupport
-import views.messages.ReportingFrequencyViewMessages.*
+import obligations.views.messages.ReportingFrequencyViewMessages.*
 
 class ReportingFrequencyViewSpec extends TestSupport {
 

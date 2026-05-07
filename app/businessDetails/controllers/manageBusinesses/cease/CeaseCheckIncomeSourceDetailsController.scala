@@ -17,26 +17,27 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import audit.AuditingService
-import audit.models.CeaseIncomeSourceAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationCeased
+import businessDetails.models.audit.CeaseIncomeSourceAuditModel
+import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
+import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.TriggeredMigration.TriggeredMigrationCeased
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
+import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
+import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
 
 import java.time.LocalDate
 import javax.inject.Inject

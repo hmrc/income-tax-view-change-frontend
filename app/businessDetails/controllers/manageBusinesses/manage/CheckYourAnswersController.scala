@@ -17,26 +17,29 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import audit.AuditingService
-import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney._
+import businessDetails.enums.IncomeSourceJourney.*
+import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
+import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{AnnualReportingMethod, BeforeSubmissionPage, QuarterlyReportingMethod, ReportingMethod}
+import enums.BeforeSubmissionPage
 import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
-import models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services.{SessionService, UpdateIncomeSourceService}
+import play.api.mvc.*
+import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.manage.CheckYourAnswersView
+import businessDetails.views.html.manageBusinesses.manage.CheckYourAnswersView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

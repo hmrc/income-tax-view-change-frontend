@@ -16,21 +16,19 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.*
+import businessDetails.controllers.manageBusinesses.cease.IncomeSourceEndDateController
+import connectors.{ITSAStatusConnector}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
-import models.core.*
 import models.core.IncomeSourceId.mkIncomeSourceId
+import models.core.*
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
+import org.mockito.ArgumentMatchers.any
 import play.api
 import play.api.http.Status
 import play.api.http.Status.*
@@ -42,6 +40,9 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService with MockDateService{
 
@@ -52,7 +53,6 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
       ).build()
 
@@ -114,7 +114,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               "using the manage businesses journey" in {
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
                 if (mode == CheckMode) {
                   setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -148,7 +148,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               "journey is complete" in {
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
                 setupMockCreateSession(true)
                 setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -169,7 +169,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 "income source ID is missing" in {
                   setupMockSuccess(mtdRole)
                   mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                  when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                     .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
                   setupMockCreateSession(true)
@@ -181,7 +181,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" in {
                   setupMockSuccess(mtdRole)
                   mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                  when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                  when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                     .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
                   setupMockCreateSession(true)
@@ -205,7 +205,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                 when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
@@ -232,7 +232,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               "form is errored out with before trading start date error" in {
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
                 setupMockCreateSession(true)
                 if (incomeSourceType == SelfEmployment) {
@@ -270,7 +270,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
 
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
                 when(mockDateServiceInjected.getCurrentDate).thenReturn(LocalDate.of(2028, 1, 1))
@@ -333,7 +333,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
               "the form is not completed successfully" in {
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                   .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
                 mockBusinessIncomeSource()
                 val result: Future[Result] = action(fakeRequest
@@ -353,7 +353,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                   "income source ID is missing" in {
                     setupMockSuccess(mtdRole)
                     mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                    when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                       .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
                     val actionMissingId = testController.submit(None, incomeSourceType, isAgent, mode, false)
@@ -365,7 +365,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                   "incomeSourceIdHash in URL does not match any incomeSourceIdHash in database" in {
                     setupMockSuccess(mtdRole)
                     mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                    when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                       .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
                     val actionInvalidId = testController.submit(Some("12345"), incomeSourceType, isAgent, mode, false)
@@ -379,7 +379,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                   "unable to set incomeSourceIdField session data" in {
                     setupMockSuccess(mtdRole)
                     mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                    when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                       .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
                     setupMockCreateSession(true)
@@ -393,7 +393,7 @@ class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSession
                   "unable to set dateCeased session data" in {
                     setupMockSuccess(mtdRole)
                     mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-                    when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
+                    when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
                       .thenReturn(Future.successful(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome))
 
                     setupMockCreateSession(true)

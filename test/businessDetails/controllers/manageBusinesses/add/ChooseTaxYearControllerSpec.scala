@@ -16,11 +16,14 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.controllers.manageBusinesses.add.ChooseTaxYearController
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.MockIncomeSourceRFService
+import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
+import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}
 import org.mockito.Mockito.mock
@@ -29,7 +32,6 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.manageBusinesses.IncomeSourceRFService
 import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.errorResponse
 
@@ -44,7 +46,6 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
       api.inject.bind[IncomeSourceRFService].toInstance(mockIncomeSourceRFService),
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 

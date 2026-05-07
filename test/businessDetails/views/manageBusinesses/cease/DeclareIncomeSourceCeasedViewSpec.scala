@@ -1,0 +1,115 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package businessDetails.views.manageBusinesses.cease
+
+import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm.declaration
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import play.api.mvc.Call
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import play.twirl.api.HtmlFormat
+import testUtils.TestSupport
+import businessDetails.views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
+
+class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
+
+  val declarePropertyCeasedView: DeclareIncomeSourceCeasedView = app.injector.instanceOf[DeclareIncomeSourceCeasedView]
+
+  val testBusinessName: String = "Big Business"
+
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, error: Boolean = false, businessName: Option[String] = None) {
+
+    val backUrl: String = {
+      if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent()
+      else         manageBusinessRoutes.ManageYourBusinessesController.show()
+    }.url
+
+    lazy val view: HtmlFormat.Appendable = declarePropertyCeasedView(
+      form = DeclareIncomeSourceCeasedForm.form(incomeSourceType),
+      incomeSourceType = incomeSourceType,
+      soleTraderBusinessName = businessName,
+      postAction = Call("", ""),
+      isAgent = isAgent,
+      backUrl = backUrl
+    )(individualUser, implicitly)
+
+    lazy val viewWithInputErrors: HtmlFormat.Appendable = declarePropertyCeasedView(
+      form = DeclareIncomeSourceCeasedForm.form(incomeSourceType)
+        .withError(declaration, messages(s"incomeSources.cease.${incomeSourceType.key}.checkboxError")),
+      incomeSourceType = incomeSourceType,
+      soleTraderBusinessName = Some(testBusinessName),
+      postAction = Call("", ""),
+      isAgent = isAgent,
+      backUrl = backUrl
+    )(individualUser, implicitly)
+
+    lazy val document: Document = if (error) Jsoup.parse(contentAsString(viewWithInputErrors)) else Jsoup.parse(contentAsString(view))
+  }
+
+  for {
+    incomeSourceType <- Seq(SelfEmployment, UkProperty, ForeignProperty)
+    isAgent          <- Seq(true, false)
+  } yield {
+    s"Declare $incomeSourceType Ceased View - isAgent = $isAgent" should {
+      "render the correct h1" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        val expectedHeading = incomeSourceType match {
+          case SelfEmployment => "Cease sole trader business"
+          case UkProperty     => "Cease UK property business"
+          case ForeignProperty => "Cease foreign property business"
+        }
+        document.getElementById("heading").text() shouldBe expectedHeading
+      }
+
+      if (incomeSourceType equals SelfEmployment) {
+        "render the business-specific hint" in new Setup(isAgent = isAgent, incomeSourceType = SelfEmployment, businessName = Some(testBusinessName)) {
+          document.getElementById(s"$declaration-hint").text() shouldBe "Only cease Big Business if you no longer receive any income or have any expenses related to this business."
+        }
+        "render the generic business hint" in new Setup(isAgent = isAgent, incomeSourceType = SelfEmployment) {
+          document.getElementById(s"$declaration-hint").text() shouldBe "Only cease your sole trader business if you no longer receive any income or have any expenses related to this business."
+        }
+      } else {
+        "render the property hint" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+          val propertyHint = incomeSourceType match {
+            case UkProperty => "Only cease your UK property business if you no longer get income from any properties in the UK"
+            case ForeignProperty => "Only cease your foreign property business if you no longer get income from any properties abroad."
+            case _ => ""
+          }
+          document.getElementById(s"$declaration-hint").text() shouldBe propertyHint
+        }
+      }
+
+      "render the back link with the correct URL" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById("back-fallback").text() shouldBe "Back"
+        document.getElementById("back-fallback").attr("href") shouldBe(
+          if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+          else         manageBusinessRoutes.ManageYourBusinessesController.show().url
+        )
+      }
+
+      "render the p1" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById("confirm-cease-p1").text() shouldBe "By continuing I confirm I want to cease this business."
+      }
+
+      "render the confirm and continue button" in new Setup(isAgent = isAgent, incomeSourceType = incomeSourceType) {
+        document.getElementById("confirm-button").text() shouldBe "Confirm and continue"
+      }
+    }
+  }
+}

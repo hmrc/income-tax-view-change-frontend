@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.DisplayBusinessStartDate

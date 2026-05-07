@@ -19,16 +19,16 @@ package businessDetails.controllers.triggeredMigration
 import audit.AuditingService
 import auth.authV2.AuthActions
 import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
+import businessDetails.forms.triggeredMigration.CheckActiveBusinessesConfirmForm
+import businessDetails.services.CustomerFactsUpdateService
+import businessDetails.services.triggeredMigration.TriggeredMigrationService
+import businessDetails.utils.TriggeredMigrationUtils
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
-import forms.triggeredMigration.CheckActiveBusinessesConfirmForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.CustomerFactsUpdateService
-import services.triggeredMigration.TriggeredMigrationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.TriggeredMigrationUtils
-import views.html.triggeredMigration.CheckActiveBusinessesConfirmView
+import businessDetails.views.html.triggeredMigration.CheckActiveBusinessesConfirmView
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
@@ -98,7 +98,6 @@ class TaxDueSummaryControllerSpec extends MockAuthActions with MockCalculationSe
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
       api.inject.bind[ObligationsConnector].toInstance(mockObligationsConnector),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

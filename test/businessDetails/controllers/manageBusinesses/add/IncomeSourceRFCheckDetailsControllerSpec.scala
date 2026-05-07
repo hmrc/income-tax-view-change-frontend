@@ -16,22 +16,25 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.controllers.manageBusinesses.add.IncomeSourceRFCheckDetailsController
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.MockIncomeSourceRFService
+import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseError
+import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
+import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
-import models.updateIncomeSource.UpdateIncomeSourceResponseError
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.manageBusinesses.IncomeSourceRFService
-import services.{DateService, DateServiceInterface, SessionService, UpdateIncomeSourceService}
+import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
@@ -48,7 +51,6 @@ class IncomeSourceRFCheckDetailsControllerSpec extends MockAuthActions with Mock
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[UpdateIncomeSourceService].toInstance(mockUpdateIncomeSourceService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

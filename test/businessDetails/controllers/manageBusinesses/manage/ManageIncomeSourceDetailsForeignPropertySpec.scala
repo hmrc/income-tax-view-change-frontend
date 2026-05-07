@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import connectors.BusinessDetailsConnector
-import enums.IncomeSourceJourney.ForeignProperty
+import businessDetails.enums.IncomeSourceJourney.ForeignProperty
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
@@ -25,21 +24,17 @@ import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.Mockito.{mock, reset}
 import play.api.http.Status
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTrader2023WithUnknowns, ukPlusForeignPropertyAndSoleTraderNoLatency, ukPlusForeignPropertyAndSoleTraderWithLatency, ukPlusForeignPropertyAndSoleTraderWithLatencyExpired}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 
 
 class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDetailsHelper {
 
-  override lazy val mockBusinessDetailsConnector: BusinessDetailsConnector = mock(classOf[BusinessDetailsConnector])
-
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockBusinessDetailsConnector)
   }
 
   val staticTaxYear: TaxYear = TaxYear(fixedDate.getYear - 1, fixedDate.getYear)
