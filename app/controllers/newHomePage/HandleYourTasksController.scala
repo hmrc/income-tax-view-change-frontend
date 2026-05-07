@@ -20,17 +20,16 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
-import models.homePage.NextUpdatesTileViewModel
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.newHomePage.SubmissionDeadlinesViewModel
-import obligations.models.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel}
+import obligations.models.{ObligationsModel, ObligationsResponseModel, SingleObligationModel}
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
