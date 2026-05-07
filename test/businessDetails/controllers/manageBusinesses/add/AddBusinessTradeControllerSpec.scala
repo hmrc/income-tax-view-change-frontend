@@ -17,11 +17,11 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import forms.manageBusinesses.add.BusinessTradeForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
@@ -79,7 +79,6 @@ class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionSer
       .overrides(
         api.inject.bind[SessionService].toInstance(mockSessionService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

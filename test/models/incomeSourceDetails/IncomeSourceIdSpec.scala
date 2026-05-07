@@ -17,7 +17,7 @@
 package models.incomeSourceDetails
 
 import exceptions.NoIncomeSourceFound
-import forms.IncomeSourcesFormsSpec.individualUser
+import businessDetails.forms.IncomeSourcesFormsSpec.individualUser
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import testConstants.BaseTestConstants.{testMtdItUser, testSelfEmploymentId}

@@ -18,14 +18,14 @@ package businessDetails.controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import businessDetails.utils.IncomeSourcesUtils
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.IncomeSourceJourney.IncomeSourceType
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSavedView
+import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSavedView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

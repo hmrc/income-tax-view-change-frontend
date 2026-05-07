@@ -19,10 +19,13 @@ package businessDetails.controllers.manageBusinesses.manage
 import auth.MtdItUser
 import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.utils.JourneyCheckerManageBusinesses
+import businessDetails.views.html.manageBusinesses.manage.ManageObligationsView
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{AnnualReportingMethod, CannotGoBackPage, QuarterlyReportingMethod}
+import enums.CannotGoBackPage
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
@@ -30,11 +33,9 @@ import obligations.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{DateService, IncomeSourceDetailsService, SessionService}
+import services.{DateService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.manage.ManageObligationsView
 
 import javax.inject.Inject
 import scala.annotation.unused
@@ -43,7 +44,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageObligationsController @Inject()(val authActions: AuthActions,
                                             val itvcErrorHandler: ItvcErrorHandler,
                                             val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                            val incomeSourceDetailsService: IncomeSourceDetailsService,
                                             val obligationsView: ManageObligationsView,
                                             val sessionService: SessionService,
                                             nextUpdatesService: NextUpdatesService,

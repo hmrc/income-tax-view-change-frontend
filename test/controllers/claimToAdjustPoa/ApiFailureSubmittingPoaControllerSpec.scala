@@ -16,7 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
@@ -33,7 +33,6 @@ class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
       ).build()
 

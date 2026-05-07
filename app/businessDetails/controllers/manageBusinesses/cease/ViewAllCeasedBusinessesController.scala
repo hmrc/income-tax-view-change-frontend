@@ -25,14 +25,15 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{IncomeSourceDetailsService, SessionService}
+import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.IncomeSourcesUtils
-import views.html.manageBusinesses.cease.ViewAllCeasedBusinessesView
+import businessDetails.views.html.manageBusinesses.cease.ViewAllCeasedBusinessesView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.services.IncomeSourceDetailsService
+import businessDetails.utils.IncomeSourcesUtils
 
 @Singleton
 class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: ViewAllCeasedBusinessesView,
@@ -61,7 +62,6 @@ class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: V
   def handleRequest(sources: IncomeSourceDetailsModel, isAgent: Boolean, backUrl: String)
                    (implicit user: MtdItUser[_]): Future[Result] = {
     lazy val errorHandler = if(isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
     incomeSourceDetailsService.getCeaseIncomeSourceViewModel(sources, isEnabled(DisplayBusinessStartDate)) match {
       case Right(viewModel) =>
         sessionService.deleteSession(Manage).map { _ =>

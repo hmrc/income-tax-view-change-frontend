@@ -16,13 +16,13 @@
 
 package obligations.controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockNextUpdatesService}
+import mocks.services.MockDateService
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import obligations.mocks.services.MockOptOutService
+import obligations.mocks.services.{MockNextUpdatesService, MockOptOutService}
 import obligations.models.*
 import obligations.models.reportingObligations.optOut.*
 import obligations.services.NextUpdatesService
@@ -55,7 +55,6 @@ class NextUpdatesControllerSpec extends MockAuthActions
       api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 

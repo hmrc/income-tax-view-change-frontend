@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.updateIncomeSource._
+import businessDetails.models.updateIncomeSource.{Cessation, TaxYearSpecific, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
 import testConstants.BaseIntegrationTestConstants.testNino

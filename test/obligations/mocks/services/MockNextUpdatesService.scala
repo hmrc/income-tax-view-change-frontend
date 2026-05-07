@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mocks.services
+package obligations.mocks.services
 
 import implicits.ImplicitDateFormatter
 import obligations.models.{ObligationsErrorModel, ObligationsResponseModel}

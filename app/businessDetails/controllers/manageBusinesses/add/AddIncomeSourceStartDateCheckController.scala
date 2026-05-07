@@ -18,12 +18,13 @@ package businessDetails.controllers.manageBusinesses.add
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
+import businessDetails.utils.JourneyCheckerManageBusinesses
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
-import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm._
+import AddIncomeSourceStartDateCheckForm._
 import implicits.ImplicitDateFormatter
 import models.UIJourneySessionData
 import models.core.{Mode, NormalMode}
@@ -33,8 +34,7 @@ import play.api.mvc._
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
+import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -205,11 +205,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
         Future.successful {
           errorHandler(isAgent).showInternalServerError()
         }
-      case _ =>
-        Logger("application").error("Unable to retrieve session data from Mongo")
-        Future.successful {
-          errorHandler(isAgent).showInternalServerError()
-        }
     }
   }
 
@@ -229,9 +224,6 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
 
       case None =>
         Logger("application").error("Unable to find addIncomeSourceData in session data")
-        Future(errorHandler(isAgent).showInternalServerError())
-      case _ =>
-        Logger("application").error("Unable to retrieve session data from Mongo")
         Future(errorHandler(isAgent).showInternalServerError())
     }
   }

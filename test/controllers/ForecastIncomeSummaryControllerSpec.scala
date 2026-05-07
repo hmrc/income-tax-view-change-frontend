@@ -16,7 +16,7 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
@@ -36,7 +36,6 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

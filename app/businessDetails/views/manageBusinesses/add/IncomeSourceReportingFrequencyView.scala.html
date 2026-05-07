@@ -1,0 +1,180 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+@import services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import views.html.components._
+@import views.html.layouts.unifiedLayout
+
+
+@this(
+    mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
+    h1: h1,
+    h2: h2,
+    p: p,
+    link: link,
+    continueButton: ContinueButton,
+    govukInsetText: GovukInsetText,
+    formWithCSRF: FormWithCSRF,
+    govukRadios: GovukRadios,
+    govukErrorSummary: GovukErrorSummary,
+    govukTable : GovukTable
+)
+
+@(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface, isR17ContentEnabled: Boolean, mtdThreshold: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+    if(isR17ContentEnabled) {
+        messages(s"incomeSources.add.reportingFrequency.r17.$key", args: _*)
+    } else {
+        messages(s"incomeSources.add.reportingFrequency.$key", args: _*)
+    }
+}
+
+@getCaptionMessage = @{
+    incomeSourceType match {
+        case SelfEmployment => getMessage("sole-trader")
+        case UkProperty => getMessage("uk-property")
+        case ForeignProperty => getMessage("foreign-property")
+    }
+}
+
+@quarterlyUpdatesWarningBlock() = {
+    @govukInsetText(InsetText(
+        id = Some("warning-inset"),
+        content = HtmlContent(getMessage("inset", (taxDateService.getCurrentTaxYearEnd + 1).toString))
+    ))
+}
+
+@reportingFrequencyTable() = {
+    @govukTable(
+        Table(
+            rows = Seq(
+                Seq(
+                    TableRow(
+                        attributes = Map("id" -> "reporting-frequency-table-row-1"),
+                        content = Text(messages("incomeSources.add.reportingFrequency.table.c1", taxDateService.getCurrentTaxYearStart.getYear.toString, taxDateService.getCurrentTaxYearEnd.toString)),
+                        classes = "govuk-summary-list__key govuk-!-width-one-half"
+                    ),
+                    TableRow(
+                        attributes = Map("id" -> "reporting-frequency-table-row-2"),
+                        content = Text(messages("incomeSources.add.reportingFrequency.table.c2"))
+                    )
+                ),
+                Seq(
+                    TableRow(
+                        attributes = Map("id" -> "reporting-frequency-table-row-3"),
+                        content = Text(messages("incomeSources.add.reportingFrequency.table.c1", (taxDateService.getCurrentTaxYearStart.getYear + 1).toString, (taxDateService.getCurrentTaxYearEnd + 1).toString)),
+                        classes = "govuk-summary-list__key govuk-!-width-one-half"
+                    ),
+                    TableRow(
+                        attributes = Map("id" -> "reporting-frequency-table-row-4"),
+                        content = Text(messages("incomeSources.add.reportingFrequency.table.c2"))
+                    )
+                )
+            ),
+            firstCellIsHeader = true,
+            classes = "govuk-summary-list"
+        )
+    )
+}
+
+@formBlock = {
+    @formWithCSRF(action = continueAction, Symbol("id") -> "reporting-quarterly-form") {
+        @govukRadios(Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                    content = Text(getMessage("form.h1")),
+                    classes = "govuk-fieldset__legend--m"
+                ))
+            )),
+            items = Seq(
+                RadioItem(
+                    id = Some("yes-response"),
+                    value = Some("true"),
+                    content = Text(messages("radioForm.yes"))
+                ),
+                RadioItem(
+                    id = Some("no-response"),
+                    value = Some("false"),
+                    content = Text(messages("radioForm.no"))
+                )
+            ),
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)))),
+            classes = "govuk-radios--inline"
+        ).withFormField(form("reporting-quarterly-form")))
+
+       @continueButton()
+    }
+}
+
+@mainTemplate(
+        pageTitle = getMessage("title"),
+        isAgent = isAgent,
+        form = Some(form),
+        backUrl = None,
+        btaNavPartial = user.btaNavPartial,
+        btaAndPtaServiceNavigation = user.serviceNavigationPartial
+    ) {
+
+    @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummary().withFormErrorsAsText(form, mapping = Map("reporting-quarterly-form" -> "yes-response")))
+    }
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("h1"),
+        headingClasses = Some("govuk-heading-xl margin-bottom-100"),
+        section = Some(getCaptionMessage),
+        captionClasses = Some("govuk-caption-xl")
+    ))
+
+    @p(id = Some("paragraph-1")){
+        @getMessage("p1")
+    }
+
+    @p(id = Some("reporting-frequency-ul")) {
+        <ul class="govuk-list govuk-list--bullet">
+            <li id="inset-text-bullet-1">
+            @getMessage("li1")
+            </li>
+            <li id="inset-text-bullet-2">
+            @getMessage("li2", mtdThreshold)
+            </li>
+        </ul>
+    }
+
+    @if(!isR17ContentEnabled) {
+        @reportingFrequencyTable()
+    }
+
+    @p(id = Some("paragraph-2")){
+        @getMessage("p2")
+    }
+
+    @quarterlyUpdatesWarningBlock()
+
+    @formBlock
+
+}

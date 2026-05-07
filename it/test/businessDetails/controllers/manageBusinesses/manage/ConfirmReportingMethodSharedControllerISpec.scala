@@ -16,16 +16,16 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
+import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import controllers.ControllerISpecHelper
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
-import models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
