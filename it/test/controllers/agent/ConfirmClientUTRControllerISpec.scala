@@ -16,11 +16,11 @@
 
 package controllers.agent
 
-import audit.models.ConfirmClientDetailsAuditModel
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import controllers.ControllerISpecHelper
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.ConfirmClientDetailsAuditModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status._

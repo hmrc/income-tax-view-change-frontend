@@ -1,0 +1,234 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.views.helpers.CurrentLanguage
+@import common.views.helpers.HtmlTitle
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import common.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.Header
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
+@import common.views.html.layouts.scripts.Scripts
+@import common.config.FrontendAppConfig
+@import common.views.html.helpers.injected.BackLinkWithFallback
+@import enums.GatewayPage._
+@import common.viewUtils.ExternalUrlHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderUrls
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderNames
+@import common.viewUtils.InternalUrlHelper
+
+@this(
+    appConfig: FrontendAppConfig,
+    govukBackLink: GovukBackLink,
+    govukLayout: GovukLayout,
+    hmrcHeader:  HmrcHeader,
+    govukPhaseBanner: GovukPhaseBanner,
+    footerLinks: HmrcStandardFooter,
+    hmrcTimeoutDialog: HmrcTimeoutDialog,
+    hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+    backLink: back_link,
+    backLinkFallback: BackLinkWithFallback,
+    languageSwitch: HmrcLanguageSelect,
+    mainContentLayout: mainContentLayout,
+    scripts: Scripts,
+    a: link
+)
+
+@(pageTitle: String,
+    scriptsBlock: Option[Html] = None,
+    backUrl: Option[String] = None,
+    showLogout: Boolean = true,
+    mainClass: Option[String] = None,
+    showBtaHeader: Boolean = true,
+    signOutLink: Boolean = true,
+    timeout: Boolean = true,
+    isAgent: Boolean = false,
+    itsaTaxYear: Option[Int] = None,
+    form: Option[Form[_]] = None,
+    btaNavPartial: Option[Html] = None,
+    btaAndPtaServiceNavigation: Option[ServiceNavigation] = None,
+    origin: Option[String] = None,
+    useFallbackBackLink: Boolean = true,
+    showServiceName: Boolean = true,
+    isErrorPage: Boolean = false,
+    gatewayPage: Option[GatewayPage] = None
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
+
+
+@feedbackUrl = @{
+    if(isAgent) appConfig.agentBetaFeedbackUrl
+    else appConfig.betaFeedbackUrl
+}
+
+@feedbackBanner = {
+    @if(useGovUkRebrand) {
+        @messages("betaBanner.newService.new")
+        @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link.new", id=Some("agent-feedback-url"), target=Some("_blank"), outerMessage=messages("base.fullstop")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link.new", target=Some("_blank"), id=Some("individuals-feedback-url"), outerMessage=messages("base.fullstop")) }
+    } else {
+        @messages("betaBanner.newService")
+        @messages("betaBanner.your")
+        @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("agent-feedback-url")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("individuals-feedback-url")) }
+        @messages("betaBanner.improve")
+    }
+}
+
+@useGovUkRebrand = @{ appConfig.itvcRebrand }
+
+@defaultServiceNavigation(serviceName: Option[String], serviceUrl: String) = @{
+    ServiceNavigation(serviceName = serviceName, serviceUrl = Some(serviceUrl)).withLanguageToggle()
+}
+
+@siteHeader = @{
+
+    val oldServiceName = if (isAgent) Some(messages("agent.header.serviceName")) else Some(messages("header.serviceName"))
+
+    val serviceName = {
+        (showServiceName, isAgent) match {
+            case (true, false) => Some(messages("header.serviceName"))
+            case (true, true)  => Some(messages("agent.header.serviceName"))
+            case (false, _)    => None
+        }
+    }
+
+    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
+        else controllers.routes.HomeController.show().url
+
+    if(useGovUkRebrand) {
+        val navBar = btaAndPtaServiceNavigation match {
+            case Some(nav) => nav.copy(serviceName = serviceName, serviceUrl = Some(serviceUrl)).withLanguageToggle()
+            case None => defaultServiceNavigation(serviceName, serviceUrl)
+        }
+
+        hmrcHeader(HeaderParams(
+            headerUrls = HeaderUrls(
+                homepageUrl = ExternalUrlHelper.homepageLink,
+                serviceUrl = serviceUrl,
+                signOutHref = Some(InternalUrlHelper.signoutUrl)
+            ),
+            banners = Banners(
+                userResearchBanner = Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
+                displayHmrcBanner = false,
+                phaseBanner = Some(
+                    PhaseBanner(
+                        tag = Some(Tag(content = Text("Beta"))),
+                        content = HtmlContent(feedbackBanner)
+                    )
+                ),
+                additionalBannersBlock = None
+            ),
+            language = CurrentLanguage(),
+            serviceNavigation = Some(navBar)
+        ))
+    } else {
+        hmrcHeader(Header(
+            homepageUrl = ExternalUrlHelper.homepageLink,
+            serviceName = if(showServiceName) oldServiceName else None,
+            serviceUrl = serviceUrl,
+            language = CurrentLanguage(),
+            signOutHref = Some(InternalUrlHelper.signoutUrl),
+            userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
+            displayHmrcBanner = false,
+            phaseBanner = Some(
+                PhaseBanner(
+                    tag = Some(Tag(content = Text("Beta"))),
+                    content = HtmlContent(feedbackBanner)
+                )
+            ),
+            additionalBannersBlock = None
+        ))
+    }
+}
+
+@head = {
+    @hmrcTrackingConsentSnippet()
+    <!--[if lte IE 8]><link href=' @controllers.routes.Assets.at("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
+    <!--[if gt IE 8]><!--> <link href='@controllers.routes.Assets.at("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" />
+    <!--<![endif]-->
+
+    @if(timeout) {
+    @hmrcTimeoutDialog(TimeoutDialog(
+        language = Some(CurrentLanguage().code),
+        timeout = Option(900),
+        countdown = Option(120),
+        keepAliveUrl = Some(InternalUrlHelper.keepAliveUrl),
+        signOutUrl = Some(InternalUrlHelper.signoutUrl),
+        keepAliveButtonText = Some(messages("button.continue"))
+        ))
+    }
+}
+
+@beforeContentBlock = {
+    @if(!useGovUkRebrand) {
+        @{btaNavPartial.getOrElse(())}
+    }
+
+        @if(!useGovUkRebrand) {
+            <div id="language-switch">
+                @languageSwitch(LanguageSelect(
+                    if (messages.lang.code == "cy") Cy else En,
+                    (En, InternalUrlHelper.switchLocaleToEnglishUrl),
+                    (Cy, InternalUrlHelper.switchLocaleToWelshUrl)
+                ))
+            </div>
+        }
+
+        @if(useFallbackBackLink) {
+            @backUrl.map(backLinkFallback(_, gatewayPage))
+        } else {
+            @backUrl.map(backLink(_))
+        }
+    }
+
+    @content = {
+    <div class="govuk-!-margin-bottom-6">
+        @contentBlock
+    </div>
+
+    <div class="govuk-body app-get-help-link">
+        <a lang="en" hreflang="en" class="govuk-link" rel="noreferrer noopener" target="_blank" href="@{appConfig.reportAProblemNonJSUrl}">
+            @messages("getpagehelp.linkText")
+            @messages("pagehelp.opensInNewTabText")
+        </a>
+    </div>
+
+}
+
+@hmrcFrontendAssetPath = @{uk.gov.hmrc.hmrcfrontend.controllers.routes.Assets.at("govuk").url}
+
+@if(mainClass.isDefined){
+    @govukLayout(
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        headerBlock = Some(siteHeader),
+        footerBlock = Some(footerLinks()),
+        scriptsBlock = Some(scripts()),
+        assetPath = Some(hmrcFrontendAssetPath),
+        mainContentLayout = Some(mainContentLayout(mainClass.get)(_))
+    )(content)
+} else {
+    @govukLayout(
+        pageTitle = Some(HtmlTitle(isAgent, isErrorPage, form.exists(_.hasErrors), pageTitle, showServiceName)),
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        headerBlock = Some(siteHeader),
+        footerBlock = Some(footerLinks()),
+        scriptsBlock = Some(scripts()),
+        assetPath = Some(hmrcFrontendAssetPath)
+    )(content)
+}

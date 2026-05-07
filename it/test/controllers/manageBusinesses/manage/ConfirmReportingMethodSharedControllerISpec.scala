@@ -17,10 +17,10 @@
 package controllers.manageBusinesses.manage
 
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.manage.ChangeReportingMethodForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData

@@ -16,11 +16,11 @@
 
 package authV2
 
-import auth.authV2.actions.AgentIsPrimaryAction
-import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData._
-import config.AgentItvcErrorHandler
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.auth.actions.AgentIsPrimaryAction
+import common.config.AgentItvcErrorHandler
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.models.auth.AuthorisedAndEnrolledRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion

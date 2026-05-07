@@ -14,17 +14,19 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatterImpl
-@import views.html.components._
+@import common.implicits.ImplicitDateFormatterImpl
+@import common.views.html.components._
+@import views.html.components.detailsDropdown
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import obligations.models.NextUpdatesViewModel
 @import java.time.LocalDate
 @import obligations.models._
 @import play.twirl.api.HtmlFormat
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 @import models.itsaStatus.ITSAStatus.ITSAStatus
 @import models.itsaStatus.ITSAStatus
 @import obligations.services.reportingObligations.optOut.OptOutProposition
+@import common.config.FrontendAppConfig
 
 @this(
         govukTabs: GovukTabs,
@@ -37,7 +39,7 @@
         govukTable: GovukTable,
         govukWarningText : GovukWarningText,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig
+        appConfig: FrontendAppConfig
 )
 
 @(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))(implicit messages: Messages, user: auth.MtdItUser[_])

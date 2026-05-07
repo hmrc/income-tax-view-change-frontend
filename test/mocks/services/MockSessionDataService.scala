@@ -17,12 +17,12 @@
 package mocks.services
 
 import authV2.AuthActionsTestData.sessionGetSuccessResponse
+import common.services.SessionDataService
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.SessionDataService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

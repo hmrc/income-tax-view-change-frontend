@@ -16,9 +16,10 @@
 
 package controllers
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.{DateService, DateServiceInterface}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import mocks.auth.MockAuthActions
 import mocks.services.MockDateService
@@ -36,7 +37,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{DateService, DateServiceInterface, WhatYouOweService}
+import services.WhatYouOweService
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.*
 import uk.gov.hmrc.http.HeaderCarrier

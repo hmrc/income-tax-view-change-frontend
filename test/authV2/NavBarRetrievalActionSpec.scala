@@ -16,11 +16,11 @@
 
 package authV2
 
-import auth.MtdItUser
-import auth.authV2.actions.*
 import authV2.AuthActionsTestData.*
-import config.ItvcErrorHandler
-import controllers.bta.BtaNavBarController
+import common.auth.MtdItUser
+import common.auth.actions.NavBarRetrievalAction
+import common.config.ItvcErrorHandler
+import common.controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
 import models.admin.{FeatureSwitch, NavBarFs}
 import org.mockito.ArgumentMatchers.any

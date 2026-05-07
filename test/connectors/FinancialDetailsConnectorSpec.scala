@@ -16,9 +16,9 @@
 
 package connectors
 
-import audit.AuditingService
-import audit.models.{AuditModel, ExtendedAuditModel}
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.models.audit.{AuditModel, ExtendedAuditModel}
+import common.services.AuditingService
 import models.financialDetails._
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}

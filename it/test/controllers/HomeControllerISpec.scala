@@ -16,12 +16,12 @@
 
 package controllers
 
-import audit.models.HomeAudit
-import auth.MtdItUser
-import enums.MTDIndividual
+import common.auth.MtdItUser
+import common.enums.MTDIndividual
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import models.HomeAudit
 import models.admin.NavBarFs
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.*

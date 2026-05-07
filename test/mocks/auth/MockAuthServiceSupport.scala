@@ -16,7 +16,7 @@
 
 package mocks.auth
 
-import auth.FrontendAuthorisedFunctions
+import common.auth.FrontendAuthorisedFunctions
 import org.mockito.Mockito.mock
 import org.scalatest.Suite
 

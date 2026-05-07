@@ -16,14 +16,15 @@
 
 package helpers
 
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import auth.{HeaderExtractor, MtdItUser}
 import com.github.tomakehurst.wiremock.client.WireMock
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import enums.{MTDIndividual, MTDUserRole}
+import common.auth.{HeaderExtractor, MtdItUser}
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.enums.{MTDIndividual, MTDUserRole}
+import common.implicits.ImplicitDateFormatterImpl
+import common.models.auth.AuthorisedAndEnrolledRequest
+import common.services.{DateService, DateServiceInterface}
 import helpers.servicemocks.AuditStub
-import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.repositories.OptOutSessionDataRepository
@@ -39,7 +40,6 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter

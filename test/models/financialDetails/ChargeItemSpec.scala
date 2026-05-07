@@ -16,12 +16,12 @@
 
 package models.financialDetails
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.services.{DateService, DateServiceInterface}
 import enums.CodingOutType.CODING_OUT_CLASS2_NICS
 import exceptions.MissingFieldException
 import models.financialDetails.ChargeItem.filterAllowedCharges
 import play.api.libs.json.Json
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}

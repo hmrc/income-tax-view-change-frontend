@@ -16,10 +16,11 @@
 
 package authV2
 
-import auth.MtdItUser
-import auth.authV2.actions.TriggeredMigrationRetrievalAction
 import authV2.AuthActionsTestData.{defaultIncomeSourcesData, getMtdItUser}
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.auth.MtdItUser
+import common.auth.actions.TriggeredMigrationRetrievalAction
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.services.DateServiceInterface
 import connectors.IncomeTaxCalculationConnector
 import enums.JourneyType.TriggeredMigrationJourney
 import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
@@ -40,7 +41,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
+import services.{CustomerFactsUpdateService, ITSAStatusService}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

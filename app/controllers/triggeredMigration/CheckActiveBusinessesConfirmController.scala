@@ -16,9 +16,9 @@
 
 package controllers.triggeredMigration
 
-import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
+import common.auth.AuthActions
+import common.config.FrontendAppConfig
 import forms.triggeredMigration.CheckActiveBusinessesConfirmForm
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

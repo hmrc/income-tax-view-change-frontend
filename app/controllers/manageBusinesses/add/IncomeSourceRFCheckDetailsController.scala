@@ -16,11 +16,10 @@
 
 package controllers.manageBusinesses.add
 
-import audit.AuditingService
 import audit.models.IncomeSourceReportingMethodAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.services.{AuditingService, DateServiceInterface}
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{AfterSubmissionPage, ReportingFrequencyPages}
@@ -33,7 +32,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.manageBusinesses.IncomeSourceRFService
-import services.{CreateBusinessDetailsService, DateServiceInterface, SessionService, UpdateIncomeSourceService}
+import services.{CreateBusinessDetailsService, SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses
 import views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView

@@ -17,24 +17,24 @@
 @import models.financialDetails.Payment
 @import java.time.LocalDate
 @import implicits.ImplicitCurrencyFormatter._
-@import implicits.ImplicitDateFormatter
-@import implicits.ImplicitDateFormatterImpl
+@import common.implicits.ImplicitDateFormatter
+@import common.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.DocumentDetailWithDueDate
 @import models.financialDetails.FinancialDetailsModel
 @import models.financialDetails._
 @import models.repaymentHistory.PaymentHistoryEntry
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
 @import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 @import _root_.implicits.HtmlFormatter.NbspString
-@import viewUtils.ExternalUrlHelper
+@import common.viewUtils.ExternalUrlHelper
 @import views.html.partials.paymentHistory.PaymentDescription
 
 @this(
     paymentDescription: PaymentDescription,
     mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
+    appConfig: common.config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
     p: p,

@@ -16,7 +16,8 @@
 
 package services
 
-import models.btaNavBar._
+import common.services.BtaNavBarService
+import models.btaNavBar.*
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import play.api.i18n.{Lang, Messages}

@@ -16,16 +16,18 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
-import models.financialDetails._
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
+import models.financialDetails.*
 import play.api.libs.json.{JsObject, JsValue, Json}
+import common.enums.AuditType
+import common.models.audit.ExtendedAuditModel
 
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             payments: Seq[Payment]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentHistoryResponse
-  override val auditType: String = enums.AuditType.PaymentHistoryResponse
+  override val auditType: String = AuditType.PaymentHistoryResponse
 
   private def getPayment(payment: Payment, desc: String): JsObject = {
     val date = if (payment.creditType.contains(MfaCreditType)) Some(payment.documentDate) else payment.dueDate

@@ -16,12 +16,11 @@
 
 package obligations.controllers
 
-import audit.AuditingService
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
 import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import obligations.models.ObligationsModel
 import obligations.services.NextUpdatesService

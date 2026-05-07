@@ -14,20 +14,21 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.financialDetails._
-@import auth.MtdItUser
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import common.auth.MtdItUser
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
 @import models.creditDetailModel.CreditDetailModel
-@import viewUtils.ExternalUrlHelper
+@import common.viewUtils.ExternalUrlHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.detailsDropdown
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig,
+        appConfig: common.config.FrontendAppConfig,
         h1: h1,
         h2: h2,
         p: p,

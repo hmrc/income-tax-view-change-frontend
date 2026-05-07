@@ -16,9 +16,10 @@
 
 package controllers
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
-import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
 import models.incomeSourceDetails.TaxYear
@@ -26,7 +27,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{CalculationService, DateServiceInterface}
+import services.CalculationService
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import obligations.models.*

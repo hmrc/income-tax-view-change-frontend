@@ -16,10 +16,12 @@
 
 package controllers
 
-import audit.models.IvOutcomeSuccessAuditModel
 import authV2.AuthActionsTestData.defaultIncomeSourcesData
+import common.controllers.UpliftSuccessController
+import common.enums.MTDIndividual
+import common.models.audit.IvOutcomeSuccessAuditModel
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.Voluntary
@@ -32,7 +34,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
-import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testNino, testSaUtr}
 
 import scala.concurrent.Future

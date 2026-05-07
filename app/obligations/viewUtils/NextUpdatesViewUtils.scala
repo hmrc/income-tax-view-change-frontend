@@ -16,13 +16,13 @@
 
 package obligations.viewUtils
 
-import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
-import views.html.components.link
+import common.views.html.components.link
 
 import javax.inject.Inject
 

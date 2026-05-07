@@ -16,9 +16,10 @@
 
 package controllers.agent.errors
 
+import common.controllers.agent.errors.AgentErrorController
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 
 class AgentErrorControllerSpec extends MockAuthActions {

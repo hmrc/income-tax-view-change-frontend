@@ -16,6 +16,7 @@
 
 package auth
 
+import common.auth.FrontEndHeaderExtractor
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar

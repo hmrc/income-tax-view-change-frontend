@@ -16,7 +16,7 @@
 
 package helpers.servicemocks
 
-import audit.models.ExtendedAuditModel
+import common.models.audit.ExtendedAuditModel
 import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.{JsValue, Json}
 

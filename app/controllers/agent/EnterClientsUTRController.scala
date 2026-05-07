@@ -16,23 +16,23 @@
 
 package controllers.agent
 
-import audit.AuditingService
-import audit.models.EnterClientUTRAuditModel
-import auth.FrontendAuthorisedFunctions
-import auth.authV2.AuthActions
-import auth.authV2.models.AuthorisedUserRequest
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.AuthUtils._
-import controllers.agent.sessionUtils.SessionKeys
-import enums._
+import common.auth.{AuthActions, FrontendAuthorisedFunctions}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.config.featureswitch.FeatureSwitching
+import common.models.auth.AuthorisedUserRequest
+import common.services.AuditingService
+import common.services.agent.ClientDetailsService
+import common.utils.session.SessionKeys
+import common.utils.auth.AuthUtils.*
+import enums.*
 import forms.agent.ClientsUTRForm
+import audit.models.EnterClientUTRAuditModel
 import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services.agent.ClientDetailsService
-import services.agent.ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
+import play.api.mvc.*
+import ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.EnterClientsUTRView

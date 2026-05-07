@@ -16,10 +16,10 @@
 
 package controllers
 
-import audit.models.RefundToTaxPayerResponseAuditModel
-import auth.MtdItUser
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.auth.MtdItUser
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.RefundToTaxPayerResponseAuditModel
 import models.admin.PaymentHistoryRefunds
 import models.core.Nino
 import models.repaymentHistory._

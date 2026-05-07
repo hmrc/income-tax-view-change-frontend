@@ -16,10 +16,10 @@
 
 package controllers.manageBusinesses.add
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.{MTDIndividual, MTDUserRole}
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import helpers.servicemocks.IncomeTaxViewChangeStub

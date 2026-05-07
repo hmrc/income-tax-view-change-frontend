@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.featureswitch.FeatureSwitching
+import common.config.featureswitch.FeatureSwitching
 import mocks.MockHttpV2
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}

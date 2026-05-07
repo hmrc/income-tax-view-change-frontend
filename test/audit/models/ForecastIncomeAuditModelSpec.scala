@@ -17,6 +17,7 @@
 package audit.models
 
 import authV2.AuthActionsTestData.defaultMTDITUser
+import models.ForecastIncomeAuditModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.Json

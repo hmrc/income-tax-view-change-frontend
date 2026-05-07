@@ -16,10 +16,10 @@
 
 package controllers.manageBusinesses.manage
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

@@ -16,7 +16,8 @@
 
 package services.claimToAdjustPoa
 
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.services.DateServiceInterface
 import connectors.{CalculationListConnector, ChargeHistoryConnector}
 import enums.{Poa1Charge, Poa2Charge}
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
@@ -27,7 +28,6 @@ import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
-import services.DateServiceInterface
 import services.claimToAdjustPoa.ClaimToAdjustHelper.{isPoaOne, isPoaTwo}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 

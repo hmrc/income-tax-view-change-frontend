@@ -16,8 +16,8 @@
 
 package services
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
 import connectors.FinancialDetailsConnector
 import models.core.ErrorModel
 import models.incomeSourceDetails.TaxYear

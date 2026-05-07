@@ -16,11 +16,10 @@
 
 package controllers.manageBusinesses.manage
 
-import audit.AuditingService
 import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.services.AuditingService
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AnnualReportingMethod, BeforeSubmissionPage, QuarterlyReportingMethod, ReportingMethod}

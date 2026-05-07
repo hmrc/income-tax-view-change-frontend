@@ -16,12 +16,12 @@
 
 package models.liabilitycalculation.viewmodels
 
+import common.services.DateService
 import mocks.services.MockDateService
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.ObligationsModel
-import services.DateService
 import testConstants.ChargeConstants
 import obligations.testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
 import testUtils.UnitSpec

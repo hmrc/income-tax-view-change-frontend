@@ -16,12 +16,13 @@
 
 package authV2
 
-import audit.AuditingService
-import audit.models.IvUpliftRequiredAuditModel
-import auth.FrontendAuthorisedFunctions
-import auth.authV2.actions._
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import authV2.AuthActionsTestData._
+import auth.authV2.actions.*
+import authV2.AuthActionsTestData.*
+import common.auth.FrontendAuthorisedFunctions
+import common.auth.actions.AuthoriseAndRetrieveIndividual
+import common.models.audit.IvUpliftRequiredAuditModel
+import common.models.auth.AuthorisedAndEnrolledRequest
+import common.services.AuditingService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.Assertion
@@ -29,7 +30,7 @@ import play.api
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testConstants.BaseTestConstants.{testNino, testRetrievedUserName, testSaUtr}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments, MissingBearerToken}

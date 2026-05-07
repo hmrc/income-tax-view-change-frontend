@@ -7,13 +7,6 @@ GET         /assets/*file                                                 contro
 # Assets
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
-GET        /language/:lang                                                controllers.LocalLanguageController.switchToLanguage(lang: String)
-
-
-# No Income Sources Error page
-GET         /cannot-access-service                                          controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
-GET         /agents/cannot-access-service                                   controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
-
 #Home Controller
 GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   controllers.HomeController.show(origin: Option[String] ?= None)
@@ -82,42 +75,9 @@ GET   /agents/check-your-active-businesses/confirm   controllers.triggeredMigrat
 POST  /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = false)
 POST  /agents/check-your-active-businesses/confirm   controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = true)
 
-#Feedback Routes
-GET         /feedback                                                     controllers.feedback.FeedbackController.show()
-GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
-POST        /feedback                                                     controllers.feedback.FeedbackController.submit()
-POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent()
-GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou()
-GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent()
-
-#Timeout Routes
-GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout()
-GET         /keep-alive                                                   controllers.timeout.SessionTimeoutController.keepAlive()
-
-#Sign Out Routes
-GET         /sign-out                                                     controllers.SignOutController.signOut()
-
-#Sign In Routes
-GET         /sign-in                                                      controllers.SignInController.signIn()
-
-#Not Enrolled
-GET         /cannot-access-service                                        controllers.errors.NotEnrolledController.show()
-
-#Uplift Failed
-GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show()
-
-#Uplift Success
-GET         /uplift-success                                               controllers.UpliftSuccessController.success()
-
-#BTA Partial
-GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial()
-
 #CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/calculation/:taxYear/submitted                        controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
-
-#Language Controller
-GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
 
 #Payment history
 GET         /payment-refund-history                                       controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
@@ -139,8 +99,6 @@ GET         /agents/:taxYear/final-tax-overview/calculate                 contro
 GET         /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.showAgent(taxYear: Int)
 POST        /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.agentSubmit(taxYear: Int)
 
-GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
-GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
 
 #custom not found
 GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show()
@@ -174,6 +132,7 @@ GET          /agents/how-to-claim-refund                                  contro
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
+->          /                                                             common.Routes
 ->          /                                                             obligations.Routes
 ->          /                                                             manageBusinesses.Routes
 ->          /                                                             claimToAdjustPoa.Routes

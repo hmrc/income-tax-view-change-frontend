@@ -17,6 +17,7 @@
 package obligations.models.audit
 
 import authV2.AuthActionsTestData.getMinimalMTDITUser
+import common.enums.AuditType.ViewObligationsResponse
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import obligations.testConstants.NextUpdatesTestConstants.*
 import play.api.libs.json.Json
@@ -26,7 +27,7 @@ import testUtils.TestSupport
 class NextUpdatesResponseAuditModelSpec extends TestSupport {
 
   val transactionName: String = enums.TransactionName.ViewObligationsResponse
-  val auditEvent: String = enums.AuditType.ViewObligationsResponse
+  val auditEvent: String = ViewObligationsResponse
 
   "The NextUpdatesResponseAuditModel" when {
 

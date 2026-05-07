@@ -16,8 +16,8 @@
 
 package utils
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.PropertyDetailsModel

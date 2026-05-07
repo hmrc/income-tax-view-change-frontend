@@ -16,10 +16,10 @@
 
 package controllers
 
-import audit.AuditingService
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import enums.MTDPrimaryAgent
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.enums.MTDPrimaryAgent
+import common.services.AuditingService
 import models.admin.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear

@@ -16,11 +16,12 @@
 
 package controllers.manageBusinesses.manage
 
+import common.enums.MTDIndividual
+import common.implicits.ImplicitDateFormatter
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.MTDIndividual
-import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.ManageIncomeSourceData
@@ -32,7 +33,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService}
+import services.{SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
 

@@ -16,15 +16,14 @@
 
 package controllers
 
-import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatter
+import common.services.{AuditingService, DateServiceInterface}
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
-import implicits.ImplicitDateFormatter
 import models.admin.*
 import models.core.Nino
 import models.financialDetails.*

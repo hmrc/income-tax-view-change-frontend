@@ -16,10 +16,10 @@
 
 package utils.claimToAdjust
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import cats.data.EitherT
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.MtdItUser
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData

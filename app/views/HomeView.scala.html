@@ -14,18 +14,19 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
 @import models.homePage.HomePageViewModel
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
+@import views.html.components.h3link
 
 
 @this(
     layout: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
+    appConfig: common.config.FrontendAppConfig,
     h1WithCaption: h1WithCaption,
     h2: h2,
     h3link: h3link,
@@ -47,7 +48,7 @@ viewModel: HomePageViewModel
     implicit request: Request[_],
     messages: Messages,
     user: auth.MtdItUser[_],
-    appConfig: config.FrontendAppConfig)
+    appConfig: common.config.FrontendAppConfig)
 
 @tiles() = {
     <div class="grid-row">

@@ -16,12 +16,13 @@
 
 package controllers.agent
 
-import audit.models.ConfirmClientDetailsAuditModel
+import common.services.DateServiceInterface
+import common.utils.session.SessionKeys
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.services.MockITSAStatusService
 import mocks.views.agent.MockConfirmClient
+import models.ConfirmClientDetailsAuditModel
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
@@ -31,7 +32,6 @@ import play.api
 import play.api.Application
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import views.html.agent.ConfirmClientUTRView

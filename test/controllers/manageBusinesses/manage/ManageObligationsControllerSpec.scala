@@ -16,10 +16,11 @@
 
 package controllers.manageBusinesses.manage
 
+import common.enums.MTDIndividual
+import common.services.{DateService, DateServiceInterface}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney._
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockDateService, MockNextUpdatesService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
@@ -33,7 +34,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, DateServiceInterface, SessionService}
+import services.SessionService
 import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}

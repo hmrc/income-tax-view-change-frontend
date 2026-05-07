@@ -16,8 +16,9 @@
 
 package obligations.controllers.reportingObligations.optOut
 
+import common.enums.MTDIndividual
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear
@@ -32,7 +33,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

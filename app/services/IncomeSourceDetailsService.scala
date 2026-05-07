@@ -16,9 +16,9 @@
 
 package services
 
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.models.auth.AuthorisedAndEnrolledRequest
 import connectors.BusinessDetailsConnector
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.core.IncomeSourceId

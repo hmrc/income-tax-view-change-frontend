@@ -16,9 +16,10 @@
 
 package controllers.manageBusinesses.add
 
+import common.enums.MTDIndividual
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import enums.MTDIndividual
 import forms.manageBusinesses.add.AddProprertyForm
 import forms.manageBusinesses.add.AddProprertyForm._
 import mocks.auth.MockAuthActions
@@ -33,7 +34,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, SessionService}
+import services.SessionService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 
 class AddPropertyControllerSpec extends MockAuthActions with MockSessionService {

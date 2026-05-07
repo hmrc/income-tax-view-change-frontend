@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
 @import exceptions.MissingFieldException
 @import models.homePage.YourBusinessesTileViewModel
 @import models.homePage.NextUpdatesTileViewModel
@@ -23,7 +23,8 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
-@import viewUtils.ExternalUrlHelper
+@import common.viewUtils.ExternalUrlHelper
+@import views.html.components._
 
 @this(
     layout: unifiedLayout,
@@ -48,7 +49,7 @@
     implicit request: Request[_],
     messages: Messages,
     user: auth.MtdItUser[_],
-    appConfig: config.FrontendAppConfig)
+    appConfig: common.config.FrontendAppConfig)
 
 @pageHeading = @{
     user.optClientNameAsString.fold(messages("home.agent.heading")){

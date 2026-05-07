@@ -18,6 +18,7 @@ package services.manageBusinesses
 
 import authV2.AuthActionsSpecHelper
 import authV2.AuthActionsTestData.defaultMTDITUser
+import common.services.DateService
 import enums.AfterSubmissionPage
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -31,7 +32,6 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

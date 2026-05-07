@@ -16,9 +16,8 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
-import implicits.ImplicitDateParser
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
@@ -26,6 +25,9 @@ import obligations.models.ObligationWithIncomeType
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import common.enums.AuditType
+import common.implicits.ImplicitDateParser
+import common.models.audit.ExtendedAuditModel
 
 case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                             messagesApi: MessagesApi,
@@ -35,7 +37,7 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
 
 
   override val transactionName: String = enums.TransactionName.TaxYearOverviewResponse
-  override val auditType: String = enums.AuditType.TaxYearOverviewResponse
+  override val auditType: String = AuditType.TaxYearOverviewResponse
 
 
   private val taxYearSummaryJson = {

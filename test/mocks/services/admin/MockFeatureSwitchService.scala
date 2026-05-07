@@ -16,8 +16,8 @@
 
 package mocks.services.admin
 
+import common.services.admin.FeatureSwitchService
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import services.admin.FeatureSwitchService
 import testUtils.TestSupport
 
 

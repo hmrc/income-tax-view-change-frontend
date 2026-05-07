@@ -16,8 +16,9 @@
 
 package audit
 
-import audit.models.ExtendedAuditModel
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.models.audit.ExtendedAuditModel
+import common.services.AuditingService
 import org.mockito.Mockito.mock
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsValue, Json}

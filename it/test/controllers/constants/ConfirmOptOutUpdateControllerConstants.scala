@@ -16,8 +16,8 @@
 
 package controllers.constants
 
+import common.services.DateService
 import models.incomeSourceDetails.TaxYear
-import services.DateService
 
 object ConfirmOptOutUpdateControllerConstants {
 

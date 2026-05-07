@@ -16,9 +16,9 @@
 
 package obligations.controllers.reportingObligations.signUp
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.JourneyType.{Opt, SignUpJourney}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.admin.{NavBarFs, OptInOptOutContentUpdateR17, SignUpFs}

@@ -16,7 +16,7 @@
 
 package utils
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import enums.*
 import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.UIJourneySessionData

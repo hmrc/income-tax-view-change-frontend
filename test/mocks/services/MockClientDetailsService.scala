@@ -16,11 +16,11 @@
 
 package mocks.services
 
+import common.services.agent.ClientDetailsService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.agent.ClientDetailsService
-import services.agent.ClientDetailsService.{ClientDetails, ClientDetailsFailure}
+import ClientDetailsService.{ClientDetails, ClientDetailsFailure}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.UnitSpec
 

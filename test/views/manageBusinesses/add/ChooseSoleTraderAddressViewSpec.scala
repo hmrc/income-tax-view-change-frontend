@@ -16,7 +16,7 @@
 
 package views.manageBusinesses.add
 
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import models.core.NormalMode
 import org.jsoup.Jsoup

@@ -16,11 +16,12 @@
 
 package connectors.agent
 
+import common.connectors.agent.CitizenDetailsConnector
 import mocks.MockHttpV2
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants.testSaUtr
-import testConstants.CitizenDetailsTestConstants._
+import testConstants.CitizenDetailsTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 

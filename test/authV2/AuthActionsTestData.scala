@@ -16,11 +16,12 @@
 
 package authV2
 
-import auth.MtdItUser
-import auth.authV2.models._
-import controllers.agent.AuthUtils._
-import controllers.agent.sessionUtils.SessionKeys
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import auth.authV2.models.*
+import common.auth.MtdItUser
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.models.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest}
+import common.utils.session.SessionKeys
+import common.utils.auth.AuthUtils.*
 import forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
@@ -29,9 +30,9 @@ import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, Session
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.Html
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 

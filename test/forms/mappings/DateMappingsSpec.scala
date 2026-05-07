@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import common.forms.mappings.Mappings
 import generators.Generators
 import org.scalacheck.Gen
 import org.scalatest.OptionValues

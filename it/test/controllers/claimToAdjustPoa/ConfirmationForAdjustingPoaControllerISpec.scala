@@ -16,12 +16,12 @@
 
 package controllers.claimToAdjustPoa
 
-import audit.models.AdjustPaymentsOnAccountAuditModel
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import controllers.ControllerISpecHelper
 import controllers.claimToAdjustPoa.routes._
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.AdjustPaymentsOnAccountAuditModel
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import models.core.AccountingPeriodModel

@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import controllers.agent.sessionUtils.SessionKeys
+import common.utils.session.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.views.agent.MockUTRError
 import play.api

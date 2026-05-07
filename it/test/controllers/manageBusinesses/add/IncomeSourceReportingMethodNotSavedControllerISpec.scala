@@ -16,9 +16,9 @@
 
 package controllers.manageBusinesses.add
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.NavBarFs
 import play.api.http.Status.{OK, SEE_OTHER}

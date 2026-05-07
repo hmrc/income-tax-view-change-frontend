@@ -16,9 +16,12 @@
 
 package connectors
 
-import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.controllers.feedback.routes as feedbackRoutes
+import common.controllers.timeout.routes as timeoutRoutes
+import common.controllers.routes as appRoutes
 import models.core.Mode
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
@@ -52,8 +55,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     else controllers.manageBusinesses.add.routes.AddBusinessAddressController.submit(None, mode = mode, isTriggeredMigration).url
   }
 
-  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url
-  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent().url
+  lazy val individualFeedbackUrl: String = feedbackRoutes.FeedbackController.show().url
+  lazy val agentFeedbackUrl: String = feedbackRoutes.FeedbackController.showAgent().url
 
   lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
   lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
@@ -71,11 +74,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout().url),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive().url)
+                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + timeoutRoutes.SessionTimeoutController.timeout().url),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + timeoutRoutes.SessionTimeoutController.keepAlive().url)
               )
             ),
-            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut().url),
+            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + appRoutes.SignOutController.signOut().url),
             "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(
@@ -185,11 +188,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout().url),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive().url)
+                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + timeoutRoutes.SessionTimeoutController.timeout().url),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + timeoutRoutes.SessionTimeoutController.keepAlive().url)
               )
             ),
-            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut().url),
+            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + appRoutes.SignOutController.signOut().url),
             "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(

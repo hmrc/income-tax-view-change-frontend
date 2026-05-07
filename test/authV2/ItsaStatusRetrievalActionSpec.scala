@@ -16,10 +16,11 @@
 
 package authV2
 
-import auth.MtdItUser
-import auth.authV2.actions.ItsaStatusRetrievalAction
 import authV2.AuthActionsTestData.*
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.auth.MtdItUser
+import common.auth.actions.ItsaStatusRetrievalAction
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.services.DateServiceInterface
 import connectors.ITSAStatusConnector
 import models.admin.{FeatureSwitchName, `CY+1YouMustWaitToSignUpPageEnabled`}
 import models.incomeSourceDetails.TaxYear
@@ -36,7 +37,6 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import services.DateServiceInterface
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import org.scalatest.EitherValues.*

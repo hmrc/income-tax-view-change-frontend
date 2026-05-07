@@ -16,12 +16,12 @@
 
 package views
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.implicits.ImplicitDateFormatter
 import enums.ChargeType._
 import exceptions.MissingFieldException
-import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.nodes.Element

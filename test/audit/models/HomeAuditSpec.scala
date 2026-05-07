@@ -18,6 +18,7 @@ package audit.models
 
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import forms.IncomeSourcesFormsSpec.commonAuditDetails
+import models.HomeAudit
 import models.homePage.NextUpdatesTileViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.itsaStatus.ITSAStatus

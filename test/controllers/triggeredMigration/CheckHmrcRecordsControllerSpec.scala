@@ -16,9 +16,10 @@
 
 package controllers.triggeredMigration
 
+import common.enums.MTDIndividual
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.MTDIndividual
 import enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import mocks.auth.MockAuthActions
 import mocks.services.MockTriggeredMigrationService
@@ -29,7 +30,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateServiceInterface
 import services.triggeredMigration.TriggeredMigrationService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeUnconfirmed
 

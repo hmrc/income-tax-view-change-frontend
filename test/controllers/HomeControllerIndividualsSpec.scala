@@ -16,10 +16,10 @@
 
 package controllers
 
-import audit.AuditingService
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.agent.sessionUtils.SessionKeys
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.services.AuditingService
+import common.utils.session.SessionKeys
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
@@ -41,7 +41,7 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.{CreditService}
+import services.CreditService
 import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
 import views.html.HomeView

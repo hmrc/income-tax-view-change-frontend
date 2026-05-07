@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 @import models.core.AddressModel
 @import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
@@ -22,10 +22,10 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.details.Details
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
-@import config.FrontendAppConfig
-@import viewUtils.ExternalUrlHelper
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
+@import common.viewUtils.ExternalUrlHelper
 @import play.twirl.api.HtmlFormat
 @import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
 

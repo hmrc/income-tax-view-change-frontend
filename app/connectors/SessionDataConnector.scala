@@ -16,7 +16,8 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import models.sessionData.SessionDataGetResponse.SessionGetResponse
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse

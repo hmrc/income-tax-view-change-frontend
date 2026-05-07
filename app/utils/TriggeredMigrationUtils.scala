@@ -16,8 +16,8 @@
 
 package utils
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import models.admin.TriggeredMigration
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect

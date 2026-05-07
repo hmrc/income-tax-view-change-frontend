@@ -16,8 +16,8 @@
 
 package obligations.views.nextUpdates
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
@@ -34,7 +34,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import testConstants.BusinessDetailsTestConstants.business1
 import testUtils.TestSupport
-import views.html.components.link
+import common.views.html.components.link
 
 import java.time.LocalDate
 

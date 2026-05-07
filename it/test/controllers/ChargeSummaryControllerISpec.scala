@@ -16,13 +16,13 @@
 
 package controllers
 
-import audit.models.ChargeSummaryAudit
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import enums.ChargeType.ITSA_ENGLAND_AND_NI
 import enums.CodingOutType._
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.ChargeSummaryAudit
 import models.admin.ChargeHistory
 import models.financialDetails._
 import play.api.http.Status._

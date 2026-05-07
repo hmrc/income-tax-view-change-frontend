@@ -16,7 +16,7 @@
 
 package controllers
 
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.PaymentJourneyModel
 import play.api.http.Status.OK

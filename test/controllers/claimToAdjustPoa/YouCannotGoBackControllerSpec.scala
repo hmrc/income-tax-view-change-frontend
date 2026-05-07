@@ -16,8 +16,9 @@
 
 package controllers.claimToAdjustPoa
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
@@ -25,7 +26,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{DateServiceInterface, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
 import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 

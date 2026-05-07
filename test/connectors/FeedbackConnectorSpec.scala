@@ -16,10 +16,11 @@
 
 package connectors
 
-import forms.FeedbackForm
+import common.connectors.FeedbackConnector
+import common.forms.FeedbackForm
 import mocks.MockHttpV2
 import mocks.services.MockSessionService
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import play.api.http.Status.BAD_REQUEST
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status

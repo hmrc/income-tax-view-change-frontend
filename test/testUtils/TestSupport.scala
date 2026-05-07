@@ -16,13 +16,15 @@
 
 package testUtils
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.*
-import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import common.auth.MtdItUser
+import common.config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import common.config.featureswitch.FeatureSwitching
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
+import common.implicits.ImplicitDateFormatterImpl
+import common.services.DateService
+import common.utils.session
 import controllers.agent.sessionUtils
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
-import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.financialDetails.ChargeItem
@@ -42,7 +44,6 @@ import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
-import services.DateService
 import testConstants.BaseTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 import testOnly.repository.FeatureSwitchRepository
@@ -265,7 +266,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   lazy val fakeRequestWithClientUTR: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest().withSession(
-      sessionUtils.SessionKeys.clientUTR -> "1234567890"
+      session.SessionKeys.clientUTR -> "1234567890"
     )
 
   lazy val fakeRequestWithActiveAndRefererToHomePage: FakeRequest[AnyContentAsEmpty.type] =
@@ -277,44 +278,44 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     )
 
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
-    sessionUtils.SessionKeys.clientFirstName -> "Test",
-    sessionUtils.SessionKeys.clientLastName -> "User",
-    sessionUtils.SessionKeys.clientUTR -> "1234567890",
-    sessionUtils.SessionKeys.clientMTDID -> testMtditid,
-    sessionUtils.SessionKeys.clientNino -> testNino,
-    sessionUtils.SessionKeys.isSupportingAgent -> "false"
+    session.SessionKeys.clientFirstName -> "Test",
+    session.SessionKeys.clientLastName -> "User",
+    session.SessionKeys.clientUTR -> "1234567890",
+    session.SessionKeys.clientMTDID -> testMtditid,
+    session.SessionKeys.clientNino -> testNino,
+    session.SessionKeys.isSupportingAgent -> "false"
   )
 
   def fakeRequestUnconfirmedClient(clientNino: String = testNino, isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-      sessionUtils.SessionKeys.clientFirstName -> "Test",
-      sessionUtils.SessionKeys.clientLastName -> "User",
-      sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
-      sessionUtils.SessionKeys.clientNino -> clientNino,
-      sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
+      session.SessionKeys.clientFirstName -> "Test",
+      session.SessionKeys.clientLastName -> "User",
+      session.SessionKeys.clientUTR -> "1234567890",
+      session.SessionKeys.clientMTDID -> testMtditid,
+      session.SessionKeys.clientNino -> clientNino,
+      session.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
   def fakeRequestConfirmedClient(isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
     fakeRequestWithActiveSession.withSession(
-      sessionUtils.SessionKeys.clientFirstName -> "Test",
-      sessionUtils.SessionKeys.clientLastName -> "User",
-      sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
-      sessionUtils.SessionKeys.clientNino -> testNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true",
-      sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
+      session.SessionKeys.clientFirstName -> "Test",
+      session.SessionKeys.clientLastName -> "User",
+      session.SessionKeys.clientUTR -> "1234567890",
+      session.SessionKeys.clientMTDID -> testMtditid,
+      session.SessionKeys.clientNino -> testNino,
+      session.SessionKeys.confirmedClient -> "true",
+      session.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
   def fakePostRequestConfirmedClient(isSupportingAgent: Boolean = false): FakeRequest[AnyContentAsEmpty.type] =
     fakePostRequestWithActiveSession.withSession(
-      sessionUtils.SessionKeys.clientFirstName -> "Test",
-      sessionUtils.SessionKeys.clientLastName -> "User",
-      sessionUtils.SessionKeys.clientUTR -> "1234567890",
-      sessionUtils.SessionKeys.clientMTDID -> testMtditid,
-      sessionUtils.SessionKeys.clientNino -> testNino,
-      sessionUtils.SessionKeys.confirmedClient -> "true",
-      sessionUtils.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
+      session.SessionKeys.clientFirstName -> "Test",
+      session.SessionKeys.clientLastName -> "User",
+      session.SessionKeys.clientUTR -> "1234567890",
+      session.SessionKeys.clientMTDID -> testMtditid,
+      session.SessionKeys.clientNino -> testNino,
+      session.SessionKeys.confirmedClient -> "true",
+      session.SessionKeys.isSupportingAgent -> isSupportingAgent.toString
     )
 
   def agentUserConfirmedClient(isSupportingAgent: Boolean = false): MtdItUser[_] = defaultMTDITUser(

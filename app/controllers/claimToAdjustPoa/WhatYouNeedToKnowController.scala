@@ -16,10 +16,9 @@
 
 package controllers.claimToAdjustPoa
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import cats.data.EitherT
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import models.core.NormalMode
 import play.api.i18n.I18nSupport

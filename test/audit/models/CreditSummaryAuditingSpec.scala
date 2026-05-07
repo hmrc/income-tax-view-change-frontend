@@ -27,8 +27,6 @@ import java.time.LocalDate
 
 class CreditSummaryAuditingSpec extends TestSupport {
 
-  import CreditSummaryAuditing._
-
   implicit val msgApi: MessagesApi = messagesApi
 
   val documentDetailsA =      DocumentDetail(

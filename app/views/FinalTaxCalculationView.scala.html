@@ -17,12 +17,13 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases._
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import views.html.partials.taxYearSummaryBreakdownPartial
-@import views.html.helpers.injected.ContinueButton
+@import common.views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import config.FrontendAppConfig
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import models.liabilitycalculation.viewmodels.CalculationSummary
+@import views.html.components.h1_itsa
 
 @this(layout: unifiedLayout,
       breakdownPartial: taxYearSummaryBreakdownPartial,

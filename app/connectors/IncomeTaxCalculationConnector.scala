@@ -16,11 +16,12 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import enums.TaxYearSummary.CalculationRecord
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
-import play.api.http.Status._
+import play.api.http.Status.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 

@@ -16,6 +16,7 @@
 
 package controllers.agent
 
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import mocks.auth.MockAuthActions
 import mocks.views.agent.MockEnterClientsUTR
@@ -23,7 +24,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.DateServiceInterface
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.agent.EnterClientsUTRView
 

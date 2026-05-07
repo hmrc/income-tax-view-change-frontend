@@ -33,7 +33,6 @@
 package connectors
 
 import audit.mocks.MockAuditingService
-import config.FrontendAppConfig
 import mocks.MockHttpV2
 import models.updateIncomeSource.UpdateIncomeSourceResponse
 import obligations.testConstants.UpdateIncomeSourceTestConstants
@@ -42,6 +41,7 @@ import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants._
 import UpdateIncomeSourceTestConstants._
+import common.config.FrontendAppConfig
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

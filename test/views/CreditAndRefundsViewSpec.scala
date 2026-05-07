@@ -16,9 +16,9 @@
 
 package views
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatter
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatter
 import models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

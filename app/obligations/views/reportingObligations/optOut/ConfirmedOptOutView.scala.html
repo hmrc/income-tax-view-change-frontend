@@ -15,11 +15,12 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import obligations.models.reportingObligations.optOut.*
-@import viewUtils.ExternalUrlHelper
+@import common.viewUtils.ExternalUrlHelper
 @import obligations.controllers.{routes => obligationsRoutes}
+@import common.config.FrontendAppConfig
 @this(
     mainTemplate: unifiedLayout,
     h1: h1,
@@ -38,7 +39,7 @@
     confirmedOptOutViewScenarios: ConfirmedOptOutViewScenarios,
     selfAssessmentTaxReturnLink: String,
     compatibleSoftwareLink: String
-)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
+)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: FrontendAppConfig)
 
 @greenPanelScenario1And4() = @{
     govukPanel(

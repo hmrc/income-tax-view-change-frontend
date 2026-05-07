@@ -16,18 +16,19 @@
 
 package controllers
 
-import audit.AuditingService
-import audit.models._
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config._
+import audit.models.*
+import audit.models.AllowanceAndDeductionsResponseAuditModel
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.*
+import common.implicits.ImplicitDateFormatter
+import common.services.AuditingService
 import forms.utils.SessionKeys.calcPagesBackPage
-import implicits.ImplicitDateFormatter
-import models.liabilitycalculation._
+import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc._
+import play.api.mvc.*
 import services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

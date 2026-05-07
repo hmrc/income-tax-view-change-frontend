@@ -16,14 +16,14 @@
 
 package views.feedback
 
-import forms.FeedbackForm
+import common.forms.FeedbackForm
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.feedback.FeedbackView
+import common.views.html.feedback.FeedbackView
 
 class FeedbackViewSpec extends ViewSpec {
 

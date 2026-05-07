@@ -16,12 +16,14 @@
 
 package audit.models
 
-import audit.Utilities._
-import auth.MtdItUser
+import common.utils.audit.Utilities.*
+import common.auth.MtdItUser
 import models.financialDetails.{ChargeItem, CodingOutDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
-import play.api.libs.json._
-import services.DateServiceInterface
+import play.api.libs.json.*
+import common.enums.AuditType
+import common.models.audit.ExtendedAuditModel
+import common.services.DateServiceInterface
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList)
@@ -30,7 +32,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 
   override val transactionName: String = enums.TransactionName.WhatYouOweResponse
-  override val auditType: String = enums.AuditType.WhatYouOweResponse
+  override val auditType: String = AuditType.WhatYouOweResponse
 
   private val docDetailsListJson: List[JsObject] =
     whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)

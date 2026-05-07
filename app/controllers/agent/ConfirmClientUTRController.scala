@@ -16,18 +16,17 @@
 
 package controllers.agent
 
-import audit.AuditingService
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.config.featureswitch.FeatureSwitching
+import common.services.{AuditingService, SessionDataService}
+import common.utils.session.SessionKeys
 import audit.models.ConfirmClientDetailsAuditModel
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.ConfirmClientUTRView

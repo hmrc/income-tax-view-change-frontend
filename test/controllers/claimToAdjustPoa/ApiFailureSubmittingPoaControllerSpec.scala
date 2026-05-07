@@ -16,15 +16,15 @@
 
 package controllers.claimToAdjustPoa
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api
 import play.api.Application
 import play.api.test.Helpers.{HTML, OK, contentAsString, contentType, defaultAwaitTimeout, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
 
 class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {

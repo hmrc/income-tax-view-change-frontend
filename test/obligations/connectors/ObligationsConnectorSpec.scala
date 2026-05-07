@@ -33,7 +33,7 @@
 package obligations.connectors
 
 import audit.mocks.MockAuditingService
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import mocks.MockHttpV2
 import obligations.models.*
 import obligations.models.audit.NextUpdatesResponseAuditModel

@@ -16,9 +16,9 @@
 
 package services
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData._
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import connectors.CreateIncomeSourceConnector
 import connectors.helpers.IncomeSourcesDataHelper
 import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}

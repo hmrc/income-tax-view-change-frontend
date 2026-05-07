@@ -16,11 +16,11 @@
 
 package connectors
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import com.codahale.metrics.Timer
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import org.mockito.Mockito.{mock, reset}
 import org.scalatest.BeforeAndAfterEach

@@ -17,8 +17,8 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import enums.MTDIndividual
+import common.enums.MTDIndividual
+import common.models.auth.AuthorisedAndEnrolledRequest
 import models.core.{AccountingPeriodModel, AddressModel}
 import models.incomeSourceDetails._
 import org.scalatest.wordspec.AnyWordSpec

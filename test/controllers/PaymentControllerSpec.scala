@@ -16,17 +16,17 @@
 
 package controllers
 
-import audit.models.InitiatePayNowAuditModel
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector, PayApiConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
+import models.InitiatePayNowAuditModel
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import play.api
 import play.api.Application
 import play.api.test.Helpers._
-import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
 import testConstants.PaymentDataTestConstants._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

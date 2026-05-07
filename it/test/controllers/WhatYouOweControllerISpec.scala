@@ -16,10 +16,11 @@
 
 package controllers
 
-import audit.models.WhatYouOweResponseAuditModel
-import auth.MtdItUser
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.auth.MtdItUser
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.services.DateServiceInterface
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.WhatYouOweResponseAuditModel
 import models.admin.*
 import models.core.SelfServeTimeToPayJourneyResponseModel
 import models.financialDetails.*
@@ -27,7 +28,6 @@ import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
-import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsIntegrationTestConstants.*

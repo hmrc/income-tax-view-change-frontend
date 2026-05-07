@@ -16,10 +16,10 @@
 
 package controllers
 
-import audit.models.ClaimARefundAuditModel
-import auth.MtdItUser
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.auth.MtdItUser
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import models.ClaimARefundAuditModel
 import models.admin.CreditsRefundsRepay
 import models.core.ErrorModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}

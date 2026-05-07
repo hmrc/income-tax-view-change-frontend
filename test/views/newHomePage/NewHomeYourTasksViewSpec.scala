@@ -16,8 +16,8 @@
 
 package views.newHomePage
 
-import config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatter
+import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatter
 import models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
 import models.newHomePage.{HandleYourTasksViewModel, MaturityLevel, NoTaskCard}

@@ -16,9 +16,9 @@
 
 package controllers.triggeredMigration
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.JourneyType.TriggeredMigrationJourney
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.TriggeredMigration

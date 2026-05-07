@@ -16,19 +16,19 @@
 
 package controllers.agent
 
-import audit.models.EnterClientUTRAuditModel
-import controllers.agent.sessionUtils.SessionKeys
+import common.utils.session.SessionKeys
 import forms.agent.ClientsUTRForm
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import mocks.views.agent.MockEnterClientsUTR
+import models.EnterClientUTRAuditModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
 import play.api
 import play.api.Application
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import services.agent.ClientDetailsService._
+import common.services.agent.ClientDetailsService._
 import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
 import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
 import views.html.agent.EnterClientsUTRView

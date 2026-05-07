@@ -16,11 +16,11 @@
 
 package services
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.{getAllEnrolmentsAgent, getAuthUserDetails, ninoEnrolment}
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.enums.{MTDIndividual, MTDPrimaryAgent}
 import connectors.{CalculationListConnector, IncomeTaxCalculationConnector}
-import enums.{MTDIndividual, MTDPrimaryAgent}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.liabilitycalculation.*
 import models.taxyearsummary.*

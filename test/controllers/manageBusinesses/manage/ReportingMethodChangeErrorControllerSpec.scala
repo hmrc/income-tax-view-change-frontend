@@ -16,9 +16,10 @@
 
 package controllers.manageBusinesses.manage
 
+import common.enums.MTDIndividual
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
@@ -27,7 +28,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService}
+import services.{SessionService, UpdateIncomeSourceService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome
 

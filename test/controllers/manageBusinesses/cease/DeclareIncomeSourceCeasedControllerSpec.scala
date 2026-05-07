@@ -16,10 +16,11 @@
 
 package controllers.manageBusinesses.cease
 
+import common.enums.MTDIndividual
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.MTDIndividual
 import forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -34,7 +35,7 @@ import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, SessionService}
+import services.SessionService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
 
 class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockSessionService {

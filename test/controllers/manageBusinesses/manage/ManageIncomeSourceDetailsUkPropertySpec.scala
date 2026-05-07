@@ -16,9 +16,9 @@
 
 package controllers.manageBusinesses.manage
 
+import common.enums.MTDIndividual
 import enums.IncomeSourceJourney.UkProperty
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.MTDIndividual
 import models.admin.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}

@@ -16,8 +16,8 @@
 
 package controllers
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import connectors.{BusinessDetailsConnector, CalculationListConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.auth.MockAuthActions
 import mocks.connectors.MockIncomeTaxCalculationConnector

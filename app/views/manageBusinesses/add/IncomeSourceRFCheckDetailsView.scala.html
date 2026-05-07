@@ -14,16 +14,16 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
 @import models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
-@import services.DateServiceInterface
+@import common.services.DateServiceInterface
 
 @this(
         mainTemplate: unifiedLayout,

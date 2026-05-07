@@ -22,7 +22,7 @@ import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.feedback.FeedbackThankYouView
+import common.views.html.feedback.FeedbackThankYouView
 
 class FeedbackThankYouViewSpec extends TestSupport {
 

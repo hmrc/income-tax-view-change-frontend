@@ -16,10 +16,10 @@
 
 package views
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatter
 import java.time.LocalDate
-import implicits.ImplicitDateFormatter
 import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

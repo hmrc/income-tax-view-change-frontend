@@ -16,16 +16,17 @@
 
 package services
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset}
 import testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
-import java.time._
+import java.time.*
 import scala.language.reflectiveCalls
 
 class DateServiceSpec extends TestSupport {

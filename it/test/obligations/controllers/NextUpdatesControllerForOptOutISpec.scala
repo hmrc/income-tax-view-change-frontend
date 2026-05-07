@@ -16,8 +16,8 @@
 
 package obligations.controllers
 
-import auth.MtdItUser
-import enums.MTDIndividual
+import common.auth.MtdItUser
+import common.enums.MTDIndividual
 import helpers.ComponentSpecBase
 import helpers.servicemocks.*
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus

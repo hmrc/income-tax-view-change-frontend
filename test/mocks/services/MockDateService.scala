@@ -16,10 +16,10 @@
 
 package mocks.services
 
+import common.services.DateService
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.DateService
 import testUtils.UnitSpec
 
 trait MockDateService extends UnitSpec with BeforeAndAfterEach {

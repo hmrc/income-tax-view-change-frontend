@@ -16,8 +16,10 @@
 
 package controllers
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason}
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.PoaTwoReconciliationCredit
@@ -28,7 +30,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, PaymentAllocationsService}
+import services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.FinancialDetailsTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome

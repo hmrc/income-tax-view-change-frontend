@@ -16,8 +16,9 @@
 
 package controllers
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
@@ -25,7 +26,7 @@ import play.api
 import play.api.Application
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers._
-import services.{CalculationService, CreditHistoryService, DateServiceInterface}
+import services.{CalculationService, CreditHistoryService}
 import testConstants.BaseTestConstants.{calendarYear2018, testSaUtr}
 import testConstants.FinancialDetailsTestConstants._
 import views.html.CreditsSummaryView

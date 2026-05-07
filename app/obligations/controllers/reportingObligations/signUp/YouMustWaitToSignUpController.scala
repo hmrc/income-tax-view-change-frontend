@@ -16,12 +16,12 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import auth.authV2.AuthActions
 import com.google.inject.Inject
+import common.auth.AuthActions
+import common.services.DateService
 import obligations.models.reportingObligations.signUp.YouMustWaitToSignUpViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.DateService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import obligations.views.html.reportingObligations.signUp.YouMustWaitToSignUpView
 

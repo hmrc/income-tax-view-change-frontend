@@ -16,7 +16,7 @@
 
 package testOnly.connectors
 
-import connectors.RawResponseReads
+import common.connectors.RawResponseReads
 import play.api.libs.json.{JsValue, Json}
 import testOnly.TestOnlyAppConfig
 import testOnly.models.StubClientDetailsModel

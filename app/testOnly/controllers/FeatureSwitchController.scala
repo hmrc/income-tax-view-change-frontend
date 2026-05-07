@@ -16,15 +16,15 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.services.admin.FeatureSwitchService
 import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.admin.{FeatureSwitchName, InvalidFS}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.admin.FeatureSwitchService
 import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

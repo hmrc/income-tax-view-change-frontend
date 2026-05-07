@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import models.financialDetails.SecondLatePaymentPenalty
 import models.incomeSourceDetails.TaxYear
 import models.taxyearsummary.TaxYearSummaryChargeItem

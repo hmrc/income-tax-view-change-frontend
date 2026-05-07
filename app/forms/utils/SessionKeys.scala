@@ -25,6 +25,4 @@ object SessionKeys {
   val gatewayPage: String = "gatewayPage"
 
   val calcPagesBackPage: String = "calcPagesBackPage"
-
-  val origin: String = "origin"
 }

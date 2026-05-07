@@ -16,8 +16,8 @@
 
 package services.newHomePage
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*

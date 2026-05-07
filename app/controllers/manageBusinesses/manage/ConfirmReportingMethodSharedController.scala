@@ -16,11 +16,10 @@
 
 package controllers.manageBusinesses.manage
 
-import audit.AuditingService
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
+import common.services.{AuditingService, DateService}
 import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AfterSubmissionPage, BeforeSubmissionPage, ReportingMethod}
@@ -34,7 +33,7 @@ import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{DateService, SessionService, UpdateIncomeSourceService}
+import services.{SessionService, UpdateIncomeSourceService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import views.html.manageBusinesses.manage.ConfirmReportingMethodView

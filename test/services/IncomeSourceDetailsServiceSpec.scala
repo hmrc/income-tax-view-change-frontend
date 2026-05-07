@@ -17,9 +17,9 @@
 package services
 
 import audit.mocks.MockAuditingService
-import auth.MtdItUser
-import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.models.auth.AuthorisedAndEnrolledRequest
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import mocks.connectors.MockBusinessDetailsConnector
 import mocks.services.config.MockAppConfig

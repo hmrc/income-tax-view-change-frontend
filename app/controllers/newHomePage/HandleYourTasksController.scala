@@ -16,11 +16,11 @@
 
 package controllers.newHomePage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import controllers.agent.sessionUtils.SessionKeys
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.services.DateServiceInterface
+import common.utils.session.SessionKeys
 import controllers.newHomePage.routes
 import models.admin.*
 import models.creditsandrefunds.CreditsModel

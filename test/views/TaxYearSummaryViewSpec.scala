@@ -16,9 +16,11 @@
 
 package views
 
-import config.featureswitch.FeatureSwitching
+import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatterImpl
+import common.viewUtils
+import common.viewUtils.ExternalUrlHelper
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
-import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
@@ -32,6 +34,7 @@ import obligations.testConstants.NextUpdatesTestConstants.*
 import testUtils.ViewSpec
 import views.html.TaxYearSummaryView
 import obligations.models.*
+
 import java.time.LocalDate
 
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
@@ -1274,7 +1277,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val bulletLink: Element = document.getElementById("calculation-bullet-2-link")
         bulletLink.text should include(messagesLookUp("tax-year-summary.calculation-bullet-2-link"))
         bulletLink.text should include("(opens in new tab)")
-        bulletLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saTaxReturnDeadlinesUrl
+        bulletLink.attr("href") shouldBe ExternalUrlHelper.saTaxReturnDeadlinesUrl
         bulletLink.attr("target") shouldBe "_blank"
 
 

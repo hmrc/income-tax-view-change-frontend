@@ -16,12 +16,12 @@
 
 package controllers
 
-import audit.models.TaxDueResponseAuditModel
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.AuditStub.verifyAuditEvent
 import helpers.servicemocks._
+import models.TaxDueResponseAuditModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._

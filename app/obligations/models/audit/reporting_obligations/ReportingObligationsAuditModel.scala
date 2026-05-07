@@ -16,7 +16,7 @@
 
 package obligations.models.audit.reporting_obligations
 
-import enums.MTDUserRole
+import common.enums.MTDUserRole
 import play.api.libs.json.{JsObject, Json, OFormat}
 
 case class ReportingObligationsAuditModel(

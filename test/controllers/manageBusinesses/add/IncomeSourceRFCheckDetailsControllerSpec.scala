@@ -16,9 +16,10 @@
 
 package controllers.manageBusinesses.add
 
+import common.enums.MTDIndividual
+import common.services.{DateService, DateServiceInterface}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockIncomeSourceRFService, MockSessionService}
 import models.UIJourneySessionData
@@ -31,7 +32,7 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.manageBusinesses.IncomeSourceRFService
-import services.{DateService, DateServiceInterface, SessionService, UpdateIncomeSourceService}
+import services.{SessionService, UpdateIncomeSourceService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

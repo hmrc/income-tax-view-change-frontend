@@ -16,8 +16,9 @@
 
 package obligations.services.reportingObligations.optOut
 
-import auth.MtdItUser
 import cats.data.OptionT
+import common.auth.MtdItUser
+import common.services.DateServiceInterface
 import enums.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -29,7 +30,7 @@ import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import play.api.Logger
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
+import services.{CalculationListService, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

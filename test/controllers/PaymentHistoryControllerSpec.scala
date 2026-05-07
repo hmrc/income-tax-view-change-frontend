@@ -16,10 +16,11 @@
 
 package controllers
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.implicits.ImplicitDateFormatter
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
-import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import models.admin.PaymentHistoryRefunds
 import models.financialDetails.{ChargeItem, Payment}
@@ -31,7 +32,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import services.PaymentHistoryService.PaymentHistoryError
-import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
+import services.{PaymentHistoryService, RepaymentService}
 
 import scala.concurrent.Future
 

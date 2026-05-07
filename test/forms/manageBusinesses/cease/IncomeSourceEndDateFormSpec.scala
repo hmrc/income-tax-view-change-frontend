@@ -16,15 +16,15 @@
 
 package forms.manageBusinesses.cease
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.getMinimalMTDITUser
+import common.auth.MtdItUser
+import common.services.DateService
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import forms.models.DateFormElement
 import org.scalatest.Assertion
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
-import services.DateService
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 import testUtils.TestSupport

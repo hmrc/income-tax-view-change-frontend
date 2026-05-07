@@ -16,6 +16,7 @@
 
 package obligations.controllers
 
+import common.services.{DateService, DateServiceInterface}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockNextUpdatesService}
@@ -37,7 +38,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
 

@@ -16,10 +16,10 @@
 
 package controllers.agent
 
-import audit.models.EnterClientUTRAuditModel
+import common.enums.MTDPrimaryAgent
 import controllers.ControllerISpecHelper
-import enums.MTDPrimaryAgent
 import helpers.servicemocks.*
+import models.EnterClientUTRAuditModel
 import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse

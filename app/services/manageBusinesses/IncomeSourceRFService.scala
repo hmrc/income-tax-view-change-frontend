@@ -16,8 +16,9 @@
 
 package services.manageBusinesses
 
-import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.MtdItUser
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.services.DateService
 import controllers.manageBusinesses.add.routes
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyState
@@ -28,7 +29,7 @@ import models.itsaStatus.StatusDetail
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.{DateService, ITSAStatusService, SessionService}
+import services.{ITSAStatusService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.JourneyCheckerManageBusinesses
 

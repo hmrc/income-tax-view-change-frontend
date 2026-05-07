@@ -16,8 +16,8 @@
 
 package controllers.manageBusinesses.cease
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{DisplayBusinessStartDate, NavBarFs}
 import play.api.http.Status.OK

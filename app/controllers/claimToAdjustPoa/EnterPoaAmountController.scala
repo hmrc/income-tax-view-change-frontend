@@ -16,10 +16,9 @@
 
 package controllers.claimToAdjustPoa
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
 import controllers.claimToAdjustPoa.routes._
 import forms.adjustPoa.EnterPoaAmountForm
 import models.claimToAdjustPoa.Increase

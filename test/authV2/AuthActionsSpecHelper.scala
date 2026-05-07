@@ -16,14 +16,14 @@
 
 package authV2
 
-import audit.AuditingService
-import config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
-import controllers.bta.BtaNavBarController
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
+import common.controllers.bta.BtaNavBarController
+import common.services.{AuditingService, SessionDataService}
+import common.services.admin.FeatureSwitchService
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
-import services.admin.FeatureSwitchService
-import services.{IncomeSourceDetailsService, SessionDataService}
+import services.IncomeSourceDetailsService
 import testUtils.TestSupport
 import views.html.navBar.PtaPartial
 

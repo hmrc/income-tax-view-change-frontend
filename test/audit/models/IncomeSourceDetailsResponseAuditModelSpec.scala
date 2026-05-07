@@ -17,10 +17,11 @@
 package audit.models
 
 import authV2.AuthActionsTestData.defaultAuthorisedAndEnrolledRequest
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.models.audit.IncomeSourceDetailsResponseAuditModel
 import play.api.libs.json.{JsArray, Json}
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

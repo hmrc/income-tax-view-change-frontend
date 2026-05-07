@@ -16,8 +16,8 @@
 
 package models.liabilitycalculation
 
+import common.implicits.ImplicitDateFormatter
 import enums.TaxYearSummary.CalcType.{amendmentTypes, crystallisedTypes}
-import implicits.ImplicitDateFormatter
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json._
 

@@ -16,11 +16,11 @@
 
 package authV2
 
-import auth.MtdItUser
-import auth.authV2.actions.SaveOriginAndRedirect
 import authV2.AuthActionsTestData.defaultMTDITUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.auth.actions.SaveOriginAndRedirect
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import mocks.services.MockAsyncCacheApi
 import org.mockito.Mockito.mock
 import play.api.http.Status.SEE_OTHER

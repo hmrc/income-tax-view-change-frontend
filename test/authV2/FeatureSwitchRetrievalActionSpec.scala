@@ -16,9 +16,10 @@
 
 package authV2
 
-import auth.MtdItUser
-import auth.authV2.actions.FeatureSwitchRetrievalAction
 import authV2.AuthActionsTestData.*
+import common.auth.MtdItUser
+import common.auth.actions.FeatureSwitchRetrievalAction
+import common.services.admin.FeatureSwitchService
 import models.admin.{FeatureSwitch, NavBarFs}
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
@@ -27,7 +28,6 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
-import services.admin.FeatureSwitchService
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import org.mockito.ArgumentMatchers.any
 import uk.gov.hmrc.http.HeaderCarrier

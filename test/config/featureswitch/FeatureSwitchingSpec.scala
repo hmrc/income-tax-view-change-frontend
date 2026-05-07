@@ -16,12 +16,13 @@
 
 package config.featureswitch
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData._
-import config.FrontendAppConfig
-import models.admin._
+import authV2.AuthActionsTestData.*
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import models.admin.*
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import testUtils.TestSupport

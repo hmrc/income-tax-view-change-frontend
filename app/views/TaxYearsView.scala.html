@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
@@ -23,7 +23,7 @@
         h1: h1,
         p: p,
         link: link,
-        appConfig: config.FrontendAppConfig
+        appConfig: common.config.FrontendAppConfig
 )
 
 @(
@@ -127,7 +127,7 @@
     @if(isAgent) {
         @p(id = Some("oldSa-para-agent")) {
             @messages("taxYears.oldSa.agent.content.1", (earliestSubmissionTaxYear - 1).toString, earliestSubmissionTaxYear.toString)
-            @link(link = viewUtils.ExternalUrlHelper.saForAgents,
+            @link(link = common.viewUtils.ExternalUrlHelper.saForAgents,
 
                 messageKey = "taxYears.oldSa.agent.content.2",
                 id = Some("self-assessment-for-agents-link"),

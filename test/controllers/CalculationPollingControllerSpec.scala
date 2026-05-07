@@ -16,8 +16,9 @@
 
 package controllers
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationPollingService
@@ -25,7 +26,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.{CalculationPollingService, DateServiceInterface}
+import services.CalculationPollingService
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
 

@@ -16,8 +16,8 @@
 
 package mocks.auth
 
-import auth.FrontendAuthorisedFunctions
-import auth.authV2.Constants.mtdEnrolmentName
+import common.auth.FrontendAuthorisedFunctions
+import common.auth.Constants.mtdEnrolmentName
 import org.mockito.Mockito._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core._

@@ -16,9 +16,9 @@
 
 package views.newHomePage
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.getMtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements

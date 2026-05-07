@@ -16,11 +16,10 @@
 
 package controllers.claimToAdjustPoa
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import cats.data.EitherT
 import com.google.inject.Singleton
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.claimToAdjustPoa.routes._
 import forms.adjustPoa.SelectYourReasonFormProvider
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel

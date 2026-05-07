@@ -16,7 +16,7 @@
 
 package helpers
 
-import enums.{MTDIndividual, MTDUserRole}
+import common.enums.{MTDIndividual, MTDUserRole}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.scalatest._

@@ -16,7 +16,7 @@
 
 package helpers.servicemocks
 
-import controllers.agent.AuthUtils._
+import common.utils.auth.AuthUtils._
 import helpers.WiremockHelper.{stubPostWithRequest, stubPostWithRequestAndResponseHeaders}
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}

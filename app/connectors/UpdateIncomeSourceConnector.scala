@@ -16,8 +16,9 @@
 
 package connectors
 
-import config.FrontendAppConfig
-import models.updateIncomeSource._
+import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
+import models.updateIncomeSource.*
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json

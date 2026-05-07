@@ -16,13 +16,13 @@
 
 package views
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatter
 import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import enums.CodingOutType.*
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import implicits.ImplicitDateFormatter
 import models.financialDetails.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel

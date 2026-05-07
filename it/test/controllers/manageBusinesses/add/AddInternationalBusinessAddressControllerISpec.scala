@@ -16,8 +16,8 @@
 
 package controllers.manageBusinesses.add
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.WiremockHelper
 import helpers.servicemocks.{AddressLookupStub, IncomeTaxViewChangeStub}
 import models.admin.OverseasBusinessAddress

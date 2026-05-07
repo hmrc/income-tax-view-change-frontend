@@ -16,8 +16,7 @@
 
 package services
 
-
-import auth.MtdItUser
+import common.auth.MtdItUser
 import connectors.CreateIncomeSourceConnector
 import enums.IncomeSourceJourney.UkProperty
 import models.createIncomeSource._

@@ -16,7 +16,8 @@
 
 package services.admin
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.services.admin.FeatureSwitchService
 import mocks.repositories.MockFeatureSwitchRepository
 import mocks.connectors.MockFeatureSwitchConnector
 import models.admin.{FeatureSwitch, FeatureSwitchName}

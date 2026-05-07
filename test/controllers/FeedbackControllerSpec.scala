@@ -16,10 +16,10 @@
 
 package controllers
 
-import connectors.FeedbackConnector
-import controllers.feedback.FeedbackController
-import enums.MTDIndividual
-import implicits.ImplicitDateFormatter
+import common.connectors.FeedbackConnector
+import common.controllers.feedback.FeedbackController
+import common.enums.MTDIndividual
+import common.implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

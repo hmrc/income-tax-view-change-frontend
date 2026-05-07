@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import enums.MTDSupportingAgent
+@import common.enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
+@import common.views.html.components._
 @import views.html.partials.newHome.overview.OverviewCard
-@import views.html.layouts.unifiedLayout
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.NewHomeNavigation
 
 
@@ -30,7 +30,7 @@
         h2: h2,
         p: p,
         overviewCard: OverviewCard,
-        appConfig: config.FrontendAppConfig,
+        appConfig: common.config.FrontendAppConfig,
         newHomeNav: NewHomeNavigation
 )
 

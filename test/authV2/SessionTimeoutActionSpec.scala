@@ -16,14 +16,15 @@
 
 package authV2
 
-import auth.authV2.actions._
+import auth.authV2.actions.*
+import common.auth.actions.SessionTimeoutAction
 import org.scalatest.Assertion
 import play.api.Application
 import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Request, Result, Results}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.SessionKeys
 
 import scala.concurrent.Future

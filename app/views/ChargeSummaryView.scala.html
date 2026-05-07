@@ -15,27 +15,27 @@
  *@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
 @import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 @import models.chargeHistory.AdjustmentModel
 @import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, FirstLatePaymentPenalty, LateSubmissionPenalty}
-@import services.DateServiceInterface
+@import common.services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.chargeSummary._
 @import models.repaymentHistory.RepaymentHistoryUtils
 @import _root_.implicits.HtmlFormatter.NbspString
 
 @import java.time.LocalDate
-@import viewUtils.ExternalUrlHelper
+@import common.viewUtils.ExternalUrlHelper
 
 
 @this(
     mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
+    appConfig: common.config.FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1WithCaption: h1WithCaption,
     p: p,
@@ -55,7 +55,7 @@
     govukTable: GovukTable
 )
 
-@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
+@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: common.config.FrontendAppConfig, dateService: DateServiceInterface)
 
 @import implicitDateFormatter.longDate
 

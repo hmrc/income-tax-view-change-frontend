@@ -16,15 +16,16 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
-import enums.AuditType.ChargeSummary
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
+import common.enums.AuditType.ChargeSummary
+import common.services.DateServiceInterface
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.PaymentHistoryAllocations
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
-import services.DateServiceInterface
 import utils.JsonUtils
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],

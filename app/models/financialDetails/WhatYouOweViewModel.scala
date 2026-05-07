@@ -16,8 +16,8 @@
 
 package models.financialDetails
 
+import common.services.DateServiceInterface
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
-import services.DateServiceInterface
 import java.time.LocalDate
 
 case class WhatYouOweViewModel(currentDate: LocalDate,

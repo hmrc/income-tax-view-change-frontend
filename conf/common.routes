@@ -1,0 +1,50 @@
+GET        /language/:lang                                                common.controllers.LocalLanguageController.switchToLanguage(lang: String)
+GET        /agents/language/:lang                                                common.controllers.AgentLanguageController.switchToLanguage(lang: String)
+
+GET         /switch-to-welsh                                              common.controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
+GET         /switch-to-english                                            common.controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
+
+# No Income Sources Error page
+GET         /cannot-access-service                                          common.controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
+GET         /agents/cannot-access-service                                   common.controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
+
+#Feedback Routes
+GET         /feedback                                                     common.controllers.feedback.FeedbackController.show()
+GET         /agents/feedback                                              common.controllers.feedback.FeedbackController.showAgent()
+POST        /feedback                                                     common.controllers.feedback.FeedbackController.submit()
+POST        /agents/feedback                                              common.controllers.feedback.FeedbackController.submitAgent()
+GET         /thankyou                                                     common.controllers.feedback.FeedbackController.thankYou()
+GET         /agents/thankyou                                              common.controllers.feedback.FeedbackController.thankYouAgent()
+
+#Timeout Routes
+GET         /session-timeout                                              common.controllers.timeout.SessionTimeoutController.timeout()
+GET         /keep-alive                                                   common.controllers.timeout.SessionTimeoutController.keepAlive()
+
+#Sign Out Routes
+GET         /sign-out                                                     common.controllers.SignOutController.signOut()
+
+#Sign In Routes
+GET         /sign-in                                                      common.controllers.SignInController.signIn()
+
+#Not Enrolled
+GET         /cannot-access-service                                        common.controllers.errors.NotEnrolledController.show()
+
+#Not Assigned
+GET         /agents/no-assignment                                         common.controllers.agent.errors.NoAssignmentController.show()
+#Uplift Failed
+GET         /cannot-view-page                                             common.controllers.errors.UpliftFailedController.show()
+
+#Uplift Success
+GET         /uplift-success                                               common.controllers.UpliftSuccessController.success()
+
+# Client Relationship Failure
+GET         /agents/not-authorised-to-view-client                         common.controllers.agent.ClientRelationshipFailureController.show()
+
+#BTA Partial
+GET         /partial                                                      common.controllers.bta.BTAPartialController.setupPartial()
+
+#Language Controller
+GET         /language/:lang                                               common.controllers.ItvcLanguageController.switchToLanguage(lang: String)
+
+#Agent Error
+GET         /agents/agent-error                                           common.controllers.agent.errors.AgentErrorController.show()

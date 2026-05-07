@@ -16,8 +16,8 @@
 
 package audit.mocks
 
-import audit.AuditingService
-import audit.models.{AuditModel, ExtendedAuditModel}
+import common.models.audit.{AuditModel, ExtendedAuditModel}
+import common.services.AuditingService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}

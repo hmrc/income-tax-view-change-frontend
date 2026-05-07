@@ -16,9 +16,9 @@
 
 package controllers
 
-import audit.models.AccessDeniedForSupportingAgentAuditModel
-import config.FrontendAppConfig
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.config.FrontendAppConfig
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.models.audit.AccessDeniedForSupportingAgentAuditModel
 import helpers.ComponentSpecBase
 import helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
 import helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails

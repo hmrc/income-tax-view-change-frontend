@@ -16,7 +16,7 @@
 
 package controllers
 
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse

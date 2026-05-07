@@ -16,10 +16,10 @@
 
 package services
 
-import audit.AuditingService
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.services.{AuditingService, DateService}
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType.*

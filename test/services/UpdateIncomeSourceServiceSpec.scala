@@ -16,15 +16,15 @@
 
 package services
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
-import config.featureswitch.FeatureSwitching
 import connectors.UpdateIncomeSourceConnector
 import obligations.testConstants.UpdateIncomeSourceTestConstants
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import UpdateIncomeSourceTestConstants.{failureResponse, successResponse, taxYearSpecific}
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

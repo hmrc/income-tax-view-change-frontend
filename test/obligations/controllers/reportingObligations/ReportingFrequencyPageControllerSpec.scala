@@ -16,9 +16,10 @@
 
 package obligations.controllers.reportingObligations
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.enums.MTDIndividual
+import common.services.{DateService, DateServiceInterface}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockDateService
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
@@ -37,7 +38,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
 

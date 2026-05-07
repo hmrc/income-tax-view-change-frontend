@@ -16,8 +16,8 @@
 
 package controllers
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCreditHistoryService, MockDateService, MockFinancialDetailsService}
 import models.admin.{ChargeHistory, FeatureSwitch}

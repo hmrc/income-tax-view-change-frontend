@@ -16,7 +16,8 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData._
+import authV2.AuthActionsTestData.*
+import models.PaymentAllocationsResponseAuditModel
 import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}

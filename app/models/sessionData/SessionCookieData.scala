@@ -16,8 +16,8 @@
 
 package models.sessionData
 
-import controllers.agent.sessionUtils.SessionKeys
-import services.agent.ClientDetailsService.ClientDetails
+import common.utils.session.SessionKeys
+import common.services.agent.ClientDetailsService.ClientDetails
 
 case class SessionCookieData(mtditid: String,
                              nino: String,

@@ -16,9 +16,9 @@
 
 package controllers.newHomePage
 
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.ChargeType.ITSA_NI
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.WiremockHelper
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
 import models.admin.{CreditsRefundsRepay, NewHomePage, PenaltiesAndAppeals}

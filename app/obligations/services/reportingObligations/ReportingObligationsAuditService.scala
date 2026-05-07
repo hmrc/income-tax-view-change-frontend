@@ -16,11 +16,13 @@
 
 package obligations.services.reportingObligations
 
-import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import enums.AuditType.IncomeSourceDetailsResponse as _
-import enums.{AuditType, TransactionName}
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.enums.AuditType
+import common.enums.AuditType.{ReportingObligationsPage, IncomeSourceDetailsResponse as _}
+import common.services.DateServiceInterface
+import enums.TransactionName
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, UnknownStatus, Voluntary}
@@ -30,7 +32,6 @@ import obligations.viewUtils.ReportingFrequencyViewUtils
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
-import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -156,7 +157,7 @@ class ReportingObligationsAuditService @Inject()(
 
     ReportingObligationsAuditModel(
       agentReferenceNumber = mtdItUser.arn,
-      auditType = enums.AuditType.ReportingObligationsPage.name,
+      auditType = ReportingObligationsPage.name,
       credId = mtdItUser.credId,
       mtditid = mtdItUser.mtditid,
       nino = mtdItUser.nino,

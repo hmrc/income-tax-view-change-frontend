@@ -17,6 +17,8 @@
 package audit.models
 
 import play.api.libs.json.{JsObject, JsValue, Json}
+import common.enums.AuditType
+import common.models.audit.ExtendedAuditModel
 
 case class EnterClientUTRAuditModel(isSuccessful: Boolean,
                                     nino: String,
@@ -28,7 +30,7 @@ case class EnterClientUTRAuditModel(isSuccessful: Boolean,
 
   override val transactionName: String = enums.TransactionName.EnterClientUTR
 
-  override val auditType: String = enums.AuditType.EnterClientUTR
+  override val auditType: String = AuditType.EnterClientUTR
 
   private val successOutcome: JsObject = Json.obj(
     "outcome" ->

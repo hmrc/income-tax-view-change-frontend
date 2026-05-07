@@ -16,10 +16,12 @@
 
 package audit.models
 
-import audit.Utilities._
-import auth.MtdItUser
+import common.utils.audit.Utilities.*
+import common.auth.MtdItUser
 import models.homePage.NextUpdatesTileViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
+import common.enums.AuditType
+import common.models.audit.ExtendedAuditModel
 
 import java.time.LocalDate
 
@@ -48,7 +50,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     Json.obj("credId"-> mtdItUser.credId) ++
     Json.obj("agentReferenceNumber"-> mtdItUser.arn)
 
-  override val auditType: String = enums.AuditType.ItsaHomePage
+  override val auditType: String = AuditType.ItsaHomePage
 
 }
 

@@ -16,9 +16,9 @@
 
 package controllers
 
-import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.models.audit.IncomeSourceDetailsResponseAuditModel
+import common.models.auth.AuthorisedAndEnrolledRequest
 import helpers.CreditsSummaryDataHelper
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import play.api.http.Status.OK
@@ -59,7 +59,6 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
           } else {
             "render the credit summary page" when {
               "a valid response is received" in {
-                import audit.models.CreditSummaryAuditing._
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
@@ -110,7 +109,6 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
 
             "correctly audit a list of credits" when {
               "the list contains Balancing Charge Credits" in {
-                import audit.models.CreditSummaryAuditing._
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
 

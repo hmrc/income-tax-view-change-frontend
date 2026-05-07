@@ -16,10 +16,10 @@
 
 package controllers
 
-import audit.models.TaxYearSummaryResponseAuditModel
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
+import models.TaxYearSummaryResponseAuditModel
 import models.admin.*
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}

@@ -16,6 +16,7 @@
 
 package audit.models
 
+import models.{ViewInYearTaxEstimateAuditBody, ViewInYearTaxEstimateAuditModel}
 import models.liabilitycalculation.viewmodels.CalculationSummary
 import play.api.libs.json.{JsObject, Json}
 import testUtils.UnitSpec

@@ -16,8 +16,9 @@
 
 package audit.models
 
-
-import models.repaymentHistory._
+import common.enums.AuditType.RefundToTaxPayerResponse
+import models.RefundToTaxPayerResponseAuditModel
+import models.repaymentHistory.*
 import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
@@ -86,7 +87,7 @@ class RefundToTaxPayerResponseAuditModelSpec extends TestSupport {
     RefundToTaxPayerResponseAuditModel(testRepaymentHistory)(agentUserConfirmedClient())
   }
   val transactionName = enums.TransactionName.RefundToTaxPayer.name
-  val auditType = enums.AuditType.RefundToTaxPayerResponse.name
+  val auditType = RefundToTaxPayerResponse.name
 
   "RefundToTaxPayerAuditModel" should {
     s"have the correct transaction name of '$transactionName'" when {

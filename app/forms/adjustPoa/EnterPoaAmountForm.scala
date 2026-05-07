@@ -16,7 +16,7 @@
 
 package forms.adjustPoa
 
-import forms.mappings.Mappings
+import common.forms.mappings.Mappings
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import play.api.data.Form
 import play.api.data.Forms.mapping

@@ -16,10 +16,10 @@
 
 package controllers
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.enums.MTDUserRole
 import enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
-import enums.MTDUserRole
 import models.admin.NavBarFs
 import models.financialDetails.*
 import models.incomeSourceDetails.IncomeSourceDetailsModel

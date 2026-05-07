@@ -16,7 +16,7 @@
 
 package views
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest

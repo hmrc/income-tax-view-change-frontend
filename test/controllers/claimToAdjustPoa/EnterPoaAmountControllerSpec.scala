@@ -16,9 +16,12 @@
 
 package controllers.claimToAdjustPoa
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
+import common.utils.session
+import common.utils.session.SessionKeys
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import controllers.agent.sessionUtils
-import enums.{MTDIndividual, MTDSupportingAgent}
 import generators.PoaGenerator
 import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -36,7 +39,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.claimToAdjustPoa.ClaimToAdjustService
-import services.{DateServiceInterface, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
 import testConstants.BaseTestConstants
 
 import scala.concurrent.Future
@@ -89,12 +92,12 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
       FakeRequest(POST, routes.EnterPoaAmountController.submit(false, mode).url)
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession(
-          sessionUtils.SessionKeys.clientFirstName -> "Test",
-          sessionUtils.SessionKeys.clientLastName -> "User",
-          sessionUtils.SessionKeys.clientUTR -> "1234567890",
-          sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",
-          sessionUtils.SessionKeys.clientNino -> "AA111111A",
-          sessionUtils.SessionKeys.confirmedClient -> "true"
+          SessionKeys.clientFirstName -> "Test",
+          session.SessionKeys.clientLastName -> "User",
+          session.SessionKeys.clientUTR -> "1234567890",
+          session.SessionKeys.clientMTDID -> "XAIT00000000015",
+          session.SessionKeys.clientNino -> "AA111111A",
+          session.SessionKeys.confirmedClient -> "true"
         )
     }
     else {

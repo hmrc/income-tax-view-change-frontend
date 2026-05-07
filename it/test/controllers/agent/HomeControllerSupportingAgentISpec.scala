@@ -16,12 +16,12 @@
 
 package controllers.agent
 
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.enums.MTDSupportingAgent
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import controllers.ControllerISpecHelper
-import enums.MTDSupportingAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.NavBarFs
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}

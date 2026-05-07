@@ -16,8 +16,9 @@
 
 package controllers.claimToAdjustPoa
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
@@ -25,7 +26,7 @@ import play.api
 import play.api.Application
 import play.api.test.Helpers._
 import services.claimToAdjustPoa.ClaimToAdjustService
-import services.{DateServiceInterface, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
 
 import scala.concurrent.Future
 

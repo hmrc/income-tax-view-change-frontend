@@ -16,11 +16,11 @@
 
 package controllers
 
-import audit.models.PaymentHistoryResponseAuditModel
-import auth.MtdItUser
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.auth.MtdItUser
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.PaymentHistoryResponseAuditModel
 import models.admin.PaymentHistoryRefunds
 import models.financialDetails.Payment
 import play.api.http.Status.*

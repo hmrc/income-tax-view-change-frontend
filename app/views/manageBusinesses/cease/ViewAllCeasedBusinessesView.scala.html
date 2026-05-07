@@ -14,15 +14,17 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import _root_.common.implicits.ImplicitDateFormatterImpl
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 @import enums.IncomeSourceJourney.IncomeSourceType
 @import enums.IncomeSourceJourney.UkProperty
 @import enums.IncomeSourceJourney.ForeignProperty
 @import enums.IncomeSourceJourney.SelfEmployment
+@import views.html.components.CeasedBusinesses
+
 
 @this(
         mainTemplate: unifiedLayout,

@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.errors.NotEnrolledController
+import common.controllers.errors.NotEnrolledController
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents

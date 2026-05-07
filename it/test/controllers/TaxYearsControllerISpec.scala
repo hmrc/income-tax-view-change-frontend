@@ -16,8 +16,8 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitching
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.config.featureswitch.FeatureSwitching
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks._
 import models.admin.PostFinalisationAmendmentsR18
 import play.api.http.Status._

@@ -16,8 +16,8 @@
 
 package mocks.auth
 
-import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.delegatedEnrolmentPredicate
+import common.auth.FrontendAuthorisedFunctions
 import forms.IncomeSourcesFormsSpec.AuthRetrievals
 import org.mockito.Mockito.*
 import forms.IncomeSourcesFormsSpec.NrsAgentAuthRetrievals

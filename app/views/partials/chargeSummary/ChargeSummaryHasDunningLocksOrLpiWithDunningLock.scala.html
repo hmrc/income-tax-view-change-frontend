@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import views.html.components._
+@import common.views.html.components._
 
 @import java.time.LocalDate
 @import exceptions.MissingFieldException
@@ -27,7 +27,7 @@
     chargeItem: models.financialDetails.ChargeItem,
     dueDate: Option[LocalDate],
     latePaymentInterestCharge: Boolean,
-    appConfig: config.FrontendAppConfig
+    appConfig: common.config.FrontendAppConfig
 )(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate

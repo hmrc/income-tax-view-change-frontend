@@ -16,9 +16,10 @@
 
 package controllers.newHomePage
 
-import auth.authV2.AuthActions
+import common.auth.AuthActions
+import common.services.{DateService, DateServiceInterface}
+import common.utils.session.SessionKeys
 import controllers.HomeController
-import controllers.agent.sessionUtils.SessionKeys
 import controllers.newHomePage.HandleYourTasksController
 import mocks.auth.MockAuthActions
 import mocks.services.*

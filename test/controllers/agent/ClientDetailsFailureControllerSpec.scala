@@ -16,11 +16,12 @@
 
 package controllers.agent
 
+import common.controllers.agent.ClientRelationshipFailureController
 import mocks.auth.MockAuthActions
 import mocks.views.agent.MockClientRelationshipFailure
 import play.api
 import play.api.Application
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 import uk.gov.hmrc.auth.core.InsufficientEnrolments

@@ -16,8 +16,8 @@
 
 package obligations.utils.reportingObligations
 
-import auth.MtdItUser
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.auth.MtdItUser
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import models.incomeSourceDetails.TaxYear
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.optOut.OptOutService

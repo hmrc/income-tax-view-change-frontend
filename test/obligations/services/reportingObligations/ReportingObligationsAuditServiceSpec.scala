@@ -16,9 +16,10 @@
 
 package obligations.services.reportingObligations
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
-import enums.MTDIndividual
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.enums.MTDIndividual
+import common.services.DateService
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
@@ -30,7 +31,6 @@ import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
-import services.DateService
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}

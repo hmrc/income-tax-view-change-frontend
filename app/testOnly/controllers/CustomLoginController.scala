@@ -16,22 +16,22 @@
 
 package testOnly.controllers
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.BaseController
+import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.controllers.BaseController
+import common.services.DateServiceInterface
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
+import play.api.mvc.*
+import services.CalculationListService
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
-import testOnly.models._
+import testOnly.models.*
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
-import testOnly.utils.UserRepository
+import testOnly.utils.{AuthExchange, SessionBuilder, UserRepository}
 import testOnly.views.html.LoginPage
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthExchange, SessionBuilder}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +48,6 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val customAuthConnector: CustomAuthConnector,
                                       val calculationListService: CalculationListService,
                                       val dynamicStubService: DynamicStubService,
-                                      val ITSAStatusService: ITSAStatusService,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       dateService: DateServiceInterface

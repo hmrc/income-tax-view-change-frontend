@@ -16,9 +16,10 @@
 
 package controllers.manageBusinesses.add
 
+import common.enums.MTDIndividual
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
@@ -28,7 +29,7 @@ import play.api
 import play.api.Application
 import play.api.mvc.Result
 import play.api.test.Helpers._
-import services.{DateServiceInterface, SessionService}
+import services.SessionService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderNoLatency
 
 import scala.concurrent.Future

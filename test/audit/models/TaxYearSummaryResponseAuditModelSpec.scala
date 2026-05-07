@@ -17,7 +17,8 @@
 package audit.models
 
 import authV2.AuthActionsTestData.*
-import implicits.ImplicitDateParser
+import common.implicits.ImplicitDateParser
+import models.TaxYearSummaryResponseAuditModel
 import models.core.AccountingPeriodModel
 import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -32,8 +33,9 @@ import testConstants.ChargeConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import play.api.libs.json._
-import org.scalatest.matchers.should.Matchers._
+import play.api.libs.json.*
+import org.scalatest.matchers.should.Matchers.*
+
 import java.time.LocalDate
 
 class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupport with ImplicitDateParser with ChargeConstants {

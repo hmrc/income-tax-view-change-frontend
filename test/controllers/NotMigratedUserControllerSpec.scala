@@ -16,18 +16,18 @@
 
 package controllers
 
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.implicits.ImplicitDateFormatter
+import common.services.{DateService, DateServiceInterface}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import mocks.services.MockDateService
-import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.DateService
-import services.{DateServiceInterface, PaymentHistoryService}
+import services.PaymentHistoryService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeNotMigrated
 
 class NotMigratedUserControllerSpec extends MockAuthActions

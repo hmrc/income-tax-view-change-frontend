@@ -16,9 +16,9 @@
 
 package obligations.controllers
 
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.enums.MTDIndividual
 import controllers.ControllerISpecHelper
-import enums.MTDIndividual
 import helpers.servicemocks.*
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}

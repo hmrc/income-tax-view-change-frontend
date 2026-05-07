@@ -16,9 +16,9 @@
 
 package controllers.manageBusinesses.add
 
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.SelfEmployment
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import forms.manageBusinesses.add.AddProprertyForm
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.OverseasBusinessAddress

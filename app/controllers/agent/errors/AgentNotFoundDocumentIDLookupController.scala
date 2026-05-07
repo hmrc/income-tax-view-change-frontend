@@ -16,12 +16,12 @@
 
 package controllers.agent.errors
 
-import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
+import common.auth.AuthActions
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.CustomNotFoundErrorView
+import common.views.html.errorPages.CustomNotFoundErrorView
 
 @Singleton
 class AgentNotFoundDocumentIDLookupController @Inject()(val authActions: AuthActions,

@@ -14,9 +14,10 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
+@import common.views.html.components._
 @import java.time.LocalDate
 @import models.homePage.HomePageViewModel
+@import views.html.components.home_tile
 
 @this(
     home_tile: home_tile,
@@ -24,7 +25,7 @@
     link: link
 )
 
-@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
+@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: common.config.FrontendAppConfig)
 
 @getReturnHref(year: Int) = @{
     if (isAgent) {

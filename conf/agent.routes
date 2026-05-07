@@ -1,8 +1,5 @@
 # agent specific routes
 
-# Language
-GET         /language/:lang                                                controllers.agent.AgentLanguageController.switchToLanguage(lang: String)
-
 # Enter Clients UTR
 GET         /client-utr                                                    controllers.agent.EnterClientsUTRController.show()
 POST        /client-utr                                                    controllers.agent.EnterClientsUTRController.submit()
@@ -12,11 +9,6 @@ GET         /client-utr/:utr                                               contr
 GET         /confirm-client-details                                         controllers.agent.ConfirmClientUTRController.show()
 POST        /confirm-client-details                                         controllers.agent.ConfirmClientUTRController.submit()
 
-# Client Relationship Failure
-GET         /not-authorised-to-view-client                                controllers.agent.ClientRelationshipFailureController.show()
-
-GET         /no-assignment                                               controllers.agent.NoAssignmentController.show()
-
 # UTR Error
 GET         /cannot-view-client                                            controllers.agent.UTRErrorController.show()
 POST        /cannot-view-client                                            controllers.agent.UTRErrorController.submit()
@@ -25,5 +17,4 @@ POST        /cannot-view-client                                            contr
 GET         /remove-client-sessions                                        controllers.agent.RemoveClientDetailsSessionsController.show()
 
 #Agent Error
-GET         /agent-error                                                   controllers.agent.errors.AgentErrorController.show()
 GET         /custom-not-found                                              controllers.agent.errors.AgentNotFoundDocumentIDLookupController.show()

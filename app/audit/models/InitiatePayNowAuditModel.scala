@@ -18,13 +18,15 @@ package audit.models
 
 import play.api.libs.json.{JsValue, Json, Writes}
 import uk.gov.hmrc.auth.core.AffinityGroup
+import common.enums.AuditType
+import common.models.audit.ExtendedAuditModel
 
 case class InitiatePayNowAuditModel(mtditid: String, nino: String,
                                     saUtr: Option[String], credId: Option[String],
                                     userType: Option[AffinityGroup]) extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.InitiatePayNow
-  override val auditType: String = enums.AuditType.InitiatePayNow
+  override val auditType: String = AuditType.InitiatePayNow
 
   private case class AuditDetail(mtditid: String, nino: String,
                                  saUtr: Option[String], credId: Option[String],

@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import models.incomeSourceDetails.{ ChosenReportingMethod, SignedUpForMTD, SignUpNextYearOnly, NotSigningUp, SignUpCurrentYearOnly, SignUpBothYears, OnlyOneYearAvailableToSignUp, OptedOut}
 @import models.incomeSourceDetails.viewmodels._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
-@import views.html.components._
-@import views.html.helpers.injected.ErrorSummary
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.helpers.injected.ErrorSummary
+@import common.views.html.layouts.unifiedLayout
 
 @import java.time.LocalDate
 

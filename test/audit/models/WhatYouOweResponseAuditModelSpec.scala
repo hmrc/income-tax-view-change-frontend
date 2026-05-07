@@ -16,12 +16,13 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData._
+import authV2.AuthActionsTestData.*
+import models.WhatYouOweResponseAuditModel
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.dueDateOverdue
 import testUtils.TestSupport

@@ -16,11 +16,12 @@
 
 package controllers.manageBusinesses.cease
 
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationCeased
-import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.IncomeSourceId
@@ -33,7 +34,7 @@ import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import services.{SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants._
 

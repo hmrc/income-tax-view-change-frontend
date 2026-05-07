@@ -16,12 +16,11 @@
 
 package controllers
 
-import audit.AuditingService
 import audit.models.RefundToTaxPayerResponseAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
 import connectors.RepaymentHistoryConnector
 import models.admin.PaymentHistoryRefunds
 import models.core.Nino

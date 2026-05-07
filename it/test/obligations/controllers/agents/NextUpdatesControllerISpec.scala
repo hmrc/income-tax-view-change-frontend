@@ -16,11 +16,11 @@
 
 package obligations.controllers.agents
 
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import controllers.ControllerISpecHelper
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOutFs
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}

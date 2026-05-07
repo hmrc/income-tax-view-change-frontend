@@ -16,13 +16,13 @@
 
 package mocks.auth
 
-import audit.AuditingService
 import audit.mocks.MockAuditingService
-import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
-import config.featureswitch.FeatureSwitching
+import common.auth.FrontendAuthorisedFunctions
+import common.config.featureswitch.FeatureSwitching
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.services.AuditingService
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.services.{MockClientDetailsService, MockCustomerFactsUpdateService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
@@ -42,9 +42,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
+import common.services.{DateServiceInterface, SessionDataService}
+import common.services.agent.ClientDetailsService
 import scala.concurrent.Future
-import services.agent.ClientDetailsService
-import services.{CustomerFactsUpdateService, DateServiceInterface, IncomeSourceDetailsService, SessionDataService}
+import services.{CustomerFactsUpdateService, IncomeSourceDetailsService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport

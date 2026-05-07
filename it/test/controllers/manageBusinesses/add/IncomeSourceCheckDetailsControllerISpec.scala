@@ -16,15 +16,14 @@
 
 package controllers.manageBusinesses.add
 
-import audit.models.CreateIncomeSourceAuditModel
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.TriggeredMigration.TriggeredMigrationAdded
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.IncomeSourceCheckDetailsConstants.*
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.UIJourneySessionData
+import models.{CreateIncomeSourceAuditModel, UIJourneySessionData}
 import models.admin.{NavBarFs, OverseasBusinessAddress, TriggeredMigration}
 import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer

@@ -16,9 +16,9 @@
 
 package controllers
 
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYearEndDate
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}

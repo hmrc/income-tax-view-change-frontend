@@ -22,6 +22,8 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.language.implicitConversions
+import common.enums.AuditType
+import common.models.audit.ExtendedAuditModel
 
 object CreditSummaryAuditing {
 
@@ -59,7 +61,7 @@ object CreditSummaryAuditing {
                                  creditDetails: Seq[CreditSummaryDetails]) extends ExtendedAuditModel {
 
     override val transactionName: String = enums.TransactionName.CreditsSummary
-    override val auditType: String = enums.AuditType.CreditsSummaryResponse
+    override val auditType: String = AuditType.CreditsSummaryResponse
 
     private def creditDetailToJson(credit: CreditSummaryDetails): JsObject = {
       Json.obj(

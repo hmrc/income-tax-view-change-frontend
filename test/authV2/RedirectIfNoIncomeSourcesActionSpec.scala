@@ -16,9 +16,9 @@
 
 package authV2
 
-import auth.MtdItUser
-import auth.authV2.actions.RedirectIfNoIncomeSourcesAction
 import authV2.AuthActionsTestData.*
+import common.auth.MtdItUser
+import common.auth.actions.RedirectIfNoIncomeSourcesAction
 import org.scalatest.Assertion
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*

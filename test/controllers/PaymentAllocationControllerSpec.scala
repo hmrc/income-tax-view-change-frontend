@@ -17,9 +17,10 @@
 package controllers
 
 
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.implicits.ImplicitDateFormatter
+import common.services.{DateService, DateServiceInterface}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockPaymentAllocationsService}
 import models.core.Nino
@@ -31,7 +32,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{DateService, DateServiceInterface, PaymentAllocationsService}
+import services.PaymentAllocationsService
 import testConstants.PaymentAllocationsTestConstants.*
 
 import scala.concurrent.Future

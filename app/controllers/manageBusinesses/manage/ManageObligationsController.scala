@@ -16,9 +16,9 @@
 
 package controllers.manageBusinesses.manage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.services.DateService
 import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AnnualReportingMethod, CannotGoBackPage, QuarterlyReportingMethod}
@@ -29,7 +29,7 @@ import obligations.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{DateService, IncomeSourceDetailsService, SessionService}
+import services.{IncomeSourceDetailsService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.JourneyCheckerManageBusinesses

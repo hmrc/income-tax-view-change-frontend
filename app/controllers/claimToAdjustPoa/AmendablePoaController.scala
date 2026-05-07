@@ -16,9 +16,9 @@
 
 package controllers.claimToAdjustPoa
 
-import auth.authV2.AuthActions
 import cats.data.EitherT
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.InitialPage
 import implicits.ImplicitCurrencyFormatter
 import models.core.Nino

@@ -14,18 +14,18 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
-@import auth.MtdItUser
+@import _root_.common.implicits.ImplicitDateFormatterImpl
+@import common.auth.MtdItUser
 @import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.creditAndRefunds._
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig,
+        appConfig: common.config.FrontendAppConfig,
         h1: h1,
         h2: h2,
         p: p,

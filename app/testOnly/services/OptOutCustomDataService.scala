@@ -16,14 +16,14 @@
 
 package testOnly.services
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.services.DateServiceInterface
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json, OWrites, Writes}
-import services.DateServiceInterface
 import testOnly.models.{DataModel, Nino}
 import testOnly.utils.OptOutCustomDataUploadHelper
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}

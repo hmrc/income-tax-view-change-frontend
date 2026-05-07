@@ -16,7 +16,7 @@
 
 package models
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import enums.IncomeSourceJourney.SelfEmployment
 import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}

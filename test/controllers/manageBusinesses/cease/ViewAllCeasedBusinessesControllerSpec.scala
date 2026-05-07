@@ -16,12 +16,13 @@
 
 package controllers.manageBusinesses.cease
 
+import common.enums.MTDIndividual
+import common.implicits.ImplicitDateFormatter
+import common.services.DateServiceInterface
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.MTDIndividual
 import exceptions.MissingFieldException
-import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
@@ -31,7 +32,7 @@ import play.api
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{DateServiceInterface, SessionService}
+import services.SessionService
 import testConstants.BusinessDetailsTestConstants._
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}

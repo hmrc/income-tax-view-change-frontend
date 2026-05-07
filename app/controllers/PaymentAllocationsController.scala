@@ -16,15 +16,14 @@
 
 package controllers
 
-import audit.AuditingService
 import audit.models.PaymentAllocationsResponseAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch._
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.implicits.ImplicitDateFormatterImpl
+import common.services.AuditingService
 import enums.GatewayPage.GatewayPage
 import forms.utils.SessionKeys.gatewayPage
-import implicits.ImplicitDateFormatterImpl
 import models.admin.CreditsRefundsRepay
 import models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}

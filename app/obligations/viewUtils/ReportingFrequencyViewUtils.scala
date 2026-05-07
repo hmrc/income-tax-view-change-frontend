@@ -16,15 +16,15 @@
 
 package obligations.viewUtils
 
-import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.services.DateServiceInterface
 import models.admin.OptInOptOutContentUpdateR17
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, ITSAStatus, Mandated, Voluntary}
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import play.api.i18n.Messages
-import services.DateServiceInterface
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext

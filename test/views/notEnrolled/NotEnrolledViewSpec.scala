@@ -16,7 +16,7 @@
 
 package views.notEnrolled
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._

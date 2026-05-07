@@ -16,9 +16,9 @@
 
 package models.financialDetails
 
+import common.services.DateServiceInterface
 import models.financialDetails.FinancialDetail.Types.*
 import play.api.libs.json.{Format, Json}
-import services.DateServiceInterface
 
 import java.time.LocalDate
 

@@ -16,13 +16,12 @@
 
 package controllers.manageBusinesses.cease
 
-import audit.models.CeaseIncomeSourceAuditModel
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.Cease
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.UIJourneySessionData
+import models.{CeaseIncomeSourceAuditModel, UIJourneySessionData}
 import models.admin.NavBarFs
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData

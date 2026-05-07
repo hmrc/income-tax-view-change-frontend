@@ -32,10 +32,11 @@
 
 package connectors
 
-import audit.AuditingService
-import audit.models._
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import config.FrontendAppConfig
+import audit.models.*
+import common.config.FrontendAppConfig
+import common.models.audit.{AuditModel, ExtendedAuditModel, IncomeSourceDetailsResponseAuditModel}
+import common.models.auth.AuthorisedAndEnrolledRequest
+import common.services.AuditingService
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
@@ -46,7 +47,7 @@ import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

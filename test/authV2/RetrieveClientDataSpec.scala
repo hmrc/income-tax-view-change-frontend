@@ -16,12 +16,15 @@
 
 package authV2
 
-import auth.authV2.actions._
-import auth.authV2.models.AuthorisedAgentWithClientDetailsRequest
-import authV2.AuthActionsTestData._
-import config.AgentItvcErrorHandler
-import controllers.agent.sessionUtils.SessionKeys
-import enums.MTDPrimaryAgent
+import auth.authV2.actions.*
+import authV2.AuthActionsTestData.*
+import common.auth.actions.RetrieveClientData
+import common.config.AgentItvcErrorHandler
+import common.enums.MTDPrimaryAgent
+import common.models.auth.AuthorisedAgentWithClientDetailsRequest
+import common.services.SessionDataService
+import common.services.agent.ClientDetailsService
+import common.utils.session.SessionKeys
 import mocks.services.MockClientDetailsService
 import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
@@ -32,9 +35,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Result, Results}
-import play.api.test.Helpers._
-import services.SessionDataService
-import services.agent.ClientDetailsService
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 

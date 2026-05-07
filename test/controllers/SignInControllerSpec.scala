@@ -16,10 +16,11 @@
 
 package controllers
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.controllers.SignInController
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testUtils.TestSupport
 
 class SignInControllerSpec extends TestSupport {

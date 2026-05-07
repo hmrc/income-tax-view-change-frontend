@@ -16,8 +16,8 @@
 
 package controllers.claimToAdjustPoa
 
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.core.{CheckMode, NormalMode}

@@ -16,14 +16,14 @@
 
 @import forms.manageBusinesses.add.BusinessTradeForm
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
-@import views.html.components._
-@import views.html.helpers.injected.{ErrorSummary, InputHelper}
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.helpers.injected.{ErrorSummary, InputHelper}
+@import common.views.html.layouts.unifiedLayout
 
 
 @this(
         mainTemplate: unifiedLayout,
-        appConfig: config.FrontendAppConfig,
+        appConfig: common.config.FrontendAppConfig,
         h1: h1,
         h2: h2,
         p: p,

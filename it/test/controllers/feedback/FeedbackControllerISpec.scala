@@ -16,8 +16,8 @@
 
 package controllers.feedback
 
+import common.enums.{MTDIndividual, MTDPrimaryAgent}
 import controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDPrimaryAgent}
 import helpers.FeedbackConnectorStub
 import helpers.servicemocks.{MTDAgentAuthStub, MTDIndividualAuthStub}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

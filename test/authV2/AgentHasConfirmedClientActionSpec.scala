@@ -16,10 +16,10 @@
 
 package authV2
 
-import auth.authV2.actions.AgentHasConfirmedClientAction
-import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData._
-import enums.MTDSupportingAgent
+import common.auth.actions.AgentHasConfirmedClientAction
+import common.enums.MTDSupportingAgent
+import common.models.auth.AuthorisedAndEnrolledRequest
 import org.scalatest.Assertion
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder

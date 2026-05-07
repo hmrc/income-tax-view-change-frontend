@@ -16,8 +16,8 @@
 
 package views.manageBusinesses.manage
 
-import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
 import enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
 import enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
 import enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}

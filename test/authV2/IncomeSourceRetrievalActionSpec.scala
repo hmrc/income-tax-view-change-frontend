@@ -16,11 +16,11 @@
 
 package authV2
 
-import auth.MtdItUser
-import auth.authV2.actions.IncomeSourceRetrievalAction
 import authV2.AuthActionsTestData._
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import enums.{MTDIndividual, MTDPrimaryAgent}
+import common.auth.MtdItUser
+import common.auth.actions.IncomeSourceRetrievalAction
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.enums.{MTDIndividual, MTDPrimaryAgent}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion

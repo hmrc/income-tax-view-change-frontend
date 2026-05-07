@@ -16,13 +16,12 @@
 
 package controllers.manageBusinesses.manage
 
-import audit.models.ManageIncomeSourceCheckYourAnswersAuditModel
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ControllerISpecHelper
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
-import models.UIJourneySessionData
+import models.{ManageIncomeSourceCheckYourAnswersAuditModel, UIJourneySessionData}
 import models.admin.NavBarFs
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import models.updateIncomeSource.UpdateIncomeSourceResponseModel

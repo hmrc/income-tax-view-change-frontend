@@ -16,11 +16,11 @@
 
 package controllers.newHomePage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.services.DateServiceInterface
 import models.admin.RecentActivity
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
@@ -28,7 +28,7 @@ import models.itsaStatus.ITSAStatus
 import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService}
+import services.{ITSAStatusService, PaymentHistoryService}
 import services.newHomePage.RecentActivityService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

@@ -16,8 +16,8 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
 import models.core.AccountingPeriodModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
@@ -25,6 +25,8 @@ import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate
+import common.enums.AuditType
+import common.models.audit.ExtendedAuditModel
 
 
 case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
@@ -33,7 +35,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
   extends ExtendedAuditModel {
 
   override val transactionName: String = enums.TransactionName.PaymentAllocations
-  override val auditType: String = enums.AuditType.PaymentAllocations
+  override val auditType: String = AuditType.PaymentAllocations
 
   private def getTaxYearString(periodTo: LocalDate): String = {
     val taxYear = AccountingPeriodModel.determineTaxYearFromPeriodEnd(periodTo)

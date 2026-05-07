@@ -16,11 +16,12 @@
 
 package controllers.timeout
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.controllers.timeout.SessionTimeoutController
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testUtils.TestSupport
 
 class SessionTimeoutControllerSpec extends TestSupport {

@@ -16,10 +16,10 @@
 
 package controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.services.DateService
 import enums.AfterSubmissionPage
 import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -36,7 +36,7 @@ import services.manageBusinesses.IncomeSourceRFService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.{JourneyCheckerManageBusinesses, MtdConstants}
-import views.html.errorPages.templates.ErrorTemplate
+import common.views.html.errorPages.templates.ErrorTemplate
 import views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 
 import javax.inject.Inject

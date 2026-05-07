@@ -16,10 +16,10 @@
 
 package services.claimToAdjustPoa
 
-import audit.AuditingService
 import audit.models.AdjustPaymentsOnAccountAuditModel
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
 import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PoaAmendmentData, SelectYourReason}
 import models.core.Nino
 import models.nrs.{IdentityData, NrsMetadata, NrsSubmission, RawPayload, SearchKeys}
