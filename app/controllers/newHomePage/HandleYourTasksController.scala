@@ -80,15 +80,10 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) => handleYourTasks(origin, user.isAgent, nextUpdatesDueDates)
-      case Left(ex) =>
-        Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful(handleErrorGettingDueDates(user.isAgent))
-    }
+    handleYourTasks(origin, user.isAgent)
   }
 
-  private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean, nextUpdatesDueDates: Seq[LocalDate])
+  private def handleYourTasks(origin: Option[String] = None, isAgent: Boolean)
                              (implicit user: MtdItUser[_]): Future[Result] = {
     val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
 
@@ -129,8 +124,8 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
 
       val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel, isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus, penaltiesAndAppealsEnabled)
       
-      val overdueUpdatesCount = nextUpdatesDueDates.count(_.isBefore(dateService.getCurrentDate))
-      val nextUpdateDueDate = nextUpdatesDueDates.sortWith(_ isBefore _).headOption
+      val overdueUpdatesCount = dueDates.count(_.isBefore(dateService.getCurrentDate))
+      val nextUpdateDueDate = dueDates.sortWith(_ isBefore _).headOption
       
       if(user.isSupportingAgent) {
         auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, overdueUpdatesCount, nextUpdateDueDate, userIsCYPlusOne))
