@@ -70,6 +70,7 @@ case class OptOutTaxYearQuestionViewModel(taxYear: OptOutTaxYear,
   def showSecondParagraph: Boolean = optOutState match {
     case Some(OneYearOptOutFollowedByMandated)                 => false
     case Some(NextYearOptOut) if currentYearStatus == NoStatus => false
+    case Some(NextYearOptOut) if currentYearStatus == Annual   => false
     case Some(_)                                               => true
     case _                                                     => false
   }
