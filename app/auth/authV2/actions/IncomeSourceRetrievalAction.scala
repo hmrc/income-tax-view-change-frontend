@@ -19,18 +19,18 @@ package auth.authV2.actions
 import auth.MtdItUser
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import connectors.IncomeSourceConnector
 import controllers.BaseController
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
-import services.IncomeSourceDetailsService
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: IncomeSourceDetailsService)
+class IncomeSourceRetrievalAction @Inject()(val incomeSourceConnector: IncomeSourceConnector)
                                            (implicit val executionContext: ExecutionContext,
                                             val individualErrorHandler: ItvcErrorHandler,
                                             val agentErrorHandler: AgentItvcErrorHandler,
@@ -55,7 +55,7 @@ class IncomeSourceRetrievalAction @Inject()(val incomeSourceDetailsService: Inco
 
     implicit val req: AuthorisedAndEnrolledRequest[A] = request
 
-    incomeSourceDetailsService.getIncomeSourceDetails().map {
+    incomeSourceConnector.getIncomeSources().map {
       case response: IncomeSourceDetailsModel =>
         Right(MtdItUser(req.mtditId, response.nino, req.mtdUserRole, req.authUserDetails, req.clientDetails, response))
       case error: IncomeSourceDetailsError =>

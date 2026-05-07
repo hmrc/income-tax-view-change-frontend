@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.{business1, business1NoLatency, business2, ceasedBusiness}

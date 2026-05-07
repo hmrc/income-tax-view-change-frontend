@@ -38,7 +38,6 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
 
   def getITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)
                          (implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] = {
-
     val itsaURL = getITSAStatusDetailUrl(nino, taxYear, futureYears, history)
     http.get(url"$itsaURL")
       .transform(_.addHttpHeaders("Accept" -> "application/vnd.hmrc.2.0+json"))

@@ -17,7 +17,7 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.services.MockITSAStatusService
@@ -42,7 +42,6 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
     .overrides(
       api.inject.bind[ConfirmClientUTRView].toInstance(mockConfirmClient),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 

@@ -20,11 +20,13 @@ import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import businessDetails.mocks.services.{MockCustomerFactsUpdateService, MockIncomeSourceDetailsService}
+import config.featureswitch.FeatureSwitching
+import connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import mocks.connectors.MockIncomeTaxCalculationConnector
+import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
 import mocks.services.admin.MockFeatureSwitchService
-import mocks.services.*
+import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
@@ -41,18 +43,18 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 import services.admin.FeatureSwitchService
+import org.scalatestplus.mockito.MockitoSugar.mock => sMock
+import businessDetails.services.{CustomerFactsUpdateService, IncomeSourceDetailsService}
+import scala.concurrent.Future
 import services.agent.ClientDetailsService
-import services.{CustomerFactsUpdateService, DateServiceInterface, IncomeSourceDetailsService, SessionDataService}
+import services.{DateServiceInterface, SessionDataService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
-
 import java.time.Instant
-import scala.concurrent.Future
 
 trait MockAuthActions
   extends TestSupport
@@ -64,9 +66,10 @@ trait MockAuthActions
     with MockSessionDataService
     with MockClientDetailsService
     with MockCustomerFactsUpdateService
+    with MockFeatureSwitchService
     with MockITSAStatusService
     with MockIncomeTaxCalculationConnector
-    with MockFeatureSwitchService {
+    with MockIncomeSourceConnector {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -74,6 +77,7 @@ trait MockAuthActions
     reset(mockAuthService)
     reset(mockFAF)
     reset(mockCustomerFactsUpdateService)
+    reset(mockIncomeSourceDetailsService)
   }
 
   override def afterEach() = {
@@ -84,15 +88,14 @@ trait MockAuthActions
   lazy val mockFAF: FrontendAuthorisedFunctions = mock(classFAF)
   
   lazy val mockItsaStatusConnector = sMock[ITSAStatusConnector]
-  lazy val mockBusinessDetailsConnector = sMock[BusinessDetailsConnector]
   lazy val mockDateServiceInterface = sMock[DateServiceInterface]
 
   lazy val applicationBuilderWithAuthBindings: GuiceApplicationBuilder = {
     new GuiceApplicationBuilder()
       .overrides(
         api.inject.bind[FrontendAuthorisedFunctions].toInstance(mockFAF),
-        api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService),
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
+        api.inject.bind[IncomeSourceConnector].toInstance(mockIncomeSourceConnector),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
         api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService),
@@ -138,7 +141,7 @@ trait MockAuthActions
       )
     )
 
-    when(mockBusinessDetailsConnector.getIncomeSources()(any(), any()))
+    when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
       .thenReturn(Future.successful(incomeSourceDetailsModel))
 
     when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))

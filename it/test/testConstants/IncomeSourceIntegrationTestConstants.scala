@@ -16,9 +16,9 @@
 
 package testConstants
 
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
-import enums.IncomeSourceJourney.SelfEmployment
 import enums.JourneyType.IncomeSourceJourneyType
 import models.UIJourneySessionData
 import models.incomeSourceDetails._

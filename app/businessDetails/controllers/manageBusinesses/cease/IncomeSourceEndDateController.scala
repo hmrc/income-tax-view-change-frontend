@@ -20,9 +20,7 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
-import enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
 
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
@@ -33,13 +31,15 @@ import play.api.mvc._
 import services.{DateService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.cease.IncomeSourceEndDateView
+import businessDetails.views.html.manageBusinesses.cease.IncomeSourceEndDateView
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import businessDetails.forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
+import businessDetails.utils.JourneyCheckerManageBusinesses
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,

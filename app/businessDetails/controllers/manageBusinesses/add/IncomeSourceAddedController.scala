@@ -20,9 +20,11 @@ import auth.MtdItUser
 import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import businessDetails.services.IncomeSourceDetailsService
+import businessDetails.utils.JourneyCheckerManageBusinesses
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.IncomeSourceJourney.IncomeSourceType
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.core.IncomeSourceId
@@ -33,8 +35,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.JourneyCheckerManageBusinesses
-import views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
+import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 
 import java.time.LocalDate
 import javax.inject.Inject

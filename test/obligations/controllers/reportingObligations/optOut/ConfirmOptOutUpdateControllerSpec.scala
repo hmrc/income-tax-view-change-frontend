@@ -16,7 +16,7 @@
 
 package obligations.controllers.reportingObligations.optOut
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import connectors.{ITSAStatusConnector}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
@@ -48,7 +48,6 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
       api.inject.bind[OptOutService].toInstance(mockOptOutService),
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
