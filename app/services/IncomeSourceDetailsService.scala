@@ -253,8 +253,6 @@ class IncomeSourceDetailsService @Inject()(
           )
           startDate <- newlyAddedProperty.tradingStartDate
         } yield IncomeSourceFromUser(startDate, None)
-      case _ =>
-        None
     }
   }
 
@@ -279,8 +277,6 @@ class IncomeSourceDetailsService @Inject()(
       case SelfEmployment => incomeSourceDetailsModel.businesses.flatMap(_.latencyDetails).headOption
       case UkProperty => incomeSourceDetailsModel.getUKProperty.flatMap(_.latencyDetails)
       case ForeignProperty => incomeSourceDetailsModel.getForeignProperty.flatMap(_.latencyDetails)
-      case _ => None
     }
   }
 }
-

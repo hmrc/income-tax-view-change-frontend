@@ -41,16 +41,20 @@ import config.featureswitch.FeatureSwitching
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.EmptyPredicate
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
+// Added @nowarn annotation to suppress compiler warning on line 75. As the filed name from Retrieval had been deprecated since 2024-02-26. But we are still using it.
+// https://github.com/hmrc/auth-client/blob/4ab64507528f7e5e4200eca6d01f6ddc6aa3b269/src-common/main/scala/uk/gov/hmrc/auth/core/retrieve/v2/Retrievals.scala#L54-L56
+@nowarn("cat=deprecation")
 @Singleton
 class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val appConfig: FrontendAppConfig,

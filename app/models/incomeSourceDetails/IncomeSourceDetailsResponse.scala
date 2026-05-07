@@ -165,7 +165,6 @@ case class IncomeSourceDetailsModel(
       case SelfEmployment => getSoleTraderBusiness(id).flatMap(_.latencyDetails)
       case UkProperty => getUKProperty.flatMap(_.latencyDetails)
       case ForeignProperty => getForeignProperty.flatMap(_.latencyDetails)
-      case _ => None
     }
   }
 

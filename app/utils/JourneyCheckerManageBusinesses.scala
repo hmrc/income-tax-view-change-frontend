@@ -74,8 +74,6 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
           Future.successful {
             Redirect(ceaseBusinessesRoutes.IncomeSourceCeasedBackErrorController.show(incomeSources.businessType))
           }
-        case (e, _, _) =>
-          throw new Exception(s"Invalid operation found: ${e.operationType}")
       }
     }
 
