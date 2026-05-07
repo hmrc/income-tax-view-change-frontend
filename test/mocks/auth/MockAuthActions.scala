@@ -25,7 +25,9 @@ import config.featureswitch.FeatureSwitching
 import connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
+import mocks.services.admin.MockFeatureSwitchService
 import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
@@ -41,8 +43,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
+import services.admin.FeatureSwitchService
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
-
 import businessDetails.services.{CustomerFactsUpdateService, IncomeSourceDetailsService}
 import scala.concurrent.Future
 import services.agent.ClientDetailsService
@@ -64,6 +66,7 @@ trait MockAuthActions
     with MockSessionDataService
     with MockClientDetailsService
     with MockCustomerFactsUpdateService
+    with MockFeatureSwitchService
     with MockITSAStatusService
     with MockIncomeTaxCalculationConnector
     with MockIncomeSourceConnector {

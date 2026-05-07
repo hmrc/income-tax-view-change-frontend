@@ -44,6 +44,7 @@ import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import models.itsaStatus.StatusDetail
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 
