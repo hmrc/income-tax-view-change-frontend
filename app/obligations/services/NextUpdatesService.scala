@@ -43,8 +43,8 @@ class NextUpdatesService @Inject()(
                                     val obligationsConnector: ObligationsConnector
                                   )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
 
-  def getDueDates()(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
-    getOpenObligations().map {
+  def getDueDates(openObligations: Option[Future[ObligationsResponseModel]] = None)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[Either[Exception, Seq[LocalDate]]] = {
+    openObligations.getOrElse(getOpenObligations()).map {
       case deadlines: ObligationsModel if !deadlines.obligations.forall(_.obligations.isEmpty) =>
         Right(deadlines.obligations.flatMap(_.obligations.map(_.due)))
       case ObligationsModel(obligations) if obligations.isEmpty || obligations.forall(_.obligations.isEmpty) =>
@@ -152,8 +152,8 @@ class NextUpdatesService @Inject()(
     processingRes
   }
 
-  def getNextDueDates()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
-    getOpenObligations().map {
+  def getNextDueDates(openObligations: Option[Future[ObligationsResponseModel]] = None)(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
+    openObligations.getOrElse(getOpenObligations()).map {
       case ObligationsModel(obligations) =>
         val openObligations = obligations.flatMap(_.obligations)
 

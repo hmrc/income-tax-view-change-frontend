@@ -22,17 +22,17 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.admin.{PaymentHistoryRefunds, RecentActivity}
-import models.admin.RecentActivity
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService}
 import services.newHomePage.RecentActivityService
+import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.HomePageUtils
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,10 +42,11 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
                                          recentActivityService: RecentActivityService,
                                          paymentHistoryService: PaymentHistoryService,
                                          val ITSAStatusService: ITSAStatusService,
-                                         val dateService: DateServiceInterface)
+                                         val dateService: DateServiceInterface,
+                                         val whatYouOweService: WhatYouOweService)
                                         (implicit val ec: ExecutionContext,
                                          mcc: MessagesControllerComponents,
-                                         val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                         val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with HomePageUtils {
 
   def show(isAgent: Boolean, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
@@ -108,9 +109,5 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
           .getOrElse(ITSAStatus.NoStatus)
       }
   }
-
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = routes.RecentActivityController.show(isAgent, origin).url
-  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
-  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
+  
 }

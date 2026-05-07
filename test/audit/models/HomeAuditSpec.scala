@@ -112,7 +112,9 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             currentYearITSAStatus = ITSAStatus.NoStatus,
             nextQuarterlyUpdateDueDate = None,
             nextTaxReturnDueDate = None)
-          HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
+          HomeAudit.applySupportingAgent(user,
+            nextDetailsTile.getNumberOfOverdueObligations,
+            nextDetailsTile.getNextDeadline).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
             "nextUpdateDeadline" -> fixedDate.toString
           )
         }
@@ -125,7 +127,12 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
             currentYearITSAStatus = ITSAStatus.NoStatus,
             nextQuarterlyUpdateDueDate = None,
             nextTaxReturnDueDate = None)
-          HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
+
+          HomeAudit.applySupportingAgent(
+            user,
+            nextDetailsTile.getNumberOfOverdueObligations,
+            nextDetailsTile.getNextDeadline
+          ).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
             "nextUpdateDeadline" -> fixedDate.toString
           )
         }
@@ -139,7 +146,11 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
           currentYearITSAStatus = ITSAStatus.NoStatus,
           nextQuarterlyUpdateDueDate = None,
           nextTaxReturnDueDate = None)
-        HomeAudit.applySupportingAgent(user, nextDetailsTile).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
+        HomeAudit.applySupportingAgent(
+          user,
+          nextDetailsTile.getNumberOfOverdueObligations,
+          nextDetailsTile.getNextDeadline
+        ).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
           "overdueUpdates" -> 2
         )
       }
