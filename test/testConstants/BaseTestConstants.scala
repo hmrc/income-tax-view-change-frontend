@@ -117,6 +117,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testPaymentLotItem = "000001"
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
   val testErrorNotFoundStatus: Int = Status.NOT_FOUND
+  val testBadRequestStatus: Int = Status.BAD_REQUEST
   val testErrorMessage = "Dummy Error Message"
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
