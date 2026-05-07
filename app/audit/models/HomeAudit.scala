@@ -16,17 +16,16 @@
 
 package audit.models
 
-import audit.Utilities.*
+import audit.Utilities._
 import auth.MtdItUser
 import models.homePage.NextUpdatesTileViewModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate
 
-case class HomeAudit(mtdItUser: MtdItUser[?],
+case class HomeAudit(mtdItUser: MtdItUser[_],
                      nextPaymentOrOverdue: Option[Either[(LocalDate, Boolean), Int]],
-                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int],
-                     userIsCYPlusOne: Boolean) extends ExtendedAuditModel {
+                     nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int]) extends ExtendedAuditModel {
 
   private val paymentsInformation: JsObject = nextPaymentOrOverdue match {
     case Some(Right(count)) => Json.obj("overduePayments" -> count)
@@ -43,8 +42,7 @@ case class HomeAudit(mtdItUser: MtdItUser[?],
 
   override val detail: JsValue = Json.obj(
     "mtditid" -> mtdItUser.mtditid,
-    "nino" -> mtdItUser.nino,
-    "userIsCYPlusOne" -> userIsCYPlusOne
+    "nino" -> mtdItUser.nino
   ) ++ userType(mtdItUser.userType, mtdItUser.isSupportingAgent) ++ paymentsInformation ++ updatesInformation ++
     Json.obj("saUtr"-> mtdItUser.saUtr) ++
     Json.obj("credId"-> mtdItUser.credId) ++
@@ -55,11 +53,10 @@ case class HomeAudit(mtdItUser: MtdItUser[?],
 }
 
 object HomeAudit {
-  def apply(mtdItUser: MtdItUser[?],
+  def apply(mtdItUser: MtdItUser[_],
             nextPaymentDueDate: Option[LocalDate],
             overduePaymentsCount: Int,
-            nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-            userIsCYPlusOne: Boolean): HomeAudit = {
+            nextUpdatesTileViewModel: NextUpdatesTileViewModel): HomeAudit = {
 
     val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations
     val nextUpdateDueDate: Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
@@ -81,14 +78,12 @@ object HomeAudit {
     HomeAudit(
       mtdItUser,
       nextPaymentOrOverdue = nextPaymentOrOverdue,
-      nextUpdateOrOverdue = nextUpdateOrOverdue,
-      userIsCYPlusOne = userIsCYPlusOne
+      nextUpdateOrOverdue = nextUpdateOrOverdue
     )
   }
 
-  def applySupportingAgent(mtdItUser: MtdItUser[?],
-                           nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-                           userIsCYPlusOne: Boolean): HomeAudit = {
+  def applySupportingAgent(mtdItUser: MtdItUser[_],
+                           nextUpdatesTileViewModel: NextUpdatesTileViewModel): HomeAudit = {
     val overdueUpdatesCount: Int = nextUpdatesTileViewModel.getNumberOfOverdueObligations
     val nextUpdateDueDate: Option[LocalDate] = nextUpdatesTileViewModel.getNextDeadline
     val nextUpdateOrOverdue: Either[(LocalDate, Boolean), Int] = {
@@ -101,8 +96,7 @@ object HomeAudit {
     HomeAudit(
       mtdItUser,
       nextPaymentOrOverdue = None,
-      nextUpdateOrOverdue = nextUpdateOrOverdue,
-      userIsCYPlusOne = userIsCYPlusOne
+      nextUpdateOrOverdue = nextUpdateOrOverdue
     )
   }
 }
