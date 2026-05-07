@@ -17,12 +17,13 @@
 package views
 
 import config.FrontendAppConfig
+import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testUtils.ViewSpec
 import views.html.TaxYearsView
 
@@ -40,20 +41,38 @@ class TaxYearsViewSpec extends ViewSpec {
   val currentTaxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.currentTaxYear", year, yearPlusOne)}"
   val taxYear: (String, String) => String = (year, yearPlusOne) => s"${messages("taxYears.taxYears", year, yearPlusOne)}"
 
-  class TestSetup(calcs: List[Int],
-              itsaSubmissionFeatureSwitch: Boolean = false,
-              isPostFinalisationAmendmentR18Enabled: Boolean = false,
-              utr: Option[String] = None, isAgent: Boolean = false) {
+  class TestSetup(
+                    calcs: List[Int],
+                    itsaSubmissionFeatureSwitch: Boolean = false,
+                    isPostFinalisationAmendmentR18Enabled: Boolean = false,
+                    utr: Option[String] = None,
+                    isAgent: Boolean = false,
+                    isErrorContent: Boolean = false
+                 ) {
     lazy val page: HtmlFormat.Appendable =
-      taxYearsView(taxYears = calcs,
+      taxYearsView(
+        taxYears = calcs,
         backUrl = "testBackURL",
         utr = utr,
         itsaSubmissionIntegrationEnabled = itsaSubmissionFeatureSwitch,
         isPostFinalisationAmendmentR18Enabled = isPostFinalisationAmendmentR18Enabled,
         earliestSubmissionTaxYear = 2023,
-        isAgent = isAgent)(FakeRequest(), implicitly)
+        isAgent = isAgent,
+        errorTaxYear = if (isErrorContent) Some(TaxYear.getCYPlusOneTaxYear) else None
+      )(FakeRequest(), implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
+  }
+  object pageContent {
+    val title: String = "Your tax returns - Manage your Self Assessment - GOV.UK"
+
+    val errorHeading: String = "Your tax returns"
+    val errorSubheading: String = "Your tax return information cannot currently be displayed here"
+    val errorPreLinkText: String = s"To see information from before the ${TaxYear.getCYPlusOneTaxYear.startYear} to ${TaxYear.getCYPlusOneTaxYear.endYear} tax year, you need to visit your previous"
+    val errorLinkTest: String = "Self Assessment online account (opens in new tab)."
+    val agentErrorLinkText: String = "Self Assessment for Agents account (opens in new tab)."
+    val errorAgentPreLinkText: String = s"To see information from before the ${TaxYear.getCYPlusOneTaxYear.startYear} to ${TaxYear.getCYPlusOneTaxYear.endYear} tax year, you need to log in to your"
+    val errorAgentPostLinkText: String = "This will be a different Government Gateway ID and password to your Agent Services account."
   }
 
   "individual" when {
@@ -185,6 +204,13 @@ class TaxYearsViewSpec extends ViewSpec {
       }
     }
 
+    "Display the Individuals error content for CY+1 users" in new TestSetup(List(), isAgent = false, isErrorContent = true, utr = Some("1234567890")) {
+      document.title shouldBe pageContent.title
+      document.getElementById("heading").text shouldBe pageContent.errorHeading
+      document.getElementById("error-subHeading").text shouldBe pageContent.errorSubheading
+      assert(document.getElementById("error-content").text.contains(pageContent.errorPreLinkText))
+      assert(document.getElementById("error-content").text.contains(pageContent.errorLinkTest))
+    }
   }
 
   "agent" when {
@@ -199,6 +225,15 @@ class TaxYearsViewSpec extends ViewSpec {
         "https://www.gov.uk/guidance/self-assessment-for-agents-online-service"
       )
 
+    }
+
+    "Display the Agents error content for CY+1 users" in new TestSetup(List(), isAgent = true, isErrorContent = true) {
+      document.title shouldBe pageContent.title
+      document.getElementById("heading").text shouldBe pageContent.errorHeading
+      document.getElementById("error-subHeading").text shouldBe pageContent.errorSubheading
+      assert(document.getElementById("agent-error-content").text.contains(pageContent.errorAgentPreLinkText))
+      assert(document.getElementById("agent-error-content").text.contains(pageContent.agentErrorLinkText))
+      assert(document.getElementById("agent-error-content").text.contains(pageContent.errorAgentPostLinkText))
     }
   }
 }
