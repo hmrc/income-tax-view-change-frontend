@@ -20,11 +20,12 @@ import audit.AuditingService
 import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
-import config.featureswitch.FeatureSwitching
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.MockIncomeTaxCalculationConnector
-import mocks.services.{MockClientDetailsService, MockCustomerFactsUpdateService, MockITSAStatusService, MockIncomeSourceDetailsService, MockSessionDataService}
+import mocks.services.admin.MockFeatureSwitchService
+import mocks.services.*
+import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
@@ -41,8 +42,7 @@ import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
-
-import scala.concurrent.Future
+import services.admin.FeatureSwitchService
 import services.agent.ClientDetailsService
 import services.{CustomerFactsUpdateService, DateServiceInterface, IncomeSourceDetailsService, SessionDataService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
@@ -50,7 +50,9 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusine
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
+
 import java.time.Instant
+import scala.concurrent.Future
 
 trait MockAuthActions
   extends TestSupport
@@ -62,9 +64,9 @@ trait MockAuthActions
     with MockSessionDataService
     with MockClientDetailsService
     with MockCustomerFactsUpdateService
-    with FeatureSwitching
     with MockITSAStatusService
-    with MockIncomeTaxCalculationConnector {
+    with MockIncomeTaxCalculationConnector
+    with MockFeatureSwitchService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -93,11 +95,13 @@ trait MockAuthActions
         api.inject.bind[AuditingService].toInstance(mockAuditingService),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
-        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService)
+        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService),
+        api.inject.bind[FeatureSwitchService].toInstance(mockFeatureSwitchService)
       )
+      .configure(Map("feature-switches.read-from-mongo" -> true))
   }
 
-  def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false): Unit = {
+  def setupMockSuccess(mtdUserRole: MTDUserRole, withNrs: Boolean = false, enabledFeatures: List[FeatureSwitchName] = List()): Unit = {
     if (withNrs) {
       mtdUserRole match {
         case MTDIndividual => setupMockUserAuthWithNrs
@@ -111,6 +115,7 @@ trait MockAuthActions
         case _ => setupMockAgentWithClientAuth(true)
       }
     }
+    setupMockFeatureSwitches(enabledFeatures*)
   }
 
   def mockItsaStatusRetrievalAction(
@@ -163,7 +168,6 @@ trait MockAuthActions
         submissionChannel = None
       )))
   }
-
 
   def setupMockUserAuth: Unit = {
     val allEnrolments = getAllEnrolmentsIndividual(hasNino = true, hasSA = true)

@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.IncomeSourceNotAddedController
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.MTDIndividual
@@ -32,7 +32,6 @@ import services.{CreateBusinessDetailsService, DateServiceInterface}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, foreignPropertyIncome, ukPropertyIncome}
 
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
 

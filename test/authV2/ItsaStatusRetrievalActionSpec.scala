@@ -61,7 +61,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
   lazy val agentErrorHandler =
     app.injector.instanceOf[AgentItvcErrorHandler]
 
-  def actionWithSwitch(enabledSwitches: Set[FeatureSwitchName]) = 
+  def actionWithSwitch(enabledSwitches: Set[FeatureSwitchName]) =
     new ItsaStatusRetrievalAction(
       appConfig,
       mockItsaStatusConnector,
@@ -170,7 +170,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       }
 
       "return an MtdItUser when valid ITSA status exists for current and future years" in {
-        
+
         val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
 
         val itsaStatusResponses = List(

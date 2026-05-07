@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.AddIncomeSourceController
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
@@ -75,7 +74,6 @@ class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFor
 
         "render the add income source page with no tables or table paragraph text" when {
           "user has no businesses or properties" in {
-            disableAllSwitches()
             mockNoIncomeSources()
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()

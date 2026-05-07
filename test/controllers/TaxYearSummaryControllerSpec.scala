@@ -405,8 +405,7 @@ class TaxYearSummaryControllerSpec
               }
 
               "FilterCodedOutPoas FS is enabled and there are some not coded out" in {
-                enable(FilterCodedOutPoas)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(FilterCodedOutPoas))
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = None))
@@ -498,8 +497,7 @@ class TaxYearSummaryControllerSpec
               }
 
               "FilterCodedOutPoas FS is enabled and POA charges are coded out" in {
-                enable(FilterCodedOutPoas)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(FilterCodedOutPoas))
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
@@ -563,9 +561,7 @@ class TaxYearSummaryControllerSpec
             "Penalties in the charges table" when {
 
               "the user has penalties and the penalties FS is enabled" in {
-
-                enable(PenaltiesAndAppeals)
-                setupMockSuccess(mtdUserRole)
+                setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAllThreePenalties)
@@ -607,7 +603,6 @@ class TaxYearSummaryControllerSpec
             "Not show penalties in the charges table" when {
 
               "the penalties FS is disabled" in {
-                disable(PenaltiesAndAppeals)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
@@ -941,8 +936,6 @@ class TaxYearSummaryControllerSpec
 
             "show the Tax Year Summary Page with error messages" when {
               "liability Calculation has error messages" in {
-
-                disable(NavBarFs)
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 setupMockGetPoaTaxYearForEntryPointCall(Right(None))
@@ -1087,9 +1080,7 @@ class TaxYearSummaryControllerSpec
             }
 
             "user has a second late payment penalty without a chargeReference, so url cannot be generated" in {
-
-              enable(PenaltiesAndAppeals)
-              setupMockSuccess(mtdUserRole)
+              setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
               mockLatestAndPreviousSuccess(testMtditid)
               mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithLPP2NoChargeRef)

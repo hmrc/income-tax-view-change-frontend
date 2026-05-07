@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.ManageObligationsController
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.*
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
@@ -40,7 +40,6 @@ import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import utils.IncomeSourcesUtils
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -164,9 +163,7 @@ class ManageObligationsControllerSpec
         s"the user is authenticated as a $mtdRole" should {
 
           "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
-
-            enable(OptInOptOutContentUpdateR17)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
             mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))

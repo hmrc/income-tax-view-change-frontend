@@ -19,7 +19,6 @@ package controllers.newHomePage
 import auth.authV2.AuthActions
 import controllers.HomeController
 import controllers.agent.sessionUtils.SessionKeys
-import controllers.newHomePage.HandleYourTasksController
 import mocks.auth.MockAuthActions
 import mocks.services.*
 import models.financialDetails.*
@@ -146,7 +145,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
   }
@@ -154,6 +152,7 @@ class HandleYourTasksControllerSpec extends MockAuthActions
   "show()" when {
     "an authenticated use" should {
       "render the Handle your tasks page with a Your tasks tab open" in new Setup {
+        setupMockFeatureSwitches()
         setupMockUserAuth
         mockItsaStatusRetrievalAction()
         val financialDetails = List(FinancialDetailsModel(

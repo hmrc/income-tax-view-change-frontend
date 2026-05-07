@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.SelfEmployment
 import enums.MTDIndividual
@@ -39,7 +39,6 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessInc
 
 import scala.annotation.unused
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -82,8 +81,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
         "display the ChooseSoleTraderAddress page when OverseasBusinessAddress FS is enabled" when {
 
           "user has active UK business addresses" in {
-            enable(OverseasBusinessAddress)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
             mockNoIncomeSources()
             val result = action(fakeRequest)
@@ -95,8 +93,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             status(result) shouldBe OK
           }
           "user has an active international business address" in {
-            enable(OverseasBusinessAddress)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
             mockItsaStatusRetrievalAction(businessInternational)
             mockNoIncomeSources()
             val result = action(fakeRequest)
@@ -112,7 +109,6 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
         "redirect to the homepage" when {
 
           "OverseasBusinessAddress FS is disabled" in {
-            disable(OverseasBusinessAddress)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
             mockNoIncomeSources()
@@ -139,9 +135,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
         s"return 303: reload the page" when {
 
           "existing address selected" in {
-
-            enable(OverseasBusinessAddress)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
 
             when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any()))
@@ -169,9 +163,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
           }
 
           "new address selected" in {
-
-            enable(OverseasBusinessAddress)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
             mockItsaStatusRetrievalAction(businessIncome2018and2019AndProp)
 
             mockNoIncomeSources()

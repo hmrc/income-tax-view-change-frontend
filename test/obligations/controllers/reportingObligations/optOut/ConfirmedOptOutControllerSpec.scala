@@ -67,10 +67,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
       s"the user is authenticated as a $mtdRole" should {
 
         "render the Confirmed page" in {
-
-          enable(OptOutFs)
-
-          setupMockSuccess(mtdRole)
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockOptOutConfirmedPageViewModel(eligibleTaxYearResponse)
@@ -105,8 +102,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
         s"redirect to cannot-go-back page" when {
           "there is no tax year eligible for opt out" in {
-            enable(OptOutFs)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptOutFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(noEligibleTaxYearResponse)
@@ -140,8 +136,7 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
           }
 
           "opt out service fails" in {
-            enable(OptOutFs)
-            setupMockSuccess(mtdRole)
+            setupMockSuccess(mtdRole, false, List(OptOutFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockOptOutConfirmedPageViewModel(failedResponse)
@@ -163,8 +158,6 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
 
         "redirect to the home page" when {
           "the opt out feature switch is disabled" in {
-            disable(OptOutFs)
-
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)

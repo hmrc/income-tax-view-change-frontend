@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.DeclareIncomeSourceCeasedController
+import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
@@ -37,7 +37,6 @@ import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
-import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 
 class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -108,7 +107,6 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             "journey is complete" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              disableAllSwitches()
               mockBothPropertyBothBusiness()
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))

@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import auth.authV2.AuthActions
-import businessDetails.controllers.manageBusinesses.add.IncomeSourceAddedController
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
 import enums.IncomeSourceJourney.*
@@ -454,8 +453,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                taxYear2 = year2019.toString,
                latencyIndicator2 = "Q"
              )
-
-           disableAllSwitches()
+           
            setupMockSuccess(MTDIndividual)
            mockItsaStatusRetrievalAction(businessIncome)
 
@@ -518,7 +516,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDIndividual)
             mockItsaStatusRetrievalAction()
 
@@ -585,7 +582,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "A"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDIndividual)
             mockItsaStatusRetrievalAction()
 
@@ -652,7 +648,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDIndividual)
             mockItsaStatusRetrievalAction()
 
@@ -719,7 +714,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDIndividual)
             mockItsaStatusRetrievalAction()
 
@@ -789,7 +783,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDIndividual)
             mockItsaStatusRetrievalAction()
 
@@ -857,7 +850,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDIndividual)
             mockItsaStatusRetrievalAction()
 
@@ -922,7 +914,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDIndividual)
             mockItsaStatusRetrievalAction()
 
@@ -1000,7 +991,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
             mockItsaStatusRetrievalAction(businessIncome)
 
@@ -1065,7 +1055,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1132,7 +1121,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "A"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1199,7 +1187,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1266,7 +1253,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1336,7 +1322,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1404,7 +1389,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1468,7 +1452,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDPrimaryAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1542,7 +1525,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1609,7 +1591,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "A"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1676,7 +1657,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1743,7 +1723,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1813,7 +1792,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1881,7 +1859,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
             mockItsaStatusRetrievalAction()
 
@@ -1946,7 +1923,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
                 latencyIndicator2 = "Q"
               )
 
-            disableAllSwitches()
             setupMockSuccess(MTDSupportingAgent)
             mockItsaStatusRetrievalAction()
 

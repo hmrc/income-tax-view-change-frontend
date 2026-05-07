@@ -16,9 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.IncomeSourceCeasedObligationsController
-import enums.IncomeSourceJourney.*
 import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import enums.IncomeSourceJourney.*
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
@@ -26,7 +25,7 @@ import mocks.services.{MockDateService, MockNextUpdatesService, MockSessionServi
 import models.UIJourneySessionData
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import obligations.models.{GroupedObligationsModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
+import obligations.models.*
 import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
@@ -199,7 +198,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
     reset(mockIncomeSourceDetailsService)
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
-    disableAllSwitches()
   }
 
   val incomeSourceTypes = List(SelfEmployment, UkProperty, ForeignProperty)
