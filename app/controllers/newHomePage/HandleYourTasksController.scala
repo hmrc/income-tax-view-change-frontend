@@ -113,7 +113,6 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     } yield {
 
       val mandation = currentItsaStatus == ITSAStatus.Mandated
-      val userIsCYPlusOne = currentItsaStatus == ITSAStatus.NoStatus
 
       val creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay)
       val penaltiesAndAppealsEnabled = isEnabled(PenaltiesAndAppeals)
@@ -127,15 +126,14 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       val nextUpdateDueDate = dueDates.sortWith(_ isBefore _).headOption
       
       if(user.isSupportingAgent) {
-        auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, overdueUpdatesCount, nextUpdateDueDate, userIsCYPlusOne))
+        auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, overdueUpdatesCount, nextUpdateDueDate))
       } else {
         auditingService.extendedAudit(HomeAudit(
           mtdItUser = user,
           nextPaymentDueDate = paymentsDueMerged,
           overduePaymentsCount = overDuePaymentsCount,
           overdueUpdatesCount = overdueUpdatesCount,
-          nextUpdateDueDate = nextUpdateDueDate,
-          userIsCYPlusOne = userIsCYPlusOne
+          nextUpdateDueDate = nextUpdateDueDate
         ))
       }
 

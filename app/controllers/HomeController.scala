@@ -126,7 +126,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
 
-      auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel.getNumberOfOverdueObligations, nextUpdatesTileViewModel.getNextDeadline, userIsCYPlusOne))
+      auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel.getNumberOfOverdueObligations, nextUpdatesTileViewModel.getNextDeadline))
 
       Ok(
         supportingAgentHomeView(
@@ -215,8 +215,7 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
               paymentsDueMerged,
               overDuePaymentsCount,
               nextUpdatesTileViewModel.getNumberOfOverdueObligations,
-              nextUpdatesTileViewModel.getNextDeadline,
-              userIsCYPlusOne
+              nextUpdatesTileViewModel.getNextDeadline
             )
           )
 
