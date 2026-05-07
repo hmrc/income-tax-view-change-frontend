@@ -140,5 +140,9 @@ object TaxYear {
     }
   }
 
+  def getCYPlusOneTaxYear(implicit dateService: DateServiceInterface): TaxYear = {
+    getTaxYear(dateService.getCurrentDate).nextYear
+  }
+
 }
 
