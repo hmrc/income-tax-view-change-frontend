@@ -21,7 +21,6 @@ import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
 import businessDetails.mocks.services.{MockCustomerFactsUpdateService, MockIncomeSourceDetailsService}
-import config.featureswitch.FeatureSwitching
 import connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}

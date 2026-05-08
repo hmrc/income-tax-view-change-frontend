@@ -17,9 +17,8 @@
 package authV2
 
 import audit.AuditingService
-import businessDetails.services.IncomeSourceDetailsService
 import config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
-import connectors.{BusinessDetailsConnector, IncomeSourceConnector}
+import connectors.IncomeSourceConnector
 import controllers.bta.BtaNavBarController
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures

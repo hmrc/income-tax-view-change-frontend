@@ -16,7 +16,6 @@
 
 package businessDetails.forms.manageBusinesses.add
 
-import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import testUtils.TestSupport

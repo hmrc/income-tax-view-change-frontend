@@ -16,7 +16,6 @@
 
 package businessDetails.forms.triggeredMigration
 
-import businessDetails.forms.triggeredMigration.CheckActiveBusinessesConfirmForm
 import play.api.data.Form
 import testUtils.TestSupport
 

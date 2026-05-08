@@ -18,11 +18,12 @@ package obligations.models.reportingObligations
 
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Voluntary, isExemptionStatus, isNonExemptStatus}
-import services.DateServiceInterface
-import obligations.controllers.reportingObligations.optOut.{routes => optOutRoutes}
-import obligations.controllers.reportingObligations.signUp.{routes => signUpRoutes}
-import obligations.enums.ReportingObligations.{MultiYearCard, NoCard, ReportingObligationSummaryCardState, SingleYearCard}
+import obligations.controllers.reportingObligations.optOut.routes as optOutRoutes
+import obligations.controllers.reportingObligations.signUp.routes as signUpRoutes
+import obligations.enums.ReportingObligations.ReportingObligationSummaryCardState
+import obligations.enums.ReportingObligations.ReportingObligationSummaryCardState.{MultiYearCard, NoCard, SingleYearCard}
 import obligations.services.reportingObligations.optOut.OptOutProposition
+import services.DateServiceInterface
 
 case class ReportingFrequencyViewModel(
                                         isAgent: Boolean,

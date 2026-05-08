@@ -16,7 +16,6 @@
 
 package businessDetails.forms.manageBusinesses.add
 
-import businessDetails.forms.manageBusinesses.add.{AddProprertyForm, IsTheNewAddressInTheUKForm}
 import play.api.data.Form
 import testUtils.TestSupport
 

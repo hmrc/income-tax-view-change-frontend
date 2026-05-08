@@ -16,7 +16,7 @@
 
 package models.extensions
 
-import enums._
+import enums.DocumentType.*
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel}
 
 import java.time.LocalDate

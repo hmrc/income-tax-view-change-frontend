@@ -17,7 +17,6 @@
 package businessDetails.models.createIncomeSource
 
 import businessDetails.connectors.helpers.IncomeSourcesDataHelper
-import businessDetails.models.createIncomeSource.{CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSourceRequest, CreateUKPropertyIncomeSourceRequest, PropertyDetails}
 import play.api.libs.json.{JsSuccess, Json}
 import testUtils.TestSupport
 

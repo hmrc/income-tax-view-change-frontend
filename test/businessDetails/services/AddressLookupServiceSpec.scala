@@ -16,7 +16,6 @@
 
 package businessDetails.services
 
-import businessDetails.services.{AddressLookupConnector, AddressLookupService}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.core.{CheckMode, NormalMode}
