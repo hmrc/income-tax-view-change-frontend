@@ -19,7 +19,7 @@ package businessDetails.controllers.manageBusinesses.cease
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.JourneyType.Cease
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}

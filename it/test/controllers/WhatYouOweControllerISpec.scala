@@ -18,6 +18,7 @@ package controllers
 
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.*

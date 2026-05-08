@@ -19,8 +19,8 @@ package authV2
 import auth.MtdItUser
 import auth.authV2.actions.*
 import authV2.AuthActionsTestData.*
+import common.controllers.bta.BtaNavBarController
 import config.ItvcErrorHandler
-import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
 import models.admin.{FeatureSwitch, NavBarFs}
 import org.mockito.ArgumentMatchers.any

@@ -17,7 +17,9 @@
 package controllers.agent
 
 import audit.models.EnterClientUTRAuditModel
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
+import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.viewUtils.InternalUrlHelper
 import enums.MTDPrimaryAgent
 import helpers.servicemocks.*
 import play.api.http.Status.*
@@ -32,7 +34,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   val path = "/agents/client-utr"
 
   s"GET $path" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
 
@@ -40,18 +42,18 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(InternalUrlHelper.signinUrl)
         )
       }
     }
-    s"redirect ($SEE_OTHER) to ${controllers.agent.errors.routes.AgentErrorController.show().url}" when {
+    s"redirect ($SEE_OTHER) to ${agentErrorRoutes.AgentErrorController.show().url}" when {
       "the user is authenticated but doesn't have the agent enrolment" in {
         MTDAgentAuthStub.stubNoAgentEnrolmentError()
         val result = buildGETMTDClient(path).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
         )
       }
     }
@@ -67,7 +69,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   }
 
   s"POST ${controllers.agent.routes.EnterClientsUTRController.submit().url}" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
 
@@ -75,7 +77,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(InternalUrlHelper.signinUrl)
         )
       }
     }
@@ -88,7 +90,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
         )
       }
     }

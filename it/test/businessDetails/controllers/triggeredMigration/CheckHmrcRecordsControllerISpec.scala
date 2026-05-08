@@ -17,8 +17,8 @@
 package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.audit.TriggeredMigrationStartAuditModel
-import controllers.ControllerISpecHelper
 import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.admin.TriggeredMigration

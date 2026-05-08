@@ -16,7 +16,7 @@
 
 package models.sessionData
 
-import controllers.agent.sessionUtils.SessionKeys
+import common.utils.sessionUtils.SessionKeys
 import testConstants.BaseTestConstants.{testFirstName, testMtditid, testNino, testSaUtr, testSecondName}
 import testUtils.UnitSpec
 

@@ -18,9 +18,9 @@ package controllers.newHomePage
 
 import audit.AuditingService
 import auth.authV2.AuthActions
+import common.utils.sessionUtils.SessionKeys
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.HomeController
-import controllers.agent.sessionUtils.SessionKeys
 import mocks.auth.MockAuthActions
 import mocks.services.*
 import models.financialDetails.*

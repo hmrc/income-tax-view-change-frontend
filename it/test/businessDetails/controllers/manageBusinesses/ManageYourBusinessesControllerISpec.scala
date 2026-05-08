@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses
 
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.DisplayBusinessStartDate

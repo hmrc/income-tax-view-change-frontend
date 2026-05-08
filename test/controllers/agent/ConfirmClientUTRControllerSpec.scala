@@ -17,8 +17,11 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
-import connectors.{ITSAStatusConnector}
-import controllers.agent.sessionUtils.SessionKeys
+import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.controllers.agent.routes as agentRoutes
+import common.utils.sessionUtils.SessionKeys
+import common.viewUtils.InternalUrlHelper
+import connectors.ITSAStatusConnector
 import mocks.auth.MockAuthActions
 import mocks.services.MockITSAStatusService
 import mocks.views.agent.MockConfirmClient
@@ -29,7 +32,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify}
 import play.api
 import play.api.Application
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
@@ -57,7 +60,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
         }
       }
 
@@ -68,7 +71,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
         }
       }
 
@@ -79,7 +82,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
         }
       }
 
@@ -104,7 +107,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show().url)
+          redirectLocation(result) shouldBe Some(agentRoutes.ClientRelationshipFailureController.show().url)
         }
       }
     }
@@ -141,7 +144,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
         }
       }
 
@@ -152,7 +155,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
         }
       }
 
@@ -163,7 +166,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
         }
       }
 
@@ -188,7 +191,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show().url)
+          redirectLocation(result) shouldBe Some(agentRoutes.ClientRelationshipFailureController.show().url)
         }
       }
     }

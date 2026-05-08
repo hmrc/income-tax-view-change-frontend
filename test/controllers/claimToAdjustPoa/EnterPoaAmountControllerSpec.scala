@@ -16,8 +16,9 @@
 
 package controllers.claimToAdjustPoa
 
-import connectors.{ITSAStatusConnector}
-import controllers.agent.sessionUtils
+import common.utils.sessionUtils
+import common.utils.sessionUtils.SessionKeys
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import generators.PoaGenerator
 import mocks.auth.MockAuthActions
@@ -88,7 +89,7 @@ class EnterPoaAmountControllerSpec extends MockAuthActions
       FakeRequest(POST, routes.EnterPoaAmountController.submit(false, mode).url)
         .withFormUrlEncodedBody("poa-amount" -> poaAmount)
         .withSession(
-          sessionUtils.SessionKeys.clientFirstName -> "Test",
+          SessionKeys.clientFirstName -> "Test",
           sessionUtils.SessionKeys.clientLastName -> "User",
           sessionUtils.SessionKeys.clientUTR -> "1234567890",
           sessionUtils.SessionKeys.clientMTDID -> "XAIT00000000015",

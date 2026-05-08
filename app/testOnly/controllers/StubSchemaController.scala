@@ -16,8 +16,8 @@
 
 package testOnly.controllers
 
+import common.controllers.BaseController
 import config.FrontendAppConfig
-import controllers.BaseController
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.{JsValue, Json}
