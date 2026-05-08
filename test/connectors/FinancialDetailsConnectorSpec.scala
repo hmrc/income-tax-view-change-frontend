@@ -328,7 +328,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
       val payments: Seq[Payment] =
         Seq(
-          Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
+          Payment(taxYear = 9999, reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
             method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
             dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01"))
         )
@@ -428,7 +428,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
       val payments: Seq[Payment] =
         Seq(
-          Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
+          Payment(taxYear = 9999, reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
             method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
             dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01"))
         )

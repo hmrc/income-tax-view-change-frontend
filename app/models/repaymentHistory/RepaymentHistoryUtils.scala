@@ -137,7 +137,8 @@ object RepaymentHistoryUtils {
       transactionId = payment.transactionId,
       amount = payment.amount,
       linkUrl = getControllerHref(payment.transactionId, isAgent),
-      visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}"
+      visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}",
+      taxYear = Some(payment.taxYear)
     )
   }
 
@@ -147,7 +148,8 @@ object RepaymentHistoryUtils {
       creditType = MfaCreditType,
       amount = payment.amount,
       linkUrl = getCreditsLinkUrl(payment.documentDate, isAgent),
-      visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}"
+      visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}",
+      taxYear = Some(payment.taxYear)
     )
   }
 
@@ -172,7 +174,8 @@ object RepaymentHistoryUtils {
           getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
         else
           getCreditsLinkUrl(dueDate, isAgent),
-        visuallyHiddenText = transactionId
+        visuallyHiddenText = transactionId,
+        taxYear = Some(payment.taxYear)
       )
     }
   }
@@ -184,7 +187,8 @@ object RepaymentHistoryUtils {
       amount = Some(chargeItem.originalAmount),
       transactionId = Some(chargeItem.transactionId),
       linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId, codedOut = Some(true)),
-      visuallyHiddenText = chargeItem.transactionType.toString
+      visuallyHiddenText = chargeItem.transactionType.toString,
+      taxYear = Some(chargeItem.taxYear.endYear)
     )
   }
 
@@ -194,7 +198,8 @@ object RepaymentHistoryUtils {
       creditType = Repayment,
       amount = repayment.totalRepaymentAmount,
       linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
-      visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
+      visuallyHiddenText = s"${repayment.repaymentRequestNumber}",
+      taxYear = None
     )
   }
 

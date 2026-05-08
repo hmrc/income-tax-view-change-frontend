@@ -65,7 +65,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       .filter(_.dueDate.exists(date => !date.isBefore(recentActivityDate) && !date.isAfter(today)))
       .maxByOption(_.dueDate)
       .flatMap {
-        case Payment(_, Some(amount), _, _, _, _, _, Some(dueDate), _, _, _, _, _) => Some(RecentActivityPaymentModel(amount, dueDate))
+        case Payment(_, _, Some(amount), _, _, _, _, _, Some(dueDate), _, _, _, _, _) => Some(RecentActivityPaymentModel(amount, dueDate))
         case _ => None
       }
   }
