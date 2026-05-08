@@ -170,11 +170,34 @@ case class ChargeSummaryViewModel(
     val matchingPayment = payment.clearingId
     matchingPayment match {
       case Some(paymentId) => {
-        val link: String = if (isAgent) {
-          PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
-        } else {
-          PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
+
+        val matchingFinancialDetail = payments.financialDetails.find(_.transactionId.contains(paymentId))
+        val originalAmount = matchingFinancialDetail.flatMap(_.originalAmount)
+        val isItACredit = originalAmount.exists(_ < 0)
+
+        println("ZZZZZZ")
+        println("ZZZZZZ")
+        println(chargeItem.originalAmount)
+        println(originalAmount)
+        println(s"originalAmount raw: $originalAmount")
+        println(s"matchingFinancialDetail: $matchingFinancialDetail")
+        println(s"isItACredit: $isItACredit")
+        println("ZZZZZZ")
+        println("ZZZZZZ")
+
+        println("DDDDDD")
+
+        println("DDDDDD")
+
+        val documentDate = chargeItem.documentDate.getYear
+        val link = (isItACredit, isAgent) match {
+          case (true, true) => CreditsSummaryController.showAgentCreditsSummary(documentDate).url
+          case (true, false) => CreditsSummaryController.showCreditsSummary(documentDate).url
+          case (false, true) => PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
+          case (false, false) => PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
         }
+
+        println(link)
 
         val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
         else if (payment.isCutoverCredit) messages("paymentHistory.cutOver")
@@ -211,6 +234,8 @@ case class ChargeSummaryViewModel(
       chargeItemList ++
       paymentAllocationsFormattedList
   }.sortBy(_.date)
+
+  println(paymentAllocationsFormattedList)
 }
 
 
