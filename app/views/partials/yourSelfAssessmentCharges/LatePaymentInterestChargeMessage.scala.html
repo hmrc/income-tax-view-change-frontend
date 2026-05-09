@@ -39,12 +39,30 @@
     if (payment.isCutoverCredit) {
         messages("paymentHistory.cutOver")
     } else if (matchingPayment.isDefined) {
-        val link = (payment.isCredit, viewModel.isAgent, payment.taxYear.isDefined) match {
+        val matchingFinancialDetail = viewModel.payments.financialDetails.find(_.transactionId.contains(matchingPayment.get))
+        val originalAmount = matchingFinancialDetail.flatMap(_.originalAmount)
+        val isItACredit = originalAmount.exists(_ < 0)
+
+        val documentDate = viewModel.chargeItem.documentDate.getYear
+
+        println("TTTTTTTTTTT")
+        println("TTTTTTTTTTT")
+        println(viewModel.chargeItem.documentDate)
+        println("TTTTTTTTTTT")
+        println("TTTTTTTTTTT")
+
+        val link = (isItACredit, viewModel.isAgent, payment.taxYear.isDefined) match {
             case (false, true, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
             case (false, false, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
-            case (true, true, true) => controllers.routes.ChargeSummaryController.showAgent(payment.taxYear.get.toInt, matchingPayment.get).url
-            case (true, false, true) => controllers.routes.ChargeSummaryController.show(payment.taxYear.get.toInt, matchingPayment.get, viewModel.origin).url
+            case (true, true, true) => controllers.routes.CreditsSummaryController.showAgentCreditsSummary(documentDate).url
+            case (true, false, true) => controllers.routes.CreditsSummaryController.showCreditsSummary(documentDate).url
         }
+
+        println("LLLLLLLLLLL")
+        println("LLLLLLLLLLL")
+        println(link)
+        println("LLLLLLLLLLL")
+        println("LLLLLLLLLLL")
 
         val linkText =
             if (viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
