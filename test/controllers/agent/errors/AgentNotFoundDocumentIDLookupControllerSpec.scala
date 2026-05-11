@@ -18,7 +18,7 @@ package controllers.agent.errors
 
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 
 class AgentNotFoundDocumentIDLookupControllerSpec extends MockAuthActions {

@@ -17,6 +17,7 @@
 package controllers
 
 import auth.MtdItUser
+import common.controllers.ControllerISpecHelper
 import enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import enums.MTDUserRole
 import models.financialDetails.*

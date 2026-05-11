@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status._

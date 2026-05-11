@@ -18,9 +18,9 @@ package auth.authV2.actions
 
 import auth.authV2.models.{AgentClientDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedUserRequest}
 import com.google.inject.Singleton
+import common.utils.sessionUtils.SessionKeys
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import controllers.agent.routes
-import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import play.api.Logger
 import play.api.mvc.Results.Redirect

@@ -18,9 +18,9 @@ package testUtils
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.*
+import common.utils.sessionUtils
 import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
-import controllers.agent.sessionUtils
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName

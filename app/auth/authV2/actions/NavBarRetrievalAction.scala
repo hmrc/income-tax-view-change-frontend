@@ -17,8 +17,8 @@
 package auth.authV2.actions
 
 import auth.MtdItUser
+import common.controllers.bta.BtaNavBarController
 import config.{FrontendAppConfig, ItvcErrorHandler}
-import controllers.bta.BtaNavBarController
 import forms.utils.SessionKeys
 import models.OriginEnum
 import models.OriginEnum.{BTA, PTA}

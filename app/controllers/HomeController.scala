@@ -20,9 +20,9 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import common.utils.sessionUtils.SessionKeys
 import config.*
 import config.featureswitch.*
-import controllers.agent.sessionUtils.SessionKeys
 import enums.MTDSupportingAgent
 import models.admin.*
 import models.core.Nino

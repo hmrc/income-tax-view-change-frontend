@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import controllers.ItvcLanguageController
+import common.controllers.ItvcLanguageController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.MessageCheckView
 import uk.gov.hmrc.play.language.LanguageUtils

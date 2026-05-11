@@ -18,7 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub

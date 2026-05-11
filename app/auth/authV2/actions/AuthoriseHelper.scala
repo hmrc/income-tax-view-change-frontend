@@ -17,12 +17,14 @@
 package auth.authV2.actions
 
 import auth.authV2.models.AuthorisedAndEnrolledRequest
+import common.viewUtils.InternalUrlHelper
+import common.controllers.errors.routes as errorRoutes
 import config.featureswitch.FeatureSwitching
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name, ~}
 
 import java.time.LocalDate
@@ -44,13 +46,13 @@ trait AuthoriseHelper extends FeatureSwitching {
   def logAndRedirect[A](): PartialFunction[Throwable, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _: BearerTokenExpired =>
       logger.warn("Bearer Token Timed Out.")
-      Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())))
+      Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
     case insufficientEnrolments: InsufficientEnrolments =>
       logger.error(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
-      Future.successful(Left(Redirect(controllers.errors.routes.NotEnrolledController.show())))
+      Future.successful(Left(Redirect(errorRoutes.NotEnrolledController.show())))
     case authorisationException: AuthorisationException =>
       logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-      Future.successful(Left(Redirect(controllers.routes.SignInController.signIn())))
+      Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
   }

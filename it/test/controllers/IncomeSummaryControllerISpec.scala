@@ -16,11 +16,12 @@
 
 package controllers
 
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks._
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import helpers.servicemocks.*
+import play.api.http.Status.*
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 class IncomeSummaryControllerISpec extends ControllerISpecHelper {

@@ -19,7 +19,7 @@ package controllers.agent.errors
 import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.errorPages.CustomNotFoundErrorView
 
