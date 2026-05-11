@@ -16,7 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import controllers.claimToAdjustPoa.routes._
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub

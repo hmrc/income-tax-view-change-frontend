@@ -33,6 +33,7 @@ import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmployme
 import testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySessionData, multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.enums.TriggeredMigration.TriggeredMigrationAdded
+import common.controllers.ControllerISpecHelper
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 

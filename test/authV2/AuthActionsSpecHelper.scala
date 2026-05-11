@@ -17,9 +17,9 @@
 package authV2
 
 import audit.AuditingService
+import common.controllers.bta.BtaNavBarController
 import config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
 import connectors.IncomeSourceConnector
-import controllers.bta.BtaNavBarController
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock

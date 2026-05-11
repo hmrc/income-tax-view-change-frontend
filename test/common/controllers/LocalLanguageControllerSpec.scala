@@ -16,7 +16,6 @@
 
 package common.controllers
 
-import common.controllers.LocalLanguageController
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status.SEE_OTHER
