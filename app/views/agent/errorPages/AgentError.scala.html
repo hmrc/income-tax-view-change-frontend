@@ -16,6 +16,7 @@
 
 @import views.html.layouts.unifiedLayout
 @import views.html.components._
+@import common.viewUtils.InternalUrlHelper
 
 @this(
     mainTemplate: unifiedLayout,
@@ -40,7 +41,7 @@
     }
 
     <div>
-        @link(link = controllers.routes.SignOutController.signOut().url, messageKey = "base.sign-out",
+        @link(link = InternalUrlHelper.signoutUrl, messageKey = "base.sign-out",
         classes = "govuk-button")
     </div>
 }

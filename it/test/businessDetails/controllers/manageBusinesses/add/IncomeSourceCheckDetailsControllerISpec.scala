@@ -18,7 +18,6 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import controllers.ControllerISpecHelper
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.*

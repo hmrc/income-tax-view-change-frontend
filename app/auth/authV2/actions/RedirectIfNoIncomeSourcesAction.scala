@@ -17,6 +17,7 @@
 package auth.authV2.actions
 
 import auth.MtdItUser
+import common.controllers.routes as appRoutes
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
@@ -42,7 +43,7 @@ class RedirectIfNoIncomeSourcesAction @Inject()()
 
       Future.successful(
         Left(
-          Redirect(controllers.routes.NoIncomeSourcesController.show(request.isAgent))
+          Redirect(appRoutes.NoIncomeSourcesController.show(request.isAgent))
         )
       )
     }

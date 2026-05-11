@@ -16,6 +16,9 @@
 
 package routes
 
+import common.viewUtils.InternalUrlHelper
+import common.controllers.routes as appRoutes
+import common.controllers.errors.routes as errorRoutes
 import testUtils.TestSupport
 
 class RoutesSpec extends TestSupport {
@@ -32,7 +35,7 @@ class RoutesSpec extends TestSupport {
   // Timeout routes
   "The URL for the SessionTimeoutController.timeout action" should {
     s"be equal to $contextRoute/session-timeout" in {
-      controllers.timeout.routes.SessionTimeoutController.timeout().url shouldBe s"$contextRoute/session-timeout"
+      InternalUrlHelper.timeoutUrl shouldBe s"$contextRoute/session-timeout"
     }
   }
 
@@ -60,14 +63,14 @@ class RoutesSpec extends TestSupport {
   //Not-Enrolled route
   "The URL for the NotEnrolledController.show action" should {
     s"be equal to $contextRoute/not-enrolled" in {
-      controllers.errors.routes.NotEnrolledController.show().url shouldBe s"$contextRoute/cannot-access-service"
+      errorRoutes.NotEnrolledController.show().url shouldBe s"$contextRoute/cannot-access-service"
     }
   }
 
   //Language route
   "The URL for the ItvcLanguageController.switchToLanguage" should {
     s"be equal to $contextRoute/language/en" in {
-      controllers.routes.ItvcLanguageController.switchToLanguage("en").url shouldBe s"$contextRoute/language/en"
+      appRoutes.ItvcLanguageController.switchToLanguage("en").url shouldBe s"$contextRoute/language/en"
     }
   }
 }

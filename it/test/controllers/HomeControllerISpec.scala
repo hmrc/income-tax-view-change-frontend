@@ -18,6 +18,7 @@ package controllers
 
 import audit.models.HomeAudit
 import auth.MtdItUser
+import common.controllers.ControllerISpecHelper
 import enums.MTDIndividual
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches

@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import controllers.ControllerISpecHelper
 import enums.JourneyType.Manage
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -33,6 +32,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import businessDetails.testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.controllers.ControllerISpecHelper
 
 
 class ManageObligationsControllerISpec extends ControllerISpecHelper {

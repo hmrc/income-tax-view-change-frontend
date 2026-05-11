@@ -17,7 +17,7 @@
 package obligations.controllers
 
 import auth.MtdItUser
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.MTDIndividual
 import helpers.servicemocks.*
 import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches

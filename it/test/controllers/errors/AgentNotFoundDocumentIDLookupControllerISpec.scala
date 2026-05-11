@@ -16,7 +16,7 @@
 
 package controllers.errors
 
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status._
 

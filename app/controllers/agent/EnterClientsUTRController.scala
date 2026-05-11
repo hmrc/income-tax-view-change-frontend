@@ -23,8 +23,8 @@ import auth.authV2.AuthActions
 import auth.authV2.models.AuthorisedUserRequest
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.AuthUtils._
-import controllers.agent.sessionUtils.SessionKeys
+import common.utils.AuthUtils._
+import common.utils.sessionUtils.SessionKeys
 import enums._
 import forms.agent.ClientsUTRForm
 import models.sessionData.SessionCookieData

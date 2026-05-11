@@ -23,7 +23,9 @@ import auth.authV2.Constants
 import auth.authV2.models.{AuthUserDetails, AuthorisedAndEnrolledRequest}
 import com.google.inject.Singleton
 import config.FrontendAppConfig
-import controllers.agent.AuthUtils.mtdEnrolmentName
+import common.utils.AuthUtils.mtdEnrolmentName
+import common.controllers.routes as appRoutes
+import common.controllers.errors.routes as errorRoutes
 import enums.MTDIndividual
 import forms.utils.SessionKeys
 import play.api.Logger
@@ -79,8 +81,8 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   def ivUpliftRedirectUrl[A](implicit request: Request[A]):String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
     @unused val origin = request.getQueryString(SessionKeys.origin)
-    val completionUrl: String = s"$host${controllers.routes.UpliftSuccessController.success().url}"
-    val failureUrl: String = s"$host${controllers.errors.routes.UpliftFailedController.show().url}"
+    val completionUrl: String = s"$host${appRoutes.UpliftSuccessController.success().url}"
+    val failureUrl: String = s"$host${errorRoutes.UpliftFailedController.show().url}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
   }
 

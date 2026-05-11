@@ -20,9 +20,9 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import common.utils.sessionUtils.SessionKeys
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*

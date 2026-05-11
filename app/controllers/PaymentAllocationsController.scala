@@ -20,6 +20,7 @@ import audit.AuditingService
 import audit.models.PaymentAllocationsResponseAuditModel
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import common.controllers.agent.errors.routes as agentErrorRoutes
 import config.featureswitch._
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.GatewayPage.GatewayPage
