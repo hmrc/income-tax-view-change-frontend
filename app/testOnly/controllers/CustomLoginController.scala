@@ -22,11 +22,11 @@ import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
-import testOnly.models._
+import testOnly.models.*
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
 import testOnly.utils.UserRepository
 import testOnly.views.html.LoginPage
@@ -130,8 +130,6 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                 } else {
                   Future.successful(successRedirect(bearer, auth, homePage))
                 }
-
-              case code => Future.successful(InternalServerError("something went wrong.." + code))
             }
         )
       }

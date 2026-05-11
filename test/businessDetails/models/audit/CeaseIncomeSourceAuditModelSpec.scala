@@ -17,7 +17,6 @@
 package businessDetails.models.audit
 
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import obligations.testConstants.UpdateIncomeSourceTestConstants.failureResponse

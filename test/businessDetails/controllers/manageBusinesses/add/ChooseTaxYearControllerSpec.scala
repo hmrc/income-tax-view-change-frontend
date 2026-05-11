@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.ChooseTaxYearController
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService

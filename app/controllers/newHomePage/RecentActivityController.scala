@@ -109,5 +109,5 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
           .getOrElse(ITSAStatus.NoStatus)
       }
   }
-  
+
 }

@@ -21,8 +21,6 @@ import common.controllers.timeout.routes as timeoutRoutes
 import common.controllers.feedback.routes as feedbackRoutes
 import common.controllers.agent.errors.routes as agentErrorRoutes
 
-import play.api.i18n.Messages
-
 object InternalUrlHelper {
   
   val signinUrl = appRoutes.SignInController.signIn().url

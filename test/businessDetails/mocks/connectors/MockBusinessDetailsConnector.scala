@@ -17,12 +17,10 @@
 package businessDetails.mocks.connectors
 
 import connectors.BusinessDetailsConnector
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

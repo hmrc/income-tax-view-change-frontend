@@ -16,6 +16,7 @@
 
 package models.penalties.appealInformation
 
+import models.penalties.appealInformation.AppealLevelEnum.{HmrcAppealLevel, ThirdAppealLevel, TribunalAppealLevel}
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
 import testUtils.TestSupport
 
@@ -33,6 +34,11 @@ class AppealLevelEnumSpec extends TestSupport {
       result shouldBe JsString("02")
     }
 
+    "be writeable to JSON for appeal level '03'" in {
+      val result = Json.toJson(ThirdAppealLevel)(AppealLevelEnum.writes.writes(_))
+      result shouldBe JsString("03")
+    }
+
     "be readable from JSON for appeal level '01'" in {
       val result = Json.fromJson(JsString("01"))(AppealLevelEnum.format)
       result shouldBe JsSuccess(HmrcAppealLevel)
@@ -41,6 +47,11 @@ class AppealLevelEnumSpec extends TestSupport {
     "be readable from JSON for appeal level '02'" in {
       val result = Json.fromJson(JsString("02"))(AppealLevelEnum.format)
       result shouldBe JsSuccess(TribunalAppealLevel)
+    }
+
+    "be readable from JSON for appeal level '03'" in {
+      val result = Json.fromJson(JsString("03"))(AppealLevelEnum.format)
+      result shouldBe JsSuccess(ThirdAppealLevel)
     }
 
     "throw a JsError when unable to read the JSON returned" in {

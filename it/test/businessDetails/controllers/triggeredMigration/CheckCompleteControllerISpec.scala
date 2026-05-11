@@ -24,7 +24,6 @@ import models.UIJourneySessionData
 import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import common.controllers.ControllerISpecHelper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse

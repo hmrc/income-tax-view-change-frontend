@@ -36,7 +36,6 @@ import views.html.TaxYearSummaryView
 import obligations.models.*
 
 import java.time.LocalDate
-import common.viewUtils.ExternalUrlHelper
 
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 

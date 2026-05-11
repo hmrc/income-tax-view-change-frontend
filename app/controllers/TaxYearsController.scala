@@ -18,24 +18,22 @@ package controllers
 
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.admin.{ITSASubmissionIntegration, PostFinalisationAmendmentsR18}
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.TaxYearsView
-import models.incomeSourceDetails.TaxYear
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
-                                   val authActions: AuthActions,
-                                   itvcErrorHandler: ItvcErrorHandler,
-                                   agentItvcErrorHandler: AgentItvcErrorHandler
+                                   val authActions: AuthActions
                                   )
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,

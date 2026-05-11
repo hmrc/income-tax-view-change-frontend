@@ -17,7 +17,6 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.RawResponseReads
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
