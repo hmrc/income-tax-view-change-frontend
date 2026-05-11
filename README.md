@@ -7,7 +7,7 @@ This is the repository for the Income Tax View and Change frontend.
 
 Backend: https://github.com/hmrc/income-tax-view-change
 
-Stub: https://github.com/hmrc/income-tax-view-change-dynamic-stub
+Stub: https://github.com/hmrc/income-tax-vc-fs-and-stub
 
 Feature switch info: https://confluence.tools.tax.service.gov.uk/pages/viewpage.action?spaceKey=MISUV&title=Feature+Switches+State
 
