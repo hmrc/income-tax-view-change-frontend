@@ -21,7 +21,6 @@ import auth.MtdItUser
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import authV2.AuthActionsTestData.defaultMTDITUser
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import businessDetails.mocks.connectors.MockBusinessDetailsConnector
 import businessDetails.services.IncomeSourceDetailsService
 import mocks.services.config.MockAppConfig
 import mocks.services.MockAsyncCacheApi

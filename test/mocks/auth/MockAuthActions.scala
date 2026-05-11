@@ -25,7 +25,6 @@ import common.controllers.agent.routes as agentRoutes
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.controllers.errors.routes as errorRoutes
 import common.viewUtils.InternalUrlHelper
-import config.featureswitch.FeatureSwitching
 import connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}

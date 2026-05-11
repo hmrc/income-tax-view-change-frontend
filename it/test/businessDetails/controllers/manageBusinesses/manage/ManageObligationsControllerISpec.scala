@@ -20,7 +20,7 @@ import enums.JourneyType.Manage
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, OptInOptOutContentUpdateR17}
+import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

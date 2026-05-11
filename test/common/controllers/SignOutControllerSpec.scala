@@ -17,7 +17,6 @@
 package common.controllers
 
 import auth.FrontendAuthorisedFunctions
-import common.controllers.SignOutController
 import config.{FrontendAppConfig, FrontendAuthConnector}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

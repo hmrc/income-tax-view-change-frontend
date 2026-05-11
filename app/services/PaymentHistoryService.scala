@@ -23,10 +23,11 @@ import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import models.admin.ChargeHistory
 import models.chargeHistory.ChargesHistoryErrorModel
 import models.core.Nino
-import models.financialDetails.{ChargeItem, FinancialDetailsModel, Payment, Payments, PaymentsError, TransactionUtils}
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
+import play.api.http.Status
 import play.api.http.Status.NOT_FOUND
 import services.PaymentHistoryService.PaymentHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
@@ -93,7 +94,10 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
   def getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(implicit mtdItUser: MtdItUser[_], hc: HeaderCarrier): Future[List[ChargeItem]] = {
 
     for {
-      financialDetailsModel       <- financialDetailsService.getAllFinancialDetails.map(_.map { case (_, fdm: FinancialDetailsModel) => fdm })
+      financialDetailsModel       <- financialDetailsService.getAllFinancialDetails.map(_.map {
+        case (_, fdm: FinancialDetailsModel) => fdm
+        case (_, models.financialDetails.FinancialDetailsErrorModel(_, message)) => throw Exception(s"Failed to get Financial Details, $message")
+      })
       financialDetailsByTaxYear    = financialDetailsModel.flatMap(_.financialDetails).groupBy(_.taxYear)
       documentDetailsWithDueDate   = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())
       chargeItems                  = documentDetailsWithDueDate.flatMap { dd =>

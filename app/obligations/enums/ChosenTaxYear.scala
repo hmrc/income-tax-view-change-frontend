@@ -16,15 +16,7 @@
 
 package obligations.enums
 
-sealed trait ChosenTaxYear
-
-case object PreviousTaxYear extends ChosenTaxYear
-
-case object CurrentTaxYear extends ChosenTaxYear
-
-case object NextTaxYear extends ChosenTaxYear
-
-case object NoChosenTaxYear extends ChosenTaxYear
-
+enum ChosenTaxYear:
+  case PreviousTaxYear, CurrentTaxYear, NextTaxYear, NoChosenTaxYear
 
 

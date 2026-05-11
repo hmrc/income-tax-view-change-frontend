@@ -16,7 +16,6 @@
 
 package businessDetails.forms.manageBusinesses.add
 
-import businessDetails.forms.manageBusinesses.add.{IncomeSourceReportingMethodForm, IncomeSourceReportingMethodFormMapping}
 import play.api.data.{Form, FormError}
 import testUtils.TestSupport
 

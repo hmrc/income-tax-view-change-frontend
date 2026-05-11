@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.IsTheNewAddressInTheUKController
-import connectors.{ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import mocks.auth.MockAuthActions

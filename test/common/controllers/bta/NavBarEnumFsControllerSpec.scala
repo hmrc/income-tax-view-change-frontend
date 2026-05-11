@@ -18,7 +18,6 @@ package common.controllers.bta
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
-import common.controllers.bta.BtaNavBarController
 import connectors.BtaNavBarPartialConnector
 import models.btaNavBar.*
 import org.mockito.ArgumentMatchers.any

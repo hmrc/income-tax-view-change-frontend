@@ -16,18 +16,15 @@
 
 package controllers.claimToAdjustPoa
 
-import audit.models.AdjustPaymentsOnAccountAuditModel
 import common.controllers.ControllerISpecHelper
 import controllers.claimToAdjustPoa.routes._
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.JsValue
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants._
@@ -67,15 +64,6 @@ class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
     )),
     properties = Nil
   )
-
-  private def auditAdjustPayementsOnAccount(isSuccessful: Boolean, mtdUserRole: MTDUserRole): AdjustPaymentsOnAccountAuditModel = AdjustPaymentsOnAccountAuditModel(
-    isSuccessful = isSuccessful,
-    previousPaymentOnAccountAmount = 2000.00,
-    requestedPaymentOnAccountAmount = 1000.00,
-    adjustmentReasonCode = "001",
-    adjustmentReasonDescription = "My main income will be lower",
-    isDecreased = true
-  )(getTestUser(mtdUserRole, incomeSource))
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -182,8 +182,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     submissionDeadlinesViewModel
   }
 
-  private def getOpenObligations(obligationsResponseModel: Future[ObligationsResponseModel])
-                                (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[SingleObligationModel]] = {
+  private def getOpenObligations(obligationsResponseModel: Future[ObligationsResponseModel]): Future[Seq[SingleObligationModel]] = {
     obligationsResponseModel.flatMap {
       case openObligations: ObligationsModel if openObligations.obligations.forall(_.obligations.nonEmpty) => Future.successful(openObligations.obligations.flatMap(_.obligations))
       case _ =>
@@ -205,10 +204,5 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
           .headOption
           .getOrElse(ITSAStatus.NoStatus)
       }
-  }
-
-  private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    errorHandler.showInternalServerError()
   }
 }

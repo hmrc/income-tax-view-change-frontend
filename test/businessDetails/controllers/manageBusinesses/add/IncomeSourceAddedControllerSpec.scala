@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import auth.authV2.AuthActions
-import businessDetails.controllers.manageBusinesses.add.IncomeSourceAddedController
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.services.IncomeSourceDetailsService
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}

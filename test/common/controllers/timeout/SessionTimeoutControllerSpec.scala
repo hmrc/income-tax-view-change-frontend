@@ -16,7 +16,6 @@
 
 package common.controllers.timeout
 
-import common.controllers.timeout.SessionTimeoutController
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.http.Status

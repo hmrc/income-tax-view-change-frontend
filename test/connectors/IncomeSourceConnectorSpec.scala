@@ -47,7 +47,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessAndPropertyMigrat2019, singleBusinessIncome}
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessAndPropertyMigrat2019
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

@@ -16,7 +16,6 @@
 
 package common.controllers
 
-import common.controllers.SignInController
 import config.FrontendAppConfig
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
