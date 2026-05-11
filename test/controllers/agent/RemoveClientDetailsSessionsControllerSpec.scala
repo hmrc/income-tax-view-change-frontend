@@ -16,6 +16,7 @@
 
 package controllers.agent
 
+import common.viewUtils.InternalUrlHelper
 import connectors.{ITSAStatusConnector}
 import mocks.auth.MockAuthActions
 import mocks.views.agent.MockEnterClientsUTR
@@ -50,7 +51,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
         }
       }
 
@@ -65,7 +66,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
         }
       }
     }

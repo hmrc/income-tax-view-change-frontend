@@ -16,6 +16,8 @@
 
 package controllers.agent
 
+import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.viewUtils.InternalUrlHelper
 import helpers.ComponentSpecBase
 import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status.*
@@ -24,14 +26,14 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
   val path = "/agents/cannot-view-client"
 
   s"GET $path" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildGETMTDClient(path).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(InternalUrlHelper.signinUrl)
         )
       }
     }
@@ -44,7 +46,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
         Then(s"Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
         )
       }
     }
@@ -65,14 +67,14 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
   }
 
   s"POST $path" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(InternalUrlHelper.signinUrl)
         )
       }
     }
@@ -84,7 +86,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
         )
       }
     }

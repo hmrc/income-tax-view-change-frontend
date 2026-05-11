@@ -17,7 +17,7 @@
 package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.admin.TriggeredMigration

@@ -16,9 +16,10 @@
 
 package auth.authV2.actions
 
+import common.viewUtils.InternalUrlHelper
 import play.api.Logger
 import play.api.mvc.Results.Redirect
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.http.SessionKeys
 
 import javax.inject.{Inject, Singleton}
@@ -39,7 +40,7 @@ class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit v
       case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
         Logger(getClass).warn("Session Time Out.")
-        Future.successful(Left(Redirect(controllers.timeout.routes.SessionTimeoutController.timeout())))
+        Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
       case (_, _) =>
         val mtdItUserWithUpdatedHeaders = request.withHeaders(updatedHeaders)
         Future.successful(Right(mtdItUserWithUpdatedHeaders))

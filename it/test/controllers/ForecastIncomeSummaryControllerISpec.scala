@@ -18,12 +18,13 @@ package controllers
 
 import audit.models.ForecastIncomeAuditModel
 import auth.MtdItUser
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks._
+import helpers.servicemocks.*
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 

@@ -16,14 +16,15 @@
 
 package controllers
 
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.utils.SessionKeys
-import helpers.servicemocks._
+import helpers.servicemocks.*
 import models.liabilitycalculation.LiabilityCalculationError
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
+import play.api.http.Status.*
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
-import testConstants.NewCalcBreakdownItTestConstants._
+import testConstants.NewCalcBreakdownItTestConstants.*
 @deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingControllerISpec extends ControllerISpecHelper {
 

@@ -18,10 +18,10 @@ package auth.authV2.actions
 
 import auth.MtdItUser
 import auth.authV2.models.ItsaStatusRetrievalActionError
+import common.controllers.BaseController
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.ITSAStatusConnector
-import controllers.BaseController
 import models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}

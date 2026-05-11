@@ -16,7 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums._
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.PoaAmendmentData

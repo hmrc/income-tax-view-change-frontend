@@ -17,7 +17,7 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}

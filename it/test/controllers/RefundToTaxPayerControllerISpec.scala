@@ -18,12 +18,13 @@ package controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
 import auth.MtdItUser
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.PaymentHistoryRefunds
 import models.core.Nino
-import models.repaymentHistory._
-import play.api.http.Status._
+import models.repaymentHistory.*
+import play.api.http.Status.*
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
 

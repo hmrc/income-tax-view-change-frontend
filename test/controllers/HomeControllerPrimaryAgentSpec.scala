@@ -19,6 +19,7 @@ package controllers
 import audit.AuditingService
 import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import common.controllers.routes as appRoutes
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.MTDPrimaryAgent
 import mocks.services.admin.MockFeatureSwitchService
@@ -716,7 +717,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient(isSupportingAgent = false))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.NoIncomeSourcesController.show(true).url)
+          redirectLocation(result) shouldBe Some(appRoutes.NoIncomeSourcesController.show(true).url)
         }
       }
     }

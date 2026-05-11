@@ -18,6 +18,7 @@ package controllers
 
 import audit.models.TaxDueResponseAuditModel
 import auth.MtdItUser
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import helpers.servicemocks.AuditStub.verifyAuditEvent
