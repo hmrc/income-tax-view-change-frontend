@@ -21,7 +21,6 @@ import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

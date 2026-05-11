@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 

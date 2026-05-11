@@ -22,7 +22,6 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.AddIncomeSourceData

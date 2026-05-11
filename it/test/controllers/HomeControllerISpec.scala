@@ -23,7 +23,6 @@ import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.NavBarFs
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}

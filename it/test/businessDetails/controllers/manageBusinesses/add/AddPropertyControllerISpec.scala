@@ -21,7 +21,6 @@ import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.NavBarFs
 import models.core.NormalMode
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid

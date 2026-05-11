@@ -19,7 +19,7 @@ package controllers.claimToAdjustPoa
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.JsValue
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService

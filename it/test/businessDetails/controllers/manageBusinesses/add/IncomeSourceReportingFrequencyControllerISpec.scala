@@ -23,7 +23,6 @@ import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails._
 import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK

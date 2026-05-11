@@ -22,7 +22,6 @@ import enums.JourneyType.Cease
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
