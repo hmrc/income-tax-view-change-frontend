@@ -17,7 +17,6 @@
 package businessDetails.models.audit
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import enums.FailureCategory.ApiFailure
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}

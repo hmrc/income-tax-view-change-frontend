@@ -16,7 +16,6 @@
 
 package common.controllers
 
-import common.controllers.NoIncomeSourcesController
 import enums.{MTDIndividual, MTDPrimaryAgent}
 import mocks.auth.MockAuthActions
 import play.api

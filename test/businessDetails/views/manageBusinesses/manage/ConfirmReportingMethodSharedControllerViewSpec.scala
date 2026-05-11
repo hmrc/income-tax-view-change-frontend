@@ -83,6 +83,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         case ("annual", true) => "Opt out of Making Tax Digital for Income Tax for the 2026 to 2027 tax year"
         case ("quarterly", false) => "Signing up to Making Tax Digital for Income Tax for the 2025 to 2026 tax year"
         case ("quarterly", true) => "Signing up to Making Tax Digital for Income Tax for the 2026 to 2027 tax year"
+        case (_, _) => "N/A"
       }
     }
     val pageDescriptionAnnual = "This will mean you no longer need to submit quarterly updates through compatible software for this income source."

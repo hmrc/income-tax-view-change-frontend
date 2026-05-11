@@ -32,13 +32,11 @@
 
 package connectors
 
-import audit.AuditingService
 import auth.authV2.models.AuthorisedAndEnrolledRequest
 import config.FrontendAppConfig
-import connectors.{BaseConnectorSpec, BusinessDetailsConnector}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito.when
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status

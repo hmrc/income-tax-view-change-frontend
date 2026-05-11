@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.controllers.manageBusinesses.add.IncomeSourceNotAddedController
-import connectors.{ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup

@@ -23,7 +23,7 @@ import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import obligations.enums.{CurrentTaxYear, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
+import obligations.enums.ChosenTaxYear.*
 import obligations.mocks.services.MockOptOutService
 import obligations.models.reportingObligations.optOut.*
 import obligations.services.reportingObligations.optOut.*

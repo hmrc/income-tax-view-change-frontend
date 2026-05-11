@@ -16,7 +16,6 @@
 
 package common.controllers.agent
 
-import common.controllers.agent.ClientRelationshipFailureController
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.viewUtils.InternalUrlHelper
 import mocks.auth.MockAuthActions

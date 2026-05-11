@@ -30,7 +30,7 @@ import models.UIJourneySessionData
 import models.core.{Mode, NormalMode}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -198,7 +198,10 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
         val journeySessionData: UIJourneySessionData =
           sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
-        sessionService.setMongoData(journeySessionData).flatMap(_ => Future.successful(Redirect(backUrl)))
+        sessionService.setMongoData(journeySessionData).flatMap {
+          case true => Future.successful(Redirect(backUrl))
+          case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+        }
 
       case None =>
         Logger("application").error("Unable to find addIncomeSourceData in session data")
@@ -220,7 +223,10 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
         val journeySessionData: UIJourneySessionData =
           sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
-        sessionService.setMongoData(journeySessionData).flatMap(_ => Future.successful(Redirect(successUrl)))
+        sessionService.setMongoData(journeySessionData).flatMap {
+          case true  => Future.successful(Redirect(successUrl))
+          case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
+        }
 
       case None =>
         Logger("application").error("Unable to find addIncomeSourceData in session data")

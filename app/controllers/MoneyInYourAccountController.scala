@@ -75,7 +75,6 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
         val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel, appConfig.repaymentsUrl)
         auditClaimARefund(creditsModel)
         Ok(moneyInYourAccountView(viewModel, isAgent, backUrl)(user, user, messages))
-      case _ => logAndRedirect("Invalid response from financial transactions")
     }
   }
 
@@ -114,8 +113,6 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
           case Left(ex) =>
             logAndRedirect(ex.getLocalizedMessage)
         }
-      case _ =>
-        Future.successful(logAndRedirect("Could not get CreditsModel"))
     }
   }
 

@@ -18,7 +18,6 @@ package common.controllers
 
 import audit.models.IvOutcomeSuccessAuditModel
 import authV2.AuthActionsTestData.defaultIncomeSourcesData
-import common.controllers.UpliftSuccessController
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions

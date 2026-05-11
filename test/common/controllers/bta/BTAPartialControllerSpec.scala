@@ -16,7 +16,6 @@
 
 package common.controllers.bta
 
-import common.controllers.bta.BTAPartialController
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions

@@ -17,7 +17,6 @@
 package businessDetails.services
 
 import businessDetails.connectors.CustomerFactsUpdateConnector
-import businessDetails.services.CustomerFactsUpdateService
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, verify, when}
 import testUtils.TestSupport

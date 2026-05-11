@@ -17,7 +17,6 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import connectors.BusinessDetailsConnector
 import models.core.{AccountingPeriodModel, AddressModel}
 import models.incomeSourceDetails.*
 import org.scalatest.wordspec.AnyWordSpec

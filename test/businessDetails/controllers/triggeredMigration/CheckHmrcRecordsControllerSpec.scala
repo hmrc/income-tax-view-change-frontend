@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import businessDetails.controllers.triggeredMigration.CheckHmrcRecordsController
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import businessDetails.mocks.services.MockTriggeredMigrationService

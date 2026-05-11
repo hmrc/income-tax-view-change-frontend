@@ -16,8 +16,8 @@
 
 package models.financialDetails
 
-import enums.CodingOutType._
-import enums.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
+import enums.CodingOutType.*
+import enums.DocumentType.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
 import testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 import testUtils.UnitSpec
 

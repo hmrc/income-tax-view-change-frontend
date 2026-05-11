@@ -20,7 +20,6 @@ import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import common.controllers.agent.errors.routes as agentErrorRoutes
 import config.featureswitch.*
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.ChargeSummaryController.ErrorCode

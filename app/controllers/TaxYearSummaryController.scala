@@ -198,12 +198,13 @@ class TaxYearSummaryController @Inject()(
           origin = origin,
           isAgent = isAgent
         )
-      case (_, _, None) if isAgent =>
-        Logger("application").error(s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-        Future(agentItvcErrorHandler.showInternalServerError())
-      case (_, _, None) if !isAgent =>
-        Logger("application").error(s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-        Future(itvcErrorHandler.showInternalServerError())
+      case (_, _, None) =>
+        if isAgent then
+          Logger("application").error(s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          Future(agentItvcErrorHandler.showInternalServerError())
+        else
+          Logger("application").error(s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          Future(itvcErrorHandler.showInternalServerError())
     }
   }
 

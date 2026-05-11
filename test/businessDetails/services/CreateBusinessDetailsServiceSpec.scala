@@ -22,7 +22,6 @@ import businessDetails.connectors.CreateIncomeSourceConnector
 import businessDetails.connectors.helpers.IncomeSourcesDataHelper
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.models.createIncomeSource.*
-import businessDetails.services.CreateBusinessDetailsService
 import config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.*
 import org.mockito.ArgumentMatchers.any

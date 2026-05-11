@@ -18,7 +18,6 @@ package businessDetails.connectors
 
 import _root_.helpers.servicemocks.AuditStub
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import businessDetails.connectors.CreateIncomeSourceConnector
 import businessDetails.models.createIncomeSource.*
 import com.github.tomakehurst.wiremock.client.WireMock
 import org.scalatest.wordspec.AnyWordSpec
