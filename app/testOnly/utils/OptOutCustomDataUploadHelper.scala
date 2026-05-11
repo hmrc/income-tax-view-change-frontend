@@ -31,4 +31,17 @@ trait OptOutCustomDataUploadHelper {
       codeBlock
     }
   }
+
+  def handleDefaultValues(status: Option[String])(codeBlock: => Future[Unit]): Future[Unit] = {
+    status match {
+      case Some("Default") => Logger("application").info(s"Default was chosen by the user. There is nothing to overwrite. < Status: $status >")
+        Future.successful(Ok(s"Default was chosen by the user. There is nothing to overwrite. < Status: $status >"))
+      case Some(value) =>
+        Logger("application").info(s"Status value provided by the user: $value. Proceeding with the code block execution.")
+        codeBlock
+      case None =>
+        Logger("application").info("No status value provided by the user. Proceeding with the code block execution.")
+        codeBlock
+    }
+  }
 }

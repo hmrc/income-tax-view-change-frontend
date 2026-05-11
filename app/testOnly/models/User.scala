@@ -41,7 +41,7 @@ object User {
     )
 }
 
-case class UserRecord(nino: String, mtditid: String, utr: String, description: String)
+case class UserRecord(nino: String, mtditid: String, utr: String, category: String, description: String)
 
 object UserRecord {
   implicit val formats: OFormat[UserRecord] = Json.format[UserRecord]

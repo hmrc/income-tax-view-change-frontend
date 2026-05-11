@@ -21,7 +21,7 @@ import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, Nino, SchemaModel, TrigMigUser}
+import testOnly.models.{DataModel, Nino, SchemaModel, IncomeSourcesUser}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import play.api.libs.ws.writeableOf_JsValue
@@ -104,13 +104,13 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/business-data/$mtdid"
   }
 
-  def overwriteBusinessData(mtdid: String, trigMigUser: TrigMigUser)
+  def overwriteBusinessData(mtdid: String, incomeSourcesUser: IncomeSourcesUser)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
 
     val url = getOverwriteBusinessDataUrl(mtdid)
 
-    val requestJson = Json.toJson(trigMigUser)
+    val requestJson = Json.toJson(incomeSourcesUser)
 
     http.post(url"$url")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
