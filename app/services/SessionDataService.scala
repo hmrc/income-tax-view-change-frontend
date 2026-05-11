@@ -16,8 +16,8 @@
 
 package services
 
+import common.utils.sessionUtils.SessionKeys
 import connectors.SessionDataConnector
-import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse

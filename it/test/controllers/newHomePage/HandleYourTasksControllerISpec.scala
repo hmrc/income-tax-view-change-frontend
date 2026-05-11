@@ -16,7 +16,7 @@
 
 package controllers.newHomePage
 
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.ChargeType.ITSA_NI
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.WiremockHelper

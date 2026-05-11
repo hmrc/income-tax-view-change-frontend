@@ -16,7 +16,8 @@
 
 package services
 
-import controllers.agent.sessionUtils
+import common.utils.sessionUtils
+import common.utils.sessionUtils.SessionKeys
 import mocks.connectors.MockSessionDataConnector
 import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
 import testUtils.TestSupport
@@ -30,7 +31,7 @@ class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
       "the cookie contains the mtdId, utr and nino" in {
         val response: SessionGetResponse = Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "not required"))
         val request = fakeRequestWithActiveSession.withSession(
-          sessionUtils.SessionKeys.clientUTR -> "three",
+          SessionKeys.clientUTR -> "three",
           sessionUtils.SessionKeys.clientMTDID -> "one",
           sessionUtils.SessionKeys.clientNino -> "two"
         )

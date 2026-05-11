@@ -19,9 +19,9 @@ package controllers.agent
 import audit.AuditingService
 import audit.models.ConfirmClientDetailsAuditModel
 import auth.authV2.AuthActions
+import common.utils.sessionUtils.SessionKeys
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.sessionUtils.SessionKeys
 import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger

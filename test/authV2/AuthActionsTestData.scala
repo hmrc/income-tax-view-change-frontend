@@ -18,10 +18,10 @@ package authV2
 
 import auth.MtdItUser
 import auth.authV2.models._
-import controllers.agent.AuthUtils._
-import controllers.agent.sessionUtils.SessionKeys
+import common.utils.AuthUtils._
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import businessDetails.forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
+import common.utils.sessionUtils.SessionKeys
 import models.admin.FeatureSwitch
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import models.sessionData.SessionCookieData

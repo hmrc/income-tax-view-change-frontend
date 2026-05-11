@@ -17,7 +17,7 @@
 package controllers.agent
 
 import auth.MtdItUser
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.MTDSupportingAgent
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}

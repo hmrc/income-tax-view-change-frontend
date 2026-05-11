@@ -18,6 +18,7 @@ package businessDetails.services
 
 import auth.MtdItUser
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessesRoutes
+import common.viewUtils.InternalUrlHelper
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import models.core.Mode
@@ -53,8 +54,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     else addBusinessesRoutes.AddBusinessAddressController.submit(None, mode = mode, isTriggeredMigration).url
   }
 
-  lazy val individualFeedbackUrl: String = controllers.feedback.routes.FeedbackController.show().url
-  lazy val agentFeedbackUrl: String = controllers.feedback.routes.FeedbackController.showAgent().url
+  lazy val individualFeedbackUrl: String = InternalUrlHelper.feedbackUrl
+  lazy val agentFeedbackUrl: String = InternalUrlHelper.agentFeedbackUrl
 
   lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
   lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
@@ -72,11 +73,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout().url),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive().url)
+                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.timeoutUrl),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.keepAliveUrl)
               )
             ),
-            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut().url),
+            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.signoutUrl),
             "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(
@@ -186,11 +187,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.timeout().url),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + controllers.timeout.routes.SessionTimeoutController.keepAlive().url)
+                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.timeoutUrl),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.keepAliveUrl)
               )
             ),
-            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + controllers.routes.SignOutController.signOut().url),
+            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.signoutUrl),
             "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
             "selectPageConfig" -> JsObject(
               Seq(

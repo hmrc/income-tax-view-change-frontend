@@ -20,6 +20,7 @@ import audit.AuditingService
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import common.controllers.agent.errors.routes as agentErrorRoutes
 import config.featureswitch.*
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.ChargeSummaryController.ErrorCode
@@ -72,8 +73,8 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
       if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
       else itvcErrorHandler.showInternalServerError()
     } else {
-      if (isAgent) Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show().url)
-      else Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show().url)
+      if (isAgent) Redirect(controllers.agent.errors.routes.AgentNotFoundDocumentIDLookupController.show())
+      else Redirect(controllers.errors.routes.NotFoundDocumentIDLookupController.show())
     }
   }
 

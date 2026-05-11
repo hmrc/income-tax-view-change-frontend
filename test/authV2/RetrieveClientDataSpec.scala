@@ -19,8 +19,8 @@ package authV2
 import auth.authV2.actions._
 import auth.authV2.models.AuthorisedAgentWithClientDetailsRequest
 import authV2.AuthActionsTestData._
+import common.utils.sessionUtils.SessionKeys
 import config.AgentItvcErrorHandler
-import controllers.agent.sessionUtils.SessionKeys
 import enums.MTDPrimaryAgent
 import mocks.services.MockClientDetailsService
 import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}

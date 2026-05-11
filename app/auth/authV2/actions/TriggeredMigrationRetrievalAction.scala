@@ -19,10 +19,10 @@ package auth.authV2.actions
 import auth.MtdItUser
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.services.CustomerFactsUpdateService
+import common.controllers.BaseController
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.IncomeTaxCalculationConnector
-import controllers.BaseController
 import enums.JourneyType.TriggeredMigrationJourney
 import enums.TaxYearSummary.CalculationRecord.LATEST
 import models.admin.TriggeredMigration

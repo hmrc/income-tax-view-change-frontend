@@ -18,7 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.helpers.servicemocks.AddressLookupStub
 import businessDetails.testConstants.AddressLookupTestConstants
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.WiremockHelper
 import helpers.servicemocks.IncomeTaxViewChangeStub

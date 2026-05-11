@@ -16,6 +16,8 @@
 
 package views
 
+import common.viewUtils
+import common.viewUtils.ExternalUrlHelper
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
@@ -32,7 +34,9 @@ import obligations.testConstants.NextUpdatesTestConstants.*
 import testUtils.ViewSpec
 import views.html.TaxYearSummaryView
 import obligations.models.*
+
 import java.time.LocalDate
+import common.viewUtils.ExternalUrlHelper
 
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
@@ -1274,7 +1278,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val bulletLink: Element = document.getElementById("calculation-bullet-2-link")
         bulletLink.text should include(messagesLookUp("tax-year-summary.calculation-bullet-2-link"))
         bulletLink.text should include("(opens in new tab)")
-        bulletLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saTaxReturnDeadlinesUrl
+        bulletLink.attr("href") shouldBe ExternalUrlHelper.saTaxReturnDeadlinesUrl
         bulletLink.attr("target") shouldBe "_blank"
 
 
@@ -1287,7 +1291,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val contactLink: Element = document.getElementById("calculation-contact-hmrc-link")
         contactLink.text should include(messagesLookUp("tax-year-summary.previous-calculation-contact-hmrc-link"))
         contactLink.text should include("(opens in new tab)")
-        contactLink.attr("href") shouldBe viewUtils.ExternalUrlHelper.saGeneralEnquiriesUrl
+        contactLink.attr("href") shouldBe ExternalUrlHelper.saGeneralEnquiriesUrl
         contactLink.attr("target") shouldBe "_blank"
 
         document.getElementById("calculation-bill").text should include(messagesLookUp("tax-year-summary.calculation-bill"))

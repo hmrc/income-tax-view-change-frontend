@@ -16,6 +16,7 @@
 
 package controllers
 
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import models.admin.PostFinalisationAmendmentsR18

@@ -16,7 +16,7 @@
 
 package controllers.claimToAdjustPoa
 
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.adjustPoa.SelectYourReasonFormProvider
 import helpers.servicemocks.IncomeTaxViewChangeStub

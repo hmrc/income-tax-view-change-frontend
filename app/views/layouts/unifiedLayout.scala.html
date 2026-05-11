@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import common.viewUtils.ExternalUrlHelper
+@import common.viewUtils.InternalUrlHelper
 @import views.helpers.CurrentLanguage
 @import views.helpers.HtmlTitle
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -21,13 +23,13 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.Header
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
-@import views.html.layouts.common.Scripts
+@import views.html.layouts.scripts.Scripts
 @import config.FrontendAppConfig
 @import views.html.helpers.injected.BackLinkWithFallback
 @import enums.GatewayPage._
-@import viewUtils.ExternalUrlHelper
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderUrls
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderNames
+
 
 @this(
     appConfig: FrontendAppConfig,
@@ -115,7 +117,7 @@
             headerUrls = HeaderUrls(
                 homepageUrl = ExternalUrlHelper.homepageLink,
                 serviceUrl = serviceUrl,
-                signOutHref = Some(controllers.routes.SignOutController.signOut().url)
+                signOutHref = Some(InternalUrlHelper.signoutUrl)
             ),
             banners = Banners(
                 userResearchBanner = Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
@@ -137,7 +139,7 @@
             serviceName = if(showServiceName) oldServiceName else None,
             serviceUrl = serviceUrl,
             language = CurrentLanguage(),
-            signOutHref = Some(controllers.routes.SignOutController.signOut().url),
+            signOutHref = Some(InternalUrlHelper.signoutUrl),
             userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
             displayHmrcBanner = false,
             phaseBanner = Some(
@@ -162,8 +164,8 @@
         language = Some(CurrentLanguage().code),
         timeout = Option(900),
         countdown = Option(120),
-        keepAliveUrl = Some(controllers.timeout.routes.SessionTimeoutController.keepAlive().url),
-        signOutUrl = Some(controllers.routes.SignOutController.signOut().url),
+        keepAliveUrl = Some(InternalUrlHelper.keepAliveUrl),
+        signOutUrl = Some(InternalUrlHelper.signoutUrl),
         keepAliveButtonText = Some(messages("button.continue"))
         ))
     }
@@ -178,8 +180,8 @@
             <div id="language-switch">
                 @languageSwitch(LanguageSelect(
                     if (messages.lang.code == "cy") Cy else En,
-                    (En, controllers.routes.LocalLanguageController.switchToLanguage("english").url),
-                    (Cy, controllers.routes.LocalLanguageController.switchToLanguage("cymraeg").url)
+                    (En, InternalUrlHelper.switchLocaleToEnglishUrl),
+                    (Cy, InternalUrlHelper.switchLocaleToWelshUrl)
                 ))
             </div>
         }
