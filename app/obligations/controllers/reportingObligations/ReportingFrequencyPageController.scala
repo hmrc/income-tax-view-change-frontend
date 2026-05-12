@@ -31,7 +31,7 @@ import play.api.mvc.*
 import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.MtdConstants
-import views.html.errorPages.templates.ErrorTemplate
+import common.views.html.errorPages.templates.ErrorTemplate
 import obligations.views.html.reportingObligations.ReportingFrequencyView
 
 import javax.inject.Inject

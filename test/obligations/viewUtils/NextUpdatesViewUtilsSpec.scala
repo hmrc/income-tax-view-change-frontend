@@ -29,7 +29,7 @@ import play.twirl.api.{Html, HtmlFormat}
 import testConstants.BaseTestConstants.{testNino, testUserTypeIndividual}
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.components.link
+import common.views.html.components.link
 
 class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDateFormatter with GuiceOneAppPerSuite {
 

@@ -22,7 +22,7 @@ import config.featureswitch.FeatureSwitching
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
-import views.html.components.link
+import common.views.html.components.link
 
 import javax.inject.Inject
 

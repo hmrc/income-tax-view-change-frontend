@@ -33,7 +33,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.CustomNotFoundErrorView
+import common.views.html.errorPages.CustomNotFoundErrorView
 import businessDetails.views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
 
 import javax.inject.{Inject, Singleton}

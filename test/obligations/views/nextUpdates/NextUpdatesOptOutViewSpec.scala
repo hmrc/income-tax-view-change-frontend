@@ -34,7 +34,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import testConstants.BusinessDetailsTestConstants.business1
 import testUtils.TestSupport
-import views.html.components.link
+import common.views.html.components.link
 
 import java.time.LocalDate
 

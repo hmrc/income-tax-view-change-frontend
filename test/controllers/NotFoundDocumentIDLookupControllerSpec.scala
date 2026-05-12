@@ -22,7 +22,7 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers._
 import testUtils.TestSupport
-import views.html.errorPages.CustomNotFoundErrorView
+import common.views.html.errorPages.CustomNotFoundErrorView
 
 class NotFoundDocumentIDLookupControllerSpec extends TestSupport {
 

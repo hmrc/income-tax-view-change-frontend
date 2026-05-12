@@ -19,7 +19,7 @@ package common.controllers.errors
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.notEnrolled.NotEnrolledView
+import common.views.html.notEnrolled.NotEnrolledView
 
 import scala.concurrent.Future
 

@@ -20,7 +20,7 @@ import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.timeout.TimeoutView
+import common.views.html.timeout.TimeoutView
 
 import scala.concurrent.Future
 
