@@ -42,20 +42,26 @@
         val matchingFinancialDetail = viewModel.payments.financialDetails.find(_.transactionId.contains(matchingPayment.get))
         val originalAmount = matchingFinancialDetail.flatMap(_.originalAmount)
         val isItACredit = originalAmount.exists(_ < 0)
+        
+        val matchingDocumentDetail = viewModel.payments.documentDetails.find(_.transactionId.contains(matchingPayment.get))
+        val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
 
-        val documentDate = viewModel.chargeItem.documentDate.getYear
+        val documentDate = matchingFinancialDetail.map(_.taxYear.toInt).getOrElse(0)
+
+        // create function to find the documentDetails using the financialDetails in the FinancialDetailsModel
+        // use that function to find the documentDetails for the matchingFinancialDetail
 
         println("TTTTTTTTTTT")
         println("TTTTTTTTTTT")
-        println(viewModel.chargeItem.documentDate)
+        println(documentDate)
         println("TTTTTTTTTTT")
         println("TTTTTTTTTTT")
 
         val link = (isItACredit, viewModel.isAgent, payment.taxYear.isDefined) match {
             case (false, true, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
             case (false, false, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
-            case (true, true, true) => controllers.routes.CreditsSummaryController.showAgentCreditsSummary(documentDate).url
-            case (true, false, true) => controllers.routes.CreditsSummaryController.showCreditsSummary(documentDate).url
+            case (true, true, true) => controllers.routes.CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
+            case (true, false, true) => controllers.routes.CreditsSummaryController.showCreditsSummary(findTaxYear).url
         }
 
         println("LLLLLLLLLLL")
