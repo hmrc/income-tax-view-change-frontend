@@ -171,23 +171,9 @@ case class ChargeSummaryViewModel(
     matchingPayment match {
       case Some(paymentId) => {
 
-        val matchingFinancialDetail = payments.financialDetails.find(_.transactionId.contains(paymentId))
-        val originalAmount = matchingFinancialDetail.flatMap(_.originalAmount)
+        val matchingDocumentDetail = payments.documentDetails.find(_.transactionId.contains(paymentId))
+        val originalAmount = matchingDocumentDetail.map(_.originalAmount)
         val isItACredit = originalAmount.exists(_ < 0)
-
-        println("ZZZZZZ")
-        println("ZZZZZZ")
-        println(chargeItem.originalAmount)
-        println(originalAmount)
-        println(s"originalAmount raw: $originalAmount")
-        println(s"matchingFinancialDetail: $matchingFinancialDetail")
-        println(s"isItACredit: $isItACredit")
-        println("ZZZZZZ")
-        println("ZZZZZZ")
-
-        println("DDDDDD")
-
-        println("DDDDDD")
 
         val documentDate = chargeItem.documentDate.getYear
         val link = (isItACredit, isAgent) match {

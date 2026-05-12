@@ -139,14 +139,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                 case Some(financialDetail: FinancialDetail) => (Some(financialDetail.taxYear), financialDetail.mainTransaction.exists(cr => creditsWithSummaryPages.contains(cr)), financialDetail.mainTransaction.contains(cutOver))
                 case None => (None, false, false)
               }
-
-              println("XXXXXXXXX")
-              println("XXXXXXXXX")
-              println(s"documentId: ${finDetailOfSource.map(_.transactionId)}")
-              println(s"isCredit: $isCredit")
-              println("XXXXXXXXX")
-              println("XXXXXXXXX")
-
+              
               PaymentHistoryAllocation(
                 dueDate = subItem.dueDate,
                 amount = subItem.amount,
