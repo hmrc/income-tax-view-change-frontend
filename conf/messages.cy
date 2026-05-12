@@ -487,6 +487,25 @@ tax-year-summary.message.C559105                               = rydych wedi haw
 tax-year-summary.message.C559113                               = ar gyfer eich eiddo tramor, mae naill ai angen i chi gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau.
 tax-year-summary.message.C559114                               = ar gyfer eich llety gwyliau wedi’i ddodrefnu yn yr AEE, mae naill ai angen i chi gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau ohonynt.
 
+tax-year-summary.message.C119113                               = Eiddo Tramor - Ni all treuliau cyfunol gael eu cyflwyno gyda dadansoddiad llawn o dreuliau.
+tax-year-summary.message.C159113                               = Eiddo Tramor - Ni all treuliau cyfunol gael eu cyflwyno gyda dadansoddiad llawn o dreuliau, ailgyflwynwch eich cais.
+tax-year-summary.message.C55329                                = Ni ddylai treuliau adloniant y busnes na ellir eu caniatáu fod yn fwy na threuliau adloniant caniataol y busnes. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.message.C55007                                = Nid yw’r cais ar gyfer y cyfnod yn cyd-fynd â’r dyddiad darfod, sef {0}. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.message.C55015                                = Mae’n rhaid i’r cyfnod ceisiadau gyd-fynd â’r dull o adrodd chwarterol yr ydych wedi’i ddewis.
+tax-year-summary.message.C55016                                = Mae’n rhaid i’r cyfnod ceisiadau gyd-fynd â’r dull o adrodd chwarterol yr ydych wedi’i ddewis.
+tax-year-summary.message.C55017                                = Mae’n rhaid i’r cyfnod ceisiadau gyd-fynd â’r dull o adrodd chwarterol yr ydych wedi’i ddewis.
+tax-year-summary.message.C559200                               = Mae un neu fwy o’ch ffynonellau incwm busnes yn defnyddio dull adrodd chwarterol ar sail CALENDR, ond nid ydych wedi cyflwyno Crynodeb Addasadwy o’ch Ffynonellau Incwm Busnes (Business Source Adjustable Summary).
+tax-year-summary.message.C55326                                = Mae angen cynnwys gwybodaeth ‘Cyfnod rhoi Cyfrif’ ar gyfer pob Hunangyflogaeth. Cyflwynwch eich cais.
+tax-year-summary.message.C55327                                = Os ydych yn defnyddio dull safonol i adrodd am incwm Hunangyflogaeth sy’n dod o un ffynhonnell neu fwy, bydd angen i chi gyflwyno ffigur addasiad sail cyfrifyddu wrth beidio â defnyddio’r rheol o ran dyddiadau cyfrifyddu hwyr. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.message.C55328                                = Os ydych yn defnyddio dull ar sail calendr i adrodd am incwm Hunangyflogaeth sy’n dod o un ffynhonnell neu fwy, bydd angen i chi gyflwyno ffigur addasiad sail cyfrifyddu ac addasiadau ffynonellau busnes wrth beidio â defnyddio’r rheol o ran dyddiadau cyfrifyddu hwyr. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.message.C55109                                = Ni all Rhyddhad Gwaredu Ased Busnes fod yn fwy na £{0}. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.message.C55110                                = Ni all Rhyddhad Buddsoddwyr fod yn fwy na £{0}.  Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.message.C55602                                = Mae eich incwm o eiddo tramor yn fwy na’r trothwy £{0} ar gyfer defnyddio cyfrifyddu arian parod. Mae’n rhaid i chi ddefnyddio dull cyfrifyddu ar sail croniadau. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.message.C55107                                = Nid oes datganiad o swydd fel cyfarwyddwr wedi’i gyflwyno ar gyfer un gyflogaeth neu fwy. Cyflwynwch eich cais.
+tax-year-summary.message.C55108                                = Sicrhewch fod y Difidend a Gafwyd o Swyddi fel Cyfarwyddwyr ddim yn fwy na Difidendau’r DU.
+tax-year-summary.message.C55525                                = Mae eich incwm o eiddo yn y DU yn fwy na’r trothwy ar gyfer defnyddio cyfrifyddu ar sail arian parod, sef £{0}. Mae’n rhaid i chi ddefnyddio dull cyfrifyddu ar sail croniadau. Diwygiwch ac ailgyflwynwch eich cais.
+
+
 tax-year-summary.agent.message.header                          = Ni allwn ddangos y cyfrifiad hwn:
 tax-year-summary.agent.message.action                          = Mae angen i chi ddiwygio ac ailgyflwyno Ffurflen Dreth eich cleient
 tax-year-summary.agent.message.C15014                          = ni all diweddariad chwarterol ddod i ben ar ôl dyddiad dod i ben y cyfnod cyfrifyddu sef, {0}.
@@ -564,6 +583,24 @@ tax-year-summary.agent.message.C559104                         = mae’ch cleien
 tax-year-summary.agent.message.C559105                         = mae’r swm a hawliwyd gan eich cleient am addasiad ar gyfer defnydd preifat ar gyfer ei eiddo tramor yn fwy na chyfanswm y treuliau caniataol.
 tax-year-summary.agent.message.C559113                         = ar gyfer eiddo tramor eich cleient, mae naill ai angen iddo gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau.
 tax-year-summary.agent.message.C559114                         = ar gyfer llety gwyliau wedi’i ddodrefnu yn yr AEE eich cleient, mae naill ai angen iddo gyflwyno treuliau cyfunol neu dreuliau manwl – ond nid y ddau ohonynt.
+
+tax-year-summary.agent.message.C119113                         = Eiddo Tramor - Ni all treuliau cyfunol gael eu cyflwyno gyda dadansoddiad llawn o dreuliau.
+tax-year-summary.agent.message.C159113                         = Eiddo Tramor - Ni all treuliau cyfunol gael eu cyflwyno gyda dadansoddiad llawn o dreuliau, ailgyflwynwch eich cais.
+tax-year-summary.agent.message.C55329                          = Ni ddylai treuliau adloniant y busnes na ellir eu caniatáu fod yn fwy na threuliau adloniant caniataol y busnes. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.agent.message.C55007                          = Nid yw’r cais ar gyfer y cyfnod yn cyd-fynd â’r dyddiad darfod, sef {0}. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.agent.message.C55015                          = Mae’n rhaid i’r cyfnod ceisiadau gyd-fynd â’r dull o adrodd chwarterol yr ydych wedi’i ddewis.
+tax-year-summary.agent.message.C55016                          = Mae’n rhaid i’r cyfnod ceisiadau gyd-fynd â’r dull o adrodd chwarterol yr ydych wedi’i ddewis.
+tax-year-summary.agent.message.C55017                          = Mae’n rhaid i’r cyfnod ceisiadau gyd-fynd â’r dull o adrodd chwarterol yr ydych wedi’i ddewis.
+tax-year-summary.agent.message.C559200                         = Mae un neu fwy o’ch ffynonellau incwm busnes yn defnyddio dull adrodd chwarterol ar sail CALENDR, ond nid ydych wedi cyflwyno Crynodeb Addasadwy o’ch Ffynonellau Incwm Busnes (Business Source Adjustable Summary).
+tax-year-summary.agent.message.C55326                          = Mae angen cynnwys gwybodaeth ‘Cyfnod rhoi Cyfrif’ ar gyfer pob Hunangyflogaeth. Cyflwynwch eich cais.
+tax-year-summary.agent.message.C55327                          = Os ydych yn defnyddio dull safonol i adrodd am incwm Hunangyflogaeth sy’n dod o un ffynhonnell neu fwy, bydd angen i chi gyflwyno ffigur addasiad sail cyfrifyddu wrth beidio â defnyddio’r rheol o ran dyddiadau cyfrifyddu hwyr. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.agent.message.C55328                          = Os ydych yn defnyddio dull ar sail calendr i adrodd am incwm Hunangyflogaeth sy’n dod o un ffynhonnell neu fwy, bydd angen i chi gyflwyno ffigur addasiad sail cyfrifyddu ac addasiadau ffynonellau busnes wrth beidio â defnyddio’r rheol o ran dyddiadau cyfrifyddu hwyr. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.agent.message.C55109                          = Ni all Rhyddhad Gwaredu Ased Busnes fod yn fwy na £{0}. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.agent.message.C55110                          = Ni all Rhyddhad Buddsoddwyr fod yn fwy na £{0}.  Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.agent.message.C55602                          = Mae eich incwm o eiddo tramor yn fwy na’r trothwy £{0} ar gyfer defnyddio cyfrifyddu arian parod. Mae’n rhaid i chi ddefnyddio dull cyfrifyddu ar sail croniadau. Diwygiwch ac ailgyflwynwch eich cais.
+tax-year-summary.agent.message.C55107                          = Nid oes datganiad o swydd fel cyfarwyddwr wedi’i gyflwyno ar gyfer un gyflogaeth neu fwy. Cyflwynwch eich cais.
+tax-year-summary.agent.message.C55108                          = Sicrhewch fod y Difidend a Gafwyd o Swyddi fel Cyfarwyddwyr ddim yn fwy na Difidendau’r DU.
+tax-year-summary.agent.message.C55525                          = Mae eich incwm o eiddo yn y DU yn fwy na’r trothwy ar gyfer defnyddio cyfrifyddu ar sail arian parod, sef £{0}. Mae’n rhaid i chi ddefnyddio dull cyfrifyddu ar sail croniadau. Diwygiwch ac ailgyflwynwch eich cais.
 
 tax-year-summary.adjust-poa-paragraph                          = Gallwch ostwng y ddau daliad ar gyfrif os ydych yn disgwyl i gyfanswm eich Treth Incwm a’ch Cyfraniadau Yswiriant Gwladol Dosbarth 4 fod yn wahanol i gyfanswm eich taliadau ar gyfrif presennol.
 tax-year-summary.adjust-poa                                    = Addasu taliadau ar gyfrif
