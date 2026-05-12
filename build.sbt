@@ -22,7 +22,9 @@ val playVersion = "play-30"
 
 scalacOptions ++= Seq(
   "-feature",
-  "-Wconf:src=target/.*:silent")
+  "-Wconf:src=target/.*:silent",
+  "-unchecked",
+  "-Werror")
 
 val compile = Seq(
   ws,
