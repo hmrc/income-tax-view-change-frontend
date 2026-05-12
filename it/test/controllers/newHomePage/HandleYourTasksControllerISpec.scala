@@ -84,28 +84,28 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val noTasksSupportingAgentContent = "You have no tasks to complete at the moment. Note that your customer may have tasks that you are unable to see as a support agent."
 
     val overdueChargeHeading = "Check what you owe and make a payment"
-    val overdueChargeContent = "You have an overdue amount of £100.00"
-    val overdueChargeTag = "Was due 29 Mar 2018"
+    val overdueChargeContent = "You have an overdue amount to pay."
+    val overdueChargeTag = "Due 29 Mar 2018"
 
     val multipleOverdueChargesHeading = "Check what you owe and make a payment"
-    val multipleOverdueChargesContent = "You have an overdue amount of £200.00"
-    val multipleOverdueChargesTag = "Oldest charge due 29 Mar 2017"
+    val multipleOverdueChargesContent = "You have more than one overdue amount to pay."
+    val multipleOverdueChargesTag = "Oldest due 29 Mar 2017"
 
     val overdueLspHeading = "View your late submission penalty"
     val overdueLspContent = "You have a late submission penalty."
-    val overdueLspTag = "Was due 29 Mar 2018"
+    val overdueLspTag = "Due 29 Mar 2018"
 
     val multipleOverdueLspHeading = "View your late submission penalties"
     val multipleOverdueLspContent = "You have 2 late submission penalties."
-    val multipleOverdueLspTag = "Oldest penalty due 29 Mar 2017"
+    val multipleOverdueLspTag = "Oldest due 29 Mar 2017"
 
     val overdueLppHeading = "View your late payment penalty"
     val overdueLppContent = "You have a late payment penalty."
-    val overdueLppTag = "Was due 29 Mar 2018"
+    val overdueLppTag = "Due 29 Mar 2018"
 
     val multipleOverdueLppHeading = "View your late payment penalties"
     val multipleOverdueLppContent = "You have 2 late payment penalties."
-    val multipleOverdueLppTag = "Oldest penalty due 29 Mar 2017"
+    val multipleOverdueLppTag = "Oldest due 29 Mar 2017"
 
     val upcomingChargeHeading = "Check what you owe and make a payment"
     val upcomingChargeContent = "You have an upcoming payment."
@@ -113,19 +113,19 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
     val overdueAnnualSubmissionHeading = "View submission deadlines"
     val overdueAnnualSubmissionContent = "You have an overdue annual submission."
-    val overdueAnnualSubmissionTag = "Was due 5 Apr 2021"
+    val overdueAnnualSubmissionTag = "Due 5 Apr 2021"
 
     val multipleOverdueAnnualSubmissionsHeading = "View submission deadlines"
     val multipleOverdueAnnualSubmissionsContent = "You have 2 overdue annual submissions."
-    val multipleOverdueAnnualSubmissionsTag = "Oldest submission due 5 Apr 2021"
+    val multipleOverdueAnnualSubmissionsTag = "Oldest due 5 Apr 2021"
 
     val overdueQuarterlySubmissionHeading = "View submission deadlines"
     val overdueQuarterlySubmissionContent = "You have an overdue quarterly submission."
-    val overdueQuarterlySubmissionTag = "Was due 5 Apr 2021"
+    val overdueQuarterlySubmissionTag = "Due 5 Apr 2021"
 
     val multipleOverdueQuarterlySubmissionsHeading = "View submission deadlines"
     val multipleOverdueQuarterlySubmissionsContent = "You have 2 overdue quarterly submissions."
-    val multipleOverdueQuarterlySubmissionsTag = "Oldest submission due 5 Apr 2021"
+    val multipleOverdueQuarterlySubmissionsTag = "Oldest due 5 Apr 2021"
 
     val upcomingAnnualSubmissionHeading = "View submission deadlines"
     val upcomingAnnualSubmissionContent = "You have an upcoming annual submission deadline."
@@ -138,7 +138,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val moneyInYourAccountHeading = "Check for money in your account and claim a refund"
     val moneyInYourAccountContent = "You have £100.00 in your account."
 
-    val overallOverdueChargeTag = "Was due 29 Mar 2017"
+    val overallOverdueChargeTag = "Due 29 Mar 2017"
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -607,7 +607,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
           }
 
           "display multiple cards" when {
-            "the user has multiple submissions, charges and money in their account" in new TestSetup(
+            "the user has submissions, penalties, one overdue charge, one upcoming charge and money in their account" in new TestSetup(
               obligationsModel = ObligationsModel(Seq(upcomingAnnualObligationsModel(), overdueAnnualObligationsModel(), overdueQuarterlyObligationsModel(), upcomingQuarterlyObligationsModel())),
               currentItsaStatus = ITSAStatus.Mandated,
               mtdUserRole = mtdUserRole,
@@ -640,8 +640,8 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getTitle(mtdUserRole)),
-                  elementTextByID("overdueTaskCard-heading-0")(YourTasksViewMessages.multipleOverdueChargesHeading),
-                  elementTextByID("overdueTaskCard-content-0")(YourTasksViewMessages.multipleOverdueChargesContent),
+                  elementTextByID("overdueTaskCard-heading-0")(YourTasksViewMessages.overdueChargeHeading),
+                  elementTextByID("overdueTaskCard-content-0")(YourTasksViewMessages.overdueChargeContent),
                   elementTextByID("overdueTaskCard-tag-0")(YourTasksViewMessages.multipleOverdueChargesTag),
                   elementAttributeBySelector(taskLink("overdueTaskCard-heading-0"), "href")(whatYouOweLink(mtdUserRole)),
                   elementTextByID("overdueTaskCard-heading-1")(YourTasksViewMessages.multipleOverdueLppHeading),
