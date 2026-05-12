@@ -205,9 +205,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
         MaturityLevel.get(charge.dueDate) match {
           case Some(MaturityLevel.Upcoming) | Some(MaturityLevel.DueEarly) | Some(MaturityLevel.DueToday) => Some(("newHome.yourTasks.selfAssessment.upcomingCharge", None))
           case Some(MaturityLevel.Overdue) => if(overdueCharges.size > 1) {
-            Some(("newHome.yourTasks.selfAssessment.overdueCharge.multiple", Some(chargeList.map(_.outstandingAmount).sum.toCurrencyString)))
+            Some(("newHome.yourTasks.selfAssessment.overdueCharge.multiple", None))
           } else {
-            Some(("newHome.yourTasks.selfAssessment.overdueCharge.single", Some(chargeList.map(_.outstandingAmount).sum.toCurrencyString)))
+            Some(("newHome.yourTasks.selfAssessment.overdueCharge.single", None))
           }
           case _ => None
         }
