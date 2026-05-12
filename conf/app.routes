@@ -21,6 +21,9 @@ GET         /agents/client-income-tax                                     contro
 GET         /agents                                                       controllers.HomeController.showAgent()
 GET         /your-tasks                                                   controllers.newHomePage.HandleYourTasksController.show()
 GET         /agents/your-tasks                                            controllers.newHomePage.HandleYourTasksController.showAgent()
+GET         /mortgage-evidence/proof-of-income                            controllers.newHomePage.ProofOfYourIncomeController.show(origin: Option[String] ?= None)
+GET         /agents/mortgage-evidence/proof-of-income                     controllers.newHomePage.ProofOfYourIncomeController.showAgent()
+
 
 GET         /recent-activity                                              controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/recent-activity                                       controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
