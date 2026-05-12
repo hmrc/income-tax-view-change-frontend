@@ -19,7 +19,6 @@ package models.homePage
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.obligations.NextUpdatesTileViewModel
 
 import java.time.LocalDate
 

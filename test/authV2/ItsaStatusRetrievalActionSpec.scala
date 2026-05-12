@@ -110,7 +110,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         val result = action.refine(mtdUser).futureValue
 
         result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(true).url
+        result.left.value.header.headers("LOCATION") shouldBe obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(true).url
       }
 
       "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - Individual" in {
@@ -138,7 +138,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         val result = action.refine(mtdUser).futureValue
 
         result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(false).url
+        result.left.value.header.headers("LOCATION") shouldBe obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(false).url
       }
 
       "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - SupportingAgent" in {
@@ -166,7 +166,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         val result = action.refine(mtdUser).futureValue
 
         result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(true).url
+        result.left.value.header.headers("LOCATION") shouldBe obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(true).url
       }
 
       "return an MtdItUser when valid ITSA status exists for current and future years" in {
@@ -293,7 +293,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         val result = action.refine(mtdUser).futureValue
 
         result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(false).url
+        result.left.value.header.headers("LOCATION") shouldBe obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(false).url
       }
 
 

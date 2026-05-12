@@ -26,6 +26,7 @@ import helpers.servicemocks.AuditStub
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
@@ -37,7 +38,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
-import repositories.{OptOutSessionDataRepository, UIJourneySessionDataRepository}
+import repositories.UIJourneySessionDataRepository
 import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants._
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}

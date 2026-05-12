@@ -16,26 +16,27 @@
 
 package controllers
 
-import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
+import audit.models.HomeAudit
 import auth.MtdItUser
 import enums.MTDIndividual
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{NavBarFs}
+import models.admin.NavBarFs
 import models.core.{AccountingPeriodModel, CessationModel}
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import play.api.http.Status._
+import obligations.models.audit.NextUpdatesResponseAuditModel
+import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import testConstants.NextUpdatesIntegrationTestConstants._
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 import testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
-import testConstants.messages.HomeMessages._
+import testConstants.messages.HomeMessages.*
+import obligations.models.*
 
 import java.time.LocalDate
 
