@@ -182,9 +182,7 @@ case class ChargeSummaryViewModel(
           case (false, true) => PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
           case (false, false) => PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
         }
-
-        println(link)
-
+        
         val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
         else if (payment.isCutoverCredit) messages("paymentHistory.cutOver")
         else messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
@@ -220,8 +218,6 @@ case class ChargeSummaryViewModel(
       chargeItemList ++
       paymentAllocationsFormattedList
   }.sortBy(_.date)
-
-  println(paymentAllocationsFormattedList)
 }
 
 

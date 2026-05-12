@@ -87,11 +87,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
 
-        println("ZZZZZZZZZZZZ")
-        println("ZZZZZZZZZZZZ")
-        println(charges)
-        println("ZZZZZZZZZZZZ")
-        println("ZZZZZZZZZZZZ")
         val maybeAvailableCredit: Option[BigDecimal] =
           credits.flatMap(_.availableCredit.filter(_ > 0.00)).headOption
         auditCreditSummary(maybeAvailableCredit, charges)
