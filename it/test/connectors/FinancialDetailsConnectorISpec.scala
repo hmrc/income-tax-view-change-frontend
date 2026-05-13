@@ -27,7 +27,7 @@ import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsRes
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{testPaymentLot, testPaymentLotItem}
+import testConstants.BaseTestConstants.{taxYear, testPaymentLot, testPaymentLotItem}
 import testConstants.PaymentAllocationsTestConstants.{paymentAllocationChargesModelMultiplePayments, testValidPaymentAllocationsModel}
 
 import java.time.LocalDate
@@ -266,6 +266,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           val paymentFull: List[Payment] =
             List(
               Payment(
+                taxYear = 9999,
                 reference = Some("reference"),
                 amount = Some(100.00),
                 outstandingAmount = Some(1.00),
@@ -341,6 +342,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           val paymentFull: List[Payment] =
             List(
               Payment(
+                taxYear = 9999,
                 reference = Some("reference"),
                 amount = Some(100.00),
                 outstandingAmount = Some(1.00),

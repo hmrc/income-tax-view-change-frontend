@@ -34,19 +34,19 @@ import java.time.LocalDate
 class PaymentHistoryControllerISpec extends ControllerISpecHelper {
 
   val payments: List[Payment] = List(
-    Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
+    Payment(taxYear = 9999, reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None, method = Some("method"),
       documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"), dueDate = Some(LocalDate.parse("2018-04-25")),
       documentDate = LocalDate.parse("2018-04-25"), transactionId = Some("DOCID01"),
       mainType = Some("SA Balancing Charge")),
-    Payment(reference = Some("mfa1"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
+    Payment(taxYear = 2018, reference = Some("mfa1"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
       documentDescription = Some("TRM New Charge"), lot = None, lotItem = None, dueDate = None,
       documentDate = LocalDate.parse("2018-04-25"), transactionId = Some("AY777777202206"),
       mainType = Some("ITSA Overpayment Relief")),
-    Payment(reference = Some("cutover1"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
+    Payment(taxYear = 2018, reference = Some("cutover1"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
       documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-04-25")), documentDate = LocalDate.parse("2018-04-25"),
       transactionId = Some("AY777777202206"),
       mainType = Some("ITSA Cutover Credits")),
-    Payment(reference = Some("bcc"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
+    Payment(taxYear = 2018, reference = Some("bcc"), amount = Some(-10000.00), outstandingAmount = None, method = Some("method"),
       documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-04-25")), documentDate = LocalDate.parse("2018-04-25"),
       transactionId = Some("AY777777202203"),
       mainType = Some("SA Balancing Charge Credit"))
