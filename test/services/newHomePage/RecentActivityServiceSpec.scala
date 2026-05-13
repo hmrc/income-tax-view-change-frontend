@@ -59,6 +59,7 @@ class RecentActivityServiceSpec
 
   private def payment(amount: BigDecimal, paymentDate: Option[LocalDate]): Payment = {
     Payment(
+      taxYear = 9999,
       reference = Some("reference"),
       amount = Some(amount),
       outstandingAmount = Some(0.00),
