@@ -17,17 +17,22 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import auth.authV2.models.AuthorisedAndEnrolledRequest
+import enums.MTDIndividual
 import models.core.{AccountingPeriodModel, AddressModel}
 import models.incomeSourceDetails.*
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
+import testConstants.BaseIntegrationTestConstants.defaultAuthUserDetails
 
 import java.time.LocalDate
 
 class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
   lazy val connector: BusinessDetailsConnector = app.injector.instanceOf[BusinessDetailsConnector]
+  lazy val incomeSourceConnector: IncomeSourceConnector = app.injector.instanceOf[IncomeSourceConnector]
 
   "BusinessDetailsConnector" when {
 
@@ -111,8 +116,6 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         }
       }
     }
-<<<<<<< HEAD
-=======
 
     ".getIncomeSources()" when {
 
@@ -168,7 +171,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               None
             )(FakeRequest())
 
-          val result = connector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
+          val result = incomeSourceConnector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
 
           result shouldBe expectedResponse
 
@@ -198,7 +201,7 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
           WiremockHelper.stubGet(url, INTERNAL_SERVER_ERROR, responseBody)
 
-          val result = connector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
+          val result = incomeSourceConnector.getIncomeSources()(hc, mtdItUser = testAuthorisedAndEnrolled).futureValue
 
           result shouldBe IncomeSourceDetailsError(status = INTERNAL_SERVER_ERROR, reason = responseBody)
 
@@ -206,6 +209,5 @@ class BusinessDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         }
       }
     }
->>>>>>> 51a7c0a85 (Reapply "MIPR-2520")
   }
 }

@@ -56,13 +56,8 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
 
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-<<<<<<< HEAD
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
-=======
         override lazy val incomeTaxBusinessDetailsBaseUrl: String = "http://localhost:9999"
 
-        override def incomeSourceOverrides(): Option[Seq[String]] = Some(incomeSourceOverride)
->>>>>>> 51a7c0a85 (Reapply "MIPR-2520")
       }
 
     val connector = new BusinessDetailsConnector(mockHttpClientV2, getAppConfig)
@@ -80,9 +75,7 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
         connector.getBusinessDetailsUrl(testNino) shouldBe s"$baseUrl/income-tax-business-details/get-business-details/nino/$testNino"
       }
     }
-
-<<<<<<< HEAD
-=======
+    
     ".getIncomeSourcesUrl()" should {
       "return the correct url" in new Setup {
         connector.getIncomeSourcesUrl(testMtditid) shouldBe s"$baseUrl/income-tax-business-details/income-sources/$testMtditid"
@@ -94,7 +87,6 @@ class BusinessDetailsConnectorSpec extends BaseConnectorSpec {
         connector.getNinoLookupUrl(testMtditid) shouldBe s"$baseUrl/income-tax-business-details/nino-lookup/$testMtditid"      }
     }
 
->>>>>>> 51a7c0a85 (Reapply "MIPR-2520")
     ".getBusinessDetails()" should {
 
       val successResponse = HttpResponse(status = Status.OK, json = Json.toJson(singleBusinessIncome), headers = Map.empty)

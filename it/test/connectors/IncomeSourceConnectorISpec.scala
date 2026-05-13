@@ -44,7 +44,7 @@ class IncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val nino = "AB123456A"
           val testMtditid = "XAITSA123456"
 
-          val url = s"/income-tax-view-change/income-sources/$testMtditid"
+          val url = s"/income-tax-business-details/income-sources/$testMtditid"
 
           val business =
             BusinessDetailsModel(
@@ -102,7 +102,7 @@ class IncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         "return IncomeSourceDetailsError with some response body" in {
           val testMtditid = "XAITSA123456"
 
-          val url = s"/income-tax-view-change/income-sources/$testMtditid"
+          val url = s"/income-tax-business-details/income-sources/$testMtditid"
 
           implicit val testAuthorisedAndEnrolled: AuthorisedAndEnrolledRequest[_] =
             AuthorisedAndEnrolledRequest(
