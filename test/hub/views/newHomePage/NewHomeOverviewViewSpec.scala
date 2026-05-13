@@ -228,9 +228,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
           document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}")
 
+          document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Proof of your income (SA302)"
+          document.select(".govuk-summary-card-no-border").get(8).hasCorrectHref("/report-quarterly/income-and-expenses/view/mortgage-evidence/proof-of-income")
+
           document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
-          document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
-          document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment")
+          document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "Check Self Assessment penalties and appeals"
+          document.select(".govuk-summary-card-no-border").get(9).link.attr("href") should include("/view-penalty/self-assessment")
         }
       }
       "the Credit Refund Repay feature switch is DISABLED" when {
@@ -301,9 +304,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(6).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
           document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}")
 
+          document.select(".govuk-summary-card-no-border").get(7).text() shouldBe "Proof of your income (SA302)"
+          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref("/report-quarterly/income-and-expenses/view/mortgage-evidence/proof-of-income")
+
           document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
-          document.select(".govuk-summary-card-no-border").get(7).text() shouldBe "Check Self Assessment penalties and appeals"
-          document.select(".govuk-summary-card-no-border").get(7).link.attr("href") should include("/view-penalty/self-assessment")
+          document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
+          document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment")
         }
       }
     }
@@ -342,6 +348,11 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         cardIndex = 1,
         linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
         linkHref = s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}"
+      )
+      taxYearSection.hasCorrectOverviewCardLink(
+        cardIndex = 2,
+        linkText = "Proof of your income (SA302)",
+        linkHref = "/report-quarterly/income-and-expenses/view/mortgage-evidence/proof-of-income"
       )
     }
 
@@ -502,9 +513,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
           document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}")
 
+          document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Proof of your income (SA302)"
+          document.select(".govuk-summary-card-no-border").get(8).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/mortgage-evidence/proof-of-income")
+
           document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
-          document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
-          document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment/agent")
+          document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "Check Self Assessment penalties and appeals"
+          document.select(".govuk-summary-card-no-border").get(9).link.attr("href") should include("/view-penalty/self-assessment/agent")
         }
       }
       "the Credit Refund Repay feature switch is DISABLED" when {
@@ -574,9 +588,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           document.select(".govuk-summary-card-no-border").get(6).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
           document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}")
 
+          document.select(".govuk-summary-card-no-border").get(7).text() shouldBe "Proof of your income (SA302)"
+          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/mortgage-evidence/proof-of-income")
+
           document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
-          document.select(".govuk-summary-card-no-border").get(7).text() shouldBe "Check Self Assessment penalties and appeals"
-          document.select(".govuk-summary-card-no-border").get(7).link.attr("href") should include("/view-penalty/self-assessment/agent")
+          document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
+          document.select(".govuk-summary-card-no-border").get(8).link.attr("href") should include("/view-penalty/self-assessment/agent")
         }
       }
     }
@@ -616,6 +633,11 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         cardIndex = 1,
         linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
         linkHref = s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}"
+      )
+      taxYearSection.hasCorrectOverviewCardLink(
+        cardIndex = 2,
+        linkText = "Proof of your income (SA302)",
+        linkHref = "/report-quarterly/income-and-expenses/view/agents/mortgage-evidence/proof-of-income"
       )
     }
 
