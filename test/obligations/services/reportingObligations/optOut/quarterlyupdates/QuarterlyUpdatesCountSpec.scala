@@ -50,7 +50,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   implicit override val dateService: DateService = mockDateService
 
   override val appConfig: FrontendAppConfig = new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-    override lazy val itvcProtectedService: String = "http://localhost:9999"
+    override lazy val incomeTaxObligationsService: String = "http://localhost:9999"
   }
 
   val obligationsConnector: ObligationsConnector = new ObligationsConnector(mockHttpClientV2, mockAuditingService, appConfig)
@@ -61,7 +61,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
     nextUpdatesService, mockDateService, repository)
 
   def buildUrl(fromDate: LocalDate, toDate: LocalDate): String = {
-    s"http://localhost:9999/income-tax-view-change/$testNino/obligations/from/$fromDate/to/$toDate"
+    s"http://localhost:9999/income-tax-obligations/$testNino/obligations/from/$fromDate/to/$toDate"
   }
 
   def buildSuccessResponse(): HttpResponse = {
