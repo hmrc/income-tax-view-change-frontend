@@ -100,6 +100,19 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
         }
     }
 
+  def startRefundAgents(): Action[AnyContent] =
+    authActions.asMTDPrimaryAgent() async {
+      implicit user =>
+        if (isEnabled(CreditsRefundsRepay)) {
+          handleRefundRequest(
+            backUrl = "", // TODO: do we need a backUrl
+            isAgent = true
+          ) recover logAndRedirect
+        } else {
+          Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
+        }
+    }
+
   private def handleRefundRequest(@unused isAgent: Boolean, @unused backUrl: String)
                                  (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits flatMap {
