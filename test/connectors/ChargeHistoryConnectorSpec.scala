@@ -35,11 +35,11 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
 
 
   trait Setup {
-    val baseUrl = "http://localhost:9999"
+    val baseUrl = "http://localhost:9090"
 
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
+        override lazy val itvcProtectedService: String = "http://localhost:9090"
       }
 
     val connector = new ChargeHistoryConnector(mockHttpClientV2, getAppConfig)
@@ -48,7 +48,7 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
 
   "getChargeHistoryUrl" should {
     "return the correct url" in new Setup {
-      connector.getChargeHistoryUrl(testMtditid, chargeReference) shouldBe s"$baseUrl/income-tax-view-change/charge-history/$testMtditid/chargeReference/$chargeReference"
+      connector.getChargeHistoryUrl(testMtditid, chargeReference) shouldBe s"$baseUrl/income-tax-financial-details/charge-history/$testMtditid/chargeReference/$chargeReference"
     }
   }
 
@@ -65,7 +65,7 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
     val badResponseModel = ChargesHistoryErrorModel(code = Status.BAD_REQUEST, message = "Error Message")
 
     val getChargeHistoryUrlTestUrl =
-      s"http://localhost:9999/income-tax-view-change/charge-history/$testMtditid/chargeReference/$chargeReference"
+      s"http://localhost:9090/income-tax-financial-details/charge-history/$testMtditid/chargeReference/$chargeReference"
 
     "return a ChargeHistory model when successful JSON is received" in new Setup {
       setupMockHttpV2Get[ChargesHistoryResponse](getChargeHistoryUrlTestUrl)(successResponseModel)

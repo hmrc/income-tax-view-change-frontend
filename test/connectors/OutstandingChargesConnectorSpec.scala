@@ -33,7 +33,7 @@ class OutstandingChargesConnectorSpec extends BaseConnectorSpec {
 
   trait Setup {
 
-    val baseUrl = "http://localhost:9999"
+    val baseUrl = "http://localhost:9090"
 
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
@@ -49,7 +49,7 @@ class OutstandingChargesConnectorSpec extends BaseConnectorSpec {
 
       "return the correct url" in new Setup {
         connector.getOutstandingChargesUrl(testSaUtr, idNumber, testTo) shouldBe
-          s"$baseUrl/income-tax-view-change/out-standing-charges/$testSaUtr/$idNumber/$testTo"
+          s"$baseUrl/income-tax-financial-details/out-standing-charges/$testSaUtr/$idNumber/$testTo"
       }
     }
 
