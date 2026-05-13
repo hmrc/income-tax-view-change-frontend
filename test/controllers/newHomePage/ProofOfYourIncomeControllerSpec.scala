@@ -89,7 +89,7 @@ with MockDateService {
       s"the user is authenticated as $mtdRole" should {
         "render the mortgage evidence page with proof of the income" when {
           "the mortgage evidence feature switch is enabled" in {
-            val itsaResponse = List(ITSAStatusResponseModel("2021", None))
+            val itsaResponse = List(ITSAStatusResponseModel("2021-22", None))
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
             enable(NewHomePage, MortgageEvidence)
             mockSingleBusinessIncomeSource()
@@ -111,7 +111,7 @@ with MockDateService {
 
         "render the mortgage evidence page with incomplete status" when {
           "the mortgage evidence feature switch is enabled" in {
-            val itsaResponse = List(ITSAStatusResponseModel("2021", None))
+            val itsaResponse = List(ITSAStatusResponseModel("2021-22", None))
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
             enable(NewHomePage, MortgageEvidence)
             mockSingleBusinessIncomeSource()
