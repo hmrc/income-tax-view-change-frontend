@@ -18,8 +18,8 @@
 
 @(itemMsgKeys: Seq[String], id: Option[String]= None, bulletId: Option[String] = None)(implicit messages: Messages)
 
-<ul class="govuk-list govuk-list--bullet" id="@id">
+<ul class="govuk-list govuk-list--bullet" @if(id.isDefined) {id="@id"}>
     @itemMsgKeys.map { msgKey =>
-       <li id="@bulletId">@messages(msgKey)</li>
+        <li @if(bulletId.isDefined) {id="@bulletId"}>@messages(msgKey)</li>
     }
 </ul>
