@@ -124,16 +124,25 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       
       val overdueUpdatesCount = dueDates.count(_.isBefore(dateService.getCurrentDate))
       val nextUpdateDueDate = dueDates.sortWith(_ isBefore _).headOption
-      
+      val userIsCYPlusOne = currentItsaStatus == ITSAStatus.NoStatus
+
       if(user.isSupportingAgent) {
-        auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, overdueUpdatesCount, nextUpdateDueDate))
+        auditingService.extendedAudit(
+          HomeAudit.applySupportingAgent(
+            mtdItUser = user,
+            overdueUpdatesCount = overdueUpdatesCount,
+            nextUpdateDueDate = nextUpdateDueDate,
+            userIsCYPlusOne = userIsCYPlusOne
+          )
+        )
       } else {
         auditingService.extendedAudit(HomeAudit(
           mtdItUser = user,
           nextPaymentDueDate = paymentsDueMerged,
           overduePaymentsCount = overDuePaymentsCount,
           overdueUpdatesCount = overdueUpdatesCount,
-          nextUpdateDueDate = nextUpdateDueDate
+          nextUpdateDueDate = nextUpdateDueDate,
+          userIsCYPlusOne = userIsCYPlusOne
         ))
       }
 
