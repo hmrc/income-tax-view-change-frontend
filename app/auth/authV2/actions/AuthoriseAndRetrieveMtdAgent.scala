@@ -19,11 +19,10 @@ package auth.authV2.actions
 import auth.authV2.AuthExceptions.NoAssignment
 import auth.authV2.models.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import com.google.inject.Singleton
-import common.controllers.agent.routes as agentRoutes
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.utils.AuthUtils.*
 import common.viewUtils.InternalUrlHelper
+import config.featureswitch.FeatureSwitching
+import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
@@ -36,10 +35,12 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunctions,
-                                             val appConfig: FrontendAppConfig,
-                                             mcc: MessagesControllerComponents,
-                                             errorHandler: AgentItvcErrorHandler)
+class AuthoriseAndRetrieveMtdAgent @Inject()(
+                                              authorisedFunctions: AuthorisedFunctions,
+                                              val appConfig: FrontendAppConfig,
+                                              mcc: MessagesControllerComponents,
+                                              errorHandler: AgentItvcErrorHandler
+                                            )
   extends FeatureSwitching
     with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] {
 
@@ -114,8 +115,16 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
       case authorisationException: AuthorisationException =>
         logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
         Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
+        logger.warn(s"missing delegated enrolment. Redirect to agent error page.")
+        Future.successful(Left(Redirect(controllers.agent.routes.ClientRelationshipFailureController.show())))
+      case _: NoAssignment =>
+        logger.warn(s"Agent User is not in an access group associated with the Client.")
+        Future.successful(Left(Redirect(controllers.agent.routes.NoAssignmentController.show())))
+      case authorisationException: AuthorisationException =>
+        logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+        Future.successful(Left(Redirect(controllers.routes.SignInController.signIn())))
       case ex =>
-        logger.error(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
+        logger.warn(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
         Future.successful(Left(errorHandler.showInternalServerError()))
     }
   }
