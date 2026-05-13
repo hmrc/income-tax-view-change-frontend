@@ -66,12 +66,10 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
 
   def handleRequest(backUrl: String, isAgent: Boolean)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
-
-    if (user.saUtr.isDefined) {
       val resultFuture: Future[Seq[ProofOfYourIncomeCardViewModel]] = for {
         itsaStatusDetails <- ITSAStatusService.getITSAStatusDetail(TaxYear(2021, 2022), true, false)
-        proofOfYourIncomeViewModels <- Future.sequence(assembleProofOfYourIncomeModel(itsaStatusDetails.map(_.taxYear), user.saUtr.get))
-        finalModel = addLegacyData(proofOfYourIncomeViewModels, user.saUtr.get)
+        proofOfYourIncomeViewModels <- assembleProofOfYourIncomeModel(itsaStatusDetails.map(_.taxYear), user.saUtr)
+        finalModel = addLegacyData(proofOfYourIncomeViewModels, user.saUtr)
       } yield finalModel
 
       resultFuture.map { viewModels =>
@@ -81,36 +79,44 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
         case e: Exception =>
           itvcErrorHandler.showInternalServerError()
       }
-    }
-  else
-  {
-    Future.successful(itvcErrorHandler.showInternalServerError())
-  }
 }
 
+  private def assembleProofOfYourIncomeModel(taxYears: List[String], saUtr: Option[String])
+                                            (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ProofOfYourIncomeCardViewModel]] = {
 
-  private def assembleProofOfYourIncomeModel (taxYears: List[String], saUtr: String)
-                   (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Seq[Future[ProofOfYourIncomeCardViewModel]] = {
-    taxYears.map { taxYear =>
-      val taxYearFormatted = taxYear.split("-")(0).toInt
+    val futures: List[Future[Option[ProofOfYourIncomeCardViewModel]]] = taxYears.map { taxYear =>
+      val taxYearFormatted = ("20"+taxYear.split("-")(1)).toInt
+
       calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYearFormatted).flatMap {
         case calcResponse: LiabilityCalculationResponse =>
-          Future.successful(ProofOfYourIncomeCardViewModel(taxYearFormatted, calcResponse.metadata.calculationType,
-            dateService.getCurrentTaxYearStart.getYear, false, saUtr))
+          Future.successful(Some(ProofOfYourIncomeCardViewModel(
+            taxYearFormatted,
+            calcResponse.metadata.calculationType,
+            dateService.getCurrentTaxYearStart.getYear,
+            false,
+            saUtr
+          )))
+
         case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
-          Logger("application").info(s"No data for tax year: ${taxYearFormatted}")
-          Future.failed(new Exception("NO_CONTENT"))
+          Logger("application").info(s"No data for tax year: $taxYearFormatted - Skipping.")
+          Future.successful(None)
+
         case _ =>
-          Logger("application").error("Unexpected error has occurred while retrieving calculation data.")
+          Logger("application").error("Unexpected error occurred while retrieving calculation data.")
           Future.failed(new Exception("CALC_ERROR"))
       }
     }
+    Future.sequence(futures).map(_.flatten)
   }
 
-  private def addLegacyData(model: Seq[ProofOfYourIncomeCardViewModel], saUtr: String): Seq[ProofOfYourIncomeCardViewModel] = {
+  private def addLegacyData(model: Seq[ProofOfYourIncomeCardViewModel], saUtr: Option[String]): Seq[ProofOfYourIncomeCardViewModel] = {
     val earliestYear = model.filter(_.calculationTypeIsValid).map(_.taxYearStart).min
     val legacyYearStart = earliestYear - 1
 
-    model ++ Seq(ProofOfYourIncomeCardViewModel(legacyYearStart, "", dateService.getCurrentTaxYearStart.getYear, true, saUtr))
+    if(saUtr.isDefined){
+      model ++ Seq(ProofOfYourIncomeCardViewModel(legacyYearStart, "", dateService.getCurrentTaxYearStart.getYear, true, saUtr))
+    }else {
+      model
+    }
   }
 }

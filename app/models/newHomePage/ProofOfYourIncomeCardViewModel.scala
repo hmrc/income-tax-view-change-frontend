@@ -23,7 +23,7 @@ case class ProofOfYourIncomeCardViewModel(taxYearStart: Int,
                                           calculationType: String,
                                           currentYear: Int,
                                           isLegacy: Boolean = false,
-                                          saUtr: String) {
+                                          saUtr: Option[String]) {
 
   val calculationTypeIsValid: Boolean = ("DF", "CA", "IF", "IA").toList.contains(calculationType)
   val itsCurrentTaxYear: Boolean = taxYearStart == currentYear

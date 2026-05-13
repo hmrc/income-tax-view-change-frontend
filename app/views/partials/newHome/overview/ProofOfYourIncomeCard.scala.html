@@ -26,7 +26,7 @@ appConfig: config.FrontendAppConfig
 
 @getLegacyLink() = @{
     if(model.isLegacy) {
-        appConfig.saViewLandPService(model.saUtr)
+        appConfig.saViewLandPService(model.saUtr.get)
     }else {
         "#"
     }
