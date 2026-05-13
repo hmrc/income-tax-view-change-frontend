@@ -1051,7 +1051,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
         val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
-        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=PAYID01"
+        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
         document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")
@@ -1062,7 +1062,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
         document.select("#payment-history-table tr:nth-child(2)").text() shouldBe MFADebitAllocation1
         document.select("#payment-history-table tr:nth-child(3)").text() shouldBe MFADebitAllocation2
-        // allocation link should be to agent payment allocation page
+        // allocation link should be to agent credits in 2018 screen
         document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
       }
     }
@@ -1380,7 +1380,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "chargeHistory enabled with a matching link to the payment allocations page" in new TestSetup(chargeItem = chargeItemModel(),
             chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
             document.select(Selectors.table).select("a").size shouldBe 10
-            document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
+            document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.CreditsSummaryController.showCreditsSummary(calendarYear = 2018).url) shouldBe true
           }
 
           "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),
@@ -1538,7 +1538,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeHistoryEnabled = true, paymentAllocations = List(
           paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01"))), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
-        document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
+        document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.CreditsSummaryController.showAgentCreditsSummary(calendarYear = 2018).url) shouldBe true
       }
     }
 
@@ -1575,7 +1575,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
         val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
-        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=PAYID01"
+        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
         document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")

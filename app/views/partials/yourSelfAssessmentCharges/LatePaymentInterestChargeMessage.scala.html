@@ -43,6 +43,7 @@
         val originalAmount = matchingDocumentDetail.map(_.originalAmount)
         val isItACredit = originalAmount.exists(_ < 0)
         val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
+        
 
         val link = (isItACredit, viewModel.isAgent, payment.taxYear.isDefined) match {
             case (false, true, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url

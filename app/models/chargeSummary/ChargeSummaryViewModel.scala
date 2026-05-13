@@ -170,15 +170,14 @@ case class ChargeSummaryViewModel(
     val matchingPayment = payment.clearingId
     matchingPayment match {
       case Some(paymentId) => {
-
         val matchingDocumentDetail = payments.documentDetails.find(_.transactionId.contains(paymentId))
         val originalAmount = matchingDocumentDetail.map(_.originalAmount)
         val isItACredit = originalAmount.exists(_ < 0)
+        val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
 
-        val documentDate = chargeItem.documentDate.getYear
         val link = (isItACredit, isAgent) match {
-          case (true, true) => CreditsSummaryController.showAgentCreditsSummary(documentDate).url
-          case (true, false) => CreditsSummaryController.showCreditsSummary(documentDate).url
+          case (true, true) => CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
+          case (true, false) => CreditsSummaryController.showCreditsSummary(findTaxYear).url
           case (false, true) => PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
           case (false, false) => PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
         }
