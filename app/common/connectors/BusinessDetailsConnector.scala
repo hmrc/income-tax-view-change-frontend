@@ -37,9 +37,7 @@ class BusinessDetailsConnector @Inject()(
   private[connectors] def getBusinessDetailsUrl(nino: String): String = {
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/get-business-details/nino/$nino"
   }
-
-<<<<<<< HEAD
-=======
+  
   private[connectors] def getIncomeSourcesUrl(mtditid: String): String = {
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/income-sources/$mtditid"
   }
@@ -48,7 +46,6 @@ class BusinessDetailsConnector @Inject()(
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/nino-lookup/$mtdRef"
   }
 
->>>>>>> 51a7c0a85 (Reapply "MIPR-2520")
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
     val url = getBusinessDetailsUrl(nino)
     Logger("application").debug(s"GET $url")
