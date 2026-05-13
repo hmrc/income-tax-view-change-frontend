@@ -57,13 +57,13 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                      ) extends BaseController with I18nSupport with FeatureSwitching {
 
   private final val customIncomeSourceUsers         = Seq("TR000001A", "AS000000A", "AS000001A")
-  private final val customReportingObligationsUsers = Seq("OP000001A", "OP000002A", "OP000003A")
+  private final val customReportingObligationsUsers = Seq("OP000001A", "OP000002A", "OP000003A", "NE000000A", "NE000001A", "NE000002A")
   private final val latentBusinessUser              = "AS000002A"
   private final val recentActivityUser              = "HP000000A"
 
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, customReportingObligationsUsers, customIncomeSourceUsers))
+      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser))
     )
   }
 
@@ -95,9 +95,9 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
                 user.category match {
                   case "Income Sources" if(customIncomeSourceUsers.contains(user.nino)) => overwriteDataForIncomeSources(user, postedUser, bearer, auth, homePage)
-                  case "Income Sources" if(user.nino == latentBusinessUser) => Future.successful(successRedirect(bearer, auth, homePage))
-                  case "Reporting Obligations" if(customReportingObligationsUsers.contains(user.nino)) => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
+                  case "Income Sources" if(user.nino == latentBusinessUser) => overwriteDataforLatentBusinesses(user, postedUser, bearer, auth, homePage)
                   case "Misc" if (user.nino == recentActivityUser) => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
+                  case _ if(customReportingObligationsUsers.contains(user.nino)) => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
                   case _ => Future.successful(successRedirect(bearer, auth, homePage))
                 }
             }
@@ -147,8 +147,21 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     }
   }
 
-  private def overwriteDataforLatentBusinesses() = {
+  private def overwriteDataforLatentBusinesses(user: UserRecord, postedUser: PostedUser, bearer: String, auth: String, homePage: String)(implicit headerCarrier: HeaderCarrier, request: Request[_]) = {
+    val latentBusinessUser = LatentBusinessUser(
+      latencyIndicator1 = postedUser.latentBusinessYear1.getOrElse("Annual"),
+      latencyIndicator2 = postedUser.latentBusinessYear2.getOrElse("Annual")
+    )
 
+    updateTestDataForLatentBusinessUser(user.mtditid, latentBusinessUser).map {
+      _ => successRedirect(bearer, auth, homePage)
+    }.recover {
+      case ex =>
+        val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+        Logger("application")
+          .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+        errorHandler.showInternalServerError()
+    }
   }
 
   private def successRedirect(bearer: String, auth: String, homePage: String): Result = {
@@ -168,6 +181,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   private def updateTestDataForRecentActivityUser(nino: String)(implicit headerCarrier: HeaderCarrier) = {
     dynamicStubService.overwriteObligationsData(nino)
+  }
+
+  private def updateTestDataForLatentBusinessUser(mtdid: String, latentBusinessUser: LatentBusinessUser)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteLatentBusinessData(mtdid, latentBusinessUser)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

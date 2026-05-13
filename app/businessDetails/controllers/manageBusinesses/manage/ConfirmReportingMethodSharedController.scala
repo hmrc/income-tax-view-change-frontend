@@ -66,6 +66,7 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
           ): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user => {
       withSessionData(IncomeSourceJourneyType(Manage, incomeSourceType), journeyState = AfterSubmissionPage) { sessionData =>
         val incomeSourceIdStringOpt = sessionData.manageIncomeSourceData.flatMap(_.incomeSourceId)
+        println(Console.MAGENTA + incomeSourceIdStringOpt + Console.RESET)
         val incomeSourceIdOpt = incomeSourceIdStringOpt.map(id => IncomeSourceId(id))
         handleShowRequest(taxYear, changeTo, isAgent, incomeSourceType, incomeSourceIdOpt)
       }
@@ -92,6 +93,9 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                 soleTraderBusinessId: Option[IncomeSourceId]
                                )(implicit user: MtdItUser[_]): Future[Result] = {
 
+    println(Console.MAGENTA + incomeSourceType + Console.RESET)
+    println(Console.YELLOW + soleTraderBusinessId + Console.RESET)
+
     val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(_.value))
 
     (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
@@ -112,6 +116,9 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                                 changeTo: String,
                                                 incomeSourceType: IncomeSourceType
                                                )(implicit user: MtdItUser[_]): Future[Result] = {
+    user.incomeSources.properties.map(prop => println(Console.MAGENTA + prop + Console.RESET))
+    println(Console.YELLOW + incomeSourceType + Console.RESET)
+    println(Console.BLUE + id.value + Console.RESET)
     user.incomeSources.getLatencyDetails(incomeSourceType, id.value) match {
       case Some(latencyDetails) =>
         if (LatencyYear.isValidLatencyYear(taxYearModel, latencyDetails)) {

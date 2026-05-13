@@ -57,7 +57,9 @@ case class PostedUser(nino: String,
                       activeSoleTrader: Boolean = false,
                       activeUkProperty: Boolean = false,
                       activeForeignProperty: Boolean = false,
-                      ceasedBusiness: Boolean = false
+                      ceasedBusiness: Boolean = false,
+                      latentBusinessYear1: Option[String],
+                      latentBusinessYear2: Option[String],
                      ) {
 
   def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
@@ -85,7 +87,9 @@ object PostedUser {
       "SoleTraderCheckbox" -> boolean,
       "UkPropertyCheckbox" -> boolean,
       "ForeignPropertyCheckbox" -> boolean,
-      "CeasedBusinessCheckbox" -> boolean
+      "CeasedBusinessCheckbox" -> boolean,
+      "latentBusinessYear1" -> optional(text),
+      "latentBusinessYear2" -> optional(text)
     )(
       (nino,
       agentType,
@@ -97,7 +101,9 @@ object PostedUser {
       activeSoleTrader,
       activeUkProperty,
       activeForeignProperty,
-      ceasedBusinesses) => PostedUser(
+      ceasedBusinesses, 
+      latentBusinessYear1,
+      latentBusinessYear2) => PostedUser(
         nino,
         agentType,
         usePTANavBar,
@@ -108,7 +114,9 @@ object PostedUser {
         activeSoleTrader,
         activeUkProperty,
         activeForeignProperty,
-        ceasedBusinesses)
+        ceasedBusinesses,
+        latentBusinessYear1,
+        latentBusinessYear2)
     )(form => Some(
       form.nino,
       form.agentType,
@@ -120,7 +128,9 @@ object PostedUser {
       form.activeSoleTrader,
       form.activeUkProperty,
       form.activeForeignProperty,
-      form.ceasedBusiness
+      form.ceasedBusiness,
+      form.latentBusinessYear1,
+      form.latentBusinessYear2
     ))
   )
 

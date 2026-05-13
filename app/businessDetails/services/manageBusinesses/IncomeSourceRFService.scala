@@ -93,6 +93,7 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
                                         nextTyStatus: Option[StatusDetail],
                                         latencyDetails: Option[LatencyDetails]
                                       ): Boolean = {
+    println(Console.MAGENTA + s"currentTyStatus: $currentTyStatus, nextTyStatus: $nextTyStatus, latencyDetails: $latencyDetails" + Console.RESET)
     latencyDetailsCheckToRedirectToCompletionPage(latencyDetails) || itsaStatusChecksToRedirectToCompletionPage(currentTyStatus, nextTyStatus)
   }
 
