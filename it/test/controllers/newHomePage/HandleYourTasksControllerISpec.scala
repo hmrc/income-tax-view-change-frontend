@@ -20,6 +20,7 @@ import common.controllers.ControllerISpecHelper
 import enums.ChargeType.ITSA_NI
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.WiremockHelper
+import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
 import models.core.{AccountingPeriodModel, CessationModel}
@@ -158,6 +159,8 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                   elementTextByID("noTaskCard-heading")(YourTasksViewMessages.noTasksHeading),
                   elementTextByID("noTaskCard-content")(YourTasksViewMessages.noTasksContent)
                 )
+                
+                verifyAuditContainsDetail(Json.obj("userIsCYPlusOne" -> false))
               }
             } else {
               "the user has tasks relating to penalties and financials but they are a supporting agent" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
@@ -169,7 +172,24 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                   elementTextByID("noTaskCard-heading")(YourTasksViewMessages.noTasksHeading),
                   elementTextByID("noTaskCard-content")(YourTasksViewMessages.noTasksSupportingAgentContent)
                 )
+
+                verifyAuditContainsDetail(Json.obj("userIsCYPlusOne" -> false))
               }
+            }
+
+            "the user is a CY+1 user" in new TestSetup(
+              currentItsaStatus = ITSAStatus.NoStatus,
+              mtdUserRole = mtdUserRole,
+              featureSwitches = List(NewHomePage, CreditsRefundsRepay)
+            ) {
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, getTitle(mtdUserRole))
+              )
+
+              verifyAuditContainsDetail(Json.obj("userIsCYPlusOne" -> true))
             }
           }
 
