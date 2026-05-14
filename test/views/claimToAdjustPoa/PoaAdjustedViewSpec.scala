@@ -24,6 +24,7 @@ import play.api.i18n._
 import play.twirl.api.Html
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.PoaAdjustedView
+import financials.controllers.routes as financialsRoutes
 
 class PoaAdjustedViewSpec extends TestSupport{
 
@@ -49,9 +50,9 @@ class PoaAdjustedViewSpec extends TestSupport{
 
   def whatYouOweUrl(isAgent: Boolean): String = {
     if(isAgent) {
-      controllers.routes.WhatYouOweController.showAgent().url
+      financialsRoutes.WhatYouOweController.showAgent().url
     } else {
-      controllers.routes.WhatYouOweController.show().url
+      financialsRoutes.WhatYouOweController.show().url
     }
   }
 

@@ -21,6 +21,7 @@ import models.incomeSourceDetails.TaxYear
 import testConstants.ANewCreditAndRefundModel
 import testUtils.UnitSpec
 import java.time.LocalDate
+import financials.controllers.routes as financialsRoutes
 
 class MoneyInYourAccountViewModelSpec extends UnitSpec {
 
@@ -130,13 +131,13 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
       ).map { creditType => CreditViewRow(creditId, creditAmount, creditType, TaxYear.forYearEnd(creditTaxYear), dateInYear(creditTaxYear)) }
 
       chargeSummaryCredits.foreach { creditRow =>
-        creditRow.descriptionLink(false) shouldBe controllers.routes.ChargeSummaryController.show(creditTaxYear, creditId).url
-        creditRow.descriptionLink(true) shouldBe controllers.routes.ChargeSummaryController.showAgent(creditTaxYear, creditId).url
+        creditRow.descriptionLink(false) shouldBe financialsRoutes.ChargeSummaryController.show(creditTaxYear, creditId).url
+        creditRow.descriptionLink(true) shouldBe financialsRoutes.ChargeSummaryController.showAgent(creditTaxYear, creditId).url
       }
 
       creditSummaryCredits.foreach { creditRow =>
-        creditRow.descriptionLink(false) shouldBe controllers.routes.CreditsSummaryController.showCreditsSummary(creditTaxYear).url
-        creditRow.descriptionLink(true) shouldBe controllers.routes.CreditsSummaryController.showAgentCreditsSummary(creditTaxYear).url
+        creditRow.descriptionLink(false) shouldBe financialsRoutes.CreditsSummaryController.showCreditsSummary(creditTaxYear).url
+        creditRow.descriptionLink(true) shouldBe financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(creditTaxYear).url
       }
     }
   }
@@ -148,14 +149,14 @@ class MoneyInYourAccountViewModelSpec extends UnitSpec {
     }
     "have the correct description link url" in {
       val paymentRow = PaymentCreditRow("payment", 20.0, dateInYear(2024), dateInYear(2024))
-      paymentRow.descriptionLink(false) shouldBe controllers.routes.PaymentAllocationsController.viewPaymentAllocation("payment").url
-      paymentRow.descriptionLink(true) shouldBe controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("payment").url
+      paymentRow.descriptionLink(false) shouldBe financialsRoutes.PaymentAllocationsController.viewPaymentAllocation("payment").url
+      paymentRow.descriptionLink(true) shouldBe financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent("payment").url
     }
   }
   "RefundRow" should {
     "have the correct description link url" in {
       val refundRow = RefundRow(30.0, dateInYear(2024))
-      refundRow.descriptionLink shouldBe controllers.routes.PaymentHistoryController.refundStatus().url
+      refundRow.descriptionLink shouldBe financialsRoutes.PaymentHistoryController.refundStatus().url
     }
   }
 

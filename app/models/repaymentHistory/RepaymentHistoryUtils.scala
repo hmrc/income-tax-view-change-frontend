@@ -26,32 +26,33 @@ import services.DateServiceInterface
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
+import financials.controllers.routes as financialsRoutes
 
 object RepaymentHistoryUtils {
 
   private def getControllerHref(transactionId: Option[String], isAgent: Boolean) = {
     if (isAgent) {
-      controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
+      financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
     } else {
-      controllers.routes.PaymentAllocationsController.viewPaymentAllocation(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
+      financialsRoutes.PaymentAllocationsController.viewPaymentAllocation(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
     }
   }
 
   private def getCreditsLinkUrl(date: LocalDate, isAgent: Boolean) = {
     val year = date.getYear
     if (isAgent) {
-      controllers.routes.CreditsSummaryController.showAgentCreditsSummary(year).url
+      financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(year).url
     } else {
-      controllers.routes.CreditsSummaryController.showCreditsSummary(year).url
+      financialsRoutes.CreditsSummaryController.showCreditsSummary(year).url
     }
   }
 
   def getChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String, codedOut: Option[Boolean] = None): String = {
     val baseUrl =
       if (isAgent) {
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
+        financialsRoutes.ChargeSummaryController.showAgent(taxYear, chargeId).url
       } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, chargeId).url
+        financialsRoutes.ChargeSummaryController.show(taxYear, chargeId).url
       }
 
     codedOut match {

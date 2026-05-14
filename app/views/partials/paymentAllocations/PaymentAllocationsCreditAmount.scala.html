@@ -21,6 +21,7 @@
 @import common.views.html.components.link
 @import java.time.LocalDate
 @import _root_.implicits.HtmlFormatter.NbspString
+@import financials.controllers.routes as financialsRoutes
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
     link: link)
@@ -30,8 +31,8 @@
 @import implicitDateFormatter._
 
 @moneyInYourAccountUrl = @{
-    if(isAgent) controllers.routes.MoneyInYourAccountController.showAgent().url
-    else controllers.routes.MoneyInYourAccountController.show().url
+    if(isAgent) financialsRoutes.MoneyInYourAccountController.showAgent().url
+    else financialsRoutes.MoneyInYourAccountController.show().url
 }
 
 @getLink = @{

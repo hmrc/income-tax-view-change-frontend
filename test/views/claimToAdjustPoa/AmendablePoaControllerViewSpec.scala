@@ -24,6 +24,8 @@ import org.jsoup.select.Elements
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.AmendablePoaView
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.controllers.routes as financialsRoutes
 
 class AmendablePoaControllerViewSpec extends TestSupport {
 
@@ -106,12 +108,12 @@ class AmendablePoaControllerViewSpec extends TestSupport {
   }
 
   def getChargeSummaryUrl(isAgent: Boolean, id: String): String = {
-    if (isAgent) controllers.routes.ChargeSummaryController.showAgent(2024, id)
-    else         controllers.routes.ChargeSummaryController.show(2024, id)
+    if (isAgent) financialsRoutes.ChargeSummaryController.showAgent(2024, id)
+    else         financialsRoutes.ChargeSummaryController.show(2024, id)
   }.url
 
   def getWhatYouNeedToKnowUrl(isAgent: Boolean): String =
-    controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
+    claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(isAgent).url
 
   def getCancelLinkUrl(isAgent: Boolean): String = {
     if (isAgent) controllers.routes.HomeController.showAgent()

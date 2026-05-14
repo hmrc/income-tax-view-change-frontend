@@ -23,6 +23,7 @@
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 @import common.viewUtils.ExternalUrlHelper
+@import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 
 @this(
@@ -57,7 +58,7 @@
 }
 
 @getWhatYouNeedToKnowUrl = @{
-    controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
+    claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(isAgent).url
 }
 
 @getTableHeading = @{

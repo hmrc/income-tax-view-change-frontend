@@ -19,6 +19,7 @@
 @import models.incomeSourceDetails.TaxYear
 @import common.views.html.components._
 @import _root_.implicits.ImplicitCurrencyFormatter._
+@import financials.controllers.routes as financialsRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -36,9 +37,9 @@
 
 @whatYouOweUrl = @{
     if(isAgent) {
-        controllers.routes.WhatYouOweController.showAgent().url
+        financialsRoutes.WhatYouOweController.showAgent().url
     } else {
-        controllers.routes.WhatYouOweController.show().url
+        financialsRoutes.WhatYouOweController.show().url
     }
 }
 

@@ -17,5 +17,3 @@ POST        /cannot-view-client                                            contr
 #Home Controller
 GET         /remove-client-sessions                                        controllers.agent.RemoveClientDetailsSessionsController.show()
 
-GET         /custom-not-found                                              controllers.agent.errors.AgentNotFoundDocumentIDLookupController.show()
-

@@ -40,6 +40,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import java.time.{LocalDate, Month}
 import scala.annotation.unused
 import scala.util.Try
+import financials.controllers.routes as financialsRoutes
 
 class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
@@ -195,7 +196,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
         "has a link to check what your client owes" in new TestSetup {
           val link: Option[Elements] = getElementById("payments-tile").map(_.select("a"))
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.WhatYouOweController.showAgent().url)
+          link.map(_.attr("href")) shouldBe Some(financialsRoutes.WhatYouOweController.showAgent().url)
           link.map(_.text) shouldBe Some("Check what your client owes")
         }
       }
@@ -380,22 +381,22 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
         "has payment and refund history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = false, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
+          link.map(_.attr("href")) shouldBe Some(financialsRoutes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some("Payment and refund history")
         }
         "has payment and credit history link when CreditsRefundsRepay ON / PaymentHistoryRefunds OFF" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
+          link.map(_.attr("href")) shouldBe Some(financialsRoutes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some("Payment and credit history")
         }
         "has payment, credit and refund history link when CreditsRefundsRepay ON / PaymentHistoryRefunds ON" in new TestSetup(creditAndRefundEnabled = true, paymentHistoryEnabled = true) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
+          link.map(_.attr("href")) shouldBe Some(financialsRoutes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some("Payment, credit and refund history")
         }
         "has payment history link when CreditsRefundsRepay OFF / PaymentHistoryRefunds OFF" in new TestSetup(paymentHistoryEnabled = false, creditAndRefundEnabled = false) {
           val link: Option[Element] = getElementById("payment-history-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.PaymentHistoryController.showAgent().url)
+          link.map(_.attr("href")) shouldBe Some(financialsRoutes.PaymentHistoryController.showAgent().url)
           link.map(_.text) shouldBe Some("Payment history")
         }
 

@@ -18,6 +18,8 @@
 @import models.chargeSummary._
 @import models.financialDetails.MfaDebitCharge
 @import common.views.html.components._
+@import financials.controllers.routes as financialsRoutes
+
 
 @this(
         implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -40,10 +42,10 @@
         messages("paymentHistory.cutOver")
     } else if (matchingPayment.isDefined) {
         val link = (payment.isCredit, viewModel.isAgent, payment.taxYear.isDefined) match {
-            case (false, true, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
-            case (false, false, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
-            case (true, true, true) => controllers.routes.ChargeSummaryController.showAgent(payment.taxYear.get.toInt, matchingPayment.get).url
-            case (true, false, true) => controllers.routes.ChargeSummaryController.show(payment.taxYear.get.toInt, matchingPayment.get, viewModel.origin).url
+            case (false, true, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
+            case (false, false, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
+            case (true, true, true) => financialsRoutes.ChargeSummaryController.showAgent(payment.taxYear.get.toInt, matchingPayment.get).url
+            case (true, false, true) => financialsRoutes.ChargeSummaryController.show(payment.taxYear.get.toInt, matchingPayment.get, viewModel.origin).url
         }
 
         val linkText =

@@ -29,6 +29,7 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.EnterPoaAmountView
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class EnterPoaAmountViewSpec extends TestSupport{
 
@@ -65,7 +66,7 @@ class EnterPoaAmountViewSpec extends TestSupport{
     .fill(EnterPoaAmountForm(7000))
 
   class Setup(isAgent: Boolean = false, form: Form[EnterPoaAmountForm] = EnterPoaAmountForm.form, viewModel: PaymentOnAccountViewModel = poAAmountViewModel()) {
-    val view: Html = enterAmountView(form, viewModel, isAgent, controllers.claimToAdjustPoa.routes.EnterPoaAmountController.submit(isAgent, NormalMode))
+    val view: Html = enterAmountView(form, viewModel, isAgent, claimToAdjustPoaRoutes.EnterPoaAmountController.submit(isAgent, NormalMode))
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val buttons = groupButton.first().children()

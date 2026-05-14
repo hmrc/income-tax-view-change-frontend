@@ -24,6 +24,7 @@
 @import models.creditDetailModel.CreditDetailModel
 @import common.viewUtils.ExternalUrlHelper
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import financials.controllers.routes as financialsRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -82,9 +83,9 @@
 
 @moneyInYourAccountControllerURL = @{
     if(isAgent) {
-        controllers.routes.MoneyInYourAccountController.showAgent().url
+        financialsRoutes.MoneyInYourAccountController.showAgent().url
     } else {
-        controllers.routes.MoneyInYourAccountController.show().url
+        financialsRoutes.MoneyInYourAccountController.show().url
     }
 }
 
