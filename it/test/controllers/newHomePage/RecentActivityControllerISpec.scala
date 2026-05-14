@@ -26,7 +26,7 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import obligations.models.*
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
@@ -96,16 +96,6 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
           "displays the no activity card" when {
             if (mtdUserRole != MTDSupportingAgent) {
               "the user has no current tasks" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
-                val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-                result should have(
-                  httpStatus(OK),
-                  pageTitle(mtdUserRole, getTitle(mtdUserRole)),
-                  elementTextByID("no-recent-activity-text")(YourTasksViewMessages.noActivityText)
-                )
-              }
-            } else {
-              "the user is a supporting agent" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -220,6 +210,18 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                   elementTextByID("recent-activity-hint-1")("")
                 )
               }
+            }
+          }
+        }
+        "redirect the user to the overview page" when {
+          if(mtdUserRole == MTDSupportingAgent) {
+            "the user is a supporting agent" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI("/report-quarterly/income-and-expenses/view/agents/overview")
+              )
             }
           }
         }

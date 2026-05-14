@@ -33,7 +33,7 @@ trait MockConfirmClient extends BeforeAndAfterEach {
   }
 
   def mockConfirmClientResponse(response: Html): Unit = {
-    when(mockConfirmClient.apply(any(), any(), any(), any())(any(), any(), any()))
+    when(mockConfirmClient.apply(any(), any(), any(), any(), any())(any(), any(), any()))
       .thenReturn(response)
   }
 
