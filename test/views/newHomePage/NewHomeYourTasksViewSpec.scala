@@ -20,7 +20,7 @@ import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
 import models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
-import models.newHomePage.{HandleYourTasksViewModel, MaturityLevel, NoTaskCard}
+import models.newHomePage.{HandleYourTasksViewModel, MaturityLevel}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
@@ -32,8 +32,7 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
 
   val newHomeOverviewView: NewHomeYourTasksView = app.injector.instanceOf[NewHomeYourTasksView]
 
-  val defaultViewModel = HandleYourTasksViewModel(Seq.empty, Seq.empty, Seq.empty, None)
-  val noTaskCard = NoTaskCard("No Task Heading", "No Task Content")
+  val defaultViewModel = HandleYourTasksViewModel(Seq.empty, Seq.empty, Seq.empty)
   def overdueTaskCard(index: String): OverdueTaskCard = OverdueTaskCard(s"OverdueContent$index", "OverdueLinkText", "/Overdue", "DueTag", None, Some("100"), PENALTIES)
   def datelessTaskCard(index: String): DatelessTaskCard = DatelessTaskCard(s"DatelessContent$index", "DatelessLinkText", "/Dateless", Some("100"), FINANCIALS)
   def upcomingTaskCard(index:String): UpcomingTaskCard = UpcomingTaskCard(s"UpcomingContent$index", "UpcomingLinkText", "/Upcoming", "DueTag", None, Some("100"), MaturityLevel.Upcoming, SUBMISSIONS)
@@ -88,8 +87,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
     }
 
     "display the correct task cards" when {
-      "no task card is defined" in new TestSetup(handleYourTasksViewModel = defaultViewModel.copy(noTaskCard = Some(noTaskCard))) {
-        document.getElementById("noTaskCard").text() shouldBe "No Task Heading No Task Content"
+      "no task card is defined" in new TestSetup(handleYourTasksViewModel = defaultViewModel.copy()) {
+        document.getElementById("no-tasks-text").text() shouldBe "You have no tasks to complete at the moment."
       }
       "there is only an overdue task" in new TestSetup(handleYourTasksViewModel = defaultViewModel.copy(overdueTasks = Seq(overdueTaskCard("1")))) {
         document.getElementById("overdueTaskCard-0").text() shouldBe "OverdueLinkText OverdueContent1"

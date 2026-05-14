@@ -3637,7 +3637,6 @@ youMustWait.agent.button.text  = Nodwch UTR arall
 newHome.yourTasks.h1                             = Eich tasgau
 newHome.navigation.yourTasks                     = Eich tasgau
 newHome.yourTasks.selfAssessment                 = Gwirio’r hyn sydd arnoch a gwneud taliad
-newHome.yourTasks.no-tasks.selfAssessment        = Dim tasgau
 newHome.yourTasks.selfAssessment.upcomingCharge = Mae gennych daliad i’w wneud cyn bo hir.
 newHome.yourTasks.selfAssessment.upcomingCharge.label = Dyledus erbyn {0}
 newHome.yourTasks.selfAssessment.overdueCharge.single = Mae gennych swm gorddyledus i’w dalu.
