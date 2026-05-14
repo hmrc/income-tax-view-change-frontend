@@ -16,7 +16,7 @@
 
 package testOnly.services
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}

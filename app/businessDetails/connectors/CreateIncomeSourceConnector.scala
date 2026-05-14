@@ -16,8 +16,8 @@
 
 package businessDetails.connectors
 
-import config.FrontendAppConfig
 import businessDetails.models.createIncomeSource.*
+import common.config.FrontendAppConfig
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, Json}

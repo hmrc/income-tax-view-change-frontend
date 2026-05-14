@@ -45,7 +45,7 @@
         incomeSourceType: IncomeSourceType,
         form: Form[_],
         optInOutContentFSEnabled: Boolean
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @prefixOld = @{
     "manageBusinesses.manage.propertyReportingMethod"

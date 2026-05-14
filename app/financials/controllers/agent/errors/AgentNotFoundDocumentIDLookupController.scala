@@ -16,8 +16,8 @@
 
 package financials.controllers.agent.errors
 
-import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
+import common.auth.AuthActions
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

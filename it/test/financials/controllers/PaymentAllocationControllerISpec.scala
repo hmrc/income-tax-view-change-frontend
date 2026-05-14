@@ -17,10 +17,10 @@
 package financials.controllers
 
 import audit.models.PaymentAllocationsResponseAuditModel
-import auth.MtdItUser
+import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.OK

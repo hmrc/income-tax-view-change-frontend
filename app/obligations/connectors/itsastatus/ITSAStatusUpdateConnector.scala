@@ -16,9 +16,9 @@
 
 package obligations.connectors.itsastatus
 
-import config.FrontendAppConfig
 import connectors.RawResponseReads
 import ITSAStatusUpdateConnectorModel.*
+import common.config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.libs.json.Json

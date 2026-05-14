@@ -16,9 +16,9 @@
 
 package controllers
 
-import connectors.{ITSAStatusConnector}
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
 import play.api
 import play.api.Application

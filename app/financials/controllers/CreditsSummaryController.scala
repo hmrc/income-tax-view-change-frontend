@@ -16,12 +16,11 @@
 
 package financials.controllers
 
-import audit.AuditingService
 import audit.models.CreditSummaryAuditing
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
 import models.creditDetailModel.CreditDetailModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}

@@ -16,10 +16,10 @@
 
 package obligations.viewUtils
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultAuthUserDetails
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.actions.AuthActionsTestData.defaultAuthUserDetails
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
 import models.admin.FeatureSwitchName

@@ -16,9 +16,9 @@
 
 package views
 
+import common.config.featureswitch.FeatureSwitching
 import common.viewUtils
 import common.viewUtils.ExternalUrlHelper
-import config.featureswitch.FeatureSwitching
 import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import implicits.ImplicitDateFormatterImpl
 import models.financialDetails.*

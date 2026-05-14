@@ -21,9 +21,9 @@ import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseError
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}

@@ -16,7 +16,7 @@
 
 package repositories
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.claimToAdjustPoa.PoaSessionData
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._

@@ -16,6 +16,7 @@
 
 package audit.models
 
+import common.models.audit.ExtendedAuditModel
 import models.creditDetailModel.CreditDetailModel
 import models.financialDetails.CreditType
 import play.api.i18n.{Lang, MessagesApi}

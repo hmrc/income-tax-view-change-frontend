@@ -16,7 +16,7 @@
 
 package common.controllers.bta
 
-import auth.authV2.AuthActions
+import common.auth.AuthActions
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

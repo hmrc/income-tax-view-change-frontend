@@ -16,9 +16,9 @@
 
 package businessDetails.models.audit
 
-import audit.Utilities
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities
 import play.api.libs.json.{JsValue, Json}
 
 case class TriggeredMigrationCompleteAuditModel()(implicit user: MtdItUser[_]) extends ExtendedAuditModel {

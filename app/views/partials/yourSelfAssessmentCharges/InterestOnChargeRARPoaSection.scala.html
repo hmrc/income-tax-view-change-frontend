@@ -29,15 +29,14 @@
 @import views.html.partials.chargeSummary.ChargeSummaryPaymentAllocation
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import implicits.ImplicitPercentageFormatter.PercentageFormatterBigDecimal
-
-
+@import common.config.FrontendAppConfig
 
 @this(
         h2: h2,
         p: p,
         link: link,
         govukDetails: GovukDetails,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         govukTable: GovukTable,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         chargeSummaryPaymentAllocation: ChargeSummaryPaymentAllocation,

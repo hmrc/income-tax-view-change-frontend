@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import forms.FeedbackForm
 import play.api.Logger
 import play.api.http.HeaderNames

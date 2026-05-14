@@ -34,7 +34,7 @@
         govukWarningText: GovukWarningText
 )
 
-@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, postAction: Call)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getAddedMessage = @{
     incomeSourceType match {

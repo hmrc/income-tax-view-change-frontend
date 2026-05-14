@@ -17,11 +17,11 @@
 package controllers
 
 import audit.models.TaxDueResponseAuditModel
-import auth.MtdItUser
+import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
-import helpers.servicemocks.AuditStub.verifyAuditEvent
+import common.helpers.servicemocks.AuditStub.verifyAuditEvent
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.*

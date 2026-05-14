@@ -16,8 +16,8 @@
 
 package services.claimToAdjust
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}

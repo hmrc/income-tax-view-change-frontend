@@ -16,7 +16,7 @@
 
 package views.newHomePage
 
-import config.featureswitch.FeatureSwitching
+import common.config.featureswitch.FeatureSwitching
 import models.newHomePage.{RecentActivityCard, RecentActivityViewModel}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages

@@ -16,8 +16,8 @@
 
 package services
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import connectors.GetPenaltyDetailsConnector
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus

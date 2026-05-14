@@ -16,10 +16,10 @@
 
 package testConstants
 
-import auth.MtdItUser
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import authV2.AuthActionsTestData.*
-import config.FrontendAppConfig
+import common.auth.actions.AuthActionsTestData.*
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.models.auth.AuthorisedAndEnrolledRequest
 import enums.MTDIndividual
 import models.btaNavBar.ListLinks
 import models.core.Nino

@@ -16,7 +16,7 @@
 
 package obligations.services
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.*
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}

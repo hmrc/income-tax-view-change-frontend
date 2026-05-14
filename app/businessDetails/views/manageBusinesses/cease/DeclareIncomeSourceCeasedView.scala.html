@@ -58,7 +58,7 @@
         isAgent: Boolean,
         backUrl: String,
         origin: Option[String] = None
-)(implicit user: auth.MtdItUser[_], messages: Messages)
+)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @messagesPrefix = @{ s"incomeSources.cease.${incomeSourceType.key}" }
 

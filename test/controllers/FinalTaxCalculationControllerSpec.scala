@@ -16,11 +16,11 @@
 
 package controllers
 
-import connectors.{ITSAStatusConnector}
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
 import models.liabilitycalculation._
 import org.mockito.ArgumentMatchers.any

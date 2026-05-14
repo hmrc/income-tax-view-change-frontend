@@ -32,7 +32,7 @@
         continueButton: ContinueButton
 )
 
-@(isAgent: Boolean, viewModel: SignUpTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: SignUpTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @startYear = @{ viewModel.signUpTaxYear.taxYear.startYear.toString }
 @endYear = @{ viewModel.signUpTaxYear.taxYear.endYear.toString }

@@ -40,7 +40,7 @@
     incomeSourceType: IncomeSourceType,
     isChange: Boolean = false,
     isOptInOptOutContentUpdateR17: Boolean
-)(implicit user: auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
+)(implicit user: common.auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
 
 @header = @{
     h1WithCaption(

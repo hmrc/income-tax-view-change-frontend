@@ -20,6 +20,7 @@
 
 @import java.time.LocalDate
 @import exceptions.MissingFieldException
+@import common.config.FrontendAppConfig
 
 @this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
 
@@ -27,7 +28,7 @@
     chargeItem: models.financialDetails.ChargeItem,
     dueDate: Option[LocalDate],
     latePaymentInterestCharge: Boolean,
-    appConfig: config.FrontendAppConfig
+    appConfig: FrontendAppConfig
 )(implicit messages: Messages)
 
 @import implicitDateFormatter.longDate

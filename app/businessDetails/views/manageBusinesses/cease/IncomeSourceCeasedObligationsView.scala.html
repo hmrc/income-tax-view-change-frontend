@@ -37,7 +37,7 @@
         govukPanel: GovukPanel
 )
 
-@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String, reportingObligationsLink: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String, reportingObligationsLink: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

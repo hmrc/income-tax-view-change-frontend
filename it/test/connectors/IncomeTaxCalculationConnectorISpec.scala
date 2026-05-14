@@ -16,9 +16,9 @@
 
 package connectors
 
-import _root_.helpers.servicemocks.AuditStub
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import com.github.tomakehurst.wiremock.client.WireMock
+import common.helpers.servicemocks.AuditStub
+import common.helpers.{ComponentSpecBase, WiremockHelper}
 import models.liabilitycalculation._
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

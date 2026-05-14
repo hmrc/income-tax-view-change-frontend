@@ -16,6 +16,7 @@
 
 package audit.models
 
+import common.models.audit.ExtendedAuditModel
 import play.api.libs.json.{JsValue, Json, Writes}
 import uk.gov.hmrc.auth.core.AffinityGroup
 

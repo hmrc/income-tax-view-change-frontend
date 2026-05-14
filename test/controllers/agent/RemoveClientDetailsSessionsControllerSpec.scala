@@ -16,9 +16,9 @@
 
 package controllers.agent
 
+import common.mocks.auth.MockAuthActions
 import common.viewUtils.InternalUrlHelper
-import connectors.{ITSAStatusConnector}
-import mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import mocks.views.agent.MockEnterClientsUTR
 import play.api
 import play.api.Application

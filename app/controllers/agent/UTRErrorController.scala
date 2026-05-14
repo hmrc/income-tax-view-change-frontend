@@ -16,10 +16,10 @@
 
 package controllers.agent
 
-import auth.authV2.AuthActions
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.config.featureswitch.FeatureSwitching
 import common.utils.sessionUtils.SessionKeys
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

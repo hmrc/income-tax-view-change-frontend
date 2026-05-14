@@ -17,10 +17,9 @@
 package financials.controllers
 
 import audit.models.InitiatePayNowAuditModel
+import common.mocks.auth.MockAuthActions
 import connectors.{ITSAStatusConnector, PayApiConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.PaymentController
-import mocks.auth.MockAuthActions
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*

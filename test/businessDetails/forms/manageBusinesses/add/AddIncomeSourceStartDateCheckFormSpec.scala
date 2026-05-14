@@ -16,9 +16,9 @@
 
 package businessDetails.forms.manageBusinesses.add
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.getMinimalMTDITUser
+import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.auth.MtdItUser
 import implicits.ImplicitDateFormatter
 import play.api.data.Form
 import services.DateService

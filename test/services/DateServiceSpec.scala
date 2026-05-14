@@ -16,9 +16,9 @@
 
 package services
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.FrontendAppConfig
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset}
 import testConstants.BaseTestConstants.testNino

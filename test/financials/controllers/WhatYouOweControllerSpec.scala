@@ -16,12 +16,12 @@
 
 package financials.controllers
 
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
-import routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.WhatYouOweController
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import forms.utils.SessionKeys.gatewayPage
-import mocks.auth.MockAuthActions
 import mocks.services.MockDateService
 import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
@@ -43,7 +43,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class WhatYouOweControllerSpec extends MockAuthActions
   with ChargeConstants with MockDateService{

@@ -16,14 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import connectors.{ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import businessDetails.enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
 import businessDetails.enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import org.mockito.Mockito.mock
 import mocks.services.{MockDateService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
@@ -37,6 +36,7 @@ import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.mocks.auth.MockAuthActions
 
 import scala.concurrent.Future
 

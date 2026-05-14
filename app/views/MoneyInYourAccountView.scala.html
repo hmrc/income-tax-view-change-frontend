@@ -18,8 +18,9 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatter
-@import auth.MtdItUser
+@import common.auth.MtdItUser
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import common.config.FrontendAppConfig
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import views.html.partials.creditAndRefunds._
@@ -29,7 +30,7 @@
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         h1: h1,
         h2: h2,
         p: p,

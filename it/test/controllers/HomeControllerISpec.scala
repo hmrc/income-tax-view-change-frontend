@@ -17,12 +17,13 @@
 package controllers
 
 import audit.models.HomeAudit
-import auth.MtdItUser
+import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import enums.MTDIndividual
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
+import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, MTDIndividualAuthStub}
+import helpers.servicemocks.{IncomeTaxViewChangeStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.*

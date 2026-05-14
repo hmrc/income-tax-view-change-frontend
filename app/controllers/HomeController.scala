@@ -16,13 +16,12 @@
 
 package controllers
 
-import audit.AuditingService
 import audit.models.HomeAudit
-import auth.MtdItUser
-import auth.authV2.AuthActions
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.*
+import common.config.*
+import common.services.AuditingService
 import common.utils.sessionUtils.SessionKeys
-import config.*
-import config.featureswitch.*
 import enums.MTDSupportingAgent
 import models.admin.*
 import models.core.Nino

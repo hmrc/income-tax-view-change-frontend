@@ -16,7 +16,6 @@
 
 package common.viewUtils
 
-import common.viewUtils.ExternalUrlHelper
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import testUtils.UnitSpec

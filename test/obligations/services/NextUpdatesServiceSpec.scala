@@ -16,7 +16,7 @@
 
 package obligations.services
 
-import config.featureswitch.FeatureSwitching
+import common.config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.mocks.connectors.MockObligationsConnector
 import obligations.models.*

@@ -23,6 +23,7 @@
 @import obligations.models.reportingObligations.ReportingFrequencyViewModel
 @import businessDetails.controllers.manageBusinesses.routes as addBusinessRoutes
 @import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+@import common.config.FrontendAppConfig
 
 @this(
     mainTemplate: unifiedLayout,
@@ -37,7 +38,7 @@
     govukInsetText : GovukInsetText
 )
 
-@(viewModel: ReportingFrequencyViewModel, optInOptOutContentUpdateR17IsEnabled: Boolean, nextUpdatesLink: String)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface, appConfig: config.FrontendAppConfig)
+@(viewModel: ReportingFrequencyViewModel, optInOptOutContentUpdateR17IsEnabled: Boolean, nextUpdatesLink: String)(implicit messages: Messages, user: common.auth.MtdItUser[_], dateService: DateServiceInterface, appConfig: FrontendAppConfig)
 
 @itsaStatusTable = {
     @h2(

@@ -16,8 +16,8 @@
 
 package obligations.controllers
 
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
-import mocks.auth.MockAuthActions
 import mocks.services.MockDateService
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear

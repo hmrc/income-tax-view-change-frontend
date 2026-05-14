@@ -19,10 +19,10 @@ package controllers.agent
 import audit.models.ConfirmClientDetailsAuditModel
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.controllers.agent.routes as agentRoutes
+import common.mocks.auth.MockAuthActions
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
 import connectors.ITSAStatusConnector
-import mocks.auth.MockAuthActions
 import mocks.services.MockITSAStatusService
 import mocks.views.agent.MockConfirmClient
 import models.sessionData.SessionDataModel

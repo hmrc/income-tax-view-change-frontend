@@ -18,7 +18,6 @@ package businessDetails.controllers.manageBusinesses.add
 
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,6 +32,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeig
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.mocks.auth.MockAuthActions
 
 class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions with MockSessionService {
 

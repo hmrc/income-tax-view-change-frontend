@@ -16,11 +16,11 @@
 
 package common.controllers
 
-import audit.AuditingService
-import audit.models.IvOutcomeSuccessAuditModel
-import auth.authV2.AuthActions
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.AuthActions
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.models.audit.IvOutcomeSuccessAuditModel
+import common.services.AuditingService
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

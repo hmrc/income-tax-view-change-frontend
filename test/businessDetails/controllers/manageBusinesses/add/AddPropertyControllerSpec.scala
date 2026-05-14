@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm.*
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.NormalMode
 import org.jsoup.Jsoup
@@ -37,6 +36,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm
+import common.mocks.auth.MockAuthActions
 
 class AddPropertyControllerSpec extends MockAuthActions with MockSessionService {
 

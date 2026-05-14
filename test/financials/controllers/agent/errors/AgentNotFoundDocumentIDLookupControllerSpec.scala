@@ -16,8 +16,7 @@
 
 package financials.controllers.agent.errors
 
-import financials.controllers.agent.errors.AgentNotFoundDocumentIDLookupController
-import mocks.auth.MockAuthActions
+import common.mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import play.api.test.Helpers.*
 import testConstants.BaseTestConstants.agentAuthRetrievalSuccess

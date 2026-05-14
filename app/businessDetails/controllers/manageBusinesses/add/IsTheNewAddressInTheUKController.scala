@@ -16,13 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
@@ -35,6 +31,9 @@ import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import common.views.html.errorPages.CustomNotFoundErrorView
 import businessDetails.views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused

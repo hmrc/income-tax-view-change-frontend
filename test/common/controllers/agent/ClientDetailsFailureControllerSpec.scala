@@ -17,8 +17,8 @@
 package common.controllers.agent
 
 import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.mocks.auth.MockAuthActions
 import common.viewUtils.InternalUrlHelper
-import mocks.auth.MockAuthActions
 import mocks.views.agent.MockClientRelationshipFailure
 import play.api
 import play.api.Application

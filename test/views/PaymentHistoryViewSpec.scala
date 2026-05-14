@@ -16,7 +16,7 @@
 
 package views
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter.*
 import implicits.ImplicitDateFormatter
 import models.financialDetails.*

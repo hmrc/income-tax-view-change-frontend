@@ -16,7 +16,7 @@
 
 package connectors
 
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import common.helpers.{ComponentSpecBase, WiremockHelper}
 import connectors.constants.ITSAStatusUpdateConnectorConstants.*
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import org.scalatest.wordspec.AnyWordSpec

@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
@@ -42,6 +41,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesA
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.mocks.auth.MockAuthActions
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
 

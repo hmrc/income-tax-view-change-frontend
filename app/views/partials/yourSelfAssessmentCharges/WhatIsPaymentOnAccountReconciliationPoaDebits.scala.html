@@ -24,12 +24,13 @@
 @import models.chargeSummary.ChargeSummaryViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
 @import implicits.ImplicitDateFormatterImpl
+@import common.config.FrontendAppConfig
 
 @this(
         p: p,
         link: link,
         govukDetails: GovukDetails,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         reviewAndReconciliationPoa1And2Explanations: ReviewAndReconciliationPoa1And2Explanations,
         govukWarningText: GovukWarningText,
         warningRARPoa: WarningRARPoa,

@@ -16,8 +16,8 @@
 
 package services
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
 import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.{TaxYear, TaxYearRange}

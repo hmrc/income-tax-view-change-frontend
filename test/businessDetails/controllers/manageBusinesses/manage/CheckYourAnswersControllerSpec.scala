@@ -20,7 +20,6 @@ import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.ManageIncomeSourceData
 import org.mockito.ArgumentMatchers.any
@@ -37,6 +36,7 @@ import businessDetails.controllers.manageBusinesses.manage.routes as manageYourB
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService
+import common.mocks.auth.MockAuthActions
 
 import scala.concurrent.Future
 

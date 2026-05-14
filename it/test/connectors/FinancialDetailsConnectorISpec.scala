@@ -16,7 +16,7 @@
 
 package connectors
 
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import common.helpers.{ComponentSpecBase, WiremockHelper}
 import models.core.ResponseModel.ResponseModel
 import models.core.{ErrorModel, Nino}
 import models.creditsandrefunds.CreditsModel
@@ -27,7 +27,7 @@ import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsRes
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{taxYear, testPaymentLot, testPaymentLotItem}
+import testConstants.BaseTestConstants.{testPaymentLot, testPaymentLotItem}
 import testConstants.PaymentAllocationsTestConstants.{paymentAllocationChargesModelMultiplePayments, testValidPaymentAllocationsModel}
 
 import java.time.LocalDate

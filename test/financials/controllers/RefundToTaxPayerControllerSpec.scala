@@ -17,11 +17,10 @@
 package financials.controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
+import common.mocks.auth.MockAuthActions
 import connectors.{ITSAStatusConnector, RepaymentHistoryConnector}
 import controllers.routes
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.RefundToTaxPayerController
-import mocks.auth.MockAuthActions
 import mocks.connectors.MockRepaymentHistoryConnector
 import models.admin.PaymentHistoryRefunds
 import models.creditsandrefunds.RefundToTaxPayerViewModel

@@ -37,7 +37,7 @@
         govukTable: GovukTable
 )
 
-@(viewModel: TaxYearSummaryViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: TaxYearSummaryViewModel)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 @import implicitDateFormatter._
 
 @tableHead = @{

@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

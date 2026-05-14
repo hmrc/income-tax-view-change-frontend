@@ -16,8 +16,8 @@
 
 package obligations.utils.reportingObligations
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import models.admin.*
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect

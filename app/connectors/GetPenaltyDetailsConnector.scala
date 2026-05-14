@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsReads, GetPenaltyDetailsResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}

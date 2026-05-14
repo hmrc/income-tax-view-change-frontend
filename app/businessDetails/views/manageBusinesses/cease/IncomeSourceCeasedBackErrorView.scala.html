@@ -29,7 +29,7 @@
     formWithCSRF: FormWithCSRF,
     continueButton: ContinueButton)
 
-@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getCeasedMessage = @{
     incomeSourceType match {

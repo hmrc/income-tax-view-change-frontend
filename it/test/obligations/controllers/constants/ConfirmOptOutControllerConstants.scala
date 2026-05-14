@@ -16,9 +16,9 @@
 
 package obligations.controllers.constants
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import enums.MTDUserRole
-import helpers.servicemocks.BtaPartialStub.getTestUser
+import common.helpers.servicemocks.BtaPartialStub.getTestUser
 import models.incomeSourceDetails.TaxYear
 import services.DateService
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse

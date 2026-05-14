@@ -16,10 +16,9 @@
 
 package financials.controllers
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import financials.controllers.ChargeSummaryController
-import mocks.auth.MockAuthActions
+import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.mocks.auth.MockAuthActions
 import mocks.services.{MockCreditHistoryService, MockDateService, MockFinancialDetailsService}
 import models.admin.{ChargeHistory, FeatureSwitch}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}

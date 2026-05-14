@@ -16,9 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
@@ -40,6 +37,8 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRo
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
 import businessDetails.utils.JourneyCheckerManageBusinesses
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,

@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.btaNavBar.NavContent
 import play.api.Logger
 import uk.gov.hmrc.http.client.HttpClientV2

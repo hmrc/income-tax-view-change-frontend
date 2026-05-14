@@ -16,7 +16,7 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
+import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.homePage.NextUpdatesTileViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel

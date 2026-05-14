@@ -43,7 +43,7 @@
         viewModel: CheckCeaseIncomeSourceDetailsViewModel,
         messagesPrefix: String,
         isTriggeredMigration: Boolean
-)(implicit request: auth.MtdItUser[_], messages: Messages)
+)(implicit request: common.auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$messagesPrefix.$key", args: _*)

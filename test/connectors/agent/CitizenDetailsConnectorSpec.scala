@@ -16,7 +16,7 @@
 
 package connectors.agent
 
-import mocks.MockHttpV2
+import common.mocks.MockHttpV2
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.mvc.Http.Status
 import testConstants.BaseTestConstants.testSaUtr

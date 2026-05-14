@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
@@ -43,6 +42,7 @@ import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import common.mocks.auth.MockAuthActions
 import models.itsaStatus.StatusDetail
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {

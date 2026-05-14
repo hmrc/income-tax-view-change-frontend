@@ -16,12 +16,13 @@
 
 package financials.controllers
 
-import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.authV2.models.AuthorisedAndEnrolledRequest
 import common.controllers.ControllerISpecHelper
+import common.helpers.servicemocks.AuditStub
+import common.models.audit.IncomeSourceDetailsResponseAuditModel
+import common.models.auth.AuthorisedAndEnrolledRequest
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.CreditsSummaryDataHelper
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse

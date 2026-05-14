@@ -22,10 +22,10 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
 @import obligations.controllers.{routes => obligationsRoutes}
+@import common.config.FrontendAppConfig
 
 @this(
     mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
     h1: h1,
     h2: h2,
     p: p,
@@ -35,8 +35,8 @@
 @(isAgent: Boolean, isSignUp: Boolean)(
     implicit request: Request[_],
     messages: Messages,
-    user: auth.MtdItUser[_],
-    appConfig: config.FrontendAppConfig
+    user: common.auth.MtdItUser[_],
+    appConfig: FrontendAppConfig
 )
 
 @getMessages(messageKey: String) = @{

@@ -19,6 +19,7 @@ package controllers.agent
 import audit.models.EnterClientUTRAuditModel
 import common.controllers.ControllerISpecHelper
 import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.helpers.servicemocks.{AuditStub, CitizenDetailsStub, MTDAgentAuthStub}
 import common.viewUtils.InternalUrlHelper
 import enums.MTDPrimaryAgent
 import helpers.servicemocks.*

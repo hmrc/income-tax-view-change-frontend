@@ -16,11 +16,10 @@
 
 package controllers
 
-import audit.AuditingService
 import audit.models.{ViewInYearTaxEstimateAuditBody, ViewInYearTaxEstimateAuditModel}
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.services.AuditingService
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.viewmodels.CalculationSummary

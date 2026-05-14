@@ -31,7 +31,7 @@
   postAction: Call,
   backUrl: String,
   isAgent: Boolean
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("triggered-migration.check-active-businesses-confirm.heading"),

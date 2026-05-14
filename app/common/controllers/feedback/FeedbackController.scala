@@ -16,8 +16,8 @@
 
 package common.controllers.feedback
 
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.FeedbackConnector
 import forms.FeedbackForm
 import play.api.Logger

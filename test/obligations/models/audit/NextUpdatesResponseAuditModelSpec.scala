@@ -16,7 +16,7 @@
 
 package obligations.models.audit
 
-import authV2.AuthActionsTestData.getMinimalMTDITUser
+import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import obligations.testConstants.NextUpdatesTestConstants.*
 import play.api.libs.json.Json

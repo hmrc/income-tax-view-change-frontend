@@ -16,7 +16,7 @@
 
 package utils
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import services.DateServiceInterface
 
 import java.time.LocalDate

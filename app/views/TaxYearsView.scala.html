@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.TaxYear
 @import common.viewUtils.ExternalUrlHelper
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
@@ -27,7 +28,7 @@
         p: p,
         link: link,
         linkComponent: linkComponent,
-        appConfig: config.FrontendAppConfig
+        appConfig: FrontendAppConfig
 )
 
 @(

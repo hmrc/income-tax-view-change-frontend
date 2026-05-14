@@ -16,8 +16,8 @@
 
 package common.views.timeout
 
+import common.config.FrontendAppConfig
 import common.viewUtils.InternalUrlHelper
-import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest

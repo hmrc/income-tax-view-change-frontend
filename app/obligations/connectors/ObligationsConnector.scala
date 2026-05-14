@@ -16,9 +16,9 @@
 
 package obligations.connectors
 
-import audit.AuditingService
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.services.AuditingService
 import connectors.RawResponseReads
 import obligations.models.audit.NextUpdatesResponseAuditModel
 import obligations.models.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}

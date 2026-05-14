@@ -16,10 +16,9 @@
 
 package financials.controllers.claimToAdjustPoa
 
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.claimToAdjustPoa.ApiFailureSubmittingPoaController
-import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api

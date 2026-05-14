@@ -16,14 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.services.AddressLookupService
 import businessDetails.utils.IncomeSourcesUtils
 import com.google.inject.Inject
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.core.Mode
 import play.api.Logger

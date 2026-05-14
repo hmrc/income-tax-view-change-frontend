@@ -16,10 +16,10 @@
 
 package views
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import models.admin.PaymentHistoryRefunds
 import models.creditsandrefunds.CreditsModel
 import models.homePage.*

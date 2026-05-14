@@ -18,9 +18,9 @@ package common.controllers.feedback
 
 import common.controllers.ControllerISpecHelper
 import common.controllers.feedback.routes as feedbackRoutes
+import common.helpers.FeedbackConnectorStub
+import common.helpers.servicemocks.{MTDAgentAuthStub, MTDIndividualAuthStub}
 import enums.{MTDIndividual, MTDPrimaryAgent}
-import helpers.FeedbackConnectorStub
-import helpers.servicemocks.{MTDAgentAuthStub, MTDIndividualAuthStub}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 

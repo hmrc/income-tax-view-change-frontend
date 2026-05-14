@@ -16,10 +16,10 @@
 
 package controllers
 
-import connectors.{ITSAStatusConnector}
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys
-import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationPollingService
 import play.api
 import play.api.Application

@@ -16,8 +16,8 @@
 
 package obligations.views.nextUpdates
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks

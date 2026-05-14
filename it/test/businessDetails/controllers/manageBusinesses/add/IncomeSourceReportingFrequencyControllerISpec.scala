@@ -18,10 +18,11 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.controllers.ControllerISpecHelper
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
+import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.incomeSourceDetails._
 import models.itsaStatus.ITSAStatus.Voluntary

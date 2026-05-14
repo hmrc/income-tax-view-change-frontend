@@ -28,6 +28,7 @@
 @import views.html.partials.chargeSummary._
 @import models.repaymentHistory.RepaymentHistoryUtils
 @import _root_.implicits.HtmlFormatter.NbspString
+@import common.config.FrontendAppConfig
 
 @import java.time.LocalDate
 @import common.viewUtils.ExternalUrlHelper
@@ -35,7 +36,7 @@
 
 @this(
     mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
+    appConfig: FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1WithCaption: h1WithCaption,
     p: p,
@@ -55,7 +56,7 @@
     govukTable: GovukTable
 )
 
-@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: config.FrontendAppConfig, dateService: DateServiceInterface)
+@(viewModel: ChargeSummaryViewModel, whatYouOweUrl: String)(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig, dateService: DateServiceInterface)
 
 @import implicitDateFormatter.longDate
 

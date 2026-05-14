@@ -17,10 +17,10 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import play.api
 import play.api.Application

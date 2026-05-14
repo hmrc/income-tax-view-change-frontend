@@ -20,7 +20,6 @@ import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.core.{CheckMode, Mode, NormalMode}
@@ -39,6 +38,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{noIncomeDet
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.mocks.auth.MockAuthActions
 
 
 class AddIncomeSourceStartDateControllerSpec extends MockAuthActions

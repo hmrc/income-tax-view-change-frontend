@@ -16,12 +16,13 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import enums.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
 import models.creditsandrefunds.{CreditsModel, Transaction}
-import models.financialDetails._
+import models.financialDetails.*
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 

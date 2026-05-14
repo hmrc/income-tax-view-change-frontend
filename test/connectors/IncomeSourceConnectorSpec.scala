@@ -32,10 +32,10 @@
 
 package connectors
 
-import audit.AuditingService
-import audit.models.*
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.models.audit.{ExtendedAuditModel, IncomeSourceDetailsResponseAuditModel}
+import common.models.auth.AuthorisedAndEnrolledRequest
+import common.services.AuditingService
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}

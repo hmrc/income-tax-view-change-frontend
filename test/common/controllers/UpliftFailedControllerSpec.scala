@@ -16,9 +16,9 @@
 
 package common.controllers
 
-import audit.mocks.MockAuditingService
-import audit.models.IvOutcomeFailureAuditModel
 import common.controllers.errors.UpliftFailedController
+import common.mocks.MockAuditingService
+import common.models.audit.IvOutcomeFailureAuditModel
 import org.jsoup.Jsoup
 import play.api.http.{HttpEntity, Status}
 import play.api.mvc.MessagesControllerComponents

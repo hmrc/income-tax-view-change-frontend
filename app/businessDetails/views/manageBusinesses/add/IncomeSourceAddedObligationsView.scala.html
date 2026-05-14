@@ -56,7 +56,7 @@
     getNextUpdatesUrl: String,
     getManageBusinessUrl: String,
     scenario: SignedUpForMTD
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"business.added.${incomeSourceType.messagesSuffix}.$key", args: _*)

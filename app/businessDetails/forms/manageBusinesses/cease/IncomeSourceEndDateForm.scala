@@ -16,11 +16,11 @@
 
 package businessDetails.forms.manageBusinesses.cease
 
-import auth.MtdItUser
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.models.DateFormElement
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import forms.validation.CustomConstraints
 import play.api.data.Form
 import play.api.data.Forms.{default, mapping, text, tuple}

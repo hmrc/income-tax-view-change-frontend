@@ -16,11 +16,10 @@
 
 package financials.controllers
 
-import audit.AuditingService
 import audit.models.InitiatePayNowAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.services.AuditingService
 import connectors.PayApiConnector
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger

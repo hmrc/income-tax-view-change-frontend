@@ -16,8 +16,8 @@
 
 package testConstants
 
-import auth.authV2.models.{AgentClientDetails, AuthUserDetails}
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.models.auth.{AgentClientDetails, AuthUserDetails}
 import common.utils.sessionUtils.SessionKeys
 import enums.{MTDIndividual, MTDUserRole}
 import models.btaNavBar.{NavContent, NavLinks}

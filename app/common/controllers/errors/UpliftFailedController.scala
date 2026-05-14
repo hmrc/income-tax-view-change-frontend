@@ -16,8 +16,8 @@
 
 package common.controllers.errors
 
-import audit.AuditingService
-import audit.models.IvOutcomeFailureAuditModel
+import common.models.audit.IvOutcomeFailureAuditModel
+import common.services.AuditingService
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import common.views.html.errorPages.UpliftFailedView

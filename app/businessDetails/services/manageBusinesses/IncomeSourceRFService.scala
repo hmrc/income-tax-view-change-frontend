@@ -16,11 +16,11 @@
 
 package businessDetails.services.manageBusinesses
 
-import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import businessDetails.controllers.manageBusinesses.add.routes
 import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.utils.JourneyCheckerManageBusinesses
+import common.auth.MtdItUser
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyState
 import enums.JourneyType.IncomeSourceJourneyType
 import models.UIJourneySessionData

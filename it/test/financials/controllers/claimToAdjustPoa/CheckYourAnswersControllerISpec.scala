@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.controllers.ControllerISpecHelper
 import routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import models.claimToAdjustPoa.PoaAmendmentData

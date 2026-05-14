@@ -20,10 +20,11 @@
 @import common.views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         h1: h1,
         h2: h2,
         p: p,
@@ -34,7 +35,7 @@
         formWithCSRF: FormWithCSRF
 )
 
-@(isAgent: Boolean, viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @getCorrectBody = @{
     if (viewModel.isAmountZero)   getMessage("p2")

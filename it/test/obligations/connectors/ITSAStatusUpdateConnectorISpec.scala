@@ -16,7 +16,7 @@
 
 package obligations.connectors
 
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import common.helpers.{ComponentSpecBase, WiremockHelper}
 import connectors.constants.ITSAStatusUpdateConnectorConstants.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.connectors.itsastatus.{ITSAStatusUpdateConnector, ITSAStatusUpdateRequest}

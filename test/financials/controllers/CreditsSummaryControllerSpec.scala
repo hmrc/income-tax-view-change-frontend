@@ -16,10 +16,9 @@
 
 package financials.controllers
 
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.CreditsSummaryController
-import mocks.auth.MockAuthActions
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
 import play.api

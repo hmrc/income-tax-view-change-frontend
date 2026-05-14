@@ -16,8 +16,8 @@
 
 package common.controllers.bta
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
 import connectors.BtaNavBarPartialConnector
 import models.btaNavBar.*
 import org.mockito.ArgumentMatchers.any

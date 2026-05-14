@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
 import obligations.models.reportingObligations.optOut.OptOutSessionData

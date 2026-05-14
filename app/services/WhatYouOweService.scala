@@ -16,11 +16,11 @@
 
 package services
 
-import audit.AuditingService
 import audit.models.WhatYouOweResponseAuditModel
-import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import models.admin.*
 import models.core.Nino

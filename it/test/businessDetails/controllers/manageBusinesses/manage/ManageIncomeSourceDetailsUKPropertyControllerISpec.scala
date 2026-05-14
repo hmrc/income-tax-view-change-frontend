@@ -17,8 +17,9 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK

@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.cease
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.*
@@ -42,6 +41,7 @@ import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.mocks.auth.MockAuthActions
 
 class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService with MockDateService{
 

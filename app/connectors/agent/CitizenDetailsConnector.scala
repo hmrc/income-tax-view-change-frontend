@@ -16,7 +16,7 @@
 
 package connectors.agent
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import connectors.RawResponseReads
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.api.Logger

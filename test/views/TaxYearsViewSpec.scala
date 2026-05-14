@@ -16,7 +16,7 @@
 
 package views
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

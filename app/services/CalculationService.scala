@@ -16,9 +16,9 @@
 
 package services
 
-import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import connectors.IncomeTaxCalculationConnector
 import enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
 import models.admin.PostFinalisationAmendmentsR18

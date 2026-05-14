@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import enums.GatewayPage._
 @import java.time.LocalDate
+@import common.config.FrontendAppConfig
 
 
 @this(mainTemplate: unifiedLayout,
@@ -35,7 +36,7 @@
       p:p,
       govukInsetText: GovukInsetText,
       link: link,
-      appConfig: config.FrontendAppConfig,
+      appConfig: FrontendAppConfig,
       numberList: orderedNumberList
 )
 

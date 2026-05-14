@@ -17,10 +17,10 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService}
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress

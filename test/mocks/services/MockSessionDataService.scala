@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import authV2.AuthActionsTestData.sessionGetSuccessResponse
+import common.auth.actions.AuthActionsTestData.sessionGetSuccessResponse
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import org.mockito.ArgumentMatchers.any

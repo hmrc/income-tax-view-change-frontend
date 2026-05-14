@@ -16,12 +16,11 @@
 
 package financials.controllers
 
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.PaymentHistoryController
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import models.admin.PaymentHistoryRefunds
 import models.financialDetails.{ChargeItem, Payment}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel}

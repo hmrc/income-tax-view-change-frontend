@@ -16,8 +16,8 @@
 
 package connectors
 
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
-import auth.authV2.models.AuthorisedAndEnrolledRequest
+import common.helpers.{ComponentSpecBase, WiremockHelper}
+import common.models.auth.AuthorisedAndEnrolledRequest
 import enums.MTDIndividual
 import models.core.{AccountingPeriodModel, AddressModel}
 import models.incomeSourceDetails.*

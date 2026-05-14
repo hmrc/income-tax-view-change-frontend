@@ -16,10 +16,9 @@
 
 package financials.controllers.claimToAdjustPoa
 
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.claimToAdjustPoa.YouCannotGoBackController
-import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api

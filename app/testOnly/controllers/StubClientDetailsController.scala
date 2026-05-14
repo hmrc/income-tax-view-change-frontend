@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport

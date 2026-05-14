@@ -38,7 +38,7 @@
         backUrl: String,
         viewModel: CheckYourAnswersViewModel,
         incomeSourceType: IncomeSourceType
-)(implicit request: auth.MtdItUser[_], messages: Messages)
+)(implicit request: common.auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"manageBusinesses.check-answers.$key", args: _*)

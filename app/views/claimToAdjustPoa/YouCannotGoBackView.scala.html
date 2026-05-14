@@ -36,7 +36,7 @@
         isAgent: Boolean,
         poaTaxYear: TaxYear
 )(
-        implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
+        implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
 @getMessage(key: String, args: String*) = @{

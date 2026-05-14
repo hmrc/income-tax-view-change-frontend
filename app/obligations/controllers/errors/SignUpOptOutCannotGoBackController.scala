@@ -16,10 +16,10 @@
 
 package obligations.controllers.errors
 
-import auth.authV2.AuthActions
 import com.google.inject.Inject
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.AuthActions
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import obligations.controllers.reportingObligations.routes
 import obligations.utils.reportingObligations.ReportingObligationsUtils
 import play.api.i18n.I18nSupport

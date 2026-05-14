@@ -16,7 +16,7 @@
 
 package common.controllers.timeout
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents

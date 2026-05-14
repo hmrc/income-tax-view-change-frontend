@@ -16,8 +16,8 @@
 
 package services.newHomePage
 
-import auth.MtdItUser
 import com.google.inject.Inject
+import common.auth.MtdItUser
 import obligations.connectors.ObligationsConnector
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear

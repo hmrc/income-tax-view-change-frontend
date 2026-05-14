@@ -16,11 +16,11 @@
 
 package businessDetails.models.audit
 
-import audit.Utilities.userAuditDetails
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
+import common.utils.audit.Utilities.userAuditDetails
 import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.Utilities._

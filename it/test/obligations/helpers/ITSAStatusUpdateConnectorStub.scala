@@ -16,7 +16,7 @@
 
 package obligations.helpers
 
-import helpers.WiremockHelper
+import common.helpers.WiremockHelper
 
 object ITSAStatusUpdateConnectorStub {
   def stubItsaStatusUpdate(taxableEntityId: String, status: Int, responseBody: String, headers: Map[String, String] = Map()): Unit =

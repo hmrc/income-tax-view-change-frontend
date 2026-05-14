@@ -16,7 +16,7 @@
 
 package common.controllers.agent.errors
 
-import mocks.auth.MockAuthActions
+import common.mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import play.api.test.Helpers.*
 import testConstants.BaseTestConstants.agentAuthRetrievalSuccess

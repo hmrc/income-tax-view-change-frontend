@@ -20,9 +20,10 @@ import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceT
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import common.controllers.ControllerISpecHelper
+import common.helpers.servicemocks.AuditStub
 import enums.JourneyType.Cease
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData

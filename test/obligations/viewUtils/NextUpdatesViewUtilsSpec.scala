@@ -16,9 +16,9 @@
 
 package obligations.viewUtils
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.FrontendAppConfig
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import implicits.ImplicitDateFormatter
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.IncomeSourceDetailsModel

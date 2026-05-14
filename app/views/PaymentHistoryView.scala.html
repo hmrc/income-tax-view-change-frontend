@@ -31,11 +31,12 @@
 @import common.viewUtils.ExternalUrlHelper
 @import views.html.partials.paymentHistory.PaymentDescription
 @import financials.controllers.routes as financialsRoutes
+@import common.config.FrontendAppConfig
 
 @this(
     paymentDescription: PaymentDescription,
     mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
+    appConfig: FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
     p: p,

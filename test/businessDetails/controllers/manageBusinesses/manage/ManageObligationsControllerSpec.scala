@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.manage
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockDateService, MockSessionService}
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.*
@@ -40,6 +39,7 @@ import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarter
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.IncomeSourcesUtils
+import common.mocks.auth.MockAuthActions
 import obligations.mocks.services.MockNextUpdatesService
 
 import java.time.LocalDate

@@ -16,14 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.InitialPage
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.core.{Mode, NormalMode}
@@ -35,6 +31,9 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddBusinessNameView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

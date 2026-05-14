@@ -27,7 +27,7 @@
     p: p,
     continueButton: ContinueButton)
 
-@(isAgent: Boolean, subheadingContent: String, noSession: Boolean = false)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, subheadingContent: String, noSession: Boolean = false)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getManageUrl = @{
     if(isAgent) {

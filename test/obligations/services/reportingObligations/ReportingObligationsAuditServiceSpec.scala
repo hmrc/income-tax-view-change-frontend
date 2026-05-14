@@ -16,8 +16,8 @@
 
 package obligations.services.reportingObligations
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import enums.MTDIndividual
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.TaxYear

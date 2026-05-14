@@ -16,9 +16,6 @@
 
 package controllers
 
-import audit.AuditingService
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.MTDSupportingAgent
 import mocks.services.admin.MockFeatureSwitchService
 import models.admin.OptInOptOutContentUpdateR17
@@ -46,6 +43,9 @@ import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.newHomePage.*
 import views.html.helpers.injected.home.YourReportingObligationsTile
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.services.AuditingService
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -19,9 +19,9 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}

@@ -16,7 +16,7 @@
 
 package services
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import connectors.ChargeHistoryConnector
 import enums.CreateReversalReason
 import models.chargeHistory._

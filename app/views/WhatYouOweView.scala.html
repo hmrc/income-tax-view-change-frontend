@@ -16,7 +16,7 @@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import auth.MtdItUser
+@import common.auth.MtdItUser
 @import models.financialDetails.WhatYouOweViewModel
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -27,10 +27,11 @@
 @import views.html.partials.whatYouOwe._
 @import _root_.implicits.HtmlFormatter.NbspString
 @import common.viewUtils.ExternalUrlHelper
+@import common.config.FrontendAppConfig
 
 @this(
         h1: h1,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         h2: h2,
         link: link,
         govukInsetText: GovukInsetText,

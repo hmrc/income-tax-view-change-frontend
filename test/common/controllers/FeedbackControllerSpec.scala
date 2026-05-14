@@ -17,11 +17,11 @@
 package common.controllers
 
 import common.controllers.feedback.{FeedbackController, routes as feedbackRoutes}
+import common.mocks.auth.MockAuthActions
 import common.viewUtils.InternalUrlHelper
 import connectors.FeedbackConnector
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any

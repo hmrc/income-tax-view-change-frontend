@@ -16,8 +16,7 @@
 
 package businessDetails.views.manageBusinesses.manage
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import businessDetails.enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
 import businessDetails.enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
@@ -35,6 +34,7 @@ import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethod
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
+import common.auth.MtdItUser
 
 class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 

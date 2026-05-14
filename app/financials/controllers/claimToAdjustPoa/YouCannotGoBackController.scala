@@ -16,10 +16,10 @@
 
 package financials.controllers.claimToAdjustPoa
 
-import auth.authV2.AuthActions
 import cats.data.EitherT
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
 import enums.CannotGoBackPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

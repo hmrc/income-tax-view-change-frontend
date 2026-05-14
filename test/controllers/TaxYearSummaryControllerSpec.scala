@@ -16,10 +16,10 @@
 
 package controllers
 
+import common.mocks.auth.MockAuthActions
 import connectors.{CalculationListConnector, ITSAStatusConnector}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
-import mocks.auth.MockAuthActions
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService}
 import models.admin.*

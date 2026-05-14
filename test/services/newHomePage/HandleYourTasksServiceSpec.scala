@@ -16,8 +16,8 @@
 
 package services.newHomePage
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.incomeSourceDetails.IncomeSourceDetailsModel

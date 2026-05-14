@@ -16,11 +16,11 @@
 
 package common.controllers
 
-import audit.models.IvOutcomeSuccessAuditModel
-import authV2.AuthActionsTestData.defaultIncomeSourcesData
+import common.auth.actions.AuthActionsTestData.defaultIncomeSourcesData
+import common.mocks.auth.MockAuthActions
+import common.models.audit.IvOutcomeSuccessAuditModel
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.MtdItsaOptOut

@@ -16,11 +16,10 @@
 
 package controllers.newHomePage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import models.admin.{PaymentHistoryRefunds, RecentActivity}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear

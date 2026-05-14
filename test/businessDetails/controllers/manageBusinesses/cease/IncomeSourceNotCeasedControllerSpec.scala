@@ -17,9 +17,9 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api
