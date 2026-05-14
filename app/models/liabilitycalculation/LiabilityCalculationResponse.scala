@@ -17,12 +17,14 @@
 package models.liabilitycalculation
 
 import enums.TaxYearSummary.CalcType.{amendmentTypes, crystallisedTypes}
-import implicits.{ImplicitCurrencyFormatter, ImplicitDateFormatter}
+import implicits.ImplicitDateFormatter
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.*
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import scala.util.Try
+import scala.util.matching.Regex
 
 
 sealed trait LiabilityCalculationResponseModel
@@ -102,13 +104,30 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
 
   val genericMessages: Seq[Message] = allMessages.filter(message => acceptedMessages.contains(message.id))
 
+  private def messageVariablesRegex: Regex = {
+    val dateDashPattern = "\\d{4}-\\d{2}-\\d{2}"
+    val dateSlashPattern = "\\d{2}/\\d{2}/\\d{4}"
+    val currencyDecimal = "£\\d+\\.\\d{2}"
+    val currencyComma = "£\\d+,\\d+"
+    val currencyWhole = "£\\d+"
+    val numberPattern = "\\d+"
+
+    Seq(
+      dateDashPattern,
+      dateSlashPattern,
+      currencyDecimal,
+      currencyComma,
+      currencyWhole,
+      numberPattern
+    ).mkString("|").r
+  }
+
   def getErrorMessageVariables(messagesProperty: MessagesApi, isAgent: Boolean): Seq[Message] = {
     val lang = Lang("GB")
     val errMessages = errorMessages.map(msg => {
       val key = if (isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
       if (messagesProperty.isDefinedAt(key)(lang)) {
-        val regex = "\\d{4}-\\d{2}-\\d{2}|\\d{2}/\\d{2}/\\d{4}|£\\d+,\\d+|\\d+|£\\d+".r
-        val variable: String = regex.findFirstIn(msg.text).getOrElse("")
+        val variable: String = messageVariablesRegex.findFirstIn(msg.text).getOrElse("")
         Message(id = msg.id, text = variable)
       } else {
         Message(id = msg.id, text = "")
@@ -139,6 +158,26 @@ object Messages {
           case Some(date) => Message(id = msg.id, text = implicitDateFormatter.longDate(date).toLongDate)
           case None => msg
         }
+      } else {
+        msg
+      }
+    }
+  }
+
+  def translateMessageCurrencyVariables(messages: Seq[Message])(implicit message: play.api.i18n.Messages): Seq[Message] = {
+
+    val errorMessagesCurrencyFormat: Seq[String] = Seq("C55109", "C55110", "C55602", "C55525")
+    val currencyRegex = "£\\d+\\.\\d{2}".r
+
+    messages.map { msg =>
+      if (errorMessagesCurrencyFormat.contains(msg.id)) {
+        val updatedText = currencyRegex.findFirstIn(msg.text)
+          .flatMap(value => Try(BigDecimal(value.stripPrefix("£"))).toOption)
+          .map { amount =>
+            msg.text.replace(currencyRegex.findFirstIn(msg.text).get, amount.toString())
+          }
+          .getOrElse(msg.text)
+        Message(id = msg.id, text = updatedText)
       } else {
         msg
       }

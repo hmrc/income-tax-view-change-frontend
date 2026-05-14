@@ -96,7 +96,9 @@ class TaxYearSummaryController @Inject()(
           liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty, isAgent)
         val translatedDateMessages =
           models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
-        liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
+        val translatedCurrencyMessages =
+          models.liabilitycalculation.Messages.translateMessageDateVariables(translatedDateMessages)(messages, this)
+        liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedCurrencyMessages))))
       case None =>
         liabilityCalc
     }
