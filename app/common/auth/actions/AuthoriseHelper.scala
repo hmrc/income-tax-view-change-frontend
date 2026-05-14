@@ -48,10 +48,10 @@ trait AuthoriseHelper extends FeatureSwitching {
       logger.warn("Bearer Token Timed Out.")
       Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
     case insufficientEnrolments: InsufficientEnrolments =>
-      logger.error(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
+      logger.warn(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
       Future.successful(Left(Redirect(errorRoutes.NotEnrolledController.show())))
     case authorisationException: AuthorisationException =>
-      logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+      logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
       Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432

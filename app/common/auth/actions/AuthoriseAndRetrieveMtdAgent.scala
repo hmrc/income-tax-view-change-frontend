@@ -115,7 +115,7 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
         logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
         Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
       case ex =>
-        logger.error(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
+        logger.warn(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
         Future.successful(Left(errorHandler.showInternalServerError()))
     }
   }
