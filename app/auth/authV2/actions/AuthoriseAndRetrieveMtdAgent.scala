@@ -106,16 +106,16 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
         logger.warn("Bearer Token Timed Out.")
         Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
       case _: InsufficientEnrolments =>
-        logger.error(s"missing delegated enrolment. Redirect to agent error page.")
+        logger.warn(s"missing delegated enrolment. Redirect to agent error page.")
         Future.successful(Left(Redirect(agentRoutes.ClientRelationshipFailureController.show())))
       case _: NoAssignment =>
-        logger.error(s"Agent User is not in an access group associated with the Client.")
+        logger.warn(s"Agent User is not in an access group associated with the Client.")
         Future.successful(Left(Redirect(agentRoutes.NoAssignmentController.show())))
       case authorisationException: AuthorisationException =>
-        logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+        logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
         Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
       case ex =>
-        logger.error(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
+        logger.warn(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
         Future.successful(Left(errorHandler.showInternalServerError()))
     }
   }
