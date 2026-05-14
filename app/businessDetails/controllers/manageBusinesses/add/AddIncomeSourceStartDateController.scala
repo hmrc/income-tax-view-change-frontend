@@ -32,7 +32,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.CustomNotFoundErrorView
+import common.views.html.errorPages.CustomNotFoundErrorView
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateView
 
 import java.time.LocalDate

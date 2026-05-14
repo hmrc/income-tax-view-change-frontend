@@ -26,7 +26,7 @@ import testUtils.TestSupport
 class SessionTimeoutControllerSpec extends TestSupport {
 
   object TestSessionTimeoutController extends SessionTimeoutController(
-    app.injector.instanceOf[views.html.timeout.TimeoutView])(
+    app.injector.instanceOf[common.views.html.timeout.TimeoutView])(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents]
   )

@@ -1,0 +1,45 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.viewUtils.InternalUrlHelper
+
+@this(
+    layout: unifiedLayout,
+    h1: h1,
+    p: p,
+    link: link
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@paragraph = {
+    @messages("timeout.signIn.1")
+    @link(
+        link = InternalUrlHelper.signinUrl,
+        messageKey = "timeout.signIn.2",
+
+        id = Some("sign-in-link"),
+    )
+    @messages("timeout.signIn.3")
+}
+
+@layout(pageTitle = messages("timeout.heading"), showLogout = false, showBtaHeader = false, timeout = false) {
+
+    @h1(messages("timeout.heading"))
+    @p(id=Some("sign-in"))(paragraph)
+}

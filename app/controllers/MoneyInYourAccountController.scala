@@ -33,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.ErrorRecovery
 import views.html.{CreditAndRefundsView, MoneyInYourAccountView}
-import views.html.errorPages.CustomNotFoundErrorView
+import common.views.html.errorPages.CustomNotFoundErrorView
 
 import javax.inject.Inject
 import scala.annotation.unused

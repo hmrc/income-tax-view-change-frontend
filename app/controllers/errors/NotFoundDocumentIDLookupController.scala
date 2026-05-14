@@ -19,7 +19,7 @@ package controllers.errors
 import com.google.inject.{Inject, Singleton}
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.CustomNotFoundErrorView
+import common.views.html.errorPages.CustomNotFoundErrorView
 
 import scala.concurrent.Future
 

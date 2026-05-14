@@ -38,7 +38,7 @@ import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.MtdConstants
-import views.html.errorPages.templates.ErrorTemplate
+import common.views.html.errorPages.templates.ErrorTemplate
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 
 import javax.inject.Inject

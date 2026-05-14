@@ -25,7 +25,7 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.expectedJourneyId
 import testUtils.TestSupport
-import views.html.errorPages.UpliftFailedView
+import common.views.html.errorPages.UpliftFailedView
 
 import scala.concurrent.ExecutionContext
 
