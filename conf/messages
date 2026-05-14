@@ -397,6 +397,10 @@ taxYears.oldSa.agent.content.1								   = To view a client’s summary from bef
 taxYears.oldSa.agent.content.2								   = Self Assessment for Agents account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your agent services account.
 taxYears.r18.amendment.text                                    = You can view the tax year summary pages to also see your options for amending the filed return for that year.
+taxYears.dropdown.title                                        = Help with proof of your income (SA302)
+taxYears.dropdown.content.1                                    = You can view the
+taxYears.dropdown.content.linkText                             = proof of your income (SA302)
+taxYears.dropdown.content.2                                    = page
 
 ## Tax Years Page - Error ##
 taxYears.error.subheading                                      = Your tax return information cannot currently be displayed here

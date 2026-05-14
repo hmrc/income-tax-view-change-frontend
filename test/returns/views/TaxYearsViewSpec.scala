@@ -45,6 +45,7 @@ class TaxYearsViewSpec extends ViewSpec {
                     calcs: List[Int],
                     itsaSubmissionFeatureSwitch: Boolean = false,
                     isPostFinalisationAmendmentR18Enabled: Boolean = false,
+                    isMortgageEvidenceEnabled: Boolean = false,
                     utr: Option[String] = None,
                     isAgent: Boolean = false,
                     isErrorContent: Boolean = false
@@ -56,6 +57,7 @@ class TaxYearsViewSpec extends ViewSpec {
         utr = utr,
         itsaSubmissionIntegrationEnabled = itsaSubmissionFeatureSwitch,
         isPostFinalisationAmendmentR18Enabled = isPostFinalisationAmendmentR18Enabled,
+        isMortgageEvidenceEnabled = isMortgageEvidenceEnabled,
         earliestSubmissionTaxYear = 2023,
         isAgent = isAgent,
         errorTaxYear = if (isErrorContent) Some(TaxYear.getCYPlusOneTaxYear) else None
