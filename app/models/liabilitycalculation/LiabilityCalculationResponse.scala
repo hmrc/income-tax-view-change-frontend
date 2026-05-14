@@ -17,9 +17,9 @@
 package models.liabilitycalculation
 
 import enums.TaxYearSummary.CalcType.{amendmentTypes, crystallisedTypes}
-import implicits.ImplicitDateFormatter
+import implicits.{ImplicitCurrencyFormatter, ImplicitDateFormatter}
 import play.api.i18n.{Lang, MessagesApi}
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -107,7 +107,7 @@ case class Messages(info: Option[Seq[Message]] = None, warnings: Option[Seq[Mess
     val errMessages = errorMessages.map(msg => {
       val key = if (isAgent) "tax-year-summary.agent.message." + msg.id else "tax-year-summary.message." + msg.id
       if (messagesProperty.isDefinedAt(key)(lang)) {
-        val regex = "\\d{2}/\\d{2}/\\d{4}|£\\d+,\\d+|\\d+|£\\d+".r
+        val regex = "\\d{4}-\\d{2}-\\d{2}|\\d{2}/\\d{2}/\\d{4}|£\\d+,\\d+|\\d+|£\\d+".r
         val variable: String = regex.findFirstIn(msg.text).getOrElse("")
         Message(id = msg.id, text = variable)
       } else {
@@ -124,20 +124,24 @@ object Messages {
 
   def translateMessageDateVariables(messages: Seq[Message])(implicit message: play.api.i18n.Messages, implicitDateFormatter: ImplicitDateFormatter): Seq[Message] = {
 
-    val pattern = DateTimeFormatter.ofPattern("d/MM/yyyy")
+    val legacyPattern = DateTimeFormatter.ofPattern("d/MM/yyyy")
+    val isoPattern = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val errorMessagesDateFormat: Seq[String] = Seq("C15014", "C55014", "C55008", "C55011", "C55012", "C55013", "C55007")
-    // lang conversion for date (GB,CY)
-    val errorMessages = messages.map(msg => {
-      errorMessagesDateFormat.contains(msg.id) match {
-        case true =>
-          val date = LocalDate.parse(msg.text, pattern)
-          val dateText = implicitDateFormatter.longDate(date).toLongDate
-          Message(id = msg.id, text = dateText)
-        case false =>
-          Message(id = msg.id, text = msg.text)
-      }
-    })
 
-    errorMessages
+    def parseDate(text: String): Option[LocalDate] =
+      Iterator(isoPattern, legacyPattern)
+        .flatMap(fmt => scala.util.Try(LocalDate.parse(text, fmt)).toOption)
+        .nextOption()
+
+    messages.map { msg =>
+      if (errorMessagesDateFormat.contains(msg.id)) {
+        parseDate(msg.text) match {
+          case Some(date) => Message(id = msg.id, text = implicitDateFormatter.longDate(date).toLongDate)
+          case None => msg
+        }
+      } else {
+        msg
+      }
+    }
   }
 }
