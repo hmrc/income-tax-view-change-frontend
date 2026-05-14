@@ -496,12 +496,12 @@ tax-year-summary.message.C559200                                   = One or more
 tax-year-summary.message.C55326                                    = Periods of Account information is required for all Self Employments. Please submit.
 tax-year-summary.message.C55327                                    = One or more Self Employment income sources with standard reporting require a basis adjustment figure to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
 tax-year-summary.message.C55328                                    = One or more Self Employment income sources with calendar reporting require a basis adjustment figure and business source adjustments to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
-tax-year-summary.message.C55109                                    = Business Asset Disposal Relief cannot exceed £{0}. Please amend and resubmit.
-tax-year-summary.message.C55110                                    = Investors Relief cannot exceed £{0}. Please amend and resubmit.
-tax-year-summary.message.C55602                                    = Your Foreign property income has exceeded the £{0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+tax-year-summary.message.C55109                                    = Business Asset Disposal Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.message.C55110                                    = Investors Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.message.C55602                                    = Your Foreign property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
 tax-year-summary.message.C55107                                    = One or more employments have no directorship declaration submitted. Please submit.
 tax-year-summary.message.C55108                                    = Please ensure that the Dividend Received from Directorships is not greater than UK Dividends.
-tax-year-summary.message.C55525                                    = Your UK property income has exceeded the £{0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+tax-year-summary.message.C55525                                    = Your UK property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
 
 
 tax-year-summary.agent.message.header                              = We cannot show this calculation because:
@@ -593,12 +593,12 @@ tax-year-summary.agent.message.C559200                             = One or more
 tax-year-summary.agent.message.C55326                              = Periods of Account information is required for all Self Employments. Please submit.
 tax-year-summary.agent.message.C55327                              = One or more Self Employment income sources with standard reporting require a basis adjustment figure to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
 tax-year-summary.agent.message.C55328                              = One or more Self Employment income sources with calendar reporting require a basis adjustment figure and business source adjustments to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
-tax-year-summary.agent.message.C55109                              = Business Asset Disposal Relief cannot exceed £{0}. Please amend and resubmit.
-tax-year-summary.agent.message.C55110                              = Investors Relief cannot exceed £{0}. Please amend and resubmit.
-tax-year-summary.agent.message.C55602                              = Your Foreign property income has exceeded the £{0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+tax-year-summary.agent.message.C55109                              = Business Asset Disposal Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.agent.message.C55110                              = Investors Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.agent.message.C55602                              = Your Foreign property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
 tax-year-summary.agent.message.C55107                              = One or more employments have no directorship declaration submitted. Please submit.
 tax-year-summary.agent.message.C55108                              = Please ensure that the Dividend Received from Directorships is not greater than UK Dividends.
-tax-year-summary.agent.message.C55525                              = Your UK property income has exceeded the £{0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+tax-year-summary.agent.message.C55525                              = Your UK property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
 
 
 tax-year-summary.adjust-poa-paragraph                              = You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account.
