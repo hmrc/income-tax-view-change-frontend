@@ -23,6 +23,7 @@ import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 object ClaimToAdjustPoaTestConstants {
 
@@ -205,7 +206,7 @@ object ClaimToAdjustPoaTestConstants {
 
   val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
 
-  def whatYouNeedToKnowViewModel(isAgent: Boolean, showIncreaseAfterPaymentContent: Boolean): WhatYouNeedToKnowViewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), showIncreaseAfterPaymentContent, controllers.claimToAdjustPoa.routes.SelectYourReasonController.show(isAgent, NormalMode).url)
+  def whatYouNeedToKnowViewModel(isAgent: Boolean, showIncreaseAfterPaymentContent: Boolean): WhatYouNeedToKnowViewModel = WhatYouNeedToKnowViewModel(poaTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1), showIncreaseAfterPaymentContent, claimToAdjustPoaRoutes.SelectYourReasonController.show(isAgent, NormalMode).url)
 
   def chargeHistoryModelNoPOA(taxYear: Int): ChargeHistoryModel = ChargeHistoryModel(s"${taxYear.toString}", "1040000124", LocalDate.of(taxYear, 7, 6), "documentDescription", 1500, LocalDateTime.of(LocalDate.of(2018, 7, 6), LocalTime.of(9, 30, 45)), "amended return", None)
 

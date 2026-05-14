@@ -16,13 +16,13 @@
 
 package views.claimToAdjustPoa
 
+import financials.controllers.routes as financialsRoutes
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.YouCannotGoBackView
-
 class YouCannotGoBackViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean) {
@@ -46,8 +46,8 @@ class YouCannotGoBackViewSpec extends TestSupport {
   }
 
   def getWhatYouOweControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
-    else controllers.routes.WhatYouOweController.show().url
+    if (isAgent) financialsRoutes.WhatYouOweController.showAgent().url
+    else financialsRoutes.WhatYouOweController.show().url
   }
 
   def getTaxYearSummaryControllerLink(isAgent: Boolean): String = {

@@ -19,6 +19,7 @@
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.homePage.HomePageViewModel
+@import financials.controllers.routes as financialsRoutes
 
 @this(
     home_tile: home_tile,
@@ -59,12 +60,12 @@
 @checkWhatYouOweLink = @{
     if(isAgent) {
         link(
-            link = controllers.routes.WhatYouOweController.showAgent().url,
+            link = financials.controllers.routes.WhatYouOweController.showAgent().url,
             messageKey = "home.agent.payments.view"
         )
     } else {
         link(
-            link = controllers.routes.WhatYouOweController.show(viewModel.origin).url,
+            link = financials.controllers.routes.WhatYouOweController.show(viewModel.origin).url,
             messageKey = "home.payments.view"
         )
     }

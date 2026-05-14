@@ -35,6 +35,7 @@ import testConstants.CalculationListIntegrationTestConstants.successResponseNonC
 import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.NewCalcBreakdownItTestConstants.*
 import testConstants.messages.TaxYearSummaryMessages.*
+import financials.controllers.routes as financialsRoutes
 
 import java.time.LocalDate
 import obligations.models.*
@@ -678,9 +679,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   val document = Jsoup.parse(res.body)
 
                   def getChargeSummaryUrl(id: String) = if (mtdUserRole == MTDIndividual) {
-                    controllers.routes.ChargeSummaryController.show(testYear2023, id).url
+                    financialsRoutes.ChargeSummaryController.show(testYear2023, id).url
                   } else {
-                    controllers.routes.ChargeSummaryController.showAgent(testYear2023, id).url
+                    financialsRoutes.ChargeSummaryController.showAgent(testYear2023, id).url
                   }
 
                   document.getElementById("paymentTypeLink-0").attr("href") shouldBe getChargeSummaryUrl("1040000123")

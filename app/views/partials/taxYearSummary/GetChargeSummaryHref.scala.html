@@ -17,6 +17,8 @@
 @import models.taxyearsummary.TaxYearSummaryChargeItem
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import models.financialDetails.SecondLatePaymentPenalty
+@import financials.controllers.routes as financialsRoutes
+
 @this()
 @(chargeItem: TaxYearSummaryChargeItem, viewModel: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean, origin: Option[String])
 
@@ -25,9 +27,9 @@
         viewModel.LPP2Url
     } else {
         if(isAgent) {
-            controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest).url
+            financialsRoutes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest).url
         } else {
-            controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin).url
+            financialsRoutes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin).url
         }
     }
 }

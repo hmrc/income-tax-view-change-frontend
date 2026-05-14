@@ -52,6 +52,7 @@ import obligations.services.NextUpdatesService
 import java.time.LocalDate
 import scala.annotation.unused
 import scala.concurrent.Future
+import financials.controllers.routes as financialsRoutes
 
 class TaxYearSummaryControllerSpec
   extends MockAuthActions
@@ -544,9 +545,9 @@ class TaxYearSummaryControllerSpec
                 val result = action(fakeRequest)
 
                 def chargeSummaryUrl(id: String) = if (isAgent) {
-                  controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id).url
+                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id).url
                 } else {
-                  controllers.routes.ChargeSummaryController.show(testTaxYear, id).url
+                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id).url
                 }
 
                 status(result) shouldBe OK
@@ -582,9 +583,9 @@ class TaxYearSummaryControllerSpec
                 val result = action(fakeRequest)
 
                 def chargeSummaryUrl(id: String) = if (isAgent) {
-                  controllers.routes.ChargeSummaryController.showAgent(testTaxYear, id).url
+                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id).url
                 } else {
-                  controllers.routes.ChargeSummaryController.show(testTaxYear, id).url
+                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id).url
                 }
 
                 status(result) shouldBe OK

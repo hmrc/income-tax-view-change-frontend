@@ -19,6 +19,7 @@ package models.financialDetails
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import services.DateServiceInterface
 import java.time.LocalDate
+import financials.controllers.routes as financialsRoutes
 
 case class WhatYouOweViewModel(currentDate: LocalDate,
                                hasOverdueOrAccruingInterestCharges: Boolean,
@@ -51,9 +52,9 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
 
   def paymentHistoryControllerURL(isAgent: Boolean, origin: Option[String] = None) =
     if(isAgent){
-      controllers.routes.PaymentHistoryController.showAgent().url
+      financialsRoutes.PaymentHistoryController.showAgent().url
     } else {
-      controllers.routes.PaymentHistoryController.show(origin).url
+      financialsRoutes.PaymentHistoryController.show(origin).url
     }
 
 }

@@ -26,6 +26,7 @@
 @import common.views.html.components.link
 @import common.views.html.components.p
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 @this(
         govukButton : GovukButton,
@@ -136,7 +137,7 @@
         )
     ))
 
-    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.submit(isAgent)) {
+    @formWithCSRF(action = claimToAdjustPoaRoutes.CheckYourAnswersController.submit(isAgent)) {
 
         <div class="govuk-button-group">
 

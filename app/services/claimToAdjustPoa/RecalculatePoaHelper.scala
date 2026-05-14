@@ -33,7 +33,7 @@ import services.{NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import utils.ErrorRecovery
-import controllers.claimToAdjustPoa.routes._
+import financials.controllers.claimToAdjustPoa.routes._
 import models.admin.SubmitClaimToAdjustToNrs
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
