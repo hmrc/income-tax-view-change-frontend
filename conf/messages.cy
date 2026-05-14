@@ -269,6 +269,7 @@ newHome.overview.tax-year.proofOfIncome.card.previousTY.header  = {0} i {1} blwy
 newHome.overview.tax-year.proofOfIncome.card.sa302key           = Cyfrifiad Treth SA302
 newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete = Anghyflawn – ni ellir ei ddefnyddio fel tystiolaeth o’ch incwm
 newHome.overview.tax-year.proofOfIncome.card.sa302value.proof   = Tystiolaeth o’ch incwm
+newHome.overview.tax-year.proofOfIncome.card.sa302value.legacy  = Blynyddoedd treth cyn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm
 newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = Bwrw golwg dros
 ### Help Tab
 new.home.help.heading                                           = Troi Treth yn Ddigidol

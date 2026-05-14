@@ -46,8 +46,9 @@ case class ProofOfYourIncomeCardViewModel(taxYearStart: Int,
         "",
         Some(messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.action"))) // TODO: Tax overview tax should have logic to check if action is needed
       calculationType match {
-        case "DF" | "CA" => Some(cardBase.copy(rowDescription = messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.proof")))
-        case "IF" | "IA" => Some(cardBase.copy(rowDescription = messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete")))
+        //CR, AM & IC -> #2150
+        case "DF" | "CA" | "CR" | "AM" => Some(cardBase.copy(rowDescription = messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.proof")))
+        case "IF" | "IA" | "IC" => Some(cardBase.copy(rowDescription = messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete")))
         case _ => None
       }
     }else {
