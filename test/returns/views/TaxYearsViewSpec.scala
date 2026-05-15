@@ -206,6 +206,19 @@ class TaxYearsViewSpec extends ViewSpec {
       }
     }
 
+    "The TaxYears view with MortgageEvidence FS enabled" when {
+      "the user has multiple tax years" should {
+        "display the SA302 dropdown and text below the tax years list" in new TestSetup(
+          calcs = List(testYearPlusOne, testTaxYear),
+          isMortgageEvidenceEnabled = true
+        ) {
+          layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe messages("taxYears.dropdown.title")
+          document.getElementById("heading").text shouldBe messages("")
+          document.getElementById("taxyears-sa302-link").attr("href") shouldBe Some("/report-quarterly/income-and-expenses/view/mortgage-evidence/proof-of-income")
+        }
+      }
+    }
+
     "Display the Individuals error content for CY+1 users" in new TestSetup(List(), isAgent = false, isErrorContent = true, utr = Some("1234567890")) {
       document.title shouldBe pageContent.title
       document.getElementById("heading").text shouldBe pageContent.errorHeading
