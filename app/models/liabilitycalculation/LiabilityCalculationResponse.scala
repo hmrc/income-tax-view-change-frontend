@@ -163,24 +163,4 @@ object Messages {
       }
     }
   }
-
-  def translateMessageCurrencyVariables(messages: Seq[Message])(implicit message: play.api.i18n.Messages): Seq[Message] = {
-
-    val errorMessagesCurrencyFormat: Seq[String] = Seq("C55109", "C55110", "C55602", "C55525")
-    val currencyRegex = "£\\d+\\.\\d{2}".r
-
-    messages.map { msg =>
-      if (errorMessagesCurrencyFormat.contains(msg.id)) {
-        val updatedText = currencyRegex.findFirstIn(msg.text)
-          .flatMap(value => Try(BigDecimal(value.stripPrefix("£"))).toOption)
-          .map { amount =>
-            msg.text.replace(currencyRegex.findFirstIn(msg.text).get, amount.toString())
-          }
-          .getOrElse(msg.text)
-        Message(id = msg.id, text = updatedText)
-      } else {
-        msg
-      }
-    }
-  }
 }
