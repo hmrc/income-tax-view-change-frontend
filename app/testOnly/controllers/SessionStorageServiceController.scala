@@ -16,9 +16,8 @@
 
 package testOnly.controllers
 
-import auth.FrontendAuthorisedFunctions
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.auth.{AuthActions, FrontendAuthorisedFunctions}
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
 import play.api.Logger
 import play.api.mvc._

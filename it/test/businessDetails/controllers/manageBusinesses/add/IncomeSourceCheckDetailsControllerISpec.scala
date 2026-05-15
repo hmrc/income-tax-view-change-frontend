@@ -21,7 +21,7 @@ import businessDetails.controllers.triggeredMigration.routes as triggeredMigrati
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.*
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
@@ -34,6 +34,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySession
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.controllers.ControllerISpecHelper
+import common.helpers.servicemocks.AuditStub
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 

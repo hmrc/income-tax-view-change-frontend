@@ -16,12 +16,11 @@
 
 package financials.controllers
 
-import audit.AuditingService
 import audit.models.PaymentHistoryResponseAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.*
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.services.AuditingService
 import enums.GatewayPage.PaymentHistoryPage
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter

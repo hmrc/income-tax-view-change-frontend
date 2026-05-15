@@ -16,10 +16,10 @@
 
 package obligations.controllers.reportingObligations
 
-import config.FrontendAppConfig
-import connectors.{ITSAStatusConnector}
+import common.config.FrontendAppConfig
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.MockDateService
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}

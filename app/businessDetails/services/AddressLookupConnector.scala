@@ -16,11 +16,11 @@
 
 package businessDetails.services
 
-import auth.MtdItUser
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessesRoutes
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import common.viewUtils.InternalUrlHelper
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
 import models.core.Mode
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse

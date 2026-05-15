@@ -16,10 +16,10 @@
 
 package financials.controllers
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.*
-import config.featureswitch.*
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.*
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger

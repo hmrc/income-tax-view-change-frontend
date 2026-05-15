@@ -16,11 +16,10 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import com.google.inject.Inject
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
 import obligations.controllers.errors.routes as errorRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.signUp.SignUpService

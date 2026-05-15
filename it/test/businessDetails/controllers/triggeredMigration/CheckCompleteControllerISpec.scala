@@ -19,12 +19,13 @@ package businessDetails.controllers.triggeredMigration
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import enums.JourneyType.TriggeredMigrationJourney
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import common.controllers.ControllerISpecHelper
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import repositories.UIJourneySessionDataRepository

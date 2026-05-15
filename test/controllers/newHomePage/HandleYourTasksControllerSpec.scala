@@ -16,12 +16,12 @@
 
 package controllers.newHomePage
 
-import audit.AuditingService
-import auth.authV2.AuthActions
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.mocks.auth.MockAuthActions
+import common.services.AuditingService
 import common.utils.sessionUtils.SessionKeys
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.HomeController
-import mocks.auth.MockAuthActions
 import mocks.services.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear

@@ -16,9 +16,9 @@
 
 package obligations.controllers.reportingObligations
 
-import auth.authV2.AuthActions
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.AuthActions
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import obligations.controllers.routes as obligationsRoutes
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
 import obligations.models.reportingObligations.ReportingFrequencyViewModel

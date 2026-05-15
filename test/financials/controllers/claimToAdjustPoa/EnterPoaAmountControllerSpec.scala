@@ -16,13 +16,12 @@
 
 package financials.controllers.claimToAdjustPoa
 
+import common.mocks.auth.MockAuthActions
 import common.utils.sessionUtils
 import common.utils.sessionUtils.SessionKeys
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.claimToAdjustPoa.EnterPoaAmountController
 import generators.PoaGenerator
-import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel

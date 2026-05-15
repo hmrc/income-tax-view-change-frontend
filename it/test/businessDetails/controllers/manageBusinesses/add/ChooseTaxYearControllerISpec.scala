@@ -21,8 +21,9 @@ import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.{testBusinessName, testBusinessStartDate, testBusinessTrade}
 import common.controllers.ControllerISpecHelper
-import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, LatencyDetails}

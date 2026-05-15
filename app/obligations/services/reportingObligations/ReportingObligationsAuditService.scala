@@ -16,9 +16,9 @@
 
 package obligations.services.reportingObligations
 
-import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import enums.AuditType.IncomeSourceDetailsResponse as _
 import enums.{AuditType, TransactionName}
 import models.admin.OptInOptOutContentUpdateR17

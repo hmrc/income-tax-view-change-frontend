@@ -16,11 +16,11 @@
 
 package controllers
 
-import connectors.{ITSAStatusConnector}
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import mocks.services.MockDateService
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application

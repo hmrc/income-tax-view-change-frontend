@@ -18,7 +18,6 @@ package businessDetails.controllers.manageBusinesses.add
 
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
@@ -39,6 +38,7 @@ import scala.annotation.unused
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.mocks.auth.MockAuthActions
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 

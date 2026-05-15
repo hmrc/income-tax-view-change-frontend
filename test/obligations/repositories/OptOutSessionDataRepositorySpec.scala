@@ -16,7 +16,7 @@
 
 package obligations.repositories
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import enums.JourneyType.OptOutJourney
 import mocks.services.*
 import models.UIJourneySessionData

@@ -16,10 +16,9 @@
 
 package obligations.controllers.reportingObligations.optOut
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import obligations.controllers.errors.routes as errorRoutes

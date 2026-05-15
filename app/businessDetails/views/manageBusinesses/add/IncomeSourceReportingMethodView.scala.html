@@ -39,7 +39,7 @@
     p:p
 )
 
-@(incomeSourceType: IncomeSourceType, incomeSourceReportingMethodForm: Form[_], incomeSourceReportingViewModel: IncomeSourceReportingMethodViewModel, postAction: Call, isAgent: Boolean)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(incomeSourceType: IncomeSourceType, incomeSourceReportingMethodForm: Form[_], incomeSourceReportingViewModel: IncomeSourceReportingMethodViewModel, postAction: Call, isAgent: Boolean)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     incomeSourceType match {

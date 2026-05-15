@@ -16,10 +16,10 @@
 
 package connectors
 
-import audit.AuditingService
-import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.models.audit.IncomeSourceDetailsResponseAuditModel
+import common.models.auth.AuthorisedAndEnrolledRequest
+import common.services.AuditingService
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.http.Status.OK

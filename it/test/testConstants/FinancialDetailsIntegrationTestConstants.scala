@@ -16,8 +16,8 @@
 
 package testConstants
 
+import common.helpers.ComponentSpecBase
 import enums.ChargeType.NIC4_WALES
-import helpers.ComponentSpecBase
 import models.financialDetails._
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}

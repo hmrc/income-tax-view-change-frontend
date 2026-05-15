@@ -16,7 +16,7 @@
 
 package views
 
-import config.featureswitch.FeatureSwitching
+import common.config.featureswitch.FeatureSwitching
 import enums.ChargeType.*
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException

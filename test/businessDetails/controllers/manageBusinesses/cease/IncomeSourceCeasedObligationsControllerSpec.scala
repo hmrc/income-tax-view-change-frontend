@@ -18,10 +18,10 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.IncomeSourcesUtils
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.*

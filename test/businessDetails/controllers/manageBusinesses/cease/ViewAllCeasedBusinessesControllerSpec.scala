@@ -18,12 +18,12 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.services.IncomeSourceDetailsService
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import exceptions.MissingFieldException
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any

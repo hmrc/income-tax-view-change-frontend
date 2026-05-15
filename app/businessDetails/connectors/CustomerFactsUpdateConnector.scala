@@ -16,7 +16,7 @@
 
 package businessDetails.connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import connectors.RawResponseReads
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

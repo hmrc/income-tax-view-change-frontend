@@ -19,7 +19,7 @@
 @import views.html.components.detailsDropdown
 @import obligations.views.html.helpers.injected._
 @import common.views.html.layouts.unifiedLayout
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 @import common.viewUtils.ExternalUrlHelper
 @import models.itsaStatus.ITSAStatus.ITSAStatus
 @import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
@@ -35,7 +35,7 @@
     detailsDropdown: detailsDropdown,
     nextUpdatesHelper: NextUpdatesHelper,
     nextUpdatesHelperR17: NextUpdatesHelperR17,
-    appConfig: config.FrontendAppConfig
+    appConfig: FrontendAppConfig
 )
 
 @(
@@ -49,7 +49,7 @@
     whatTheUserCanDo: Html,
     optInOptOutContentR17Enabled: Boolean,
     taxYearStatusesCyNy: (ITSAStatus, ITSAStatus)
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("nextUpdates.heading"),

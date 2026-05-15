@@ -16,12 +16,12 @@
 
 package controllers.agent
 
-import audit.AuditingService
 import audit.models.ConfirmClientDetailsAuditModel
-import auth.authV2.AuthActions
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
 import common.utils.sessionUtils.SessionKeys
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
 import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger

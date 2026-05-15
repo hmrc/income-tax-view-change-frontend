@@ -32,8 +32,8 @@
 
 package connectors
 
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.models.auth.AuthorisedAndEnrolledRequest
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

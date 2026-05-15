@@ -16,7 +16,7 @@
 
 package common.controllers.agent
 
-import helpers.ComponentSpecBase
+import common.helpers.ComponentSpecBase
 import play.api.http.Status.SEE_OTHER
 
 

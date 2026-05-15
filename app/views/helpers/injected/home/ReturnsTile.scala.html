@@ -18,6 +18,7 @@
 @import views.html.components.home_tile
 @import java.time.LocalDate
 @import models.homePage.HomePageViewModel
+@import common.config.FrontendAppConfig
 
 @this(
     home_tile: home_tile,
@@ -25,7 +26,7 @@
     link: link
 )
 
-@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
+@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages, user: common.auth.MtdItUser[_], appConfig: FrontendAppConfig)
 
 @getReturnHref(year: Int) = @{
     if (isAgent) {

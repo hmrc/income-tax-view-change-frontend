@@ -16,9 +16,9 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import auth.authV2.AuthActions
 import com.google.inject.Inject
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import obligations.controllers.errors.routes as errorRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes

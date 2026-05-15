@@ -15,10 +15,10 @@
  *@
 
 @import views.html.partials.newHome.overview.OverviewCard
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean, isLSPPresent: Boolean, isLPPPresent: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, isLSPPresent: Boolean, isLPPPresent: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @penaltiesHomeUrl: String = @{
     if(isAgent){

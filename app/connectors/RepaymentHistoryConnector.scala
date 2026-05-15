@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.core.Nino
 import models.repaymentHistory._
 import play.api.Logger

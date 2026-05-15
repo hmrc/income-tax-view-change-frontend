@@ -18,7 +18,6 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -32,6 +31,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeig
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.services.UpdateIncomeSourceService
+import common.mocks.auth.MockAuthActions
 
 import scala.concurrent.Future
 

@@ -18,10 +18,10 @@ package controllers.agent
 
 import audit.models.EnterClientUTRAuditModel
 import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.mocks.auth.MockAuthActions
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
 import forms.agent.ClientsUTRForm
-import mocks.auth.MockAuthActions
 import mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers

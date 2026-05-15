@@ -18,11 +18,11 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import services.DateServiceInterface
 import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData

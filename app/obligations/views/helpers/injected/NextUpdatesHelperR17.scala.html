@@ -22,7 +22,7 @@
 @import java.time.LocalDate
 @import obligations.models._
 @import play.twirl.api.HtmlFormat
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 @import models.itsaStatus.ITSAStatus.ITSAStatus
 @import models.itsaStatus.ITSAStatus
 @import obligations.services.reportingObligations.optOut.OptOutProposition
@@ -39,10 +39,10 @@
         govukTable: GovukTable,
         govukWarningText : GovukWarningText,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig
+        appConfig: FrontendAppConfig
 )
 
-@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
     

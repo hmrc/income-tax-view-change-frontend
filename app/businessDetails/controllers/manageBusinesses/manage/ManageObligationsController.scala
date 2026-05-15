@@ -16,14 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod}
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.views.html.manageBusinesses.manage.ManageObligationsView
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.CannotGoBackPage
 import models.admin.OptInOptOutContentUpdateR17

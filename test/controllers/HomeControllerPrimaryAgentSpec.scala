@@ -16,11 +16,11 @@
 
 package controllers
 
-import audit.AuditingService
-import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.services.AuditingService
 import enums.MTDPrimaryAgent
 import mocks.services.admin.MockFeatureSwitchService
 import models.admin.*

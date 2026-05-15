@@ -16,7 +16,7 @@
 
 package common.controllers.agent
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import play.api.i18n.Lang
 import play.api.mvc.MessagesControllerComponents
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}

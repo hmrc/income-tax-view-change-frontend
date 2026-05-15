@@ -49,7 +49,7 @@
         origin: Option[String] = None,
         isTriggeredMigration: Boolean,
         overseasBusinessAddressEnabled: Boolean = false
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

@@ -16,8 +16,8 @@
 
 package testOnly.services
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import connectors.ITSAStatusConnector
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatusResponseModel

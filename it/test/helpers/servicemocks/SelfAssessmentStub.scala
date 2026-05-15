@@ -16,7 +16,7 @@
 
 package helpers.servicemocks
 
-import helpers.WiremockHelper
+import common.helpers.WiremockHelper
 import play.api.http.Status
 
 object SelfAssessmentStub {

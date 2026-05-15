@@ -16,11 +16,10 @@
 
 package controllers
 
-import audit.AuditingService
 import audit.models.ForecastIncomeAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.services.AuditingService
 import implicits.ImplicitDateFormatter
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger

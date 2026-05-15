@@ -16,11 +16,12 @@
 
 package audit.models
 
-import audit.Utilities._
-import auth.MtdItUser
+import common.utils.audit.Utilities.*
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import models.financialDetails.{ChargeItem, CodingOutDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
-import play.api.libs.json._
+import play.api.libs.json.*
 import services.DateServiceInterface
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],

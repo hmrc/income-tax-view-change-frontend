@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.cease
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.NormalMode
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -37,6 +36,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUI
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
+import common.mocks.auth.MockAuthActions
 
 class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockSessionService {
 

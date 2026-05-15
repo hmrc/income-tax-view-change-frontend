@@ -16,8 +16,9 @@
 
 package audit.models
 
-import audit.Utilities.*
-import auth.MtdItUser
+import common.utils.audit.Utilities.*
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate

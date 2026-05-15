@@ -16,9 +16,9 @@
 
 package businessDetails.forms.manageBusinesses.cease
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.getMinimalMTDITUser
+import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.auth.MtdItUser
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}

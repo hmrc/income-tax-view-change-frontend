@@ -16,7 +16,7 @@
 
 package services
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import mocks.services.{LockServiceDidNotAcquireMongoLock, MockCalculationService}
 import models.liabilitycalculation._
 import org.scalatest.time.{Seconds, Span}

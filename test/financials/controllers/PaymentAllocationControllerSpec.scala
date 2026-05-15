@@ -16,11 +16,10 @@
 
 package financials.controllers
 
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
-import financials.controllers.PaymentAllocationsController
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockPaymentAllocationsService}
 import models.core.Nino
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}

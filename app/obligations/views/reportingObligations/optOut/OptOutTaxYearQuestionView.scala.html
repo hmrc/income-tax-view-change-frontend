@@ -31,7 +31,7 @@
         continueButton: ContinueButton
 )
 
-@(isAgent: Boolean, viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"optout.taxYearQuestion.$key.${viewModel.messageSuffix}", args: _*)

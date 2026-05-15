@@ -17,9 +17,9 @@
 package controllers.agent
 
 import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.helpers.ComponentSpecBase
+import common.helpers.servicemocks.MTDAgentAuthStub
 import common.viewUtils.InternalUrlHelper
-import helpers.ComponentSpecBase
-import helpers.servicemocks.MTDAgentAuthStub
 import play.api.http.Status.*
 
 class UTRErrorControllerISpec extends ComponentSpecBase {

@@ -21,10 +21,10 @@ import businessDetails.controllers.triggeredMigration.routes as triggeredMigrati
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.enums.TriggeredMigration.TriggeredMigrationCeased
 import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.core.IncomeSourceId
 import obligations.testConstants.UpdateIncomeSourceTestConstants

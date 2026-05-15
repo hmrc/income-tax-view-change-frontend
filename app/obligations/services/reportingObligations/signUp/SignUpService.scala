@@ -16,9 +16,9 @@
 
 package obligations.services.reportingObligations.signUp
 
-import auth.MtdItUser
 import cats.data.OptionT
 import cats.implicits.*
+import common.auth.MtdItUser
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus

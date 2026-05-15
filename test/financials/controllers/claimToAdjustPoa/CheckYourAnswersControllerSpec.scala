@@ -16,10 +16,9 @@
 
 package financials.controllers.claimToAdjustPoa
 
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import financials.controllers.claimToAdjustPoa.CheckYourAnswersController
-import mocks.auth.MockAuthActions
 import mocks.services.{MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}

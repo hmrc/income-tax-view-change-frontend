@@ -16,14 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.forms.manageBusinesses.add.ChooseTaxYearForm
 import businessDetails.forms.models.ChooseTaxYearFormModel
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import config.FrontendAppConfig
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.ReportingFrequencyPages
 import models.UIJourneySessionData
@@ -36,6 +33,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{CalculationListService, DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.ChooseTaxYearView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

@@ -16,8 +16,9 @@
 
 package audit.models
 
-import audit.Utilities
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,

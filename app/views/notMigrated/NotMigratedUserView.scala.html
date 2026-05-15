@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
 
@@ -29,7 +29,7 @@
 @(isAgent: Boolean,
         backUrl: String)(
         implicit messages: Messages,
-        user: auth.MtdItUser[_])
+        user: common.auth.MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("notmigrated.user.heading"),

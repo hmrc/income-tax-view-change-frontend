@@ -16,12 +16,11 @@
 
 package controllers
 
-import audit.AuditingService
 import audit.models.TaxYearSummaryResponseAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter

@@ -16,7 +16,7 @@
 
 package mocks.repositories
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import enums.JourneyType.Operation
 import models.UIJourneySessionData
 import org.bson.BsonValue

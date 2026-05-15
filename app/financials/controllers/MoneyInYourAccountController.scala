@@ -16,12 +16,12 @@
 
 package financials.controllers
 
-import audit.AuditingService
 import audit.models.ClaimARefundAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.*
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.services.AuditingService
+import common.views.html.errorPages.CustomNotFoundErrorView
 import models.admin.CreditsRefundsRepay
 import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import play.api.i18n.{I18nSupport, Messages}
@@ -31,7 +31,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import utils.ErrorRecovery
-import common.views.html.errorPages.CustomNotFoundErrorView
 import views.html.{CreditAndRefundsView, MoneyInYourAccountView}
 
 import javax.inject.Inject

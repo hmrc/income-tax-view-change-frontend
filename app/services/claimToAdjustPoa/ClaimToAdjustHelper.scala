@@ -16,7 +16,7 @@
 
 package services.claimToAdjustPoa
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import connectors.{CalculationListConnector, ChargeHistoryConnector}
 import enums.DocumentType.{Poa1Charge, Poa2Charge}
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}

@@ -16,11 +16,11 @@
 
 package businessDetails.models.audit
 
-import audit.Utilities.userAuditDetails
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
+import common.utils.audit.Utilities.userAuditDetails
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseError
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import implicits.ImplicitDateParser
 import models.core.IncomeSourceId
 import play.api.libs.json.{JsObject, JsValue, Json}

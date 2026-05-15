@@ -16,7 +16,7 @@
 
 package services
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.btaNavBar.{ListLinks, NavContent, NavLinks}
 import play.api.i18n.{Lang, Messages}
 

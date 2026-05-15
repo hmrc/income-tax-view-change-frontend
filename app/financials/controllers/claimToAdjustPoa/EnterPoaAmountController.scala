@@ -16,10 +16,9 @@
 
 package financials.controllers.claimToAdjustPoa
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
 import forms.adjustPoa.EnterPoaAmountForm
 import models.claimToAdjustPoa.Increase
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel

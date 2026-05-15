@@ -16,12 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.services.IncomeSourceDetailsService
 import businessDetails.utils.IncomeSourcesUtils
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
@@ -30,6 +26,9 @@ import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.ManageYourBusinessesView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

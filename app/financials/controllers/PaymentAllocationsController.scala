@@ -16,13 +16,14 @@
 
 package financials.controllers
 
-import audit.AuditingService
 import audit.models.PaymentAllocationsResponseAuditModel
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.*
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.services.AuditingService
 import enums.GatewayPage.GatewayPage
+import financials.controllers.agent.errors.routes as agentErrorRoutes
+import financials.controllers.errors.routes as errorRoutes
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatterImpl
 import models.admin.CreditsRefundsRepay
@@ -39,8 +40,6 @@ import views.html.PaymentAllocationView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import financials.controllers.errors.routes as errorRoutes
-import financials.controllers.agent.errors.routes as agentErrorRoutes
 
 
 @Singleton

@@ -16,9 +16,9 @@
 
 package views
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.FrontendAppConfig
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import enums.ChargeType.*
 import exceptions.MissingFieldException
 import financials.controllers.routes as financialsRoutes

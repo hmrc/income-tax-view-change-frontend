@@ -16,9 +16,9 @@
 
 package services
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.featureswitch.FeatureSwitching
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import connectors.RepaymentHistoryConnector
 import mocks.connectors.MockFinancialDetailsConnector
 import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService}

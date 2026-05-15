@@ -16,13 +16,12 @@
 
 package financials.controllers.errors
 
-import financials.controllers.errors.NotFoundDocumentIDLookupController
+import common.views.html.errorPages.CustomNotFoundErrorView
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*
 import testUtils.TestSupport
-import common.views.html.errorPages.CustomNotFoundErrorView
 
 class NotFoundDocumentIDLookupControllerSpec extends TestSupport {
 

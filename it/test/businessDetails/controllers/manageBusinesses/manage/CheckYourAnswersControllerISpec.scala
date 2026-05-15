@@ -20,9 +20,10 @@ import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceT
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import common.controllers.ControllerISpecHelper
+import common.helpers.servicemocks.AuditStub
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import play.api.http.Status.{OK, SEE_OTHER}

@@ -16,9 +16,9 @@
 
 package obligations.models.audit
 
-import audit.Utilities.userAuditDetails
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 import play.api.libs.json.{JsValue, Json}
 

@@ -21,7 +21,7 @@
 @import common.views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.overview._
 @import views.html.partials.newHome.NewHomeNavigation
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 @import models.financialDetails.*
@@ -54,7 +54,7 @@
         penaltiesAndAppealsEnabled: Boolean,
         isRecentActivityEnabled: Boolean,
         creditsRefundsRepayEnabled: Boolean)(
-        implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
+        implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
 @pageHeading = @{

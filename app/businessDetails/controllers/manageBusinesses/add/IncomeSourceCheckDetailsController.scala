@@ -16,9 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import audit.AuditingService
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.enums.TriggeredMigration.TriggeredMigrationAdded
@@ -26,7 +23,6 @@ import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.services.CreateBusinessDetailsService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
@@ -40,6 +36,9 @@ import play.api.mvc.*
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.services.AuditingService
 
 import javax.inject.Inject
 import scala.annotation.unused

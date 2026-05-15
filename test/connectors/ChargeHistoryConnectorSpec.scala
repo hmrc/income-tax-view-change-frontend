@@ -16,9 +16,8 @@
 
 package connectors
 
-import audit.mocks.MockAuditingService
-import config.FrontendAppConfig
-import mocks.MockHttpV2
+import common.config.FrontendAppConfig
+import common.mocks.{MockAuditingService, MockHttpV2}
 import models.chargeHistory.ChargesHistoryResponse.ChargesHistoryResponse
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import play.api.Configuration

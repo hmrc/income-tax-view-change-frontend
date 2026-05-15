@@ -16,6 +16,7 @@
 
 package audit.models
 
+import common.models.audit.AuditModel
 import models.liabilitycalculation.viewmodels.CalculationSummary
 import play.api.libs.json.{Json, OWrites}
 

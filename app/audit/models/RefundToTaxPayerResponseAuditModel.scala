@@ -16,8 +16,9 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, TotalInterest}
 import play.api.libs.json.{JsValue, Json}
 

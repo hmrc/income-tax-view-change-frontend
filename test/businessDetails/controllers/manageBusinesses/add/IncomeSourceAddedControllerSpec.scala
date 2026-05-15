@@ -16,14 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.authV2.AuthActions
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.services.IncomeSourceDetailsService
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
 import mocks.services.{MockITSAStatusService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.*
@@ -41,6 +38,9 @@ import testConstants.BusinessDetailsTestConstants.{year2018, year2019}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.*
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.mocks.auth.MockAuthActions
 import obligations.mocks.services.MockNextUpdatesService
 
 import java.time.LocalDate

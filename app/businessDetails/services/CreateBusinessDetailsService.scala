@@ -16,10 +16,10 @@
 
 package businessDetails.services
 
-import auth.MtdItUser
 import businessDetails.connectors.CreateIncomeSourceConnector
 import businessDetails.enums.IncomeSourceJourney.UkProperty
 import businessDetails.models.createIncomeSource.*
+import common.auth.MtdItUser
 import models.incomeSourceDetails.viewmodels.*
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier

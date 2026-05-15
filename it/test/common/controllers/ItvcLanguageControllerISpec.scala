@@ -16,7 +16,7 @@
 
 package common.controllers
 
-import helpers.ComponentSpecBase
+import common.helpers.ComponentSpecBase
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.SEE_OTHER
 

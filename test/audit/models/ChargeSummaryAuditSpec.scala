@@ -16,7 +16,7 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
+import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import enums.ChargeType.*
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails

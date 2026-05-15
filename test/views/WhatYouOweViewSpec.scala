@@ -16,9 +16,9 @@
 
 package views
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.featureswitch.FeatureSwitching
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import financials.controllers.routes as financialsRoutes
 import enums.CodingOutType.*
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter

@@ -16,15 +16,15 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import auth.authV2.AuthActions
 import businessDetails.utils.TriggeredMigrationUtils
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
+import common.auth.AuthActions
+import common.config.FrontendAppConfig
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}

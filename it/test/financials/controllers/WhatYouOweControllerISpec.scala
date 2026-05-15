@@ -17,10 +17,11 @@
 package financials.controllers
 
 import audit.models.WhatYouOweResponseAuditModel
-import auth.MtdItUser
+import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
+import common.helpers.servicemocks.AuditStub
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.*
 import models.core.SelfServeTimeToPayJourneyResponseModel
 import models.financialDetails.*

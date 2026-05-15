@@ -18,8 +18,9 @@ package obligations.controllers.agents
 
 import common.controllers.ControllerISpecHelper
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.ITSAStatusDetailsStub
+import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOutFs
 import models.core.AccountingPeriodModel

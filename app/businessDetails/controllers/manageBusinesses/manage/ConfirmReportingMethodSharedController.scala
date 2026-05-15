@@ -16,16 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import audit.AuditingService
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.enums.ReportingMethod
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AfterSubmissionPage, BeforeSubmissionPage}
 import models.UIJourneySessionData
@@ -40,6 +35,10 @@ import play.api.mvc.*
 import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethodView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
 
 import javax.inject.Inject
 import scala.annotation.unused

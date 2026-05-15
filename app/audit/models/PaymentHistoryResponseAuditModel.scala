@@ -16,9 +16,10 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
-import models.financialDetails._
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
+import models.financialDetails.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],

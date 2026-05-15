@@ -16,10 +16,7 @@
 
 package views.agent
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
-import config.FrontendAppConfig
-import config.featureswitch.*
+import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
@@ -36,6 +33,9 @@ import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import views.html.agent.PrimaryAgentHomeView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 
 import java.time.{LocalDate, Month}
 import scala.annotation.unused

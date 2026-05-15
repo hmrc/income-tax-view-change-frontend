@@ -16,8 +16,8 @@
 
 package services.admin
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
 import testOnly.repository.FeatureSwitchRepository

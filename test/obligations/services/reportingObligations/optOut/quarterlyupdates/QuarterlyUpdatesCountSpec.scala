@@ -16,9 +16,8 @@
 
 package obligations.services.reportingObligations.optOut.quarterlyupdates
 
-import audit.mocks.MockAuditingService
-import config.FrontendAppConfig
-import mocks.MockHttpV2
+import common.config.FrontendAppConfig
+import common.mocks.{MockAuditingService, MockHttpV2}
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import obligations.connectors.ObligationsConnector
 import obligations.repositories.OptOutSessionDataRepository

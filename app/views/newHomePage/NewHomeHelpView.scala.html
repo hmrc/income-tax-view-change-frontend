@@ -21,6 +21,7 @@
 @import views.html.partials.newHome.overview.OverviewCard
 @import common.views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.NewHomeNavigation
+@import common.config.FrontendAppConfig
 
 
 @this(
@@ -30,7 +31,7 @@
         h2: h2,
         p: p,
         overviewCard: OverviewCard,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         newHomeNav: NewHomeNavigation
 )
 
@@ -42,7 +43,7 @@
         helpUrl: String,
         isGovUkRebrandEnabled: Boolean,
         isRecentActivityEnabled: Boolean
-)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+)(implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @pageHeading = @{
     if (isAgent) {

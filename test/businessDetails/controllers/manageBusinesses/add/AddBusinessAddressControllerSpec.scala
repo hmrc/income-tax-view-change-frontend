@@ -18,10 +18,10 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService}
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.core.{CheckMode, NormalMode}

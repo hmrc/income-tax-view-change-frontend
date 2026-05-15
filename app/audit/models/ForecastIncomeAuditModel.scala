@@ -16,12 +16,13 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import implicits.ImplicitDateParser
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
-import utils.Utilities._
+import utils.Utilities.*
 
 
 case class ForecastIncomeAuditModel(user: MtdItUser[_], endOfYearEstimate: EndOfYearEstimate)

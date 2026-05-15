@@ -38,7 +38,7 @@
         form: Form[LocalDate],
         postAction: Call,
         isAgent: Boolean = false,
-        backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+        backUrl: String)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"${incomeSourceType.endDateMessagePrefix}.$key", args: _*)

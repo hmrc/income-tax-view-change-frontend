@@ -15,18 +15,19 @@
  *@
 
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import auth.MtdItUser
+@import common.auth.MtdItUser
 @import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import views.html.partials.creditAndRefunds._
 @import financials.controllers.routes as financialsRoutes
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         h1: h1,
         h2: h2,
         p: p,

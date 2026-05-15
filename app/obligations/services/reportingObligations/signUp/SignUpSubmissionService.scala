@@ -16,8 +16,8 @@
 
 package obligations.services.reportingObligations.signUp
 
-import audit.AuditingService
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.services.AuditingService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector

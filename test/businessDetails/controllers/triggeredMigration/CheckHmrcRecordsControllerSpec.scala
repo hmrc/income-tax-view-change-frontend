@@ -21,9 +21,9 @@ import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, Trigge
 import businessDetails.mocks.services.MockTriggeredMigrationService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
+import common.mocks.auth.MockAuthActions
 import connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import models.admin.TriggeredMigration
 import models.core.IncomeSourceId
 import org.mockito.ArgumentMatchers

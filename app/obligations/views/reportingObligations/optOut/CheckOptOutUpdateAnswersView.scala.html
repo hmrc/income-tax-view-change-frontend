@@ -32,7 +32,7 @@ govukButton: GovukButton,
 formWithCSRF: FormWithCSRF
 )
 
-@(viewModel: CheckOptOutUpdateAnswersViewModel, isAgent: Boolean, reportingObligationsURL: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: CheckOptOutUpdateAnswersViewModel, isAgent: Boolean, reportingObligationsURL: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @getPostAction = @{
     obligations.controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.submit(isAgent, viewModel.startYear)

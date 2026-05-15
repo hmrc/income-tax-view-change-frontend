@@ -16,7 +16,7 @@
 
 package views.helpers.whatYouOweChargesSummary
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import play.api.i18n.Messages
 
 object WYOMessagesHelper {

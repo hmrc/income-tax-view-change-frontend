@@ -16,11 +16,10 @@
 
 package financials.controllers.claimToAdjustPoa
 
-import audit.AuditingService
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import cats.data.EitherT
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.services.AuditingService
 import financials.controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import models.core.CheckMode

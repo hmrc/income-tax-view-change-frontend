@@ -20,10 +20,10 @@ import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRou
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.services.CreateBusinessDetailsService
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer

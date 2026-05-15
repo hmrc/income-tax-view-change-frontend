@@ -16,8 +16,8 @@
 
 package connectors
 
-import _root_.helpers.ComponentSpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import common.helpers.ComponentSpecBase
 import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import models.nrs.NrsSuccessResponse
 import org.scalatest.wordspec.AnyWordSpec

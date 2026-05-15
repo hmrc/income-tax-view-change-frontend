@@ -17,11 +17,12 @@
 package controllers.newHomePage
 
 import common.controllers.ControllerISpecHelper
+import common.helpers.WiremockHelper
 import enums.ChargeType.ITSA_NI
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.WiremockHelper
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.ITSAStatusDetailsStub
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.creditsandrefunds.CreditsModel

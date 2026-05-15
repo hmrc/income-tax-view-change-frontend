@@ -16,9 +16,9 @@
 
 package common.controllers.agent
 
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.config.featureswitch.FeatureSwitching
 import controllers.agent.routes
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

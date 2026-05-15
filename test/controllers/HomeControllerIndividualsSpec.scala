@@ -16,12 +16,12 @@
 
 package controllers
 
-import audit.AuditingService
-import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes
+import common.services.AuditingService
 import common.utils.sessionUtils.SessionKeys
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*

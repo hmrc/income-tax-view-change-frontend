@@ -19,7 +19,7 @@ package businessDetails.connectors
 import businessDetails.connectors.helpers.IncomeSourcesDataHelper
 import businessDetails.models.createIncomeSource.CreateIncomeSourceErrorResponse.format
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
-import mocks.MockHttpV2
+import common.mocks.MockHttpV2
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import testUtils.TestSupport

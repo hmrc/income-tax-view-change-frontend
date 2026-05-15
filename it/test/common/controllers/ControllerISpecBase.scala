@@ -16,9 +16,9 @@
 
 package common.controllers
 
-import auth.HeaderExtractor
-import config.FrontendAppConfig
-import helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
+import common.auth.HeaderExtractor
+import common.config.FrontendAppConfig
+import common.helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
 import implicits.ImplicitDateFormatterImpl
 import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*

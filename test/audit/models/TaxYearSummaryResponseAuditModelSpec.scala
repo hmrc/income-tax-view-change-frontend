@@ -16,7 +16,7 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData.*
+import common.auth.actions.AuthActionsTestData.*
 import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
 import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}

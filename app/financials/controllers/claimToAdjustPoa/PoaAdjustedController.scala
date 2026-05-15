@@ -16,11 +16,10 @@
 
 package financials.controllers.claimToAdjustPoa
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import cats.data.EitherT
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
 import enums.AfterSubmissionPage
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.claimToAdjustPoa.{Increase, PoaAmendmentData, SelectYourReason}

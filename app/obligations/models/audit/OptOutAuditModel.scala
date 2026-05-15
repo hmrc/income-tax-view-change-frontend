@@ -16,8 +16,8 @@
 
 package obligations.models.audit
 
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.models.audit.ExtendedAuditModel
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}

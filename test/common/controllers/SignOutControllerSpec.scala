@@ -16,8 +16,8 @@
 
 package common.controllers
 
-import auth.FrontendAuthorisedFunctions
-import config.{FrontendAppConfig, FrontendAuthConnector}
+import common.auth.FrontendAuthorisedFunctions
+import common.config.{FrontendAppConfig, FrontendAuthConnector}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status

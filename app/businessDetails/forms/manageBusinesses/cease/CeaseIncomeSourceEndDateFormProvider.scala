@@ -16,8 +16,8 @@
 
 package businessDetails.forms.manageBusinesses.cease
 
-import auth.MtdItUser
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.auth.MtdItUser
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.validation.{Constraint, Valid}

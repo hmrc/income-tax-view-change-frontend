@@ -16,12 +16,12 @@
 
 package services
 
-import audit.mocks.MockAuditingService
-import auth.MtdItUser
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.services.IncomeSourceDetailsService
+import common.auth.MtdItUser
+import common.mocks.MockAuditingService
+import common.models.auth.AuthorisedAndEnrolledRequest
 import mocks.services.config.MockAppConfig
 import mocks.services.MockAsyncCacheApi
 import models.admin.{DisplayBusinessStartDate, FeatureSwitch}

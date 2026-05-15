@@ -18,7 +18,8 @@ package financials.controllers
 
 import connectors.ITSAStatusConnector
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
-import financials.controllers.ChargeSummaryController
+import financials.controllers.agent.errors.routes as agentErrorRoutes
+import financials.controllers.errors.routes as errorRoutes
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.PoaTwoReconciliationCredit
@@ -33,8 +34,7 @@ import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsSer
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.FinancialDetailsTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import financials.controllers.agent.errors.routes as agentErrorRoutes
-import financials.controllers.errors.routes as errorRoutes
+
 import java.time.LocalDate
 import scala.concurrent.Future
 

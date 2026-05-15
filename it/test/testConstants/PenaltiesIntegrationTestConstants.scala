@@ -16,7 +16,7 @@
 
 package testConstants
 
-import helpers.ComponentSpecBase
+import common.helpers.ComponentSpecBase
 import play.api.libs.json.{JsValue, Json}
 
 object PenaltiesIntegrationTestConstants extends ComponentSpecBase {

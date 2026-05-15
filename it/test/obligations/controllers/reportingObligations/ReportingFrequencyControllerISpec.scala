@@ -17,9 +17,10 @@
 package obligations.controllers.reportingObligations
 
 import common.controllers.ControllerISpecHelper
+import common.helpers.WiremockHelper
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.WiremockHelper
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
 import models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*

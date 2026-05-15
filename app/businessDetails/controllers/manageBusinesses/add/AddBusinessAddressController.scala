@@ -16,11 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import com.google.inject.Singleton
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.core.Mode
@@ -33,6 +29,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.services.AddressLookupService
 import businessDetails.utils.IncomeSourcesUtils
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
 
 import javax.inject.Inject
 import scala.annotation.unused

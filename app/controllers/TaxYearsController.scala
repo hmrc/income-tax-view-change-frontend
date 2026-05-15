@@ -16,10 +16,9 @@
 
 package controllers
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import models.admin.{ITSASubmissionIntegration, PostFinalisationAmendmentsR18}
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger

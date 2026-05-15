@@ -19,10 +19,10 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import common.mocks.auth.MockAuthActions
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress

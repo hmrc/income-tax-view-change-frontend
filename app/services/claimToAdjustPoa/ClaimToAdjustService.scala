@@ -16,8 +16,8 @@
 
 package services.claimToAdjustPoa
 
-import auth.MtdItUser
 import cats.data.EitherT
+import common.auth.MtdItUser
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.core.Nino

@@ -17,9 +17,10 @@
 package obligations.controllers.reportingObligations.signUp
 
 import common.controllers.ControllerISpecHelper
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import enums.JourneyType.{Opt, SignUpJourney}
 import enums.MTDIndividual
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
 import models.incomeSourceDetails.TaxYear

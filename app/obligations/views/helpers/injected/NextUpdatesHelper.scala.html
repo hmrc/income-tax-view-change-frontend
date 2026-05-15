@@ -22,7 +22,7 @@
 @import play.twirl.api.HtmlFormat
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl, govukAccordion: GovukAccordion, govukTable: GovukTable)
-@(obligations: NextUpdatesViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(obligations: NextUpdatesViewModel)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @deadlineRow(deadline: ObligationWithIncomeType) = @{

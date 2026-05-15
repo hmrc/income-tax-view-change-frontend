@@ -16,7 +16,7 @@
 
 package obligations.repositories
 
-import helpers.ComponentSpecBase
+import common.helpers.ComponentSpecBase
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition

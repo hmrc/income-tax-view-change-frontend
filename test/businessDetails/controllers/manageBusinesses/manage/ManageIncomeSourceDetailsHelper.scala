@@ -16,8 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import connectors.{ITSAStatusConnector}
-import mocks.auth.MockAuthActions
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.nodes.{Document, Element}

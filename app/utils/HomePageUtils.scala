@@ -16,8 +16,8 @@
 
 package utils
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import controllers.Execution.trampoline
 import models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
 import models.financialDetails.*

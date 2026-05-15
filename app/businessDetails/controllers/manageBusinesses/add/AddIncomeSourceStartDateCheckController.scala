@@ -16,12 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.BeforeSubmissionPage
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import AddIncomeSourceStartDateCheckForm._
@@ -35,6 +32,8 @@ import services.{DateService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
