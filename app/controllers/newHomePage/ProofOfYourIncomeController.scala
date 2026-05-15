@@ -16,10 +16,9 @@
 
 package controllers.newHomePage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
+import common.config.{FrontendAppConfig, ItvcErrorHandler}
 import models.admin.MortgageEvidence
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
