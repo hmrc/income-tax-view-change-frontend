@@ -76,7 +76,6 @@ trait MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
     reset(mockAuthService)
     reset(mockFAF)
     reset(mockCustomerFactsUpdateService)

@@ -92,12 +92,6 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
         val result = TestFSService.set(exampleFSName, true)
         result.futureValue shouldBe true
       }
-      "read FS from mongo FS is disabled" in {
-        when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn false
-
-        val result = TestFSService.set(exampleFSName, false)
-        result.futureValue shouldBe true
-      }
     }
     "return false if FS not set" when {
       "read FS from mongo FS is enabled" in {
@@ -107,18 +101,16 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
         val result = TestFSService.set(exampleFSName, true)
         result.futureValue shouldBe false
       }
+      "read FS from mongo FS is disabled" in {
+        when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn false
+
+        val result = TestFSService.set(exampleFSName, false)
+        result.futureValue shouldBe false
+      }
     }
   }
 
   "FeatureSwitchService.setAll" should {
-    "set the FS in config" when {
-      "read FS from mongo FS is disabled" in {
-        when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn false
-        TestFSService.setAll(Map(exampleFSName -> true, anotherFSName -> false))
-        isEnabled(exampleFSName) shouldBe true
-        isEnabled(anotherFSName) shouldBe false
-      }
-    }
     "call the repository" when {
       "read FS from mongo FS is enabled" in {
         when(mockFrontendAppConfig.readFeatureSwitchesFromMongo) thenReturn true

@@ -27,10 +27,8 @@ trait FeatureSwitching {
   val FEATURE_SWITCH_ON = "true"
   val FEATURE_SWITCH_OFF = "false"
 
-  def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean = {
-    sys.props.get(featureSwitch.name) orElse
-      appConfig.config.getOptional[String](s"feature-switch.enable-${featureSwitch.name}") contains FEATURE_SWITCH_ON
-  }
+  def isEnabledFromConfig(featureSwitch: FeatureSwitchName): Boolean =
+    appConfig.config.getOptional[String](s"feature-switch.enable-${featureSwitch.name}") contains FEATURE_SWITCH_ON
 
   def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean = {
     isEnabledMongoOrConfig(featureSwitch, user.featureSwitches)
@@ -47,26 +45,6 @@ trait FeatureSwitching {
   def areAllEnabled(featureSwitches: FeatureSwitchName*): Boolean = {
     featureSwitches.foldLeft(false) { (_, switch) =>
       isEnabledFromConfig(switch)
-    }
-  }
-
-  def enable(featureSwitch: FeatureSwitchName): Unit =
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
-
-  def enable(featureSwitches: FeatureSwitchName*): Unit = {
-    featureSwitches.foreach(
-      fs => sys.props += fs.name -> FEATURE_SWITCH_ON
-    )
-  }
-
-  def disable(featureSwitch: FeatureSwitchName): Unit =
-    sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
-
-  def setFS(featureSwitchName: FeatureSwitchName, enabled: Boolean): Unit = {
-    if (enabled) {
-      enable(featureSwitchName)
-    } else {
-      disable(featureSwitchName)
     }
   }
 

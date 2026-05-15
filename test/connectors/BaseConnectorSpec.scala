@@ -18,10 +18,8 @@ package connectors
 
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import com.codahale.metrics.Timer
-import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import models.admin.FeatureSwitchName.allFeatureSwitches
 import org.mockito.Mockito.{mock, reset}
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.concurrent.ScalaFutures
@@ -60,11 +58,6 @@ trait BaseConnectorSpec extends UnitSpec with BeforeAndAfterEach with GuiceOneAp
     defaultMTDITUser(Some(testUserTypeIndividual),businessAndPropertyAligned, request)
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
-
-
-  def disableAllSwitches(): Unit = {
-    allFeatureSwitches.foreach(switch => disable(switch))
-  }
 
   implicit val timeoutDuration: FiniteDuration = 20.seconds
 

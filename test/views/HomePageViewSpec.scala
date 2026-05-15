@@ -20,7 +20,7 @@ import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDI
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import models.admin.PaymentHistoryRefunds
+import models.admin.FeatureSwitch
 import models.creditsandrefunds.CreditsModel
 import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -36,6 +36,7 @@ import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import views.html.HomeView
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.util.Random
@@ -468,7 +469,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some("Payment history and refunds")
       }
       "has a payment history heading when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false, creditAndRefundEnabled = false) {
-        disable(PaymentHistoryRefunds)
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some("Payment history")
       }
       "has a link to the payment and refund history page" which {

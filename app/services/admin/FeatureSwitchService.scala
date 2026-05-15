@@ -71,8 +71,8 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
     if (appConfig.readFeatureSwitchesFromMongo) {
       featureSwitchConnector.setSwitch(featureSwitchName, enabled)
     } else {
-      setFS(featureSwitchName, enabled)
-      Future.successful(true)
+      Logger("application").error("Cannot set feature switch when read-from-mongo is disabled")
+      Future(false)
     }
   }
 
@@ -81,9 +81,7 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
     if (appConfig.readFeatureSwitchesFromMongo) {
       featureSwitchConnector.setSwitches(featureSwitches).map(_ => ())
     } else {
-      featureSwitches.foreach { case (featureSwitchName, state) =>
-        setFS(featureSwitchName, state)
-      }
+      Logger("application").error("Cannot set feature switches when read-from-mongo is disabled")
       Future.successful((): Unit)
     }
   }

@@ -23,8 +23,6 @@ import common.config.featureswitch.FeatureSwitching
 import common.utils.sessionUtils
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import implicits.ImplicitDateFormatterImpl
-import models.admin.FeatureSwitchName
-import models.admin.FeatureSwitchName.allFeatureSwitches
 import models.financialDetails.ChargeItem
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
 import org.apache.pekko.actor.ActorSystem
@@ -55,7 +53,7 @@ import uk.gov.hmrc.play.partials.HeaderCarrierForPartials
 
 import java.time.LocalDate
 import scala.concurrent.duration.*
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterAll with BeforeAndAfterEach with Injecting with FeatureSwitching {
 
@@ -344,33 +342,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       fakeRequest.withSession(fakeRequest.session.data ++: newSessions: _*)
     }
   }
-
-  def disableAllSwitches(): Unit =
-    if (appConfig.readFeatureSwitchesFromMongo)
-      Await.result(featureSwitchRepository.setFeatureSwitches(allFeatureSwitches.map(_ -> false).toMap), 5.seconds)
-    else
-      allFeatureSwitches.foreach(switch => disable(switch))
-
-  override def enable(featureSwitch: FeatureSwitchName): Unit =
-    if (appConfig.readFeatureSwitchesFromMongo)
-      Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, true), 5.seconds)
-    else
-      sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
-
-  override def enable(featureSwitchNames: FeatureSwitchName*): Unit = {
-    featureSwitchNames.foreach { featureSwitch =>
-      if (appConfig.readFeatureSwitchesFromMongo)
-        Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, true), 5.seconds)
-      else
-        sys.props += featureSwitch.name -> FEATURE_SWITCH_ON
-    }
-  }
-
-  override def disable(featureSwitch: FeatureSwitchName): Unit =
-    if (appConfig.readFeatureSwitchesFromMongo)
-      Await.result(featureSwitchRepository.setFeatureSwitch(featureSwitch, false), 5.seconds)
-    else
-      sys.props += featureSwitch.name -> FEATURE_SWITCH_OFF
 
   def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterest > 0 => x
