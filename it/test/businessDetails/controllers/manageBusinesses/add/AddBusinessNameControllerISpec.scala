@@ -16,11 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import controllers.ControllerISpecHelper
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.NavBarFs
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
@@ -34,6 +32,7 @@ import scala.concurrent.ExecutionContext
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
+import common.controllers.ControllerISpecHelper
 
 class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 

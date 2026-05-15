@@ -39,7 +39,8 @@ case object NotYetAllocatedPaymentStatus extends PaymentAllocationStatus
 
 case object PartiallyAllocatedPaymentStatus extends PaymentAllocationStatus
 
-case class Payment(reference: Option[String],
+case class Payment(taxYear: Int,
+                   reference: Option[String],
                    amount: Option[BigDecimal],
                    outstandingAmount: Option[BigDecimal],
                    method: Option[String],

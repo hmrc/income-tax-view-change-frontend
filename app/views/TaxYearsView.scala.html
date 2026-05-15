@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.TaxYear
+@import common.viewUtils.ExternalUrlHelper
 
 @this(
         mainTemplate: unifiedLayout,
@@ -87,7 +88,7 @@
 @errorLink() = {
     @linkComponent(
         url = if(isAgent) {
-            viewUtils.ExternalUrlHelper.saForAgents
+            ExternalUrlHelper.saForAgents
         } else {
             appConfig.saViewLandPService(utr.getOrElse(throw Exception("Can not provide SA link: UTR is missing")))
         },
@@ -145,7 +146,7 @@
         @if(isAgent) {
             @p(id = Some("oldSa-para-agent")) {
                 @messages("taxYears.oldSa.agent.content.1", (earliestSubmissionTaxYear - 1).toString, earliestSubmissionTaxYear.toString)
-                @link(link = viewUtils.ExternalUrlHelper.saForAgents,
+                @link(link = ExternalUrlHelper.saForAgents,
 
                     messageKey = "taxYears.oldSa.agent.content.2",
                     id = Some("self-assessment-for-agents-link"),

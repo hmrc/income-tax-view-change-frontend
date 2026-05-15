@@ -17,12 +17,10 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import controllers.ControllerISpecHelper
 import enums.JourneyType.Cease
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -32,6 +30,7 @@ import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.IncomeSourceIntegrationTestConstants._
 import businessDetails.testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
+import common.controllers.ControllerISpecHelper
 
 import java.time.LocalDate
 

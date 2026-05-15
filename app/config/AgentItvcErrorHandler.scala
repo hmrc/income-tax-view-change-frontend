@@ -21,8 +21,8 @@ import play.api.mvc.Results.{BadRequest, InternalServerError, Unauthorized}
 import play.api.mvc.{RequestHeader, Result}
 import play.twirl.api.Html
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
-import views.html.agent.errorPages.UnauthorisedAgentView
-import views.html.errorPages.templates.ErrorTemplate
+import common.views.html.errorPages.agent.UnauthorisedAgentView
+import common.views.html.errorPages.templates.ErrorTemplate
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

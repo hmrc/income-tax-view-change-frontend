@@ -19,7 +19,6 @@ package businessDetails.services.manageBusinesses
 import authV2.AuthActionsSpecHelper
 import authV2.AuthActionsTestData.defaultMTDITUser
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import enums.AfterSubmissionPage
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.services.{MockCalculationListService, MockITSAStatusService, MockSessionService}

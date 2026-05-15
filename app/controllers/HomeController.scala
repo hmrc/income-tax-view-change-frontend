@@ -20,9 +20,9 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import common.utils.sessionUtils.SessionKeys
 import config.*
 import config.featureswitch.*
-import controllers.agent.sessionUtils.SessionKeys
 import enums.MTDSupportingAgent
 import models.admin.*
 import models.core.Nino
@@ -124,8 +124,15 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
 
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
+      val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
 
-      auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, nextUpdatesTileViewModel.getNumberOfOverdueObligations, nextUpdatesTileViewModel.getNextDeadline))
+      auditingService.extendedAudit(
+        HomeAudit.applySupportingAgent(user,
+          nextUpdatesTileViewModel.getNumberOfOverdueObligations,
+          nextUpdatesTileViewModel.getNextDeadline,
+          userIsCYPlusOne
+        )
+      )
 
       Ok(
         supportingAgentHomeView(
@@ -207,14 +214,17 @@ class HomeController @Inject()(val homeView: views.html.HomeView,
           val mandationStatus =
             if (mandation) SessionKeys.mandationStatus -> "on"
             else SessionKeys.mandationStatus -> "off"
-          
+
+          val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
+
           auditingService.extendedAudit(
             HomeAudit(
               user,
               paymentsDueMerged,
               overDuePaymentsCount,
               nextUpdatesTileViewModel.getNumberOfOverdueObligations,
-              nextUpdatesTileViewModel.getNextDeadline
+              nextUpdatesTileViewModel.getNextDeadline,
+              userIsCYPlusOne
             )
           )
 

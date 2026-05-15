@@ -19,7 +19,6 @@ package businessDetails.services
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import businessDetails.connectors.UpdateIncomeSourceConnector
-import businessDetails.services.{UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import config.featureswitch.FeatureSwitching
 import obligations.testConstants.UpdateIncomeSourceTestConstants
 import obligations.testConstants.UpdateIncomeSourceTestConstants.{failureResponse, successResponse, taxYearSpecific}

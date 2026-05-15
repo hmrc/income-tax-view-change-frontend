@@ -17,15 +17,18 @@
 package mocks.services
 
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import services.CalculationPollingService
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testUtils.UnitSpec
 
+import scala.annotation.nowarn
 import scala.concurrent.Future
 
+// Added @nowarn annotation to suppress compiler warning on line 36. As the filed CalculationPollingService had been deprecated.
+@nowarn("cat=deprecation")
 trait MockCalculationPollingService extends UnitSpec with BeforeAndAfterEach {
 
   val testCalcId: String = "1234567890"

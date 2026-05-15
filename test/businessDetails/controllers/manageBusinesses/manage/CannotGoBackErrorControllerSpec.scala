@@ -16,9 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.CannotGoBackErrorController
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import connectors.{ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions

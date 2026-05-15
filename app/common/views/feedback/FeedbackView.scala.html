@@ -1,0 +1,98 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import common.views.html.helpers.injected.ErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import forms.FeedbackForm
+
+@this(
+    mainTemplate: unifiedLayout,
+    h1: h1,
+    p: p,
+    form: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    inputRadios: input_radios,
+    inputText: input_text,
+    inputCharacterCount: input_character_count,
+    govukRadios: GovukRadios,
+    govukInput : GovukInput,
+    govukCharacterCount : GovukCharacterCount,
+    govukButton : GovukButton
+)
+
+@(feedbackForm: Form[FeedbackForm], postAction: Call, isAgent: Boolean = false, origin: Option[String] = None)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+
+@mainTemplate(
+    pageTitle = messages("feedback.heading"),
+    form = Some(feedbackForm),
+    isAgent = isAgent,
+    origin = origin) {
+
+    @errorSummary(
+        form = feedbackForm
+    )
+
+    @h1(msg = messages("feedback.heading"))
+
+    @p(){@messages("feedback.description")}
+
+    @form(action = postAction, Symbol("id") -> "feedback-form") {
+        @inputRadios(
+            feedbackForm("feedback-rating"),
+            legend = messages("feedback.radiosDescription"),
+            items = Seq(
+                ("5", messages("feedback.veryGood")),
+                ("4", messages("feedback.good")),
+                ("3", messages("feedback.neutral")),
+                ("2", messages("feedback.bad")),
+                ("1", messages("feedback.veryBad"))
+            )
+        )
+
+        @inputText(
+            feedbackForm("feedback-name"),
+            label = messages("feedback.fullName"),
+            spellcheck = Some(false),
+            autocomplete = Some("name")
+        )
+
+        @inputText(
+            feedbackForm("feedback-email"),
+            inputType = "email",
+            label = messages("feedback.email"),
+            spellcheck = Some(false),
+            autocomplete = Some("email")
+        )
+
+        @inputCharacterCount(
+            feedbackForm("feedback-comments"),
+            id = "feedback-comments",
+            name = "feedback-comments",
+            label = messages("feedback.comments"),
+            maxLength = Some(2000),
+            hint = Some(messages("feedback.comments.hint"))
+        )
+
+        @govukButton(Button(
+            content = Text(messages("feedback.send"))
+        ))
+    }
+
+}

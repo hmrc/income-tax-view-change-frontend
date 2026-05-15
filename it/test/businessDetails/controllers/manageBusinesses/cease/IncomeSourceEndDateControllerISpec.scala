@@ -16,12 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import controllers.ControllerISpecHelper
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -33,6 +31,7 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.controllers.ControllerISpecHelper
 
 class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
 

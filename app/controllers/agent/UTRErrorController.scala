@@ -17,9 +17,9 @@
 package controllers.agent
 
 import auth.authV2.AuthActions
+import common.utils.sessionUtils.SessionKeys
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.sessionUtils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

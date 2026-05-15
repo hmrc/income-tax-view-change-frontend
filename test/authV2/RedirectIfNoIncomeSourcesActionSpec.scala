@@ -19,6 +19,7 @@ package authV2
 import auth.MtdItUser
 import auth.authV2.actions.RedirectIfNoIncomeSourcesAction
 import authV2.AuthActionsTestData.*
+import common.controllers.routes as appRoutes
 import org.scalatest.Assertion
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
@@ -91,7 +92,7 @@ class RedirectIfNoIncomeSourcesActionSpec extends AuthActionsSpecHelper {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(
-          controllers.routes.NoIncomeSourcesController.show(isAgent = false).url
+          appRoutes.NoIncomeSourcesController.show(isAgent = false).url
         )
       }
 
@@ -109,7 +110,7 @@ class RedirectIfNoIncomeSourcesActionSpec extends AuthActionsSpecHelper {
 
         status(result) shouldBe SEE_OTHER
         redirectLocation(result) shouldBe Some(
-          controllers.routes.NoIncomeSourcesController.show(isAgent = true).url
+          appRoutes.NoIncomeSourcesController.show(isAgent = true).url
         )
       }
     }

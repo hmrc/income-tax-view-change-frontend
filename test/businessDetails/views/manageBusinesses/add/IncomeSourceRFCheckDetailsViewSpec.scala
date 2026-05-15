@@ -89,6 +89,7 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
           case (true, false) => pageDocument.getElementsByClass("govuk-summary-list__value").last().text() shouldBe "2023 to 2024"
           case (false, true) => pageDocument.getElementsByClass("govuk-summary-list__value").last().text() shouldBe "2024 to 2025"
           case (true, true) => pageDocument.getElementsByClass("govuk-summary-list__value").last().text() shouldBe "2023 to 2024 2024 to 2025"
+          case (false, false) => assert(false)
         }
 
         pageDocument.getElementsByClass("govuk-summary-list__actions").last().text().replace(visuallyHiddenLast, "").trim shouldBe "Change"

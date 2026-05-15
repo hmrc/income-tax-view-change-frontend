@@ -18,10 +18,10 @@ package auth.authV2.actions
 
 import auth.MtdItUser
 import auth.authV2.models.ItsaStatusRetrievalActionError
+import common.controllers.BaseController
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import connectors.ITSAStatusConnector
-import controllers.BaseController
 import models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
@@ -88,7 +88,7 @@ class ItsaStatusRetrievalAction @Inject()(
             case Some(Agent) =>
               Logger(getClass).info(s"[ItsaStatusRetrievalAction][refine] Redirecting user to Agent YouMustWaitToSignUp page")
               Left(Redirect(YouMustWaitToSignUpController.show(isAgent = true)))
-            case None =>
+            case _ =>
               Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
               Left(internalServerErrorFor(req, "affinity-group", None))
           }

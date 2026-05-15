@@ -17,8 +17,8 @@
 package obligations.controllers.reportingObligations.optOut
 
 import auth.MtdItUser
-import controllers.ControllerISpecHelper
-import controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
+import common.controllers.ControllerISpecHelper
+import obligations.controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
 import enums.JourneyType.{Opt, OptOutJourney}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}

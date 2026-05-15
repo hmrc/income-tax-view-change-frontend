@@ -16,7 +16,6 @@
 
 package businessDetails.models.updateIncomeSource
 
-import businessDetails.models.updateIncomeSource.UpdateIncomeSourceRequestModel
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import obligations.testConstants.UpdateIncomeSourceTestConstants.{request, requestJson, requestTaxYearSpecific, requestTaxYearSpecificJson}

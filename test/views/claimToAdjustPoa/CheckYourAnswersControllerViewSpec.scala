@@ -16,7 +16,7 @@
 
 package views.claimToAdjustPoa
 
-import controllers.claimToAdjustPoa.routes._
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.core.CheckMode
 import models.incomeSourceDetails.TaxYear
@@ -41,9 +41,9 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
             adjustedFirstPoaAmount = BigDecimal(3000.00),
             adjustedSecondPoaAmount = BigDecimal(3000.00),
             poaReason = poaReason,
-            redirectUrl = ConfirmationForAdjustingPoaController.show(isAgent).url,
-            changePoaReasonUrl = SelectYourReasonController.show(isAgent, CheckMode).url,
-            changePoaAmountUrl = EnterPoaAmountController.show(isAgent, CheckMode).url
+            redirectUrl = claimToAdjustPoaRoutes.ConfirmationForAdjustingPoaController.show(isAgent).url,
+            changePoaReasonUrl = claimToAdjustPoaRoutes.SelectYourReasonController.show(isAgent, CheckMode).url,
+            changePoaAmountUrl = claimToAdjustPoaRoutes.EnterPoaAmountController.show(isAgent, CheckMode).url
           )
         )
       )
@@ -75,15 +75,15 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
       }
       "render the first change link" in new Setup(isAgent) {
         document.getElementById("change-1").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list.change")
-        document.getElementById("change-1").getElementsByTag("a").attr("href") shouldBe SelectYourReasonController.show(isAgent, CheckMode).url
+        document.getElementById("change-1").getElementsByTag("a").attr("href") shouldBe claimToAdjustPoaRoutes.SelectYourReasonController.show(isAgent, CheckMode).url
       }
       "render the second change link" in new Setup(isAgent) {
         document.getElementById("change-2").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.summary-list.change")
-        document.getElementById("change-2").getElementsByTag("a").attr("href") shouldBe EnterPoaAmountController.show(isAgent, CheckMode).url
+        document.getElementById("change-2").getElementsByTag("a").attr("href") shouldBe claimToAdjustPoaRoutes.EnterPoaAmountController.show(isAgent, CheckMode).url
       }
       "render the continue button" in new Setup(isAgent) {
         document.getElementById("confirm-button").text() shouldBe messages("base.confirm-and-continue")
-        document.getElementById("confirm-button").getElementsByTag("a").attr("href") shouldBe ConfirmationForAdjustingPoaController.show(isAgent).url
+        document.getElementById("confirm-button").getElementsByTag("a").attr("href") shouldBe claimToAdjustPoaRoutes.ConfirmationForAdjustingPoaController.show(isAgent).url
       }
       "render the Confirm and Save button" in new Setup(isAgent = isAgent, poaReason = Increase) {
         document.getElementById("confirm-and-save-button").text() shouldBe messages("claimToAdjustPoa.checkYourAnswers.confirm-and-save")

@@ -23,7 +23,9 @@ import auth.authV2.Constants
 import auth.authV2.models.{AuthUserDetails, AuthorisedAndEnrolledRequest}
 import com.google.inject.Singleton
 import config.FrontendAppConfig
-import controllers.agent.AuthUtils.mtdEnrolmentName
+import common.utils.AuthUtils.mtdEnrolmentName
+import common.controllers.routes as appRoutes
+import common.controllers.errors.routes as errorRoutes
 import enums.MTDIndividual
 import forms.utils.SessionKeys
 import play.api.Logger
@@ -38,9 +40,12 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import java.net.URLEncoder
 import javax.inject.Inject
-import scala.annotation.unused
+import scala.annotation.{nowarn, unused}
 import scala.concurrent.{ExecutionContext, Future}
 
+// Added @nowarn annotation to suppress compiler warning on line 72. As the filed name from Retrieval had been deprecated since 2024-02-26. But we are still using it (https://jira.tools.tax.service.gov.uk/browse/MISUV-11315)
+// https://github.com/hmrc/auth-client/blob/4ab64507528f7e5e4200eca6d01f6ddc6aa3b269/src-common/main/scala/uk/gov/hmrc/auth/core/retrieve/v2/Retrievals.scala#L54-L56
+@nowarn("cat=deprecation")
 @Singleton
 class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                                val appConfig: FrontendAppConfig,
@@ -76,8 +81,8 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   def ivUpliftRedirectUrl[A](implicit request: Request[A]):String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
     @unused val origin = request.getQueryString(SessionKeys.origin)
-    val completionUrl: String = s"$host${controllers.routes.UpliftSuccessController.success().url}"
-    val failureUrl: String = s"$host${controllers.errors.routes.UpliftFailedController.show().url}"
+    val completionUrl: String = s"$host${appRoutes.UpliftSuccessController.success().url}"
+    val failureUrl: String = s"$host${errorRoutes.UpliftFailedController.show().url}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
   }
 

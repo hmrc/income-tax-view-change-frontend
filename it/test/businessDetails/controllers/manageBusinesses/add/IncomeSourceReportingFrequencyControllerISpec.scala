@@ -17,13 +17,12 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails._
 import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK

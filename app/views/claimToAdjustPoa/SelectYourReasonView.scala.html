@@ -18,9 +18,10 @@
 @import models.core.Mode
 @import models.incomeSourceDetails.TaxYear
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
-@import views.html.components._
-@import views.html.helpers.injected.{ErrorSummary, InputHelper}
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.helpers.injected.{ErrorSummary, InputHelper}
+@import common.views.html.layouts.unifiedLayout
+@import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -78,7 +79,7 @@
 
     @formContent
 
-    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.SelectYourReasonController.submit(isAgent, mode), Symbol("id") -> "select-your-reason-form") {
+    @formWithCSRF(action = claimToAdjustPoaRoutes.SelectYourReasonController.submit(isAgent, mode), Symbol("id") -> "select-your-reason-form") {
         @govukRadios(
             Radios(
                 fieldset = Some(Fieldset(

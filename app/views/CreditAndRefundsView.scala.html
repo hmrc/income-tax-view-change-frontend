@@ -18,9 +18,10 @@
 @import auth.MtdItUser
 @import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.creditAndRefunds._
+@import financials.controllers.routes as financialsRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -70,7 +71,7 @@
     }
 
     @if(!isAgent) {
-        @continueButton(Some(messages("credit-and-refund.claim-refund-btn")), Some(s"${controllers.routes.MoneyInYourAccountController.startRefund().url}"))
+        @continueButton(Some(messages("credit-and-refund.claim-refund-btn")), Some(s"${financialsRoutes.MoneyInYourAccountController.startRefund().url}"))
 
     }
 }

@@ -19,8 +19,9 @@ package controllers
 import audit.AuditingService
 import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import common.controllers.routes as appRoutes
+import common.utils.sessionUtils.SessionKeys
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
@@ -979,6 +980,6 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
     val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
 
     status(result) shouldBe SEE_OTHER
-    redirectLocation(result) shouldBe Some(controllers.routes.NoIncomeSourcesController.show(false).url)
+    redirectLocation(result) shouldBe Some(appRoutes.NoIncomeSourcesController.show(false).url)
   }
 }

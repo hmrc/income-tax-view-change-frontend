@@ -14,10 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.components.{h2, p, link}
+@import common.views.html.components.{h2, p, link}
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import financials.controllers.routes as financialsRoutes
 
 @this(
         h2: h2,
@@ -29,9 +30,9 @@
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
-        controllers.routes.WhatYouOweController.showAgent().url
+        financials.controllers.routes.WhatYouOweController.showAgent().url
     } else {
-        controllers.routes.WhatYouOweController.show().url
+        financials.controllers.routes.WhatYouOweController.show().url
     }
 }
 

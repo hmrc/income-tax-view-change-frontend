@@ -18,8 +18,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.PageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import financials.controllers.routes as financialsRoutes
 
 @this(
         mainTemplate: unifiedLayout,
@@ -48,8 +49,8 @@
 }
 
 @wyoLinkUrl = @{
-    if(isAgent) controllers.routes.WhatYouOweController.showAgent().url
-    else controllers.routes.WhatYouOweController.show().url
+    if(isAgent) financialsRoutes.WhatYouOweController.showAgent().url
+    else financialsRoutes.WhatYouOweController.show().url
 }
 
 @getHomeUrl = @{

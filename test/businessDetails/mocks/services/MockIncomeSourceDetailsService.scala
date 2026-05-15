@@ -17,15 +17,8 @@
 package businessDetails.mocks.services
 
 import businessDetails.services.IncomeSourceDetailsService
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
-import org.mockito.ArgumentMatchers.*
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito.{mock, reset}
 import org.scalatest.{BeforeAndAfterEach, Suite}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
-
-import scala.concurrent.Future
-
 
 trait MockIncomeSourceDetailsService extends BeforeAndAfterEach {
   self: Suite =>

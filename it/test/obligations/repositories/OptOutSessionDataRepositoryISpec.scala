@@ -19,10 +19,9 @@ package obligations.repositories
 import helpers.ComponentSpecBase
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
-import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import org.mongodb.scala.bson.BsonDocument
-import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
+import org.mongodb.scala.SingleObservableFuture
 import org.scalatest.concurrent.ScalaFutures
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository

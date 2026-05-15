@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.templates.ErrorTemplateWithLink
+import common.views.html.errorPages.templates.ErrorTemplateWithLink
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

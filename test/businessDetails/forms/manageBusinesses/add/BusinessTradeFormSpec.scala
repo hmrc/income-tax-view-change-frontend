@@ -16,7 +16,6 @@
 
 package businessDetails.forms.manageBusinesses.add
 
-import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}

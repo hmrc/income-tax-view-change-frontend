@@ -18,14 +18,12 @@ package utils
 
 import helpers.ComponentSpecBase
 import play.api.Environment
-import play.api.i18n.MessagesApi
 
 import scala.io.Source
 
 class WelshMessagesSpec extends ComponentSpecBase {
 
   private val env: Environment = app.injector.instanceOf[Environment]
-  private val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
 
   private def loadMessagesFile(path: String): Map[String, String] = {
     env.resourceAsStream(path)

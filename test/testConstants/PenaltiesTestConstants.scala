@@ -16,10 +16,11 @@
 
 package testConstants
 
-import models.penalties.appealInformation._
+import models.penalties.appealInformation.*
+import models.penalties.appealInformation.AppealLevelEnum.HmrcAppealLevel
 import models.penalties.breathingSpace.BreathingSpace
-import models.penalties.latePayment._
-import models.penalties.lateSubmission._
+import models.penalties.latePayment.*
+import models.penalties.lateSubmission.*
 import models.penalties.{GetPenaltyDetails, Totalisations}
 import play.api.libs.json.{JsObject, Json}
 import testUtils.TestSupport

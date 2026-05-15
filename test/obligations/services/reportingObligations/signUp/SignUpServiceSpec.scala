@@ -24,7 +24,7 @@ import models.itsaStatus.ITSAStatus.*
 import models.itsaStatus.{StatusDetail, StatusReason}
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData, SignUpTaxYearQuestionViewModel}
 import obligations.repositories.SignUpSessionDataRepository
-import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
+import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -77,11 +77,6 @@ class SignUpServiceSpec extends UnitSpec
   "availableSignUpTaxYear()" should {
 
     "return available tax years from the proposition" in {
-
-      val proposition = SignUpProposition(
-        currentTaxYear = CurrentSignUpTaxYear(Annual, currentTaxYear),
-        nextTaxYear = NextSignUpTaxYear(Annual, nextTaxYear, CurrentSignUpTaxYear(Annual, currentTaxYear))
-      )
 
       when(mockITSAStatusService.getStatusTillAvailableFutureYears(ArgumentMatchers.eq(currentTaxYear.previousYear))(any, any, any))
         .thenReturn(Future.successful(

@@ -18,10 +18,10 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.forms.manageBusinesses.add.IsTheNewAddressInTheUKForm
-import controllers.ControllerISpecHelper
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.{testBusinessName, testBusinessStartDate, testBusinessTrade}
+import common.controllers.ControllerISpecHelper
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress

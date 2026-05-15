@@ -33,7 +33,6 @@
 package businessDetails.connectors
 
 import audit.mocks.MockAuditingService
-import businessDetails.connectors.UpdateIncomeSourceConnector
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponse
 import config.FrontendAppConfig
 import mocks.MockHttpV2

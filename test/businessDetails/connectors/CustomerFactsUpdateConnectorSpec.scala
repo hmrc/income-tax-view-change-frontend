@@ -17,7 +17,6 @@
 package businessDetails.connectors
 
 import audit.mocks.MockAuditingService
-import businessDetails.connectors.CustomerFactsUpdateConnector
 import config.FrontendAppConfig
 import mocks.MockHttpV2
 import play.api.Configuration

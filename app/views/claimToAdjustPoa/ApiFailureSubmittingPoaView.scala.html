@@ -14,12 +14,13 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import auth.MtdItUser
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.PageHeading
+@import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 @this(
         p: p,
@@ -45,7 +46,7 @@
 }
 
 @getAdjustPoaFirstPageUrl = @{
-    controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
+    claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent).url
 }
 
 @getHomeUrl = @{

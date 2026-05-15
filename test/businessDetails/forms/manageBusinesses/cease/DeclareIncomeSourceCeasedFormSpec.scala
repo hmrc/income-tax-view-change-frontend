@@ -17,7 +17,6 @@
 package businessDetails.forms.manageBusinesses.cease
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}

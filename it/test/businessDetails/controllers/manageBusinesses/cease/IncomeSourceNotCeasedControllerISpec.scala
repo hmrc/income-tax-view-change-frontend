@@ -17,10 +17,9 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.NavBarFs
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse

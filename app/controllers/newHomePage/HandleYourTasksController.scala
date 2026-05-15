@@ -20,9 +20,9 @@ import audit.AuditingService
 import audit.models.HomeAudit
 import auth.MtdItUser
 import auth.authV2.AuthActions
+import common.utils.sessionUtils.SessionKeys
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.agent.sessionUtils.SessionKeys
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
@@ -124,16 +124,25 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       
       val overdueUpdatesCount = dueDates.count(_.isBefore(dateService.getCurrentDate))
       val nextUpdateDueDate = dueDates.sortWith(_ isBefore _).headOption
-      
+      val userIsCYPlusOne = currentItsaStatus == ITSAStatus.NoStatus
+
       if(user.isSupportingAgent) {
-        auditingService.extendedAudit(HomeAudit.applySupportingAgent(user, overdueUpdatesCount, nextUpdateDueDate))
+        auditingService.extendedAudit(
+          HomeAudit.applySupportingAgent(
+            mtdItUser = user,
+            overdueUpdatesCount = overdueUpdatesCount,
+            nextUpdateDueDate = nextUpdateDueDate,
+            userIsCYPlusOne = userIsCYPlusOne
+          )
+        )
       } else {
         auditingService.extendedAudit(HomeAudit(
           mtdItUser = user,
           nextPaymentDueDate = paymentsDueMerged,
           overduePaymentsCount = overDuePaymentsCount,
           overdueUpdatesCount = overdueUpdatesCount,
-          nextUpdateDueDate = nextUpdateDueDate
+          nextUpdateDueDate = nextUpdateDueDate,
+          userIsCYPlusOne = userIsCYPlusOne
         ))
       }
 
@@ -182,8 +191,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     submissionDeadlinesViewModel
   }
 
-  private def getOpenObligations(obligationsResponseModel: Future[ObligationsResponseModel])
-                                (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[SingleObligationModel]] = {
+  private def getOpenObligations(obligationsResponseModel: Future[ObligationsResponseModel]): Future[Seq[SingleObligationModel]] = {
     obligationsResponseModel.flatMap {
       case openObligations: ObligationsModel if openObligations.obligations.forall(_.obligations.nonEmpty) => Future.successful(openObligations.obligations.flatMap(_.obligations))
       case _ =>
@@ -205,10 +213,5 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
           .headOption
           .getOrElse(ITSAStatus.NoStatus)
       }
-  }
-
-  private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    errorHandler.showInternalServerError()
   }
 }

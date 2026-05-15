@@ -30,6 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.Singleton
+import financials.controllers.routes as financialsRoutes
 
 @Singleton
 class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector,
@@ -65,7 +66,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       .filter(_.dueDate.exists(date => !date.isBefore(recentActivityDate) && !date.isAfter(today)))
       .maxByOption(_.dueDate)
       .flatMap {
-        case Payment(_, Some(amount), _, _, _, _, _, Some(dueDate), _, _, _, _, _) => Some(RecentActivityPaymentModel(amount, dueDate))
+        case Payment(_, _, Some(amount), _, _, _, _, _, Some(dueDate), _, _, _, _, _) => Some(RecentActivityPaymentModel(amount, dueDate))
         case _ => None
       }
   }
@@ -100,7 +101,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
     recentPayment.map { payment =>
       RecentActivityCard(
         linkContentText = "new.home.recentActivity.payments.link.text",
-        linkUrl = if (mtdUser.isAgent) controllers.routes.PaymentHistoryController.showAgent().url else controllers.routes.PaymentHistoryController.show().url,
+        linkUrl = if (mtdUser.isAgent) financialsRoutes.PaymentHistoryController.showAgent().url else financialsRoutes.PaymentHistoryController.show().url,
         contentText = "new.home.recentActivity.payments.content.text",
         dateContentText = "new.home.recentActivity.payments.date.content.text",
         cardDate = payment.dateOfPayment,
@@ -156,9 +157,9 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
   private def getRecentRefundCard(recentRefundModel: Option[RecentRefundModel])(implicit mtdItUser: MtdItUser[_]): Option[RecentActivityCard] = {
 
     val paymentCreditRefundUrl = if (mtdItUser.isAgent) {
-      controllers.routes.PaymentHistoryController.showAgent().url
+      financialsRoutes.PaymentHistoryController.showAgent().url
     } else {
-      controllers.routes.PaymentHistoryController.show().url
+      financialsRoutes.PaymentHistoryController.show().url
     }
 
     recentRefundModel.map { refund =>

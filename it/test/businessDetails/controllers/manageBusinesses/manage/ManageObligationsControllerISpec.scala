@@ -16,12 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import controllers.ControllerISpecHelper
 import enums.JourneyType.Manage
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{NavBarFs, OptInOptOutContentUpdateR17}
+import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
@@ -33,6 +32,7 @@ import testConstants.IncomeSourceIntegrationTestConstants._
 import businessDetails.testConstants.IncomeSourcesObligationsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.controllers.ControllerISpecHelper
 
 
 class ManageObligationsControllerISpec extends ControllerISpecHelper {

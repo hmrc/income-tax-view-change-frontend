@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.IncomeSourceEndDateController
-import connectors.{ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions

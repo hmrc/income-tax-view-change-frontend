@@ -49,6 +49,8 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
+import financials.controllers.routes as financialsRoutes
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 //scalastyle:off
 @Singleton
@@ -75,14 +77,14 @@ class TaxYearSummaryController @Inject()(
   // Individual back urls
   private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
 
-  private def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
+  private def whatYouOweUrl(origin: Option[String]): String = financialsRoutes.WhatYouOweController.show(origin).url
 
   private def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
 
   // Agent back urls
   private lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
   private lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
-  private lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+  private lazy val agentWhatYouOweUrl: String = financialsRoutes.WhatYouOweController.showAgent().url
 
   def formatErrorMessages(
                            liabilityCalc: LiabilityCalculationResponse,
@@ -198,12 +200,13 @@ class TaxYearSummaryController @Inject()(
           origin = origin,
           isAgent = isAgent
         )
-      case (_, _, None) if isAgent =>
-        Logger("application").error(s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-        Future(agentItvcErrorHandler.showInternalServerError())
-      case (_, _, None) if !isAgent =>
-        Logger("application").error(s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
-        Future(itvcErrorHandler.showInternalServerError())
+      case (_, _, None) =>
+        if isAgent then
+          Logger("application").error(s"[Agent][$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          Future(agentItvcErrorHandler.showInternalServerError())
+        else
+          Logger("application").error(s"[$taxYear]] No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+          Future(itvcErrorHandler.showInternalServerError())
     }
   }
 
@@ -255,7 +258,7 @@ class TaxYearSummaryController @Inject()(
         pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
       )
 
-    lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+    lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
 
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
@@ -298,7 +301,7 @@ class TaxYearSummaryController @Inject()(
 
     if (error.status == NO_CONTENT) {
 
-      lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+      lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
       val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
       val calculationSummary: Option[CalculationSummary] =
@@ -347,7 +350,7 @@ class TaxYearSummaryController @Inject()(
         ))
       )
     } else {
-      lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+      lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
       val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
       val calculationSummary: Option[CalculationSummary] =

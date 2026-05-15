@@ -16,9 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.controllers.manageBusinesses.cease.IncomeSourceCeasedBackErrorController
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import connectors.{ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import mocks.auth.MockAuthActions
 import mocks.services.MockSessionService

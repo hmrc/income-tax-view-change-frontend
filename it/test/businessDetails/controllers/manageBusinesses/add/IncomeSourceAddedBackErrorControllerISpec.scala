@@ -17,14 +17,13 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.JourneyType.Add
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails.AddIncomeSourceData
-import play.api.http.Status.{OK, SEE_OTHER}
+import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}

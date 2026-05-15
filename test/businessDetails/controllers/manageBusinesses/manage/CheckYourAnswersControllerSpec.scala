@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.controllers.manageBusinesses.manage.CheckYourAnswersController
 import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.MTDIndividual

@@ -19,12 +19,11 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
-import controllers.ControllerISpecHelper
+import common.controllers.ControllerISpecHelper
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json

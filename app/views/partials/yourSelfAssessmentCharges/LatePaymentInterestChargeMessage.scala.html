@@ -17,7 +17,9 @@
 @import implicits.ImplicitDateFormatterImpl
 @import models.chargeSummary._
 @import models.financialDetails.MfaDebitCharge
-@import views.html.components._
+@import common.views.html.components._
+@import financials.controllers.routes as financialsRoutes
+
 
 @this(
         implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -44,27 +46,12 @@
         val isItACredit = originalAmount.exists(_ < 0) && matchingDocumentDetail.exists(_.taxYear != 9999)
         val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
 
-        println("XXXXXXXXX")
-        println("XXXXXXXXX")
-        println("WE'RE FALLING HERE")
-        println("XXXXXXXXX")
-        println("XXXXXXXXX")
-
-
         val link = (isItACredit, viewModel.isAgent, payment.taxYear.isDefined) match {
-            case (false, true, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
-            case (false, false, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
-            case (true, true, true) => controllers.routes.CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
-            case (true, false, true) => controllers.routes.CreditsSummaryController.showCreditsSummary(findTaxYear).url
+            case (false, true, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
+            case (false, false, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
+            case (true, true, true) => financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
+            case (true, false, true) => financialsRoutes.CreditsSummaryController.showCreditsSummary(findTaxYear).url
         }
-
-        println("TTTTTTTT")
-        println("TTTTTTTT")
-        println("matchingDocumentDetail is " + matchingDocumentDetail)
-        println("isItACredit is " + isItACredit)
-        println(s"link is $link")
-        println("TTTTTTTT")
-        println("TTTTTTTT")
 
         val linkText =
             if (viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")

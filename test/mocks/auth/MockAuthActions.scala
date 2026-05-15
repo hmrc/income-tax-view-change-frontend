@@ -21,7 +21,10 @@ import audit.mocks.MockAuditingService
 import auth.FrontendAuthorisedFunctions
 import authV2.AuthActionsTestData.*
 import businessDetails.mocks.services.{MockCustomerFactsUpdateService, MockIncomeSourceDetailsService}
-import config.featureswitch.FeatureSwitching
+import common.controllers.agent.routes as agentRoutes
+import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.controllers.errors.routes as errorRoutes
+import common.viewUtils.InternalUrlHelper
 import connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
@@ -283,7 +286,7 @@ trait MockAuthActions
         val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
       }
     }
 
@@ -297,7 +300,7 @@ trait MockAuthActions
         val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
       }
     }
 
@@ -311,7 +314,7 @@ trait MockAuthActions
         val result = action(fakeRequest)
 
         status(result) shouldBe Status.SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.errors.routes.NotEnrolledController.show().url)
+        redirectLocation(result) shouldBe Some(errorRoutes.NotEnrolledController.show().url)
       }
     }
 
@@ -363,7 +366,7 @@ trait MockAuthActions
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
         }
       }
 
@@ -377,7 +380,7 @@ trait MockAuthActions
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
         }
       }
 
@@ -391,7 +394,7 @@ trait MockAuthActions
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
         }
       }
     } else {
@@ -408,7 +411,7 @@ trait MockAuthActions
           val result = action(fakeRequest)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.ClientRelationshipFailureController.show().url)
+          redirectLocation(result) shouldBe Some(agentRoutes.ClientRelationshipFailureController.show().url)
         }
       }
     }
