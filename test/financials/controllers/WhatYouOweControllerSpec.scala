@@ -141,9 +141,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
     moneyInYourAccountUrl = if (isAgent) MoneyInYourAccountController.showAgent().url else MoneyInYourAccountController.show().url,
     creditAndRefundEnabled = true,
     taxYearSummaryUrl = _ => if (isAgent)
-      controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
+      returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
     else
-      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
+      returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
     claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(ctaViewModel(adjustPaymentsOnAccountFSEnabled, poaTaxYear)),
     lpp2Url = LPP2Url,
     adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url,

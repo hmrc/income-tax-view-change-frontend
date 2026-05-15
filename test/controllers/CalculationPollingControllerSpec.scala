@@ -25,6 +25,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
+import returns.controllers.routes as returnsRoutes
 import services.{CalculationPollingService, DateServiceInterface}
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
@@ -64,9 +65,9 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
               val result = action()(fakeRequest.addingToSession(SessionKeys.calculationId -> testCalcId))
               status(result) shouldBe Status.SEE_OTHER
               val expectedUrl = if (isAgent) {
-                routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear).url
+                returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear).url
               } else {
-                routes.TaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear).url
+                returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear).url
               }
               redirectLocation(result) shouldBe Some(expectedUrl)
             }
@@ -81,9 +82,9 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
               val result = action(true)(fakeRequest.addingToSession(SessionKeys.calculationId -> testCalcId))
               status(result) shouldBe Status.SEE_OTHER
               val expectedUrl = if (isAgent) {
-                routes.FinalTaxCalculationController.showAgent(testTaxYear).url
+                returnsRoutes.FinalTaxCalculationController.showAgent(testTaxYear).url
               } else {
-                routes.FinalTaxCalculationController.show(testTaxYear).url
+                returnsRoutes.FinalTaxCalculationController.show(testTaxYear).url
               }
               redirectLocation(result) shouldBe Some(expectedUrl)
             }

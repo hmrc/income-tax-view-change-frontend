@@ -81,9 +81,9 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
 
   def getTaxYearSummaryLink(mtdUserRole: MTDUserRole): String = {
     if (mtdUserRole == MTDIndividual) {
-      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
+      returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
     } else {
-      controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(2024).url
+      returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(2024).url
     }
   }
 

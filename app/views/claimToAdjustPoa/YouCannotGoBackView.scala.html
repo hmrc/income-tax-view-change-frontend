@@ -44,8 +44,8 @@
 }
 
 @tysLinkUrl = @{
-    if(isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(poaTaxYear.endYear).url
-    else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(poaTaxYear.endYear).url
+    if(isAgent) returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(poaTaxYear.endYear).url
+    else returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(poaTaxYear.endYear).url
 }
 
 @wyoLinkUrl = @{

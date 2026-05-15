@@ -350,7 +350,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
         "has a link to the view payments page" in new TestSetup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").first)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(currentTaxYear).url)
+          link.map(_.attr("href")) shouldBe Some(returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(currentTaxYear).url)
           link.map(_.text) shouldBe Some(s"View your client’s current ${currentTaxYear - 1} to $currentTaxYear return")
         }
         "has a link to the update and submit page" in new TestSetup {
@@ -365,7 +365,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
         }
         "has a link to the tax years page" in new TestSetup {
           val link: Option[Element] = getElementById("returns-tile").map(_.select("a").last)
-          link.map(_.attr("href")) shouldBe Some(controllers.routes.TaxYearsController.showAgentTaxYears().url)
+          link.map(_.attr("href")) shouldBe Some(returns.controllers.routes.TaxYearsController.showAgentTaxYears().url)
           link.map(_.text) shouldBe Some("View all tax years")
         }
       }

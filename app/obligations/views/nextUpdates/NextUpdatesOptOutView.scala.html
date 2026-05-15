@@ -79,10 +79,10 @@
             @p(){
                 @messages("nextUpdates.previousYears.textOne")
                 @if(isAgent) {
-                    @link(link = controllers.routes.TaxYearsController.showAgentTaxYears().url, messageKey = "nextUpdates.previousYears.link")
+                    @link(link = returns.controllers.routes.TaxYearsController.showAgentTaxYears().url, messageKey = "nextUpdates.previousYears.link")
                 }
                 @if(!isAgent) {
-                    @link(link = controllers.routes.TaxYearsController.showTaxYears(origin).url, messageKey = "nextUpdates.previousYears.link")
+                    @link(link = returns.controllers.routes.TaxYearsController.showTaxYears(origin).url, messageKey = "nextUpdates.previousYears.link")
                 }
                 @messages("nextUpdates.previousYears.textTwo")
             }

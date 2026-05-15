@@ -301,9 +301,9 @@
 
 @taxYearSummaryLink = @{
     if (isAgent) {
-        controllers.routes.TaxYearsController.showAgentTaxYears().url
+        returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
     } else {
-        controllers.routes.TaxYearsController.showTaxYears().url
+        returns.controllers.routes.TaxYearsController.showTaxYears().url
     }
 }
 
