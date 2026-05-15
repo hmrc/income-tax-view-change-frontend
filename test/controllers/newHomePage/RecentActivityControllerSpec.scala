@@ -17,9 +17,7 @@
 package controllers.newHomePage
 
 import common.mocks.auth.MockAuthActions
-import enums.MTDIndividual
 import enums.{MTDIndividual, MTDSupportingAgent}
-import common.mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockITSAStatusService}
 import models.admin.{NewHomePage, RecentActivity}
 import models.incomeSourceDetails.IncomeSourceDetailsModel

@@ -18,6 +18,7 @@ package connectors
 
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import com.codahale.metrics.Timer
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import org.mockito.Mockito.{mock, reset}

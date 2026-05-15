@@ -21,7 +21,6 @@ import enums.ChargeType.*
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException
 import financials.controllers.routes as financialsRoutes
-import models.admin.FilterCodedOutPoas
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*
