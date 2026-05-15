@@ -33,9 +33,10 @@ class NewHomeNavigationSpec extends TestSupport {
               overViewUrl: String = "overview-url",
               helpUrl: String = "help-url",
               activeTab: String = "your-tasks",
-              isRecentActivityEnabled: Boolean = false) {
+              isRecentActivityEnabled: Boolean = false,
+              isSupportingAgent: Boolean = false) {
 
-    val html: HtmlFormat.Appendable = newHomeNavigation(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, activeTab, isRecentActivityEnabled)
+    val html: HtmlFormat.Appendable = newHomeNavigation(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, activeTab, isRecentActivityEnabled, isSupportingAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 
@@ -51,6 +52,14 @@ class NewHomeNavigationSpec extends TestSupport {
 
       }
       "the 'Recent Activity' feature switch is DISABLED" in new Setup(isRecentActivityEnabled = false) {
+        val navigationTabs: Elements = pageDocument.selectFirst(".govuk-service-navigation__wrapper").select("a")
+        navigationTabs.size() shouldBe 3
+        navigationTabs.get(0).text() shouldBe "Your tasks"
+        navigationTabs.get(1).text() shouldBe "Overview"
+        navigationTabs.get(2).text() shouldBe "Help"
+      }
+
+      "the user is a supporting agent" in new Setup(isSupportingAgent = true, isRecentActivityEnabled = true) {
         val navigationTabs: Elements = pageDocument.selectFirst(".govuk-service-navigation__wrapper").select("a")
         navigationTabs.size() shouldBe 3
         navigationTabs.get(0).text() shouldBe "Your tasks"

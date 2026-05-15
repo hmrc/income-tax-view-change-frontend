@@ -16,31 +16,31 @@
 
 package views
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.FrontendAppConfig
-import enums.ChargeType._
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import enums.ChargeType.*
 import exceptions.MissingFieldException
+import financials.controllers.routes as financialsRoutes
 import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import testConstants.PaymentAllocationsTestConstants._
+import testConstants.PaymentAllocationsTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.ViewSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.PaymentAllocationView
 
-import scala.jdk.CollectionConverters._
-
+import scala.jdk.CollectionConverters.*
 
 class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   lazy val paymentAllocationView: PaymentAllocationView = app.injector.instanceOf[PaymentAllocationView]
 
-  lazy val backUrl: String = controllers.routes.PaymentHistoryController.show().url
+  lazy val backUrl: String = financialsRoutes.PaymentHistoryController.show().url
 
   val testMtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), businessAndPropertyAligned)
 
@@ -304,7 +304,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
     }
 
     "have a fallback link" in new PaymentAllocationSetup {
-      document.hasFallbackBacklinkTo(controllers.routes.PaymentHistoryController.show().url)
+      document.hasFallbackBacklinkTo(financialsRoutes.PaymentHistoryController.show().url)
     }
 
     "have Payment allocations table" when {
@@ -357,15 +357,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "a payment on account 1 of 2" in new PaymentAllocationSetup(viewModel(poa1Allocations: _*)) {
 
         val expectedLinkUrls: Seq[String] = Seq(
-          controllers.routes.ChargeSummaryController.show(2018, "poa1_1").url,
-          controllers.routes.ChargeSummaryController.show(2018, "poa1_2").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa1_3").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa1_4").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa1_5").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa1_6").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa1_7").url,
-          controllers.routes.ChargeSummaryController.show(2020, "poa1_8").url,
-          controllers.routes.MoneyInYourAccountController.show().url
+          financialsRoutes.ChargeSummaryController.show(2018, "poa1_1").url,
+          financialsRoutes.ChargeSummaryController.show(2018, "poa1_2").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa1_3").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa1_4").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa1_5").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa1_6").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa1_7").url,
+          financialsRoutes.ChargeSummaryController.show(2020, "poa1_8").url,
+          financialsRoutes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
@@ -390,15 +390,15 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "a payment on account 2 of 2" in new PaymentAllocationSetup(viewModel(poa2Allocations: _*)) {
 
         val expectedLinkUrls: Seq[String] = Seq(
-          controllers.routes.ChargeSummaryController.show(2018, "poa2_1").url,
-          controllers.routes.ChargeSummaryController.show(2018, "poa2_2").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa2_3").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa2_4").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa2_5").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa2_6").url,
-          controllers.routes.ChargeSummaryController.show(2019, "poa2_7").url,
-          controllers.routes.ChargeSummaryController.show(2020, "poa2_8").url,
-          controllers.routes.MoneyInYourAccountController.show().url
+          financialsRoutes.ChargeSummaryController.show(2018, "poa2_1").url,
+          financialsRoutes.ChargeSummaryController.show(2018, "poa2_2").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa2_3").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa2_4").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa2_5").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa2_6").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "poa2_7").url,
+          financialsRoutes.ChargeSummaryController.show(2020, "poa2_8").url,
+          financialsRoutes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading
@@ -423,13 +423,13 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
       "a balancing charge" in new PaymentAllocationSetup(viewModel(bcdAllocations: _*)) {
 
         val expectedLinkUrls: Seq[String] = Seq(
-          controllers.routes.ChargeSummaryController.show(2018, "bcd_1").url,
-          controllers.routes.ChargeSummaryController.show(2018, "bcd_2").url,
-          controllers.routes.ChargeSummaryController.show(2019, "bcd_3").url,
-          controllers.routes.ChargeSummaryController.show(2019, "bcd_4").url,
-          controllers.routes.ChargeSummaryController.show(2019, "bcd_5").url,
-          controllers.routes.ChargeSummaryController.show(2020, "bcd_6").url,
-          controllers.routes.MoneyInYourAccountController.show().url
+          financialsRoutes.ChargeSummaryController.show(2018, "bcd_1").url,
+          financialsRoutes.ChargeSummaryController.show(2018, "bcd_2").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "bcd_3").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "bcd_4").url,
+          financialsRoutes.ChargeSummaryController.show(2019, "bcd_5").url,
+          financialsRoutes.ChargeSummaryController.show(2020, "bcd_6").url,
+          financialsRoutes.MoneyInYourAccountController.show().url
         )
 
         document.getElementsByTag("h2").eq(2).text() shouldBe paymentAllocationHeading

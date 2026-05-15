@@ -16,8 +16,8 @@
 
 package services.newHomePage
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
@@ -29,6 +29,8 @@ import models.newHomePage.YourTasksCard.*
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
+import obligations.controllers.{routes => obligationsRoutes}
+import financials.controllers.routes as financialsRoutes
 
 @Singleton
 class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
@@ -79,9 +81,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
   private def getSubmissionTasks(viewModel: SubmissionDeadlinesViewModel, isAgent: Boolean, isQuarterly: Boolean): Seq[YourTasksCard] = {
     val submissionsLink = if(isAgent) {
-      controllers.routes.NextUpdatesController.showAgent().url
+      obligationsRoutes.NextUpdatesController.showAgent().url
     } else {
-      controllers.routes.NextUpdatesController.show().url
+      obligationsRoutes.NextUpdatesController.show().url
     }
 
     val submissionsLinkTextKey = "new.home.yourTasks.updates-and-deadlines"
@@ -155,9 +157,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
     val redirectLinkMoneyInYourAccount = {
       if (isAgent) {
-        controllers.routes.MoneyInYourAccountController.showAgent().url
+        financialsRoutes.MoneyInYourAccountController.showAgent().url
       } else {
-        controllers.routes.MoneyInYourAccountController.show().url
+        financialsRoutes.MoneyInYourAccountController.show().url
       }
     }
 
@@ -195,7 +197,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
   private def getChargesCard(chargeList: List[ChargeItem], isAgent: Boolean) = {
     val linkText = "newHome.yourTasks.selfAssessment"
-    val redirectLink = if(isAgent) controllers.routes.WhatYouOweController.showAgent().url else controllers.routes.WhatYouOweController.show().url
+    val redirectLink = if(isAgent) financialsRoutes.WhatYouOweController.showAgent().url else financialsRoutes.WhatYouOweController.show().url
 
     val oldestCharge = oldestTransaction(chargeList)
     val overdueCharges = chargeList.filter(charge => chargesSet.contains(charge.transactionType) && charge.dueDate.exists(_.isBefore(LocalDate.now())))
@@ -204,9 +206,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
         MaturityLevel.get(charge.dueDate) match {
           case Some(MaturityLevel.Upcoming) | Some(MaturityLevel.DueEarly) | Some(MaturityLevel.DueToday) => Some(("newHome.yourTasks.selfAssessment.upcomingCharge", None))
           case Some(MaturityLevel.Overdue) => if(overdueCharges.size > 1) {
-            Some(("newHome.yourTasks.selfAssessment.overdueCharge.multiple", Some(chargeList.map(_.outstandingAmount).sum.toCurrencyString)))
+            Some(("newHome.yourTasks.selfAssessment.overdueCharge.multiple", None))
           } else {
-            Some(("newHome.yourTasks.selfAssessment.overdueCharge.single", Some(chargeList.map(_.outstandingAmount).sum.toCurrencyString)))
+            Some(("newHome.yourTasks.selfAssessment.overdueCharge.single", None))
           }
           case _ => None
         }
@@ -241,9 +243,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
         case _ => ""
       }
     } else if (isAgent) {
-      controllers.routes.ChargeSummaryController.showAgent(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
+      financialsRoutes.ChargeSummaryController.showAgent(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
     } else {
-      controllers.routes.ChargeSummaryController.show(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
+      financialsRoutes.ChargeSummaryController.show(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
     }
 
     val contentDescription = if(latePaymentPenaltyList.size > 1) {
@@ -278,9 +280,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
         case _ => ""
       }
     } else if (isAgent) {
-      controllers.routes.ChargeSummaryController.showAgent(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
+      financialsRoutes.ChargeSummaryController.showAgent(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
     } else {
-      controllers.routes.ChargeSummaryController.show(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
+      financialsRoutes.ChargeSummaryController.show(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
     }
 
     val contentDescription = if (lateSubmissionPenaltyList.size > 1) {

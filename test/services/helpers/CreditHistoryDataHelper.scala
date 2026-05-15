@@ -28,17 +28,16 @@ import java.time.LocalDate
 trait CreditHistoryDataHelper {
 
 
-  val paymentsForTheGivenTaxYear: List[Payment] = List(Payment(reference = Some("reference"), amount = Some(100.00),
+  val paymentsForTheGivenTaxYear: List[Payment] = List(Payment(taxYear = 9999, reference = Some("reference"), amount = Some(100.00),
     outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
     dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID01")))
 
 
   val creditsForTheGivenTaxYear: List[Payment] = List(
-    Payment(reference = Some("reference"), amount = Some(-100.00),
+    Payment(taxYear = 2020, reference = Some("reference"), amount = Some(-100.00),
       outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
-
       dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID01")),
-    Payment(reference = Some("reference"), amount = Some(-100.00),
+    Payment(taxYear = 2020, reference = Some("reference"), amount = Some(-100.00),
       outstandingAmount = Some(1.00), method = Some("method"), documentDescription = None, lot = None, lotItem = Some("lotItem"),
       dueDate = Some(LocalDate.parse("2020-08-20")), documentDate = LocalDate.parse("2020-08-20"), Some("DOCID02"))
   )

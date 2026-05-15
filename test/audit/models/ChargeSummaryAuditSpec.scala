@@ -16,10 +16,10 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
+import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import enums.ChargeType.*
 import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
-import forms.IncomeSourcesFormsSpec.commonAuditDetails
+import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*

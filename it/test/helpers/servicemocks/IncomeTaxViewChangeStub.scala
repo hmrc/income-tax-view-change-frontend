@@ -16,14 +16,14 @@
 
 package helpers.servicemocks
 
+import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import helpers.WiremockHelper
+import common.helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
-import models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.obligations.ObligationsModel
 import models.repaymentHistory.RepaymentHistoryModel
+import obligations.models.ObligationsModel
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsValue, Json}

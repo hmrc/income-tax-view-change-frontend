@@ -16,16 +16,17 @@
 
 @import models.incomeSourceDetails.TaxYear
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.helpers.injected.InputHelper
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.helpers.injected.InputHelper
+@import common.views.html.layouts.unifiedLayout
 @import models.claimToAdjustPoa.viewModels.WhatYouNeedToKnowViewModel
-@import viewUtils.ExternalUrlHelper
+@import common.viewUtils.ExternalUrlHelper
+@import common.config.FrontendAppConfig
 
 
 @this(
         mainTemplate: unifiedLayout,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         h1WithCaption: h1WithCaption,
         h2: h2,
         h3: h3,
@@ -38,7 +39,7 @@
         inputHelper: InputHelper,
 )
 
-@(isAgent: Boolean, viewModel: WhatYouNeedToKnowViewModel)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: WhatYouNeedToKnowViewModel)(implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @getHomePageUrl = @{
     if (isAgent) controllers.routes.HomeController.showAgent().url

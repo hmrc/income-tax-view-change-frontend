@@ -7,13 +7,6 @@ GET         /assets/*file                                                 contro
 # Assets
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
-GET        /language/:lang                                                controllers.LocalLanguageController.switchToLanguage(lang: String)
-
-
-# No Income Sources Error page
-GET         /cannot-access-service                                          controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
-GET         /agents/cannot-access-service                                   controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
-
 #Home Controller
 GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /income-tax                                                   controllers.HomeController.show(origin: Option[String] ?= None)
@@ -32,48 +25,6 @@ GET         /overview                                                     contro
 GET         /help                                                         controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)
 GET         /agents/overview                                              controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
 GET         /agents/help                                                  controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
-
-#NextUpdates
-GET         /submission-deadlines                                         controllers.NextUpdatesController.show(origin: Option[String] ?= None)
-GET         /agents/submission-deadlines                                  controllers.NextUpdatesController.showAgent()
-
-#Reporting Obligations
-GET         /reporting-frequency                                          controllers.reportingObligations.ReportingFrequencyPageController.show(isAgent:Boolean = false)
-GET         /agents/reporting-frequency                                   controllers.reportingObligations.ReportingFrequencyPageController.show(isAgent:Boolean = true)
-
-#OptOut
-GET         /optout/confirmed                                             controllers.reportingObligations.optOut.ConfirmedOptOutController.show(isAgent: Boolean = false)
-GET         /agents/optout/confirmed                                      controllers.reportingObligations.optOut.ConfirmedOptOutController.show(isAgent: Boolean = true)
-
-GET         /optout                                                       controllers.reportingObligations.optOut.OptOutTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/optout                                                controllers.reportingObligations.optOut.OptOutTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-POST        /optout                                                       controllers.reportingObligations.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-POST        /agents/optout                                                controllers.reportingObligations.optOut.OptOutTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-
-GET         /optout/check-your-answers/:taxYear                           controllers.reportingObligations.optOut.ConfirmOptOutUpdateController.show(isAgent: Boolean = false, taxYear: String)
-GET         /agents/optout/check-your-answers/:taxYear                    controllers.reportingObligations.optOut.ConfirmOptOutUpdateController.show(isAgent: Boolean = true, taxYear: String)
-POST        /optout/check-your-answers/:taxYear                           controllers.reportingObligations.optOut.ConfirmOptOutUpdateController.submit(isAgent: Boolean = false, taxYear: String)
-POST        /agents/optout/check-your-answers/:taxYear                    controllers.reportingObligations.optOut.ConfirmOptOutUpdateController.submit(isAgent: Boolean = true, taxYear: String)
-
-# Sign Up
-GET         /sign-up/start                                                controllers.reportingObligations.signUp.SignUpStartController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/sign-up/start                                         controllers.reportingObligations.signUp.SignUpStartController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-
-GET         /sign-up                                                      controllers.reportingObligations.signUp.SignUpTaxYearQuestionController.show(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-GET         /agents/sign-up                                               controllers.reportingObligations.signUp.SignUpTaxYearQuestionController.show(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-POST        /sign-up                                                      controllers.reportingObligations.signUp.SignUpTaxYearQuestionController.submit(isAgent: Boolean = false, taxYear: Option[String] ?= None)
-POST        /agents/sign-up                                               controllers.reportingObligations.signUp.SignUpTaxYearQuestionController.submit(isAgent: Boolean = true, taxYear: Option[String] ?= None)
-
-GET         /sign-up/completed                                            controllers.reportingObligations.signUp.SignUpCompletedController.show(isAgent: Boolean = false)
-GET         /agents/sign-up/completed                                     controllers.reportingObligations.signUp.SignUpCompletedController.show(isAgent: Boolean = true)
-
-#You Must Wait Page
-GET          /access-service-from-next-tax-year                           controllers.reportingObligations.signUp.YouMustWaitToSignUpController.show(isAgent: Boolean = false)
-GET          /agents/view-client-from-next-tax-year                       controllers.reportingObligations.signUp.YouMustWaitToSignUpController.show(isAgent: Boolean = true)
-
-#Sign-up/Opt-out Cannot Go Back
-GET         /signup/cannot-go-back                                        controllers.reportingObligations.SignUpOptOutCannotGoBackController.show(isAgent: Boolean = false, isSignUpJourney: Option[Boolean] ?= None)
-GET         /agents/signup/cannot-go-back                                 controllers.reportingObligations.SignUpOptOutCannotGoBackController.show(isAgent: Boolean = true, isSignUpJourney: Option[Boolean] ?= None)
 
 # Tax Year Summary
 GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
@@ -97,82 +48,9 @@ GET         /agents/:taxYear/allowances-and-deductions                    contro
 GET         /tax-years                                                    controllers.TaxYearsController.showTaxYears(origin: Option[String] ?= None)
 GET         /agents/tax-years                                             controllers.TaxYearsController.showAgentTaxYears()
 
-#Payment
-GET         /payment                                                      controllers.PaymentController.paymentHandoff(amountInPence: Long, origin: Option[String] ?= None)
-GET         /agents/payment                                               controllers.PaymentController.agentPaymentHandoff(amountInPence: Long)
-
-#Payment Allocation
-GET         /payment-made-to-hmrc                                         controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String, origin: Option[String] ?= None)
-GET         /agents/payment-made-to-hmrc                                  controllers.PaymentAllocationsController.viewPaymentAllocationAgent(documentNumber: String)
-
-#WhatYouOwe
-GET         /what-you-owe                                                 controllers.WhatYouOweController.show(origin: Option[String] ?= None)
-GET         /agents/what-your-client-owes                                 controllers.WhatYouOweController.showAgent()
-
-#Charge summary
-GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
-GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)
-
-#Triggered Migration
-GET         /check-your-active-businesses/hmrc-record                     controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = false, state: Option[String] ?= None)
-GET         /agents/check-your-active-businesses/hmrc-record              controllers.triggeredMigration.CheckHmrcRecordsController.show(isAgent: Boolean = true, state: Option[String] ?= None)
-GET         /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = false)
-GET         /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.show(isAgent: Boolean = true)
-POST        /check-your-active-businesses/complete                        controllers.triggeredMigration.CheckCompleteController.submit(isAgent: Boolean = false)
-POST        /agents/check-your-active-businesses/complete                 controllers.triggeredMigration.CheckCompleteController.submit(isAgent: Boolean = true)
-
-# Triggered migration – confirm active businesses
-GET   /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.show(isAgent: Boolean = false)
-GET   /agents/check-your-active-businesses/confirm   controllers.triggeredMigration.CheckActiveBusinessesConfirmController.show(isAgent: Boolean = true)
-POST  /check-your-active-businesses/confirm          controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = false)
-POST  /agents/check-your-active-businesses/confirm   controllers.triggeredMigration.CheckActiveBusinessesConfirmController.submit(isAgent: Boolean = true)
-
-#Feedback Routes
-GET         /feedback                                                     controllers.feedback.FeedbackController.show()
-GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
-POST        /feedback                                                     controllers.feedback.FeedbackController.submit()
-POST        /agents/feedback                                              controllers.feedback.FeedbackController.submitAgent()
-GET         /thankyou                                                     controllers.feedback.FeedbackController.thankYou()
-GET         /agents/thankyou                                              controllers.feedback.FeedbackController.thankYouAgent()
-
-#Timeout Routes
-GET         /session-timeout                                              controllers.timeout.SessionTimeoutController.timeout()
-GET         /keep-alive                                                   controllers.timeout.SessionTimeoutController.keepAlive()
-
-#Sign Out Routes
-GET         /sign-out                                                     controllers.SignOutController.signOut()
-
-#Sign In Routes
-GET         /sign-in                                                      controllers.SignInController.signIn()
-
-#Not Enrolled
-GET         /cannot-access-service                                        controllers.errors.NotEnrolledController.show()
-
-#Uplift Failed
-GET         /cannot-view-page                                             controllers.errors.UpliftFailedController.show()
-
-#Cannot Change Reporting Obligations
-GET         /cannot-update-reporting-obligations                          controllers.errors.CannotUpdateReportingObligationsController.show(isAgent: Boolean = false)
-GET         /agents/cannot-update-reporting-obligations                   controllers.errors.CannotUpdateReportingObligationsController.show(isAgent: Boolean = true)
-
-#Uplift Success
-GET         /uplift-success                                               controllers.UpliftSuccessController.success()
-
-#BTA Partial
-GET         /partial                                                      controllers.bta.BTAPartialController.setupPartial()
-
 #CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/calculation/:taxYear/submitted                        controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
-
-#Language Controller
-GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
-
-#Payment history
-GET         /payment-refund-history                                       controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
-GET         /agents/payment-refund-history                                controllers.PaymentHistoryController.showAgent()
-GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus()
-
 
 #InYear Tax
 GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show(origin: Option[String] ?= None)
@@ -188,12 +66,6 @@ GET         /agents/:taxYear/final-tax-overview/calculate                 contro
 GET         /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.showAgent(taxYear: Int)
 POST        /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.agentSubmit(taxYear: Int)
 
-GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
-GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
-
-#custom not found
-GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show()
-
 #Forecast income summary
 GET         /:taxYear/forecast-income                                     controllers.ForecastIncomeSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/:taxYear/forecast-income                              controllers.ForecastIncomeSummaryController.showAgent(taxYear: Int)
@@ -202,20 +74,6 @@ GET         /agents/:taxYear/forecast-income                              contro
 GET         /:taxYear/forecast-tax-calculation                            controllers.ForecastTaxCalcSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/:taxYear/forecast-tax-calculation                     controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
 
-#Credits and Refunds
-GET          /money-in-your-account                                       controllers.MoneyInYourAccountController.show(origin: Option[String] ?= None)
-GET          /agents/money-in-your-account                                controllers.MoneyInYourAccountController.showAgent()
-GET          /start-refund                                                controllers.MoneyInYourAccountController.startRefund()
-
-
-#Credits
-GET         /credits-from-hmrc/:calendarYear                              controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)
-GET         /agents/credits-from-hmrc/:calendarYear                       controllers.CreditsSummaryController.showAgentCreditsSummary(calendarYear: Int)
-
-#Refund to taxpayer
-GET         /refund-to-taxpayer/:repaymentRequestNumber                    controllers.RefundToTaxPayerController.show(repaymentRequestNumber: String, origin: Option[String] ?= None)
-GET         /agents/refund-to-taxpayer/:repaymentRequestNumber             controllers.RefundToTaxPayerController.showAgent(repaymentRequestNumber: String)
-
 # Users not migrated to ETMP
 GET          /how-to-claim-refund                                         controllers.NotMigratedUserController.show()
 GET          /agents/how-to-claim-refund                                  controllers.NotMigratedUserController.showAgent()
@@ -223,5 +81,8 @@ GET          /agents/how-to-claim-refund                                  contro
 GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
-->          /                                                             manageBusinesses.Routes
+->          /                                                             common.Routes
+->          /                                                             obligations.Routes
+->          /                                                             businessDetails.Routes
+->          /                                                             financialDetails.Routes
 ->          /                                                             claimToAdjustPoa.Routes

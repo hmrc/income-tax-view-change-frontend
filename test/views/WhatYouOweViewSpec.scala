@@ -16,10 +16,10 @@
 
 package views
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.featureswitch.FeatureSwitching
-import controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import financials.controllers.routes as financialsRoutes
 import enums.CodingOutType.*
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import implicits.ImplicitDateFormatter
@@ -40,6 +40,7 @@ import views.html.WhatYouOweView
 
 import java.time.LocalDate
 import scala.annotation.unused
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with ChargeConstants {
 
@@ -154,15 +155,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      moneyInYourAccountUrl = MoneyInYourAccountController.show().url,
+      moneyInYourAccountUrl = financialsRoutes.MoneyInYourAccountController.show().url,
       creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
       lpp2Url = LPP2Url,
-      adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = false).url,
+      adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = false).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
-        ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
-      paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
+        financialsRoutes.ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
+      paymentHandOffUrl = financialsRoutes.PaymentController.paymentHandoff(_, None).url,
       selfServeTimeToPayEnabled = true,
       selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
     )
@@ -212,15 +213,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       backUrl = "testBackURL",
       utr = Some("1234567890"),
       dunningLock = dunningLock,
-      moneyInYourAccountUrl = MoneyInYourAccountController.showAgent().url,
+      moneyInYourAccountUrl = financialsRoutes.MoneyInYourAccountController.showAgent().url,
       creditAndRefundEnabled = true,
       taxYearSummaryUrl = _ => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
       lpp2Url = "",
-      adjustPoaUrl = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = true).url,
+      adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = true).url,
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
-        ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
-      paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
+        financialsRoutes.ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
+      paymentHandOffUrl = financialsRoutes.PaymentController.paymentHandoff(_, None).url,
       selfServeTimeToPayEnabled = true,
       selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
     )
@@ -518,7 +519,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Text + " 3"
-          lpp1Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(fixedDate.getYear, id1040000123).url
+          lpp1Row.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(fixedDate.getYear, id1040000123).url
           lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp1Row.select("td").last().text() shouldBe "£50.00"
 
@@ -532,7 +533,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val lspRow: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
           lspRow.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lspRow.select("td").get(1).text() shouldBe lspText + " 1"
-          lspRow.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(fixedDate.getYear, id1040000123).url
+          lspRow.select("td").get(1).getElementsByClass("govuk-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(fixedDate.getYear, id1040000123).url
           lspRow.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lspRow.select("td").last().text() shouldBe "£50.00"
         }
@@ -649,7 +650,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "have Data for due within 30 days" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
 
-          pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          pageDocument.getElementById("due-0-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
           findElementById("due-0-overdue") shouldBe None
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -657,7 +658,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "have data with POA2 with hyperlink and no overdue" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
-          pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(fixedDate.getYear, "1040000125").url
+          pageDocument.getElementById("due-1-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(fixedDate.getYear, "1040000125").url
           findElementById("due-1-overdue") shouldBe None
         }
 
@@ -665,7 +666,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           "and overdue payment headers" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
           pageDocument.getElementById("payment-button").
-            attr("href") shouldBe controllers.routes.PaymentController.
+            attr("href") shouldBe financialsRoutes.PaymentController.
             paymentHandoff(5000).url
         }
 
@@ -808,7 +809,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
-            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -845,7 +846,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
-            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
@@ -873,7 +874,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
-            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+            pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -900,7 +901,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
-          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
           pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -929,7 +930,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
-          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
           pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -946,7 +947,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           overduePaymentsTableRow2.select("td").get(1).text() shouldBe overdueTag + " " + poa2Text + s" 2"
           overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
-          pageDocument.getElementById("due-1-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          pageDocument.getElementById("due-1-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000125").url
           pageDocument.getElementById("due-1-overdue").text shouldBe overdueTag
         }
@@ -987,15 +988,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "have payments data with button with overdue charges" in new TestSetup(charges = whatYouOweDataWithOverdueData()) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
-          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(300).url
+          pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(300).url
         }
         "have payments data with button with charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithOverdueData().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00))) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
-          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+          pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(100).url
         }
         "have payments data with button with charges due after 30 days" in new TestSetup(charges = whatYouOweDataWithOverdueData().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00, balanceDueWithin30Days = 0.00))) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
-          pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
+          pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(400).url
         }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
@@ -1072,13 +1073,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
-          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000125").url
           pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             fixedDate.getYear).url
 
-          pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+          pageDocument.getElementById("due-1-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000123").url
           findElementById("due-1-overdue") shouldBe None
           pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -1093,17 +1094,17 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
       s"have payment data with button with overdue charges" in new TestSetup(charges = whatYouOweDataWithMixedData1()) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(200).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(200).url
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
       s"have payment data with button with charges due within 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData1().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(overDueAmount = 0.00))) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(100).url
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
       s"have payment data with button with charges due after 30 days" in new TestSetup(charges = whatYouOweDataWithMixedData1().copy(balanceDetails = whatYouOweDataWithMixedData1().balanceDetails.copy(balanceDueWithin30Days = 0.00, overDueAmount = 0.00))) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(400).url
         findElementById("pre-mtd-payments-heading") shouldBe None
       }
     }
@@ -1145,13 +1146,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         dueWithInThirtyDaysTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
         dueWithInThirtyDaysTableRow1.select("td").last().text() shouldBe "£50.00"
 
-        pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+        pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           fixedDate.getYear, "1040000125").url
         pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
           fixedDate.getYear).url
 
-        pageDocument.getElementById("due-1-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(
+        pageDocument.getElementById("due-1-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           fixedDate.getYear, "1040000123").url
         findElementById("due-1-overdue") shouldBe None
         pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
@@ -1165,15 +1166,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       s"have payment data with button when charges overdue" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(200).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(200).url
       }
       s"have payment data with button when charges due in next 30 days" in new TestSetup(charges = whatYouOweDataWithWithPaymentsWithin30Days) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(100).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(100).url
       }
       s"have payment data with button when charges due in more than 30 days" in new TestSetup(charges = whatYouOweDataWithWithFuturePayments) {
         pageDocument.getElementById("payment-button").text shouldBe payNow
-        pageDocument.getElementById("payment-button").attr("href") shouldBe controllers.routes.PaymentController.paymentHandoff(400).url
+        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.paymentHandoff(400).url
       }
     }
 
@@ -1310,7 +1311,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
       }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
-        pageDocument.getElementById("due-0-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
+        pageDocument.getElementById("due-0-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url
       }
 

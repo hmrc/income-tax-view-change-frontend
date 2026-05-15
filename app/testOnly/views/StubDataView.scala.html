@@ -15,16 +15,17 @@
  *@
 
 @import testOnly.views.html.helpers.{SummaryErrorHelper, DropdownHelper, InputHelper, TextAreaHelper}
-@import views.html.components._
+@import common.views.html.components._
 @import testOnly.models.DataModel
 @import testOnly.forms.StubDataForm._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.helpers.injected.ErrorSummary
-@import views.html.layouts.unifiedLayout
+@import common.views.html.helpers.injected.ErrorSummary
+@import common.views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
 
 @this(unifiedLayout: unifiedLayout, h1: h1, form: FormWithCSRF, errorSummary: ErrorSummary, summaryErrorHelper: SummaryErrorHelper, dropdownHelper: DropdownHelper, inputHelper: InputHelper, textAreaHelper: TextAreaHelper, continueButton: ContinueButton)
 
-@(stubDataForm: Form[DataModel], postAction: Call, showSuccess: Boolean, errorResponse: Option[String])(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(stubDataForm: Form[DataModel], postAction: Call, showSuccess: Boolean, errorResponse: Option[String])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @unifiedLayout(pageTitle = "Stub ITVC Test Data") {
 

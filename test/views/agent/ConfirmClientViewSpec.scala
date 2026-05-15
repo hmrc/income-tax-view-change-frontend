@@ -31,11 +31,12 @@ class ConfirmClientViewSpec extends ViewSpec {
   val confirmClient: ConfirmClientUTRView = app.injector.instanceOf[ConfirmClientUTRView]
 
 
-  val confirmClientView = confirmClient(
+  def confirmClientView(isSupportingAgent: Boolean = false) = confirmClient(
     clientName = testClientName,
     clientUtr = testClientUTR,
     postAction = postAction,
-    backUrl = backUrl
+    backUrl = backUrl,
+    isSupportingAgent = isSupportingAgent
   )
 
   object confirmClientMessages {
@@ -46,52 +47,66 @@ class ConfirmClientViewSpec extends ViewSpec {
     val clientUTRHeading: String = "Client’s Unique Taxpayer Reference (UTR)"
     val changeClient: String = "Change client"
     val confirmContinue: String = "Confirm and continue"
+    
+    val supportingAgentText = "Supporting agents cannot access a client’s tax account information that shows:"
+    val supportingAgentBullets = "payments, credits and refunds returns next charges due penalties and appeals"
+    
   }
 
   "the Confirm Client page" should {
 
-    s"have the title ${confirmClientMessages.title}" in new Setup(confirmClientView) {
+    s"have the title ${confirmClientMessages.title}" in new Setup(confirmClientView()) {
       document.title shouldBe confirmClientMessages.title
     }
 
-    s"have the heading ${confirmClientMessages.heading}" in new Setup(confirmClientView) {
+    s"have the heading ${confirmClientMessages.heading}" in new Setup(confirmClientView()) {
       layoutContent hasPageHeading confirmClientMessages.heading
     }
 
-    s"have a back link" in new Setup(confirmClientView) {
+    s"have a back link" in new Setup(confirmClientView()) {
       document.hasFallbackBacklink
     }
 
-    s"have the sub heading ${confirmClientMessages.clientNameHeading}" in new Setup(confirmClientView) {
+    s"have the sub heading ${confirmClientMessages.clientNameHeading}" in new Setup(confirmClientView()) {
       layoutContent.selectHead("dl > div:nth-child(1) > dt:nth-child(1)").text shouldBe confirmClientMessages.clientNameHeading
     }
 
-    s"display the client name as ${testClientName.get}" in new Setup(confirmClientView) {
+    s"display the client name as ${testClientName.get}" in new Setup(confirmClientView()) {
       layoutContent.selectHead("dl > div:nth-child(1) > dd:nth-child(2)").text shouldBe testClientName.get
     }
 
-    s"have the sub heading ${confirmClientMessages.clientUTRHeading}" in new Setup(confirmClientView) {
+    s"have the sub heading ${confirmClientMessages.clientUTRHeading}" in new Setup(confirmClientView()) {
       layoutContent.selectHead("dl > div:nth-child(2) > dt:nth-child(1)").text shouldBe confirmClientMessages.clientUTRHeading
     }
 
-    s"display the client UTR as ${testClientUTR.get}" in new Setup(confirmClientView) {
+    s"display the client UTR as ${testClientUTR.get}" in new Setup(confirmClientView()) {
       layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe testClientUTR.get
     }
 
-    s"have a ${confirmClientMessages.changeClient} link" in new Setup(confirmClientView) {
+    s"have a ${confirmClientMessages.changeClient} link" in new Setup(confirmClientView()) {
       layoutContent.hasCorrectHref(controllers.agent.routes.EnterClientsUTRController.show().url)
     }
 
-    s"have a ${confirmClientMessages.confirmContinue} button" in new Setup(confirmClientView) {
+    s"have a ${confirmClientMessages.confirmContinue} button" in new Setup(confirmClientView()) {
       val button = layoutContent.selectById("continue-button")
       button.attr("type") shouldBe "submit"
       button.text shouldBe confirmClientMessages.confirmContinue
     }
-    s"have the black banner empty" in new Setup(confirmClientView) {
+    s"have the black banner empty" in new Setup(confirmClientView()) {
       document.select(".govuk-header__content")
         .select(".hmrc-header__service-name hmrc-header__service-name--linked").text shouldBe ("")
     }
+    
+    "show supporting agent text when isSupportingAgent is true" in new Setup(confirmClientView(true)) {
+      layoutContent.getElementById("supporting-agent-access-text").text() shouldBe confirmClientMessages.supportingAgentText
+    }
+    
+    "show supporting agent bullets when isSupportingAgent is true" in new Setup(confirmClientView(true)) {
+      layoutContent.getElementById("supporting-agent-access-bullets").text() shouldBe confirmClientMessages.supportingAgentBullets
+    }
+    
+     "not show supporting agent text when isSupportingAgent is false" in new Setup(confirmClientView()) {
+      Option(layoutContent.getElementById("supporting-agent-access-text")) shouldBe None
+    }
   }
-
-
 }

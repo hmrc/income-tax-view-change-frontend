@@ -16,9 +16,9 @@
 
 package models.incomeSourceDetails
 
-import auth.MtdItUser
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
+import common.auth.MtdItUser
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
 import play.api.libs.json.{Format, JsValue, Json, OFormat}
@@ -165,7 +165,6 @@ case class IncomeSourceDetailsModel(
       case SelfEmployment => getSoleTraderBusiness(id).flatMap(_.latencyDetails)
       case UkProperty => getUKProperty.flatMap(_.latencyDetails)
       case ForeignProperty => getForeignProperty.flatMap(_.latencyDetails)
-      case _ => None
     }
   }
 
@@ -190,44 +189,24 @@ case class IncomeSourceDetailsModel(
     val allAddresses = businesses.flatMap { thisBusiness =>
       thisBusiness.address.map { address =>
         (address.addressLine1, address.postCode, address.countryCode) match {
-          case (Some(addressLine1), postCode, Some("GB")) =>
+          case (Some(addressLine1), Some(postCode), Some("GB")) =>
             Some(ChooseSoleTraderAddressUserAnswer(
               Some(addressLine1),
               address.addressLine2,
               address.addressLine3,
               address.addressLine4,
-              postCode,
+              Some(postCode),
               Some("GB"),
               false
             ))
-          case (Some(addressLine1), postCode, countryCode) =>
+          case (Some(addressLine1), postCode, Some(countryCode)) if countryCode != "GB" =>
             Some(ChooseSoleTraderAddressUserAnswer(
               Some(addressLine1),
               address.addressLine2,
               address.addressLine3,
               address.addressLine4,
               postCode,
-              countryCode,
-              false
-            ))
-          case (Some(addressLine1), None, countryCode) =>
-            Some(ChooseSoleTraderAddressUserAnswer(
-              Some(addressLine1),
-              address.addressLine2,
-              address.addressLine3,
-              address.addressLine4,
-              None,
-              countryCode,
-              false
-            ))
-          case (Some(addressLine1), postCode, None) =>
-            Some(ChooseSoleTraderAddressUserAnswer(
-              Some(addressLine1),
-              address.addressLine2,
-              address.addressLine3,
-              address.addressLine4,
-              postCode,
-              None,
+              Some(countryCode),
               false
             ))
           case _ => None

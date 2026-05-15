@@ -16,7 +16,7 @@
 
 package testConstants.messages
 
-import helpers.ComponentSpecBase
+import common.helpers.ComponentSpecBase
 object ChargeSummaryMessages extends ComponentSpecBase {
 
   val paymentBreakdownHeading: String = messagesAPI("chargeSummary.paymentBreakdown.heading")

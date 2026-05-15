@@ -1,0 +1,41 @@
+#Payment
+GET         /payment                                                      financials.controllers.PaymentController.paymentHandoff(amountInPence: Long, origin: Option[String] ?= None)
+GET         /agents/payment                                               financials.controllers.PaymentController.agentPaymentHandoff(amountInPence: Long)
+
+#Payment Allocation
+GET         /payment-made-to-hmrc                                         financials.controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String, origin: Option[String] ?= None)
+GET         /agents/payment-made-to-hmrc                                  financials.controllers.PaymentAllocationsController.viewPaymentAllocationAgent(documentNumber: String)
+
+#WhatYouOwe
+GET         /what-you-owe                                                 financials.controllers.WhatYouOweController.show(origin: Option[String] ?= None)
+GET         /agents/what-your-client-owes                                 financials.controllers.WhatYouOweController.showAgent()
+
+#Charge summary
+GET         /tax-years/:taxYear/charge                                    financials.controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
+GET         /agents/tax-years/:taxYear/charge                             financials.controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)
+
+#Payment history
+GET         /payment-refund-history                                       financials.controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
+GET         /agents/payment-refund-history                                financials.controllers.PaymentHistoryController.showAgent()
+GET         /refund-status                                                financials.controllers.PaymentHistoryController.refundStatus()
+
+
+#custom not found
+GET         /custom-not-found                                             financials.controllers.errors.NotFoundDocumentIDLookupController.show()
+GET         /agents/custom-not-found                                      financials.controllers.agent.errors.AgentNotFoundDocumentIDLookupController.show()
+
+#Credits and Refunds
+GET          /money-in-your-account                                       financials.controllers.MoneyInYourAccountController.show(origin: Option[String] ?= None)
+GET          /agents/money-in-your-account                                financials.controllers.MoneyInYourAccountController.showAgent()
+GET          /start-refund                                                financials.controllers.MoneyInYourAccountController.startRefund()
+GET          /agents/start-refund                                         financials.controllers.MoneyInYourAccountController.startRefundAgents()
+
+#Credits
+GET         /credits-from-hmrc/:calendarYear                              financials.controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)
+GET         /agents/credits-from-hmrc/:calendarYear                       financials.controllers.CreditsSummaryController.showAgentCreditsSummary(calendarYear: Int)
+
+#Refund to taxpayer
+GET         /refund-to-taxpayer/:repaymentRequestNumber                    financials.controllers.RefundToTaxPayerController.show(repaymentRequestNumber: String, origin: Option[String] ?= None)
+GET         /agents/refund-to-taxpayer/:repaymentRequestNumber             financials.controllers.RefundToTaxPayerController.showAgent(repaymentRequestNumber: String)
+
+->          /                                                             claimToAdjustPoa.Routes

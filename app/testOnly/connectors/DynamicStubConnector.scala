@@ -151,6 +151,28 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     Future(())
   }
 
+  private def getOverwriteEstimatedRepaymentDateUrl(): String = {
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/repayments-data/estimatedRepaymentDate"
+  }
+
+  def overwriteEstimatedRepaymentDate()(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+
+    val url = getOverwriteEstimatedRepaymentDateUrl()
+
+    http.post(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case OK =>
+          (): Unit
+        case _ =>
+          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+      }
+    }
+    Future(())
+  }
+
   def getOverwriteCalculationListUrl(nino: String, taxYearRange: String, crystallisationStatus: String): String = {
     s"${appConfig.dynamicStubUrl}/income-tax-view-change/calculation-list/$nino/$taxYearRange/overwrite/$crystallisationStatus"
   }
@@ -170,6 +192,28 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
+  }
+
+  private def getOverwriteEffectiveDateOfPaymentUrl(): String = {
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/effectiveDateOfPayment"
+  }
+
+  def overwriteEffectiveDateOfPayment()(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+
+    val url = getOverwriteEffectiveDateOfPaymentUrl()
+
+    http.post(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case OK =>
+          (): Unit
+        case _ =>
+          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+      }
+    }
+    Future(())
   }
 
 }

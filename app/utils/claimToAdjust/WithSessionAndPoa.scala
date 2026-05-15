@@ -16,8 +16,8 @@
 
 package utils.claimToAdjust
 
-import auth.MtdItUser
 import cats.data.EitherT
+import common.auth.MtdItUser
 import enums.{BeforeSubmissionPage, InitialPage, JourneyState}
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel

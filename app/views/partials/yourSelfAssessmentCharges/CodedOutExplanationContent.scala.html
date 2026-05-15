@@ -17,16 +17,17 @@
 @import models.financialDetails.{BalancingCharge, ChargeItem, PoaOneDebit, PoaTwoDebit}
 @import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, InsetText}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukDetails, GovukInsetText}
-@import viewUtils.ExternalUrlHelper.saThroughYourTaxCodeUrl
-@import views.html.components._
+@import common.viewUtils.ExternalUrlHelper.saThroughYourTaxCodeUrl
+@import common.views.html.components._
 @import views.html.partials.yourSelfAssessmentCharges.{WhatIsABalancingPayment, WhatIsPaymentOnAccount}
+@import common.config.FrontendAppConfig
 
 
 @this(
         p: p,
         link: link,
         govukInsetText : GovukInsetText,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         bulletPointList: bulletPointList,
         whatIsPaymentOnAccount: WhatIsPaymentOnAccount,
         whatIsABalancingPayment: WhatIsABalancingPayment,

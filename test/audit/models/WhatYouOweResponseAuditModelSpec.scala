@@ -16,7 +16,7 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData._
+import common.auth.actions.AuthActionsTestData.*
 import models.core.AccountingPeriodModel
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.incomeSourceDetails.IncomeSourceDetailsModel

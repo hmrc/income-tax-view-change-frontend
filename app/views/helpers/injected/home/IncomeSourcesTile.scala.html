@@ -14,9 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
+@import common.views.html.components._
+@import views.html.components.home_tile
 @import java.time.LocalDate
 @import models.homePage.YourBusinessesTileViewModel
+@import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 @this(
         home_tile: home_tile,
@@ -28,9 +30,9 @@
 
 @manageBusinessesControllerURL = @{
     if(isAgent) {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+        manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
     } else {
-        controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+        manageBusinessRoutes.ManageYourBusinessesController.show().url
     }
 }
 

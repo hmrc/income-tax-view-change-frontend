@@ -16,7 +16,7 @@
 
 package services
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*
 import models.taxyearsummary.*

@@ -17,13 +17,14 @@
 @import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.components.h1WithCaption
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.components.h1WithCaption
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.NewHomeNavigation
 @import models.newHomePage.RecentActivityViewModel
 @import models.incomeSourceDetails.TaxYear
 @import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 
 @this(
         mainTemplate: unifiedLayout,
@@ -45,7 +46,7 @@
         isGovUkRebrandEnabled: Boolean,
         recentActivityViewModel: RecentActivityViewModel
 )(
-        implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
+        implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
 @import implicitDateFormatter.longDate
@@ -89,7 +90,7 @@
         </div>
     }
 
-    @newHomeNav(yourTasksUrl, recentActivityUrl, overviewUrl, helpUrl, "recent-activity", isRecentActivityEnabled = true)
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overviewUrl, helpUrl, "recent-activity", isRecentActivityEnabled = true, false)
 
     @h2(messages("new.home.navigation.tabs.recentActivity"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("recent-activities-heading"))
 
@@ -104,7 +105,7 @@
                 <h3 class="hmrc-card__heading" id="recent-activity-card-heading-@index">
                     <a id="recent-activity-card-heading-link-@index" href=@cardInfo.linkUrl>@getLinkText(cardInfo.linkContentText, cardInfo.cardTaxYear)<span class="hmrc-card__chevron" aria-hidden="true"></span></a>
                 </h3>
-                <div class="govuk-body" id="recent-activity-card-content-@index">@messages(cardInfo.contentText)</div>
+                <div class="govuk-body" id="recent-activity-card-content-@index">@getLinkText(cardInfo.contentText, cardAmount = cardInfo.cardAmount)</div>
                 <div class="govuk-hint" id="recent-activity-hint-@index">@messages(cardInfo.dateContentText, cardInfo.cardDate.toLongDate)</div>
         </div>
         </div>
@@ -112,11 +113,12 @@
     }
 }
 
-@getLinkText(linkContentText: String, taxYear: Option[TaxYear]) = @{
-    taxYear match {
-        case None => messages(linkContentText)
-        case Some(cardTaxYear) => {
+@getLinkText(linkContentText: String, taxYear: Option[TaxYear]= None, cardAmount: Option[BigDecimal] = None) = @{
+    (taxYear, cardAmount) match {
+        case (None, None) => messages(linkContentText)
+        case (Some(cardTaxYear), None) => {
             messages(linkContentText, cardTaxYear.startYear.toString, cardTaxYear.endYear.toString)
         }
+        case (None, Some(amount)) => messages(linkContentText, amount.abs.toCurrencyString)
     }
 }

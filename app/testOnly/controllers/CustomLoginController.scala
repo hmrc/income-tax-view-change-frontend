@@ -16,17 +16,17 @@
 
 package testOnly.controllers
 
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import controllers.BaseController
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
+import common.controllers.BaseController
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import services.{CalculationListService, DateServiceInterface, ITSAStatusService}
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
-import testOnly.models._
+import testOnly.models.*
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
 import testOnly.utils.UserRepository
 import testOnly.views.html.LoginPage
@@ -81,7 +81,15 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   s"report-quarterly/income-and-expenses/view?origin=$origin"
                 }
                 val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
-                
+
+                updateEffectiveDateOfPayment().failed.foreach(ex => {
+                  Logger("application").error("Failed to update effectiveDateOfPayment", ex)
+                })
+
+
+                updateEstimatedRepaymentDate().failed.foreach(ex => {
+                  Logger("application").error("Failed to update estimatedRepaymentDate", ex)
+                })
                 if (postedUser.isOptOutWhitelisted(testOnlyAppConfig.optOutUserPrefixes) && user.nino != "OP000009A") {
                   updateTestDataForOptOut(
                     nino = user.nino,
@@ -122,8 +130,6 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                 } else {
                   Future.successful(successRedirect(bearer, auth, homePage))
                 }
-
-              case code => Future.successful(InternalServerError("something went wrong.." + code))
             }
         )
       }
@@ -135,6 +141,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       .withSession(
         SessionBuilder.buildGGSession(AuthExchange(bearerToken = bearer,
           sessionAuthorityUri = auth)))
+  }
+
+  private def updateEstimatedRepaymentDate()(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteEstimatedRepaymentDate()
   }
 
   private def updateTestDataForTrigMigUser(mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier) = {
@@ -170,6 +180,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
       _ <- combinedItsaStatusFutureYear
     } yield ()
 
+  }
+
+  private def updateEffectiveDateOfPayment()(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteEffectiveDateOfPaymentUrl()
   }
 
 }

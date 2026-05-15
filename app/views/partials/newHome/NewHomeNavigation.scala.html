@@ -27,13 +27,15 @@
     overViewUrl: String,
     helpUrl: String,
     activeTab: String = "your-tasks",
-    isRecentActivityEnabled: Boolean
+    isRecentActivityEnabled: Boolean,
+    isSupportingAgent: Boolean
 )(implicit messages: Messages)
 
 
 @govukServiceNavigation(ServiceNavigation(
-    navigation = if(isRecentActivityEnabled) NavigationTabItems else NavigationTabItems.filterNot(_.content == Text(messages("new.home.navigation.tabs.recentActivity"))),
-    attributes = Map("style" -> "background-color: white;")
+    navigation = if(isRecentActivityEnabled && !isSupportingAgent) NavigationTabItems else NavigationTabItems.filterNot(_.content == Text(messages("new.home.navigation.tabs.recentActivity"))),
+    attributes = Map("style" -> "background-color: white;"),
+    navigationLabel = Some("Self Assessment Menu")
 ))
 
 

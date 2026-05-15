@@ -68,7 +68,7 @@ class CustomAuthConnector @Inject()(servicesConfig: ServicesConfig,
       }
   }
 
-  def loginRequest(payload: JsValue)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
+  private def loginRequest(payload: JsValue)(implicit hc: HeaderCarrier): Future[(AuthExchange, GovernmentGatewayToken)] = {
 
     def getHeader(headerName: String, headers: Map[String, Seq[String]]): Option[String] = {
       val headerNames = List(headerName, headerName.take(1).toUpperCase() + headerName.drop(1))

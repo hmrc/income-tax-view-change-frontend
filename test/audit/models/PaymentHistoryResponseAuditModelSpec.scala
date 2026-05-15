@@ -16,7 +16,7 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData._
+import common.auth.actions.AuthActionsTestData.*
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json._
@@ -36,20 +36,20 @@ class PaymentHistoryResponseAuditModelSpec extends TestSupport {
   private def paymentHistoryAuditFullTxm(userType: Option[AffinityGroup] = Some(Individual)) = PaymentHistoryResponseAuditModel(
     mtdItUser = defaultMTDITUser(userType, IncomeSourceDetailsModel(testNino, testMtditid, None, List.empty, List.empty, "1")),
   payments = Seq(
-      Payment(reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
+      Payment(taxYear = 9999, reference = Some("payment1"), amount = Some(100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
         dueDate = Some(LocalDate.parse("2018-02-01")), documentDate = LocalDate.parse("2018-02-05"), None,
         mainType = Some("Payment"), mainTransaction = Some("0060")),
-      Payment(reference = Some("cutover1"), amount = Some(-100.00), outstandingAmount = None,
+      Payment(taxYear = 2018, reference = Some("cutover1"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-02")),
         documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110")),
-      Payment(reference = Some("cutover2"), amount = Some(-100.00), outstandingAmount = None,
+      Payment(taxYear = 2018, reference = Some("cutover2"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), documentDescription = None, lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2018-02-03")),
         documentDate = LocalDate.parse("2018-02-05"), None, mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110")),
-      Payment(reference = Some("mfa1"), amount = Some(-100.00), outstandingAmount = None,
+      Payment(taxYear = 2018, reference = Some("mfa1"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
         dueDate = None, documentDate = LocalDate.parse("2018-02-04"), transactionId = None, documentDescription = None),
-      Payment(reference = Some("mfa2"), amount = Some(-100.00), outstandingAmount = None,
+      Payment(taxYear = 2018, reference = Some("mfa2"), amount = Some(-100.00), outstandingAmount = None,
         method = Some("method"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004"), lot = None, lotItem = None,
         dueDate = None, documentDate = LocalDate.parse("2018-02-05"), transactionId = None, documentDescription = None)
     )

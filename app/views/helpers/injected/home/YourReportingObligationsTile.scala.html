@@ -14,10 +14,12 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
+@import common.views.html.components._
+@import views.html.components.home_tile
 @import java.time.LocalDate
 @import models.homePage.YourReportingObligationsTileViewModel
 @import models.itsaStatus.ITSAStatus
+@import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
 
 @this(
     home_tile: home_tile,
@@ -29,7 +31,7 @@
 @(yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel, isAgent: Boolean)(implicit messages: Messages)
 
 @reportingObligationsURL = @{
-    controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
 }
 
 @reportingObligationsLink = @{
@@ -75,10 +77,8 @@
     }
 }
 
-@if(yourReportingObligationsTileViewModel.reportingObligationsEnabled) {
-    @home_tile("reporting-obligations-tile", messages("home.reportingObligations.heading")) {
-        @p(id = Some("current-itsa-status")) {@ITSAText}
-        @p(id = Some("reporting-obligations-bullet-points")) {@bulletPoints}
-        @p(classes = "govuk-!-margin-bottom-4") {@reportingObligationsLink}
-    }
+@home_tile("reporting-obligations-tile", messages("home.reportingObligations.heading")) {
+    @p(id = Some("current-itsa-status")) {@ITSAText}
+    @p(id = Some("reporting-obligations-bullet-points")) {@bulletPoints}
+    @p(classes = "govuk-!-margin-bottom-4") {@reportingObligationsLink}
 }

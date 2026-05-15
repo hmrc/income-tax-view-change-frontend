@@ -16,10 +16,9 @@
 
 package controllers
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
 import forms.utils.SessionKeys
 import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 import models.finalTaxCalculation.TaxReturnRequestModel
@@ -27,8 +26,8 @@ import models.liabilitycalculation.viewmodels.CalculationSummary
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services.{CalculationService, IncomeSourceDetailsService}
+import play.api.mvc.*
+import services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.FinalTaxCalculationView
@@ -41,7 +40,6 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
                                               calcService: CalculationService,
                                               itvcErrorHandler: ItvcErrorHandler,
                                               val itvcErrorHandlerAgent: AgentItvcErrorHandler,
-                                              val incomeSourceDetailsService: IncomeSourceDetailsService
                                              )(implicit val appConfig: FrontendAppConfig,
                                                val mcc: MessagesControllerComponents,
                                                ec: ExecutionContext) extends FrontendController(mcc)

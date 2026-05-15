@@ -78,6 +78,13 @@ agent.confirmClient.clientUtr                                   = Client’s Uni
 agent.confirmClient.changeClient                                = Change client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
+agent.confirmClient.supportingAgentAccess.p1                    = Supporting agents cannot access a client’s tax account information that shows:
+agent.confirmClient.supportingAgentAccess.bullet1               = payments, credits and refunds
+agent.confirmClient.supportingAgentAccess.bullet2               = returns
+agent.confirmClient.supportingAgentAccess.bullet3               = next charges due
+agent.confirmClient.supportingAgentAccess.bullet4               = penalties and appeals
+agent.confirmClient.supportingAgentAccess.link                  = Read more about the difference between main and supporting agents on GOV.UK
+
 ## Unauthorised Agent Page ##
 agent-unauthorised.heading                                      = You are not authorised to access this page
 agent-unauthorised.note                                         = You are a supporting agent for this client. Only their main agent can access records that show:
@@ -147,7 +154,6 @@ home.payments.daily-interest-charges                            = Daily interest
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
 home.updates.heading                                            = Your submission deadlines
-home.updates.view                                               = View update deadlines
 home.updates.view.reportingFrequency                            = View your deadlines
 home.paymentHistory.heading                                     = Payment history
 home.paymentHistory.view                                        = Payment history
@@ -194,7 +200,6 @@ home.updates.overdue.updates                                    = {0} Overdue up
 home.updates.R17.heading                                        = Your submission deadlines
 home.updates.R17.nextUpdateDue                                  = Next update due: {0}
 home.updates.R17.nextTaxReturnDue                               = Next tax return due: {0}
-home.updates.R17.linkText                                       = View your deadlines
 
 home.agent.supporting.paymentAndReturns                         = Payments and returns
 home.agent.supporting.cannotAccess                              = Supporting agents cannot access records that show:
@@ -229,13 +234,13 @@ new.home.yourTasks.upcoming-annual-updates-label                 = Due {0}
 new.home.yourTasks.upcoming-quarterly-updates-body               = You have an upcoming quarterly submission deadline.
 new.home.yourTasks.upcoming-quarterly-updates-label              = Due {0}
 new.home.yourTasks.overdue-annual-submission-single-body            = You have an overdue annual submission.
-new.home.yourTasks.overdue-annual-submission-single-label           = Was due {0}
+new.home.yourTasks.overdue-annual-submission-single-label           = Due {0}
 new.home.yourTasks.overdue-annual-submission-multiple-body          = You have {0} overdue annual submissions.
-new.home.yourTasks.overdue-annual-submission-multiple-label         = Oldest submission due {0}
+new.home.yourTasks.overdue-annual-submission-multiple-label         = Oldest due {0}
 new.home.yourTasks.overdue-quarterly-submission-single-body            = You have an overdue quarterly submission.
-new.home.yourTasks.overdue-quarterly-submission-single-label           = Was due {0}
+new.home.yourTasks.overdue-quarterly-submission-single-label           = Due {0}
 new.home.yourTasks.overdue-quarterly-submission-multiple-body          = You have {0} overdue quarterly submissions.
-new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Oldest submission due {0}
+new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Oldest due {0}
 
 ### Overview Tab
 new.home.navigation.tabs.overview                               = Overview
@@ -296,6 +301,14 @@ new.home.recentActivity.submissions.quarterly.link.text         = View your tax 
 new.home.recentActivity.submissions.quarterly.content.text      = You submitted a quarterly update.
 new.home.recentActivity.submissions.quarterly.date.content.text = Sent {0}
 
+new.home.recentActivity.payments.link.text                      = View payment history
+new.home.recentActivity.payments.content.text                   = You made a payment of {0}.
+new.home.recentActivity.payments.date.content.text              = Paid {0}
+
+new.home.recentActivity.recentRefund.link.text                 = View refund history
+new.home.recentActivity.recentRefund.content.text              = HMRC has paid your {0} refund.
+new.home.recentActivity.recentRefund.date.content.text         = Paid {0}
+
 ## Custom Error Page ##
 error.custom.heading                                            = There is a problem
 error.custom.message                                            = The page you’re trying to view has changed
@@ -321,6 +334,13 @@ taxYears.oldSa.agent.content.1								   = To view a client’s summary from bef
 taxYears.oldSa.agent.content.2								   = Self Assessment for Agents account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your agent services account.
 taxYears.r18.amendment.text                                    = You can view the tax year summary pages to also see your options for amending the filed return for that year.
+
+## Tax Years Page - Error ##
+taxYears.error.subheading                                      = Your tax return information cannot currently be displayed here
+taxYears.error.preLinkText                                     = To see information from before the {0} to {1} tax year, you need to visit your previous
+taxYears.error.linkText                                        = Self Assessment online account
+taxYears.error.agentPreLinkText                                = To see information from before the {0} to {1} tax year, you need to log in to your
+taxYears.error.agentPostLinkText                               = This will be a different Government Gateway ID and password to your Agent Services account.
 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                           = Tax year summary
@@ -1491,6 +1511,7 @@ submissionsTab.due                                                   = Due {0}
 submissionsTab.submission                                            = Submission
 submissionsTab.incomeSource                                          = Income source
 submissionsTab.dateSubmitted                                         = Date submitted
+submissionsTab.notReceived                                           = Not received
 submissionsTab.dateToDate                                            = {0} to {1}
 submissionsTab.updatePeriodDateToDate                                = The update period from {0} to {1}
 submissionsTab.obligationType.property                               = Property income
@@ -1737,7 +1758,8 @@ add-business-address.edit.heading           = Enter your business address
 ## Add international business address page
 add-international-business-address.heading = Enter your international business address
 add-international-business-address.postcode = Postcode or zipcode
-add-international-business-address.countryPicker.heading = Select the country or territory for your business address
+add-international-business-address.countryPicker.heading = Enter the country or territory for your business address
+add-international-business-address.countryPicker.hint = Enter country or territory
 
 #Following empty fields are not in Use
 #These fields are kept to match with Messages.cy
@@ -3651,22 +3673,22 @@ newHome.yourTasks.selfAssessment                 = Check what you owe and make a
 newHome.yourTasks.no-tasks.selfAssessment        = No tasks
 newHome.yourTasks.selfAssessment.upcomingCharge = You have an upcoming payment.
 newHome.yourTasks.selfAssessment.upcomingCharge.label = Due {0}
-newHome.yourTasks.selfAssessment.overdueCharge.single = You have an overdue amount of {0}
-newHome.yourTasks.selfAssessment.overdueCharge.single.label = Was due {0}
-newHome.yourTasks.selfAssessment.overdueCharge.multiple = You have an overdue amount of {0}
-newHome.yourTasks.selfAssessment.overdueCharge.multiple.label = Oldest charge due {0}
+newHome.yourTasks.selfAssessment.overdueCharge.single = You have an overdue amount to pay.
+newHome.yourTasks.selfAssessment.overdueCharge.single.label = Due {0}
+newHome.yourTasks.selfAssessment.overdueCharge.multiple = You have more than one overdue amount to pay.
+newHome.yourTasks.selfAssessment.overdueCharge.multiple.label = Oldest due {0}
 newHome.yourTasks.selfAssessment.lpp.single = You have a late payment penalty.
 newHome.yourTasks.selfAssessment.lpp.single.link = View your late payment penalty
-newHome.yourTasks.selfAssessment.lpp.single.label = Was due {0}
+newHome.yourTasks.selfAssessment.lpp.single.label = Due {0}
 newHome.yourTasks.selfAssessment.lpp.multiple = You have {0} late payment penalties.
 newHome.yourTasks.selfAssessment.lpp.multiple.link = View your late payment penalties
-newHome.yourTasks.selfAssessment.lpp.multiple.label = Oldest penalty due {0}
+newHome.yourTasks.selfAssessment.lpp.multiple.label = Oldest due {0}
 newHome.yourTasks.selfAssessment.lsp.single = You have a late submission penalty.
 newHome.yourTasks.selfAssessment.lsp.single.link = View your late submission penalty
-newHome.yourTasks.selfAssessment.lsp.single.label = Was due {0}
+newHome.yourTasks.selfAssessment.lsp.single.label = Due {0}
 newHome.yourTasks.selfAssessment.lsp.multiple = You have {0} late submission penalties.
 newHome.yourTasks.selfAssessment.lsp.multiple.link = View your late submission penalties
-newHome.yourTasks.selfAssessment.lsp.multiple.label = Oldest penalty due {0}
+newHome.yourTasks.selfAssessment.lsp.multiple.label = Oldest due {0}
 newHome.yourTasks.selfAssessment.no-tasks = You have no tasks to complete at the moment.
 newHome.yourTasks.selfAssessment.supporting.no-tasks = You have no tasks to complete at the moment. Note that your customer may have tasks that you are unable to see as a support agent.
 newHome.yourTasks.selfAssessment.money-in-account.h1 = Check for money in your account and claim a refund

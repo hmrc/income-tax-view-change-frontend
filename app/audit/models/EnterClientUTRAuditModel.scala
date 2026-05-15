@@ -16,6 +16,7 @@
 
 package audit.models
 
+import common.models.audit.ExtendedAuditModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class EnterClientUTRAuditModel(isSuccessful: Boolean,

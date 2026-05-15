@@ -1,0 +1,430 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package businessDetails.controllers.manageBusinesses.add
+
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
+import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import mocks.services.MockSessionService
+import models.UIJourneySessionData
+import models.admin.OverseasBusinessAddress
+import models.core.{AddressModel, CheckMode, Mode, NormalMode}
+import models.incomeSourceDetails.AddIncomeSourceData
+import play.api
+import play.api.Application
+import play.api.http.Status
+import play.api.mvc.{Action, AnyContent, Result}
+import play.api.test.Helpers.*
+import services.{DateServiceInterface, SessionService}
+import testConstants.BusinessDetailsTestConstants.business1
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+
+import scala.concurrent.Future
+
+
+class AddBusinessTradeControllerSpec extends MockAuthActions with MockSessionService {
+
+  val validBusinessTrade: String = "Test Business Trade"
+  val validBusinessName: String = "Test Business Name"
+  val journeyType: JourneyType = IncomeSourceJourneyType(Add, SelfEmployment)
+
+  val baseAddress = AddressModel(
+    addressLine1 = None,
+    addressLine2 = None,
+    addressLine3 = None,
+    addressLine4 = None,
+    postCode = None,
+    countryCode = None
+  )
+
+  val minimumInternationalAddress = baseAddress.copy(
+    addressLine1 = Some("Test Address Line 1"),
+    countryCode = Some("FR")
+  )
+
+  val ukAddressNoAddressLine1 = baseAddress.copy(
+    postCode = Some("AA1 1AA"),
+    countryCode = Some("GB")
+  )
+
+  val ukAddressNoPostcode = baseAddress.copy(
+    addressLine1 = Some("Test Address Line 1"),
+    countryCode = Some("GB")
+  )
+
+  val internationalAddressNoAddressLine1 = baseAddress.copy(
+    countryCode = Some("FR")
+  )
+
+  override lazy val app: Application =
+    applicationBuilderWithAuthBindings
+      .overrides(
+        api.inject.bind[SessionService].toInstance(mockSessionService),
+        api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      ).build()
+
+  lazy val testAddBusinessTradeController: AddBusinessTradeController = app.injector.instanceOf[AddBusinessTradeController]
+
+  def getAction(mtdRole: MTDUserRole, mode: Mode, isPost: Boolean = false): Action[AnyContent] = mtdRole match {
+    case MTDIndividual if isPost => testAddBusinessTradeController.submit(mode, false)
+    case MTDIndividual => testAddBusinessTradeController.show(mode, false)
+    case _ if isPost => testAddBusinessTradeController.submitAgent(mode, false)
+    case _ => testAddBusinessTradeController.showAgent(mode, false)
+  }
+
+  Seq(CheckMode, NormalMode).foreach { mode =>
+    mtdAllRoles.foreach { mtdRole =>
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
+        val action = getAction(mtdRole, mode)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+        s"the user is authenticated as a $mtdRole" should {
+          "render the AddBusinessTrade page" when {
+            "using the manage businesses journey" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName)))))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe OK
+            }
+          }
+
+          s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
+            "user has already completed the journey" in {
+              mockNoIncomeSources()
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment)))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              val redirectUrl = if (mtdRole != MTDIndividual) {
+                addBusinessRoutes.ReportingMethodSetBackErrorController.showAgent(SelfEmployment).url
+              } else {
+                addBusinessRoutes.ReportingMethodSetBackErrorController.show(SelfEmployment).url
+              }
+              redirectLocation(result) shouldBe Some(redirectUrl)
+            }
+
+            "user has already added their income source" in {
+              mockNoIncomeSources()
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+              setupMockGetMongo(Right(Some(addedIncomeSourceUIJourneySessionData(SelfEmployment))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              val redirectUrl = if (mtdRole != MTDIndividual) {
+                addBusinessRoutes.IncomeSourceAddedBackErrorController.showAgent(SelfEmployment).url
+              } else {
+                addBusinessRoutes.IncomeSourceAddedBackErrorController.show(SelfEmployment).url
+              }
+              redirectLocation(result) shouldBe Some(redirectUrl)
+            }
+          }
+        }
+
+        if (mtdRole == MTDIndividual) {
+          testMTDIndividualAuthFailures(action)
+        } else {
+          testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
+        }
+      }
+
+      s"submit${if (mtdRole != MTDIndividual) "Agent" else ""}(mode = $mode)" when {
+        val action = getAction(mtdRole, mode, true)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        s"the user is authenticated as a $mtdRole" should {
+          if (mode == CheckMode) {
+            "redirect to the IncomeSourceCheckDetailsController page" when {
+              "the business trade entered is valid" in {
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
+                setupMockSetMongoData(true)
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> validBusinessTrade))
+
+                status(result) shouldBe SEE_OTHER
+                val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                  status(result) shouldBe SEE_OTHER
+                  val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                    addBusinessRoutes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
+                  } else {
+                    addBusinessRoutes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
+                  }
+                  redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                }
+              }
+            }} else {
+              "redirect to the add business address page" when {
+                "the individual is authenticated and the business trade entered is valid" in {
+                  setupMockSuccess(mtdRole)
+                  mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                  setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                  setupMockCreateSession(true)
+                  setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                    .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
+                  setupMockSetMongoData(true)
+
+                  val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                    BusinessTradeForm.businessTrade -> validBusinessTrade))
+                  status(result) shouldBe SEE_OTHER
+                  val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                    addBusinessRoutes.AddBusinessAddressController.show(mode).url
+                  } else {
+                    addBusinessRoutes.AddBusinessAddressController.showAgent(mode).url
+                  }
+                  redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                }
+              }
+
+              "redirect to the choose sole trader business address page" when {
+                "the OverseasBusinessAddress FS is on" when {
+                  "the individual is authenticated and the business trade entered is valid with a valid address on file - UK" in {
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      addBusinessRoutes.ChooseSoleTraderAddressController.show(false).url
+                    } else {
+                      addBusinessRoutes.ChooseSoleTraderAddressController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+
+                  "the individual is authenticated and the business trade entered is valid with a valid address on file - International" in {
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(minimumInternationalAddress)))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(minimumInternationalAddress)))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade)))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      addBusinessRoutes.ChooseSoleTraderAddressController.show(false).url
+                    } else {
+                      addBusinessRoutes.ChooseSoleTraderAddressController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+                }
+              }
+
+              "redirect to the is the new address in the UK page" when {
+                "the OverseasBusinessAddress FS is on" when {
+                  "the individual is authenticated and the business trade entered is valid and theres no addresses on file" in {
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = None))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      addBusinessRoutes.IsTheNewAddressInTheUKController.show(false).url
+                    } else {
+                      addBusinessRoutes.IsTheNewAddressInTheUKController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+                  "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no address line 1 UK" in {
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoAddressLine1)))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoAddressLine1)))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      addBusinessRoutes.IsTheNewAddressInTheUKController.show(false).url
+                    } else {
+                      addBusinessRoutes.IsTheNewAddressInTheUKController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+                  "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no postcode UK" in {
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoPostcode)))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(ukAddressNoPostcode)))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      addBusinessRoutes.IsTheNewAddressInTheUKController.show(false).url
+                    } else {
+                      addBusinessRoutes.IsTheNewAddressInTheUKController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+                  "the individual is autheticated and the business trade entered is valid and there's invalid addresses on file - no address line 1 international" in {
+                    setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
+                    mockItsaStatusRetrievalAction(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(internationalAddressNoAddressLine1)))))
+                    setupMockGetIncomeSourceDetails(businessesAndPropertyIncome.copy(businesses = List(business1.copy(address = Some(internationalAddressNoAddressLine1)))))
+                    setupMockCreateSession(true)
+                    setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                      .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName), businessTrade = Some(validBusinessTrade), address = None))))))
+                    setupMockSetMongoData(true)
+
+                    val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                      BusinessTradeForm.businessTrade -> validBusinessTrade))
+                    status(result) shouldBe SEE_OTHER
+                    val expectedRedirectUrl = if (mtdRole == MTDIndividual) {
+                      addBusinessRoutes.IsTheNewAddressInTheUKController.show(false).url
+                    } else {
+                      addBusinessRoutes.IsTheNewAddressInTheUKController.show(true).url
+                    }
+                    redirectLocation(result) shouldBe Some(expectedRedirectUrl)
+                  }
+                }
+              }
+            }
+
+            "return to add business trade page" when {
+              "trade name is same as business name" in {
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                val businessNameAsTrade: String = "Test Name"
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(businessNameAsTrade),
+                    businessTrade = Some(businessNameAsTrade)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> businessNameAsTrade))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Trade and business name cannot be the same")
+              }
+
+              "trade name contains invalid characters" in {
+                val invalidBusinessTradeChar: String = "££"
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                    businessTrade = Some(invalidBusinessTradeChar)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> invalidBusinessTradeChar))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("The business trade can only include upper or lower case letters, full stops, commas, digits, &amp;, ’, \\, /, -.")
+              }
+
+              "trade name is empty" in {
+                val invalidBusinessTradeEmpty: String = ""
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                    businessTrade = Some(invalidBusinessTradeEmpty)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> invalidBusinessTradeEmpty))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Enter the trade of your business")
+              }
+
+              "trade name is too short" in {
+                val invalidBusinessTradeShort: String = "A"
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                    businessTrade = Some(invalidBusinessTradeShort)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> invalidBusinessTradeShort))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Trade must be 2 characters or more")
+              }
+
+              "trade name is too long" in {
+                val invalidBusinessTradeLong: String = "This trade name is far too long to be accepted"
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
+                setupMockCreateSession(true)
+                setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, SelfEmployment))
+                  .copy(addIncomeSourceData = Some(AddIncomeSourceData(businessName = Some(validBusinessName),
+                    businessTrade = Some(invalidBusinessTradeLong)))))))
+
+                val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(
+                  BusinessTradeForm.businessTrade -> invalidBusinessTradeLong))
+
+                status(result) shouldBe BAD_REQUEST
+                contentAsString(result) should include("Trade must be 35 characters or fewer")
+              }
+            }
+          }
+
+          if (mtdRole == MTDIndividual) {
+            testMTDIndividualAuthFailures(action)
+          } else {
+            testMTDAgentAuthFailures(action, mtdRole == MTDSupportingAgent)
+          }
+        }
+      }
+    }
+  }

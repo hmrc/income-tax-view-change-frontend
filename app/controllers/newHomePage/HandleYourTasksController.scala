@@ -16,28 +16,30 @@
 
 package controllers.newHomePage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import controllers.agent.sessionUtils.SessionKeys
-import controllers.newHomePage.routes
+import audit.models.HomeAudit
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
+import common.utils.sessionUtils.SessionKeys
 import models.admin.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.newHomePage.SubmissionDeadlinesViewModel
-import models.obligations.{ObligationsModel, SingleObligationModel}
+import obligations.models.{ObligationsModel, ObligationsResponseModel, SingleObligationModel}
+import obligations.services.NextUpdatesService
+import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.*
 import services.newHomePage.HandleYourTasksService
-import services.reportingObligations.optOut.OptOutService
-import services.reportingObligations.signUp.SignUpService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.HomePageUtils
 import views.html.newHomePage.NewHomeYourTasksView
 
 import java.time.LocalDate
@@ -55,10 +57,13 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                           val dateService: DateServiceInterface,
                                           val financialDetailsService: FinancialDetailsService,
                                           val nextUpdatesService: NextUpdatesService,
-                                          val handleYourTasksService: HandleYourTasksService)
+                                          val handleYourTasksService: HandleYourTasksService,
+                                          val auditingService: AuditingService)
                                          (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
-                                          val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                          val appConfig: FrontendAppConfig,
+                                          val itvcErrorHandler: ItvcErrorHandler,
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with HomePageUtils {
 
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
@@ -83,12 +88,27 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     for {
       credits: CreditsModel <- creditService.getAllCredits
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
+
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
-
       chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
-      updatesAndDeadlinesViewModel <- getNextUpdates()
+      
+      outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
+      paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
+      overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
+      paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
+
+      obligationsResponseModel = nextUpdatesService.getOpenObligations()
+      dueDates <- nextUpdatesService.getDueDates(Some(obligationsResponseModel)).flatMap {
+        case Right(dueDates) => Future.successful(dueDates)
+        case Left(ex) => 
+          Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+          Future.failed(ex)
+      }
+
+      updatesAndDeadlinesViewModel <- getNextUpdates(obligationsResponseModel)
     } yield {
 
       val mandation = currentItsaStatus == ITSAStatus.Mandated
@@ -99,8 +119,31 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
         if (mandation) SessionKeys.mandationStatus -> "on"
         else SessionKeys.mandationStatus -> "off"
 
-      val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel,
-        isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus, penaltiesAndAppealsEnabled)
+      val yourTaskCardViewModel = handleYourTasksService.getYourTasksCards(updatesAndDeadlinesViewModel, isAgent, chargeItemList, credits, creditsRefundsRepayEnabled, currentItsaStatus, penaltiesAndAppealsEnabled)
+      
+      val overdueUpdatesCount = dueDates.count(_.isBefore(dateService.getCurrentDate))
+      val nextUpdateDueDate = dueDates.sortWith(_ isBefore _).headOption
+      val userIsCYPlusOne = currentItsaStatus == ITSAStatus.NoStatus
+
+      if(user.isSupportingAgent) {
+        auditingService.extendedAudit(
+          HomeAudit.applySupportingAgent(
+            mtdItUser = user,
+            overdueUpdatesCount = overdueUpdatesCount,
+            nextUpdateDueDate = nextUpdateDueDate,
+            userIsCYPlusOne = userIsCYPlusOne
+          )
+        )
+      } else {
+        auditingService.extendedAudit(HomeAudit(
+          mtdItUser = user,
+          nextPaymentDueDate = paymentsDueMerged,
+          overduePaymentsCount = overDuePaymentsCount,
+          overdueUpdatesCount = overdueUpdatesCount,
+          nextUpdateDueDate = nextUpdateDueDate,
+          userIsCYPlusOne = userIsCYPlusOne
+        ))
+      }
 
       Ok(handleYourTasksView(origin, isAgent,
         yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent),
@@ -125,15 +168,15 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
   }
 
-  private def getNextUpdates()(implicit user: MtdItUser[_]): Future[SubmissionDeadlinesViewModel] = {
+  private def getNextUpdates(obligationsResponseModel: Future[ObligationsResponseModel])(implicit user: MtdItUser[_]): Future[SubmissionDeadlinesViewModel] = {
 
     val submissionDeadlinesViewModel = {
       for {
-        (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- nextUpdatesService.getNextDueDates()
-        openObligations <- getOpenObligations()
+        (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- nextUpdatesService.getNextDueDates(Some(obligationsResponseModel))
+        nextUpdatesOpenObligations <- getOpenObligations(obligationsResponseModel)
       } yield {
         SubmissionDeadlinesViewModel(
-          openObligations = openObligations,
+          openObligations = nextUpdatesOpenObligations,
           currentDate = dateService.getCurrentDate,
           nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
           nextTaxReturnDueDate = nextTaxReturnDueDate
@@ -147,9 +190,8 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     submissionDeadlinesViewModel
   }
 
-  private def getOpenObligations()
-                                (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Seq[SingleObligationModel]] = {
-    nextUpdatesService.getOpenObligations().flatMap {
+  private def getOpenObligations(obligationsResponseModel: Future[ObligationsResponseModel]): Future[Seq[SingleObligationModel]] = {
+    obligationsResponseModel.flatMap {
       case openObligations: ObligationsModel if openObligations.obligations.forall(_.obligations.nonEmpty) => Future.successful(openObligations.obligations.flatMap(_.obligations))
       case _ =>
         Logger("application").error("Unexpected Exception getting open obligations")
@@ -171,12 +213,4 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
           .getOrElse(ITSAStatus.NoStatus)
       }
   }
-
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.newHomePage.routes.HandleYourTasksController.showAgent().url else controllers.newHomePage.routes.HandleYourTasksController.show().url
-
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = routes.RecentActivityController.show(isAgent, origin).url
-
-  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
-
-  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
 }

@@ -17,22 +17,23 @@
 package controllers
 
 import audit.models.TaxDueResponseAuditModel
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.AuditStub.verifyAuditEvent
-import helpers.servicemocks._
+import helpers.servicemocks.*
+import common.helpers.servicemocks.AuditStub.verifyAuditEvent
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
+import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import play.api.http.Status.*
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import testConstants.NewCalcDataIntegrationTestConstants._
-import testConstants.messages.TaxDueSummaryMessages._
+import testConstants.NewCalcDataIntegrationTestConstants.*
+import testConstants.messages.TaxDueSummaryMessages.*
 
+import java.time.LocalDate
 
-class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwitching {
+class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
   def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)
 
@@ -40,6 +41,28 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper with FeatureSwi
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/$testYear/tax-calculation"
   }
+
+  val taxYear: Int = 2022
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
+    GroupedObligationsModel("123", List(SingleObligationModel(
+      LocalDate.of(taxYear, 1, 6),
+      LocalDate.of(taxYear, 4, 5),
+      LocalDate.of(taxYear, 5, 5),
+      "Quarterly",
+      None,
+      "#001",
+      StatusFulfilled),
+      SingleObligationModel(
+        LocalDate.of(taxYear, 1, 6),
+        LocalDate.of(taxYear, 4, 5),
+        LocalDate.of(taxYear, 5, 5),
+        "Quarterly",
+        None,
+        "#002",
+        StatusFulfilled
+      )
+    ))
+  ))
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val path = getPath(mtdUserRole)

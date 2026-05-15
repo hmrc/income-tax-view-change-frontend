@@ -157,3 +157,11 @@ case object OptOutTaxYearsPage extends AuditType {
 case object ReportingObligationsPage extends AuditType {
   val name = "ReportingObligationsPage"
 }
+
+case object TriggeredMigrationStart extends AuditType {
+  val name = "TriggeredMigrationStart"
+}
+
+case object TriggeredMigrationComplete extends AuditType {
+  val name = "TriggeredMigrationComplete"
+}

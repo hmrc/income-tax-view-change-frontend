@@ -24,17 +24,19 @@
 @import models.financialDetails._
 @import models.repaymentHistory.PaymentHistoryEntry
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
 @import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 @import _root_.implicits.HtmlFormatter.NbspString
-@import viewUtils.ExternalUrlHelper
+@import common.viewUtils.ExternalUrlHelper
 @import views.html.partials.paymentHistory.PaymentDescription
+@import financials.controllers.routes as financialsRoutes
+@import common.config.FrontendAppConfig
 
 @this(
     paymentDescription: PaymentDescription,
     mainTemplate: unifiedLayout,
-    appConfig: config.FrontendAppConfig,
+    appConfig: FrontendAppConfig,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     h1: h1,
     p: p,
@@ -141,7 +143,7 @@ btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavi
     @if(!isAgent && paymentHistoryAndRefundsEnabled) {
         <div id="refundstatus" class="govuk-inset-text">
             @getMessage("check-refund-1")
-            @link(link =  s"${controllers.routes.PaymentHistoryController.refundStatus().url}",
+            @link(link =  s"${financialsRoutes.PaymentHistoryController.refundStatus().url}",
             messageKey = "paymentHistory.check-refund-2", classes = "govuk-link",
             role=Some("button")
             )

@@ -16,11 +16,11 @@
 
 package controllers
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import models.admin.{ITSASubmissionIntegration, PostFinalisationAmendmentsR18}
+import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -32,9 +32,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
-                                   val authActions: AuthActions,
-                                   itvcErrorHandler: ItvcErrorHandler,
-                                   agentItvcErrorHandler: AgentItvcErrorHandler
+                                   val authActions: AuthActions
                                   )
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
@@ -66,8 +64,19 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
         )))
       case _ =>
         Logger("application").error(s"[TaxYearsController][handleRequest] failed to render taxYearsView for taxYears due to no orderedTaxYearsByAccountingPeriods returned")
-        val errorHandler = if (isAgent) agentItvcErrorHandler.showBadRequestError() else itvcErrorHandler.showBadRequestError()
-        Future.successful(errorHandler)
+        Future(BadRequest(taxYearsView(
+          taxYears = List(),
+          backUrl = backUrl,
+          isAgent = isAgent,
+          utr = user.saUtr,
+          itsaSubmissionIntegrationEnabled = isEnabled(ITSASubmissionIntegration),
+          isPostFinalisationAmendmentR18Enabled = isEnabled(PostFinalisationAmendmentsR18),
+          earliestSubmissionTaxYear = user.incomeSources.earliestSubmissionTaxYear.getOrElse(2023),
+          btaNavPartial = user.btaNavPartial,
+          serviceNavigationPartial = user.serviceNavigationPartial,
+          origin = origin,
+          errorTaxYear = Some(TaxYear.getCYPlusOneTaxYear),
+        )))
     }
   }
 

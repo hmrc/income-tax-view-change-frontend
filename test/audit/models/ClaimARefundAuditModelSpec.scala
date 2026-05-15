@@ -16,8 +16,8 @@
 
 package audit.models
 
-import auth.MtdItUser
-import forms.IncomeSourcesFormsSpec.commonAuditDetails
+import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
+import common.auth.MtdItUser
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import play.api.libs.json.Json
 import testConstants.ANewCreditAndRefundModel

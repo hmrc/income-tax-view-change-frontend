@@ -16,11 +16,11 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector,ITSAStatusConnector}
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import mocks.services.MockDateService
 import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
@@ -39,7 +39,6 @@ class NotMigratedUserControllerSpec extends MockAuthActions
     .overrides(
       api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
     ).build()
 

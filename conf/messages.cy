@@ -79,6 +79,13 @@ agent.confirmClient.clientUtr                                   = Cyfeirnod Unig
 agent.confirmClient.changeClient                                = Newid cleient
 agent.confirmClient.confirmContinue                             = Cadarnhau ac yn eich blaen
 
+agent.confirmClient.supportingAgentAccess.p1                    = Ni all asiantau ategol gael mynediad at wybodaeth yng nghyfrif treth cwsmer sy’n dangos y canlynol:
+agent.confirmClient.supportingAgentAccess.bullet1               = taliadau, credydau ac ad-daliadau
+agent.confirmClient.supportingAgentAccess.bullet2               = Ffurflenni Treth
+agent.confirmClient.supportingAgentAccess.bullet3               = y ffioedd sy’n ddyledus nesaf
+agent.confirmClient.supportingAgentAccess.bullet4               = cosbau ac apeliadau
+agent.confirmClient.supportingAgentAccess.link                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK
+
 ## Unauthorised Agent Page ##
 agent-unauthorised.heading                                      = Nid ydych wedi’ch awdurdodi i gael mynediad at y dudalen hon
 agent-unauthorised.note                                         = Rydych yn asiant ategol ar gyfer y cleient hwn. Y prif asiant yn unig sy’n gallu cael mynediad at gofnodion sy’n dangos:
@@ -151,7 +158,6 @@ home.overdue.date.update.count                                  = {0} Ddiweddari
 home.overdue.date.payment.count                                 = {0} Daliadau am fod yn hwyr
 home.overdue.date                                               = Yn hwyr
 home.updates.heading                                            = Eich dyddiadau cau ar gyfer cyflwyno
-home.updates.view                                               = Bwrw golwg dros ddyddiadau cau diweddariadau
 home.updates.view.reportingFrequency                            = Bwrw golwg dros eich dyddiadau cau
 home.tax-years.heading                                          = Ffurflenni Treth
 home.your-returns.agent.description                             = Defnyddiwch y gwasanaeth hwn i roi gwybod am incwm heb ei drethu ac unrhyw ryddhad treth yr ydych yn ei hawlio
@@ -195,7 +201,6 @@ home.updates.overdue.updates                                    = {0} Ddiweddari
 home.updates.R17.heading                                        = Eich dyddiadau cau ar gyfer cyflwyno
 home.updates.R17.nextUpdateDue                                  = Diweddariad nesaf i’w gyflwyno erbyn: {0}
 home.updates.R17.nextTaxReturnDue                               = Ffurflen Dreth nesaf i’w chyflwyno erbyn: {0}
-home.updates.R17.linkText                                       = Bwrw golwg dros eich dyddiadau cau
 
 home.agent.supporting.paymentAndReturns                         = Taliadau a Ffurflenni Treth
 home.agent.supporting.cannotAccess                              = Ni all asiantau ategol gael mynediad at gofnodion sy’n dangos:
@@ -230,13 +235,13 @@ new.home.yourTasks.upcoming-annual-updates-label           = Dyledus erbyn {0}
 new.home.yourTasks.upcoming-quarterly-updates-body         = Mae gennych ddyddiad cau ar y ffordd ar gyfer cyflwyniad chwarterol.
 new.home.yourTasks.upcoming-quarterly-updates-label        = Dyledus erbyn {0}
 new.home.yourTasks.overdue-annual-submission-single-body            = Mae gennych gyflwyniad blynyddol sy’n hwyr.
-new.home.yourTasks.overdue-annual-submission-single-label           = Roedd hyn yn ddyledus ar {0}
+new.home.yourTasks.overdue-annual-submission-single-label           = Dyddiad Dyledus {0}
 new.home.yourTasks.overdue-annual-submission-multiple-body          = Mae gennych {0} o gyflwyniadau blynyddol sy’n hwyr.
-new.home.yourTasks.overdue-annual-submission-multiple-label         = Dyddiad cau’r cyflwyniad hynaf yw {0}
+new.home.yourTasks.overdue-annual-submission-multiple-label         = Dyddiad Dyledus yr hynaf {0}
 new.home.yourTasks.overdue-quarterly-submission-single-body            = Mae gennych gyflwyniad chwarterol sy’n hwyr.
-new.home.yourTasks.overdue-quarterly-submission-single-label           = Roedd hyn yn ddyledus ar {0}
+new.home.yourTasks.overdue-quarterly-submission-single-label           = Dyddiad Dyledus {0}
 new.home.yourTasks.overdue-quarterly-submission-multiple-body          = Mae gennych {0} o gyflwyniadau chwarterol sy’n hwyr.
-new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Dyddiad cau’r cyflwyniad hynaf yw {0}
+new.home.yourTasks.overdue-quarterly-submission-multiple-label         = Dyddiad Dyledus yr hynaf {0}
 
 ### Overview Tab
 new.home.navigation.tabs.overview                               = Trosolwg
@@ -296,6 +301,14 @@ new.home.recentActivity.submissions.quarterly.link.text         = Gweld eich cry
 new.home.recentActivity.submissions.quarterly.content.text      = Gwnaethoch gyflwyno diweddariad chwarterol.
 new.home.recentActivity.submissions.quarterly.date.content.text = Anfonwyd ar {0}
 
+new.home.recentActivity.payments.link.text                      = Gweld hanes taliadau
+new.home.recentActivity.payments.content.text                   = Gwnaethoch dalu {0}.
+new.home.recentActivity.payments.date.content.text              = Talwyd erbyn {0}
+
+new.home.recentActivity.recentRefund.link.text                 = Gweld hanes ad-daliadau
+new.home.recentActivity.recentRefund.content.text               = Mae CThEF wedi talu’ch ad-daliad o {0}.
+new.home.recentActivity.recentRefund.date.content.text          = Talwyd erbyn {0}
+
 ## Custom Error Page ##
 error.custom.heading                                           = Mae problem wedi codi
 error.custom.message                                           = Mae’r dudalen rydych yn ceisio’i gweld wedi newid
@@ -321,6 +334,13 @@ taxYears.oldSa.agent.content.1								   = I weld crynodeb cleient o gyfnod cyn 
 taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
 taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 taxYears.r18.amendment.text                                    = Gallwch fwrw golwg dros dudalennau yn crynhoi blwyddyn dreth i hefyd gael gweld beth yw eich opsiynau o ran diwygio’r ffurflen dreth rydych eisoes wedi’i chyflwyno’r flwyddyn honno.
+
+## Tax Years Page - Error ##
+taxYears.error.subheading                                      = Ni all yr wybodaeth am eich Ffurflenni Treth gael ei harddangos yma ar hyn o bryd
+taxYears.error.preLinkText                                     = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fynd i’ch
+taxYears.error.linkText                                        = cyfrif Hunanasesiad ar-lein blaenorol
+taxYears.error.agentPreLinkText                                = Er mwyn gweld gwybodaeth sy’n gynharach na blwyddyn dreth 2026 i 2027, mae angen i chi fewngofnodi i’ch
+taxYears.error.agentPostLinkText                               = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth sy’n wahanol i’ch cyfrif Gwasanaethau Asiant.
 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                       = Crynodeb o’r flwyddyn dreth
@@ -1489,6 +1509,7 @@ submissionsTab.due                                                   = Yn ddyled
 submissionsTab.submission                                            = Cyflwyniad
 submissionsTab.incomeSource                                          = Ffynhonnell incwm
 submissionsTab.dateSubmitted                                         = Dyddiad cyflwyno
+submissionsTab.notReceived                                           = Heb ddod i law
 submissionsTab.dateToDate                                            = {0} i {1}
 submissionsTab.updatePeriodDateToDate                                = Y cyfnod diweddaru o {0} i {1}
 submissionsTab.obligationType.property                               = Incwm o eiddo
@@ -1738,7 +1759,8 @@ add-business-address.edit.heading           = Nodwch gyfeiriad eich busnes
 ## Add international business address page
 add-international-business-address.heading = Nodwch gyfeiriad rhyngwladol eich busnes
 add-international-business-address.postcode =  Cod post neu god ‘zip’
-add-international-business-address.countryPicker.heading = Dewiswch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes
+add-international-business-address.countryPicker.heading = Nodwch y wlad neu’r diriogaeth ar gyfer cyfeiriad eich busnes
+add-international-business-address.countryPicker.hint = Nodwch wlad neu diriogaeth
 
 shortMonth.1     = Ion
 shortMonth.2     = Chwe
@@ -3637,18 +3659,18 @@ newHome.yourTasks.selfAssessment                 = Gwirio’r hyn sydd arnoch a 
 newHome.yourTasks.no-tasks.selfAssessment        = Dim tasgau
 newHome.yourTasks.selfAssessment.upcomingCharge = Mae gennych daliad i’w wneud cyn bo hir.
 newHome.yourTasks.selfAssessment.upcomingCharge.label = Dyledus erbyn {0}
-newHome.yourTasks.selfAssessment.overdueCharge.single = Mae gennych swm gorddyledus o {0}
-newHome.yourTasks.selfAssessment.overdueCharge.single.label = Roedd hyn yn ddyledus ar {0}
-newHome.yourTasks.selfAssessment.overdueCharge.multiple = Mae gennych swm gorddyledus o {0}
-newHome.yourTasks.selfAssessment.overdueCharge.multiple.label = Mae’r ffi hynaf yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.overdueCharge.single = Mae gennych swm gorddyledus i’w dalu.
+newHome.yourTasks.selfAssessment.overdueCharge.single.label = Dyddiad Dyledus {0}
+newHome.yourTasks.selfAssessment.overdueCharge.multiple = Mae gennych fwy nag un swm gorddyledus i’w dalu.
+newHome.yourTasks.selfAssessment.overdueCharge.multiple.label = Dyddiad Dyledus yr hynaf {0}
 newHome.yourTasks.selfAssessment.lpp.single = Mae gennych gosb am dalu’n hwyr.
-newHome.yourTasks.selfAssessment.lpp.single.label = Roedd hyn yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.lpp.single.label = Dyddiad Dyledus {0}
 newHome.yourTasks.selfAssessment.lpp.multiple = Mae gennych {0} o gosbau am dalu’n hwyr.
-newHome.yourTasks.selfAssessment.lpp.multiple.label = Mae’r gosb hynaf yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.lpp.multiple.label = Dyddiad Dyledus yr hynaf {0}
 newHome.yourTasks.selfAssessment.lsp.single = Mae gennych gosb am gyflwyno’n hwyr.
-newHome.yourTasks.selfAssessment.lsp.single.label = Roedd hyn yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.lsp.single.label = Dyddiad Dyledus {0}
 newHome.yourTasks.selfAssessment.lsp.multiple = Mae gennych {0} o gosbau am gyflwyno’n hwyr.
-newHome.yourTasks.selfAssessment.lsp.multiple.label = Mae’r gosb hynaf yn ddyledus ar {0}
+newHome.yourTasks.selfAssessment.lsp.multiple.label = Dyddiad Dyledus yr hynaf {0}
 newHome.yourTasks.selfAssessment.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd.
 newHome.yourTasks.selfAssessment.supporting.no-tasks = Nid oes gennych dasgau i’w cwblhau ar hyn o bryd. Noder – efallai fod gan eich cwsmer dasgau nad oes modd i chi eu gweld fel asiant ategol.
 newHome.yourTasks.selfAssessment.money-in-account.h1 = Gwirio faint o arian sydd yn eich cyfrif a hawlio ad-daliad

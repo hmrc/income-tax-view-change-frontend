@@ -17,10 +17,11 @@
 @import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
+@import common.views.html.components._
 @import views.html.partials.newHome.overview.OverviewCard
-@import views.html.layouts.unifiedLayout
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.NewHomeNavigation
+@import common.config.FrontendAppConfig
 
 
 @this(
@@ -30,7 +31,7 @@
         h2: h2,
         p: p,
         overviewCard: OverviewCard,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         newHomeNav: NewHomeNavigation
 )
 
@@ -42,7 +43,7 @@
         helpUrl: String,
         isGovUkRebrandEnabled: Boolean,
         isRecentActivityEnabled: Boolean
-)(implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_])
+)(implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @pageHeading = @{
     if (isAgent) {
@@ -84,10 +85,10 @@
         </div>
     }
 
-    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "help", isRecentActivityEnabled)
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "help", isRecentActivityEnabled, user.isSupportingAgent)
 
 
-<div class="govuk-!-padding-top-4 govuk-!-padding-bottom-6" id="help" role="tabpanel" aria-labelledby="tab_help">
+<div class="govuk-!-padding-top-4 govuk-!-padding-bottom-6" id="help" role="tabpanel">
 
     @h2(msg = messages("new.home.help.heading"))
 

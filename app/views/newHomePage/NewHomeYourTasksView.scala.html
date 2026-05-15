@@ -17,10 +17,10 @@
 @import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components.h1WithCaption
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components.h1WithCaption
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.newHome._
-@import views.html.components._
+@import common.views.html.components._
 @import models.newHomePage.HandleYourTasksViewModel
 @import models.newHomePage.YourTasksCard.{OverdueTaskCard, UpcomingTaskCard, DatelessTaskCard}
 @import models.newHomePage.YourTasksCard
@@ -44,7 +44,7 @@
         viewModel: HandleYourTasksViewModel,
         isGovUkRebrandEnabled: Boolean,
         isRecentActivityEnabled: Boolean)(
-        implicit messages: Messages,  request: RequestHeader, user: auth.MtdItUser[_]
+        implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
 @import implicitDateFormatter.longDate
@@ -88,7 +88,7 @@
         </div>
     }
 
-    @newHomeNav(yourTasksUrl, recentActivityUrl, overviewUrl, helpUrl, "your-tasks", isRecentActivityEnabled)
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overviewUrl, helpUrl, "your-tasks", isRecentActivityEnabled, user.isSupportingAgent)
 
     @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("your-tasks-heading"))
 

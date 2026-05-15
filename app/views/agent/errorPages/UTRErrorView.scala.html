@@ -14,11 +14,12 @@
  * limitations under the License.
  *@
 
-@import views.html.helpers.injected.ContinueButton
+@import common.views.html.helpers.injected.ContinueButton
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
-@import viewUtils.ExternalUrlHelper
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.viewUtils.ExternalUrlHelper
+@import common.config.FrontendAppConfig
 
 @this(
     mainTemplate: unifiedLayout,
@@ -28,7 +29,7 @@
     p:  p
 )
 
-@(postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+@(postAction: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @mainTemplate(pageTitle = messages("agent.utr_error.title"), isAgent = true, isErrorPage = true) {
     @h1(msg = messages("agent.utr_error.heading"))

@@ -20,8 +20,8 @@
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.taxYearSummary._
 @import views.html.partials.taxYearSummaryTabsPartial
 @import models.liabilitycalculation.viewmodels.CalculationSummary
@@ -56,7 +56,7 @@
     viewTaxCalcLink: Option[String],
     selfAssessmentLink: String,
     contactHmrcLink: String
-)(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: auth.MtdItUser[_])
+)(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: common.auth.MtdItUser[_])
 
 @import implicitDateFormatter._
 

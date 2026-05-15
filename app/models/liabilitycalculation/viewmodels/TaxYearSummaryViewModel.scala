@@ -16,13 +16,14 @@
 
 package models.liabilitycalculation.viewmodels
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import models.financialDetails.SecondLatePaymentPenalty
 import models.incomeSourceDetails.TaxYear
-import models.obligations.ObligationsModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import obligations.models.ObligationsModel
 
 import java.time.LocalDate
+import financials.controllers.routes as financialsRoutes
 
 case class TaxYearSummaryViewModel(
                                     calculationSummary: Option[CalculationSummary],
@@ -101,9 +102,9 @@ case class TaxYearSummaryViewModel(
       LPP2Url
     } else {
       if (isAgent) {
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest).url
+        financialsRoutes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest).url
       } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin).url
+        financialsRoutes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin).url
       }
     }
   }

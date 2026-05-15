@@ -16,9 +16,9 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
-import forms.IncomeSourcesFormsSpec.commonAuditDetails
+import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import org.scalatest.Assertion

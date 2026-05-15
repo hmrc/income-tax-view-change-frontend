@@ -16,7 +16,7 @@
 
 package views
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import implicits.ImplicitCurrencyFormatter.*
 import implicits.ImplicitDateFormatter
 import models.financialDetails.*
@@ -96,34 +96,34 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentEntriesMFA: List[(Int, List[PaymentHistoryEntry])] = List(
     (2020, List(
       PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1", taxYear = Some(2020))(dateServiceInterface),
       PaymentHistoryEntry(date = "2020-04-13", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1", taxYear = Some(2020))(dateServiceInterface))),
     (2021, List(
       PaymentHistoryEntry(date = "2019-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1", taxYear = Some(2019))(dateServiceInterface),
       PaymentHistoryEntry(date = "2018-04-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface))),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1", taxYear = Some(2018))(dateServiceInterface))),
     (2022, List(
       PaymentHistoryEntry(date = "2019-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface),
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1", taxYear = Some(2019))(dateServiceInterface),
       PaymentHistoryEntry(date = "2019-09-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-        linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
+        linkUrl = "link1", visuallyHiddenText = "hidden-text1", taxYear = Some(2019))(dateServiceInterface)))
   )
 
   val repaymentRequestNumber = "000000003135"
 
   val groupedRepayments: List[(Int, List[PaymentHistoryEntry])] = List(
-    (2021, List(PaymentHistoryEntry("2021-08-22", Repayment, None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
-      PaymentHistoryEntry("2021-08-21", Repayment, Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface),
-      PaymentHistoryEntry("2021-08-20", Repayment, Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber)(dateServiceInterface)))
+    (2021, List(PaymentHistoryEntry("2021-08-22", Repayment, None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-21", Repayment, Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-20", Repayment, Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface)))
   )
 
   val expectedDatesOrder: List[String] = List("25 December 2020", "13 April 2020", "25 December 2019", "25 September 2019", "25 April 2019", "25 April 2018")
 
   val emptyPayments: List[(Int, List[PaymentHistoryEntry])] = List(
     (2021, List(PaymentHistoryEntry(date = "2019-09-25", creditType = PaymentType, amount = None, transactionId = Some("TRANS123"),
-      linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)))
+      linkUrl = "link1", visuallyHiddenText = "hidden-text1", None)(dateServiceInterface)))
   )
 
   val viewModel: PaymentCreditAndRefundHistoryViewModel = PaymentCreditAndRefundHistoryViewModel(paymentHistoryAndRefundsEnabled = false, creditsRefundsRepayEnabled = false)
@@ -143,7 +143,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
   val entry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-    linkUrl = "link1", visuallyHiddenText = "hidden-text1")(dateServiceInterface)
+    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None)(dateServiceInterface)
 
   def getContent(row: Int)(implicit layoutContent: Element): String = {
     val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")

@@ -16,12 +16,12 @@
 
 package controllers.agent
 
-import audit.AuditingService
 import audit.models.ConfirmClientDetailsAuditModel
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.sessionUtils.SessionKeys
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.config.featureswitch.FeatureSwitching
+import common.services.AuditingService
+import common.utils.sessionUtils.SessionKeys
 import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger
@@ -53,7 +53,8 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
           clientName = user.optClientNameAsString,
           clientUtr = user.saUtr,
           postAction = routes.ConfirmClientUTRController.submit(),
-          backUrl = backUrl
+          backUrl = backUrl,
+          isSupportingAgent = user.isSupportingAgent
         )
       )
     }

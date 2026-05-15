@@ -1,0 +1,423 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+@import models.core.AddressModel
+@import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.details.Details
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
+@import common.viewUtils.ExternalUrlHelper
+@import play.twirl.api.HtmlFormat
+@import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
+
+@this(
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        govukSummaryList: GovukSummaryList,
+        govukDetails: GovukDetails,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+        govukButton: GovukButton,
+        formWithCSRF: FormWithCSRF
+)
+
+@(
+        viewModel: ManageIncomeSourceDetailsViewModel,
+        isAgent: Boolean,
+        showStartDate: Boolean,
+        showOptInOptOutContentUpdateR17: Boolean,
+        backUrl: String
+)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@changeReportingMethodUrl(taxYear: String, changeTo: String) = @{
+    businessDetails.controllers.manageBusinesses.manage.routes.ConfirmReportingMethodSharedController.show(isAgent, taxYear, changeTo, viewModel.incomeSourceType).url
+}
+
+@changeToValue(currentMethod: String) = @{
+    if(currentMethod == "Q") {
+        "annual"
+    } else {
+        "quarterly"
+    }
+}
+
+@taxYearValue(taxYear: String) = @{
+    s"${taxYear.toInt - 1}-$taxYear"
+}
+
+@extractOption(content: Option[String]) = @{
+    content match {
+        case Some(x) => x
+        case None => messages("incomeSources.generic.unknown")
+    }
+}
+
+@getSectionMessage = @{
+    viewModel.incomeSourceType match {
+        case SelfEmployment => messages("incomeSources.manage.new.business.details.sole.trader.section")
+        case UkProperty => messages("incomeSources.manage.new.uk.property.manage.details.uk.property.section")
+        case ForeignProperty => messages("incomeSources.manage.new.foreign.property.manage.details.foreign.property.section")
+    }
+}
+
+@getSelfEmploymentList = @{
+val rows = {
+    val maybeTradingNameRow: Option[SummaryListRow] =
+        viewModel.tradingName match {
+            case Some("nextUpdates.business") =>
+                Some(SummaryListRow(
+                    key = Key(
+                        content = Text(messages("incomeSources.manage.new.business.details.business.name"))
+                    ),
+                    value = Value(content = Text(messages("nextUpdates.business")))
+                ))
+            case Some(name) =>
+                Some(SummaryListRow(
+                    key = Key(
+                        content = Text(messages("incomeSources.manage.new.business.details.business.name"))
+                    ),
+                    value = Value(content = Text(name))
+                ))
+            case None =>
+                Some(SummaryListRow(
+                    key = Key(
+                        content = Text(messages("incomeSources.manage.new.business.details.business.name"))
+                    ),
+                    value = Value(content = Text(messages("incomeSources.generic.unknown")))
+                ))
+        }
+
+    val addressRow = SummaryListRow(
+        key = Key(
+            content = Text(messages("incomeSources.manage.new.business.details.business.address"))
+        ),
+        value = Value(
+            content = getLongAddressFromBusinessAddressDetails(viewModel.address) match {
+                case Some(x) => HtmlContent(s"""$x""")
+                case None => Text(messages("incomeSources.generic.unknown"))
+            }
+        )
+    )
+    maybeTradingNameRow.toSeq :+ addressRow
+}
+  rows
+}
+
+
+@getLongAddressFromBusinessAddressDetails(address: Option[AddressModel]) = @{
+    address match {
+        case Some(address) =>
+            val nonNoneFields = List(
+                address.addressLine1,
+                address.addressLine2,
+                address.addressLine3,
+                address.addressLine4,
+                address.postCode,
+                Some(address.countryName)
+            ).flatten
+            Some(nonNoneFields.map("<div>" + _ + "</div>").mkString(""))
+        case None => None
+    }
+}
+
+
+@getMTDUsageRows = @{
+    viewModel.latencyDetails.toSeq.flatMap { latencyDetails =>
+        Seq(
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(
+                        messages(
+                            "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage",
+                            (latencyDetails.taxYear1.toInt - 1).toString,
+                            latencyDetails.taxYear1
+                        )
+                    )
+                ),
+                value = Value(
+                    content = Text(
+                        if (latencyDetails.latencyIndicator1 == "Q")
+                            messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes")
+                        else
+                            messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no")
+                    )
+                ),
+                actions = if (viewModel.shouldShowChangeLinksForTaxYearOne) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(
+                                taxYearValue(latencyDetails.taxYear1),
+                                changeToValue(latencyDetails.latencyIndicator1)
+                            ),
+                            content = Text(
+                                messages(
+                                    if (latencyDetails.latencyIndicator1 == "Q")
+                                        "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut"
+                                    else
+                                        "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup"
+                                )
+                            ),
+                            attributes = Map(
+                                "id" -> (if (latencyDetails.latencyIndicator1 == "Q") "opt-out-link-1" else "sign-up-link-1")
+                            )
+                        )
+                    )
+                )) else None
+            )),
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(
+                        messages(
+                            "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage",
+                            (latencyDetails.taxYear2.toInt - 1).toString,
+                            latencyDetails.taxYear2
+                        )
+                    )
+                ),
+                value = Value(
+                    content = Text(
+                        if (latencyDetails.latencyIndicator2 == "Q")
+                            messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.yes")
+                        else
+                            messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.mtdUsage.no")
+                    )
+                ),
+                actions = if (viewModel.shouldShowChangeLinksForTaxYearTwo) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(
+                                taxYearValue(latencyDetails.taxYear2),
+                                changeToValue(latencyDetails.latencyIndicator2)
+                            ),
+                            content = Text(
+                                messages(
+                                    if (latencyDetails.latencyIndicator2 == "Q")
+                                        "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut"
+                                    else
+                                        "incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup"
+                                )
+                            ),
+                            attributes = Map(
+                                "id" -> (if (latencyDetails.latencyIndicator2 == "Q") "opt-out-link-2" else "sign-up-link-2")
+                            )
+                        )
+                    )
+                )) else None
+            ))
+        ).flatten
+    }
+}
+
+@getTaxYears = @{
+    viewModel.latencyDetails.toSeq.flatMap { latencyDetails =>
+        Seq(
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(messages("incomeSources.manage.new.business.details.reporting.method", (latencyDetails.taxYear1.toInt - 1).toString, latencyDetails.taxYear1))
+                ),
+                value = Value(
+                    content = Text(messages(s"incomeSources.manage.new.business.details.${viewModel.latencyValueAsKey(latencyDetails.latencyIndicator1)}"))
+                ),
+                actions = if (viewModel.shouldShowChangeLinksForTaxYearOne) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(taxYearValue(latencyDetails.taxYear1), changeToValue(latencyDetails.latencyIndicator1)),
+                            content = Text(messages("incomeSources.manage.new.business.details.change")),
+                            attributes = Map("id" -> "change-link-1")
+                        )
+                    )
+                )) else None
+            )),
+            Some(SummaryListRow(
+                key = Key(
+                    content = Text(messages("incomeSources.manage.new.business.details.reporting.method", (latencyDetails.taxYear2.toInt - 1).toString, latencyDetails.taxYear2))
+                ),
+                value = Value(
+                    content = Text(messages(s"incomeSources.manage.new.business.details.${viewModel.latencyValueAsKey(latencyDetails.latencyIndicator2)}"))
+                ),
+                actions = if (viewModel.shouldShowChangeLinksForTaxYearTwo) Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeReportingMethodUrl(taxYearValue(latencyDetails.taxYear2), changeToValue(latencyDetails.latencyIndicator2)),
+                            content = Text(messages("incomeSources.manage.new.business.details.change")),
+                            attributes = Map("id" -> "change-link-2")
+                        )
+                    )
+                )) else None
+            ))
+        ).flatten
+    }
+}
+
+@reportingFrequencyURL(isAgent: Boolean) = @{
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
+}
+
+@getQuarterlyType = @{
+    if(!viewModel.isQuarterly) {
+        Seq.empty
+    } else {
+        viewModel.quarterReportingType match {
+            case Some(quarterType) =>
+                Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("incomeSources.manage.quarterly-period"))
+                        ),
+                        value = Value(
+                            content = Text(messages(s"incomeSources.manage.quarterly-period.${quarterType.value.toLowerCase}"))
+                        )
+                    )
+                )
+            case None => Seq.empty
+        }
+    }
+}
+
+@quarterlyPeriodDropDown = @{
+    viewModel.quarterReportingType match {
+        case None => HtmlFormat.empty
+        case Some(quarterlyType) => {
+            val messagePrefix = s"incomeSources.manage.quarterly-period.${quarterlyType.value.toLowerCase()}"
+
+            val p1 = p(id = Some("expandable-standard-update-period"))(Html(messages(s"$messagePrefix.content.p1")))
+            val p2 = p(id = Some("software-support"))(Html(messages(s"$messagePrefix.content.p2")))
+
+            val anchor = link( id = Some("learn-about-quarters-link"), target = Some("_blank"), link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl, messageKey = s"incomeSources.manage.quarterly-period.content.p3", outerMessage = messages("base.fullstop"))
+            val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
+
+            govukDetails(Details(
+                id = Some("standard-update-period-dropdown"),
+                summary = Text(messages(s"$messagePrefix.summary")),
+                content = content
+            ))
+        }
+    }
+}
+
+@mainTemplate(
+    pageTitle = messages("incomeSources.manage.new.business.details.heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
+
+    @hmrcPageHeading(PageHeading(
+        text = messages("incomeSources.manage.new.business.details.heading"),
+        headingClasses = Some("govuk-heading-xl"),
+        section = Some(getSectionMessage),
+        captionClasses = Some("govuk-caption-xl")
+    ))
+
+    @if(viewModel.isBusinessInLatency){
+        @if(showOptInOptOutContentUpdateR17) {
+            <div id="up-to-two-tax-years" class="govuk-body">
+                @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph", viewModel.latencyDetails.fold("")(_.taxYear2))
+            </div>
+        } else {
+            <div id="up-to-two-tax-years" class="govuk-inset-text">
+                @messages("incomeSources.manage.new.business.details.insetText", viewModel.latencyDetails.fold("")(_.taxYear2))
+            </div>
+        }
+    }
+
+    @p(id = Some("reportingFrequency")) {
+        @if(showOptInOptOutContentUpdateR17) {
+            @messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix")
+            @link(
+                link = reportingFrequencyURL(isAgent),
+                messageKey = messages("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyLink"),
+                id = Some("reportingFrequency-link"),
+                outerMessage = "."
+            )
+        } else {
+            @link(
+                link = reportingFrequencyURL(isAgent),
+                messageKey = messages("incomeSources.manage.new.business.details.reporting.frequency"),
+                id = Some("reportingFrequency-link")
+            )
+        }
+    }
+
+    <div class="govuk-!-margin-bottom-9">
+    @govukSummaryList(SummaryList(
+        rows = {
+            if(viewModel.incomeSourceType == SelfEmployment) getSelfEmploymentList else Seq.empty
+        } ++ {
+            if (showStartDate) {
+                Seq(
+                    SummaryListRow(
+                        key = Key(
+                            content = Text(messages("incomeSources.manage.new.business.details.date.started"))
+                        ),
+                        value = Value(
+                            content = Text(
+                                viewModel.tradingStartDate match {
+                                    case Some(x) => x.toLongDate
+                                    case None => messages("incomeSources.generic.unknown")
+                                }
+                            )
+                        )
+                    )
+                )
+            }else Seq.empty
+        } ++
+                {
+                    if (viewModel.incomeSourceType == SelfEmployment) {
+                        Seq(
+                            SummaryListRow(
+                                key = Key(
+                                    content = Text(messages("incomeSources.manage.new.business.details.trade.type"))
+                                ),
+                                value = Value(
+                                    content = Text(extractOption(viewModel.incomeSource))
+                                )
+                            )
+                        )
+                    } else Seq.empty
+                }
+                ++ (getQuarterlyType)
+                ++(
+                    if (viewModel.isBusinessInLatency) {
+                        if (showOptInOptOutContentUpdateR17) {
+                            getMTDUsageRows
+                        } else {
+                            getTaxYears
+                        }
+                    } else Seq.empty
+                ),
+            attributes = Map("id" -> "manage-details-table")
+        )
+    )
+    @if(!viewModel.isBusinessInLatency && viewModel.isQuarterly){
+        @quarterlyPeriodDropDown
+    }
+
+    </div>
+}

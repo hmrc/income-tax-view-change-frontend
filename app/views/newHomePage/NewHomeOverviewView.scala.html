@@ -17,11 +17,11 @@
 @import enums.MTDSupportingAgent
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components.h1WithCaption
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components.h1WithCaption
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.newHome.overview._
 @import views.html.partials.newHome.NewHomeNavigation
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 @import models.incomeSourceDetails.TaxYear
 @import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 @import models.financialDetails.*
@@ -54,7 +54,7 @@
         penaltiesAndAppealsEnabled: Boolean,
         isRecentActivityEnabled: Boolean,
         creditsRefundsRepayEnabled: Boolean)(
-        implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: auth.MtdItUser[_]
+        implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
 @pageHeading = @{
@@ -102,7 +102,7 @@
         </div>
     }
 
-    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "overview", isRecentActivityEnabled)
+    @newHomeNav(yourTasksUrl, recentActivityUrl, overViewUrl, helpUrl, "overview", isRecentActivityEnabled, user.isSupportingAgent)
 
 
     <div class="govuk-!-padding-bottom-6"></div>

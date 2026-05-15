@@ -16,8 +16,8 @@
 
 package connectors
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import models.core.ResponseModel.{ResponseModel, UnexpectedError}
 import models.core.{CorrelationId, Nino}
 import models.creditsandrefunds.CreditsModel

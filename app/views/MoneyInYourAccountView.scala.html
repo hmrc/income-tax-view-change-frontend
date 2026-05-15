@@ -18,17 +18,19 @@
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
 @import implicits.ImplicitDateFormatter
-@import auth.MtdItUser
+@import common.auth.MtdItUser
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.creditAndRefunds._
 @import models.creditsandrefunds._
+@import financials.controllers.routes as financialsRoutes
 
 @this(
         mainTemplate: unifiedLayout,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         h1: h1,
         h2: h2,
         p: p,
@@ -80,12 +82,12 @@
         }else {
             @if(viewModel.secondPendingAmountRequested.getOrElse(BigDecimal(0)) > 0) {
                 @messages("money-in-your-account.no-money-two-refunds")
-                @link(controllers.routes.PaymentHistoryController.refundStatus().url,
+                @link(financialsRoutes.PaymentHistoryController.refundStatus().url,
                     messageKey = "money-in-your-account.no-money-two-refunds-link-text", outerMessage = ".", id = Some("refunds-link"))
             } else {
                 @if(viewModel.firstPendingAmountRequested.getOrElse(BigDecimal(0)) > 0) {
                     @messages("money-in-your-account.no-money-one-refund")
-                    @link(controllers.routes.PaymentHistoryController.refundStatus().url,
+                    @link(financialsRoutes.PaymentHistoryController.refundStatus().url,
                         messageKey = "money-in-your-account.no-money-one-refund-link-text", outerMessage = ".", id = Some("refunds-link"))
                 }
             }
@@ -118,7 +120,11 @@
 @ClaimRefundButton() = @{
     continueButton(
         Some(messages("money-in-your-account.claim-refund.button-text")),
-        Some(s"${controllers.routes.MoneyInYourAccountController.startRefund().url}"),
+        Some(if (isAgent)
+        s"${financialsRoutes.MoneyInYourAccountController.startRefundAgents().url}"
+            else
+        s"${financialsRoutes.MoneyInYourAccountController.startRefund().url}"
+            ),
         id = Some("claim-a-refund-button")
     )
 }

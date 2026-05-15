@@ -16,15 +16,14 @@
 
 package controllers
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationService
-import models.admin.NavBarFs
 import play.api
 import play.api.Application
 import play.api.http.Status
-import play.api.test.Helpers.{charset, contentType, _}
+import play.api.test.Helpers.*
 import services.{CalculationService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
@@ -37,7 +36,6 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
     .overrides(
       api.inject.bind[CalculationService].toInstance(mockCalculationService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -45,7 +43,6 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disable(NavBarFs)
   }
 
   val view: ForecastIncomeSummaryView = app.injector.instanceOf[ForecastIncomeSummaryView]

@@ -16,26 +16,29 @@
 
 package controllers
 
-import audit.models.{HomeAudit, NextUpdatesResponseAuditModel}
-import auth.MtdItUser
+import audit.models.HomeAudit
+import common.auth.MtdItUser
+import common.controllers.ControllerISpecHelper
 import enums.MTDIndividual
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
+import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, MTDIndividualAuthStub}
+import helpers.servicemocks.{IncomeTaxViewChangeStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.admin.{NavBarFs, ReportingFrequencyPage}
 import models.core.{AccountingPeriodModel, CessationModel}
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import play.api.http.Status._
+import obligations.models.*
+import obligations.models.audit.NextUpdatesResponseAuditModel
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
+import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import testConstants.NextUpdatesIntegrationTestConstants._
 import testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
-import testConstants.messages.HomeMessages._
+import testConstants.messages.HomeMessages.*
 
 import java.time.LocalDate
 
@@ -73,6 +76,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
       "render the home page" which {
         "displays the next upcoming payment and charge" when {
           "there are payments upcoming and nothing is overdue" in {
+            stubGetFeatureSwitches()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -140,13 +144,14 @@ class HomeControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
             )
 
-            verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false)).detail)
+            verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false), userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
 
         "displays no upcoming payment" when {
           "there are no upcoming payments" in {
+            stubGetFeatureSwitches()
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -212,13 +217,14 @@ class HomeControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
             )
 
-            verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false)).detail)
+            verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false), userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
 
         "displays an overdue payment and an overdue obligation" when {
           "there is a single payment overdue and a single obligation overdue" in {
+            stubGetFeatureSwitches()
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -286,11 +292,16 @@ class HomeControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
             )
 
-            verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate.minusDays(1) -> true)), Left(currentDate.minusDays(1) -> true)).detail)
+            verifyAuditContainsDetail(HomeAudit(
+              testUser,
+              Some(Left(currentDate.minusDays(1) -> true)),
+              Left(currentDate.minusDays(1) -> true),
+              userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
 
           "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
+            stubGetFeatureSwitches()
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -358,12 +369,17 @@ class HomeControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
             )
 
-            verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(currentDate.minusDays(1) -> true)).detail)
+            verifyAuditContainsDetail(HomeAudit(
+              testUser,
+              Some(Right(2)),
+              Left(currentDate.minusDays(1) -> true),
+              userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
         "display a count of the overdue payments a count of overdue obligations" when {
           "there is more than one payment overdue and more than one obligation overdue" in {
+            stubGetFeatureSwitches()
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
@@ -452,13 +468,14 @@ class HomeControllerISpec extends ControllerISpecHelper {
               elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
             )
 
-            verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
+            verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2), userIsCYPlusOne = false).detail)
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
           }
         }
 
         "display Income Sources tile" when {
           "using the manage businesses journey" in {
+            stubGetFeatureSwitches()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -531,6 +548,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
         }
         "display Your Businesses tile" when {
           "using the manage businesses journey" in {
+            stubGetFeatureSwitches()
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
@@ -604,9 +622,9 @@ class HomeControllerISpec extends ControllerISpecHelper {
 
         "display the Reporting Obligations tile" when {
           "Reporting Frequency feature switches are enabled" in {
+            stubGetFeatureSwitches()
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-            enable(ReportingFrequencyPage)
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -679,6 +697,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
       "render the error page" when {
 
         "retrieving the charges was unsuccessful" in {
+          stubGetFeatureSwitches()
           MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(

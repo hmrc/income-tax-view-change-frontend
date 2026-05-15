@@ -16,7 +16,7 @@
 
 package repositories
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import enums.JourneyType.{JourneyType, Operation}
 import models.UIJourneySessionData
 import org.mongodb.scala.bson.collection.mutable.Document

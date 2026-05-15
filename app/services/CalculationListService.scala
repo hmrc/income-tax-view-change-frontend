@@ -16,7 +16,7 @@
 
 package services
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import connectors.CalculationListConnector
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino

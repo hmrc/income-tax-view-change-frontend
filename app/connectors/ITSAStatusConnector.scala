@@ -16,7 +16,7 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
@@ -37,7 +37,6 @@ class ITSAStatusConnector @Inject()(val http: HttpClientV2,
 
   def getITSAStatusDetail(nino: String, taxYear: String, futureYears: Boolean, history: Boolean)
                          (implicit headerCarrier: HeaderCarrier): Future[Either[ITSAStatusResponse, List[ITSAStatusResponseModel]]] = {
-
     val itsaURL = getITSAStatusDetailUrl(nino, taxYear, futureYears, history)
     http.get(url"$itsaURL")
       .transform(_.addHttpHeaders("Accept" -> "application/vnd.hmrc.2.0+json"))

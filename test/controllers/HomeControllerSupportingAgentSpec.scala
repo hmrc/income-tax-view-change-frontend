@@ -16,13 +16,14 @@
 
 package controllers
 
-import audit.AuditingService
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import enums.MTDSupportingAgent
-import models.admin.{OptInOptOutContentUpdateR17, ReportingFrequencyPage}
+import mocks.services.admin.MockFeatureSwitchService
+import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
+import obligations.services.NextUpdatesService
+import obligations.services.reportingObligations.optOut.OptOutService
+import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -35,19 +36,21 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.reportingObligations.signUp.SignUpService
-import services.{CreditService, NextUpdatesService}
-import services.reportingObligations.optOut.OptOutService
+import services.CreditService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.HomeView
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.newHomePage.*
 import views.html.helpers.injected.home.YourReportingObligationsTile
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.services.AuditingService
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with Injecting {
+class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with Injecting with MockFeatureSwitchService {
 
   given mockedYourReportingObligationsTile: YourReportingObligationsTile = mock(classOf[YourReportingObligationsTile])
 
@@ -82,7 +85,6 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       supportingAgentHomeView,
       authActions,
       mockedNextUpdatesService,
-      mockIncomeSourceDetailsService,
       mockFinancialDetailsService,
       mockDateServiceInjected,
       mockWhatYouOweService,
@@ -105,7 +107,6 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
   }
 
   "show()" when {
@@ -115,6 +116,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
     s"the user is authenticated $agentType" should {
       "render the home page controller with the next updates tile" when {
         "there is a future update date to display" in new Setup {
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuth(true)
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(futureDueDates))
@@ -135,6 +137,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         }
 
         "there is an overdue update date to display" in new Setup {
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuth(true)
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(overdueDueDates))
@@ -150,6 +153,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         }
 
         "there are no updates to display" in new Setup {
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuth(true)
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(Seq()))
@@ -161,12 +165,13 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text() shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text() shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
       "render the home without the Next Updates tile" when {
         "the user has no updates due" in new Setup {
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuth(true)
           mockItsaStatusRetrievalAction()
           mockSingleBusinessIncomeSource()
@@ -178,12 +183,12 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile").text shouldBe "Your submission deadlines View update deadlines"
+          document.select("#updates-tile").text shouldBe "Your submission deadlines View your deadlines"
         }
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
-        enable(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
         setupMockAgentWithClientAuth(isSupportingAgent)
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
@@ -209,11 +214,11 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
+        link.attr("href") shouldBe obligations.controllers.routes.NextUpdatesController.showAgent().url
       }
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
-        enable(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
         setupMockAgentWithClientAuth(isSupportingAgent)
 
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
@@ -243,11 +248,11 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
+        link.attr("href") shouldBe obligations.controllers.routes.NextUpdatesController.showAgent().url
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
-        enable(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
         setupMockAgentWithClientAuth(isSupportingAgent)
 
         val currentTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
@@ -273,7 +278,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
         val link: Elements = tile.select("a")
         link.text.trim shouldBe "View your deadlines"
-        link.attr("href") shouldBe controllers.routes.NextUpdatesController.showAgent().url
+        link.attr("href") shouldBe obligations.controllers.routes.NextUpdatesController.showAgent().url
       }
 
       "render the home page with the Your Businesses tile with link" when {
@@ -289,14 +294,14 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           document.title shouldBe homePageTitle
           document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
           document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.newJourney.view")
-          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
         }
       }
 
       "render the home page with a Reporting Obligations tile" that {
         "states that the user is reporting annually" when {
           "Reporting Frequency FS is enabled and the current ITSA status is annually" in new Setup {
-            enable(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuth(isSupportingAgent)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             mockGetDueDates(Right(Seq.empty))
@@ -314,7 +319,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
         }
         "states that the user is reporting quarterly" when {
           "Reporting Frequency FS is enabled and the current ITSA status is voluntary" in new Setup {
-            enable(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuth(isSupportingAgent)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Voluntary))))
 
@@ -330,7 +335,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           }
 
           "Reporting Frequency FS is enabled and the current ITSA status is mandated" in new Setup {
-            enable(ReportingFrequencyPage)
+            setupMockFeatureSwitches()
             setupMockAgentWithClientAuth(isSupportingAgent)
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail.copy(status = ITSAStatus.Mandated))))
             mockGetDueDates(Right(Seq.empty))
@@ -398,7 +403,6 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
 
       "render the home page without a reporting obligations tile" in new Setup {
-        disable(ReportingFrequencyPage)
         setupMockAgentWithClientAuth(true)
         mockItsaStatusRetrievalAction()
         mockGetDueDates(Right(overdueDueDates))

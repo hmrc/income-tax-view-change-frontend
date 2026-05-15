@@ -16,7 +16,7 @@
 
 package views.components
 
-import config.featureswitch.FeatureSwitching
+import common.config.featureswitch.FeatureSwitching
 import models.liabilitycalculation.viewmodels.CalculationSummary
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import models.taxyearsummary._

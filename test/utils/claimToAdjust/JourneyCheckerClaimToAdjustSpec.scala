@@ -16,9 +16,9 @@
 
 package utils.claimToAdjust
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
 import models.claimToAdjustPoa.PoaAmendmentData
@@ -38,6 +38,7 @@ import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAccountSessionService {
 
@@ -82,14 +83,14 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
 
         val res = TestJourneyCheckerClaimToAdjust.redirectToYouCannotGoBackPage(tsTestUserAgent)
 
-        res shouldBe Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+        res shouldBe Redirect(claimToAdjustPoaRoutes.YouCannotGoBackController.show(true).url)
 
       }
       "user is an individual" in {
 
         val res = TestJourneyCheckerClaimToAdjust.redirectToYouCannotGoBackPage(tsTestUser)
 
-        res shouldBe Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        res shouldBe Redirect(claimToAdjustPoaRoutes.YouCannotGoBackController.show(false).url)
 
       }
     }
@@ -170,9 +171,9 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
         val resAgent = TestJourneyCheckerClaimToAdjustSpy.withSessionData(journeyState = BeforeSubmissionPage)(successfulFutureOkAgent)(tsTestUserAgent, headerCarrier)
 
         status(res) shouldBe SEE_OTHER
-        redirectLocation(res) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        redirectLocation(res) shouldBe Some(claimToAdjustPoaRoutes.YouCannotGoBackController.show(false).url)
         status(resAgent) shouldBe SEE_OTHER
-        redirectLocation(resAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+        redirectLocation(resAgent) shouldBe Some(claimToAdjustPoaRoutes.YouCannotGoBackController.show(true).url)
       }
     }
     "run the code block and go to the what you need to know page" when {

@@ -16,8 +16,8 @@
 
 package services.newHomePage
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -27,8 +27,7 @@ import models.newHomePage.MaturityLevel.Upcoming
 import models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
 import models.newHomePage.{HandleYourTasksViewModel, NoTaskCard, SubmissionDeadlinesViewModel}
-import models.obligations.{SingleObligationModel, StatusOpen}
-import services.newHomePage.HandleYourTasksService
+import obligations.models.{SingleObligationModel, StatusOpen}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
@@ -64,13 +63,13 @@ class HandleYourTasksServiceSpec extends TestSupport {
   val overdueMultipleAnnualSubmissionsCard: OverdueTaskCard = OverdueTaskCard("new.home.yourTasks.overdue-annual-submission-multiple-body", "new.home.yourTasks.updates-and-deadlines", "/report-quarterly/income-and-expenses/view/submission-deadlines", "new.home.yourTasks.overdue-annual-submission-multiple-label", Some(LocalDate.of(2020, 12, 15)), Some("2"), SUBMISSIONS)
   val overdueMultipleQuarterlySubmissionsCard: OverdueTaskCard = OverdueTaskCard("new.home.yourTasks.overdue-quarterly-submission-multiple-body", "new.home.yourTasks.updates-and-deadlines", "/report-quarterly/income-and-expenses/view/submission-deadlines", "new.home.yourTasks.overdue-quarterly-submission-multiple-label", Some(LocalDate.of(2020, 12, 15)), Some("2"), SUBMISSIONS)
 
-  val overdueChargeCard: OverdueTaskCard = OverdueTaskCard("newHome.yourTasks.selfAssessment.overdueCharge.single", "newHome.yourTasks.selfAssessment", "/report-quarterly/income-and-expenses/view/what-you-owe", "newHome.yourTasks.selfAssessment.overdueCharge.single.label", Some(fixedDate.minusYears(3)), Some("£1,000.00"), FINANCIALS)
+  val overdueChargeCard: OverdueTaskCard = OverdueTaskCard("newHome.yourTasks.selfAssessment.overdueCharge.single", "newHome.yourTasks.selfAssessment", "/report-quarterly/income-and-expenses/view/what-you-owe", "newHome.yourTasks.selfAssessment.overdueCharge.single.label", Some(fixedDate.minusYears(3)), None, FINANCIALS)
   val overdueLppCard: OverdueTaskCard = OverdueTaskCard("newHome.yourTasks.selfAssessment.lpp.single", "newHome.yourTasks.selfAssessment.lpp.single.link", "/report-quarterly/income-and-expenses/view/tax-years/2024/charge?id=200", "newHome.yourTasks.selfAssessment.lpp.single.label", Some(fixedDate.minusYears(2)), None, PENALTIES)
   val overdueLspCard: OverdueTaskCard = OverdueTaskCard("newHome.yourTasks.selfAssessment.lsp.single", "newHome.yourTasks.selfAssessment.lsp.single.link", "/report-quarterly/income-and-expenses/view/tax-years/2024/charge?id=300", "newHome.yourTasks.selfAssessment.lsp.single.label", Some(fixedDate.minusYears(1)), None, PENALTIES)
 
   val overdueMultipleLppCard: OverdueTaskCard = OverdueTaskCard("newHome.yourTasks.selfAssessment.lpp.multiple", "newHome.yourTasks.selfAssessment.lpp.multiple.link", "http://localhost:9185/view-penalty/self-assessment#lppTab", "newHome.yourTasks.selfAssessment.lsp.multiple.label", Some(fixedDate.minusYears(2)), Some("2"), PENALTIES)
   val overdueMultipleLspCard: OverdueTaskCard = OverdueTaskCard("newHome.yourTasks.selfAssessment.lsp.multiple", "newHome.yourTasks.selfAssessment.lsp.multiple.link", "http://localhost:9185/view-penalty/self-assessment#lspTab", "newHome.yourTasks.selfAssessment.lsp.multiple.label", Some(fixedDate.minusYears(1)), Some("2"), PENALTIES)
-  val overdueMultipleChargeCard: OverdueTaskCard = OverdueTaskCard("newHome.yourTasks.selfAssessment.overdueCharge.multiple", "newHome.yourTasks.selfAssessment", "/report-quarterly/income-and-expenses/view/what-you-owe", "newHome.yourTasks.selfAssessment.overdueCharge.multiple.label", Some(fixedDate.minusYears(3)), Some("£2,000.00"), FINANCIALS)
+  val overdueMultipleChargeCard: OverdueTaskCard = OverdueTaskCard("newHome.yourTasks.selfAssessment.overdueCharge.multiple", "newHome.yourTasks.selfAssessment", "/report-quarterly/income-and-expenses/view/what-you-owe", "newHome.yourTasks.selfAssessment.overdueCharge.multiple.label", Some(fixedDate.minusYears(3)), None, FINANCIALS)
 
   val moneyInYourAccountTask: DatelessTaskCard = DatelessTaskCard("newHome.yourTasks.selfAssessment.money-in-account", "newHome.yourTasks.selfAssessment.money-in-account.h1", "/report-quarterly/income-and-expenses/view/money-in-your-account", Some("£1,000.00"), FINANCIALS)
 

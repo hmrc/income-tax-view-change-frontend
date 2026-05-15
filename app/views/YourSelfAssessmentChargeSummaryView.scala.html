@@ -19,8 +19,9 @@
 @import models.chargeSummary.ChargeSummaryViewModel
 @import services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import views.html.components.numberList
+@import common.views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import views.html.partials.yourSelfAssessmentCharges.PaymentHistoryTable
@@ -35,12 +36,12 @@
 @import _root_.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
 @import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
-@import viewUtils.ExternalUrlHelper
+@import common.viewUtils.ExternalUrlHelper
 @import exceptions.MissingFieldException
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
-        appConfig: config.FrontendAppConfig,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         h1WithCaption: h1WithCaption,
         govukTable: GovukTable,
@@ -70,7 +71,7 @@
 )(
     implicit request: Request[_],
     messages: Messages,
-    appConfig: config.FrontendAppConfig,
+    appConfig: FrontendAppConfig,
     dateService: DateServiceInterface
 )
 

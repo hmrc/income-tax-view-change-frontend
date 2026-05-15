@@ -1,0 +1,328 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import businessDetails.enums.IncomeSourceJourney._
+@import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
+@import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import play.twirl.api.HtmlFormat
+@import models.core._
+@import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+
+@this(
+        mainTemplate: unifiedLayout,
+        hmrcPageHeading: HmrcPageHeading,
+        govukSummaryList: GovukSummaryList,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        hr: hr,
+        govukTable: GovukTable,
+        continueButton: ContinueButton,
+        formWithCSRF: FormWithCSRF
+)
+
+@(
+        viewModel: CheckDetailsViewModel,
+        postAction: Call,
+        isAgent: Boolean,
+        backUrl: String,
+        origin: Option[String] = None,
+        isTriggeredMigration: Boolean,
+        overseasBusinessAddressEnabled: Boolean = false
+)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+@getMessage(key: String, args: String*) = @{
+    viewModel.incomeSourceType match {
+        case SelfEmployment => messages(s"check-details.$key", args: _*)
+        case UkProperty => messages(s"check-details-uk.$key", args: _*)
+        case ForeignProperty => messages(s"check-details-fp.$key", args: _*)
+    }
+}
+
+@changeBusinessNameURL = @{
+    if(isAgent) {
+        addBusinessRoutes.AddBusinessNameController.showAgent(mode = CheckMode, isTriggeredMigration).url
+    } else {
+        addBusinessRoutes.AddBusinessNameController.show(mode = CheckMode, isTriggeredMigration).url
+    }
+}
+
+@changeBusinessTradeURL = @{
+    if(isAgent) {
+        addBusinessRoutes.AddBusinessTradeController.showAgent(mode = CheckMode, isTriggeredMigration).url
+    } else {
+        addBusinessRoutes.AddBusinessTradeController.show(mode = CheckMode, isTriggeredMigration).url
+    }
+}
+
+@changeBusinessAddressURL = @{
+    if (overseasBusinessAddressEnabled) {
+        val isNoAddressOnFile = businessDetailsViewModel.exists(_.isNoAddressOnFile)
+
+        if (isNoAddressOnFile) {
+            addBusinessRoutes.IsTheNewAddressInTheUKController.show(isAgent, isTriggeredMigration).url
+        } else {
+            addBusinessRoutes.ChooseSoleTraderAddressController.show(isAgent).url
+        }
+    } else {
+        if (isAgent) {
+            addBusinessRoutes.AddBusinessAddressController.showAgent(mode = CheckMode, isTriggeredMigration).url
+        } else {
+            addBusinessRoutes.AddBusinessAddressController.show(mode = CheckMode, isTriggeredMigration).url
+        }
+    }
+}
+
+@sanitiseOutput(input: String) = @{
+    input
+    .replaceAll("<[^>]*>", "")
+    .replaceAll("\t", "")
+    .replaceAll("[\\p{So}\\p{Cn}]", "") // remove symbols/emoji
+}
+
+@getLongAddressFromBusinessAddressDetails(address1: String, address2: Option[String], address3: Option[String], address4: Option[String], postCode: Option[String], countryCode: Option[String]) = @{
+    List(Some(address1),
+        address2,
+        address3,
+        address4,
+        postCode,
+        countryCode
+    ).flatten
+    .filter(_.nonEmpty)
+    .map(sanitiseOutput)
+    .map(HtmlFormat.escape)
+    .map("<div>" + _ + "</div>")
+    .mkString("")
+}
+
+
+@changeStartDateURL = @{
+    addBusinessRoutes.AddIncomeSourceStartDateController.show(isAgent = isAgent, mode = CheckMode, viewModel.incomeSourceType, isTriggeredMigration).url
+}
+
+@extractName = @{
+    viewModel match {
+        case x: CheckBusinessDetailsViewModel => x.businessName.getOrElse("")
+        case _ => ""
+    }
+}
+
+@extractTrade = @{
+    viewModel match {
+        case x: CheckBusinessDetailsViewModel => x.businessTrade
+        case _ => ""
+    }
+}
+
+@extractStartDate = @{
+    viewModel match {
+        case x: CheckBusinessDetailsViewModel => x.businessStartDate.map(_.toLongDate).getOrElse("")
+        case y: CheckPropertyViewModel => y.tradingStartDate.toLongDate
+    }
+}
+
+@extractAddress = @{
+    HtmlContent(viewModel match {
+        case x: CheckBusinessDetailsViewModel => {
+            getLongAddressFromBusinessAddressDetails(
+                address1 = x.businessAddressLine1,
+                address2 = x.businessAddressLine2,
+                address3 = x.businessAddressLine3,
+                address4 = x.businessAddressLine4,
+                postCode = x.businessPostalCode,
+                countryCode = x.businessCountryName,
+            )
+        }
+        case _ => ""
+    })
+}
+
+@businessNameRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment) {
+        Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("business-name")),
+                ),
+                value = Value(
+                    content = Text(extractName)
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeBusinessNameURL,
+                            content = Text(getMessage("change")),
+                            attributes = Map("id" -> "change-business-name-link"),
+                            visuallyHiddenText = Some(getMessage("business-name"))
+                        )
+                    )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@businessStartDateRow = @{
+    Seq(
+        SummaryListRow(
+            key = Key(
+                content = Text(getMessage("start-date"))
+            ),
+            value = Value(
+                content = Text(extractStartDate)
+            ),
+            actions = Some(Actions(
+                items = Seq(
+                    ActionItem(
+                        href = changeStartDateURL,
+                        content = Text(getMessage("change")),
+                        attributes = Map("id" -> "change-business-start-date-link"),
+                        visuallyHiddenText = Some(getMessage("start-date"))
+                    )
+                )
+            ))
+        )
+    )
+}
+
+@businessTradeRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment) {
+        Seq(
+            SummaryListRow(
+                key = Key(
+                    content = Text(getMessage("trade"))
+                ),
+                value = Value(
+                    content = Text(extractTrade)
+                ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeBusinessTradeURL,
+                            content = Text(getMessage("change")),
+                            attributes = Map("id" -> "change-business-trade-link"),
+                            visuallyHiddenText = Some(getMessage("trade"))
+                        )
+                    )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@businessDetailsViewModel = @{
+    viewModel match {
+        case x: CheckBusinessDetailsViewModel => Some(x)
+        case _                               => None
+    }
+}
+
+@showAddedAddressRow = @{
+    overseasBusinessAddressEnabled && businessDetailsViewModel.exists(viewModel =>
+        viewModel.isAddingNewAddress || viewModel.isNoAddressOnFile
+    )
+}
+
+@addedAddressRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment && showAddedAddressRow) {
+        val msgKey = businessDetailsViewModel.map(_.addedAddressMessageKey).getOrElse("added-address")
+        Seq(
+            SummaryListRow(
+                key = Key(content = Text(getMessage(msgKey))),
+                value = Value(content = extractAddress),
+                actions = Some(Actions(items = Seq(
+                    ActionItem(
+                        href = changeBusinessAddressURL,
+                        content = Text(getMessage("change")),
+                        attributes = Map("id" -> "change-added-business-address-link"),
+                        visuallyHiddenText = Some(getMessage(msgKey))
+                    )
+                )))
+            )
+        )
+    } else Seq.empty
+}
+
+@businessAddressRow = @{
+    if(viewModel.incomeSourceType == SelfEmployment && !showAddedAddressRow) {
+        Seq(
+            SummaryListRow(
+                key = Key(
+                content = Text(getMessage("address"))
+            ),
+                value = Value(
+                content = extractAddress
+            ),
+                actions = Some(Actions(
+                    items = Seq(
+                        ActionItem(
+                            href = changeBusinessAddressURL,
+                            content = Text(getMessage("change")),
+                            attributes = Map("id" -> "change-business-address-link"),
+                            visuallyHiddenText = Some(getMessage("address"))
+                        )
+                    )
+                ))
+            )
+        )
+    } else Seq.empty
+}
+
+@mainTemplate(
+    pageTitle = getMessage("title"),
+    backUrl = Some(backUrl),
+    useFallbackBackLink = true,
+    isAgent = isAgent,
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
+
+    @hmrcPageHeading(PageHeading(
+        text = getMessage("title"),
+        headingClasses = Some("govuk-heading-xl"),
+        section = Some(getMessage("heading")),
+        captionClasses = Some("govuk-caption-xl")
+    ))
+
+    @formWithCSRF(action = postAction) {
+
+        @govukSummaryList(SummaryList(
+            rows = {
+                businessNameRow ++
+                businessStartDateRow ++
+                businessTradeRow ++
+                addedAddressRow ++
+                businessAddressRow
+            },
+            attributes = Map("id" -> "check-details-table")
+        ))
+
+        @p(id = Some("check-details-description")){
+            @getMessage("description")
+        }
+
+      @continueButton(id = Some("confirm-button"), alternativeText = Some(messages("base.confirm-and-continue")))
+    }
+
+}

@@ -16,7 +16,7 @@
 
 package services
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import enums.JourneyType.*
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}

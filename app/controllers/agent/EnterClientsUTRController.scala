@@ -16,15 +16,14 @@
 
 package controllers.agent
 
-import audit.AuditingService
 import audit.models.EnterClientUTRAuditModel
-import auth.FrontendAuthorisedFunctions
-import auth.authV2.AuthActions
-import auth.authV2.models.AuthorisedUserRequest
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig}
-import controllers.agent.AuthUtils._
-import controllers.agent.sessionUtils.SessionKeys
+import common.auth.{AuthActions, FrontendAuthorisedFunctions}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.config.featureswitch.FeatureSwitching
+import common.models.auth.AuthorisedUserRequest
+import common.services.AuditingService
+import common.utils.AuthUtils._
+import common.utils.sessionUtils.SessionKeys
 import enums._
 import forms.agent.ClientsUTRForm
 import models.sessionData.SessionCookieData

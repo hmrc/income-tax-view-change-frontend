@@ -16,23 +16,24 @@
 
 package controllers.agent
 
-import config.featureswitch.FeatureSwitching
-import helpers.ComponentSpecBase
-import helpers.servicemocks.MTDAgentAuthStub
-import play.api.http.Status._
+import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.helpers.ComponentSpecBase
+import common.helpers.servicemocks.MTDAgentAuthStub
+import common.viewUtils.InternalUrlHelper
+import play.api.http.Status.*
 
-class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
+class UTRErrorControllerISpec extends ComponentSpecBase {
   val path = "/agents/cannot-view-client"
 
   s"GET $path" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildGETMTDClient(path).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(InternalUrlHelper.signinUrl)
         )
       }
     }
@@ -45,7 +46,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
         Then(s"Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
         )
       }
     }
@@ -66,14 +67,14 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
   }
 
   s"POST $path" should {
-    s"redirect ($SEE_OTHER) to ${controllers.routes.SignInController.signIn().url}" when {
+    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.routes.SignInController.signIn().url)
+          redirectURI(InternalUrlHelper.signinUrl)
         )
       }
     }
@@ -85,7 +86,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase with FeatureSwitching {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.errors.routes.AgentErrorController.show().url)
+          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
         )
       }
     }

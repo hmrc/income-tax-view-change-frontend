@@ -15,10 +15,11 @@
  *@
 
 @import views.html.navBar.BtaPartial
-@import views.html.layouts.unifiedLayout
-@import views.html.components.h1
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components.h1
+@import common.config.FrontendAppConfig
 
-@this(mainTemplate: unifiedLayout, appConfig: config.FrontendAppConfig, btaPartial: BtaPartial, h1: h1)
+@this(mainTemplate: unifiedLayout, appConfig: FrontendAppConfig, btaPartial: BtaPartial, h1: h1)
 
 @()(implicit request: Request[_], messages: Messages)
 

@@ -16,8 +16,10 @@
 
 package controllers.agent
 
-import controllers.agent.sessionUtils.SessionKeys
-import mocks.auth.MockAuthActions
+import common.viewUtils.InternalUrlHelper
+import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.mocks.auth.MockAuthActions
+import common.utils.sessionUtils.SessionKeys
 import mocks.views.agent.MockUTRError
 import play.api
 import play.api.Application
@@ -46,7 +48,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+        redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
       }
     }
 
@@ -56,7 +58,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
       }
     }
 
@@ -67,7 +69,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
       }
     }
 
@@ -100,7 +102,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+        redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
       }
     }
 
@@ -111,7 +113,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.errors.routes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
       }
     }
 

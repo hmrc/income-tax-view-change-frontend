@@ -17,7 +17,7 @@
 package services
 
 import com.google.inject.ImplementedBy
-import config.{FrontendAppConfig, TimeMachine}
+import common.config.{FrontendAppConfig, TimeMachine}
 import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate

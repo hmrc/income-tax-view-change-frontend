@@ -14,13 +14,15 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import views.html.components.h3link
 @import exceptions.MissingFieldException
 @import models.homePage.HomePageViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
+@import common.config.FrontendAppConfig
 
 @this(
     layout: unifiedLayout,
@@ -44,8 +46,8 @@ viewModel: HomePageViewModel
 )(
     implicit request: Request[_],
     messages: Messages,
-    user: auth.MtdItUser[_],
-    appConfig: config.FrontendAppConfig)
+    user: common.auth.MtdItUser[_],
+    appConfig: FrontendAppConfig)
 
 @pageHeading = @{
     user.optClientNameAsString.fold(messages("home.agent.heading")){

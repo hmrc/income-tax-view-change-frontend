@@ -18,6 +18,7 @@
 @import implicits.ImplicitCurrencyFormatter._
 @import models.paymentAllocationCharges._
 @import _root_.implicits.HtmlFormatter.NbspString
+@import financials.controllers.routes as financialsRoutes
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
@@ -26,9 +27,9 @@
 
 @paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate, isAgent: Boolean) = @{
     if(isAgent){
-        controllers.routes.ChargeSummaryController.showAgent(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
+        financialsRoutes.ChargeSummaryController.showAgent(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
     } else {
-        controllers.routes.ChargeSummaryController.show(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
+        financialsRoutes.ChargeSummaryController.show(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
     }
 }
 

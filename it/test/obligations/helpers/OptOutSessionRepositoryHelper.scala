@@ -1,0 +1,59 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package obligations.helpers
+
+import common.helpers.CustomMatchers
+import enums.JourneyType.OptOutJourney
+import models.UIJourneySessionData
+import models.incomeSourceDetails.TaxYear
+import models.itsaStatus.ITSAStatus.ITSAStatus
+import obligations.models.reportingObligations.optOut.OptOutSessionData
+import obligations.repositories.OptOutContextData
+import repositories.UIJourneySessionDataRepository
+import testConstants.BaseIntegrationTestConstants.testSessionId
+
+class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) extends CustomMatchers {
+
+  def stubOptOutInitialState(
+                              currentTaxYear: TaxYear,
+                              previousYearCrystallised: Boolean,
+                              previousYearStatus: ITSAStatus,
+                              currentYearStatus: ITSAStatus,
+                              nextYearStatus: ITSAStatus,
+                              selectedOptOutYear: Option[String] = None,
+                              journeyIsComplete: Boolean = false
+                            ): Boolean = {
+    repository.set(
+      UIJourneySessionData(
+        sessionId = testSessionId,
+        journeyType = OptOutJourney.toString,
+        optOutSessionData =
+          Some(OptOutSessionData(
+            Some(OptOutContextData(
+              currentYear = currentTaxYear.toString,
+              crystallisationStatus = previousYearCrystallised,
+              previousYearITSAStatus = previousYearStatus.toString,
+              currentYearITSAStatus = currentYearStatus.toString,
+              nextYearITSAStatus = nextYearStatus.toString)),
+            selectedOptOutYear = selectedOptOutYear
+          )),
+        journeyIsComplete = Some(journeyIsComplete)
+      )
+    ).futureValue
+  }
+
+}

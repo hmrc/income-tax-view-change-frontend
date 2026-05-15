@@ -16,18 +16,14 @@
 
 package connectors
 
-import audit.AuditingService
-import audit.models.IncomeSourceDetailsResponseAuditModel
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
-import play.api.http.{HeaderNames, Status}
+import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import utils.Headers.checkAndAddTestHeader
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -35,20 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class BusinessDetailsConnector @Inject()(
                                           httpClient: HttpClientV2,
-                                          auditingService: AuditingService,
                                           appConfig: FrontendAppConfig
                                         )(implicit val ec: ExecutionContext) {
 
   private[connectors] def getBusinessDetailsUrl(nino: String): String = {
     s"${appConfig.itvcProtectedService}/income-tax-view-change/get-business-details/nino/$nino"
-  }
-
-  private[connectors] def getIncomeSourcesUrl(mtditid: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/income-sources/$mtditid"
-  }
-
-  private[connectors] def getNinoLookupUrl(mtdRef: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/nino-lookup/$mtdRef"
   }
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
@@ -79,77 +66,6 @@ class BusinessDetailsConnector @Inject()(
       }.recover {
         case ex =>
           Logger("application").error(s"[FE Business Details Connector][getBusinessDetails] Unexpected future failed error, ${ex.getMessage}")
-          IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
-      }
-  }
-
-  def modifyHeaderCarrier(
-                           path: String,
-                           headerCarrier: HeaderCarrier
-                         )(implicit appConfig: FrontendAppConfig): HeaderCarrier = {
-
-    val manageBusinessesPattern = """.*/manage-your-businesses/.*""".r
-    val incomeSourcesPattern    = """.*/income-sources/.*""".r
-    val confirmTriggeredMigrationUrl   = "/check-your-active-businesses/confirm"
-    val completedTriggeredMigrationUrl = "/check-your-active-businesses/complete"
-
-    val refererOpt = headerCarrier.extraHeaders.find(_._1.equalsIgnoreCase(HeaderNames.REFERER)).map(_._2)
-
-    if (refererOpt.exists(ref => ref.contains(confirmTriggeredMigrationUrl) || ref.contains(completedTriggeredMigrationUrl))) {
-      return checkAndAddTestHeader(path, headerCarrier, appConfig.triggeredMigrationOverrides(), "afterMigration")
-    }
-
-    if (manageBusinessesPattern.matches(path) || incomeSourcesPattern.matches(path)) {
-      return checkAndAddTestHeader(path, headerCarrier, appConfig.incomeSourceOverrides(), "afterIncomeSourceCreated")
-    }
-
-    headerCarrier
-  }
-
-
-
-  def getIncomeSources()(implicit headerCarrier: HeaderCarrier, mtdItUser: AuthorisedAndEnrolledRequest[_]): Future[IncomeSourceDetailsResponse] = {
-
-    val url = getIncomeSourcesUrl(mtdItUser.mtditId)
-    Logger("application").debug(s"GET $url")
-
-    val hc: HeaderCarrier = modifyHeaderCarrier(mtdItUser.path, headerCarrier)(appConfig)
-
-    httpClient
-      .get(url"$url")
-      .setHeader(hc.extraHeaders:_*)
-      .execute[HttpResponse]
-      .map { response =>
-        response.status match {
-          case OK =>
-            Logger("application").debug(s"[FE Business Details Connector][getIncomeSources] RESPONSE status: ${response.status}, json: ${response.json}")
-            response.json.validate[IncomeSourceDetailsModel].fold(
-              invalid => {
-                Logger("application").error(s"[FE Business Details Connector][getIncomeSources] $invalid")
-                IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
-              },
-              valid => {
-                auditingService.extendedAudit(
-                  IncomeSourceDetailsResponseAuditModel(
-                    mtdItUser,
-                    valid.nino,
-                    valid.businesses.map(_.incomeSourceId),
-                    valid.properties.map(_.incomeSourceId),
-                    valid.yearOfMigration
-                  ))
-                valid
-              }
-            )
-          case status if (status >= 500) =>
-            Logger("application").error(s"[FE Business Details Connector][getIncomeSources] RESPONSE status: ${response.status}, body: ${response.body}")
-            IncomeSourceDetailsError(response.status, response.body)
-          case _ =>
-            Logger("application").warn(s"[FE Business Details Connector][getIncomeSources] RESPONSE status: ${response.status}, body: ${response.body}")
-            IncomeSourceDetailsError(response.status, response.body)
-        }
-      }.recover {
-        case ex =>
-          Logger("application").error(s"[FE Business Details Connector][getIncomeSources] Unexpected future failed error, ${ex.getMessage}")
           IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       }
   }

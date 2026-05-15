@@ -16,9 +16,9 @@
 
 package testConstants.incomeSources
 
-import enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import models.UIJourneySessionData
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
@@ -34,8 +34,8 @@ object IncomeSourceDetailsTestConstants {
   val businessesAndPropertyIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(business1, business2), List(propertyDetails))
   val businessesAndPropertyIncomeCeased = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(ceasedBusiness), List(ceasedPropertyDetails))
   val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-  val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)
-  val singleBusinessIncomeNoYearOfMigration = IncomeSourceDetailsModel(testNino, testMtditid, None, List(business1), Nil)
+  val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)
+  val singleBusinessIncomeNoYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, None, List(business1), Nil)
   val singleBusinessIncomeUnconfirmed = singleBusinessIncomeNoYearOfMigration.copy(channel = HmrcUnconfirmed.getValue)
   val dualBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1, business1), Nil)
   val singleBusinessIncomeNoLatency = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1NoLatency), Nil)
@@ -188,7 +188,6 @@ object IncomeSourceDetailsTestConstants {
             accountingPeriodEndDate = Some(LocalDate.of(2023, 4, 6)),
             incomeSourceId = Some(testSelfEmploymentId),
             address = Some(Address(Seq("line1", "line2"), Some("N1 1EE"), Some(Country(Some("GB"), Some("United Kingdom"))))),
-            countryCode = Some("A Country"),
             reportingMethodTaxYear1 = None,
             reportingMethodTaxYear2 = None,
             incomeSourceCreatedJourneyComplete = None

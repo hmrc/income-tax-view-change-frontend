@@ -16,13 +16,13 @@
 
 package connectors
 
-import _root_.helpers.ComponentSpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import common.helpers.ComponentSpecBase
 import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import models.nrs.NrsSuccessResponse
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.MimeTypes
-import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR}
+import play.api.http.Status.{ACCEPTED, BAD_REQUEST}
 import play.api.libs.json.Json
 import testConstants.NrsUtils
 import uk.gov.hmrc.http.HeaderCarrier

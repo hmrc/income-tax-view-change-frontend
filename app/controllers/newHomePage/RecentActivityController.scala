@@ -16,21 +16,22 @@
 
 package controllers.newHomePage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import models.admin.RecentActivity
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import models.admin.{PaymentHistoryRefunds, RecentActivity}
+import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
-import models.obligations.ObligationsModel
+import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService}
 import services.newHomePage.RecentActivityService
+import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.HomePageUtils
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,22 +39,21 @@ import scala.concurrent.{ExecutionContext, Future}
 class RecentActivityController @Inject()(val newHomeRecentActivityView: views.html.newHomePage.NewHomeRecentActivityView,
                                          val authActions: AuthActions,
                                          recentActivityService: RecentActivityService,
+                                         paymentHistoryService: PaymentHistoryService,
                                          val ITSAStatusService: ITSAStatusService,
-                                         val dateService: DateServiceInterface)
+                                         val dateService: DateServiceInterface,
+                                         val whatYouOweService: WhatYouOweService)
                                         (implicit val ec: ExecutionContext,
                                          mcc: MessagesControllerComponents,
-                                         val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+                                         val appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with HomePageUtils {
 
   def show(isAgent: Boolean, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      if(isEnabled(RecentActivity)) {
-        handleShowRequest(origin)
-      } else {
-        if (isAgent) {
-          Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
-        } else {
-          Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
-        }
+      (isEnabled(RecentActivity), !user.isSupportingAgent, user.isAgent) match {
+        case (true, true, _) => handleShowRequest(origin)
+        case (true, false, _) => Future.successful(Redirect(controllers.routes.HomeController.handleOverview(origin, isAgent)))
+        case (false, _, true) => Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
+        case (false, _, false) => Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
       }
   }
   
@@ -65,9 +65,18 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
         case obligations: ObligationsModel => obligations
         case _ => ObligationsModel(Nil)
       }
+
+      repaymentHistoryData <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds)).map {
+        case Right(repaymentHistory) => models.repaymentHistory.RepaymentHistoryModel(repaymentHistory)
+        case Left(value) => models.repaymentHistory.RepaymentHistoryModel(Nil)
+      }
+
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
       recentSubmissionActivities = recentActivityService.getRecentSubmissionActivity(fulfilledObligations, currentItsaStatus)
-      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities)
+      payments <- paymentHistoryService.getPaymentHistory().map(_.getOrElse(List.empty[Payment]))
+      recentPayment = recentActivityService.getRecentPaymentActivity(payments)
+      recentRefunds = recentActivityService.getRecentRefundActivity(repaymentHistoryData, dateService)
+      recentActivityViewModel = recentActivityService.recentActivityCards(recentSubmissionActivities, recentPayment, recentRefunds)
     } yield {
       Ok(newHomeRecentActivityView(
         origin,
@@ -97,8 +106,4 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
       }
   }
 
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show(origin).url
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = routes.RecentActivityController.show(isAgent, origin).url
-  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
-  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
 }

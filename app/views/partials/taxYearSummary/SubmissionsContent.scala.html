@@ -18,11 +18,11 @@
 @import views.html.partials.taxYearSummary._
 @import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import java.time.LocalDate
-@import views.html.components._
+@import common.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.table.HeadCell
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-@import models.obligations.ObligationWithIncomeType
+@import obligations.models.ObligationWithIncomeType
 @import uk.gov.hmrc.govukfrontend.views.Aliases.TableRow
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 @import models.incomeSourceDetails.QuarterReportingType
@@ -37,7 +37,7 @@
         govukTable: GovukTable
 )
 
-@(viewModel: TaxYearSummaryViewModel)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(viewModel: TaxYearSummaryViewModel)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 @import implicitDateFormatter._
 
 @tableHead = @{
@@ -49,6 +49,7 @@
 }
 @tableRows(input: Seq[ObligationWithIncomeType]) = @{
     input.map(nextUpdateWithIncomeType => {
+        val dateContent = nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort).fold(HtmlContent(messages("submissionsTab.notReceived")))(value => HtmlContent(value))
         Seq(
             TableRow(classes = "govuk-table__header govuk-!-font-weight-regular govuk-!-width-one-third",
                 content = HtmlContent(updateTypeHelper(nextUpdateWithIncomeType.obligation.obligationType))),
@@ -57,7 +58,8 @@
                     messages(nextUpdateWithIncomeType.incomeType)
                 })),
             TableRow(classes = "govuk-table__cell govuk-!-width-one-third",
-                content = nextUpdateWithIncomeType.obligation.dateReceived.map(_.toLongDateShort).fold(HtmlContent(""))(value => HtmlContent(value)))
+                content = dateContent
+            )
         )
     })
 }

@@ -17,13 +17,13 @@
 package repositories
 
 
-import enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import common.helpers.ComponentSpecBase
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
 import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.mongodb.scala.bson.BsonDocument
-import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
+import org.mongodb.scala.SingleObservableFuture
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class UIJourneySessionDataISpec extends ComponentSpecBase {

@@ -16,14 +16,15 @@
 
 package views
 
-import config.featureswitch.FeatureSwitching
-import enums.ChargeType._
+import common.config.featureswitch.FeatureSwitching
+import enums.ChargeType.*
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException
+import financials.controllers.routes as financialsRoutes
 import models.admin.FilterCodedOutPoas
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,16 +32,15 @@ import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import play.twirl.api.Html
 import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.*
 import testUtils.ViewSpec
 import views.html.ChargeSummaryView
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
-
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
   lazy val chargeSummary: ChargeSummaryView = app.injector.instanceOf[ChargeSummaryView]
-  val whatYouOweAgentUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+  val whatYouOweAgentUrl: String = financialsRoutes.WhatYouOweController.showAgent().url
 
   import Messages._
 
@@ -412,7 +412,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       ) {
 
         document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
-        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(2020, "some-id").url
+        document.selectById("rar-charge-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(2020, "some-id").url
 
         document
           .getElementById("payment-history-table")
@@ -434,7 +434,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaTwoReconciliationCredit)
       ) {
         document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
-        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.show(2020, "some-id").url
+        document.selectById("rar-charge-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(2020, "some-id").url
 
         document
           .getElementById("payment-history-table")
@@ -1380,7 +1380,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "chargeHistory enabled with a matching link to the payment allocations page" in new TestSetup(chargeItem = chargeItemModel(),
             chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
             document.select(Selectors.table).select("a").size shouldBe 10
-            document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
+            document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
           }
 
           "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),
@@ -1453,7 +1453,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaOneReconciliationCredit)
       ) {
         document.selectById("rar-charge-link").text() shouldBe "First payment on account: credit from your tax return"
-        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(2020, "some-id").url
+        document.selectById("rar-charge-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(2020, "some-id").url
 
         document
           .getElementById("payment-history-table")
@@ -1476,7 +1476,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         reviewAndReconcileCredit = reviewAndReconcileCreditChargeItem(PoaTwoReconciliationCredit)
       ) {
         document.selectById("rar-charge-link").text() shouldBe "Second payment on account: credit from your tax return"
-        document.selectById("rar-charge-link").attr("href") shouldBe controllers.routes.ChargeSummaryController.showAgent(2020, "some-id").url
+        document.selectById("rar-charge-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(2020, "some-id").url
 
         document
           .getElementById("payment-history-table")
@@ -1538,7 +1538,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeHistoryEnabled = true, paymentAllocations = List(
           paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", 1500.0, Some("123456789012"), Some("PAYID01"))), isAgent = true) {
         document.select(Selectors.table).select("a").size shouldBe 1
-        document.select(Selectors.table).select("a").forall(_.attr("href") == controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
+        document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url) shouldBe true
       }
     }
 

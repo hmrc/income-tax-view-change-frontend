@@ -16,8 +16,9 @@
 
 package controllers.agent
 
-import connectors.{BusinessDetailsConnector, ITSAStatusConnector}
-import mocks.auth.MockAuthActions
+import common.mocks.auth.MockAuthActions
+import common.viewUtils.InternalUrlHelper
+import connectors.ITSAStatusConnector
 import mocks.views.agent.MockEnterClientsUTR
 import play.api
 import play.api.Application
@@ -34,7 +35,6 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
     .overrides(
       api.inject.bind[EnterClientsUTRView].toInstance(enterClientsUTR),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[BusinessDetailsConnector].toInstance(mockBusinessDetailsConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
     ).build()
 
@@ -51,7 +51,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.SignInController.signIn().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
         }
       }
 
@@ -59,13 +59,14 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
         "redirect to the session timeout page" in {
 
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuthorisationException(exception = BearerTokenExpired())
           mockItsaStatusRetrievalAction()
 
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.timeout.routes.SessionTimeoutController.timeout().url)
+          redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
         }
       }
     }
@@ -77,6 +78,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
 
         "remove client details session keys and redirect to the enter client UTR page" in {
 
+          setupMockFeatureSwitches()
           setupMockAgentWithClientAuthAndIncomeSources(isSupportingAgent = isSupportingAgent)
           mockItsaStatusRetrievalAction()
 

@@ -16,7 +16,7 @@
 
 package mocks.services.config
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import testUtils.UnitSpec

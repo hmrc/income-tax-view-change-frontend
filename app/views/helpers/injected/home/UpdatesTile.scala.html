@@ -14,12 +14,14 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
+@import common.views.html.components._
+@import views.html.components.home_tile
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.obligations.NextUpdatesTileViewModel
+@import models.homePage.NextUpdatesTileViewModel
 @import models.itsaStatus.ITSAStatus
-@import views.html.layouts.unifiedLayout
+@import common.views.html.layouts.unifiedLayout
+@import obligations.controllers.{routes => obligationsRoutes}
 
 
 @this(
@@ -35,20 +37,16 @@
 
 @nextUpdatesControllerURL = @{
     if(isAgent) {
-        controllers.routes.NextUpdatesController.showAgent().url
+        obligationsRoutes.NextUpdatesController.showAgent().url
     } else {
-        controllers.routes.NextUpdatesController.show(optOrigin).url
+        obligationsRoutes.NextUpdatesController.show(optOrigin).url
     }
 }
 
 @nextUpdatesLink = @{
     link(
         link = nextUpdatesControllerURL,
-        messageKey = if(nextUpdatesTileViewModel.isReportingFrequencyEnabled) {
-            "home.updates.view.reportingFrequency"
-        } else {
-            if(nextUpdatesTileViewModel.showOptInOptOutContentUpdateR17) "home.updates.R17.linkText" else "home.updates.view"
-        }
+        messageKey = "home.updates.view.reportingFrequency"
     )
 }
 

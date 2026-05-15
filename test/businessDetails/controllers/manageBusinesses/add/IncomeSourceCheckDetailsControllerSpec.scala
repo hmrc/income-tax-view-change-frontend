@@ -1,0 +1,282 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package businessDetails.controllers.manageBusinesses.add
+
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
+import businessDetails.services.CreateBusinessDetailsService
+import common.mocks.auth.MockAuthActions
+import connectors.ITSAStatusConnector
+import enums.JourneyType.{Add, IncomeSourceJourneyType}
+import enums.MTDIndividual
+import mocks.services.MockSessionService
+import models.admin.OverseasBusinessAddress
+import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
+import play.api
+import play.api.Application
+import play.api.http.Status
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
+import play.api.mvc.Result
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import services.{DateServiceInterface, SessionService}
+import testConstants.BaseTestConstants.testSelfEmploymentId
+import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData}
+
+import scala.concurrent.Future
+
+class IncomeSourceCheckDetailsControllerSpec extends MockAuthActions with MockSessionService {
+
+  import businessDetails.testConstants.IncomeSourceCheckDetailsConstants.*
+  lazy val mockBusinessDetailsService: CreateBusinessDetailsService = mock(classOf[CreateBusinessDetailsService])
+
+  override lazy val app: Application = applicationBuilderWithAuthBindings
+    .overrides(
+      api.inject.bind[SessionService].toInstance(mockSessionService),
+      api.inject.bind[CreateBusinessDetailsService].toInstance(mockBusinessDetailsService),
+      api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+    ).build()
+
+  lazy val testCheckDetailsController = app.injector.instanceOf[IncomeSourceCheckDetailsController]
+
+  def getHeading(sourceType: IncomeSourceType): String = {
+    sourceType match {
+      case SelfEmployment => messages("check-details.title")
+      case UkProperty => messages("check-details-uk.title")
+      case ForeignProperty => messages("check-details-fp.title")
+    }
+  }
+
+  def getTitle(sourceType: IncomeSourceType, isAgent: Boolean): String = {
+    val prefix: String = if (isAgent) "htmlTitle.agent" else "htmlTitle"
+    sourceType match {
+      case SelfEmployment => s"${messages(prefix, messages("check-details.title"))}"
+      case UkProperty => messages(prefix, messages("check-details-uk.title"))
+      case ForeignProperty => messages(prefix, messages("check-details-fp.title"))
+    }
+  }
+
+  def getLink(sourceType: IncomeSourceType): String = {
+    sourceType match {
+      case SelfEmployment => s"${messages("check-details.change")}"
+      case UkProperty => s"${messages("check-details-uk.change")}"
+      case ForeignProperty => s"${messages("check-details-fp.change")}"
+    }
+  }
+
+  List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
+    mtdAllRoles.foreach { mtdRole =>
+      s"show${if (mtdRole != MTDIndividual) "Agent" else ""}(incomeSourceType = $incomeSourceType)" when {
+        val action = if (mtdRole == MTDIndividual) testCheckDetailsController.show(incomeSourceType, false) else testCheckDetailsController.showAgent(incomeSourceType, false)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
+        s"the user is authenticated as a $mtdRole" should {
+          "render the check details page" when {
+            "the session contains full business details and FS enabled" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+
+              mockNoIncomeSources()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
+
+              val result: Future[Result] = action(fakeRequest)
+
+              val document: Document = Jsoup.parse(contentAsString(result))
+              val changeDetailsLinks = document.select(".govuk-summary-list__actions .govuk-link")
+
+              status(result) shouldBe OK
+              document.title shouldBe getTitle(incomeSourceType, mtdRole != MTDIndividual)
+              document.select("h1:nth-child(1)").text shouldBe getHeading(incomeSourceType)
+              changeDetailsLinks.first().ownText() shouldBe getLink(incomeSourceType)
+            }
+
+          }
+          if (incomeSourceType == SelfEmployment) {
+            "render the check details page with overseas address rows when OverseasBusinessAddress is enabled" in {
+              setupMockSuccess(mtdRole, false, List(OverseasBusinessAddress))
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+              mockNoIncomeSources()
+              setupMockCreateSession(true)
+
+              val sessionDataWithNewAddress = notCompletedUIJourneySessionData(
+                IncomeSourceJourneyType(Add, SelfEmployment)
+              ).copy(
+                addIncomeSourceData = notCompletedUIJourneySessionData(
+                  IncomeSourceJourneyType(Add, SelfEmployment)
+                ).addIncomeSourceData.map(
+                  _.copy(chooseSoleTraderAddress = Some(ChooseSoleTraderAddressUserAnswer(
+                    addressLine1 = Some("123 Test Address"),
+                    addressLine2 = None,
+                    addressLine3 = None,
+                    addressLine4 = None,
+                    postcode = None,
+                    countryCode = Some("GB"),
+                    newAddress = true)))
+                )
+              )
+
+              setupMockGetMongo(Right(Some(sessionDataWithNewAddress)))
+
+              val result: Future[Result] = action(fakeRequest)
+
+              status(result) shouldBe OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              val bodyText = document.body().text()
+              bodyText should (
+                include("Added address for this business") or
+                  include("Added international address for this business")
+                )
+            }
+
+            "render the check details page without overseas address rows when OverseasBusinessAddress is disabled" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+              mockNoIncomeSources()
+              setupMockCreateSession(true)
+
+              val sessionDataWithNewAddress = notCompletedUIJourneySessionData(
+                IncomeSourceJourneyType(Add, SelfEmployment)
+              ).copy(
+                addIncomeSourceData = notCompletedUIJourneySessionData(
+                  IncomeSourceJourneyType(Add, SelfEmployment)
+                ).addIncomeSourceData.map(
+                  _.copy(chooseSoleTraderAddress = Some(ChooseSoleTraderAddressUserAnswer(addressLine1 = Some("123 Test Address"),
+                    addressLine2 = None,
+                    addressLine3 = None,
+                    addressLine4 = None,
+                    postcode = None,
+                    countryCode = Some("GB"),
+                    newAddress = true)))
+                )
+              )
+              setupMockGetMongo(Right(Some(sessionDataWithNewAddress)))
+
+              val result: Future[Result] = action(fakeRequest)
+
+              status(result) shouldBe OK
+              val document: Document = Jsoup.parse(contentAsString(result))
+              document.body().text() should not include "Added address for this business"
+            }
+          }
+
+          s"return ${Status.SEE_OTHER}: redirect to the relevant You Cannot Go Back page" when {
+            s"user has already completed the journey" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+
+              mockNoIncomeSources()
+              setupMockGetMongo(Right(Some(sessionDataCompletedJourney(IncomeSourceJourneyType(Add, incomeSourceType)))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              val redirectUrl = if (mtdRole != MTDIndividual) addBusinessRoutes.ReportingMethodSetBackErrorController.showAgent(incomeSourceType).url
+              else addBusinessRoutes.ReportingMethodSetBackErrorController.show(incomeSourceType).url
+              redirectLocation(result) shouldBe Some(redirectUrl)
+            }
+          }
+          s"return ${Status.SEE_OTHER}: redirect to IncomeSourceAddedBackErrorController" when {
+            s"user has already added their income source" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+
+              mockNoIncomeSources()
+              setupMockGetMongo(Right(Some(sessionDataISAdded(IncomeSourceJourneyType(Add, incomeSourceType)))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe SEE_OTHER
+              val redirectUrl = if (mtdRole != MTDIndividual) addBusinessRoutes.IncomeSourceAddedBackErrorController.showAgent(incomeSourceType).url
+              else addBusinessRoutes.IncomeSourceAddedBackErrorController.show(incomeSourceType).url
+              redirectLocation(result) shouldBe Some(redirectUrl)
+            }
+          }
+
+          "return 500 INTERNAL_SERVER_ERROR" when {
+            "there is session data missing" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+
+              mockNoIncomeSources()
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
+
+              val result: Future[Result] = action(fakeRequest)
+              status(result) shouldBe INTERNAL_SERVER_ERROR
+            }
+          }
+        }
+      }
+
+      s"submit${if (mtdRole != MTDIndividual) "Agent" else ""}(incomeSourceType = $incomeSourceType)" when {
+        val action = if (mtdRole == MTDIndividual) testCheckDetailsController.submit(incomeSourceType, false) else testCheckDetailsController.submitAgent(incomeSourceType, false)
+        val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
+        s"the user is authenticated as a $mtdRole" should {
+          "redirect to IncomeSourceReportingFrequencyController" when {
+            "data is correct and redirect next page" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+              mockNoIncomeSources()
+              when(mockBusinessDetailsService.createRequest(any())(any(), any(), any()))
+                .thenReturn(Future {
+                  Right(CreateIncomeSourceResponse(testBusinessId))
+                })
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
+              setupMockSetMongoData(true)
+              when(mockSessionService.deleteMongoData(any())(any())).thenReturn(Future(true))
+
+              val result: Future[Result] = action(fakeRequest)
+
+              val redirectUrl: (Boolean, IncomeSourceType, String) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, id: String) =>
+                routes.IncomeSourceReportingFrequencyController.show(isAgent, false, incomeSourceType).url
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(redirectUrl(mtdRole != MTDIndividual, incomeSourceType, testSelfEmploymentId))
+            }
+          }
+          "redirect to custom error page" when {
+            "unable to create business" in {
+              setupMockSuccess(mtdRole)
+              mockItsaStatusRetrievalAction(noIncomeDetails)
+
+              mockNoIncomeSources()
+              when(mockBusinessDetailsService.createRequest(any())(any(), any(), any()))
+                .thenReturn(Future {
+                  Left(new Error("Test Error"))
+                })
+              setupMockCreateSession(true)
+              setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType)))))
+              when(mockSessionService.deleteMongoData(any())(any())).thenReturn(Future(true))
+
+              val result: Future[Result] = action(fakeRequest)
+
+              val redirectUrl = if (mtdRole != MTDIndividual) addBusinessRoutes.IncomeSourceNotAddedController.showAgent(incomeSourceType).url
+              else addBusinessRoutes.IncomeSourceNotAddedController.show(incomeSourceType).url
+
+              status(result) shouldBe SEE_OTHER
+              redirectLocation(result) shouldBe Some(redirectUrl)
+            }
+          }
+        }
+      }
+    }
+  }
+}

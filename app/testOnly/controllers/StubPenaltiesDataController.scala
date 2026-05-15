@@ -16,8 +16,8 @@
 
 package testOnly.controllers
 
-import config.FrontendAppConfig
-import controllers.BaseController
+import common.config.FrontendAppConfig
+import common.controllers.BaseController
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
 import play.api.mvc._

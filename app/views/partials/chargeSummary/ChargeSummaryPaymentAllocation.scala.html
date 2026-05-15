@@ -20,6 +20,7 @@
 @import models.financialDetails.FinancialDetailsModel
 @import models.financialDetails.MfaDebitCharge
 @import _root_.implicits.HtmlFormatter.NbspString
+@import financials.controllers.routes as financialsRoutes
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
@@ -54,9 +55,9 @@
 
                 if(matchingPayment.isDefined) {
                     val link = if(isAgent) {
-                        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
+                        financials.controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
                     } else {
-                        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, origin).url
+                        financials.controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, origin).url
                     }
                     val linkText = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
                                 messages(allocation.getPaymentAllocationTextInChargeSummary, codingOutFrom, codingOutTo)

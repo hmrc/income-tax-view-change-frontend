@@ -16,7 +16,7 @@
 
 package models
 
-import models.repaymentHistory.RepaymentHistoryModel
+import models.repaymentHistory.{HipRepaymentHistoryResponse, RepaymentHistoryModel}
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, repaymentHistoryTwoRSI, validRepaymentHistoryOneRSIJson, validRepaymentHistoryTwoRSIJson}
@@ -36,6 +36,72 @@ class RepaymentHistoryResponseModelSpec extends UnitSpec with Matchers {
         Json.fromJson[RepaymentHistoryModel](validRepaymentHistoryTwoRSIJson).fold(
           invalid => invalid,
           valid => valid) shouldBe RepaymentHistoryModel(List(repaymentHistoryTwoRSI))
+      }
+      "the API5324 response is missing repaymentSupplementItem" in {
+        val api5324Response = Json.parse(
+          """
+            |{
+            |  "etmp_transaction_header": {
+            |    "status": "OK",
+            |    "processingDate": "2026-04-23T12:25:58Z"
+            |  },
+            |  "etmp_Response_Details": {
+            |    "repaymentsViewerDetails": [
+            |      {
+            |        "repaymentRequestNumber": "000000004624",
+            |        "actor": "Operator",
+            |        "channel": "Manual Return",
+            |        "status": "Approved",
+            |        "amountRequested": 868.2,
+            |        "amountApprovedforRepayment": 868.2,
+            |        "totalRepaymentAmount": 868.2,
+            |        "repaymentMethod": "BACS Payment out",
+            |        "creationDate": "2026-04-02",
+            |        "estimatedRepaymentDate": "2026-04-05",
+            |        "repaymentItems": [
+            |          {
+            |            "creditItems": [
+            |              {
+            |                "creditReference": "XP002610256651",
+            |                "creditChargeName": "SA Balancing Charge Credit",
+            |                "amount": 868.2,
+            |                "creationDate": "2026-04-02",
+            |                "taxYear": "2025"
+            |              }
+            |            ],
+            |            "creditReasons": [
+            |              {
+            |                "creditReference": "XP002610256651",
+            |                "creditReason": "Excess Payment",
+            |                "edp": "2027-01-31",
+            |                "amount": 2486,
+            |                "originalChargeReduced": "Income Tax Estimate",
+            |                "amendmentDate": "2026-04-02",
+            |                "taxYear": "2026"
+            |              },
+            |              {
+            |                "creditReference": "XP002610256651",
+            |                "creditReason": "Excess Payment",
+            |                "edp": "2027-01-31",
+            |                "amount": 145.8,
+            |                "originalChargeReduced": "Income Tax Estimate",
+            |                "amendmentDate": "2026-04-02",
+            |                "taxYear": "2026"
+            |              }
+            |            ]
+            |          }
+            |        ]
+            |      }
+            |    ]
+            |  }
+            |}
+            |""".stripMargin
+        )
+
+        Json.fromJson[HipRepaymentHistoryResponse](api5324Response).fold(
+          invalid => invalid,
+          valid => valid.etmp_Response_Details.repaymentsViewerDetails.head.repaymentItems.get.head.repaymentSupplementItem
+        ) shouldBe Seq.empty
       }
     }
 

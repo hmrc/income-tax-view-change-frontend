@@ -16,7 +16,7 @@
 
 package testOnly.controllers
 
-import controllers.BaseController
+import common.controllers.BaseController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.TestBTAPartial
 

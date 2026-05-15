@@ -15,11 +15,12 @@
  *@
 
 @import play.twirl.api.Html
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
 
 @this(
-    appConfig: config.FrontendAppConfig,
+    appConfig: FrontendAppConfig,
     layout: unifiedLayout,
     h2: h2,
     button: href_button,

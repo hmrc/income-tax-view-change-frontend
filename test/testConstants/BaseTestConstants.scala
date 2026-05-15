@@ -16,10 +16,10 @@
 
 package testConstants
 
-import auth.MtdItUser
-import auth.authV2.models.AuthorisedAndEnrolledRequest
-import authV2.AuthActionsTestData.*
-import config.FrontendAppConfig
+import common.auth.actions.AuthActionsTestData.*
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.models.auth.AuthorisedAndEnrolledRequest
 import enums.MTDIndividual
 import models.btaNavBar.ListLinks
 import models.core.Nino
@@ -117,6 +117,7 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testPaymentLotItem = "000001"
   val testErrorStatus: Int = Status.INTERNAL_SERVER_ERROR
   val testErrorNotFoundStatus: Int = Status.NOT_FOUND
+  val testBadRequestStatus: Int = Status.BAD_REQUEST
   val testErrorMessage = "Dummy Error Message"
   implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

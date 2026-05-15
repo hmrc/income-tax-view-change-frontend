@@ -16,16 +16,17 @@
 
 package controllers
 
-import audit.models.{NextUpdatesResponseAuditModel, TaxYearSummaryResponseAuditModel}
+import audit.models.TaxYearSummaryResponseAuditModel
+import common.helpers.servicemocks.AuditStub
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
-import helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
+import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import models.admin.*
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{IsMTD, LiabilityCalculationError}
-import models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import obligations.models.audit.NextUpdatesResponseAuditModel
 import org.jsoup.Jsoup
 import play.api.http.Status.*
 import play.api.libs.json.Json
@@ -35,8 +36,10 @@ import testConstants.CalculationListIntegrationTestConstants.successResponseNonC
 import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.NewCalcBreakdownItTestConstants.*
 import testConstants.messages.TaxYearSummaryMessages.*
+import financials.controllers.routes as financialsRoutes
 
 import java.time.LocalDate
+import obligations.models.*
 
 class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
@@ -56,8 +59,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
           } else {
             "render the tax summary page" that {
               "includes the latest and previous calculations tab - previous calc amended" in {
-                enable(PostFinalisationAmendmentsR18)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(PostFinalisationAmendmentsR18))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -94,9 +96,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "includes the latest and previous calculations tab - previous calc finalised" in {
 
-                enable(PostFinalisationAmendmentsR18)
-
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(PostFinalisationAmendmentsR18))
 
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
 
@@ -680,9 +680,9 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   val document = Jsoup.parse(res.body)
 
                   def getChargeSummaryUrl(id: String) = if (mtdUserRole == MTDIndividual) {
-                    controllers.routes.ChargeSummaryController.show(testYear2023, id).url
+                    financialsRoutes.ChargeSummaryController.show(testYear2023, id).url
                   } else {
-                    controllers.routes.ChargeSummaryController.showAgent(testYear2023, id).url
+                    financialsRoutes.ChargeSummaryController.showAgent(testYear2023, id).url
                   }
 
                   document.getElementById("paymentTypeLink-0").attr("href") shouldBe getChargeSummaryUrl("1040000123")

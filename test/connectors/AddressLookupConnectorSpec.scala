@@ -16,8 +16,9 @@
 
 package connectors
 
-import config.featureswitch.FeatureSwitching
-import mocks.MockHttpV2
+import businessDetails.services.AddressLookupConnector
+import common.config.featureswitch.FeatureSwitching
+import common.mocks.MockHttpV2
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}

@@ -16,13 +16,15 @@
 
 package controllers.newHomePage
 
+import common.mocks.auth.MockAuthActions
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
+import enums.{MTDIndividual, MTDSupportingAgent}
+import common.mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockITSAStatusService}
 import models.admin.{NewHomePage, RecentActivity}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.newHomePage.RecentActivityViewModel
-import models.obligations.ObligationsModel
+import obligations.models.ObligationsModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{when, mock as mMock}
 import play.api
@@ -30,7 +32,7 @@ import play.api.http.Status
 import play.api.inject
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.newHomePage.RecentActivityService
-import services.{DateService, DateServiceInterface, ITSAStatusService}
+import services.{DateService, DateServiceInterface, ITSAStatusService, PaymentHistoryService}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
 
@@ -41,17 +43,18 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
 
   lazy val mockDateServiceInjected: DateService = mMock(classOfDateService)
   lazy val mockRecentActivityService: RecentActivityService = mMock(classOf[RecentActivityService])
+  lazy val mockPaymentHistoryService: PaymentHistoryService = mMock(classOf[PaymentHistoryService])
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[RecentActivityService].toInstance(mockRecentActivityService),
       api.inject.bind[ITSAStatusService].toInstance(mockITSAStatusService),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected),
+      api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService)
     ).build()
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
     when(mockDateServiceInterface.getCurrentDate).thenReturn(LocalDate.of(2023, 1, 1))
     when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(2024)
   }
@@ -65,40 +68,60 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
       val action = testController.show(isAgent)
       s"the user is authenticated as $mtdRole" should {
         "render the recent activity page" when {
-          "the recent activity feature switch is enabled" in {
-            enable(NewHomePage, RecentActivity)
+          if (mtdRole != MTDSupportingAgent) {
+            "the recent activity feature switch is enabled" in {
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
-            val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+              when(mockIncomeSourceConnector.getIncomeSources()(any(), any())).thenReturn(Future(singleBusinessIncome))
+              when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
+              when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
+              when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
+              when(mockPaymentHistoryService.getRepaymentHistory(any())(any(), any())).thenReturn(Future(Right(Seq.empty)))
+              when(mockRecentActivityService.recentActivityCards(any(), any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+              setupMockSuccess(mtdRole, false, List(NewHomePage, RecentActivity))
 
-            when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
-            when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
-            when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
-            when(mockRecentActivityService.recentActivityCards(any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
-            setupMockSuccess(mtdRole)
+              val result = action(fakeRequest)
 
-            val result = action(fakeRequest)
-
-            status(result) shouldBe Status.OK
+              status(result) shouldBe Status.OK
+            }
           }
         }
         "redirect the user" when {
           "recent activity FS is disabled" in {
-            enable(NewHomePage)
-            disable(RecentActivity)
-
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
-            when(mockIncomeSourceDetailsService.getIncomeSourceDetails()(any(), any())).thenReturn(Future(singleBusinessIncome))
+            when(mockIncomeSourceConnector.getIncomeSources()(any(), any())).thenReturn(Future(singleBusinessIncome))
             when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
-            when(mockRecentActivityService.recentActivityCards(any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
-            setupMockSuccess(mtdRole)
+            when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
+            when(mockPaymentHistoryService.getRepaymentHistory(any())(any(), any())).thenReturn(Future(Right(Seq.empty)))
+            when(mockRecentActivityService.recentActivityCards(any(), any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+            setupMockSuccess(mtdRole, false, List(NewHomePage))
 
             val result = action(fakeRequest)
-            val yourTasksUrl = if(isAgent) "/report-quarterly/income-and-expenses/view/agents/your-tasks" else "/report-quarterly/income-and-expenses/view/your-tasks"
+            val yourTasksUrl = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/your-tasks" else "/report-quarterly/income-and-expenses/view/your-tasks"
 
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(yourTasksUrl)
+          }
+          if (mtdRole == MTDSupportingAgent) {
+            "the user is a supporting agent" in {
+              val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
+
+              when(mockIncomeSourceConnector.getIncomeSources()(any(), any())).thenReturn(Future(singleBusinessIncome))
+              when(mockRecentActivityService.getFulfilledObligations()(any(), any())).thenReturn(Future(ObligationsModel(Seq.empty)))
+              when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(Seq.empty))
+              when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
+              when(mockPaymentHistoryService.getRepaymentHistory(any())(any(), any())).thenReturn(Future(Right(Seq.empty)))
+              when(mockRecentActivityService.recentActivityCards(any(), any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
+              setupMockSuccess(mtdRole, false, List(NewHomePage, RecentActivity))
+
+              val result = action(fakeRequest)
+              val overviewUrl = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/overview" else "/report-quarterly/income-and-expenses/view/overview"
+
+              status(result) shouldBe Status.SEE_OTHER
+              redirectLocation(result) shouldBe Some(overviewUrl)
+            }
           }
         }
       }

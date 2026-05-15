@@ -1,0 +1,153 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import models.incomeSourceDetails.viewmodels.IncomeSourceReportingMethodViewModel
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.html.components.{Fieldset, FormWithCSRF, GovukInput, GovukRadios, Input, Legend, RadioItem, Radios, Text, _}
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
+@import common.views.html.components._
+@import common.views.html.helpers.injected.{ContinueButton, ErrorSummary, InputHelper}
+@import views.html.helpers.injected.RadioHelper
+@import common.views.html.layouts.unifiedLayout
+
+@this(
+    mainTemplate: unifiedLayout,
+    hmrcPageHeading: HmrcPageHeading,
+    inputHelper: InputHelper,
+    continueButton: ContinueButton,
+    formWithCSRF: FormWithCSRF,
+    errorSummary: ErrorSummary,
+    radioHelper: RadioHelper,
+    govukRadios: GovukRadios,
+    govukInput : GovukInput,
+    h2: h2,
+    p:p
+)
+
+@(incomeSourceType: IncomeSourceType, incomeSourceReportingMethodForm: Form[_], incomeSourceReportingViewModel: IncomeSourceReportingMethodViewModel, postAction: Call, isAgent: Boolean)(implicit user: common.auth.MtdItUser[_], messages: Messages)
+
+@getMessage(key: String, args: String*) = @{
+    incomeSourceType match {
+        case SelfEmployment => messages(s"incomeSources.add.incomeSourceReportingMethod.se.$key", args: _*)
+        case UkProperty => messages(s"incomeSources.add.incomeSourceReportingMethod.uk.$key", args: _*)
+        case ForeignProperty => messages(s"incomeSources.add.incomeSourceReportingMethod.fp.$key", args: _*)
+    }
+}
+
+
+@renderChooseReportingMethodOptions(taxYear: String, taxYearSeq: String, isAnnualReporting: Boolean) = {
+
+    @govukInput(
+        Input(
+            inputType = "hidden",
+            classes = "govuk-visually-hidden",
+            value = Some(taxYear)
+        ).withFormField(incomeSourceReportingMethodForm("new_"+taxYearSeq+"_reporting_method_tax_year"))
+    )
+
+    @govukInput(
+        Input(
+            inputType = "hidden",
+            classes = "govuk-visually-hidden",
+            value = if(isAnnualReporting) Some("A") else Some("Q")
+        ).withFormField(incomeSourceReportingMethodForm(taxYearSeq+"_reporting_method"))
+    )
+
+
+    @govukRadios(
+        Radios(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                content = Text(messages("incomeSources.add.incomeSourceReportingMethod.taxYear", (taxYear.toInt - 1).toString, taxYear)),
+                classes = "govuk-fieldset__legend govuk-!-margin-bottom-5",
+                isPageHeading = false
+            )))
+        ),
+        items = Seq(
+            RadioItem(
+                content = HtmlContent("<b>"+messages("incomeSources.add.incomeSourceReportingMethod.chooseAnnualReport")+"</b>"),
+                value = Some("A")
+            ),
+            RadioItem(
+                content = HtmlContent("<b>"+messages("incomeSources.add.incomeSourceReportingMethod.chooseQuarterlyReport")+"</b>"),
+                value = Some("Q")
+            )
+        )).withFormField(incomeSourceReportingMethodForm("new_"+taxYearSeq+"_reporting_method"))
+    )
+}
+
+@mainTemplate(
+    pageTitle = messages("incomeSources.add.incomeSourceReportingMethod.heading"),
+    form = Some(incomeSourceReportingMethodForm),
+    isAgent = isAgent, backUrl = None,
+    btaNavPartial = user.btaNavPartial,
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
+
+    @errorSummary(
+        form = incomeSourceReportingMethodForm
+    )
+
+    @hmrcPageHeading(PageHeading(
+        text = messages("incomeSources.add.incomeSourceReportingMethod.heading"),
+        headingClasses = Some("govuk-heading-xl margin-bottom-100"),
+        section = Some(getMessage("caption")),
+        captionClasses = Some("govuk-caption-xl")
+    ))
+
+    @p() {
+        @messages("incomeSources.add.incomeSourceReportingMethod.description1", incomeSourceReportingViewModel.latencyYear2.get.taxYear)
+    }
+
+    @p() {
+        @messages("incomeSources.add.incomeSourceReportingMethod.description2")
+    }
+
+    @p() {
+        @messages("incomeSources.add.incomeSourceReportingMethod.description3")
+    }
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li id="bullet-1">@Html(messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet1"))</li>
+        <li id="bullet-2">@Html(messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet2"))</li>
+        <li id="bullet-3">@Html(messages("incomeSources.add.incomeSourceReportingMethod.description4.bullet3"))</li>
+    </ul>
+
+    @h2("incomeSources.add.incomeSourceReportingMethod.chooseReport")
+
+    @formWithCSRF(action = postAction, Symbol("id") -> "add-uk-property-reporting-method-form") {
+        @if(incomeSourceReportingViewModel.latencyYear1.isDefined) {
+            @renderChooseReportingMethodOptions(incomeSourceReportingViewModel.latencyYear1.get.taxYear, "tax_year_1", incomeSourceReportingViewModel.latencyYear1.get.isAnnualReporting)
+            @govukInput(
+                Input(
+                    id = "new_tax_year_1_reporting_method-3",
+                    inputType = "hidden",
+                    classes = "govuk-visually-hidden",
+                    value = Some("none")
+                ).withFormField(incomeSourceReportingMethodForm("new_tax_year_1_reporting_method").copy(errors = Seq())
+            )
+        )
+    }
+
+    @if(incomeSourceReportingViewModel.latencyYear2.isDefined){
+        @renderChooseReportingMethodOptions(incomeSourceReportingViewModel.latencyYear2.get.taxYear, "tax_year_2", incomeSourceReportingViewModel.latencyYear2.get.isAnnualReporting)
+    }
+
+    @continueButton()
+
+    }
+}

@@ -16,15 +16,15 @@
 
 package controllers
 
-import config.featureswitch.FeatureSwitching
+import common.controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks._
+import helpers.servicemocks.*
 import models.admin.PostFinalisationAmendmentsR18
-import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import play.api.http.Status.*
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 
-class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitching {
+class TaxYearsControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
@@ -59,8 +59,7 @@ class TaxYearsControllerISpec extends ControllerISpecHelper with FeatureSwitchin
               }
 
               "render the amendment guidance text when PostFinalisationAmendmentsR18 FS is enabled" in {
-                enable(PostFinalisationAmendmentsR18)
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(PostFinalisationAmendmentsR18))
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK,
                   multipleBusinessesAndPropertyResponseWoMigration

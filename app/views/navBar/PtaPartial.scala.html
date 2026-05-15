@@ -22,8 +22,9 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.language.{Cy, En}
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.SignOut
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.BusinessTaxAccount
+@import common.viewUtils.InternalUrlHelper
 
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 
 @this(hmrcAccountMenu: HmrcAccountMenu)(implicit accountMenuConfig: AccountMenuConfig)
 @()(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -33,7 +34,7 @@
         href = appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.show().url,
         active = true
     ),
-    signOut = SignOut(href = controllers.routes.SignOutController.signOut().url),
+    signOut = SignOut(href = InternalUrlHelper.signoutUrl),
     language = if(messages.lang.code == "cy") Cy else En,
     businessTaxAccount = Some(BusinessTaxAccount())
 ).withUrlsFromConfig())
