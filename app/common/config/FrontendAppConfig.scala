@@ -56,7 +56,11 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
+  
+  //individual sa302
   def sa302:String = s"$itvcFrontendEnvironment/$baseUrl/mortgage-evidence/proof-of-income"
+  //agent sa302
+  def sa302Agent:String = s"$itvcFrontendEnvironment/$agentBaseUrl/mortgage-evidence/proof-of-income"
 
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
