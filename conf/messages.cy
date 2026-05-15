@@ -857,6 +857,7 @@ taxCal_breakdown.table.cgt.due                                      = Treth Enil
 taxCal_breakdown.table.cgt.overpaid                                 = Treth Enillion Cyfalaf a gyfrifwyd fel gordaliad
 
 taxCal_breakdown.table.giftAidTax                                            = Tâl treth Rhodd Cymorth
+taxCal_breakdown.table.winterFuelPaymentCharge                               = Taliad Tanwydd Gaeaf i’w dalu yn ôl
 taxCal_breakdown.table.totalPensionSavingsTaxCharges                         = Cyfanswm y taliadau a godir ar gynilion pensiwn
 taxCal_breakdown.table.statePensionLumpSumCharges                            = Cyfandaliad Pensiwn y Wladwriaeth
 taxCal_breakdown.table.other_charges                                         = Taliadau eraill
