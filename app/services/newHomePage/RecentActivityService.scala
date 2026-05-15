@@ -87,14 +87,10 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
   }
 
   def recentActivityCards(recentSubmissionActivity: RecentActivitySubmissionsModel, recentPayment: Option[RecentActivityPaymentModel], recentRefundModel: Option[RecentRefundModel])(implicit mtdUser: MtdItUser[_]): RecentActivityViewModel = {
-    if (mtdUser.isSupportingAgent) {
-      RecentActivityViewModel(Seq.empty)
-    } else {
-      val submissionsCards = getRecentSubmissionsCards(recentSubmissionActivity.mostRecentAnnualSubmission, recentSubmissionActivity.mostRecentQuarterlySubmission)
-      val paymentCard = getRecentPaymentCard(recentPayment)
-      val refundCard = getRecentRefundCard(recentRefundModel).toList
-      RecentActivityViewModel(submissionsCards ++ paymentCard ++ refundCard)
-    }
+    val submissionsCards = getRecentSubmissionsCards(recentSubmissionActivity.mostRecentAnnualSubmission, recentSubmissionActivity.mostRecentQuarterlySubmission)
+    val paymentCard = getRecentPaymentCard(recentPayment)
+    val refundCard = getRecentRefundCard(recentRefundModel).toList
+    RecentActivityViewModel(submissionsCards ++ paymentCard ++ refundCard)
   }
 
   private def getRecentPaymentCard(recentPayment: Option[RecentActivityPaymentModel])(implicit mtdUser: MtdItUser[_]) = {

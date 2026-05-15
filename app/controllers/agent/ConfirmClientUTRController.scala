@@ -53,7 +53,8 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
           clientName = user.optClientNameAsString,
           clientUtr = user.saUtr,
           postAction = routes.ConfirmClientUTRController.submit(),
-          backUrl = backUrl
+          backUrl = backUrl,
+          isSupportingAgent = user.isSupportingAgent
         )
       )
     }

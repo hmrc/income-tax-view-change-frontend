@@ -49,14 +49,11 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
 
   def show(isAgent: Boolean, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      if (isEnabled(RecentActivity)) {
-        handleShowRequest(origin)
-      } else {
-        if (isAgent) {
-          Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
-        } else {
-          Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
-        }
+      (isEnabled(RecentActivity), !user.isSupportingAgent, user.isAgent) match {
+        case (true, true, _) => handleShowRequest(origin)
+        case (true, false, _) => Future.successful(Redirect(controllers.routes.HomeController.handleOverview(origin, isAgent)))
+        case (false, _, true) => Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
+        case (false, _, false) => Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
       }
   }
   

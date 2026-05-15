@@ -78,6 +78,13 @@ agent.confirmClient.clientUtr                                   = Client’s Uni
 agent.confirmClient.changeClient                                = Change client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
+agent.confirmClient.supportingAgentAccess.p1                    = Supporting agents cannot access a client’s tax account information that shows:
+agent.confirmClient.supportingAgentAccess.bullet1               = payments, credits and refunds
+agent.confirmClient.supportingAgentAccess.bullet2               = returns
+agent.confirmClient.supportingAgentAccess.bullet3               = next charges due
+agent.confirmClient.supportingAgentAccess.bullet4               = penalties and appeals
+agent.confirmClient.supportingAgentAccess.link                  = Read more about the difference between main and supporting agents on GOV.UK
+
 ## Unauthorised Agent Page ##
 agent-unauthorised.heading                                      = You are not authorised to access this page
 agent-unauthorised.note                                         = You are a supporting agent for this client. Only their main agent can access records that show:

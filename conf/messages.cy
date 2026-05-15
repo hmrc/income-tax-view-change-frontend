@@ -79,6 +79,13 @@ agent.confirmClient.clientUtr                                   = Cyfeirnod Unig
 agent.confirmClient.changeClient                                = Newid cleient
 agent.confirmClient.confirmContinue                             = Cadarnhau ac yn eich blaen
 
+agent.confirmClient.supportingAgentAccess.p1                    = Ni all asiantau ategol gael mynediad at wybodaeth yng nghyfrif treth cwsmer sy’n dangos y canlynol:
+agent.confirmClient.supportingAgentAccess.bullet1               = taliadau, credydau ac ad-daliadau
+agent.confirmClient.supportingAgentAccess.bullet2               = Ffurflenni Treth
+agent.confirmClient.supportingAgentAccess.bullet3               = y ffioedd sy’n ddyledus nesaf
+agent.confirmClient.supportingAgentAccess.bullet4               = cosbau ac apeliadau
+agent.confirmClient.supportingAgentAccess.link                  = Darllenwch ragor am y gwahaniaeth rhwng prif asiantau ac asiantau ategol ar GOV.UK
+
 ## Unauthorised Agent Page ##
 agent-unauthorised.heading                                      = Nid ydych wedi’ch awdurdodi i gael mynediad at y dudalen hon
 agent-unauthorised.note                                         = Rydych yn asiant ategol ar gyfer y cleient hwn. Y prif asiant yn unig sy’n gallu cael mynediad at gofnodion sy’n dangos:
