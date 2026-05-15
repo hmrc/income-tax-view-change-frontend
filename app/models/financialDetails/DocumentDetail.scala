@@ -50,7 +50,7 @@ case class DocumentDetail(taxYear: Int,
 
   def findTaxYear: Int = taxYear match {
     case year if taxYear != 9999 => year
-    case year if effectiveDateOfPayment.isDefined => year
+    case year if effectiveDateOfPayment.isDefined => effectiveDateOfPayment.get.getYear
     case _ => documentDate.getYear
   }
 
@@ -65,7 +65,7 @@ case class DocumentDetail(taxYear: Int,
 
   def hasAccruingInterest: Boolean =
     accruingInterestAmount.getOrElse[BigDecimal](0) > 0 && !isPaid
- 
+
   def isAccruingInterest: Boolean = accruingInterestAmount match {
     case Some(amount) if amount <= 0 => false
     case Some(_) => true

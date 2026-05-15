@@ -172,7 +172,7 @@ case class ChargeSummaryViewModel(
       case Some(paymentId) => {
         val matchingDocumentDetail = payments.documentDetails.find(_.transactionId.contains(paymentId))
         val originalAmount = matchingDocumentDetail.map(_.originalAmount)
-        val isItACredit = originalAmount.exists(_ < 0)
+        val isItACredit = originalAmount.exists(_ < 0) && matchingDocumentDetail.exists(_.taxYear != 9999)
         val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
 
         val link = (isItACredit, isAgent) match {

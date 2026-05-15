@@ -41,9 +41,15 @@
     } else if (matchingPayment.isDefined) {
         val matchingDocumentDetail = viewModel.payments.documentDetails.find(_.transactionId.contains(matchingPayment.get))
         val originalAmount = matchingDocumentDetail.map(_.originalAmount)
-        val isItACredit = originalAmount.exists(_ < 0)
+        val isItACredit = originalAmount.exists(_ < 0) && matchingDocumentDetail.exists(_.taxYear != 9999)
         val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
-        
+
+        println("XXXXXXXXX")
+        println("XXXXXXXXX")
+        println("WE'RE FALLING HERE")
+        println("XXXXXXXXX")
+        println("XXXXXXXXX")
+
 
         val link = (isItACredit, viewModel.isAgent, payment.taxYear.isDefined) match {
             case (false, true, _) => controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
@@ -51,6 +57,14 @@
             case (true, true, true) => controllers.routes.CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
             case (true, false, true) => controllers.routes.CreditsSummaryController.showCreditsSummary(findTaxYear).url
         }
+
+        println("TTTTTTTT")
+        println("TTTTTTTT")
+        println("matchingDocumentDetail is " + matchingDocumentDetail)
+        println("isItACredit is " + isItACredit)
+        println(s"link is $link")
+        println("TTTTTTTT")
+        println("TTTTTTTT")
 
         val linkText =
             if (viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
