@@ -30,9 +30,9 @@
 
 @getReturnHref(year: Int) = @{
     if (isAgent) {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
+        returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
     } else {
-        controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, viewModel.origin).url
+        returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, viewModel.origin).url
     }
 }
 
@@ -54,9 +54,9 @@
 
 @taxYearsControllerURL = @{
     if(isAgent) {
-        controllers.routes.TaxYearsController.showAgentTaxYears().url
+        returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
     } else {
-        controllers.routes.TaxYearsController.showTaxYears(viewModel.origin).url
+        returns.controllers.routes.TaxYearsController.showTaxYears(viewModel.origin).url
     }
 }
 

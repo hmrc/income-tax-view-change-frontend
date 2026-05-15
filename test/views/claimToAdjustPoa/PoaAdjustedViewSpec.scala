@@ -42,9 +42,9 @@ class PoaAdjustedViewSpec extends TestSupport{
 
   def taxYearSummaryUrl(isAgent: Boolean): String = {
     if(isAgent) {
-      controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear.endYear).url
+      returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear.endYear).url
     } else {
-      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear.endYear).url
+      returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear.endYear).url
     }
   }
 

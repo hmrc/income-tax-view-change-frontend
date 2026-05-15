@@ -1,0 +1,177 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import models.incomeSourceDetails.TaxYear
+@import common.viewUtils.ExternalUrlHelper
+@import common.config.FrontendAppConfig
+
+@this(
+        mainTemplate: unifiedLayout,
+        h1: h1,
+        h2: h2,
+        p: p,
+        link: link,
+        linkComponent: linkComponent,
+        appConfig: FrontendAppConfig
+)
+
+@(
+    taxYears: List[Int],
+    backUrl: String,
+    utr: Option[String] = None,
+    itsaSubmissionIntegrationEnabled: Boolean,
+    isPostFinalisationAmendmentR18Enabled: Boolean,
+    earliestSubmissionTaxYear: Int,
+    isAgent: Boolean = false,
+    btaNavPartial: Option[Html] = None,
+    serviceNavigationPartial: Option[ServiceNavigation] = None,
+    origin: Option[String] = None,
+    errorTaxYear: Option[TaxYear] = None,
+)(implicit request: Request[_], messages: Messages)
+
+@getReturnHref(year: Int) = @{
+    if(isAgent) {
+        returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
+    } else {
+        returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, origin).url
+    }
+}
+
+@viewReturnLink(taxYear: Int) = {
+    <a class="govuk-link" id="viewSummary-link-@taxYear"
+    href="@getReturnHref(taxYear)">
+        @messages("taxYears.viewSummary")
+        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</span>
+    </a>
+}
+
+@updateReturnLink(taxYear: Int) = {
+@if(taxYear >= earliestSubmissionTaxYear) {
+    <a class="govuk-link" id="updateReturn-link-@taxYear" href="@appConfig.submissionFrontendTaxYearsPage(taxYear)">
+        @messages("taxYears.updateReturn")
+        <span class="govuk-visually-hidden">@messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")</span>
+    </a>
+}
+}
+
+@taxYearRow(taxYear: Int, isLatest: Boolean) = {
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__value">
+            @if(isLatest) {
+                @messages("taxYears.currentTaxYear", s"${taxYear - 1}", s"$taxYear")
+            } else {
+                @messages("taxYears.taxYears", s"${taxYear - 1}", s"$taxYear")
+            }
+        </dt>
+        @if(itsaSubmissionIntegrationEnabled) {
+            <dd class="govuk-summary-list__actions">@updateReturnLink(taxYear)</dd>
+        }
+        <dd class="govuk-summary-list__actions">@viewReturnLink(taxYear)</dd>
+    </div>
+}
+
+@errorLink() = {
+    @linkComponent(
+        url = if(isAgent) {
+            ExternalUrlHelper.saForAgents
+        } else {
+            appConfig.saViewLandPService(utr.getOrElse(throw Exception("Can not provide SA link: UTR is missing")))
+        },
+        message = if(isAgent) messages("taxYears.oldSa.agent.content.2") else messages("taxYears.error.linkText"),
+        id = Some("error-link"),
+        target = Some("_blank"),
+        additionalMessage = Some("."),
+    )
+}
+
+@mainTemplate(
+    pageTitle = messages("taxYears.heading"),
+    backUrl = Some(backUrl),
+    isAgent = isAgent,
+    btaNavPartial = btaNavPartial,
+    useFallbackBackLink = true,
+    btaAndPtaServiceNavigation = serviceNavigationPartial
+) {
+    @h1(msg = messages("taxYears.heading"), id = Some("heading"))
+    @if(errorTaxYear.isEmpty){
+
+        @p(id = Some("tax-year-description")) {
+            @messages("taxYears.description")
+        }
+
+        @if(taxYears.isEmpty) {
+            @p(id = Some("no-taxYears")) {
+                @messages("taxYears.noEstimates")
+            }
+        } else {
+            <dl class="govuk-summary-list">
+            @for((year, index) <- taxYears.zipWithIndex) {
+                @taxYearRow(year, isLatest = index == 0)
+            }
+            </dl>
+        }
+
+        @if(isPostFinalisationAmendmentR18Enabled) {
+            @p(id = Some("pfa-amendment-text")) {
+                @messages("taxYears.r18.amendment.text")
+            }
+        }
+
+        @if(!isAgent) {
+            @utr.map { utrValue =>
+                @p(id = Some("oldSa-para")) {
+                    @messages("taxYears.oldSa.content.text", (earliestSubmissionTaxYear - 1).toString, earliestSubmissionTaxYear.toString)
+                    @link(link = appConfig.saViewLandPService(utrValue), messageKey = "taxYears.oldSa.content.link",
+                        id = Some("self-assessment-online-account-link"),
+                        outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
+                }
+            }
+        }
+
+        @if(isAgent) {
+            @p(id = Some("oldSa-para-agent")) {
+                @messages("taxYears.oldSa.agent.content.1", (earliestSubmissionTaxYear - 1).toString, earliestSubmissionTaxYear.toString)
+                @link(link = ExternalUrlHelper.saForAgents,
+
+                    messageKey = "taxYears.oldSa.agent.content.2",
+                    id = Some("self-assessment-for-agents-link"),
+                    outerMessage = ".", rel = Some("noreferrer noopener"), target = Some("_blank"))
+                @messages("taxYears.oldSa.agent.content.3")
+            }
+        }
+    }else{
+
+        @h2(msg = messages("taxYears.error.subheading"), optId = Some("error-subHeading"))
+        @if(isAgent){
+            @p(id = Some("agent-error-content") ){
+                @messages("taxYears.error.agentPreLinkText", s"${errorTaxYear.get.startYear}", s"${errorTaxYear.get.endYear}")
+                @errorLink()
+                @messages("taxYears.error.agentPostLinkText")
+            }
+        }else{
+            @p(id = Some("error-content") ){
+                @messages("taxYears.error.preLinkText", s"${errorTaxYear.get.startYear}", s"${errorTaxYear.get.endYear}")
+                @errorLink()
+            }
+        }
+
+    }
+
+}
+

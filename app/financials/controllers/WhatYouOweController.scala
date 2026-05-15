@@ -34,6 +34,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import controllers.routes as appRoutes
+import returns.controllers.routes as returnsRoutes
 
 
 class WhatYouOweController @Inject()(val authActions: AuthActions,
@@ -95,8 +96,8 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   }).url
 
   private def getTaxYearSummaryUrl(origin: Option[String])(implicit user: MtdItUser[_]): Int => String = {
-    if (user.isAgent) appRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
-    else                appRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
+    if (user.isAgent) returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+    else                returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
   }
 
   private def getAdjustPoaUrl(implicit user: MtdItUser[_]): String = claimToAdjustPoaRoutes.AmendablePoaController.show(user.isAgent).url

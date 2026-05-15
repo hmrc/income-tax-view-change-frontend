@@ -51,8 +51,8 @@ class YouCannotGoBackViewSpec extends TestSupport {
   }
 
   def getTaxYearSummaryControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(2024).url
-    else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
+    if (isAgent) returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(2024).url
+    else returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
   }
 
   def executeTest(isAgent: Boolean): Unit = {

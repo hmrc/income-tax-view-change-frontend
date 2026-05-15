@@ -110,8 +110,8 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
   private def getRecentSubmissionsCards(recentAnnualSubmission: Option[SingleObligationModel], recentQuarterlySubmission: Option[SingleObligationModel])(implicit mtdUser: MtdItUser[_]) = {
 
     def getTaxYearSummaryUrl(taxYear: Int) = mtdUser.isAgent match {
-      case true => controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
-      case false => controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url
+      case true => returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
+      case false => returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url
     }
 
     val recentAnnualCard: Option[RecentActivityCard] = recentAnnualSubmission.flatMap { obligation =>
