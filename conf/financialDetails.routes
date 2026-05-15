@@ -28,7 +28,7 @@ GET         /agents/custom-not-found                                      financ
 GET          /money-in-your-account                                       financials.controllers.MoneyInYourAccountController.show(origin: Option[String] ?= None)
 GET          /agents/money-in-your-account                                financials.controllers.MoneyInYourAccountController.showAgent()
 GET          /start-refund                                                financials.controllers.MoneyInYourAccountController.startRefund()
-
+GET          /agents/start-refund                                         financials.controllers.MoneyInYourAccountController.startRefundAgents()
 
 #Credits
 GET         /credits-from-hmrc/:calendarYear                              financials.controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)

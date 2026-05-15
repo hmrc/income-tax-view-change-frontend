@@ -119,7 +119,11 @@
 @ClaimRefundButton() = @{
     continueButton(
         Some(messages("money-in-your-account.claim-refund.button-text")),
-        Some(s"${financialsRoutes.MoneyInYourAccountController.startRefund().url}"),
+        Some(if (isAgent)
+        s"${financialsRoutes.MoneyInYourAccountController.startRefundAgents().url}"
+            else
+        s"${financialsRoutes.MoneyInYourAccountController.startRefund().url}"
+            ),
         id = Some("claim-a-refund-button")
     )
 }
