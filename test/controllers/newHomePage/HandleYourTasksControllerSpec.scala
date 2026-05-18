@@ -21,9 +21,11 @@ import auth.authV2.AuthActions
 import config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import controllers.HomeController
 import controllers.agent.sessionUtils.SessionKeys
+import financialDetails.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import financialDetails.services.{CreditService, FinancialDetailsService, WhatYouOweService}
 import mocks.auth.MockAuthActions
 import mocks.services.*
-import models.financialDetails.*
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import models.newHomePage.HandleYourTasksViewModel

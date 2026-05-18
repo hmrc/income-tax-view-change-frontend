@@ -14,20 +14,20 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.financialDetails.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.financialDetails.PaymentsWithChargeType
-@import models.financialDetails.FinancialDetailsModel
-@import models.financialDetails.DocumentDetail
-@import models.financialDetails.FinancialDetail
-@import models.financialDetails.DocumentDetailWithDueDate
+@import financialDetails.models.PaymentsWithChargeType
+@import financialDetails.models.FinancialDetailsModel
+@import financialDetails.models.DocumentDetail
+@import financialDetails.models.FinancialDetail
+@import financialDetails.models.DocumentDetailWithDueDate
 @import exceptions.MissingFieldException
 @import views.html.partials.chargeSummary._
 @import views.html.components._
 
 @this(p: p, h2: h2, implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(  chargeItem: models.financialDetails.ChargeItem,
+@(  chargeItem: financialDetails.models.ChargeItem,
     paymentBreakdown: List[FinancialDetail],
     latePaymentInterestCharge: Boolean,
     chargeSummaryAccruingInterestCharge: ChargeSummaryAccruingInterestCharge,

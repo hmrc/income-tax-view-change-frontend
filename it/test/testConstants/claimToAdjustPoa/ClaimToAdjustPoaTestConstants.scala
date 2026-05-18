@@ -16,7 +16,7 @@
 
 package testConstants.claimToAdjustPoa
 
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
+import financialDetails.models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import play.api.libs.json.JsValue
 import testConstants.BaseIntegrationTestConstants.testDate
 import testConstants.IncomeSourceIntegrationTestConstants.testValidFinancialDetailsModelJson

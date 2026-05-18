@@ -18,7 +18,7 @@ package mocks.connectors
 
 import connectors.IncomeTaxCalculationConnector
 import enums.TaxYearSummary.CalculationRecord
-import models.liabilitycalculation.LiabilityCalculationResponseModel
+import financialDetails.models.liabilitycalculation.LiabilityCalculationResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

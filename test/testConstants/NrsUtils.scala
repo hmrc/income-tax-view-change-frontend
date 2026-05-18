@@ -17,13 +17,13 @@
 package testConstants
 
 import cats.implicits.catsSyntaxOptionId
-import models.nrs._
+import financialDetails.models.nrs.*
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Headers
 import play.api.test.FakeRequest
-import testConstants.ChecksumUtils._
-import uk.gov.hmrc.auth.core.retrieve._
+import testConstants.ChecksumUtils.*
+import uk.gov.hmrc.auth.core.retrieve.*
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, User}
 import uk.gov.hmrc.http.HttpResponse
 

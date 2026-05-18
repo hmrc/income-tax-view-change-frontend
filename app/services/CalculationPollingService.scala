@@ -17,7 +17,7 @@
 package services
 
 import config.FrontendAppConfig
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import financialDetails.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import org.apache.pekko.actor.{ActorSystem, Scheduler}
 import org.apache.pekko.pattern.retry
 import play.api.Logger

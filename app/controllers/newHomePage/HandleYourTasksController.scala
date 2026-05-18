@@ -23,9 +23,11 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import controllers.agent.sessionUtils.SessionKeys
+import financialDetails.models.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.admin.*
-import models.creditsandrefunds.CreditsModel
-import models.financialDetails.*
+import financialDetails.models.*
+import financialDetails.models.creditsandrefunds.CreditsModel
+import financialDetails.services.{CreditService, FinancialDetailsService, WhatYouOweService}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.newHomePage.SubmissionDeadlinesViewModel

@@ -16,7 +16,7 @@
 
 package views
 
-import models.liabilitycalculation.EndOfYearEstimate
+import financialDetails.models.liabilitycalculation.EndOfYearEstimate
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.prop.TableDrivenPropertyChecks.*

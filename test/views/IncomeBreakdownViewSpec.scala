@@ -16,7 +16,7 @@
 
 package views
 
-import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
+import financialDetails.models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import org.jsoup.nodes.Element
 import testUtils.ViewSpec
 import views.html.IncomeBreakdownView

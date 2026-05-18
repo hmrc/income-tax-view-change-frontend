@@ -19,10 +19,10 @@ package controllers
 import audit.models.PaymentHistoryResponseAuditModel
 import auth.MtdItUser
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.Payment
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.PaymentHistoryRefunds
-import models.financialDetails.Payment
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.*

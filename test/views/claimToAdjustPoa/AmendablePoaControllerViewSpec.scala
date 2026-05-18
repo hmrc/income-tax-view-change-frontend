@@ -16,14 +16,14 @@
 
 package views.claimToAdjustPoa
 
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financialDetails.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.AmendablePoaView
+import financialDetails.views.html.claimToAdjustPoa.AmendablePoaView
 
 class AmendablePoaControllerViewSpec extends TestSupport {
 

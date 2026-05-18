@@ -20,8 +20,8 @@ import auth.MtdItUser
 import authV2.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import financialDetails.models.creditsandrefunds.CreditsModel
 import models.admin.PaymentHistoryRefunds
-import models.creditsandrefunds.CreditsModel
 import models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus

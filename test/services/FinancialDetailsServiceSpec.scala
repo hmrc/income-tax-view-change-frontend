@@ -19,15 +19,17 @@ package services
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
-import enums.CodingOutType._
+import enums.CodingOutType.*
 import mocks.connectors.MockFinancialDetailsConnector
 import models.core.AccountingPeriodModel
-import models.financialDetails._
+import financialDetails.models.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
+import testConstants.FinancialDetailsTestConstants.*
+import _root_.financialDetails.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import _root_.financialDetails.services.FinancialDetailsService
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

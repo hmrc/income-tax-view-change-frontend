@@ -18,9 +18,9 @@ package connectors
 
 import enums.TaxYearSummary.CalculationRecord
 import enums.TaxYearSummary.CalculationRecord.PREVIOUS
+import financialDetails.models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel, Metadata, PersonalInformation}
 import mocks.MockHttpV2
-import models.liabilitycalculation._
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, Json}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse

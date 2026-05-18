@@ -16,7 +16,8 @@
 
 package audit.models
 
-import models.financialDetails._
+import financialDetails.models.{Accepted, BalancingCharge, Cancelled, FirstLatePaymentPenalty, ITSAReturnAmendment, LateSubmissionPenalty, MfaDebitCharge, Nics2, PoaOneDebit, PoaOneReconciliationDebit, PoaTwoDebit, PoaTwoReconciliationDebit, SecondLatePaymentPenalty, TransactionItem}
+import financialDetails.models.*
 
 trait PaymentSharedFunctions {
 

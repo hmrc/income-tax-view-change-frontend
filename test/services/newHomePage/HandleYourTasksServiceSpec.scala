@@ -18,8 +18,9 @@ package services.newHomePage
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
-import models.creditsandrefunds.CreditsModel
-import models.financialDetails.*
+import financialDetails.models.creditsandrefunds.CreditsModel
+import financialDetails.models.{BalancingCharge, ChargeItem, FirstLatePaymentPenalty, LateSubmissionPenalty, MfaDebitCharge}
+import financialDetails.models.*
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus

@@ -17,8 +17,8 @@
 package views.components
 
 import config.featureswitch.FeatureSwitching
-import models.liabilitycalculation.viewmodels.CalculationSummary
-import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
+import financialDetails.models.liabilitycalculation.viewmodels.CalculationSummary
+import CalculationSummary.localDate
 import models.taxyearsummary._
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat

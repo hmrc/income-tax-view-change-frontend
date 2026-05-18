@@ -17,14 +17,14 @@
 package services.newHomePage
 
 import auth.MtdItUser
+import financialDetails.models.{Payment, repaymentHistory}
+import financialDetails.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import mocks.services.MockDateService
 import obligations.mocks.connectors.MockObligationsConnector
-import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import obligations.models.*
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import testUtils.TestSupport
@@ -189,7 +189,7 @@ class RecentActivityServiceSpec
       when(mockDateService.getCurrentDate).thenReturn(today)
       val recentRefund = refund(Some(within90Days))
       val oldRefund = refund(Some(outside90Days))
-      val repaymentHistoryModel = models.repaymentHistory.RepaymentHistoryModel(List(recentRefund, oldRefund))
+      val repaymentHistoryModel = RepaymentHistoryModel(List(recentRefund, oldRefund))
       val result = service.getRecentRefundActivity(repaymentHistoryModel, mockDateService)
 
       result shouldBe Some(RecentRefundModel(recentRefund))
@@ -199,7 +199,7 @@ class RecentActivityServiceSpec
       when(mockDateService.getCurrentDate).thenReturn(today)
 
       val oldRefund = refund(Some(outside90Days))
-      val repaymentHistoryModel = models.repaymentHistory.RepaymentHistoryModel(List(oldRefund))
+      val repaymentHistoryModel = repaymentHistory.RepaymentHistoryModel(List(oldRefund))
       val result = service.getRecentRefundActivity(repaymentHistoryModel, mockDateService)
 
       result shouldBe None

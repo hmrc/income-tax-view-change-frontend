@@ -17,12 +17,12 @@
 package audit.models
 
 import authV2.AuthActionsTestData.*
+import financialDetails.models.liabilitycalculation.{Message, Messages}
+import financialDetails.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import financialDetails.models.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}
 import implicits.ImplicitDateParser
 import models.core.AccountingPeriodModel
-import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.liabilitycalculation.{Message, Messages}
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.scalatest.wordspec.AnyWordSpecLike

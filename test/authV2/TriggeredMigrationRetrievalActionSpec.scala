@@ -25,13 +25,13 @@ import connectors.IncomeTaxCalculationConnector
 import enums.JourneyType.TriggeredMigrationJourney
 import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
+import financialDetails.models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.admin.{FeatureSwitchName, TriggeredMigration}
 import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}
-import models.liabilitycalculation.*
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.Assertion

@@ -16,7 +16,7 @@
 
 package controllers
 
-import controllers.errors.NotFoundDocumentIDLookupController
+import financialDetails.controllers.errors.NotFoundDocumentIDLookupController
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents

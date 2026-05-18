@@ -17,9 +17,9 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.liabilitycalculation.LiabilityCalculationError
 import forms.utils.SessionKeys
 import helpers.servicemocks._
-import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty

@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
+import financialDetails.models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants._
 import testUtils.TestSupport

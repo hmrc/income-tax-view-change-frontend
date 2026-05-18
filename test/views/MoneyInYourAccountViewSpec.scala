@@ -18,9 +18,9 @@ package views
 
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import financialDetails.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import java.time.LocalDate
 import implicits.ImplicitDateFormatter
-import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames
@@ -30,7 +30,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
-import views.html.MoneyInYourAccountView
+import financialDetails.views.html.MoneyInYourAccountView
 
 
 class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {

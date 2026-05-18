@@ -36,7 +36,7 @@ import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ServiceNavigationItem, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation
-
+import financialDetails.models.*
 object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val testMtditid = "XAIT00001234567"

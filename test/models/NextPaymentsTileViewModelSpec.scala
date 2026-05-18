@@ -16,7 +16,6 @@
 
 package models
 
-import models.financialDetails._
 import models.homePage.NextPaymentsTileViewModel
 import org.scalatest.matchers.should.Matchers
 import testUtils.UnitSpec

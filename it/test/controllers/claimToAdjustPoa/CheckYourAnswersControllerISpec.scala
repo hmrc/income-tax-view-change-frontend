@@ -21,16 +21,16 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import controllers.ControllerISpecHelper
 import controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.claimToAdjustPoa.PoaAmendmentData
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
-import models.claimToAdjustPoa.PoaAmendmentData
+import financialDetails.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
+import financialDetails.services.PaymentOnAccountSessionService
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.address
 import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson

@@ -19,8 +19,8 @@ package connectors
 import _root_.helpers.servicemocks.AuditStub
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import com.github.tomakehurst.wiremock.client.WireMock
+import financialDetails.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import models.core.Nino
-import models.repaymentHistory._
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting

@@ -18,8 +18,8 @@ package audit.models
 
 import audit.Utilities._
 import auth.MtdItUser
-import models.financialDetails.{ChargeItem, CodingOutDetails, WhatYouOweChargesList}
-import models.outstandingCharges.OutstandingChargesModel
+import financialDetails.models.outstandingCharges.OutstandingChargesModel
+import financialDetails.models.{ChargeItem, CodingOutDetails, WhatYouOweChargesList}
 import play.api.libs.json._
 import services.DateServiceInterface
 

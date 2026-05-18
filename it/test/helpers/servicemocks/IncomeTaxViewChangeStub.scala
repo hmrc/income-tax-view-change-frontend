@@ -18,11 +18,11 @@ package helpers.servicemocks
 
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import financialDetails.models.Payment
+import financialDetails.models.repaymentHistory.RepaymentHistoryModel
 import helpers.WiremockHelper
 import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
-import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
-import models.repaymentHistory.RepaymentHistoryModel
 import obligations.models.ObligationsModel
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR

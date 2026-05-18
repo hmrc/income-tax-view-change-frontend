@@ -18,9 +18,9 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
+import financialDetails.models.liabilitycalculation.Messages
+import financialDetails.models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import implicits.ImplicitDateParser
-import models.liabilitycalculation.Messages
-import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.ObligationWithIncomeType
 import play.api.i18n.{Lang, MessagesApi}

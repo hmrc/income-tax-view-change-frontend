@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.YouCannotGoBackView
+import financialDetails.views.html.claimToAdjustPoa.YouCannotGoBackView
 
 class YouCannotGoBackViewSpec extends TestSupport {
 

@@ -18,8 +18,8 @@ package connectors
 
 import _root_.helpers.ComponentSpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
-import models.nrs.NrsSuccessResponse
+import financialDetails.models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
+import financialDetails.models.nrs.NrsSuccessResponse
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.MimeTypes
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR}

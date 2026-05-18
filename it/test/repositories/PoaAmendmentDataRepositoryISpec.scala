@@ -16,11 +16,12 @@
 
 package repositories
 
+import financialDetails.models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
+import financialDetails.repositories.PoaAmendmentDataRepository
 import helpers.ComponentSpecBase
-import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
 import org.mongodb.scala.bson.BsonDocument
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
+import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 class PoaAmendmentDataRepositoryISpec extends ComponentSpecBase{
 

@@ -15,14 +15,14 @@
  *@
 
 @import views.html.components._
-@import models.financialDetails.CodingOutDetails
+@import financialDetails.models.CodingOutDetails
 @import auth.MtdItUser
-@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import models.financialDetails.ChargeItem
-@import models.financialDetails.Nics2
+@import financialDetails.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import financialDetails.models.ChargeItem
+@import financialDetails.models.Nics2
 @import services.DateServiceInterface
-@import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import models.financialDetails.MfaDebitCharge
+@import financialDetails.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import financialDetails.models.MfaDebitCharge
 
 @this(
     p: p,

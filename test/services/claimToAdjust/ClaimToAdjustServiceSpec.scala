@@ -18,15 +18,15 @@ package services.claimToAdjust
 
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
+import financialDetails.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
+import financialDetails.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financialDetails.models.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
+import financialDetails.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}
-import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import services.DateService
-import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.BaseTestConstants.{testNino, testUserNino}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.*
 import testUtils.TestSupport

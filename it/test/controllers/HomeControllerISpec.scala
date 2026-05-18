@@ -19,13 +19,13 @@ package controllers
 import audit.models.HomeAudit
 import auth.MtdItUser
 import enums.MTDIndividual
+import financialDetails.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub, PenaltyDetailsStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.NavBarFs
 import models.core.{AccountingPeriodModel, CessationModel}
-import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import obligations.models.audit.NextUpdatesResponseAuditModel
 import play.api.http.Status.*

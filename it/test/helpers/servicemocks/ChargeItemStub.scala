@@ -16,7 +16,7 @@
 
 package helpers.servicemocks
 
-import models.financialDetails._
+import financialDetails.models.{ChargeItem, ChargeType, CodedOutStatusType, PoaOneDebit}
 import models.incomeSourceDetails.TaxYear
 import testConstants.BaseIntegrationTestConstants.testTaxYear
 

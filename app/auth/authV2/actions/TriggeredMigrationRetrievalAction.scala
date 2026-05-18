@@ -25,8 +25,8 @@ import connectors.IncomeTaxCalculationConnector
 import controllers.BaseController
 import enums.JourneyType.TriggeredMigrationJourney
 import enums.TaxYearSummary.CalculationRecord.LATEST
+import financialDetails.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import models.admin.TriggeredMigration
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import services.{DateServiceInterface, ITSAStatusService, SessionService}

@@ -17,17 +17,18 @@
 package views
 
 import config.FrontendAppConfig
-import implicits.ImplicitCurrencyFormatter.*
+import financialDetails.models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
+import financialDetails.models.repaymentHistory.PaymentHistoryEntry
+import financialDetails.models.{BalancingChargeCreditType, CutOverCreditType, MfaCreditType, PaymentType, PoaOneReconciliationCredit, PoaTwoReconciliationCredit, Repayment, RepaymentInterest}
+import financialDetails.implicits.ImplicitCurrencyFormatter.*
 import implicits.ImplicitDateFormatter
-import models.financialDetails.*
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
-import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
-import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
 import services.DateServiceInterface
 import testUtils.ViewSpec
-import views.html.PaymentHistoryView
+import financialDetails.views.html.PaymentHistoryView
 
 import java.time.LocalDate
 import java.time.Month.APRIL

@@ -16,11 +16,10 @@
 
 package views
 
-import _root_.implicits.ImplicitCurrencyFormatter._
+import financialDetails.implicits.ImplicitCurrencyFormatter._
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
-import models.creditDetailModel.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
@@ -29,8 +28,9 @@ import play.twirl.api.HtmlFormat
 import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.testMtditid
 import testConstants.FinancialDetailsTestConstants._
+import _root_.financialDetails.models.creditDetailModel.CreditDetailModel
 import testUtils.{TestSupport, ViewSpec}
-import views.html.CreditsSummaryView
+import _root_.financialDetails.views.html.CreditsSummaryView
 
 import java.net.URL
 

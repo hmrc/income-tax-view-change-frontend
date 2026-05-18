@@ -21,9 +21,13 @@ import authV2.AuthActionsTestData.defaultMTDITUser
 import cats.data.EitherT
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
+import financialDetails.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financialDetails.models.claimToAdjustPoa.PoaAmendmentData
+import financialDetails.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financialDetails.services.PaymentOnAccountSessionService
+import financialDetails.services.claimToAdjustPoa.ClaimToAdjustService
+import financialDetails.utils.claimToAdjust.WithSessionAndPoa
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.PoaAmendmentData
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -34,13 +38,11 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.PaymentOnAccountSessionService
-import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
+import financialDetails.views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -97,9 +99,9 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         val resAgent = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = BeforeSubmissionPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
 
         status(res) shouldBe SEE_OTHER
-        redirectLocation(res) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        redirectLocation(res) shouldBe Some(claimToAdjustPoaRoutes.YouCannotGoBackController.show(false).url)
         status(resAgent) shouldBe SEE_OTHER
-        redirectLocation(resAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+        redirectLocation(resAgent) shouldBe Some(claimToAdjustPoaRoutes.YouCannotGoBackController.show(true).url)
       }
     }
 

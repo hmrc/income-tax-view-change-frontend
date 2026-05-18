@@ -24,13 +24,15 @@ import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType.*
 import models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
-import models.financialDetails.*
-import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
+import financialDetails.models.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.*
+import _root_.financialDetails.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
+import _root_.financialDetails.models.{Accepted, BalanceDetails, BalancingCharge, Cancelled, ChargeItem, CodingDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, MfaDebitCharge, Nics2, PoaOneDebit, PoaOneReconciliationDebit, PoaTwoDebit, PoaTwoReconciliationDebit, SubItem, WhatYouOweChargesList}
+import _root_.financialDetails.services.{FinancialDetailsService, SelfServeTimeToPayService, WhatYouOweService}
+import _root_.financialDetails.services.claimToAdjustPoa.ClaimToAdjustService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

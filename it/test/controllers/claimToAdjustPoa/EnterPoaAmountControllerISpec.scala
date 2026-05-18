@@ -18,13 +18,13 @@ package controllers.claimToAdjustPoa
 
 import controllers.ControllerISpecHelper
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
+import financialDetails.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.core.{CheckMode, NormalMode}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.i18n.MessagesApi
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testChargeHistoryJson, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 

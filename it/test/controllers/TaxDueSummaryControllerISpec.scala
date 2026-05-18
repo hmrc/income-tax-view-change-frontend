@@ -19,9 +19,9 @@ package controllers
 import audit.models.TaxDueResponseAuditModel
 import auth.MtdItUser
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import helpers.servicemocks.*
 import helpers.servicemocks.AuditStub.verifyAuditEvent
-import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.*
 import testConstants.BaseIntegrationTestConstants.*

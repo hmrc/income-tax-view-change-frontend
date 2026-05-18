@@ -16,8 +16,8 @@
 
 package connectors
 
-import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
-import models.nrs.NrsSuccessResponse
+import financialDetails.models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
+import financialDetails.models.nrs.NrsSuccessResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS}

@@ -16,12 +16,12 @@
 
 package mocks.services
 
+import financialDetails.models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
+import financialDetails.services.PaymentAllocationsService
 import models.core.Nino
-import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.PaymentAllocationsService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

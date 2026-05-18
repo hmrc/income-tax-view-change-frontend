@@ -17,9 +17,10 @@
 package services
 
 import connectors.NrsConnector
-import models.nrs.NrsSubmissionFailure.NrsErrorResponse
-import models.nrs.NrsSuccessResponse
-import org.mockito.Mockito._
+import financialDetails.models.nrs.NrsSubmissionFailure.NrsErrorResponse
+import financialDetails.models.nrs.NrsSuccessResponse
+import financialDetails.services.NrsService
+import org.mockito.Mockito.*
 import play.api.http.Status.NOT_FOUND
 import testConstants.NrsUtils.nrsSubmission
 import testUtils.TestSupport

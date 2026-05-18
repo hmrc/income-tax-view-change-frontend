@@ -18,7 +18,7 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
+import financialDetails.models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 

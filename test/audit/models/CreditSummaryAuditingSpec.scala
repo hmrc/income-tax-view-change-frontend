@@ -16,8 +16,9 @@
 
 package audit.models
 
-import models.creditDetailModel.CreditDetailModel
-import models.financialDetails._
+import financialDetails.models.creditDetailModel.CreditDetailModel
+import financialDetails.models.{ChargeItem, CutOverCreditType, DocumentDetail, FinancialDetail, MfaCreditType, SubItem}
+import financialDetails.models.*
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserTypeIndividual}

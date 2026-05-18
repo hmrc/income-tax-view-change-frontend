@@ -16,8 +16,9 @@
 
 package controllers
 
-import connectors.{ITSAStatusConnector}
+import connectors.ITSAStatusConnector
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import financialDetails.services.PaymentHistoryService
 import mocks.services.MockDateService
 import implicits.ImplicitDateFormatter
 import mocks.auth.MockAuthActions
@@ -27,7 +28,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.DateService
-import services.{DateServiceInterface, PaymentHistoryService}
+import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeNotMigrated
 
 class NotMigratedUserControllerSpec extends MockAuthActions

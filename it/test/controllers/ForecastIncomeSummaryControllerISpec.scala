@@ -19,8 +19,8 @@ package controllers
 import audit.models.ForecastIncomeAuditModel
 import auth.MtdItUser
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import helpers.servicemocks._
-import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status._
 import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._

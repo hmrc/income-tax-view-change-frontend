@@ -18,9 +18,10 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import models.liabilitycalculation.ReliefsClaimed
-import models.liabilitycalculation.taxcalculation.*
-import models.liabilitycalculation.viewmodels.*
+import financialDetails.models.liabilitycalculation.ReliefsClaimed
+import financialDetails.models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
+import financialDetails.models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDueSummaryViewModel}
+import financialDetails.models.liabilitycalculation.viewmodels.*
 import play.api.libs.json.*
 import utils.Utilities.*
 
@@ -29,7 +30,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
                                     viewModel: TaxDueSummaryViewModel,
                                     taxYear: Int) extends ExtendedAuditModel {
 
-  import implicits.ImplicitCurrencyFormatter.*
+  import financialDetails.implicits.ImplicitCurrencyFormatter.*
 
   override val transactionName: String = enums.TransactionName.TaxCalculationDetailsResponse
   override val auditType: String = enums.AuditType.TaxCalculationDetailsResponse

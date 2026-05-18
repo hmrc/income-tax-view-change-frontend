@@ -16,8 +16,8 @@
 
 package views.claimToAdjustPoa
 
-import forms.adjustPoa.SelectYourReasonFormProvider
-import models.claimToAdjustPoa.SelectYourReason
+import financialDetails.forms.adjustPoa.SelectYourReasonFormProvider
+import financialDetails.models.claimToAdjustPoa.SelectYourReason
 import models.core.NormalMode
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -25,7 +25,7 @@ import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.SelectYourReasonView
+import financialDetails.views.html.claimToAdjustPoa.SelectYourReasonView
 
 class SelectYourReasonViewSpec extends TestSupport {
 

@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesResponseModel}
+import financialDetails.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Configuration

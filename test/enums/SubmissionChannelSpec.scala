@@ -16,7 +16,7 @@
 
 package enums
 
-import models.liabilitycalculation.SubmissionChannel
+import financialDetails.models.liabilitycalculation.SubmissionChannel
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.*
 import testUtils.TestSupport

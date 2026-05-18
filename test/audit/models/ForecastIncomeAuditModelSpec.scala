@@ -17,8 +17,8 @@
 package audit.models
 
 import authV2.AuthActionsTestData.defaultMTDITUser
+import financialDetails.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.TestSupport

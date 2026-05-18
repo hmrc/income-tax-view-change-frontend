@@ -17,7 +17,7 @@
 package testConstants
 
 import cats.implicits.catsSyntaxOptionId
-import models.nrs.{IdentityData, NrsMetadata, NrsSubmission, NrsSuccessResponse, RawPayload, SearchKeys}
+import financialDetails.models.nrs.{IdentityData, NrsMetadata, NrsSubmission, NrsSuccessResponse, RawPayload, SearchKeys}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Headers
 import play.api.test.FakeRequest

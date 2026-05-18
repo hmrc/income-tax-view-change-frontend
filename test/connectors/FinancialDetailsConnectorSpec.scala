@@ -19,20 +19,17 @@ package connectors
 import audit.AuditingService
 import audit.models.{AuditModel, ExtendedAuditModel}
 import config.FrontendAppConfig
-import models.financialDetails._
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
-import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import play.api.Configuration
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants._
-import testConstants.FinancialDetailsTestConstants._
-import testConstants.PaymentAllocationsTestConstants._
+import testConstants.BaseTestConstants.*
+import testConstants.FinancialDetailsTestConstants.*
+import testConstants.PaymentAllocationsTestConstants.*
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

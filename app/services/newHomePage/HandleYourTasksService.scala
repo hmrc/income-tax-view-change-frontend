@@ -18,9 +18,11 @@ package services.newHomePage
 
 import auth.MtdItUser
 import config.FrontendAppConfig
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import models.creditsandrefunds.CreditsModel
-import models.financialDetails.*
+import financialDetails.controllers.routes as financialDetailsRoutes
+import financialDetails.models.{BalancingCharge, ChargeItem, FirstLatePaymentPenalty, ITSAReturnAmendment, LateSubmissionPenalty, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaTwoDebit, PoaTwoReconciliationDebit, SecondLatePaymentPenalty, TransactionType}
+import financialDetails.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import financialDetails.models.*
+import financialDetails.models.creditsandrefunds.CreditsModel
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import models.newHomePage.*
@@ -29,7 +31,7 @@ import models.newHomePage.YourTasksCard.*
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import obligations.controllers.{routes => obligationsRoutes}
+import obligations.controllers.routes as obligationsRoutes
 
 @Singleton
 class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
@@ -156,9 +158,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
     val redirectLinkMoneyInYourAccount = {
       if (isAgent) {
-        controllers.routes.MoneyInYourAccountController.showAgent().url
+        financialDetailsRoutes.MoneyInYourAccountController.showAgent().url
       } else {
-        controllers.routes.MoneyInYourAccountController.show().url
+        financialDetailsRoutes.MoneyInYourAccountController.show().url
       }
     }
 
@@ -196,7 +198,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
 
   private def getChargesCard(chargeList: List[ChargeItem], isAgent: Boolean) = {
     val linkText = "newHome.yourTasks.selfAssessment"
-    val redirectLink = if(isAgent) controllers.routes.WhatYouOweController.showAgent().url else controllers.routes.WhatYouOweController.show().url
+    val redirectLink = if(isAgent) financialDetailsRoutes.WhatYouOweController.showAgent().url else financialDetailsRoutes.WhatYouOweController.show().url
 
     val oldestCharge = oldestTransaction(chargeList)
     val overdueCharges = chargeList.filter(charge => chargesSet.contains(charge.transactionType) && charge.dueDate.exists(_.isBefore(LocalDate.now())))
@@ -242,9 +244,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
         case _ => ""
       }
     } else if (isAgent) {
-      controllers.routes.ChargeSummaryController.showAgent(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
+      financialDetailsRoutes.ChargeSummaryController.showAgent(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
     } else {
-      controllers.routes.ChargeSummaryController.show(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
+      financialDetailsRoutes.ChargeSummaryController.show(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
     }
 
     val contentDescription = if(latePaymentPenaltyList.size > 1) {
@@ -279,9 +281,9 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
         case _ => ""
       }
     } else if (isAgent) {
-      controllers.routes.ChargeSummaryController.showAgent(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
+      financialDetailsRoutes.ChargeSummaryController.showAgent(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
     } else {
-      controllers.routes.ChargeSummaryController.show(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
+      financialDetailsRoutes.ChargeSummaryController.show(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
     }
 
     val contentDescription = if (lateSubmissionPenaltyList.size > 1) {

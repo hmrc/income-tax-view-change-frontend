@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.ChargeHistoryConnector
-import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
+import financialDetails.models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

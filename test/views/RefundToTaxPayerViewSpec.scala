@@ -17,13 +17,13 @@
 package views
 
 import config.FrontendAppConfig
+import financialDetails.models.creditsandrefunds.RefundToTaxPayerViewModel
+import financialDetails.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import implicits.ImplicitDateFormatter
-import models.creditsandrefunds.RefundToTaxPayerViewModel
-import models.repaymentHistory._
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import testUtils.ViewSpec
-import views.html.RefundToTaxPayerView
+import financialDetails.views.html.RefundToTaxPayerView
 
 import java.time.LocalDate
 

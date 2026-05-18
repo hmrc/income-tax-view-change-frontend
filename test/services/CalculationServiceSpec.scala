@@ -19,9 +19,9 @@ package services
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
+import financialDetails.models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import models.admin.FeatureSwitchName
-import models.liabilitycalculation.*
 import play.api.http.Status
 import testConstants.BaseTestConstants.*
 import testUtils.TestSupport

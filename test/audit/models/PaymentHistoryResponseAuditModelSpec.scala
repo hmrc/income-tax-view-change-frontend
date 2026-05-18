@@ -17,7 +17,7 @@
 package audit.models
 
 import authV2.AuthActionsTestData._
-import models.financialDetails.Payment
+import financialDetails.models.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json._
 import testConstants.BaseTestConstants._

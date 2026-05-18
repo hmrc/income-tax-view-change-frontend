@@ -16,13 +16,13 @@
 
 package mocks.services
 
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financialDetails.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financialDetails.services.claimToAdjustPoa.ClaimToAdjustService
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.claimToAdjustPoa.ClaimToAdjustService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

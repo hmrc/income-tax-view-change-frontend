@@ -17,8 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.claimToAdjustPoa.ClaimToAdjustPoaRequest
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
+import financialDetails.models.claimToAdjustPoa.ClaimToAdjustPoaRequest
+import financialDetails.models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
 import models.core.CorrelationId
 import play.api.Logger
 import play.api.libs.json.Json

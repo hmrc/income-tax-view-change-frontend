@@ -17,7 +17,7 @@
 package audit.models
 
 
-import models.repaymentHistory._
+import financialDetails.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import play.api.libs.json.{JsValue, Json}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup

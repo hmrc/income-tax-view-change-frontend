@@ -21,8 +21,8 @@ import authV2.AuthActionsTestData.{getAllEnrolmentsAgent, getAuthUserDetails, ni
 import config.featureswitch.FeatureSwitching
 import connectors.{CalculationListConnector, IncomeTaxCalculationConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent}
+import financialDetails.models.liabilitycalculation.{Inputs, IsLegacyWithCesa, IsMTD, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.liabilitycalculation.*
 import models.taxyearsummary.*
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.test.FakeRequest

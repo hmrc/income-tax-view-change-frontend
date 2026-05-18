@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.chargeHistory._
+import financialDetails.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
 

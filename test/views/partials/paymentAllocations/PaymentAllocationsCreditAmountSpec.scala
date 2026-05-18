@@ -16,7 +16,7 @@
 
 package views.partials.paymentAllocations
 
-import models.paymentAllocationCharges.PaymentAllocationViewModel
+import financialDetails.models.paymentAllocationCharges.PaymentAllocationViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._

@@ -16,12 +16,13 @@
 
 package mocks.services
 
-import models.financialDetails.{BalanceDetails, ChargeItem, WhatYouOweChargesList}
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financialDetails.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financialDetails.models.{BalanceDetails, ChargeItem, WhatYouOweChargesList}
+import financialDetails.services.WhatYouOweService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.{DateService, WhatYouOweService}
+import services.DateService
 import testUtils.UnitSpec
 
 import java.time.LocalDate

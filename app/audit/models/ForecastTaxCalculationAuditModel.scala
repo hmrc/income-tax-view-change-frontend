@@ -18,8 +18,8 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
+import financialDetails.models.liabilitycalculation.EndOfYearEstimate
 import implicits.ImplicitDateParser
-import models.liabilitycalculation.EndOfYearEstimate
 import play.api.libs.json.{JsValue, Json}
 import utils.Utilities._
 

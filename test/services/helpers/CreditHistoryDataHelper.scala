@@ -18,9 +18,10 @@ package services.helpers
 
 
 import enums.ChargeType.NIC4_WALES
-import models.creditDetailModel._
-import models.financialDetails._
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import financialDetails.models.creditDetailModel.CreditDetailModel
+import financialDetails.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import financialDetails.models.{BalanceDetails, BalancingChargeCreditType, ChargeItem, CutOverCreditType, DocumentDetail, FinancialDetail, FinancialDetailsModel, MfaCreditType, Payment, RepaymentInterest, SubItem}
+import financialDetails.models.*
 import testConstants.BusinessDetailsTestConstants.fixedDate
 
 import java.time.LocalDate

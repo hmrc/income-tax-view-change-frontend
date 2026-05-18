@@ -16,10 +16,11 @@
 
 package testConstants.claimToAdjustPoa
 
-import models.chargeHistory.ChargeHistoryModel
-import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import financialDetails.models.chargeHistory.ChargeHistoryModel
+import financialDetails.models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import financialDetails.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.core.NormalMode
-import models.financialDetails._
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

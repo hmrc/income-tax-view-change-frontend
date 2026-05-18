@@ -18,6 +18,7 @@ package services
 
 import connectors.SelfServeTimeToPayConnector
 import exceptions.SelfServeTimeToPayJourneyException
+import financialDetails.services.SelfServeTimeToPayService
 import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import org.mockito.Mockito.{mock, when}
 import testUtils.TestSupport

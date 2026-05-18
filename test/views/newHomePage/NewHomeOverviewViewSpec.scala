@@ -18,8 +18,9 @@ package views.newHomePage
 
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import financialDetails.models.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import implicits.ImplicitDateFormatter
-import models.financialDetails.*
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup

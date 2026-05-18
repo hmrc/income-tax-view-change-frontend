@@ -16,6 +16,6 @@
 
 package models.newHomePage
 
-import models.repaymentHistory.RepaymentHistory
+import financialDetails.models.repaymentHistory.RepaymentHistory
 
 case class RecentRefundModel(recentRefund: RepaymentHistory)

@@ -23,22 +23,26 @@ import auth.authV2.AuthActions
 import config.featureswitch.FeatureSwitching
 import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.GatewayPage.TaxYearSummaryPage
+import financialDetails.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financialDetails.controllers.routes as financialDetailsRoutes
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
 import models.admin.*
 import models.core.Nino
-import models.financialDetails.*
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
-import models.liabilitycalculation.*
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import financialDetails.models.liabilitycalculation.*
 import models.taxyearsummary.TaxYearSummaryChargeItem
+import financialDetails.models
+import financialDetails.models.liabilitycalculation.viewmodels.*
+import financialDetails.services.FinancialDetailsService
+import financialDetails.services.claimToAdjustPoa.ClaimToAdjustService
 import obligations.models.ObligationsModel
 import obligations.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
 import services.*
-import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -73,16 +77,16 @@ class TaxYearSummaryController @Inject()(
                                         ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
 
   // Individual back urls
-  private def taxYearsUrl(origin: Option[String]): String = controllers.routes.TaxYearsController.showTaxYears(origin).url
+  private def taxYearsUrl(origin: Option[String]): String = routes.TaxYearsController.showTaxYears(origin).url
 
-  private def whatYouOweUrl(origin: Option[String]): String = controllers.routes.WhatYouOweController.show(origin).url
+  private def whatYouOweUrl(origin: Option[String]): String = financialDetailsRoutes.WhatYouOweController.show(origin).url
 
-  private def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
+  private def homeUrl(origin: Option[String]): String = routes.HomeController.show(origin).url
 
   // Agent back urls
-  private lazy val agentTaxYearsUrl: String = controllers.routes.TaxYearsController.showAgentTaxYears().url
-  private lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
-  private lazy val agentWhatYouOweUrl: String = controllers.routes.WhatYouOweController.showAgent().url
+  private lazy val agentTaxYearsUrl: String = routes.TaxYearsController.showAgentTaxYears().url
+  private lazy val agentHomeUrl: String = routes.HomeController.showAgent().url
+  private lazy val agentWhatYouOweUrl: String = financialDetailsRoutes.WhatYouOweController.showAgent().url
 
   def formatErrorMessages(
                            liabilityCalc: LiabilityCalculationResponse,
@@ -255,7 +259,7 @@ class TaxYearSummaryController @Inject()(
         pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
       )
 
-    lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+    lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
 
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
@@ -298,7 +302,7 @@ class TaxYearSummaryController @Inject()(
 
     if (error.status == NO_CONTENT) {
 
-      lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+      lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
       val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
       val calculationSummary: Option[CalculationSummary] =
@@ -347,7 +351,7 @@ class TaxYearSummaryController @Inject()(
         ))
       )
     } else {
-      lazy val ctaLink = controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent = isAgent).url
+      lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
       val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
       val calculationSummary: Option[CalculationSummary] =
@@ -455,7 +459,7 @@ class TaxYearSummaryController @Inject()(
 
         val chargeItemsCodingOutPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
-            .filter(_.codedOutStatus.contains(models.financialDetails.Accepted))
+            .filter(_.codedOutStatus.contains(Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
@@ -468,7 +472,7 @@ class TaxYearSummaryController @Inject()(
 
         val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
-            .filterNot(_.codedOutStatus.contains(models.financialDetails.Accepted))
+            .filterNot(_.codedOutStatus.contains(models.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 

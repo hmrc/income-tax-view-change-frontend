@@ -19,9 +19,9 @@ package controllers
 import auth.MtdItUser
 import enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import enums.MTDUserRole
-import models.financialDetails.*
+import financialDetails.models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
+import financialDetails.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.*
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse

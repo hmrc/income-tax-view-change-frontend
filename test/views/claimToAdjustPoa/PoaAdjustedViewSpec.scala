@@ -16,14 +16,14 @@
 
 package views.claimToAdjustPoa
 
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import financialDetails.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n._
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.PoaAdjustedView
+import financialDetails.views.html.claimToAdjustPoa.PoaAdjustedView
 
 class PoaAdjustedViewSpec extends TestSupport{
 

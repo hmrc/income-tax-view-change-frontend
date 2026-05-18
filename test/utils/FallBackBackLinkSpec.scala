@@ -17,6 +17,7 @@
 package utils
 
 import enums.GatewayPage.{NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
+import financialDetails.utils.FallBackBackLinks
 import testUtils.TestSupport
 
 class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {

@@ -16,11 +16,11 @@
 
 package mocks.services
 
-import models.chargeHistory.{AdjustmentHistoryModel, ChargeHistoryModel, ChargesHistoryErrorModel}
+import financialDetails.models.chargeHistory.{AdjustmentHistoryModel, ChargeHistoryModel, ChargesHistoryErrorModel}
+import financialDetails.services.ChargeHistoryService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.ChargeHistoryService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

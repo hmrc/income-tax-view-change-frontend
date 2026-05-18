@@ -20,8 +20,9 @@ import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ClaimARefundResponse
 import enums.TransactionName.ClaimARefund
-import models.creditsandrefunds.{CreditsModel, Transaction}
-import models.financialDetails._
+import financialDetails.models.{BalancingChargeCreditType, CreditType, CutOverCreditType, ITSAReturnAmendmentCredit, MfaCreditType, PaymentType, PoaOneReconciliationCredit, PoaTwoReconciliationCredit, Repayment, RepaymentInterest}
+import financialDetails.models.*
+import financialDetails.models.creditsandrefunds.{CreditsModel, Transaction}
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 

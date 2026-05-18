@@ -17,17 +17,18 @@
 package controllers
 
 import audit.AuditingService
-import audit.models._
+import audit.models.*
 import auth.MtdItUser
 import auth.authV2.AuthActions
-import config._
+import config.*
+import financialDetails.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import financialDetails.models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import forms.utils.SessionKeys.calcPagesBackPage
 import implicits.ImplicitDateFormatter
-import models.liabilitycalculation._
-import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
+import financialDetails.models.liabilitycalculation.*
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc._
+import play.api.mvc.*
 import services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

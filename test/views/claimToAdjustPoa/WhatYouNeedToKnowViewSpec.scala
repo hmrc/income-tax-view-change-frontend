@@ -23,7 +23,7 @@ import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
+import financialDetails.views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 class WhatYouNeedToKnowViewSpec extends TestSupport {
 

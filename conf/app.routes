@@ -52,22 +52,6 @@ GET         /agents/:taxYear/allowances-and-deductions                    contro
 GET         /tax-years                                                    controllers.TaxYearsController.showTaxYears(origin: Option[String] ?= None)
 GET         /agents/tax-years                                             controllers.TaxYearsController.showAgentTaxYears()
 
-#Payment
-GET         /payment                                                      controllers.PaymentController.paymentHandoff(amountInPence: Long, origin: Option[String] ?= None)
-GET         /agents/payment                                               controllers.PaymentController.agentPaymentHandoff(amountInPence: Long)
-
-#Payment Allocation
-GET         /payment-made-to-hmrc                                         controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String, origin: Option[String] ?= None)
-GET         /agents/payment-made-to-hmrc                                  controllers.PaymentAllocationsController.viewPaymentAllocationAgent(documentNumber: String)
-
-#WhatYouOwe
-GET         /what-you-owe                                                 controllers.WhatYouOweController.show(origin: Option[String] ?= None)
-GET         /agents/what-your-client-owes                                 controllers.WhatYouOweController.showAgent()
-
-#Charge summary
-GET         /tax-years/:taxYear/charge                                    controllers.ChargeSummaryController.show(taxYear: Int, id: String, isInterestCharge: Boolean ?= false, origin: Option[String] ?= None)
-GET         /agents/tax-years/:taxYear/charge                             controllers.ChargeSummaryController.showAgent(taxYear: Int, id: String, isInterestCharge: Boolean ?= false)
-
 #Feedback Routes
 GET         /feedback                                                     controllers.feedback.FeedbackController.show()
 GET         /agents/feedback                                              controllers.feedback.FeedbackController.showAgent()
@@ -105,12 +89,6 @@ GET         /agents/calculation/:taxYear/submitted                        contro
 #Language Controller
 GET         /language/:lang                                               controllers.ItvcLanguageController.switchToLanguage(lang: String)
 
-#Payment history
-GET         /payment-refund-history                                       controllers.PaymentHistoryController.show(origin: Option[String] ?= None)
-GET         /agents/payment-refund-history                                controllers.PaymentHistoryController.showAgent()
-GET         /refund-status                                                controllers.PaymentHistoryController.refundStatus()
-
-
 #InYear Tax
 GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show(origin: Option[String] ?= None)
 GET         /agents/tax-overview                                          controllers.InYearTaxCalculationController.showAgent()
@@ -128,9 +106,6 @@ POST        /agents/:taxYear/final-tax-overview                           contro
 GET         /switch-to-welsh                                              controllers.ItvcLanguageController.switchToWelsh(fragment: Option[String])
 GET         /switch-to-english                                            controllers.ItvcLanguageController.switchToEnglish(fragment: Option[String])
 
-#custom not found
-GET         /custom-not-found                                             controllers.errors.NotFoundDocumentIDLookupController.show()
-
 #Forecast income summary
 GET         /:taxYear/forecast-income                                     controllers.ForecastIncomeSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/:taxYear/forecast-income                              controllers.ForecastIncomeSummaryController.showAgent(taxYear: Int)
@@ -138,20 +113,6 @@ GET         /agents/:taxYear/forecast-income                              contro
 #Forecast Tax Calc Summary
 GET         /:taxYear/forecast-tax-calculation                            controllers.ForecastTaxCalcSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/:taxYear/forecast-tax-calculation                     controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
-
-#Credits and Refunds
-GET          /money-in-your-account                                       controllers.MoneyInYourAccountController.show(origin: Option[String] ?= None)
-GET          /agents/money-in-your-account                                controllers.MoneyInYourAccountController.showAgent()
-GET          /start-refund                                                controllers.MoneyInYourAccountController.startRefund()
-
-
-#Credits
-GET         /credits-from-hmrc/:calendarYear                              controllers.CreditsSummaryController.showCreditsSummary(calendarYear: Int, origin: Option[String] ?= None)
-GET         /agents/credits-from-hmrc/:calendarYear                       controllers.CreditsSummaryController.showAgentCreditsSummary(calendarYear: Int)
-
-#Refund to taxpayer
-GET         /refund-to-taxpayer/:repaymentRequestNumber                    controllers.RefundToTaxPayerController.show(repaymentRequestNumber: String, origin: Option[String] ?= None)
-GET         /agents/refund-to-taxpayer/:repaymentRequestNumber             controllers.RefundToTaxPayerController.showAgent(repaymentRequestNumber: String)
 
 # Users not migrated to ETMP
 GET          /how-to-claim-refund                                         controllers.NotMigratedUserController.show()
@@ -162,4 +123,4 @@ GET          /agents/how-to-claim-refund-external                         contro
 
 ->          /                                                             obligations.Routes
 ->          /                                                             businessDetails.Routes
-->          /                                                             claimToAdjustPoa.Routes
+->          /                                                             financialDetails.Routes

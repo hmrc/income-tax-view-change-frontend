@@ -16,9 +16,9 @@
 
 package mocks.services
 
+import financialDetails.services.CreditService
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.CreditService
 import testUtils.UnitSpec
 
 trait MockCreditService extends UnitSpec with BeforeAndAfterEach {

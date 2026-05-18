@@ -19,11 +19,13 @@ package utils
 import auth.MtdItUser
 import config.featureswitch.FeatureSwitching
 import controllers.Execution.trampoline
+import financialDetails.models.{ChargeItem, FinancialDetailsModel, FinancialDetailsResponseModel, WhatYouOweChargesList}
 import models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
-import models.financialDetails.*
-import services.{DateServiceInterface, WhatYouOweService}
+import financialDetails.models.*
+import financialDetails.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financialDetails.services.WhatYouOweService
+import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 
 import java.time.LocalDate
 import scala.concurrent.Future

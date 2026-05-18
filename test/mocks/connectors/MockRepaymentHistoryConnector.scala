@@ -17,8 +17,8 @@
 package mocks.connectors
 
 import connectors.RepaymentHistoryConnector
+import financialDetails.models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import models.core.Nino
-import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

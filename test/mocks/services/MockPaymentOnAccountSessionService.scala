@@ -16,11 +16,11 @@
 
 package mocks.services
 
-import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
+import financialDetails.models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
+import financialDetails.services.PaymentOnAccountSessionService
 import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.PaymentOnAccountSessionService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

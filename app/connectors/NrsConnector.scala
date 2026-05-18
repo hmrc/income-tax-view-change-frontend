@@ -17,9 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
-import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
-import models.nrs.{NrsSubmission, NrsSuccessResponse}
+import financialDetails.models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
+import financialDetails.models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
+import financialDetails.models.nrs.{NrsSubmission, NrsSuccessResponse}
 import play.api.Logging
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}

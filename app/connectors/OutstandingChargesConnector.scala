@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
+import financialDetails.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK

@@ -16,12 +16,12 @@
 
 package mocks.services
 
+import financialDetails.services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
 import models.core.Nino
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

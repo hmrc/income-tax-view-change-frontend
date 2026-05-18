@@ -17,11 +17,11 @@
 package mocks.connectors
 
 import connectors.FinancialDetailsConnector
+import financialDetails.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
+import financialDetails.models.paymentAllocations.PaymentAllocationsResponse
+import financialDetails.models.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
 import models.core.Nino
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
 import models.incomeSourceDetails.{TaxYear, TaxYearRange}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
-import models.paymentAllocations.PaymentAllocationsResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

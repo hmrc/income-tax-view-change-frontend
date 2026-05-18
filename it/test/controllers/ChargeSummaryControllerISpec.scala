@@ -19,18 +19,18 @@ package controllers
 import audit.models.ChargeSummaryAudit
 import auth.MtdItUser
 import enums.ChargeType.ITSA_ENGLAND_AND_NI
-import enums.CodingOutType._
+import enums.CodingOutType.*
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.{BalancingCharge, PoaOneDebit}
 import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.ChargeHistory
-import models.financialDetails._
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear, testTaxYearTyped}
 import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
-import testConstants.IncomeSourceIntegrationTestConstants._
-import testConstants.messages.ChargeSummaryMessages._
+import testConstants.IncomeSourceIntegrationTestConstants.*
+import testConstants.messages.ChargeSummaryMessages.*
 
 import java.time.LocalDate
 

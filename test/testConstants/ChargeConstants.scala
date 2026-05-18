@@ -17,9 +17,10 @@
 package testConstants
 
 import enums.ChargeType.NIC4_WALES
-import models.financialDetails.*
+import financialDetails.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financialDetails.models.{Accepted, BalanceDetails, BalancingCharge, Cancelled, ChargeItem, ChargeType, CodedOutStatusType, CodingOutDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, FirstLatePaymentPenalty, FullyCollected, LateSubmissionPenalty, MfaDebitCharge, Nics2, PoaOneDebit, PoaOneReconciliationDebit, PoaTwoDebit, PoaTwoReconciliationDebit, SecondLatePaymentPenalty, SubItem, TransactionType, WhatYouOweChargesList}
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import services.{DateService, DateServiceInterface}
 import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, fixedDate, futureFixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
 

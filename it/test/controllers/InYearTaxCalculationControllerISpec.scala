@@ -17,10 +17,10 @@
 package controllers
 
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.liabilitycalculation.LiabilityCalculationError
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
-import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYearEndDate
+import financialDetails.models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYearEndDate
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.i18n.{Lang, Messages}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}

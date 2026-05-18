@@ -17,10 +17,10 @@
 package audit.models
 
 import authV2.AuthActionsTestData._
-import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
+import financialDetails.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import financialDetails.models.paymentAllocations.AllocationDetail
+import financialDetails.models.{DocumentDetail, FinancialDetail, SubItem}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
-import models.paymentAllocations.AllocationDetail
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.TestSupport

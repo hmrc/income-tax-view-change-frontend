@@ -17,13 +17,13 @@
 package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import financialDetails.models.creditsandrefunds.CreditsModel
+import financialDetails.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
+import financialDetails.models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
+import financialDetails.models.{Payment, Payments, PaymentsError}
 import models.core.ResponseModel.ResponseModel
 import models.core.{ErrorModel, Nino}
-import models.creditsandrefunds.CreditsModel
-import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.incomeSourceDetails.TaxYear
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
-import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json

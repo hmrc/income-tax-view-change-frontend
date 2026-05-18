@@ -19,9 +19,10 @@ package services
 import auth.MtdItUser
 import authV2.AuthActionsTestData.defaultMTDITUser
 import config.featureswitch.FeatureSwitching
+import financialDetails.models.FinancialDetailsErrorModel
+import financialDetails.services.CreditHistoryService
 import mocks.connectors.MockFinancialDetailsConnector
-import models.financialDetails.FinancialDetailsErrorModel
-import services.CreditHistoryService.CreditHistoryError
+import financialDetails.services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport

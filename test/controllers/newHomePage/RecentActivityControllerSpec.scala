@@ -17,6 +17,7 @@
 package controllers.newHomePage
 
 import enums.MTDIndividual
+import financialDetails.services.PaymentHistoryService
 import mocks.auth.MockAuthActions
 import mocks.services.{MockDateService, MockITSAStatusService}
 import models.admin.{NewHomePage, RecentActivity}
@@ -30,7 +31,7 @@ import play.api.http.Status
 import play.api.inject
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import services.newHomePage.RecentActivityService
-import services.{DateService, DateServiceInterface, ITSAStatusService, PaymentHistoryService}
+import services.{DateService, DateServiceInterface, ITSAStatusService}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
 

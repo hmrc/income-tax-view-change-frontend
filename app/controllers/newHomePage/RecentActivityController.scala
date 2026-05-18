@@ -21,15 +21,17 @@ import auth.authV2.AuthActions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import config.featureswitch.FeatureSwitching
+import financialDetails.models.{Payment, repaymentHistory}
+import financialDetails.models.repaymentHistory.RepaymentHistoryModel
+import financialDetails.services.{PaymentHistoryService, WhatYouOweService}
 import models.admin.{PaymentHistoryRefunds, RecentActivity}
-import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.newHomePage.RecentActivityService
-import services.{DateServiceInterface, ITSAStatusService, PaymentHistoryService, WhatYouOweService}
+import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.HomePageUtils
@@ -71,8 +73,8 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
       }
 
       repaymentHistoryData <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds)).map {
-        case Right(repaymentHistory) => models.repaymentHistory.RepaymentHistoryModel(repaymentHistory)
-        case Left(value) => models.repaymentHistory.RepaymentHistoryModel(Nil)
+        case Right(repaymentHistory) => RepaymentHistoryModel(repaymentHistory)
+        case Left(value) => repaymentHistory.RepaymentHistoryModel(Nil)
       }
 
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)

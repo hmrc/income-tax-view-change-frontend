@@ -18,11 +18,11 @@ package controllers.claimToAdjustPoa
 
 import controllers.ControllerISpecHelper
 import enums._
+import financialDetails.models.claimToAdjustPoa.{OtherIncomeLower, PoaAmendmentData}
+import financialDetails.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.{OtherIncomeLower, PoaAmendmentData}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 

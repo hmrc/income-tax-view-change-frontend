@@ -22,10 +22,10 @@ import config.featureswitch.FeatureSwitching
 import config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import controllers.agent.sessionUtils
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
+import financialDetails.models.ChargeItem
 import implicits.ImplicitDateFormatterImpl
 import models.admin.FeatureSwitchName
 import models.admin.FeatureSwitchName.allFeatureSwitches
-import models.financialDetails.ChargeItem
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup

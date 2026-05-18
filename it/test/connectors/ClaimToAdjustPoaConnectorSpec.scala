@@ -18,8 +18,8 @@ package connectors
 
 import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
-import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
+import financialDetails.models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
+import financialDetails.models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
 import models.core.CorrelationId
 import org.scalatest.time.SpanSugar.convertIntToGrainOfTime
 import org.scalatest.wordspec.AnyWordSpec

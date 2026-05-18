@@ -18,8 +18,8 @@ package controllers
 
 import audit.models.ForecastTaxCalculationAuditModel
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.OK
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty

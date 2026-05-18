@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
+import financialDetails.views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 
 class ApiFailureSubmittingPoaViewSpec extends TestSupport {
 

@@ -21,7 +21,9 @@ import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import mocks.auth.MockAuthActions
 import mocks.services.*
 import _root_.config.ItvcErrorHandler
-import models.financialDetails.*
+import financialDetails.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import financialDetails.services.{FinancialDetailsService, WhatYouOweService}
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import obligations.mocks.services.MockNextUpdatesService

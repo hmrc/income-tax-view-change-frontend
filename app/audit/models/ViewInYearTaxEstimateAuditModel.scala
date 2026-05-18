@@ -16,7 +16,7 @@
 
 package audit.models
 
-import models.liabilitycalculation.viewmodels.CalculationSummary
+import financialDetails.models.liabilitycalculation.viewmodels.CalculationSummary
 import play.api.libs.json.{Json, OWrites}
 
 case class ViewInYearTaxEstimateAuditModel(

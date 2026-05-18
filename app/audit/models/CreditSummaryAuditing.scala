@@ -16,8 +16,8 @@
 
 package audit.models
 
-import models.creditDetailModel.CreditDetailModel
-import models.financialDetails.CreditType
+import financialDetails.models.CreditType
+import financialDetails.models.creditDetailModel.CreditDetailModel
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 

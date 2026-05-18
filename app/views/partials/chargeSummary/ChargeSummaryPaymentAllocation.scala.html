@@ -14,19 +14,20 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.financialDetails.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.implicits.ImplicitDateFormatterImpl
-@import models.chargeSummary.PaymentHistoryAllocations
-@import models.financialDetails.FinancialDetailsModel
-@import models.financialDetails.MfaDebitCharge
+@import financialDetails.models.chargeSummary.PaymentHistoryAllocations
+@import financialDetails.models.FinancialDetailsModel
+@import financialDetails.models.MfaDebitCharge
 @import _root_.implicits.HtmlFormatter.NbspString
+@import financialDetails.controllers.routes as financialDetailsRoutes
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
 
 @(  paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel,
-    chargeItem: models.financialDetails.ChargeItem,
+    chargeItem: financialDetails.models.ChargeItem,
     isAgent: Boolean = false,
     origin: Option[String] = None,
     codingOutFrom: String,
@@ -54,9 +55,9 @@
 
                 if(matchingPayment.isDefined) {
                     val link = if(isAgent) {
-                        controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
+                        financialDetailsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
                     } else {
-                        controllers.routes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, origin).url
+                        financialDetailsRoutes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, origin).url
                     }
                     val linkText = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit") else
                                 messages(allocation.getPaymentAllocationTextInChargeSummary, codingOutFrom, codingOutTo)

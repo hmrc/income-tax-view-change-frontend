@@ -16,7 +16,7 @@
 
 package views
 
-import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
+import financialDetails.models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks.*
 import testConstants.BaseTestConstants.testServiceNavigation

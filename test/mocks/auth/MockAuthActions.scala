@@ -24,6 +24,7 @@ import businessDetails.mocks.services.{MockCustomerFactsUpdateService, MockIncom
 import config.featureswitch.FeatureSwitching
 import connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
 import mocks.services.admin.MockFeatureSwitchService
 import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
@@ -32,7 +33,6 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.*
-import models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*

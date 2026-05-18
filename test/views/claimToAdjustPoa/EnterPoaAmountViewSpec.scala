@@ -16,9 +16,9 @@
 
 package views.claimToAdjustPoa
 
-import _root_.implicits.ImplicitCurrencyFormatter._
-import forms.adjustPoa.EnterPoaAmountForm
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financialDetails.implicits.ImplicitCurrencyFormatter._
+import financialDetails.forms.adjustPoa.EnterPoaAmountForm
+import financialDetails.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.core.NormalMode
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import testUtils.TestSupport
-import views.html.claimToAdjustPoa.EnterPoaAmountView
+import financialDetails.views.html.claimToAdjustPoa.EnterPoaAmountView
 
 class EnterPoaAmountViewSpec extends TestSupport{
 

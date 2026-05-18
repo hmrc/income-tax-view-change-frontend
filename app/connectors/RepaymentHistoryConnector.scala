@@ -17,8 +17,9 @@
 package connectors
 
 import config.FrontendAppConfig
+import financialDetails.models.repaymentHistory.{HipRepaymentHistoryResponse, RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
 import models.core.Nino
-import models.repaymentHistory._
+import financialDetails.models.repaymentHistory.*
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.client.HttpClientV2

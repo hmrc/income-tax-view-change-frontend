@@ -18,13 +18,14 @@ package connectors
 
 import auth.MtdItUser
 import config.FrontendAppConfig
+import financialDetails.models.{FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel, Payment, Payments, PaymentsError, PaymentsResponse}
 import models.core.ResponseModel.{ResponseModel, UnexpectedError}
 import models.core.{CorrelationId, Nino}
-import models.creditsandrefunds.CreditsModel
-import models.financialDetails._
+import financialDetails.models.*
+import financialDetails.models.creditsandrefunds.CreditsModel
+import financialDetails.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
+import financialDetails.models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.incomeSourceDetails.{TaxYear, TaxYearRange}
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
-import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

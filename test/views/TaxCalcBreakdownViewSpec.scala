@@ -17,9 +17,9 @@
 package views
 
 import exceptions.MissingFieldException
-import models.liabilitycalculation.taxcalculation.TaxBands
-import models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, TransitionProfitRow}
-import models.liabilitycalculation.{Message, Messages}
+import financialDetails.models.liabilitycalculation.{Message, Messages}
+import financialDetails.models.liabilitycalculation.taxcalculation.TaxBands
+import financialDetails.models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, TransitionProfitRow}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.prop.TableDrivenPropertyChecks._

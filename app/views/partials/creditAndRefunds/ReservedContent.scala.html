@@ -16,8 +16,9 @@
 
 @import views.html.components.{h2, p, link}
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
-@import models.creditsandrefunds.MoneyInYourAccountViewModel
-@import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import financialDetails.models.creditsandrefunds.MoneyInYourAccountViewModel
+@import financialDetails.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import financialDetails.controllers.routes as financialDetailsRoutes
 
 @this(
         h2: h2,
@@ -29,9 +30,9 @@
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
-        controllers.routes.WhatYouOweController.showAgent().url
+        financialDetailsRoutes.WhatYouOweController.showAgent().url
     } else {
-        controllers.routes.WhatYouOweController.show().url
+        financialDetailsRoutes.WhatYouOweController.show().url
     }
 }
 

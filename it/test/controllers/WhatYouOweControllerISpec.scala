@@ -19,10 +19,10 @@ package controllers
 import audit.models.WhatYouOweResponseAuditModel
 import auth.MtdItUser
 import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financialDetails.models.{BalanceDetails, ChargeItem, DocumentDetail, FinancialDetail, FinancialDetailsModel, TransactionUtils, WhatYouOweChargesList}
 import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
 import models.admin.*
 import models.core.SelfServeTimeToPayJourneyResponseModel
-import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}

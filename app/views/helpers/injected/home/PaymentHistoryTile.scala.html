@@ -18,7 +18,8 @@
 @import java.time.LocalDate
 @import _root_.implicits.ImplicitDateFormatterImpl
 @import models.homePage.HomePageViewModel
-@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.financialDetails.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import financialDetails.controllers.routes as financialDetailsRoutes
 
 @this(
     home_tile: home_tile,
@@ -30,9 +31,9 @@
 
 @paymentHistoryControllerURL = @{
     if(isAgent) {
-        controllers.routes.PaymentHistoryController.showAgent().url
+        financialDetailsRoutes.PaymentHistoryController.showAgent().url
     } else {
-        controllers.routes.PaymentHistoryController.show(viewModel.origin).url
+        financialDetailsRoutes.PaymentHistoryController.show(viewModel.origin).url
     }
 }
 
@@ -45,9 +46,9 @@
 
 @moneyInYourAccountControllerURL = @{
     if(isAgent) {
-        controllers.routes.MoneyInYourAccountController.showAgent().url
+        financialDetailsRoutes.MoneyInYourAccountController.showAgent().url
     } else {
-        controllers.routes.MoneyInYourAccountController.show().url
+        financialDetailsRoutes.MoneyInYourAccountController.show().url
     }
 }
 

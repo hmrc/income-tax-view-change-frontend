@@ -39,13 +39,13 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import services.CreditService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import views.html.HomeView
 import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.newHomePage.*
 import views.html.helpers.injected.home.YourReportingObligationsTile
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import financialDetails.services.CreditService
 
 import java.time.LocalDate
 import scala.concurrent.Future

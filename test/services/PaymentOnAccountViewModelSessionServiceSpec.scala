@@ -16,11 +16,12 @@
 
 package services
 
-import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
+import financialDetails.models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
+import financialDetails.repositories.PoaAmendmentDataRepository
+import financialDetails.services.PaymentOnAccountSessionService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
-import repositories.PoaAmendmentDataRepository
 import testUtils.TestSupport
 
 import scala.concurrent.Future

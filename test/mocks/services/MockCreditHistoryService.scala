@@ -16,13 +16,13 @@
 
 package mocks.services
 
-import models.creditDetailModel.CreditDetailModel
+import financialDetails.models.creditDetailModel.CreditDetailModel
+import financialDetails.services.CreditHistoryService
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import services.CreditHistoryService
-import services.CreditHistoryService.CreditHistoryError
+import CreditHistoryService.CreditHistoryError
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

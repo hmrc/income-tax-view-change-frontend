@@ -17,9 +17,9 @@
 package testConstants
 
 import enums.ChargeType.NIC4_WALES
+import financialDetails.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financialDetails.models.{BalanceDetails, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, SubItem, WhatYouOweChargesList}
 import helpers.ComponentSpecBase
-import models.financialDetails._
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 import services.DateServiceInterface
 import testConstants.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}

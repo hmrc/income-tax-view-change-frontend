@@ -17,12 +17,13 @@
 package testConstants
 
 import enums.ChargeType.NIC4_WALES
-import enums.CodingOutType._
-import models.creditDetailModel.CreditDetailModel
-import models.creditsandrefunds.{CreditsModel, Transaction}
-import models.financialDetails._
+import enums.CodingOutType.*
+import financialDetails.models.creditDetailModel.CreditDetailModel
+import financialDetails.models.creditsandrefunds.{CreditsModel, Transaction}
+import financialDetails.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financialDetails.models.{BalanceDetails, BalancingCharge, BalancingChargeCreditType, ChargeItem, CutOverCreditType, DocumentDetail, DocumentDetailWithDueDate, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel, ITSAReturnAmendmentCredit, MfaCreditType, PaymentType, PoaOneReconciliationCredit, PoaTwoReconciliationCredit, Repayment, RepaymentInterest, SubItem, WhatYouOweChargesList}
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 import services.DateService
 import testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}

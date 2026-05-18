@@ -18,13 +18,15 @@ package services.newHomePage
 
 import auth.MtdItUser
 import com.google.inject.Inject
+import financialDetails.controllers.routes as financialDetailsRoutes
+import financialDetails.models.Payment
 import obligations.connectors.ObligationsConnector
-import models.financialDetails.*
+import financialDetails.models.*
+import financialDetails.models.repaymentHistory.RepaymentHistoryModel
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.newHomePage.{RecentActivityCard, RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import obligations.models.{ObligationsModel, SingleObligationModel}
-import models.repaymentHistory.RepaymentHistoryModel
 import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -100,7 +102,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
     recentPayment.map { payment =>
       RecentActivityCard(
         linkContentText = "new.home.recentActivity.payments.link.text",
-        linkUrl = if (mtdUser.isAgent) controllers.routes.PaymentHistoryController.showAgent().url else controllers.routes.PaymentHistoryController.show().url,
+        linkUrl = if (mtdUser.isAgent) financialDetailsRoutes.PaymentHistoryController.showAgent().url else financialDetailsRoutes.PaymentHistoryController.show().url,
         contentText = "new.home.recentActivity.payments.content.text",
         dateContentText = "new.home.recentActivity.payments.date.content.text",
         cardDate = payment.dateOfPayment,
@@ -156,9 +158,9 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
   private def getRecentRefundCard(recentRefundModel: Option[RecentRefundModel])(implicit mtdItUser: MtdItUser[_]): Option[RecentActivityCard] = {
 
     val paymentCreditRefundUrl = if (mtdItUser.isAgent) {
-      controllers.routes.PaymentHistoryController.showAgent().url
+      financialDetailsRoutes.PaymentHistoryController.showAgent().url
     } else {
-      controllers.routes.PaymentHistoryController.show().url
+      financialDetailsRoutes.PaymentHistoryController.show().url
     }
 
     recentRefundModel.map { refund =>

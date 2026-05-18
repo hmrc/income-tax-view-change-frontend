@@ -15,12 +15,13 @@
  *@
 
 @import implicits.ImplicitDateFormatterImpl
-@import implicits.ImplicitCurrencyFormatter._
+@import financialDetails.implicits.ImplicitCurrencyFormatter._
 @import exceptions.MissingFieldException
-@import models.paymentAllocationCharges._
+@import financialDetails.models.paymentAllocationCharges._
 @import views.html.components.link
 @import java.time.LocalDate
 @import _root_.implicits.HtmlFormatter.NbspString
+@import financialDetails.controllers.routes as financialDetailsRoutes
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl,
     link: link)
@@ -30,8 +31,8 @@
 @import implicitDateFormatter._
 
 @moneyInYourAccountUrl = @{
-    if(isAgent) controllers.routes.MoneyInYourAccountController.showAgent().url
-    else controllers.routes.MoneyInYourAccountController.show().url
+    if(isAgent) financialDetailsRoutes.MoneyInYourAccountController.showAgent().url
+    else financialDetailsRoutes.MoneyInYourAccountController.show().url
 }
 
 @getLink = @{

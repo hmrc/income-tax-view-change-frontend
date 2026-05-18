@@ -18,7 +18,8 @@ package audit.models
 
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
-import models.financialDetails._
+import financialDetails.models.{BalancingChargeCreditType, CutOverCreditType, ITSAReturnAmendmentCredit, MfaCreditType, Payment, PaymentType, PoaOneReconciliationCredit, PoaTwoReconciliationCredit, RepaymentInterest}
+import financialDetails.models.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],

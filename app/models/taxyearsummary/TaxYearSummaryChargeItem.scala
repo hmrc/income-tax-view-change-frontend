@@ -16,7 +16,8 @@
 
 package models.taxyearsummary
 
-import models.financialDetails._
+import financialDetails.models.{Accepted, BalancingCharge, Cancelled, ChargeItem, CodedOutStatusType, FullyCollected, Nics2, PoaOneReconciliationDebit, PoaTwoReconciliationDebit, TransactionItem, TransactionType}
+import financialDetails.models.*
 import models.incomeSourceDetails.TaxYear
 import services.DateServiceInterface
 

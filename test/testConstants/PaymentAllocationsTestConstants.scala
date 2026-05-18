@@ -17,11 +17,12 @@
 package testConstants
 
 import enums.ChargeType.{ITSA_NIC4_INTEREST_GB, NIC4_WALES}
-import models.financialDetails._
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
-import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
+import financialDetails.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
+import financialDetails.models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
+import financialDetails.models.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsModel, SubItem}
+import financialDetails.models.*
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants._
+import testConstants.BaseTestConstants.*
 
 import java.time.LocalDate
 

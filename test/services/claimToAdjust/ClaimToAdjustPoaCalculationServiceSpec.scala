@@ -16,11 +16,11 @@
 
 package services.claimToAdjust
 
+import financialDetails.models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
 import mocks.connectors.MockClaimToAdjustPoaConnector
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaSuccess, UnexpectedError}
-import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
+import financialDetails.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaSuccess, UnexpectedError}
+import financialDetails.services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
 import models.incomeSourceDetails.TaxYear
-import services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
 import testConstants.BaseTestConstants.{testNino, testNinoNino, testTaxYear}
 import testUtils.TestSupport
 

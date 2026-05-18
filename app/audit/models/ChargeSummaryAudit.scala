@@ -19,9 +19,9 @@ package audit.models
 import audit.Utilities.userAuditDetails
 import auth.MtdItUser
 import enums.AuditType.ChargeSummary
-import models.chargeHistory.ChargeHistoryModel
-import models.chargeSummary.PaymentHistoryAllocations
-import models.financialDetails._
+import financialDetails.models.*
+import financialDetails.models.chargeHistory.ChargeHistoryModel
+import financialDetails.models.chargeSummary.PaymentHistoryAllocations
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import services.DateServiceInterface
