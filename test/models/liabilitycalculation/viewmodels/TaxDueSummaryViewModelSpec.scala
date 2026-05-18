@@ -19,13 +19,14 @@ package models.liabilitycalculation.viewmodels
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
-import models.liabilitycalculation.{Message, Messages, ReliefsClaimed, StudentLoan}
+import models.liabilitycalculation.{Message, Messages, PensionContributionDetail, PensionContributionReliefs, ReliefsClaimed, StudentLoan}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import testConstants.NewCalcBreakdownUnitTestConstants.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+
 import scala.language.implicitConversions
 
 class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionValues with ScalaFutures {
@@ -258,19 +259,27 @@ class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionVa
       }
     }
 
-    "giftAidTaxActual" should{
+    "totalPensionContributionReliefsActual" should {
       "return value when value is present" in{
         val amount = BigDecimal(1000.0)
-        val model = TaxDueSummaryViewModel(giftAidTax = Some(amount))
+        val model = TaxDueSummaryViewModel(pensionContributionReliefs = Some(
+          PensionContributionReliefs(
+            amount,
+            PensionContributionDetail(
+              BigDecimal(0.00),
+              BigDecimal(0.00)
+            )
+          )
+        ))
 
-        model.giftAidTaxActual shouldBe amount
+        model.totalPensionContributionReliefsActual shouldBe amount
       }
 
       "throw MissingFieldException when value is not present" in{
         val model = TaxDueSummaryViewModel()
 
         intercept[MissingFieldException] {
-          model.giftAidTaxActual
+          model.totalPensionContributionReliefsActual
         }
       }
     }

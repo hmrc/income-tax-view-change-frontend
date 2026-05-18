@@ -40,7 +40,8 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
     val grossGiftAid: Option[String] = viewModel.grossGiftAidPayments.map(_.toCurrencyString)
     val modifiedBaseBandLimit: Option[String] = viewModel.getModifiedBaseTaxBand.map(value => BigDecimal(value.apportionedBandLimit).toCurrencyString)
     val lossesApplied: Option[String] = viewModel.lossesAppliedToGeneralIncome.map(value => BigDecimal(value).toCurrencyString)
-    val giftAidTax: Option[String] = viewModel.giftAidTax.map(_.toCurrencyString)
+//    val giftAidTax: Option[String] = viewModel.giftAidTax.map(_.toCurrencyString)
+    val totalPensionContributionReliefs: Option[String] = viewModel.pensionContributionReliefs.map(_.totalPensionContributionReliefs).map(_.toCurrencyString)
 
     id match {
       case "C22201" => for {
@@ -55,14 +56,15 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
       case "C22207" => Some("Your payroll giving amount has been included in your adjusted taxable income")
 
       case "C22208" => for {
-          tax <- giftAidTax
+          tax <- totalPensionContributionReliefs
           band <- modifiedBaseBandLimit
         } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution"
 
       case "C22209" => for {
-          tax <- giftAidTax
-          band <- modifiedBaseBandLimit
-        } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution and Gift Aid payments"
+        gga <- grossGiftAid
+        tpcr <- totalPensionContributionReliefs
+        band <- modifiedBaseBandLimit
+        } yield s"Your Basic Rate limit has been increased by ${gga + tpcr} to $band for Pension Contribution and Gift Aid payments"
 
       case "C22210" => Some("Employment related expenses are capped at the total amount of employment income")
       case "C22211" => Some("This is a forecast of your annual Income Tax liability based on the information you have provided to date. Any overpayments of Income Tax will not be refundable until after you have submitted your final declaration")
