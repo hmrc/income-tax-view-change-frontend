@@ -398,7 +398,9 @@ taxYears.oldSa.agent.content.2								   = cyfrif Hunanasesiad ar gyfer Asiantau
 taxYears.oldSa.agent.content.3								   = Bydd hwn yn Ddynodydd Defnyddiwr (ID) a chyfrinair ar gyfer Porth y Llywodraeth gwahanol i’ch cyfrif gwasanaethau asiant.
 taxYears.r18.amendment.text                                    = Gallwch fwrw golwg dros dudalennau yn crynhoi blwyddyn dreth i hefyd gael gweld beth yw eich opsiynau o ran diwygio’r ffurflen dreth rydych eisoes wedi’i chyflwyno’r flwyddyn honno.
 taxYears.dropdown.title                                        = Help gyda thystiolaeth o’ch incwm (SA302)
-taxYears.dropdown.content.1                                    =
+taxYears.dropdown.content.1                                    = Gallwch fwrw golwg dros y dudalen
+taxYears.dropdown.content.linkText                             = tystiolaeth o’ch incwm SA302
+taxYears.dropdown.content.2                                    =
 
 ## Tax Years Page - Error ##
 taxYears.error.subheading                                      = Ni all yr wybodaeth am eich Ffurflenni Treth gael ei harddangos yma ar hyn o bryd
