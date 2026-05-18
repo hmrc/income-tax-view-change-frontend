@@ -18,18 +18,16 @@ package services.admin
 
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import connectors.FeatureSwitchConnector
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
-import testOnly.repository.FeatureSwitchRepository
-import connectors.FeatureSwitchConnector
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchRepository,
-                                     val featureSwitchConnector: FeatureSwitchConnector,
+class FeatureSwitchService @Inject()(val featureSwitchConnector: FeatureSwitchConnector,
                                      val appConfig: FrontendAppConfig)
                                     (implicit val ec: ExecutionContext) extends FeatureSwitching {
 
@@ -48,19 +46,7 @@ class FeatureSwitchService @Inject()(val featureSwitchRepository: FeatureSwitchR
     }
 
     if (appConfig.readFeatureSwitchesFromMongo) {
-      featureSwitchConnector.getAllSwitches()
-        .flatMap { switches =>
-          if (switches.nonEmpty) {
-            Future.successful(switches)
-          } else {
-            Logger("application").warn(
-              "Connector returned empty list, falling back to repository"
-            )
-            featureSwitchRepository.getFeatureSwitches
-          }
-        }
-        .map(enrich)
-
+      featureSwitchConnector.getAllSwitches().map(enrich)
     } else {
       Future.successful(enrich(getFSList))
     }

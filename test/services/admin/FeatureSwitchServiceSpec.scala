@@ -17,7 +17,6 @@
 package services.admin
 
 import common.config.FrontendAppConfig
-import mocks.repositories.MockFeatureSwitchRepository
 import mocks.connectors.MockFeatureSwitchConnector
 import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mockito.ArgumentMatchers
@@ -28,7 +27,7 @@ import testUtils.TestSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchRepository with MockFeatureSwitchConnector {
+class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchConnector {
 
   val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
@@ -36,7 +35,6 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
   val anotherFSName: FeatureSwitchName = FeatureSwitchName.get("opt-in-opt-out-content-update-r17").get
 
   object TestFSService extends FeatureSwitchService(
-    mockFeatureSwitchRepository,
     mockFeatureSwitchConnector,
     mockFrontendAppConfig
   )(
@@ -46,7 +44,6 @@ class FeatureSwitchServiceSpec extends TestSupport with MockFeatureSwitchReposit
   }
 
   object TestFSServiceFeatureEnabled extends FeatureSwitchService(
-    mockFeatureSwitchRepository,
     mockFeatureSwitchConnector,
     mockFrontendAppConfig
   )(

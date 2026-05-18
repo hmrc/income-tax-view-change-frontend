@@ -16,10 +16,10 @@
 
 package testUtils
 
-import common.auth.actions.AuthActionsTestData.*
 import common.auth.MtdItUser
-import common.config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
+import common.auth.actions.AuthActionsTestData.*
 import common.config.featureswitch.FeatureSwitching
+import common.config.{FrontendAppConfig, ItvcHeaderCarrierForPartialsConverter}
 import common.utils.sessionUtils
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import implicits.ImplicitDateFormatterImpl
@@ -43,7 +43,6 @@ import play.twirl.api.Html
 import services.DateService
 import testConstants.BaseTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
-import testOnly.repository.FeatureSwitchRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.*
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, Enrolments}
@@ -96,8 +95,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
 
   def assertJsonEquals(actual: JsValue, expected: JsValue): Assertion =
     normalise(actual) shouldEqual normalise(expected)
-
-  val featureSwitchRepository = app.injector.instanceOf[FeatureSwitchRepository]
 
   implicit val timeout: PatienceConfig = PatienceConfig(5.seconds)
 
