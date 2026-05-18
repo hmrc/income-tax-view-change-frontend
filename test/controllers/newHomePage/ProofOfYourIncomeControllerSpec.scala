@@ -16,9 +16,9 @@
 
 package controllers.newHomePage
 
-import auth.authV2.AuthActions
+import common.auth.AuthActions
 import enums.MTDIndividual
-import mocks.auth.MockAuthActions
+import common.mocks.auth.MockAuthActions
 import mocks.services.*
 import models.admin.{MortgageEvidence, NewHomePage}
 import models.itsaStatus.ITSAStatusResponseModel
