@@ -268,6 +268,19 @@ new.home.overview.penalties.sub-heading                         = Penalties and 
 new.home.overview.penalties.check-penalties                     = Check Self Assessment penalties and appeals
 new.home.overview.penalties.check-lsp                           = View your late submission penalties
 new.home.overview.penalties.check-lpp                           = View your late payment penalties
+newHome.overview.tax-year.proofOfIncome.pageTitle               = Tax year summary
+newHome.overview.tax-year.proofOfIncome.header                  = Proof of your income (SA302)
+newHome.overview.tax-year.proofOfIncome.p1                      = You can use your SA302 and tax year overview as proof of your income, for example if you’re applying for a mortgage and you’re self-employed.
+newHome.overview.tax-year.proofOfIncome.p2                      = The tax year is from 6 April to 5 April the following year.
+newHome.overview.tax-year.proofOfIncome.card.currentTY.header   = {0} to {1} current tax year
+newHome.overview.tax-year.proofOfIncome.card.previousTY.header  = {0} to {1} tax year
+newHome.overview.tax-year.proofOfIncome.card.legacy.header      = {0} to {1} tax year and earlier
+newHome.overview.tax-year.proofOfIncome.card.sa302key           = SA302 tax calculation
+newHome.overview.tax-year.proofOfIncome.card.legacy             = SA302 and tax year overview
+newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete = Incomplete - cannot be used as proof of your income
+newHome.overview.tax-year.proofOfIncome.card.sa302value.proof   = Proof of your income
+newHome.overview.tax-year.proofOfIncome.card.sa302value.legacy  = Tax years before using Making Tax Digital for Income Tax
+newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = View
 
 ### Help Tab
 new.home.help.heading                                           = Making Tax Digital

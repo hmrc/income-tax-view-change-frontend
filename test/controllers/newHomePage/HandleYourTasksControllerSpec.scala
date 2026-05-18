@@ -146,8 +146,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
       )
     )
     when(mockNextUpdatesService.getOpenObligations()(any(), any())).thenReturn(Future.successful(obligationsModel))
-
-    val testHomeController = app.injector.instanceOf[HomeController]
   }
 
   override def beforeEach(): Unit = {

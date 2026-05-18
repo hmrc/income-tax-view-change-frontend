@@ -269,7 +269,19 @@ new.home.overview.penalties.sub-heading                         = Cosbau ac apel
 new.home.overview.penalties.check-penalties                     = Gwirio cosbau ac apeliadau Hunanasesiad
 new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
 new.home.overview.penalties.check-lpp                           = Gweld eich cosbau am dalu’n hwyr
-
+newHome.overview.tax-year.proofOfIncome.pageTitle               = Crynodeb o’r flwyddyn dreth
+newHome.overview.tax-year.proofOfIncome.header                  = Tystiolaeth o’ch incwm (SA302)
+newHome.overview.tax-year.proofOfIncome.p1                      = Gallwch ddefnyddio’ch SA302 a’ch trosolwg o’r flwyddyn dreth fel tystiolaeth o’ch incwm, er enghraifft os ydych yn hunangyflogedig ac yn gwneud cais am forgais.
+newHome.overview.tax-year.proofOfIncome.p2                      = Mae’r flwyddyn dreth o 6 Ebrill i 5 Ebrill y flwyddyn ganlynol.
+newHome.overview.tax-year.proofOfIncome.card.currentTY.header   = {0} i {1} blwyddyn dreth bresennol
+newHome.overview.tax-year.proofOfIncome.card.previousTY.header  = {0} i {1} blwyddyn dreth
+newHome.overview.tax-year.proofOfIncome.card.legacy.header      = {0} i {1} blwyddyn dreth a chynharach
+newHome.overview.tax-year.proofOfIncome.card.sa302key           = Cyfrifiad Treth SA302
+newHome.overview.tax-year.proofOfIncome.card.legacy             = SA302 a throsolwg o’r flwyddyn dreth
+newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete = Anghyflawn – ni ellir ei ddefnyddio fel tystiolaeth o’ch incwm
+newHome.overview.tax-year.proofOfIncome.card.sa302value.proof   = Tystiolaeth o’ch incwm
+newHome.overview.tax-year.proofOfIncome.card.sa302value.legacy  = Blynyddoedd treth cyn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm
+newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = Bwrw golwg dros
 ### Help Tab
 new.home.help.heading                                           = Troi Treth yn Ddigidol
 new.home.help.openInNewTab                                      = Mae pob cysylltiad yn agor mewn tab newydd.
