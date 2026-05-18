@@ -147,7 +147,8 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         Message("C55012", "05/01/2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
-        Message("C55009", "")
+        Message("C55009", ""),
+        Message("C55007", "2024-04-05")
       )
     }
 
@@ -156,7 +157,8 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         Message("C55012", "05/01/2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
-        Message("C55009", "")
+        Message("C55009", ""),
+        Message("C55007", "2024-04-05")
       )
     }
 
@@ -166,7 +168,8 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
-        Message("C55009", "")
+        Message("C55009", ""),
+        Message("C55007", "5 Ebrill 2024")
       )
     }
     "translate date variable values from messages for agent" in {
@@ -175,7 +178,8 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
         Message("C55012", "5 Ionawr 2023"),
         Message("C15507", "£2000"),
         Message("C15510", "10"),
-        Message("C55009", "")
+        Message("C55009", ""),
+        Message("C55007", "5 Ebrill 2024")
       )
     }
 

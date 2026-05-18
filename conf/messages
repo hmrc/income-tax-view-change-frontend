@@ -555,6 +555,25 @@ tax-year-summary.message.C559105                                   = the amount 
 tax-year-summary.message.C559113                                   = for your foreign property, you need to submit either consolidated or detailed expenses but not both.
 tax-year-summary.message.C559114                                   = for your EEA furnished holiday lettings, you need to submit either consolidated or detailed expenses but not both.
 
+tax-year-summary.message.C119113                                   = Foreign Property - Consolidated expenses cannot be submitted with a full breakdown of expenses.
+tax-year-summary.message.C159113                                   = Foreign Property - Consolidated expenses cannot be submitted with a full breakdown of expenses, please resubmit.
+tax-year-summary.message.C55329                                    = Business entertainment disallowable expenses should not exceed the business entertainment allowable expenses. Please amend and resubmit.
+tax-year-summary.message.C55007                                    = Period submission does not align to cessation date of {0}. Please amend and resubmit.
+tax-year-summary.message.C55015                                    = Period submissions must support the quarter reporting type elected.
+tax-year-summary.message.C55016                                    = Period submissions must support the quarter reporting type elected.
+tax-year-summary.message.C55017                                    = Period submissions must support the quarter reporting type elected.
+tax-year-summary.message.C559200                                   = One or more of your business income sources has a quarter reporting type of CALENDAR, but you have not submitted a Business Source Adjustable Summary.
+tax-year-summary.message.C55326                                    = Periods of Account information is required for all Self Employments. Please submit.
+tax-year-summary.message.C55327                                    = One or more Self Employment income sources with standard reporting require a basis adjustment figure to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
+tax-year-summary.message.C55328                                    = One or more Self Employment income sources with calendar reporting require a basis adjustment figure and business source adjustments to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
+tax-year-summary.message.C55109                                    = Business Asset Disposal Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.message.C55110                                    = Investors Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.message.C55602                                    = Your Foreign property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+tax-year-summary.message.C55107                                    = One or more employments have no directorship declaration submitted. Please submit.
+tax-year-summary.message.C55108                                    = Please ensure that the Dividend Received from Directorships is not greater than UK Dividends.
+tax-year-summary.message.C55525                                    = Your UK property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+
+
 tax-year-summary.agent.message.header                              = We cannot show this calculation because:
 tax-year-summary.agent.message.action                              = You need to amend and resubmit your client’s return
 tax-year-summary.agent.message.C15014                              = a quarterly update cannot end after the accounting period end date of {0}.
@@ -632,6 +651,25 @@ tax-year-summary.agent.message.C559104                             = your client
 tax-year-summary.agent.message.C559105                             = the amount your client claimed for private use adjustment for their foreign property is more than the total allowable expenses.
 tax-year-summary.agent.message.C559113                             = for your client’s foreign property, they need to submit either consolidated or detailed expenses but not both.
 tax-year-summary.agent.message.C559114                             = for your client’s EEA furnished holiday lettings, they need to submit either consolidated or detailed expenses but not both.
+
+tax-year-summary.agent.message.C119113                             = Foreign Property - Consolidated expenses cannot be submitted with a full breakdown of expenses.
+tax-year-summary.agent.message.C159113                             = Foreign Property - Consolidated expenses cannot be submitted with a full breakdown of expenses, please resubmit.
+tax-year-summary.agent.message.C55329                              = Business entertainment disallowable expenses should not exceed the business entertainment allowable expenses. Please amend and resubmit.
+tax-year-summary.agent.message.C55007                              = Period submission does not align to cessation date of {0}. Please amend and resubmit.
+tax-year-summary.agent.message.C55015                              = Period submissions must support the quarter reporting type elected.
+tax-year-summary.agent.message.C55016                              = Period submissions must support the quarter reporting type elected.
+tax-year-summary.agent.message.C55017                              = Period submissions must support the quarter reporting type elected.
+tax-year-summary.agent.message.C559200                             = One or more of your business income sources has a quarter reporting type of CALENDAR, but you have not submitted a Business Source Adjustable Summary.
+tax-year-summary.agent.message.C55326                              = Periods of Account information is required for all Self Employments. Please submit.
+tax-year-summary.agent.message.C55327                              = One or more Self Employment income sources with standard reporting require a basis adjustment figure to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
+tax-year-summary.agent.message.C55328                              = One or more Self Employment income sources with calendar reporting require a basis adjustment figure and business source adjustments to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
+tax-year-summary.agent.message.C55109                              = Business Asset Disposal Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.agent.message.C55110                              = Investors Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.agent.message.C55602                              = Your Foreign property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+tax-year-summary.agent.message.C55107                              = One or more employments have no directorship declaration submitted. Please submit.
+tax-year-summary.agent.message.C55108                              = Please ensure that the Dividend Received from Directorships is not greater than UK Dividends.
+tax-year-summary.agent.message.C55525                              = Your UK property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+
 
 tax-year-summary.adjust-poa-paragraph                              = You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account.
 tax-year-summary.adjust-poa                                        = Adjust payments on account
