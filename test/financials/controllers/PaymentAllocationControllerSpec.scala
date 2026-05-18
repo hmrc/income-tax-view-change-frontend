@@ -16,11 +16,13 @@
 
 package financials.controllers
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.mocks.services.MockDateService
+import common.services.{DateService, DateServiceInterface}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import implicits.ImplicitDateFormatter
-import mocks.services.{MockDateService, MockPaymentAllocationsService}
+import mocks.services.MockPaymentAllocationsService
 import models.core.Nino
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
 import org.mockito.ArgumentMatchers.any
@@ -29,7 +31,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{DateService, DateServiceInterface, PaymentAllocationsService}
+import services.PaymentAllocationsService
 import testConstants.PaymentAllocationsTestConstants.*
 
 import scala.concurrent.Future

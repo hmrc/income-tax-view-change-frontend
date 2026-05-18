@@ -24,7 +24,6 @@ import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import services.SessionService
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
@@ -33,6 +32,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import common.controllers.ControllerISpecHelper
+import common.services.SessionService
 
 class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 

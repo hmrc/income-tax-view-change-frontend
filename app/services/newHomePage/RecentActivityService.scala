@@ -18,6 +18,7 @@ package services.newHomePage
 
 import com.google.inject.Inject
 import common.auth.MtdItUser
+import common.services.DateServiceInterface
 import obligations.connectors.ObligationsConnector
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
@@ -25,7 +26,6 @@ import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import models.newHomePage.{RecentActivityCard, RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import obligations.models.{ObligationsModel, SingleObligationModel}
 import models.repaymentHistory.RepaymentHistoryModel
-import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate

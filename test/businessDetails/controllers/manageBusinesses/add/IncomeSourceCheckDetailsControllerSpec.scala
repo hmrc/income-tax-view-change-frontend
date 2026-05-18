@@ -20,11 +20,12 @@ import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRou
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.services.CreateBusinessDetailsService
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import mocks.services.MockSessionService
 import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import org.jsoup.Jsoup
@@ -37,7 +38,6 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData}
 

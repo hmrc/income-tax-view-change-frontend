@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.FeatureSwitchConnector
+import common.connectors.FeatureSwitchConnector
 import models.admin.FeatureSwitch
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*

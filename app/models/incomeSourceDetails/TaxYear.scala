@@ -16,8 +16,8 @@
 
 package models.incomeSourceDetails
 
+import common.services.DateServiceInterface
 import play.api.libs.json.{Format, JsError, JsNumber, Reads}
-import services.DateServiceInterface
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

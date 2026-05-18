@@ -21,8 +21,8 @@ import common.auth.{HeaderExtractor, MtdItUser}
 import common.config.FrontendAppConfig
 import common.helpers.servicemocks.AuditStub
 import common.models.auth.AuthorisedAndEnrolledRequest
+import common.services.{DateService, DateServiceInterface}
 import enums.{MTDIndividual, MTDUserRole}
-import helpers.*
 import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.repositories.OptOutSessionDataRepository
@@ -39,7 +39,6 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.*
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter

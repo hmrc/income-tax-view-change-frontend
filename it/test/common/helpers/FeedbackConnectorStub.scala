@@ -16,9 +16,6 @@
 
 package common.helpers
 
-import common.helpers.WiremockHelper
-
-
 object FeedbackConnectorStub {
 
   def stubPostFeedback(status: Int): Unit =

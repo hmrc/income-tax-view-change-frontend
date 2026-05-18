@@ -19,7 +19,8 @@ package services
 import common.auth.actions.AuthActionsTestData.{getAllEnrolmentsAgent, getAuthUserDetails, ninoEnrolment}
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import connectors.{CalculationListConnector, IncomeTaxCalculationConnector}
+import common.connectors.IncomeTaxCalculationConnector
+import connectors.CalculationListConnector
 import enums.{MTDIndividual, MTDPrimaryAgent}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.liabilitycalculation.*

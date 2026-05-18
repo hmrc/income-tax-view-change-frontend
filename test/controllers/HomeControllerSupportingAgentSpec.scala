@@ -17,7 +17,6 @@
 package controllers
 
 import enums.MTDSupportingAgent
-import mocks.services.admin.MockFeatureSwitchService
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -45,6 +44,7 @@ import views.html.helpers.injected.home.YourReportingObligationsTile
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.mocks.services.admin.MockFeatureSwitchService
 import common.services.AuditingService
 
 import java.time.LocalDate

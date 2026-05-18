@@ -17,6 +17,7 @@
 @import common.config.FrontendAppConfig
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
+@import financials.controllers.routes as financialsRoutes
 
 
 @this(mainTemplate: unifiedLayout,
@@ -45,7 +46,7 @@
                 @p(classes = "govuk-body govuk-!-margin-bottom-4") {
                     @messages("notmigrated.agent.content")
                     @link(
-                        link = controllers.routes.NotMigratedUserController.redirectAgent().url,
+                        link = financialsRoutes.NotMigratedUserController.redirectAgent().url,
                         messageKey = messages("notmigrated.agent.link_title"),
                         outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank")
                     )
@@ -60,7 +61,7 @@
             @p(classes = "govuk-body govuk-!-margin-bottom-4") {
                 @messages("notmigrated.user.content")
                 @link(
-                    link = controllers.routes.NotMigratedUserController.redirect().url,
+                    link = financialsRoutes.NotMigratedUserController.redirect().url,
                     messageKey = messages("notmigrated.user.link_title"),
                     outerMessage = ".", rel = Some ("noreferrer noopener"), target = Some ("_blank") )
             }

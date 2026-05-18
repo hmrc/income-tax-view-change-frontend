@@ -19,6 +19,7 @@ package obligations.services.reportingObligations
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.services.DateServiceInterface
 import enums.AuditType.IncomeSourceDetailsResponse as _
 import enums.{AuditType, TransactionName}
 import models.admin.OptInOptOutContentUpdateR17
@@ -30,7 +31,6 @@ import obligations.viewUtils.ReportingFrequencyViewUtils
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
-import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}

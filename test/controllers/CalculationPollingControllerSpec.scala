@@ -16,8 +16,9 @@
 
 package controllers
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.services.DateServiceInterface
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys
 import mocks.services.MockCalculationPollingService
@@ -26,7 +27,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import returns.controllers.routes as returnsRoutes
-import services.{CalculationPollingService, DateServiceInterface}
+import services.CalculationPollingService
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
 

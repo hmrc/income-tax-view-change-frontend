@@ -25,12 +25,12 @@ import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsMod
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
-import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.IncomeSourceIntegrationTestConstants._
 import businessDetails.testConstants.IncomeSourcesObligationsIntegrationTestConstants.testObligationsModel
 import common.controllers.ControllerISpecHelper
+import common.services.SessionService
 
 import java.time.LocalDate
 

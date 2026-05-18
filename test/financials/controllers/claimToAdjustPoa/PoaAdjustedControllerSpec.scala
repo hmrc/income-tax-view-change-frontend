@@ -16,10 +16,12 @@
 
 package financials.controllers.claimToAdjustPoa
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.mocks.services.MockDateService
+import common.services.{DateService, DateServiceInterface}
 import enums.{MTDIndividual, MTDSupportingAgent}
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockDateService, MockPaymentOnAccountSessionService}
+import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,7 +29,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{DateService, DateServiceInterface, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
 import services.claimToAdjustPoa.ClaimToAdjustService
 
 import java.time.LocalDate

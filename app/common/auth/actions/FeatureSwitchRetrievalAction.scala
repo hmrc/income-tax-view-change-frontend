@@ -18,9 +18,9 @@ package common.auth.actions
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.services.admin.FeatureSwitchService
 import play.api.i18n.MessagesApi
 import play.api.mvc.*
-import services.admin.FeatureSwitchService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
