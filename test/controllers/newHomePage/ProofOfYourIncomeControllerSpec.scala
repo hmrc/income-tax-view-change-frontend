@@ -20,7 +20,7 @@ import common.auth.AuthActions
 import enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import mocks.services.*
-import models.admin.{MortgageEvidence, NewHomePage}
+import models.admin.{FeatureSwitch, MortgageEvidence, NewHomePage}
 import models.itsaStatus.ITSAStatusResponseModel
 import models.liabilitycalculation.*
 import org.jsoup.Jsoup
@@ -78,7 +78,6 @@ with MockDateService {
   override def beforeEach(): Unit = {
     super.beforeEach()
     disableAllSwitches()
-
   }
 
   mtdAllRoles.foreach { mtdRole =>
@@ -91,14 +90,14 @@ with MockDateService {
           "the mortgage evidence feature switch is enabled" in {
             val itsaResponse = List(ITSAStatusResponseModel("2021-22", None))
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
-            enable(NewHomePage, MortgageEvidence)
             mockSingleBusinessIncomeSource()
             when(mockDateServiceInterface.getCurrentTaxYearStart)
               .thenReturn(taxYearStartDate)
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(itsaResponse))
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(getTestCalcResponse("DF")))
-            setupMockSuccess(mtdRole)
+            val activeSwitches = List(NewHomePage, MortgageEvidence)
+            setupMockSuccess(mtdRole, enabledFeatures = activeSwitches)
 
             val result = action(fakeRequest)
 
@@ -113,14 +112,14 @@ with MockDateService {
           "the mortgage evidence feature switch is enabled" in {
             val itsaResponse = List(ITSAStatusResponseModel("2021-22", None))
             val taxYearStartDate = LocalDate.of(2023, 4, 6)
-            enable(NewHomePage, MortgageEvidence)
             mockSingleBusinessIncomeSource()
             when(mockDateServiceInterface.getCurrentTaxYearStart)
               .thenReturn(taxYearStartDate)
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(itsaResponse))
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(getTestCalcResponse("IF")))
-            setupMockSuccess(mtdRole)
+            val activeSwitches = List(NewHomePage, MortgageEvidence)
+            setupMockSuccess(mtdRole, enabledFeatures = activeSwitches)
 
             val result = action(fakeRequest)
 

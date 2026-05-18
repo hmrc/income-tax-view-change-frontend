@@ -76,7 +76,7 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
         Ok(view(Some(backUrl), isAgent, sortedModels))
       }.recover {
         case e: Exception =>
-          itvcErrorHandler.showInternalServerError()
+          Ok(view(Some(backUrl), isAgent, Seq.empty))
       }
 }
 
@@ -84,12 +84,13 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
                                             (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[ProofOfYourIncomeCardViewModel]] = {
 
     val futures: List[Future[Option[ProofOfYourIncomeCardViewModel]]] = taxYears.map { taxYear =>
-      val taxYearFormatted = ("20"+taxYear.split("-")(1)).toInt
+      val taxYearFormattedEnd = ("20"+taxYear.split("-")(1)).toInt
+      val taxYearFormattedStart = taxYear.split("-")(0).toInt
 
-      calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYearFormatted).flatMap {
+      calcService.getLiabilityCalculationDetail(user.mtditid, user.nino, taxYearFormattedEnd).flatMap {
         case calcResponse: LiabilityCalculationResponse =>
           Future.successful(Some(ProofOfYourIncomeCardViewModel(
-            taxYearFormatted,
+            taxYearFormattedStart,
             calcResponse.metadata.calculationType,
             dateService.getCurrentTaxYearStart.getYear,
             false,
@@ -97,7 +98,7 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
           )))
 
         case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
-          Logger("application").info(s"No data for tax year: $taxYearFormatted - Skipping.")
+          Logger("application").info(s"No data for tax year: $taxYearFormattedEnd - Skipping.")
           Future.successful(None)
 
         case _ =>
