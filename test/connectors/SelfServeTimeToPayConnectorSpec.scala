@@ -16,6 +16,7 @@
 
 package connectors
 
+import common.connectors.BaseConnectorSpec
 import models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}

@@ -20,11 +20,11 @@ import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.models.DateFormElement
 import common.auth.MtdItUser
+import common.services.DateService
 import org.scalatest.Assertion
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
-import services.DateService
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 import testUtils.TestSupport

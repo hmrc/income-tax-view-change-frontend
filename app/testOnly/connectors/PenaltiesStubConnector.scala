@@ -16,7 +16,7 @@
 
 package testOnly.connectors
 
-import connectors.RawResponseReads
+import common.connectors.RawResponseReads
 import testOnly.TestOnlyAppConfig
 import testOnly.models.PenaltiesDataModel
 import uk.gov.hmrc.http.client.HttpClientV2

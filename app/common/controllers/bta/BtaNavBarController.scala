@@ -16,13 +16,13 @@
 
 package common.controllers.bta
 
-import connectors.BtaNavBarPartialConnector
+import common.connectors.BtaNavBarPartialConnector
+import common.services.BtaNavBarService
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.mvc.{MessagesControllerComponents, Request}
 import play.api.routing.Router.RequestImplicits.WithHandlerDef
 import play.twirl.api.Html
-import services.BtaNavBarService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.navBar.BtaNavBar

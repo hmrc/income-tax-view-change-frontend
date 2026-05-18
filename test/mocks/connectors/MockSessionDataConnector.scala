@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.SessionDataConnector
+import common.connectors.SessionDataConnector
 import models.sessionData.SessionDataGetResponse.SessionGetResponse
 import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import org.mockito.ArgumentMatchers.any

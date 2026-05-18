@@ -18,9 +18,9 @@ package common.auth.actions
 
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.connectors.IncomeSourceConnector
 import common.controllers.BaseController
 import common.models.auth.AuthorisedAndEnrolledRequest
-import connectors.IncomeSourceConnector
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}

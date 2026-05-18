@@ -33,12 +33,11 @@ import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, Che
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.services.AuditingService
+import common.services.{AuditingService, SessionService}
 
 import javax.inject.Inject
 import scala.annotation.unused

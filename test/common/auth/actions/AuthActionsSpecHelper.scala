@@ -17,14 +17,13 @@
 package common.auth.actions
 
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
+import common.connectors.IncomeSourceConnector
 import common.controllers.bta.BtaNavBarController
-import common.services.AuditingService
-import connectors.IncomeSourceConnector
+import common.services.{AuditingService, SessionDataService}
+import common.services.admin.FeatureSwitchService
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
-import services.SessionDataService
-import services.admin.FeatureSwitchService
 import testUtils.TestSupport
 import views.html.navBar.PtaPartial
 

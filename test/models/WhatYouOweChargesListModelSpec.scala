@@ -16,11 +16,11 @@
 
 package models
 
+import common.services.DateService
 import exceptions.MissingFieldException
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.scalatest.matchers.should.Matchers
-import services.DateService
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants._

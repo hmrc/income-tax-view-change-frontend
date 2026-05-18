@@ -16,8 +16,9 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import common.mocks.auth.MockAuthActions
-import connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
+import common.services.DateServiceInterface
 import enums.MTDIndividual
 import models.admin.TriggeredMigration
 import org.mockito.ArgumentMatchers.any
@@ -25,7 +26,6 @@ import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
 import scala.concurrent.Future

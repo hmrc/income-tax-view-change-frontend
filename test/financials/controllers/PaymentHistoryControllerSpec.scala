@@ -16,8 +16,9 @@
 
 package financials.controllers
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.services.DateServiceInterface
 import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.gatewayPage
 import implicits.ImplicitDateFormatter
@@ -31,7 +32,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.PaymentHistoryService.PaymentHistoryError
-import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
+import services.{PaymentHistoryService, RepaymentService}
 
 import scala.concurrent.Future
 
