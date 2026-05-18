@@ -16,9 +16,9 @@
 
 package utils
 
-import mocks.services.MockDateService
+import common.mocks.services.MockDateService
+import common.services.DateService
 import org.mockito.Mockito.when
-import services.DateService
 import testUtils.TestSupport
 
 import java.time.LocalDate

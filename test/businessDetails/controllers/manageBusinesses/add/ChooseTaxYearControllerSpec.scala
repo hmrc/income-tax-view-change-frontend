@@ -19,10 +19,11 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.mocks.services.{MockDateService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 import enums.MTDIndividual
-import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}
 import org.mockito.Mockito.mock
@@ -31,7 +32,6 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.errorResponse
 
 import scala.concurrent.Future

@@ -17,14 +17,14 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 import enums.MTDIndividual
-import mocks.services.MockSessionService
 import play.api
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{DateServiceInterface, SessionService}
 
 class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 

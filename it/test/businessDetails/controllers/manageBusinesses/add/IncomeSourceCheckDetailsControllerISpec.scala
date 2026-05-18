@@ -28,13 +28,13 @@ import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorRespons
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.SessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySessionData, multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.controllers.ControllerISpecHelper
 import common.helpers.servicemocks.AuditStub
+import common.services.SessionService
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 

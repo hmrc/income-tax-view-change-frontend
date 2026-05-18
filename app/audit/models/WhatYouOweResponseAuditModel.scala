@@ -19,10 +19,10 @@ package audit.models
 import common.utils.audit.Utilities.*
 import common.auth.MtdItUser
 import common.models.audit.ExtendedAuditModel
+import common.services.DateServiceInterface
 import models.financialDetails.{ChargeItem, CodingOutDetails, WhatYouOweChargesList}
 import models.outstandingCharges.OutstandingChargesModel
 import play.api.libs.json.*
-import services.DateServiceInterface
 
 case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
                                         whatYouOweChargesList: WhatYouOweChargesList)

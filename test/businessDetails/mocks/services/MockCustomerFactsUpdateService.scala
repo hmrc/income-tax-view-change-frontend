@@ -20,8 +20,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
-import businessDetails.services.CustomerFactsUpdateService
-
+import common.services.CustomerFactsUpdateService
 import scala.concurrent.Future
 
 trait MockCustomerFactsUpdateService {

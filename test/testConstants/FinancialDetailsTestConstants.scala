@@ -16,6 +16,7 @@
 
 package testConstants
 
+import common.services.DateService
 import enums.ChargeType.NIC4_WALES
 import enums.CodingOutType._
 import models.creditDetailModel.CreditDetailModel
@@ -24,7 +25,6 @@ import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
-import services.DateService
 import testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 

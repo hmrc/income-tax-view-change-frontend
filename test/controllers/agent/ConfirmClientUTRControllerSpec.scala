@@ -17,13 +17,14 @@
 package controllers.agent
 
 import audit.models.ConfirmClientDetailsAuditModel
+import common.connectors.ITSAStatusConnector
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.controllers.agent.routes as agentRoutes
 import common.mocks.auth.MockAuthActions
+import common.mocks.services.MockITSAStatusService
+import common.services.DateServiceInterface
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
-import connectors.ITSAStatusConnector
-import mocks.services.MockITSAStatusService
 import mocks.views.agent.MockConfirmClient
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
@@ -34,7 +35,6 @@ import play.api
 import play.api.Application
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import views.html.agent.ConfirmClientUTRView

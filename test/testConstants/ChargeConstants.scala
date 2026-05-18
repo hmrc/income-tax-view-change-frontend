@@ -16,11 +16,11 @@
 
 package testConstants
 
+import common.services.{DateService, DateServiceInterface}
 import enums.ChargeType.NIC4_WALES
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
-import services.{DateService, DateServiceInterface}
 import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, fixedDate, futureFixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
 
 import java.time.LocalDate

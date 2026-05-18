@@ -18,7 +18,6 @@ package businessDetails.views.manageBusinesses.add
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
-import mocks.services.MockDateService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -27,6 +26,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
+import common.mocks.services.MockDateService
 
 import java.time.LocalDate
 

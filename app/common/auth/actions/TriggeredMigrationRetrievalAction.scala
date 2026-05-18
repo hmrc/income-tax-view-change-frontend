@@ -17,19 +17,18 @@
 package common.auth.actions
 
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import businessDetails.services.CustomerFactsUpdateService
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.connectors.IncomeTaxCalculationConnector
 import common.controllers.BaseController
-import connectors.IncomeTaxCalculationConnector
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, SessionService}
 import enums.JourneyType.TriggeredMigrationJourney
 import enums.TaxYearSummary.CalculationRecord.LATEST
 import models.admin.TriggeredMigration
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService, SessionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 

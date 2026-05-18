@@ -62,9 +62,9 @@
 
 @NotMigratedUserControllerURL = @{
     if (isAgent) {
-        controllers.routes.NotMigratedUserController.showAgent().url
+        financialsRoutes.NotMigratedUserController.showAgent().url
     } else {
-        controllers.routes.NotMigratedUserController.show().url
+        financialsRoutes.NotMigratedUserController.show().url
     }
 }
 

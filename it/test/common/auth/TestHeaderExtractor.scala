@@ -16,7 +16,6 @@
 
 package common.auth
 
-import common.auth.HeaderExtractor
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 

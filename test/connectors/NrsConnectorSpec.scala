@@ -16,12 +16,13 @@
 
 package connectors
 
+import common.connectors.BaseConnectorSpec
 import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import models.nrs.NrsSuccessResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS}
-import testConstants.NrsUtils._
+import testConstants.NrsUtils.*
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 import scala.concurrent.Future
