@@ -40,7 +40,6 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
     val grossGiftAid: Option[String] = viewModel.grossGiftAidPayments.map(_.toCurrencyString)
     val modifiedBaseBandLimit: Option[String] = viewModel.getModifiedBaseTaxBand.map(value => BigDecimal(value.apportionedBandLimit).toCurrencyString)
     val lossesApplied: Option[String] = viewModel.lossesAppliedToGeneralIncome.map(value => BigDecimal(value).toCurrencyString)
-//    val giftAidTax: Option[String] = viewModel.giftAidTax.map(_.toCurrencyString)
     val totalPensionContributionReliefs: Option[String] = viewModel.pensionContributionReliefs.map(_.totalPensionContributionReliefs).map(_.toCurrencyString)
 
     id match {
