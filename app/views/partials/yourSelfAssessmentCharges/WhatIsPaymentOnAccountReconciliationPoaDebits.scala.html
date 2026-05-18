@@ -54,7 +54,9 @@
     content = HtmlContent(html)
 ))
 
+    @if(viewModel.chargeItem.hasAccruingInterest || viewModel.chargeItem.hasInterest) {
     @warningRARPoa(viewModel.dueDate.map(_.toLongDate).getOrElse(""))
+    }
 
 @html= {
 @p(){@messages("yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1")}
