@@ -68,6 +68,14 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
     }
   }
 
+  private def homeLink(isAgent: Boolean): Option[String] = {
+    if (isAgent) {
+      Some(controllers.routes.HomeController.showAgent().url)
+    } else {
+      Some(controllers.routes.HomeController.show().url)
+    }
+  }
+
   private def confirmPageLink(isAgent: Boolean): Option[String] = {
     if (isAgent) {
       Some("/report-quarterly/income-and-expenses/view/agents/sign-up/completed")
@@ -114,7 +122,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
 
           status(result) shouldBe SEE_OTHER
         }
-        "redirect the user to the reporting frequency page when the sign up and opt in opt out feature switches are disabled" in {
+        "redirect the user to the home page when the sign up and opt in opt out feature switches are disabled" in {
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
@@ -125,10 +133,10 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val result = action(fakeRequest)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe reportingObligationsLink(isAgent)
+          redirectLocation(result) shouldBe homeLink(isAgent)
         }
 
-        "redirect the user to the reporting obligations page when the sign up feature switch is disabled" in {
+        "redirect the user to the home page when the sign up feature switch is disabled" in {
           val action = testController.show(isAgent, currentYear)
           val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
@@ -139,7 +147,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
           val result = action(fakeRequest)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe reportingObligationsLink(isAgent)
+          redirectLocation(result) shouldBe homeLink(isAgent)
         }
       }
     }

@@ -91,16 +91,16 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           redirectLocation(result) shouldBe Some(obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url)
         }
 
-        "be redirected to the reporting frequency page if the sign up feature switch is disabled" in {
+        "be redirected to the home page if the sign up feature switch is disabled" in {
           setupMockSuccess(mtdRole, false, List())
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
 
           val redirectUrl = if (isAgent) {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
+            controllers.routes.HomeController.showAgent().url
           } else {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
+            controllers.routes.HomeController.show().url
           }
 
           when(mockSignUpService.fetchSavedSignUpSessionData()(any(), any(), any()))
@@ -112,7 +112,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
 
-        "be redirected to the reporting frequency page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
+        "be redirected to the home page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -125,16 +125,16 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
 
 
           val redirectUrl = if (isAgent) {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
+            controllers.routes.HomeController.showAgent().url
           } else {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
+            controllers.routes.HomeController.show().url
           }
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
 
-        "be redirected to the reporting frequency page if the Sign Up feature switch is disabled" in {
+        "be redirected to the home page if the Sign Up feature switch is disabled" in {
           setupMockSuccess(mtdRole, false, List())
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -143,9 +143,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           val result = action(fakeRequest)
 
           val redirectUrl = if (isAgent) {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
+            controllers.routes.HomeController.showAgent().url
           } else {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
+            controllers.routes.HomeController.show().url
           }
 
           status(result) shouldBe SEE_OTHER

@@ -113,7 +113,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
         }
-        "render the reporting obligations page" when {
+        "redirect to the home page" when {
           "the sign up feature switch is disabled" in {
             setupMockSuccess(mtdRole, false, List())
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -122,9 +122,9 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+              controllers.routes.HomeController.showAgent().url
             } else {
-              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+              controllers.routes.HomeController.show().url
             }
 
             status(result) shouldBe Status.SEE_OTHER
@@ -132,7 +132,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
           }
         }
 
-        "render the reporting frequency page" when {
+        "redirect to the home page" when {
           "the opt in opt out content R17 feature switch is disabled" in {
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -141,9 +141,9 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+              controllers.routes.HomeController.showAgent().url
             } else {
-              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+              controllers.routes.HomeController.show().url
             }
 
             status(result) shouldBe Status.SEE_OTHER

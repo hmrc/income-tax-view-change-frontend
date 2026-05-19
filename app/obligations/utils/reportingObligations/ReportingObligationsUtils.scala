@@ -42,7 +42,7 @@ trait ReportingObligationsUtils extends FeatureSwitching {
   }
 
   def withSignUpRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    if (isEnabled(SignUpFs)) codeBlock else redirectReportingFrequency(user.userType)
+    if (isEnabled(SignUpFs)) codeBlock else redirectHome(user.userType)
   }
 
   private def redirectHome(userType: Option[AffinityGroup]): Future[Result] =
