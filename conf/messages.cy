@@ -264,6 +264,7 @@ new.home.overview.income.manage-income                          = Ychwanegu, rhe
 new.home.overview.tax-year.sub-heading                          = Crynodebau o flynyddoedd treth
 new.home.overview.tax-year.view-all-tax-years                   = Bwrw golwg dros bob blwyddyn dreth
 new.home.overview.tax-year.view-tax-years                       = Gweld eich cyfrifiad treth a’ch rhagolwg ar gyfer {0} i {1}
+new.home.overview.tax-year.proof-of-income                      = Tystiolaeth o’ch incwm (SA302)
 new.home.overview.penalties.sub-heading                         = Cosbau ac apeliadau
 new.home.overview.penalties.check-penalties                     = Gwirio cosbau ac apeliadau Hunanasesiad
 new.home.overview.penalties.check-lsp                           = Gweld eich cosbau am gyflwyno’n hwyr
