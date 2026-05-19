@@ -19,6 +19,8 @@ package controllers.newHomePage
 import common.auth.AuthActions
 import enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockITSAStatusService, MockDateService}
+import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import mocks.services.*
 import models.admin.{FeatureSwitch, MortgageEvidence, NewHomePage}
 import models.itsaStatus.ITSAStatusResponseModel
@@ -77,7 +79,6 @@ with MockDateService {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
   }
 
   mtdAllRoles.foreach { mtdRole =>
