@@ -17,10 +17,10 @@
 package controllers.newHomePage
 
 import common.auth.AuthActions
-import enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
+import enums.MTDIndividual
 import mocks.services.*
-import models.admin.{FeatureSwitch, MortgageEvidence, NewHomePage}
+import models.admin.{MortgageEvidence, NewHomePage}
 import models.itsaStatus.ITSAStatusResponseModel
 import models.liabilitycalculation.*
 import org.jsoup.Jsoup
@@ -74,11 +74,6 @@ with MockDateService {
   val authActions: AuthActions = app.injector.instanceOf(classOf[AuthActions])
 
   val testController = app.injector.instanceOf[ProofOfYourIncomeController]
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    disableAllSwitches()
-  }
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
