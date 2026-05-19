@@ -55,10 +55,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
     val allTasks = submissionsTasks ++ paymentsTasks
 
     if (allTasks.isEmpty) {
-      val noTaskDescription = if(user.isSupportingAgent) "newHome.yourTasks.selfAssessment.supporting.no-tasks" else "newHome.yourTasks.selfAssessment.no-tasks"
-      val noTaskCard: NoTaskCard = NoTaskCard("newHome.yourTasks.no-tasks.selfAssessment", noTaskDescription)
-
-      HandleYourTasksViewModel(overdueTasks = Seq.empty, datelessTasks = Seq.empty, upcomingTasks = Seq.empty, noTaskCard = Some(noTaskCard))
+      HandleYourTasksViewModel(overdueTasks = Seq.empty, datelessTasks = Seq.empty, upcomingTasks = Seq.empty)
     } else {
       given Ordering[YourTaskCardType] = Ordering.by {
         case FINANCIALS => 0
@@ -75,7 +72,7 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
       val sortedOverdueTasks = overdue.sortBy { c => (c.dueDate.fold(Long.MaxValue)(_.toEpochDay), c.cardType) }
       val sortedUpcomingTasks = upcoming.sortBy { c => (c.dueDate.fold(Long.MaxValue)(_.toEpochDay), c.cardType) }
 
-      HandleYourTasksViewModel(overdueTasks = sortedOverdueTasks, datelessTasks = dateless, upcomingTasks = sortedUpcomingTasks, noTaskCard = None)
+      HandleYourTasksViewModel(overdueTasks = sortedOverdueTasks, datelessTasks = dateless, upcomingTasks = sortedUpcomingTasks)
     }
   }
 

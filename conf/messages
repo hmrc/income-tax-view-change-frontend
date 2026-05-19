@@ -3729,7 +3729,6 @@ youMustWait.agent.button.text  = Enter another UTR
 newHome.yourTasks.h1                             = Your tasks
 newHome.navigation.yourTasks                     = Your tasks
 newHome.yourTasks.selfAssessment                 = Check what you owe and make a payment
-newHome.yourTasks.no-tasks.selfAssessment        = No tasks
 newHome.yourTasks.selfAssessment.upcomingCharge = You have an upcoming payment.
 newHome.yourTasks.selfAssessment.upcomingCharge.label = Due {0}
 newHome.yourTasks.selfAssessment.overdueCharge.single = You have an overdue amount to pay.

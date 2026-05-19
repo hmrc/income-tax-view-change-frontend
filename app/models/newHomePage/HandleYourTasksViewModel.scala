@@ -20,5 +20,6 @@ import models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, Upco
 
 case class HandleYourTasksViewModel(overdueTasks: Seq[OverdueTaskCard],
                                     datelessTasks: Seq[DatelessTaskCard],
-                                    upcomingTasks: Seq[UpcomingTaskCard],
-                                    noTaskCard: Option[NoTaskCard])
+                                    upcomingTasks: Seq[UpcomingTaskCard]) {
+  def hasNoTasks = overdueTasks.isEmpty && datelessTasks.isEmpty && upcomingTasks.isEmpty
+}

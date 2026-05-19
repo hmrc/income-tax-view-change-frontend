@@ -32,7 +32,8 @@
         h1WithCaption: h1WithCaption,
         h2: h2,
         implicitDateFormatter: ImplicitDateFormatterImpl,
-        newHomeNav: NewHomeNavigation
+        newHomeNav: NewHomeNavigation,
+        p: p
 )
 
 @(origin: Option[String] = None,
@@ -92,16 +93,15 @@
 
     @h2(messages("newHome.yourTasks.h1"), classes = "govuk-!-padding-top-6 govuk-heading-m", optId = Some("your-tasks-heading"))
 
-    @if(viewModel.noTaskCard.isDefined) {
-        @viewModel.noTaskCard.map { noTask =>
-            <div id= "noTaskCard" class="hmrc-card">
-                <div class="tile-body">
-                    <h3 class="hmrc-card__heading" id="noTaskCard-heading">
-                        @messages(noTask.cardHeading)
-                    </h3>
-                    <div class="govuk-body" id="noTaskCard-content">@messages(noTask.cardContent)</div>
-                </div>
-            </div>
+    @if(viewModel.hasNoTasks) {
+        @if(user.isSupportingAgent) {
+            @p(classes = "govuk-body", id = Some("no-tasks-text-supporting-agent")) {
+                @messages("newHome.yourTasks.selfAssessment.supporting.no-tasks")
+            }
+        } else {
+            @p(classes = "govuk-body", id = Some("no-tasks-text")) {
+                @messages("newHome.yourTasks.selfAssessment.no-tasks")
+            }
         }
     } else {
         @viewModel.overdueTasks.zipWithIndex.map { case (overdueTask, index) =>

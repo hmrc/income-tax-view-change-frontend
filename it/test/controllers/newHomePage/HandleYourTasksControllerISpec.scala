@@ -81,7 +81,6 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
   def moneyInYourAccountLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "/report-quarterly/income-and-expenses/view/agents/money-in-your-account" else "/report-quarterly/income-and-expenses/view/money-in-your-account"
 
   object YourTasksViewMessages {
-    val noTasksHeading = "No tasks"
     val noTasksContent = "You have no tasks to complete at the moment."
     val noTasksSupportingAgentContent = "You have no tasks to complete at the moment. Note that your customer may have tasks that you are unable to see as a support agent."
 
@@ -157,8 +156,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getTitle(mtdUserRole)),
-                  elementTextByID("noTaskCard-heading")(YourTasksViewMessages.noTasksHeading),
-                  elementTextByID("noTaskCard-content")(YourTasksViewMessages.noTasksContent)
+                  elementTextByID("no-tasks-text")(YourTasksViewMessages.noTasksContent)
                 )
                 
                 verifyAuditContainsDetail(Json.obj("userIsCYPlusOne" -> false))
@@ -170,8 +168,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, getTitle(mtdUserRole)),
-                  elementTextByID("noTaskCard-heading")(YourTasksViewMessages.noTasksHeading),
-                  elementTextByID("noTaskCard-content")(YourTasksViewMessages.noTasksSupportingAgentContent)
+                  elementTextByID("no-tasks-text-supporting-agent")(YourTasksViewMessages.noTasksSupportingAgentContent)
                 )
 
                 verifyAuditContainsDetail(Json.obj("userIsCYPlusOne" -> false))
