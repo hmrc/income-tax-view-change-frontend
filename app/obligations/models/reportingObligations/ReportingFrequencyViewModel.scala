@@ -26,7 +26,6 @@ import obligations.services.reportingObligations.optOut.OptOutProposition
 import services.DateServiceInterface
 
 case class ReportingFrequencyViewModel(
-                                        isAgent: Boolean,
                                         signUpTaxYears: Seq[TaxYear],
                                         itsaStatusTable: Seq[(String, Option[String], Option[String])],
                                         displayCeasedBusinessWarning: Boolean,
@@ -82,7 +81,7 @@ case class ReportingFrequencyViewModel(
     case _ => throw new RuntimeException("Invalid suffix passed to taxYearFromSuffix")
   }
 
-  def getOptOutSignUpLink(taxYear: TaxYear, suffix: String): String = {
+  def getOptOutSignUpLink(isAgent: Boolean, taxYear: TaxYear, suffix: String): String = {
     if (suffix.contains("optOut")) {
       optOutRoutes.OptOutTaxYearQuestionController.show(isAgent, Some(taxYear.startYear.toString)).url
     } else {

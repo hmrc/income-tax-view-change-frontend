@@ -63,7 +63,6 @@ class ReportingFrequencyPageController @Inject()(
         _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
         viewModel =
           ReportingFrequencyViewModel(
-            isAgent = user.isAgent,
             signUpTaxYears = signUpTaxYears,
             itsaStatusTable = reportingFrequencyViewUtils.itsaStatusTable(optOutProposition),
             displayCeasedBusinessWarning = user.incomeSources.areAllBusinessesCeased,
@@ -76,7 +75,7 @@ class ReportingFrequencyPageController @Inject()(
             isOptOutEnabled = isEnabled(OptOutFs)
           )
         nextUpdatesLink =
-          if (isAgent) obligationsRoutes.NextUpdatesController.showAgent().url
+          if (user.isAgent) obligationsRoutes.NextUpdatesController.showAgent().url
           else obligationsRoutes.NextUpdatesController.show().url
         result <-
           if (reportingFrequencyViewUtils.itsaStatusTable(optOutProposition).nonEmpty) {

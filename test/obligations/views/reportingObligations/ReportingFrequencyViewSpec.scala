@@ -178,17 +178,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val isAgentFlag = true
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              Seq(TaxYear(2024, 2025)),
-              Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(Seq(TaxYear(2024, 2025)), Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -213,21 +203,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val isAgentFlag = true
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              signUpTaxYears = Seq(TaxYear(2023, 2024)),
-              itsaStatusTable = Seq(
-                ("2023 to 2024", Some("Yes"), Some("Quarterly (mandatory)")),
-                ("2024 to 2025", Some("Yes"), Some("Quarterly")),
-                ("2025 to 2026", Some("No"), Some("Annual")),
-              ),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2023, 2024)), itsaStatusTable = Seq(
+              ("2023 to 2024", Some("Yes"), Some("Quarterly (mandatory)")),
+              ("2024 to 2025", Some("Yes"), Some("Quarterly")),
+              ("2025 to 2026", Some("No"), Some("Annual")),
+            ), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -284,17 +264,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val isAgentFlag = true
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-              itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              displayCeasedBusinessWarning = false,
-              isAnyOfBusinessLatent = true,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)), itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = true, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -319,17 +289,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val isAgentFlag = true
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-              itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)), itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -363,17 +323,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           )
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-              itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)), itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -406,17 +356,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           )
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-              itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)), itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -443,17 +383,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val isAgentFlag = false
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)),
-              itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              displayCeasedBusinessWarning = false,
-              isAnyOfBusinessLatent = true,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2024, 2025), TaxYear(2025, 2026)), itsaStatusTable = Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = true, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -477,17 +407,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val isAgentFlag: Boolean = false
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              Seq(TaxYear(2024, 2025)),
-              Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(Seq(TaxYear(2024, 2025)), Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -512,17 +432,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val isAgentFlag = false
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              Seq(TaxYear(2024, 2025)),
-              Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = false,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(Seq(TaxYear(2024, 2025)), Seq(("2024 to 2025", Some("Yes"), Some("Quarterly"))), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -546,21 +456,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
           val isAgentFlag = false
 
           val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-            ReportingFrequencyViewModel(
-              isAgent = isAgentFlag,
-              signUpTaxYears = Seq(TaxYear(2023, 2024)),
-              itsaStatusTable = Seq(
-                ("2023 to 2024", Some("Yes"), Some("Quarterly (mandatory)")),
-                ("2024 to 2025", Some("Yes"), Some("Quarterly")),
-                ("2025 to 2026", Some("No"), Some("Annual")),
-              ),
-              isAnyOfBusinessLatent = false,
-              displayCeasedBusinessWarning = true,
-              mtdThreshold = "£50,000",
-              proposition = optOutProposition,
-              isSignUpEnabled = true,
-              isOptOutEnabled = true
-            )
+            ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2023, 2024)), itsaStatusTable = Seq(
+              ("2023 to 2024", Some("Yes"), Some("Quarterly (mandatory)")),
+              ("2024 to 2025", Some("Yes"), Some("Quarterly")),
+              ("2025 to 2026", Some("No"), Some("Annual")),
+            ), displayCeasedBusinessWarning = true, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
           val pageDocument: Document =
             Jsoup.parse(
@@ -589,21 +489,11 @@ class ReportingFrequencyViewSpec extends TestSupport {
         val isAgentFlag = false
 
         val reportingFrequencyViewModel: ReportingFrequencyViewModel =
-          ReportingFrequencyViewModel(
-            isAgent = isAgentFlag,
-            signUpTaxYears = Seq(TaxYear(2023, 2024)),
-            itsaStatusTable = Seq(
-              ("2023 to 2024", Some("Required"), Some("Quarterly (mandatory)")),
-              ("2024 to 2025", Some("Voluntarily signed up"), Some("Quarterly")),
-              ("2025 to 2026", Some("Not required"), Some("Annual")),
-            ),
-            isAnyOfBusinessLatent = false,
-            displayCeasedBusinessWarning = false,
-            mtdThreshold = "£50,000",
-            proposition = optOutProposition,
-            isSignUpEnabled = true,
-            isOptOutEnabled = true
-          )
+          ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2023, 2024)), itsaStatusTable = Seq(
+            ("2023 to 2024", Some("Required"), Some("Quarterly (mandatory)")),
+            ("2024 to 2025", Some("Voluntarily signed up"), Some("Quarterly")),
+            ("2025 to 2026", Some("Not required"), Some("Annual")),
+          ), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = false, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)()
 
         val pageDocument: Document =
           Jsoup.parse(

@@ -57,7 +57,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear)
     }
 
-    val pageDocument = Jsoup.parse(contentAsString(optOutTaxYearQuestionView(isAgent = true, viewModel, form, obligations.controllers.reportingObligations.optOut.routes.OptOutTaxYearQuestionController.submit(isAgent = true))))
+    val pageDocument = Jsoup.parse(contentAsString(optOutTaxYearQuestionView(viewModel, form, obligations.controllers.reportingObligations.optOut.routes.OptOutTaxYearQuestionController.submit(isAgent = true))))
   }
 
   "Opt out tax year question page" when {

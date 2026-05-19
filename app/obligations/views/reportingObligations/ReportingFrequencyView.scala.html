@@ -115,7 +115,7 @@
                     </h3>
                     <ul class="govuk-summary-card__actions">
                         <li class="govuk-summary-card__action">
-                            <a class="govuk-link" id="manage-reporting-obligations-card-link-@index" href="@{viewModel.getOptOutSignUpLink(viewModel.taxYearFromSuffix(endMessage), endMessage)}">@messages(s"reporting.obligations.changing.${viewModel.getChangeLinkText(endMessage)}")
+                            <a class="govuk-link" id="manage-reporting-obligations-card-link-@index" href="@{viewModel.getOptOutSignUpLink(user.isAgent, viewModel.taxYearFromSuffix(endMessage), endMessage)}">@messages(s"reporting.obligations.changing.${viewModel.getChangeLinkText(endMessage)}")
                                 <span class="govuk-visually-hidden">
                                     @messages(s"reporting.obligations.changing.$endMessage").replaceFirst(messages(s"reporting.obligations.changing.${viewModel.getChangeLinkText(endMessage)}"),"").trim
                                 </span>
@@ -157,7 +157,7 @@
                 <span class="govuk-visually-hidden">Warning</span>
                 @messages("reporting.frequency.ceasedBusiness.warning.text.1")
                 @linkComponent(
-                    url = if(viewModel.isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url else manageBusinessRoutes.ManageYourBusinessesController.show().url,
+                    url = if(user.isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url else manageBusinessRoutes.ManageYourBusinessesController.show().url,
                     message = messages("reporting.frequency.ceasedBusiness.warning.link"),
                     rel=Some("noreferrer noopener"),
                     id = Some("ceased-business-link"),
@@ -195,7 +195,7 @@
         @messages("reporting.frequency.latency.details.section.text.para3.text.1")
         @linkComponent(
             id = Some("your-businesses-link"),
-            url = if(viewModel.isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url else manageBusinessRoutes.ManageYourBusinessesController.show().url,
+            url = if(user.isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url else manageBusinessRoutes.ManageYourBusinessesController.show().url,
             message = messages("reporting.frequency.latency.details.section.text.para3.link.text")
         )
         @messages("reporting.frequency.latency.details.section.text.para3.text.2")
@@ -350,7 +350,7 @@
         @messages("reporting.frequency.latency.details.section.text.para3.text.1.updateR17")
         @linkComponent(
             id = Some("your-businesses-link"),
-            url = if(viewModel.isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url else manageBusinessRoutes.ManageYourBusinessesController.show().url,
+            url = if(user.isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url else manageBusinessRoutes.ManageYourBusinessesController.show().url,
             message = messages("reporting.frequency.latency.details.section.text.para3.link.text.updateR17"),
             additionalMessage = if(messages.lang.code == "en") None else Some(messages("base.fullstop"))
         )
@@ -405,7 +405,7 @@
 @mainTemplate(
     pageTitle = if(optInOptOutContentUpdateR17IsEnabled) messages("reporting.frequency.title.R17") else messages("reporting.frequency.title"),
     backUrl = Some("#"),
-    isAgent = viewModel.isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 

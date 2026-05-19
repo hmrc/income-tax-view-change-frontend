@@ -18,8 +18,8 @@ package obligations.controllers.reportingObligations.optOut
 
 import com.google.inject.Inject
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import obligations.controllers.errors.routes as errorRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
@@ -65,17 +65,16 @@ class OptOutTaxYearQuestionController @Inject()(
                 withSessionData(isStart = true, viewModel.taxYear.taxYear) {
                   Future(Ok(
                     view(
-                      isAgent,
                       viewModel,
                       OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear),
-                      routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
+                      routes.OptOutTaxYearQuestionController.submit(user.isAgent, taxYear)
                     )
                   ))
                 }
-              case None => Future(Redirect(reportingObligationsRedirectUrl(isAgent)))
+              case None => Future(Redirect(reportingObligationsRedirectUrl(user.isAgent)))
             }
           }
-          else Future.successful(Redirect(errorRoutes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
+          else Future.successful(Redirect(errorRoutes.SignUpOptOutCannotGoBackController.show(user.isAgent, isSignUpJourney = Some(false))))
         })
       }
   }
@@ -83,32 +82,31 @@ class OptOutTaxYearQuestionController @Inject()(
 
   private def handleValidForm(
                                validForm: OptOutTaxYearQuestionForm,
-                               isAgent: Boolean,
                                taxYear: Option[String],
                                redirectToConfirmUpdatesPage: Boolean
-                             )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+                             )(implicit user: MtdItUser[_]): Future[Result] = {
 
     val formResponse = validForm.toFormMap(OptOutTaxYearQuestionForm.response).headOption
 
     formResponse match {
       case Some(OptOutTaxYearQuestionForm.responseYes) =>
         if (redirectToConfirmUpdatesPage) {
-          Future(Redirect(routes.ConfirmOptOutUpdateController.show(isAgent, taxYear.getOrElse(""))))
+          Future(Redirect(routes.ConfirmOptOutUpdateController.show(user.isAgent, taxYear.getOrElse(""))))
         } else {
           optOutSubmissionService.updateTaxYearsITSAStatusRequest().map {
             case List() =>
-              Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
+              Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(user.isAgent))
             case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
-              Redirect(routes.ConfirmedOptOutController.show(isAgent))
+              Redirect(routes.ConfirmedOptOutController.show(user.isAgent))
             case _ =>
-              Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
+              Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(user.isAgent))
           }
         }
       case Some(OptOutTaxYearQuestionForm.responseNo) =>
-        Future(Redirect(reportingObligationsRedirectUrl(isAgent)))
+        Future(Redirect(reportingObligationsRedirectUrl(user.isAgent)))
       case _ =>
         Logger("application").error("[OptOutTaxYearQuestionController.submit] Invalid form response")
-        Future(errorHandler(isAgent).showInternalServerError())
+        Future(errorHandler(user.isAgent).showInternalServerError())
     }
   }
 
@@ -122,7 +120,6 @@ class OptOutTaxYearQuestionController @Inject()(
                 Future {
                   BadRequest(
                     view(
-                      isAgent,
                       viewModel,
                       formWithErrors,
                       routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
@@ -131,11 +128,11 @@ class OptOutTaxYearQuestionController @Inject()(
                 }
               },
               form =>
-                handleValidForm(form, isAgent, taxYear, viewModel.redirectToConfirmUpdatesPage)
+                handleValidForm(form, taxYear, viewModel.redirectToConfirmUpdatesPage)
             )
           case None =>
             Logger("application").warn(s"[OptOutTaxYearQuestionController.submit] Invalid tax year provided: $taxYear, redirecting to Reporting Frequency Page")
-            Future(Redirect(reportingObligationsRedirectUrl(isAgent)))
+            Future(Redirect(reportingObligationsRedirectUrl(user.isAgent)))
         }
       }
   }

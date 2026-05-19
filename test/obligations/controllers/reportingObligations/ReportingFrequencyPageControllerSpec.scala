@@ -122,22 +122,12 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
 
             contentAsString(result) shouldBe
               reportingFrequencyView(
-                ReportingFrequencyViewModel(
-                  isAgent = isAgent,
-                  signUpTaxYears = Seq(TaxYear(2024, 2025)),
-                  itsaStatusTable =
-                    Seq(
-                      ("2023 to 2024", None, Some("Quarterly (mandatory)")),
-                      ("2024 to 2025", None, Some("Quarterly")),
-                      ("2025 to 2026", None, Some("Quarterly (mandatory)"))
-                    ),
-                  isAnyOfBusinessLatent = true,
-                  displayCeasedBusinessWarning = false,
-                  mtdThreshold = "£50,000",
-                  proposition = optOutProposition,
-                  isSignUpEnabled = true,
-                  isOptOutEnabled = true
-                ),
+                ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2024, 2025)), itsaStatusTable =
+                  Seq(
+                    ("2023 to 2024", None, Some("Quarterly (mandatory)")),
+                    ("2024 to 2025", None, Some("Quarterly")),
+                    ("2025 to 2026", None, Some("Quarterly (mandatory)"))
+                  ), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = true, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)(),
                 optInOptOutContentUpdateR17IsEnabled = false,
                 nextUpdatesLink = if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url else obligations.controllers.routes.NextUpdatesController.show().url
               ).toString
@@ -187,22 +177,12 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
             status(result) shouldBe Status.OK
             contentAsString(result) shouldBe
               reportingFrequencyView(
-                ReportingFrequencyViewModel(
-                  isAgent = isAgent,
-                  signUpTaxYears = Seq(TaxYear(2024, 2025)),
-                  itsaStatusTable =
-                    Seq(
-                      ("2023 to 2024", Some("Yes"), Some("Required")),
-                      ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
-                      ("2025 to 2026", Some("Yes"), Some("Required"))
-                    ),
-                  isAnyOfBusinessLatent = true,
-                  displayCeasedBusinessWarning = false,
-                  mtdThreshold = "£50,000",
-                  proposition = optOutProposition,
-                  isSignUpEnabled = true,
-                  isOptOutEnabled = true
-                ),
+                ReportingFrequencyViewModel(signUpTaxYears = Seq(TaxYear(2024, 2025)), itsaStatusTable =
+                  Seq(
+                    ("2023 to 2024", Some("Yes"), Some("Required")),
+                    ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
+                    ("2025 to 2026", Some("Yes"), Some("Required"))
+                  ), displayCeasedBusinessWarning = false, isAnyOfBusinessLatent = true, mtdThreshold = "£50,000", proposition = optOutProposition, isSignUpEnabled = true, isOptOutEnabled = true)(),
                 optInOptOutContentUpdateR17IsEnabled = true,
                 nextUpdatesLink = if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url else obligations.controllers.routes.NextUpdatesController.show().url
               ).toString
