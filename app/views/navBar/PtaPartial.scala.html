@@ -31,7 +31,7 @@
 
 @hmrcAccountMenu(AccountMenu(
     accountHome = AccountHome(
-        href = appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.show().url,
+        href = appConfig.itvcFrontendEnvironment + hub.controllers.routes.HomeController.show().url,
         active = true
     ),
     signOut = SignOut(href = InternalUrlHelper.signoutUrl),

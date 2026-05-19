@@ -43,8 +43,9 @@ import play.api.test.Injecting
 import services.CreditService
 import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.HomeView
-import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import hub.controllers.HomeController
+import hub.views.html.HomeView
+import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import views.html.newHomePage.*
 
 import java.time.LocalDate

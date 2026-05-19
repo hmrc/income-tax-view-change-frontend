@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package hub.controllers.agent
 
-import audit.models.EnterClientUTRAuditModel
+import hub.audit.models.EnterClientUTRAuditModel
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
-import forms.agent.ClientsUTRForm
+import hub.forms.agent.ClientsUTRForm
 import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
@@ -33,7 +33,7 @@ import play.twirl.api.HtmlFormat
 import common.services.agent.ClientDetailsService.*
 import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
 import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
-import views.html.agent.EnterClientsUTRView
+import hub.views.html.agent.EnterClientsUTRView
 
 class EnterClientsUTRControllerSpec extends MockAuthActions
   with MockEnterClientsUTR
@@ -258,7 +258,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
+          redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.UTRErrorController.show().url)
         }
 
         "a business details not found error is returned from the client lookup" in {
@@ -274,7 +274,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
+          redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.UTRErrorController.show().url)
         }
 
         "client details exist but there is no agent/client relationship" in {
@@ -293,7 +293,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
             result.header.status shouldBe SEE_OTHER
             verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = false, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), None))
-            result.header.headers.get(LOCATION) shouldBe Some(controllers.agent.routes.UTRErrorController.show().url)
+            result.header.headers.get(LOCATION) shouldBe Some(hub.controllers.agent.routes.UTRErrorController.show().url)
           }
         }
       }

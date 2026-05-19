@@ -40,8 +40,8 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
   }
 
   def getHomeControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url
+    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else hub.controllers.routes.HomeController.show().url
   }
 
   def executeTest(isAgent: Boolean): Unit = {

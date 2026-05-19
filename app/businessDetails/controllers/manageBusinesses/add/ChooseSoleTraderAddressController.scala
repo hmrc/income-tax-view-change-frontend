@@ -55,8 +55,8 @@ class ChooseSoleTraderAddressController @Inject()(
     else itvcErrorHandler
 
   private def backUrl(isAgent: Boolean): String =
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url
+    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else hub.controllers.routes.HomeController.show().url
 
   private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty
 
@@ -170,7 +170,7 @@ class ChooseSoleTraderAddressController @Inject()(
         )
       )
     } else {
-      val homeCall = if (isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
+      val homeCall = if (isAgent) hub.controllers.routes.HomeController.showAgent() else hub.controllers.routes.HomeController.show()
       Future(Redirect(homeCall))
     }
   }

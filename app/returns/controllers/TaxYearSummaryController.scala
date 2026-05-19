@@ -78,11 +78,11 @@ class TaxYearSummaryController @Inject()(
 
   private def whatYouOweUrl(origin: Option[String]): String = financialsRoutes.WhatYouOweController.show(origin).url
 
-  private def homeUrl(origin: Option[String]): String = controllers.routes.HomeController.show(origin).url
+  private def homeUrl(origin: Option[String]): String = hub.controllers.routes.HomeController.show(origin).url
 
   // Agent back urls
   private lazy val agentTaxYearsUrl: String = returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
-  private lazy val agentHomeUrl: String = controllers.routes.HomeController.showAgent().url
+  private lazy val agentHomeUrl: String = hub.controllers.routes.HomeController.showAgent().url
   private lazy val agentWhatYouOweUrl: String = financialsRoutes.WhatYouOweController.showAgent().url
 
   def formatErrorMessages(

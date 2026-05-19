@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package audit.models
+package hub.audit.models
 
 import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import play.api.libs.json.Json

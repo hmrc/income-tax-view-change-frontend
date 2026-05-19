@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package audit.models
+package hub.audit.models
 
 import common.models.audit.ExtendedAuditModel
 import play.api.libs.json.{JsObject, JsValue, Json}

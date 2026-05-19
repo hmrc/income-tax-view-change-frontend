@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package hub.controllers.agent
 
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
@@ -37,7 +37,7 @@ class RemoveClientDetailsSessionsController @Inject()(val authActions: AuthActio
 
 
   def show: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient() { implicit user =>
-    Redirect(controllers.agent.routes.EnterClientsUTRController.show().url)
+    Redirect(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
       .removingFromSession(
         SessionKeys.clientFirstName,
         SessionKeys.clientLastName,

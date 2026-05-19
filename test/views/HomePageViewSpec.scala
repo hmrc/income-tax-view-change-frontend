@@ -35,7 +35,7 @@ import play.twirl.api.HtmlFormat
 import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
-import views.html.HomeView
+import hub.views.html.HomeView
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

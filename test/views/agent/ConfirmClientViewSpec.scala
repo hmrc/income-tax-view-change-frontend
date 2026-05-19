@@ -18,13 +18,13 @@ package views.agent
 
 import play.api.mvc.Call
 import testUtils.ViewSpec
-import views.html.agent.ConfirmClientUTRView
+import hub.views.html.agent.ConfirmClientUTRView
 
 
 class ConfirmClientViewSpec extends ViewSpec {
 
-  lazy val postAction: Call = controllers.agent.routes.ConfirmClientUTRController.submit()
-  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
+  lazy val postAction: Call = hub.controllers.agent.routes.ConfirmClientUTRController.submit()
+  lazy val backUrl: String = hub.controllers.agent.routes.EnterClientsUTRController.show().url
   lazy val testClientName: Option[String] = Some("Test Name")
   lazy val testClientUTR: Option[String] = Some("1234567890")
 
@@ -84,7 +84,7 @@ class ConfirmClientViewSpec extends ViewSpec {
     }
 
     s"have a ${confirmClientMessages.changeClient} link" in new Setup(confirmClientView()) {
-      layoutContent.hasCorrectHref(controllers.agent.routes.EnterClientsUTRController.show().url)
+      layoutContent.hasCorrectHref(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
     }
 
     s"have a ${confirmClientMessages.confirmContinue} button" in new Setup(confirmClientView()) {

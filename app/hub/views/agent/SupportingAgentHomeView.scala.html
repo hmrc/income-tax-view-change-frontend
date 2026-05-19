@@ -18,31 +18,34 @@
 @import common.views.html.components._
 @import views.html.components.h3link
 @import exceptions.MissingFieldException
-@import models.homePage.HomePageViewModel
+@import models.homePage.YourBusinessesTileViewModel
+@import models.homePage.NextUpdatesTileViewModel
+@import models.homePage.YourReportingObligationsTileViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import views.html.helpers.injected.home._
+@import common.viewUtils.ExternalUrlHelper
 @import common.config.FrontendAppConfig
 
 @this(
     layout: unifiedLayout,
     h1: h1,
     h2: h2,
+    h3: h3,
     h3link: h3link,
     p: p,
     link: link,
+    bulletList: bulletPointList,
     govukWarningText : GovukWarningText,
-    paymentsTile: PaymentsTile,
     updatesTile: UpdatesTile,
-    paymentHistoryTile: PaymentHistoryTile,
-    returnsTile: ReturnsTile,
     incomeSourcesTile: IncomeSourcesTile,
-    penaltiesAndAppealsTile: PenaltiesAndAppealsTile,
     yourReportingObligationsTile: YourReportingObligationsTile
 )
 
 @(
-viewModel: HomePageViewModel
+    yourBusinessesTileViewModel: YourBusinessesTileViewModel,
+    nextUpdatesTileViewModel: NextUpdatesTileViewModel,
+    yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -58,28 +61,13 @@ viewModel: HomePageViewModel
 @tiles() = {
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @paymentsTile(viewModel, true)
-            @updatesTile(viewModel.nextUpdatesTileViewModel, true)
+            @updatesTile(nextUpdatesTileViewModel, true)
+            @incomeSourcesTile(yourBusinessesTileViewModel, true)
         </div>
     </div>
-
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @paymentHistoryTile(viewModel, true)
-            @returnsTile(viewModel, true)
-        </div>
-    </div>
-
-    <div class="grid-row">
-        <div class="flex-container govuk-!-padding-0">
-            @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, true)
-            @yourReportingObligationsTile(viewModel.yourReportingObligationsTileViewModel, true)
-        </div>
-    </div>
-
-    <div class="grid-row">
-        <div class="flex-container govuk-!-padding-0">
-            @penaltiesAndAppealsTile(viewModel.penaltiesAndAppealsTileViewModel, appConfig.incomeTaxPenaltiesFrontend)
+            @yourReportingObligationsTile(yourReportingObligationsTileViewModel, true)
         </div>
     </div>
 }
@@ -87,7 +75,7 @@ viewModel: HomePageViewModel
 @customLayout = {
     <div class="grid-row">
         <div class="column-full">
-            <span class="govuk-caption-xl">@messages("home.agent.primary.caption")</span>
+            <span class="govuk-caption-xl">@messages("home.agent.supporting.caption")</span>
             @h1(pageHeading, extraClasses = "margin-bottom-zero")
 
             @p(classes = "govuk-hint margin-bottom-zero") {
@@ -99,26 +87,32 @@ viewModel: HomePageViewModel
             }
 
             @p(classes = "govuk-body margin-bottom-sixty", id = Some("changeClientLink")) {
-                @link(controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
-            }
-            @if(viewModel.nextPaymentsTileViewModel.paymentsAccruingInterestCount > 0) {
-                <div id="accrues-interest-warning" class="grid-row">
-                    <div class="column-full">
-                    @govukWarningText(WarningText(content = Text(messages("home.interest-accruing"))))
-                    </div>
-                </div>
-            }else {
-                @if(viewModel.nextPaymentsTileViewModel.overDuePaymentsCount > 0) {
-                    <div id="overdue-warning" class="grid-row">
-                        <div class="column-full">
-                        @govukWarningText(WarningText(content = Text(messages(s"home.agent.overdue.message.dunningLock.${viewModel.dunningLockExists}"))))
-                        </div>
-                    </div>
-                }
+                @link(hub.controllers.agent.routes.RemoveClientDetailsSessionsController.show().url, "govuk-link--no-visited-state", "home.agent.changeClientLink")
             }
         </div>
     </div>
     @tiles()
+    @h3(
+        msg = messages("home.agent.supporting.paymentAndReturns"),
+        classes = "govuk-heading-m"
+    )
+    @p(){
+        @messages("home.agent.supporting.cannotAccess")
+    }
+    @bulletList(
+        itemMsgKeys =
+            Seq(
+                "home.agent.supporting.cannotAccess.payments",
+                "home.agent.supporting.cannotAccess.returns",
+                "home.agent.supporting.cannotAccess.nextChargesDue",
+                "home.agent.supporting.cannotAccess.penaltiesAndAppeals"
+
+
+            )
+    )
+    @p(id = Some("read-more-about-differences-link")) {
+     <a class="govuk-link" target="_blank" href="@ExternalUrlHelper.chooseAgentGuidanceUrl">@messages("home.agent.supporting.readMore")</a>
+}
 }
 
 @layout(

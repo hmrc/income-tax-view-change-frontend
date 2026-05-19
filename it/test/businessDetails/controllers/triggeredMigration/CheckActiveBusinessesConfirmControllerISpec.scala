@@ -66,9 +66,9 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
     val expectedRedirect: String = if (mtdRole == MTDIndividual) {
-      controllers.routes.HomeController.show().url
+      hub.controllers.routes.HomeController.show().url
     } else {
-      controllers.routes.HomeController.showAgent().url
+      hub.controllers.routes.HomeController.showAgent().url
     }
 
     s"GET $path" when {

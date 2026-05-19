@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package hub.controllers.agent
 
-import audit.models.ConfirmClientDetailsAuditModel
+import hub.audit.models.ConfirmClientDetailsAuditModel
 import common.connectors.ITSAStatusConnector
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.controllers.agent.routes as agentRoutes
@@ -37,7 +37,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
-import views.html.agent.ConfirmClientUTRView
+import hub.views.html.agent.ConfirmClientUTRView
 
 class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmClient with MockITSAStatusService {
 
@@ -94,7 +94,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
         }
       }
 
@@ -178,7 +178,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
           val result = testConfirmClientUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
         }
       }
 
@@ -218,7 +218,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
             )
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some(controllers.routes.HomeController.showAgent().url)
+            redirectLocation(result) shouldBe Some(hub.controllers.routes.HomeController.showAgent().url)
             if (!appConfig.isSessionDataStorageEnabled) {
               session(result).get(SessionKeys.confirmedClient) shouldBe Some("true")
             }

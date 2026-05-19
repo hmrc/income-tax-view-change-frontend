@@ -96,8 +96,8 @@ trait HomePageUtils extends FeatureSwitching {
 
   def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) controllers.newHomePage.routes.HandleYourTasksController.showAgent().url else controllers.newHomePage.routes.HandleYourTasksController.show().url
   def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.newHomePage.routes.RecentActivityController.show(isAgent, origin).url
-  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleOverview(origin, isAgent).url
-  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = controllers.routes.HomeController.handleHelp(origin, isAgent).url
+  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = hub.controllers.routes.HomeController.handleOverview(origin, isAgent).url
+  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = hub.controllers.routes.HomeController.handleHelp(origin, isAgent).url
 
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x

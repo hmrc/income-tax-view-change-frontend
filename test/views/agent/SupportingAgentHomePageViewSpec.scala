@@ -30,7 +30,7 @@ import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import views.html.agent.SupportingAgentHomeView
+import hub.views.html.agent.SupportingAgentHomeView
 
 import java.time.{LocalDate, Month}
 import scala.annotation.unused
@@ -42,7 +42,7 @@ import common.config.featureswitch.FeatureSwitching
 
 class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
-  lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show().url
+  lazy val backUrl: String = hub.controllers.agent.routes.ConfirmClientUTRController.show().url
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

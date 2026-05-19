@@ -52,7 +52,7 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: views.ht
     implicit user =>
       (isEnabled(RecentActivity), !user.isSupportingAgent, user.isAgent) match {
         case (true, true, _) => handleShowRequest(origin)
-        case (true, false, _) => Future.successful(Redirect(controllers.routes.HomeController.handleOverview(origin, isAgent)))
+        case (true, false, _) => Future.successful(Redirect(hub.controllers.routes.HomeController.handleOverview(origin, isAgent)))
         case (false, _, true) => Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
         case (false, _, false) => Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
       }

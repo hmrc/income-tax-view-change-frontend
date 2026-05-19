@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package hub.controllers.agent
 
 import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
@@ -26,7 +26,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.BearerTokenExpired
-import views.html.agent.EnterClientsUTRView
+import hub.views.html.agent.EnterClientsUTRView
 
 class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
   with MockEnterClientsUTR {

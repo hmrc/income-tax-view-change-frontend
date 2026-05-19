@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package hub.controllers.agent
 
 import common.viewUtils.InternalUrlHelper
 import common.controllers.agent.errors.routes as agentErrorRoutes
@@ -27,7 +27,7 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
-import views.html.agent.errorPages.UTRErrorView
+import hub.views.html.agent.errorPages.UTRErrorView
 
 class UTRErrorControllerSpec extends MockAuthActions
   with MockUTRError {
@@ -92,7 +92,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+        redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
       }
     }
 
@@ -124,7 +124,7 @@ class UTRErrorControllerSpec extends MockAuthActions
       val result = testUTRErrorController.submit()(fakeRequestWithClientUTR)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(controllers.agent.routes.EnterClientsUTRController.show().url)
+      redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
       result.futureValue.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
     }
   }

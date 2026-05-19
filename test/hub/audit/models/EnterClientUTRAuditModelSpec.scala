@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package audit.models
+package hub.audit.models
 
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}

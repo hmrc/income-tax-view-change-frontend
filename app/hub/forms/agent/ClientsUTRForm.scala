@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.agent
+package hub.forms.agent
 
 import forms.utils.ConstraintUtil.ConstraintUtil
 import play.api.data.Form

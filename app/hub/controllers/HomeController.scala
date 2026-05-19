@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package hub.controllers
 
 import audit.models.HomeAudit
 import common.auth.{AuthActions, MtdItUser}
@@ -47,12 +47,12 @@ import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeController @Inject()(val homeView: views.html.HomeView,
+class HomeController @Inject()(val homeView: hub.views.html.HomeView,
                                val newHomeRecentActivityView: views.html.newHomePage.NewHomeRecentActivityView,
                                val newHomeOverviewView: views.html.newHomePage.NewHomeOverviewView,
                                val newHomeHelpView: views.html.newHomePage.NewHomeHelpView,
-                               val primaryAgentHomeView: views.html.agent.PrimaryAgentHomeView,
-                               val supportingAgentHomeView: views.html.agent.SupportingAgentHomeView,
+                               val primaryAgentHomeView: hub.views.html.agent.PrimaryAgentHomeView,
+                               val supportingAgentHomeView: hub.views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActions,
                                val nextUpdatesService: NextUpdatesService,
                                val financialDetailsService: FinancialDetailsService,

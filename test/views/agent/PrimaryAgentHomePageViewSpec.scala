@@ -31,7 +31,7 @@ import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import views.html.agent.PrimaryAgentHomeView
+import hub.views.html.agent.PrimaryAgentHomeView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
@@ -44,7 +44,7 @@ import financials.controllers.routes as financialsRoutes
 
 class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
-  lazy val backUrl: String = controllers.agent.routes.ConfirmClientUTRController.show().url
+  lazy val backUrl: String = hub.controllers.agent.routes.ConfirmClientUTRController.show().url
 
   lazy val mockAppConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 

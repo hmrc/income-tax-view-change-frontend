@@ -87,7 +87,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
-            val backUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+            val backUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url else hub.controllers.routes.HomeController.show().url
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
@@ -99,7 +99,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
-            val backUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+            val backUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url else hub.controllers.routes.HomeController.show().url
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
@@ -114,7 +114,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             val result = action(fakeRequest)
 
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) controllers.routes.HomeController.showAgent().url else controllers.routes.HomeController.show().url
+            val redirectUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url else hub.controllers.routes.HomeController.show().url
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }

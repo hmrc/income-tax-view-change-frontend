@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package hub.controllers.agent
 
-import audit.models.EnterClientUTRAuditModel
+import hub.audit.models.EnterClientUTRAuditModel
 import common.auth.{AuthActions, FrontendAuthorisedFunctions}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
@@ -26,7 +26,7 @@ import common.services.agent.ClientDetailsService
 import common.utils.AuthUtils._
 import common.utils.sessionUtils.SessionKeys
 import enums._
-import forms.agent.ClientsUTRForm
+import hub.forms.agent.ClientsUTRForm
 import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -34,7 +34,7 @@ import play.api.mvc._
 import ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.agent.EnterClientsUTRView
+import hub.views.html.agent.EnterClientsUTRView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -85,7 +85,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
                 case ex =>
                   Logger("application").error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
                   sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId, None)
-                  Redirect(controllers.agent.routes.UTRErrorController.show())
+                  Redirect(hub.controllers.agent.routes.UTRErrorController.show())
               }
 
             case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>

@@ -69,8 +69,8 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
           incomeSourceType,
           incomeSourceIdOpt,
           backUrl = {
-            if (isAgent) controllers.routes.HomeController.showAgent()
-            else controllers.routes.HomeController.show()
+            if (isAgent) hub.controllers.routes.HomeController.showAgent()
+            else hub.controllers.routes.HomeController.show()
           }.url
         )
       }

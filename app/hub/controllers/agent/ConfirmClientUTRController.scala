@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package controllers.agent
+package hub.controllers.agent
 
-import audit.models.ConfirmClientDetailsAuditModel
+import hub.audit.models.ConfirmClientDetailsAuditModel
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
@@ -29,7 +29,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.agent.ConfirmClientUTRView
+import hub.views.html.agent.ConfirmClientUTRView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -85,13 +85,13 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
         ))
 
         Future(
-          Redirect(controllers.routes.HomeController.showAgent().url)
+          Redirect(hub.controllers.routes.HomeController.showAgent().url)
             .addingToSession(SessionKeys.confirmedClient -> "true")
         )
     }
     }
 
-  lazy val backUrl: String = controllers.agent.routes.EnterClientsUTRController.show().url
+  lazy val backUrl: String = hub.controllers.agent.routes.EnterClientsUTRController.show().url
 
   def getSessionDataStorageFS: Boolean = appConfig.isSessionDataStorageEnabled
 

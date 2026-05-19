@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.agent
+package hub.forms.agent
 
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
