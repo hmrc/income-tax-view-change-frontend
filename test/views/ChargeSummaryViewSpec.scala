@@ -21,7 +21,6 @@ import enums.ChargeType.*
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
 import exceptions.MissingFieldException
 import financials.controllers.routes as financialsRoutes
-import models.admin.FilterCodedOutPoas
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*
@@ -37,12 +36,13 @@ import testUtils.ViewSpec
 import views.html.ChargeSummaryView
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
+
 class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
   lazy val chargeSummary: ChargeSummaryView = app.injector.instanceOf[ChargeSummaryView]
   val whatYouOweAgentUrl: String = financialsRoutes.WhatYouOweController.showAgent().url
 
-  import Messages._
+  import Messages.*
 
   val defaultAdjustmentHistory: AdjustmentHistoryModel = AdjustmentHistoryModel(AdjustmentModel(1400, Some(LocalDate.of(2018,3,29)), AdjustmentReversalReason), List())
 
@@ -546,7 +546,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
             val codedOutBCDItem = chargeItemModel(transactionType = BalancingCharge, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
-            disable(FilterCodedOutPoas)
+
             "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa1CodedOutHeading
@@ -572,7 +572,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "display the fully collected coded out details" when {
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaOneDebit, codedOutStatus = Some(FullyCollected), originalAmount = 2500.00)
-            disable(FilterCodedOutPoas)
             "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa1CodedOutHeading
@@ -680,7 +679,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "display the coded out details" when {
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Accepted), originalAmount = 2500.00)
-            disable(FilterCodedOutPoas)
             "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa2CodedOutHeading
@@ -696,7 +694,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "display the fully collected coded out details" when {
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(FullyCollected), originalAmount = 2500.00)
-            disable(FilterCodedOutPoas)
             "Coding Out is Enabled" in new TestSetup(codedOutPoaItem, adjustmentHistory = codedOutEmptyAdjustmentHistory(2500.00)) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
               document.select("h1").text() shouldBe chargeSummaryPoa2CodedOutHeading
@@ -718,7 +715,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           "display the coded out details" when {
 
             val codedOutPoaItem = chargeItemModel(transactionType = PoaTwoDebit, codedOutStatus = Some(Cancelled))
-            disable(FilterCodedOutPoas)
 
             "Coding Out is Enabled" in new TestSetup(codedOutPoaItem) {
               document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2018)
