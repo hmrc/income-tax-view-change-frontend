@@ -18,7 +18,8 @@ package controllers.newHomePage
 
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
-import common.config.{FrontendAppConfig, ItvcErrorHandler}
+import common.config.FrontendAppConfig
+import common.services.{DateServiceInterface, ITSAStatusService}
 import models.admin.MortgageEvidence
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -26,7 +27,7 @@ import models.newHomePage.ProofOfYourIncomeCardViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{CalculationService, DateServiceInterface, ITSAStatusService}
+import services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.partials.newHome.overview.ProofOfYourIncomeView
@@ -39,7 +40,6 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
                                             val view: ProofOfYourIncomeView,
                                             val ITSAStatusService: ITSAStatusService,
                                             calcService: CalculationService,
-                                            itvcErrorHandler: ItvcErrorHandler,
                                             implicit val dateService: DateServiceInterface)
                                            (implicit val ec: ExecutionContext,
                                             mcc: MessagesControllerComponents,

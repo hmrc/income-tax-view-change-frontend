@@ -17,12 +17,12 @@
 package testOnly.controllers
 
 import common.config.FrontendAppConfig
+import common.services.SessionService
 import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject

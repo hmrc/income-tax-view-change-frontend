@@ -18,8 +18,8 @@ package obligations.connectors
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import common.services.AuditingService
-import connectors.RawResponseReads
 import obligations.models.audit.NextUpdatesResponseAuditModel
 import obligations.models.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import play.api.Logger

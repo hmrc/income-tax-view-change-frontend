@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import connectors.ITSAStatusConnector
 import enums.MTDIndividual
 import org.jsoup.Jsoup
 import org.mockito.Mockito.mock
@@ -25,14 +24,15 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, foreignPropertyIncome, ukPropertyIncome}
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.services.CreateBusinessDetailsService
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
+import common.services.DateServiceInterface
 
 class IncomeSourceNotAddedControllerSpec extends MockAuthActions {
 

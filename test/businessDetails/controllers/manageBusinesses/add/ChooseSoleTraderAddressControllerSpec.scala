@@ -16,9 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import connectors.ITSAStatusConnector
 import enums.MTDIndividual
-import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import org.jsoup.Jsoup
@@ -31,14 +29,16 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2018and2019AndProp, businessInternational}
 
 import scala.annotation.unused
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 

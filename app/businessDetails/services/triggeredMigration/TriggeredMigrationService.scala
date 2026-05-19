@@ -20,11 +20,11 @@ import businessDetails.enums.TriggeredMigration.TriggeredMigrationState
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import com.google.inject.Inject
+import common.services.SessionService
 import enums.JourneyType.TriggeredMigrationJourney
 import models.UIJourneySessionData
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Singleton

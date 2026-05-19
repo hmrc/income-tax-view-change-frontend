@@ -17,11 +17,12 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import enums.MTDIndividual
-import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup
@@ -29,7 +30,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 

@@ -17,6 +17,7 @@
 package connectors
 
 import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
 import models.core.Nino
 import play.api.Logger

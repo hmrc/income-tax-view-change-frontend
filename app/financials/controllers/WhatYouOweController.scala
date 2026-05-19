@@ -20,12 +20,13 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.*
+import common.services.DateServiceInterface
 import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, WhatYouOweService}
+import services.WhatYouOweService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOweView
@@ -90,9 +91,9 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
   private def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (user.isAgent match {
     case true if user.incomeSources.yearOfMigration.isDefined  => routes.MoneyInYourAccountController.showAgent()
-    case true                                                  => appRoutes.NotMigratedUserController.showAgent()
+    case true                                                  => routes.NotMigratedUserController.showAgent()
     case false if user.incomeSources.yearOfMigration.isDefined => routes.MoneyInYourAccountController.show()
-    case false                                                 => appRoutes.NotMigratedUserController.show()
+    case false                                                 => routes.NotMigratedUserController.show()
   }).url
 
   private def getTaxYearSummaryUrl(origin: Option[String])(implicit user: MtdItUser[_]): Int => String = {

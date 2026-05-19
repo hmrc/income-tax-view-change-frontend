@@ -23,12 +23,11 @@ import businessDetails.utils.TriggeredMigrationUtils
 import com.google.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckHmrcRecordsView
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
-import common.services.AuditingService
+import common.services.{AuditingService, SessionService}
 
 import scala.concurrent.{ExecutionContext, Future}
 

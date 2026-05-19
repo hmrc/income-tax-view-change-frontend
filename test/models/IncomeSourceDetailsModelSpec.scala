@@ -20,7 +20,7 @@ import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import businessDetails.forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
 import common.auth.MtdItUser
-import mocks.services.MockDateService
+import common.mocks.services.MockDateService
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash}

@@ -25,7 +25,6 @@ import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.{DateService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceEndDateView
@@ -39,6 +38,7 @@ import businessDetails.forms.manageBusinesses.cease.CeaseIncomeSourceEndDateForm
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.services.{DateService, SessionService}
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,

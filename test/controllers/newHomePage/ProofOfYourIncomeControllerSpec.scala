@@ -18,9 +18,11 @@ package controllers.newHomePage
 
 import common.auth.AuthActions
 import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import enums.MTDIndividual
 import mocks.services.*
-import models.admin.{MortgageEvidence, NewHomePage}
+import models.admin.{FeatureSwitch, MortgageEvidence, NewHomePage}
 import models.itsaStatus.ITSAStatusResponseModel
 import models.liabilitycalculation.*
 import org.jsoup.Jsoup

@@ -17,6 +17,7 @@
 package views
 
 import common.config.FrontendAppConfig
+import common.services.DateServiceInterface
 import implicits.ImplicitCurrencyFormatter.*
 import implicits.ImplicitDateFormatter
 import models.financialDetails.*
@@ -25,7 +26,6 @@ import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewMod
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
-import services.DateServiceInterface
 import testUtils.ViewSpec
 import views.html.PaymentHistoryView
 
