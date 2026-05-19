@@ -16,9 +16,10 @@
 
 package obligations.controllers
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
-import mocks.services.MockDateService
+import common.mocks.services.MockDateService
+import common.services.{DateService, DateServiceInterface}
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
@@ -37,7 +38,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
 

@@ -17,9 +17,9 @@
 package businessDetails.connectors
 
 import businessDetails.models.updateIncomeSource.{Cessation, TaxYearSpecific, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
-import connectors.RawResponseReads
 import businessDetails.models.updateIncomeSource.*
 import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json

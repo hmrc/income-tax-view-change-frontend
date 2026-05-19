@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.agent.CitizenDetailsConnector
+import common.connectors.agent.CitizenDetailsConnector
 import models.citizenDetails.CitizenDetailsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

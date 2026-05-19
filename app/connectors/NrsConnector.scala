@@ -17,6 +17,7 @@
 package connectors
 
 import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
 import models.nrs.{NrsSubmission, NrsSuccessResponse}

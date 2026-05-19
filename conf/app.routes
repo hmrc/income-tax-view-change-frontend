@@ -14,6 +14,9 @@ GET         /agents/client-income-tax                                     contro
 GET         /agents                                                       controllers.HomeController.showAgent()
 GET         /your-tasks                                                   controllers.newHomePage.HandleYourTasksController.show()
 GET         /agents/your-tasks                                            controllers.newHomePage.HandleYourTasksController.showAgent()
+GET         /mortgage-evidence/proof-of-income                            controllers.newHomePage.ProofOfYourIncomeController.show(origin: Option[String] ?= None)
+GET         /agents/mortgage-evidence/proof-of-income                     controllers.newHomePage.ProofOfYourIncomeController.showAgent()
+
 
 GET         /recent-activity                                              controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/recent-activity                                       controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
@@ -31,12 +34,6 @@ GET         /agents/calculation/:taxYear/submitted                        contro
 GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 GET         /agents/:taxYear/final-tax-overview/calculate                 controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 
-# Users not migrated to ETMP
-GET          /how-to-claim-refund                                         controllers.NotMigratedUserController.show()
-GET          /agents/how-to-claim-refund                                  controllers.NotMigratedUserController.showAgent()
-
-GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
-GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
 ->          /                                                             common.Routes
 ->          /                                                             obligations.Routes

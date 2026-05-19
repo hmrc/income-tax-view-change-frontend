@@ -20,6 +20,7 @@ import common.auth.actions.AuthActionsTestData.defaultAuthUserDetails
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.services.DateService
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -28,7 +29,6 @@ import obligations.services.reportingObligations.optOut.OptOutProposition
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
-import services.DateService
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.UnitSpec
 import uk.gov.hmrc.play.language.LanguageUtils

@@ -17,9 +17,10 @@
 package common.controllers
 
 import common.auth.actions.AuthActionsTestData.defaultIncomeSourcesData
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
 import common.models.audit.IvOutcomeSuccessAuditModel
-import connectors.ITSAStatusConnector
+import common.services.DateServiceInterface
 import enums.MTDIndividual
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.Voluntary
@@ -32,7 +33,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
-import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testNino, testSaUtr}
 
 import scala.concurrent.Future

@@ -32,10 +32,12 @@ import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockDateService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 
 import scala.concurrent.Future
 

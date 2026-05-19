@@ -17,7 +17,7 @@
 package services.newHomePage
 
 import common.auth.MtdItUser
-import mocks.services.MockDateService
+import common.mocks.services.MockDateService
 import obligations.mocks.connectors.MockObligationsConnector
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear

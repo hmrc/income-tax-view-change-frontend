@@ -16,13 +16,14 @@
 
 package financials.controllers
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.mocks.services.MockDateService
+import common.services.{DateService, DateServiceInterface}
 import enums.{MTDIndividual, MTDSupportingAgent}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import forms.utils.SessionKeys.gatewayPage
-import mocks.services.MockDateService
 import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import models.incomeSourceDetails.TaxYear
@@ -36,7 +37,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{DateService, DateServiceInterface, WhatYouOweService}
+import services.WhatYouOweService
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.*
 import uk.gov.hmrc.http.HeaderCarrier

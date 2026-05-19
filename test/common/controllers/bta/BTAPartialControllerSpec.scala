@@ -16,14 +16,14 @@
 
 package common.controllers.bta
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.services.DateServiceInterface
 import enums.MTDIndividual
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
 
 class BTAPartialControllerSpec extends MockAuthActions {

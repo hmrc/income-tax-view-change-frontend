@@ -16,15 +16,15 @@
 
 package controllers.agent
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
+import common.services.DateServiceInterface
 import common.viewUtils.InternalUrlHelper
-import connectors.ITSAStatusConnector
 import mocks.views.agent.MockEnterClientsUTR
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.DateServiceInterface
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import views.html.agent.EnterClientsUTRView
 

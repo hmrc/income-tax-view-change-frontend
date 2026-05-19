@@ -19,14 +19,14 @@ package common.auth.actions
 import com.google.inject.Singleton
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.models.auth.{AgentClientDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedUserRequest}
+import common.services.SessionDataService
+import common.services.agent.ClientDetailsService
 import common.utils.sessionUtils.SessionKeys
 import controllers.agent.routes
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
-import services.SessionDataService
-import services.agent.ClientDetailsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 

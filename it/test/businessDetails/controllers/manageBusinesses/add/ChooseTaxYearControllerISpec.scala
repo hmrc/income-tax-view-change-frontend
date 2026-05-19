@@ -23,6 +23,7 @@ import businessDetails.helpers.IncomeSourceCheckDetailsConstants.{testBusinessNa
 import common.controllers.ControllerISpecHelper
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
+import common.services.{DateService, SessionService}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, LatencyDetails}
@@ -30,7 +31,6 @@ import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
-import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, singleUKForeignPropertyResponseInLatencyPeriod}
 

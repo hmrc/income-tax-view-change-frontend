@@ -22,13 +22,13 @@ import common.helpers.servicemocks.ITSAStatusDetailsStub
 import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
+import common.services.{DateService, SessionService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.incomeSourceDetails._
 import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.{DateService, SessionService}
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import testConstants.CalculationListIntegrationTestConstants

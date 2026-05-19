@@ -19,17 +19,18 @@ package common.mocks.auth
 import common.auth.actions.AuthActionsTestData.*
 import businessDetails.mocks.services.{MockCustomerFactsUpdateService, MockIncomeSourceDetailsService}
 import common.auth.FrontendAuthorisedFunctions
+import common.connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import common.controllers.agent.routes as agentRoutes
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.controllers.errors.routes as errorRoutes
 import common.mocks.MockAuditingService
+import common.mocks.services.{MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
+import common.mocks.services.admin.MockFeatureSwitchService
 import common.services.AuditingService
+import common.services.admin.FeatureSwitchService
 import common.viewUtils.InternalUrlHelper
-import connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
-import mocks.services.admin.MockFeatureSwitchService
-import mocks.services.{MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
@@ -46,12 +47,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import services.admin.FeatureSwitchService
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
-import businessDetails.services.{CustomerFactsUpdateService, IncomeSourceDetailsService}
+import businessDetails.services.IncomeSourceDetailsService
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, SessionDataService}
+import common.services.agent.ClientDetailsService
 import scala.concurrent.Future
-import services.agent.ClientDetailsService
-import services.{DateServiceInterface, SessionDataService}
 import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
@@ -76,7 +76,6 @@ trait MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    disableAllSwitches()
     reset(mockAuthService)
     reset(mockFAF)
     reset(mockCustomerFactsUpdateService)

@@ -16,10 +16,10 @@
 
 package common.controllers
 
+import common.connectors.FeedbackConnector
 import common.controllers.feedback.{FeedbackController, routes as feedbackRoutes}
 import common.mocks.auth.MockAuthActions
 import common.viewUtils.InternalUrlHelper
-import connectors.FeedbackConnector
 import enums.MTDIndividual
 import implicits.ImplicitDateFormatter
 import org.jsoup.Jsoup

@@ -18,11 +18,12 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.IncomeSourcesUtils
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.mocks.services.{MockDateService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import enums.MTDIndividual
-import mocks.services.{MockDateService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
@@ -36,7 +37,6 @@ import play.api
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}

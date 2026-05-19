@@ -19,7 +19,8 @@ package controllers.newHomePage
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.mocks.auth.MockAuthActions
-import common.services.AuditingService
+import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.services.{AuditingService, DateService, DateServiceInterface, ITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
 import controllers.HomeController
 import mocks.services.*
@@ -146,8 +147,6 @@ class HandleYourTasksControllerSpec extends MockAuthActions
       )
     )
     when(mockNextUpdatesService.getOpenObligations()(any(), any())).thenReturn(Future.successful(obligationsModel))
-
-    val testHomeController = app.injector.instanceOf[HomeController]
   }
 
   override def beforeEach(): Unit = {

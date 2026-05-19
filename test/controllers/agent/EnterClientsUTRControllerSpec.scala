@@ -19,10 +19,10 @@ package controllers.agent
 import audit.models.EnterClientUTRAuditModel
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
 import forms.agent.ClientsUTRForm
-import mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
@@ -30,7 +30,7 @@ import play.api
 import play.api.Application
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import services.agent.ClientDetailsService.*
+import common.services.agent.ClientDetailsService.*
 import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
 import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
 import views.html.agent.EnterClientsUTRView

@@ -20,7 +20,7 @@ import audit.models.TaxYearSummaryResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
-import common.services.AuditingService
+import common.services.{AuditingService, DateServiceInterface}
 import enums.GatewayPage.TaxYearSummaryPage
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import implicits.ImplicitDateFormatter
@@ -553,7 +553,7 @@ class TaxYearSummaryController @Inject()(
   }.recover {
     case ex: Throwable =>
       val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause} - ")
+      Logger("application").error(s"[TaxYearSummaryController][handleRequest] ${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause}", ex)
       errorHandler.showInternalServerError()
   }
 

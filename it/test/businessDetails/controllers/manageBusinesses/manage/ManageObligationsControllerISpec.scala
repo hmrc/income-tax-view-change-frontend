@@ -32,6 +32,7 @@ import businessDetails.testConstants.IncomeSourcesObligationsIntegrationTestCons
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.controllers.ControllerISpecHelper
+import common.services.SessionService
 
 
 class ManageObligationsControllerISpec extends ControllerISpecHelper {

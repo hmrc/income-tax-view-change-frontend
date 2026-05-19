@@ -20,14 +20,13 @@ import audit.models.ConfirmClientDetailsAuditModel
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
-import common.services.AuditingService
+import common.services.{AuditingService, SessionDataService}
 import common.utils.sessionUtils.SessionKeys
 import models.sessionData.SessionCookieData
 import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionDataService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.agent.ConfirmClientUTRView

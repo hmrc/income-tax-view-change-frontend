@@ -16,8 +16,9 @@
 
 package obligations.controllers.reportingObligations.signUp
 
+import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
+import common.services.DateServiceInterface
 import enums.MTDIndividual
 import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
@@ -32,7 +33,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
