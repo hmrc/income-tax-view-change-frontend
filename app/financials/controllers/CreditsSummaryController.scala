@@ -18,9 +18,10 @@ package financials.controllers
 
 import audit.models.CreditSummaryAuditing
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.services.AuditingService
+import financials.controllers.routes as financialsRoutes
 import models.creditDetailModel.CreditDetailModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -33,7 +34,6 @@ import views.html.CreditsSummaryView
 import java.net.URI
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import financials.controllers.routes as financialsRoutes
 
 class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
                                          val authActions: AuthActions,
@@ -79,7 +79,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   }
 
   def handleRequest(calendarYear: Int,
-                    isAgent: Boolean,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_],
                     hc: HeaderCarrier): Future[Result] = {
@@ -89,11 +88,10 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
         val maybeAvailableCredit: Option[BigDecimal] =
           credits.flatMap(_.availableCredit.filter(_ > 0.00)).headOption
         auditCreditSummary(maybeAvailableCredit, charges)
-        val backUrl = if (isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear)
+        val backUrl = if (user.isAgent) getAgentBackURL(user.headers.get(REFERER), calendarYear) else getBackURL(user.headers.get(REFERER), origin, calendarYear)
         Future.successful(Ok(creditsView(
           calendarYear = calendarYear,
           backUrl = backUrl,
-          isAgent = isAgent,
           utr = user.saUtr,
           btaNavPartial = user.btaNavPartial,
           serviceNavigationPartial = user.serviceNavigationPartial,
@@ -101,7 +99,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
           maybeAvailableCredit = maybeAvailableCredit,
           origin = origin)))
       case Left(_) =>
-        if (isAgent) {
+        if (user.isAgent) {
           Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
           Future.successful(agentItvcErrorHandler.showInternalServerError())
         }
@@ -117,7 +115,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
       implicit user =>
         handleRequest(
           calendarYear = calendarYear,
-          isAgent = false,
           origin = origin
         )
     }
@@ -126,8 +123,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
   def showAgentCreditsSummary(calendarYear: Int): Action[AnyContent] = {
     authActions.asMTDPrimaryAgent().async { implicit mtdItUser =>
       handleRequest(
-        calendarYear = calendarYear,
-        isAgent = true
+        calendarYear = calendarYear
       )
     }
   }

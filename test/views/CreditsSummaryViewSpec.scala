@@ -16,7 +16,8 @@
 
 package views
 
-import _root_.implicits.ImplicitCurrencyFormatter._
+import _root_.implicits.ImplicitCurrencyFormatter.*
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import implicits.ImplicitDateFormatter
@@ -24,11 +25,11 @@ import models.creditDetailModel.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.helpers.CreditHistoryDataHelper
-import testConstants.BaseTestConstants.testMtditid
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.BaseTestConstants.{testMtdItAgentUser, testMtdItUser, testMtditid}
+import testConstants.FinancialDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummaryView
 
@@ -80,6 +81,9 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
               maybeAvailableCredit: Option[BigDecimal] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString") {
+
+    implicit val testUser: MtdItUser[_] = if (isAgent) testMtdItAgentUser else testMtdItUser
+
     lazy val page: HtmlFormat.Appendable =
       creditsSummaryView(
         calendarYear = testCalendarYear,
@@ -88,8 +92,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
         btaNavPartial = None,
         charges = creditCharges,
         maybeAvailableCredit = maybeAvailableCredit,
-        isAgent = isAgent
-      )(FakeRequest(), implicitly, implicitly)
+      )(FakeRequest(), testUser, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }

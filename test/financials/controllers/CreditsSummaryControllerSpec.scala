@@ -89,7 +89,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
@@ -123,7 +122,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = None,
                   calendarYear = calendarYear2018
@@ -154,7 +152,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
@@ -184,7 +181,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
@@ -213,7 +209,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
