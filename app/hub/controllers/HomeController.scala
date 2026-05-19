@@ -16,7 +16,7 @@
 
 package hub.controllers
 
-import audit.models.HomeAudit
+import hub.audit.models.HomeAudit
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.*
 import common.config.*
@@ -26,7 +26,7 @@ import enums.MTDSupportingAgent
 import models.admin.*
 import models.core.Nino
 import models.financialDetails.*
-import models.homePage.*
+import hub.models.homePage.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -39,7 +39,7 @@ import play.api.mvc.*
 import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.HomePageUtils
+import hub.utils.HomePageUtils
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -48,9 +48,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class HomeController @Inject()(val homeView: hub.views.html.HomeView,
-                               val newHomeRecentActivityView: views.html.newHomePage.NewHomeRecentActivityView,
-                               val newHomeOverviewView: views.html.newHomePage.NewHomeOverviewView,
-                               val newHomeHelpView: views.html.newHomePage.NewHomeHelpView,
+                               val newHomeRecentActivityView: hub.views.html.newHomePage.NewHomeRecentActivityView,
+                               val newHomeOverviewView: hub.views.html.newHomePage.NewHomeOverviewView,
+                               val newHomeHelpView: hub.views.html.newHomePage.NewHomeHelpView,
                                val primaryAgentHomeView: hub.views.html.agent.PrimaryAgentHomeView,
                                val supportingAgentHomeView: hub.views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActions,
@@ -280,9 +280,9 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
   private def handleYourTasks(@unused origin: Option[String] = None, isAgent: Boolean)
                              (implicit  @unused user: MtdItUser[_]): Future[Result] = {
     if(isAgent){
-      Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
+      Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
     }else {
-     Future.successful(Redirect(controllers.newHomePage.routes.HandleYourTasksController.show()))
+     Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.show()))
     }
   }
 

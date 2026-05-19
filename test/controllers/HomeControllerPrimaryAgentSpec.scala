@@ -46,7 +46,7 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import hub.controllers.HomeController
 import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
-import views.html.newHomePage.*
+import hub.views.html.newHomePage.*
 
 import java.time.LocalDate
 import scala.annotation.unused

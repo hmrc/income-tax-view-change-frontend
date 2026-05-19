@@ -16,7 +16,7 @@
 
 package controllers
 
-import audit.models.HomeAudit
+import hub.audit.models.HomeAudit
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import enums.MTDIndividual

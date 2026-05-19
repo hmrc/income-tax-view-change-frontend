@@ -22,7 +22,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import models.admin.FeatureSwitch
 import models.creditsandrefunds.CreditsModel
-import models.homePage.*
+import hub.models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus

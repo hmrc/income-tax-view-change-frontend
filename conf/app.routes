@@ -12,14 +12,14 @@ GET         /                                                             hub.co
 GET         /income-tax                                                   hub.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/client-income-tax                                     hub.controllers.HomeController.showAgent()
 GET         /agents                                                       hub.controllers.HomeController.showAgent()
-GET         /your-tasks                                                   controllers.newHomePage.HandleYourTasksController.show()
-GET         /agents/your-tasks                                            controllers.newHomePage.HandleYourTasksController.showAgent()
-GET         /mortgage-evidence/proof-of-income                            controllers.newHomePage.ProofOfYourIncomeController.show(origin: Option[String] ?= None)
-GET         /agents/mortgage-evidence/proof-of-income                     controllers.newHomePage.ProofOfYourIncomeController.showAgent()
+GET         /your-tasks                                                   hub.controllers.newHomePage.HandleYourTasksController.show()
+GET         /agents/your-tasks                                            hub.controllers.newHomePage.HandleYourTasksController.showAgent()
+GET         /mortgage-evidence/proof-of-income                            hub.controllers.newHomePage.ProofOfYourIncomeController.show(origin: Option[String] ?= None)
+GET         /agents/mortgage-evidence/proof-of-income                     hub.controllers.newHomePage.ProofOfYourIncomeController.showAgent()
 
 
-GET         /recent-activity                                              controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
-GET         /agents/recent-activity                                       controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
+GET         /recent-activity                                              hub.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
+GET         /agents/recent-activity                                       hub.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
 
 GET         /overview                                                     hub.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = false)
 GET         /help                                                         hub.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)

@@ -40,8 +40,8 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAn
 import hub.controllers.HomeController
 import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
-import views.html.newHomePage.*
-import views.html.helpers.injected.home.YourReportingObligationsTile
+import hub.views.html.newHomePage.*
+import hub.views.html.helpers.injected.home.YourReportingObligationsTile
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
