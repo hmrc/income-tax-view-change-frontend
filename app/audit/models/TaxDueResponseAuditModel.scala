@@ -60,10 +60,10 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
         } yield s"Your Basic Rate limit has been increased by $tax to $band for Pension Contribution"
 
       case "C22209" => for {
-        gga <- grossGiftAid
-        tpcr <- totalPensionContributionReliefs
+        grossGiftAidValue <- grossGiftAid
+        totalPensionContributionReliefsValue <- totalPensionContributionReliefs
         band <- modifiedBaseBandLimit
-        } yield s"Your Basic Rate limit has been increased by ${gga + tpcr} to $band for Pension Contribution and Gift Aid payments"
+        } yield s"Your Basic Rate limit has been increased by ${grossGiftAidValue + totalPensionContributionReliefsValue} to $band for Pension Contribution and Gift Aid payments"
 
       case "C22210" => Some("Employment related expenses are capped at the total amount of employment income")
       case "C22211" => Some("This is a forecast of your annual Income Tax liability based on the information you have provided to date. Any overpayments of Income Tax will not be refundable until after you have submitted your final declaration")
