@@ -17,7 +17,6 @@
 package models.newHomePage
 
 import play.api.i18n.Messages
-import services.DateServiceInterface
 
 case class ProofOfYourIncomeCardViewModel(taxYearStart: Int,
                                           calculationType: String,
