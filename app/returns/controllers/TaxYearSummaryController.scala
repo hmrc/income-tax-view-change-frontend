@@ -553,7 +553,7 @@ class TaxYearSummaryController @Inject()(
   }.recover {
     case ex: Throwable =>
       val errorHandler = if (isAgent) agentItvcErrorHandler else itvcErrorHandler
-      Logger("application").error(s"${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause} - ")
+      Logger("application").error(s"[TaxYearSummaryController][handleRequest] ${if (isAgent) "Agent" else "Individual"} - There was an error, status: - ${ex.getMessage} - ${ex.getCause}", ex)
       errorHandler.showInternalServerError()
   }
 
