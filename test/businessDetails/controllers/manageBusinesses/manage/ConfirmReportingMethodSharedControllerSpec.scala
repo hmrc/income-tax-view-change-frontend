@@ -20,11 +20,9 @@ import businessDetails.controllers.manageBusinesses.manage.routes as manageYourB
 import businessDetails.enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
 import businessDetails.enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
-import connectors.ITSAStatusConnector
 import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{MTDIndividual, MTDUserRole}
 import implicits.ImplicitDateFormatter
-import mocks.services.{MockDateService, MockSessionService}
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
@@ -36,8 +34,8 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUI
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockDateService, MockSessionService}
 import common.services.{DateService, DateServiceInterface, SessionService}
+import common.mocks.services.{MockDateService, MockITSAStatusService, MockSessionService}
 
 import scala.concurrent.Future
 

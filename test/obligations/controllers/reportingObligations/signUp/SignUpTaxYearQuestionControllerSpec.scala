@@ -156,9 +156,6 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
       s"the user is authenticated as a $mtdRole" should {
 
         "redirect the user when they select 'Yes' - to the completion page" in {
-
-          enable(SignUpFs)
-
           val action = testController.submit(isAgent, currentYear)
           val fakeRequest = fakePostRequestBasedOnMTDUserType(mtdRole)
 
