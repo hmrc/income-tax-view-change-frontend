@@ -135,34 +135,36 @@
         }
 
         @if(isMortgageEvidenceEnabled && !isAgent) {
-<details class="govuk-details">
-    <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-                @messages("taxYears.dropdown.title")
-            </span>
-    </summary>
-    <div class="govuk-details__text">
-        @p(id = Some("taxyears-sa302")) {
-        @messages("taxYears.dropdown.content.1")
-        @link(id = Some("taxyears-sa302-link"), link = appConfig.sa302, messageKey = "taxYears.dropdown.content.linkText")
-        @messages("taxYears.dropdown.content.2")  </div>
-</details>
-}}
+           <details class="govuk-details">
+               <summary class="govuk-details__summary">
+                       <span class="govuk-details__summary-text">
+                           @messages("taxYears.dropdown.title")
+                       </span>
+               </summary>
+               <div class="govuk-details__text">
+                   @p(id = Some("taxyears-sa302")) {
+                   @messages("taxYears.dropdown.content.1")
+                   @link(id = Some("taxyears-sa302-link"), link = appConfig.sa302, messageKey = "taxYears.dropdown.content.linkText")
+                   @messages("taxYears.dropdown.content.2")  </div>
+           </details>
+                   }
+        }
 
-@if(isMortgageEvidenceEnabled && isAgent) {
-<details class="govuk-details">
-    <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-                @messages("taxYears.dropdown.title")
-            </span>
-    </summary>
-    <div class="govuk-details__text">
-        @p(id = Some("taxyears-sa302")) {
-        @messages("taxYears.dropdown.content.1")
-        @link(id = Some("taxyears-sa302-link"), link = appConfig.sa302Agent, messageKey = "taxYears.dropdown.content.linkText")
-        @messages("taxYears.dropdown.content.2")  </div>
-</details>
-}}
+        @if(isMortgageEvidenceEnabled && isAgent) {
+          <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                      <span class="govuk-details__summary-text">
+                          @messages("taxYears.dropdown.title")
+                      </span>
+              </summary>
+              <div class="govuk-details__text">
+                  @p(id = Some("taxyears-sa302")) {
+                  @messages("taxYears.dropdown.content.1")
+                  @link(id = Some("taxyears-sa302-link"), link = appConfig.sa302Agent, messageKey = "taxYears.dropdown.content.linkText")
+                  @messages("taxYears.dropdown.content.2")  </div>
+          </details>
+                  }
+       }
 
 
         @if(!isAgent) {
