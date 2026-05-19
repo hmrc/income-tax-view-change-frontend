@@ -41,7 +41,6 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
         contentAsString(
           checkOptOutUpdateAnswersView(
             viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2025, 2026), 2),
-            isAgent = isAgent,
             reportingObligationsURL = reportingObligationsURL
           )
         )
@@ -98,7 +97,6 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
           contentAsString(
             checkOptOutUpdateAnswersView(
               viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 0),
-              isAgent = false,
               reportingObligationsURL = reportingObligationsURL
             )
           )
@@ -113,7 +111,6 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
           contentAsString(
             checkOptOutUpdateAnswersView(
               viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 2),
-              isAgent = false,
               reportingObligationsURL = reportingObligationsURL
             )
           )
@@ -131,7 +128,6 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
           contentAsString(
             checkOptOutUpdateAnswersView(
               viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 3),
-              isAgent = false,
               reportingObligationsURL = reportingObligationsURL
             )
           )

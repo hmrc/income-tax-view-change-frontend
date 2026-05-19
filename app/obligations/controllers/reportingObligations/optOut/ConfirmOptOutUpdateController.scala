@@ -17,8 +17,8 @@
 package obligations.controllers.reportingObligations.optOut
 
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure}
 import obligations.controllers.errors.routes as errorRoutes
@@ -50,17 +50,17 @@ class ConfirmOptOutUpdateController @Inject()(
                                              )
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with JourneyCheckerOptOut {
 
-  private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+  private def withRecover(code: => Future[Result])(implicit user: MtdItUser[_], request: Request[_]): Future[Result] = {
     code.recover {
-      case ex: Exception => handleError(s"request failed :: $ex", isAgent)
+      case ex: Exception => handleError(s"request failed :: $ex")
     }
   }
 
-  private def handleError(message: String, isAgent: Boolean)(implicit request: Request[_]): Result = {
-    val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
+  private def handleError(message: String)(implicit user: MtdItUser[_], request: Request[_]): Result = {
+    val errorHandler = if (user.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
     Logger("application").error(message)
-    errorHandler(isAgent).showInternalServerError()
+    errorHandler.showInternalServerError()
   }
 
   def show(isAgent: Boolean = false, taxYear: String): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
@@ -68,7 +68,7 @@ class ConfirmOptOutUpdateController @Inject()(
       withOptOutRFChecks {
         optOutService.fetchJourneyCompleteStatus().flatMap(journeyIsComplete => {
           if(!journeyIsComplete){
-            withRecover(isAgent) {
+            withRecover {
               val selectedTaxYear: TaxYear = TaxYear(taxYear.toInt, taxYear.toInt + 1)
               withSessionData(isStart = false, selectedTaxYear) {
                 for {
@@ -78,13 +78,13 @@ class ConfirmOptOutUpdateController @Inject()(
                     Some(selectedTaxYear)
                   )
                 } yield {
-                  val reportingObligationsURL = reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
-                  Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
+                  val reportingObligationsURL = reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent).url
+                  Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), reportingObligationsURL))
                 }
               }
             }
           }
-          else Future.successful(Redirect(errorRoutes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false))))
+          else Future.successful(Redirect(errorRoutes.SignUpOptOutCannotGoBackController.show(user.isAgent, isSignUpJourney = Some(false))))
         })
       }
   }
@@ -97,11 +97,11 @@ class ConfirmOptOutUpdateController @Inject()(
             updateTaxYearsITSAStatusRequest: List[ITSAStatusUpdateResponse] <- optOutSubmissionService.updateTaxYearsITSAStatusRequest()
             result = updateTaxYearsITSAStatusRequest match {
               case List() =>
-                Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
+                Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(user.isAgent))
               case listOfUpdateRequestsMade if !listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
-                Redirect(routes.ConfirmedOptOutController.show(isAgent))
+                Redirect(routes.ConfirmedOptOutController.show(user.isAgent))
               case listOfUpdateRequestsMade if listOfUpdateRequestsMade.exists(_.isInstanceOf[ITSAStatusUpdateResponseFailure]) =>
-                Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(isAgent))
+                Redirect(errorRoutes.CannotUpdateReportingObligationsController.show(user.isAgent))
               case _ =>
                 itvcErrorHandler.showInternalServerError()
             }
