@@ -16,10 +16,10 @@
 
 package common.auth.actions
 
-import common.auth.AuthExceptions.NoAssignment
 import com.google.inject.Singleton
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
+import common.auth.AuthExceptions.NoAssignment
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.controllers.agent.routes as agentRoutes
 import common.models.auth.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import common.utils.AuthUtils.*
@@ -39,9 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunctions,
                                              val appConfig: FrontendAppConfig,
                                              mcc: MessagesControllerComponents,
-                                             errorHandler: AgentItvcErrorHandler)
-  extends FeatureSwitching
-    with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] {
+                                             errorHandler: AgentItvcErrorHandler) extends FeatureSwitching with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] {
 
   lazy val logger: Logger = Logger(getClass)
 
@@ -112,10 +110,10 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
         logger.error(s"Agent User is not in an access group associated with the Client.")
         Future.successful(Left(Redirect(agentRoutes.NoAssignmentController.show())))
       case authorisationException: AuthorisationException =>
-        logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+        logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
         Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
       case ex =>
-        logger.warn(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
+        logger.error(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
         Future.successful(Left(errorHandler.showInternalServerError()))
     }
   }
