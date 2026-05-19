@@ -83,7 +83,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
   def showTaxYears(origin: Option[String] = None): Action[AnyContent] =
     authActions.asMTDIndividual().async { implicit user =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.show(origin).url,
+        backUrl = hub.controllers.routes.HomeController.show(origin).url,
         isAgent = false,
         origin = origin
       )
@@ -93,7 +93,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
     authActions.asMTDPrimaryAgent().async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = controllers.routes.HomeController.showAgent().url,
+          backUrl = hub.controllers.routes.HomeController.showAgent().url,
           isAgent = true
         )
     }

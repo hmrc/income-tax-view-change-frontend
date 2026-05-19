@@ -16,7 +16,7 @@
 
 package utils
 
-import controllers.routes._
+import hub.controllers.routes._
 import financials.controllers.routes as financialsRoutes
 import returns.controllers.routes as returnsRoutes
 import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}

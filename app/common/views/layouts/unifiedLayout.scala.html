@@ -104,8 +104,8 @@
         }
     }
 
-    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
-        else controllers.routes.HomeController.show().url
+    val serviceUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+        else hub.controllers.routes.HomeController.show().url
 
     if(useGovUkRebrand) {
         val navBar = btaAndPtaServiceNavigation match {

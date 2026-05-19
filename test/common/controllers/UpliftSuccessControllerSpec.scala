@@ -98,7 +98,7 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
         whenReady(result) { response =>
           verifyAudit(expectedIvOutcomeSuccessAuditModel)
           response.header.status shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+          redirectLocation(result) shouldBe Some(hub.controllers.routes.HomeController.show().url)
         }
 
       }

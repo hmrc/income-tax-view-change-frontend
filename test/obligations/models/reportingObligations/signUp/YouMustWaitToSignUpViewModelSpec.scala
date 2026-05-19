@@ -27,7 +27,7 @@ class YouMustWaitToSignUpViewModelSpec extends UnitSpec {
   "YouMustWaitToSignUpViewModel" should {
     "have the correct back URL" in {
       val viewModel = YouMustWaitToSignUpViewModel(testDate)
-      viewModel.backUrl shouldBe controllers.routes.HomeController.show().url
+      viewModel.backUrl shouldBe hub.controllers.routes.HomeController.show().url
     }
 
     "have the correct next tax year" in {

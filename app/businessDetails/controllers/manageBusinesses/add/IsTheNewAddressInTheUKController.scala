@@ -56,7 +56,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       if isEnabled(OverseasBusinessAddress) then
         handleRequest(isAgent, mode, isTriggeredMigration)
       else
-        Future.successful(Redirect(controllers.routes.HomeController.show().url))
+        Future.successful(Redirect(hub.controllers.routes.HomeController.show().url))
   }
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {

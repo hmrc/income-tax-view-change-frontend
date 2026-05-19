@@ -28,7 +28,7 @@ class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
                                        languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
 
 
-  override def fallbackURL: String = controllers.routes.HomeController.show().url
+  override def fallbackURL: String = hub.controllers.routes.HomeController.show().url
 
   val english: Lang = Lang("en")
   val welsh: Lang = Lang("cy")

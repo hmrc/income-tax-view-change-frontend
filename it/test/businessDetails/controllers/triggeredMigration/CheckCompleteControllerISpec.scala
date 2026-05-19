@@ -64,8 +64,8 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
     val homePageUrl: String =
-      if(mtdRole == MTDIndividual) controllers.routes.HomeController.show().url
-      else controllers.routes.HomeController.showAgent().url
+      if(mtdRole == MTDIndividual) hub.controllers.routes.HomeController.show().url
+      else hub.controllers.routes.HomeController.showAgent().url
 
     s"GET $path" when {
       s"user is $mtdRole" should {

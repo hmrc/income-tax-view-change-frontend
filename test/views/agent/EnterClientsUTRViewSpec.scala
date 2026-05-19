@@ -16,11 +16,11 @@
 
 package views.agent
 
-import forms.agent.ClientsUTRForm
+import hub.forms.agent.ClientsUTRForm
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.agent.EnterClientsUTRView
+import hub.views.html.agent.EnterClientsUTRView
 
 class EnterClientsUTRViewSpec extends ViewSpec {
 

@@ -116,8 +116,8 @@ class AmendablePoaControllerViewSpec extends TestSupport {
     claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(isAgent).url
 
   def getCancelLinkUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent()
-    else         controllers.routes.HomeController.show()
+    if (isAgent) hub.controllers.routes.HomeController.showAgent()
+    else         hub.controllers.routes.HomeController.show()
   }.url
 
   executeTest(isAgent = true)

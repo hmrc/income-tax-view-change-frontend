@@ -112,8 +112,8 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
   }
 
   lazy val homeUrl: Boolean => String = isAgent => if (isAgent) {
-    controllers.routes.HomeController.showAgent().url
+    hub.controllers.routes.HomeController.showAgent().url
   } else {
-    controllers.routes.HomeController.show().url
+    hub.controllers.routes.HomeController.show().url
   }
 }

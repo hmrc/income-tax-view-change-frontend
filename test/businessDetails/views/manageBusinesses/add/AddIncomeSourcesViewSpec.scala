@@ -28,8 +28,8 @@ import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
 
 class AddIncomeSourcesViewSpec extends TestSupport {
   val addIncomeSources: AddIncomeSourcesView = app.injector.instanceOf[AddIncomeSourcesView]
-  val backUrl: String = controllers.routes.HomeController.show().url
-  val backUrlAgent: String = controllers.routes.HomeController.showAgent().url
+  val backUrl: String = hub.controllers.routes.HomeController.show().url
+  val backUrlAgent: String = hub.controllers.routes.HomeController.showAgent().url
 
 
   val viewModelMax: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(

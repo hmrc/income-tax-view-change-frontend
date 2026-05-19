@@ -36,6 +36,6 @@ class UpliftSuccessController @Inject()(authActions: AuthActions,
   def success(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       auditingService.audit(IvOutcomeSuccessAuditModel(user.nino))
-      Future.successful(Redirect(controllers.routes.HomeController.show().url))
+      Future.successful(Redirect(hub.controllers.routes.HomeController.show().url))
   }
 }

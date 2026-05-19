@@ -60,7 +60,7 @@ class NextUpdatesController @Inject()(
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       action
     } else {
-      Future.successful(Ok(noNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
+      Future.successful(Ok(noNextUpdatesView(backUrl = hub.controllers.routes.HomeController.show(origin).url)))
     }
   }
 
@@ -118,7 +118,7 @@ class NextUpdatesController @Inject()(
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     getNextUpdates(
-      backUrl = controllers.routes.HomeController.show(origin),
+      backUrl = hub.controllers.routes.HomeController.show(origin),
       isAgent = false,
       errorHandler = itvcErrorHandler,
       origin = origin
@@ -128,7 +128,7 @@ class NextUpdatesController @Inject()(
   def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       getNextUpdates(
-        backUrl = controllers.routes.HomeController.showAgent(),
+        backUrl = hub.controllers.routes.HomeController.showAgent(),
         isAgent = true,
         errorHandler = agentItvcErrorHandler,
         origin = None

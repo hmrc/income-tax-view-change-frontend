@@ -71,9 +71,9 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
       withTriggeredMigrationFS {
 
         if (isAgent) {
-          Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
+          Future.successful(Redirect(hub.controllers.routes.HomeController.showAgent()))
         } else {
-          Future.successful(Redirect(controllers.routes.HomeController.show()))
+          Future.successful(Redirect(hub.controllers.routes.HomeController.show()))
         }
       }
     }

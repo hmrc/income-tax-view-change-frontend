@@ -17,7 +17,7 @@
 package views.partials.paymentAllocations.newHome
 
 import testUtils.TestSupport
-import views.html.partials.newHome.NewHomeNavigation
+import hub.views.html.partials.newHome.NewHomeNavigation
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements

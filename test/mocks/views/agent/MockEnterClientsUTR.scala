@@ -20,7 +20,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
-import views.html.agent.EnterClientsUTRView
+import hub.views.html.agent.EnterClientsUTRView
 
 trait MockEnterClientsUTR extends BeforeAndAfterEach {
   self: Suite =>
