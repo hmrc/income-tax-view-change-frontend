@@ -63,7 +63,7 @@
         @MoneyInAccountCreditExplanation(viewModel)
 
         @if(viewModel.creditRows.length > 0){
-            @whereMoneyCameFromTable(viewModel, user.isAgent)
+            @whereMoneyCameFromTable(viewModel)
         } else {}
 
         @ClaimRefundButton()

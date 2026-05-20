@@ -60,7 +60,7 @@
 
         @if(viewModel.hasAvailableCredit) {
             @if(viewModel.hasAllocatedCredit) {
-                @reservedContent(viewModel, user.isAgent)
+                @reservedContent(viewModel)
             }
             @howMuchCanIClaim(viewModel)
         }

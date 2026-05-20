@@ -85,7 +85,6 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
 
         Ok(paymentHistoryView(
           backUrl = backUrl,
-          isAgent = isAgent,
           saUtr = user.saUtr,
           viewModel = viewModel,
           btaNavPartial = user.btaNavPartial,

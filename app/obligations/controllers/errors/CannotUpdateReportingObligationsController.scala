@@ -17,6 +17,8 @@
 package obligations.controllers.errors
 
 import com.google.inject.{Inject, Singleton}
+import common.auth.AuthActions
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import obligations.views.html.errorPages.CannotUpdateReportingObligations
@@ -24,9 +26,10 @@ import obligations.views.html.errorPages.CannotUpdateReportingObligations
 import scala.concurrent.Future
 
 @Singleton
-class CannotUpdateReportingObligationsController @Inject()(cannotUpdateReportingObligations: CannotUpdateReportingObligations)
-                                                          (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) {
-  def show(isAgent: Boolean): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(cannotUpdateReportingObligations(isAgent)))
+class CannotUpdateReportingObligationsController @Inject()(cannotUpdateReportingObligations: CannotUpdateReportingObligations,
+                                                           authActions: AuthActions)
+                                                          (implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
+  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+    Future.successful(Ok(cannotUpdateReportingObligations()))
   }
 }

@@ -72,8 +72,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                       paymentHistoryRefundsEnabled = true,
                       backUrl, user.saUtr,
                       btaNavPartial = user.btaNavPartial,
-                      serviceNavigationPartial = user.serviceNavigationPartial,
-                      isAgent = user.isAgent))
+                      serviceNavigationPartial = user.serviceNavigationPartial))
               }
             case None => {
               Logger("application").error(s"No repayment details returned")
