@@ -58,7 +58,6 @@ class CheckYourAnswersController @Inject()(val authActions: AuthActions,
             EitherT.rightT(
               Ok(
                 checkYourAnswers(
-                  isAgent = user.isAgent,
                   poaReason = reason,
                   taxYear = poa.taxYear,
                   adjustedFirstPoaAmount = amount,
