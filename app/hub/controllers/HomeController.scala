@@ -289,7 +289,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         chargeItem = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
       }
       yield {
-        Ok(newHomeOverviewView(origin, isAgent, user.isSupportingAgent, dateService.getCurrentTaxYear,
+        Ok(newHomeOverviewView(origin, user.isSupportingAgent, dateService.getCurrentTaxYear,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
           appConfig.itvcRebrand, isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence)))
@@ -299,7 +299,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
 
   def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      Future.successful(Ok(newHomeHelpView(origin, isAgent, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand, isEnabled(RecentActivity))))
+      Future.successful(Ok(newHomeHelpView(origin, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand, isEnabled(RecentActivity))))
   }
 
   private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {

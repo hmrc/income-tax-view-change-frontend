@@ -53,7 +53,7 @@ viewModel: HomePageViewModel
 @tiles() = {
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @paymentsTile(viewModel, false)
+            @paymentsTile(viewModel)
             @updatesTile(viewModel.nextUpdatesTileViewModel, false, viewModel.origin)
         </div>
     </div>
@@ -61,7 +61,7 @@ viewModel: HomePageViewModel
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
             @paymentHistoryTile(viewModel, false)
-            @returnsTile(viewModel, false)
+            @returnsTile(viewModel)
         </div>
     </div>
 

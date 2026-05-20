@@ -36,7 +36,6 @@
 )
 
 @(origin: Option[String] = None,
-        isAgent: Boolean,
         yourTasksUrl: String,
         recentActivityUrl: String,
         overViewUrl: String,
@@ -46,7 +45,7 @@
 )(implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @pageHeading = @{
-    if (isAgent) {
+    if (user.isAgent) {
         user.optClientNameAsString.fold(messages("home.agent.heading")) {
             clientName => messages("home.agent.headingWithClientName", clientName)
         }
@@ -56,7 +55,7 @@
 @caption = @{
     if (user.usersRole == MTDSupportingAgent) {
         messages("home.agent.supporting.caption")
-    } else if (isAgent) {
+    } else if (user.isAgent) {
         messages("home.agent.primary.caption")
     } else {
         user.userName.fold("")(_.name.getOrElse(""))
@@ -64,7 +63,7 @@
 }
 
 @mainTemplate(
-    pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
+    pageTitle = if (user.isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
@@ -102,7 +101,7 @@
         openInNewTab = true
     )
 
-    @if(!isAgent) {
+    @if(!user.isAgent) {
         @overviewCard(
             messages("home.help.link.selfAssessment.payTaxBill"),
             appConfig.paySelfAssessmentBillLink,
@@ -116,7 +115,7 @@
         openInNewTab = true
     )
 
-    @if(!isAgent) {
+    @if(!user.isAgent) {
         @overviewCard(
             messages("home.help.link.taxSupport.getHelp"),
             appConfig.strugglingToPayTaxLink,
