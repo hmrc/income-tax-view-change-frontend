@@ -191,12 +191,10 @@
     }
 
     @paymentsMadeContent(
-        isAgent = user.isAgent,
         origin = origin,
         viewModel = viewModel)
 
     @saNoteParagraph(utr = viewModel.utr,
-        isAgent = user.isAgent,
         claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
         selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl,
         adjustPoaUrl = viewModel.adjustPoaUrl,
