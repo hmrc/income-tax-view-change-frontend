@@ -34,7 +34,7 @@ import views.html.WhatYouOweView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
-import controllers.routes as appRoutes
+import hub.controllers.routes as appRoutes
 import returns.controllers.routes as returnsRoutes
 
 
@@ -73,7 +73,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.show(origin).url,
+        backUrl = hub.controllers.routes.HomeController.show(origin).url,
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
         origin = origin

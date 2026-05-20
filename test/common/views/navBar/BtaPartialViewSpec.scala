@@ -45,7 +45,7 @@ class BtaPartialViewSpec extends TestSupport {
 
       lazy val homeButton = document.getElementById("it-quarterly-reporting-home-button")
 
-      s"has the correct link to '${controllers.routes.HomeController.show().url}'" in {
+      s"has the correct link to '${hub.controllers.routes.HomeController.show().url}'" in {
         homeButton.attr("href") shouldBe appConfig.homePageUrl
       }
 

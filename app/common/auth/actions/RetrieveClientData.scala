@@ -22,7 +22,7 @@ import common.models.auth.{AgentClientDetails, AuthorisedAgentWithClientDetailsR
 import common.services.SessionDataService
 import common.services.agent.ClientDetailsService
 import common.utils.sessionUtils.SessionKeys
-import controllers.agent.routes
+import hub.controllers.agent.routes
 import models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import play.api.Logger
 import play.api.mvc.Results.Redirect

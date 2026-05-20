@@ -288,65 +288,65 @@
             viewModel.totalPensionSavingsTaxCharges.isDefined ||
             viewModel.statePensionLumpSumCharges.isDefined ||
             viewModel.giftAidTaxChargeWhereBasicRateDiffers.isDefined ||
-            viewModel.highIncomeChildBenefitCharge.isDefined
+            viewModel.highIncomeChildBenefitCharge.isDefined ||
+            viewModel.winterFuelPaymentCharge.isDefined
     ) {
         <table class="govuk-table" id="additional-charges-table">
             <caption
             id = "additional_charges" class="govuk-table__caption govuk-heading-l">@messages("taxCal_breakdown.additional_charges")
             </caption>
 
-
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header bold">@messages("taxCal_breakdown.table.head.charge_type")</th>
                 <th scope="col" class="govuk-table__header govuk-table__header--numeric bold">@messages("taxCal_breakdown.table.amount")</th>
             </tr>
 
+            <tbody class="govuk-table__body">
+                @viewModel.giftAidTax.map { amount =>
+                    <tr>
+                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.giftAidTax")</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                            amount.toCurrency
+                        }</td>
+                    </tr>
+                }
 
-            <tbody class="govuk-table__body">
-            @viewModel.giftAidTax.map { amount =>
-                <tr>
-                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.giftAidTax")</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                        amount.toCurrency
-                    }</td>
-                </tr>
-            }
-            </tbody>
-            <tbody class="govuk-table__body">
-            @viewModel.totalPensionSavingsTaxCharges.map { amount =>
-                <tr>
-                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.totalPensionSavingsTaxCharges")</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                        amount.toCurrency
-                    }</td>
-                </tr>
-            }
-            </tbody>
-            <tbody class="govuk-table__body">
-            @viewModel.statePensionLumpSumCharges.map { amount =>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.statePensionLumpSumCharges")</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
-                        amount.toCurrency
-                    }</td>
-                </tr>
-            }
-            </tbody>
-            <tbody class="govuk-table__body">
-            @viewModel.giftAidTaxChargeWhereBasicRateDiffers.map { amount =>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell">@messages("taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers")</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">@amount.toCurrency</td>
-                </tr>
-            }
-            </tbody>
+                @viewModel.totalPensionSavingsTaxCharges.map { amount =>
+                    <tr>
+                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.totalPensionSavingsTaxCharges")</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                            amount.toCurrency
+                        }</td>
+                    </tr>
+                }
 
-            <tbody class="govuk-table__body">
+                @viewModel.statePensionLumpSumCharges.map { amount =>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.statePensionLumpSumCharges")</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                            amount.toCurrency
+                        }</td>
+                    </tr>
+                }
+                @viewModel.giftAidTaxChargeWhereBasicRateDiffers.map { amount =>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers")</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@amount.toCurrency</td>
+                    </tr>
+                }
+
                 @viewModel.highIncomeChildBenefitCharge.map { amount =>
                   <tr class="govuk-table__row">
                       <td class="govuk-table__cell">@messages("taxCal_breakdown.table.highIncomeChildBenefitCharge")</td>
                       <td class="govuk-table__cell govuk-table__cell--numeric">@amount.highIncomeChildBenefitCharge.toCurrency</td>
                   </tr>
+                }
+
+                @viewModel.winterFuelPaymentCharge.map { amount =>
+                    <tr>
+                        <td class="govuk-table__cell">@messages("taxCal_breakdown.table.winterFuelPaymentCharge")</td>
+                        <td class="govuk-table__cell govuk-table__cell--numeric">@{amount.toCurrency}</td>
+                    </tr>
                 }
             </tbody>
         </table>

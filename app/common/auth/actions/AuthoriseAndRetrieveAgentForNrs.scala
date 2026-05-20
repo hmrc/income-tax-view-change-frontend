@@ -126,6 +126,6 @@ class AuthoriseAndRetrieveAgentForNrs @Inject()(val authorisedFunctions: Fronten
     case _ ~ _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ ~ _ ~ _ ~ _ ~ _ ~
       _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ =>
       logger.error(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
+      Future.successful(Left(Redirect(hub.controllers.routes.HomeController.show())))
   }
 }

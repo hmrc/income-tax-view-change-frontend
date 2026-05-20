@@ -46,10 +46,11 @@ import play.twirl.api.Html
 import services.CreditService
 import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.HomeView
-import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
-import views.html.helpers.injected.home.YourReportingObligationsTile
-import views.html.newHomePage.*
+import hub.controllers.HomeController
+import hub.views.html.HomeView
+import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import hub.views.html.helpers.injected.home.YourReportingObligationsTile
+import hub.views.html.newHomePage.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -138,7 +139,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
         status(result) shouldBe Status.SEE_OTHER
 
-        await(result) shouldBe Redirect(controllers.newHomePage.routes.HandleYourTasksController.show().url)
+        await(result) shouldBe Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.show().url)
       }
     }
     "an authenticated user" should {

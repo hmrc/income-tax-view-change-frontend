@@ -81,7 +81,7 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
       logger.error(s"missing agent reference. Redirect to agent error page.")
       Future.successful(Left(Redirect(InternalUrlHelper.agentErrorCall)))
     case authorisationException: AuthorisationException =>
-      logger.error(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
+      logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
       Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
     // No catch-all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
@@ -109,6 +109,6 @@ class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAutho
     implicit @unused request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
       logger.error(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(controllers.routes.HomeController.show())))
+      Future.successful(Left(Redirect(hub.controllers.routes.HomeController.show())))
   }
 }

@@ -1,0 +1,110 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.views.html.components._
+@import views.html.components.home_tile
+@import java.time.LocalDate
+@import _root_.implicits.ImplicitDateFormatterImpl
+@import hub.models.homePage.NextUpdatesTileViewModel
+@import models.itsaStatus.ITSAStatus
+@import common.views.html.layouts.unifiedLayout
+@import obligations.controllers.{routes => obligationsRoutes}
+
+
+@this(
+    home_tile: home_tile,
+    implicitDateFormatter: ImplicitDateFormatterImpl,
+    p: p,
+    link: link
+)
+
+@(nextUpdatesTileViewModel: NextUpdatesTileViewModel, isAgent: Boolean, optOrigin: Option[String] = None)(implicit messages: Messages)
+
+@import implicitDateFormatter.longDate
+
+@nextUpdatesControllerURL = @{
+    if(isAgent) {
+        obligationsRoutes.NextUpdatesController.showAgent().url
+    } else {
+        obligationsRoutes.NextUpdatesController.show(optOrigin).url
+    }
+}
+
+@nextUpdatesLink = @{
+    link(
+        link = nextUpdatesControllerURL,
+        messageKey = "home.updates.view.reportingFrequency"
+    )
+}
+
+@updatesTileHeading = @{
+    messages("home.updates.R17.heading")
+}
+
+@updatesTileContentUpdatesDue0 = {
+    @nextUpdatesTileViewModel.getNextDeadline.map(_.toLongDate)
+}
+
+@updatesTileContentUpdatesDue1 = {
+    <span class="govuk-tag govuk-tag--red">@{messages("taxYears.overdue")}</span>
+    @nextUpdatesTileViewModel.getNextDeadline.map(_.toLongDate)
+}
+
+@updatesTileContentUpdatesDueMany = {
+    <span class="govuk-tag govuk-tag--red">@{messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)}</span>
+}
+
+@overdueUpdatesTag = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser) {
+        @nextUpdatesTileViewModel.getNumberOfOverdueObligations match {
+            case 0 => {}
+            case 1 => {
+                @p() {<span class="govuk-tag govuk-tag--red">@messages("taxYears.overdue")</span>}
+            }
+            case _ => {
+                @p() {<span class="govuk-tag govuk-tag--red">@messages("home.updates.overdue.updates", nextUpdatesTileViewModel.getNumberOfOverdueObligations)</span>}
+            }
+        }
+    }
+}
+
+@nextQuarterlyUpdateDueDate = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser) {
+        @nextUpdatesTileViewModel.nextQuarterlyUpdateDueDate.map { date =>
+          @p() {@messages("home.updates.R17.nextUpdateDue", date.toLongDate)}
+        }
+    }
+}
+
+@nextTaxReturnDueDate = {
+    @if(nextUpdatesTileViewModel.isQuarterlyUser || nextUpdatesTileViewModel.isAnnualUser) {
+        @nextUpdatesTileViewModel.nextTaxReturnDueDate.map { date =>
+          @p() {@messages("home.updates.R17.nextTaxReturnDue", date.toLongDate)}
+        }
+    }
+}
+
+@home_tile("updates-tile", updatesTileHeading) {
+    @if(nextUpdatesTileViewModel.showNextUpdatesTileContent) {
+        @overdueUpdatesTag
+        @nextQuarterlyUpdateDueDate
+        @nextTaxReturnDueDate
+    }
+
+    @p(classes = "govuk-!-margin-bottom-4") {
+        @nextUpdatesLink
+    }
+}

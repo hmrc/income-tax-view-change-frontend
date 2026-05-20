@@ -47,8 +47,8 @@ trait ReportingObligationsUtils extends FeatureSwitching {
 
   private def redirectHome(userType: Option[AffinityGroup]): Future[Result] =
     userType match {
-      case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-      case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+      case Some(Agent) => Future.successful(Redirect(hub.controllers.routes.HomeController.showAgent()))
+      case _ => Future.successful(Redirect(hub.controllers.routes.HomeController.show()))
     }
 
   protected def redirectReportingFrequency(userType: Option[AffinityGroup]): Future[Result] =

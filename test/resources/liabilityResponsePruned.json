@@ -147,6 +147,7 @@
     },
     "taxCalculation": {
       "incomeTax": {
+        "winterFuelPaymentCharge": 500.99,
         "totalIncomeReceivedFromAllSources": 12500,
         "totalAllowancesAndDeductions": 12500,
         "totalTaxableIncome": 12500,

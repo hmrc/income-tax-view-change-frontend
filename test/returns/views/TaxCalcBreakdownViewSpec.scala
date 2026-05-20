@@ -428,6 +428,7 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       lazy val viewTopSlicingRelief = taxCalcBreakdown(taxDueSummaryViewModelTopSlicingRelief, taxYear, backUrl)
       lazy val viewAdChGiftAid = taxCalcBreakdown(taxDueSummaryViewModelGiftAid, taxYear, backUrl)
       lazy val viewAdChPensionLumpSum = taxCalcBreakdown(taxDueSummaryViewModelPensionLumpSum, taxYear, backUrl)
+      lazy val viewAdChWinterFuelPaymentCharge = taxCalcBreakdown(taxDueSummaryViewModelWinterFuelPayment, taxYear, backUrl)
       lazy val viewAdChPensionSavings = taxCalcBreakdown(taxDueSummaryViewModelPensionSavings, taxYear, backUrl)
       lazy val zeroIncome = taxCalcBreakdown(taxDueSummaryViewModelZeroIncome, taxYear, backUrl)
 
@@ -627,8 +628,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       "have an additional charges table" which {
         val tableNumber = 7
 
-        "has all four table rows" in new Setup(view) {
-          pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, 4)
+        "has all five table rows" in new Setup(view) {
+          pageContent(pageContentSelector) hasTableWithCorrectSize(tableNumber, 5)
         }
 
         "has the correct heading" in new Setup(view) {
@@ -659,6 +660,13 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
           row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.statePensionLumpSumCharges")
+          row.select("td").last().text() shouldBe "£5,000.00"
+        }
+
+        "has only a Winter Fuel Payment Line with the correct heading and table" in new Setup(viewAdChWinterFuelPaymentCharge) {
+          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
+          val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
+          row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.winterFuelPaymentCharge")
           row.select("td").last().text() shouldBe "£5,000.00"
         }
 

@@ -22,7 +22,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import models.admin.FeatureSwitch
 import models.creditsandrefunds.CreditsModel
-import models.homePage.*
+import hub.models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -35,7 +35,7 @@ import play.twirl.api.HtmlFormat
 import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
-import views.html.HomeView
+import hub.views.html.HomeView
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

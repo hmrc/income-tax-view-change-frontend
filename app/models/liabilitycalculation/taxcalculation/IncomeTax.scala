@@ -36,7 +36,8 @@ case class IncomeTax(
                       totalAnnuityPaymentsTaxCharged: Option[BigDecimal] = None,
                       totalRoyaltyPaymentsTaxCharged: Option[BigDecimal] = None,
                       giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
-                      incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None
+                      incomeTaxChargedOnTransitionProfits: Option[BigDecimal] = None,
+                      winterFuelPaymentCharge: Option[BigDecimal] = None
                     )
 object IncomeTax {
   implicit val format: OFormat[IncomeTax] = Json.format[IncomeTax]

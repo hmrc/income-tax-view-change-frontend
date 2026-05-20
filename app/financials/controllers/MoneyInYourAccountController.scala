@@ -59,7 +59,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.HomeController.show(origin).url,
+          backUrl = hub.controllers.routes.HomeController.show(origin).url,
           isAgent = user.isAgent
         ) recover logAndRedirect
     }
@@ -80,7 +80,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent() async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = controllers.routes.HomeController.showAgent().url,
+          backUrl = hub.controllers.routes.HomeController.showAgent().url,
           isAgent = mtdItUser.isAgent
         ) recover logAndRedirect
     }

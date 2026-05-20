@@ -126,7 +126,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   private def isItsaStatusVoluntaryOrMandated()(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Result, Boolean]] = {
     def redirectBasedOnUser: Future[Either[Result, Boolean]] =
-      Future(Left(if (user.isAgent) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
+      Future(Left(if (user.isAgent) Redirect(hub.controllers.routes.HomeController.showAgent()) else Redirect(hub.controllers.routes.HomeController.show())))
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
       itsaStatusList =>
@@ -172,9 +172,9 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   private def redirectToHome(isAgent: Boolean): Result = {
     if (isAgent) {
-      Redirect(controllers.routes.HomeController.showAgent())
+      Redirect(hub.controllers.routes.HomeController.showAgent())
     } else {
-      Redirect(controllers.routes.HomeController.show())
+      Redirect(hub.controllers.routes.HomeController.show())
     }
   }
 

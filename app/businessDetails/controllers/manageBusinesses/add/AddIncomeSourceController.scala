@@ -46,8 +46,8 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
                                           val mcc: MessagesControllerComponents) extends FrontendController(mcc)
   with I18nSupport with IncomeSourcesUtils {
 
-  private lazy val homePageCall: Call = controllers.routes.HomeController.show()
-  private lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent()
+  private lazy val homePageCall: Call = hub.controllers.routes.HomeController.show()
+  private lazy val homePageCallAgent: Call = hub.controllers.routes.HomeController.showAgent()
 
   def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
@@ -55,7 +55,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
         isAgent = false,
         homePageCall = homePageCall,
         sources = user.incomeSources,
-        backUrl = controllers.routes.HomeController.show().url
+        backUrl = hub.controllers.routes.HomeController.show().url
       )(implicitly, itvcErrorHandler)
   }
 
@@ -65,7 +65,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
         isAgent = true,
         homePageCall = homePageCallAgent,
         sources = mtdItUser.incomeSources,
-        backUrl = controllers.routes.HomeController.showAgent().url
+        backUrl = hub.controllers.routes.HomeController.showAgent().url
       )(implicitly, itvcErrorHandlerAgent)
 
   }
