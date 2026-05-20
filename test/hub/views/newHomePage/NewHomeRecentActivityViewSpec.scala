@@ -41,7 +41,6 @@ class NewHomeRecentActivityViewSpec extends TestSupport with FeatureSwitching wi
     val testMessages: Messages = messages
 
     lazy val page = newHomeRecentActivityView(
-      isAgent = isAgent,
       yourTasksUrl = "/tasksUrl",
       recentActivityUrl = "/recentActivityUrl",
       overviewUrl = "/overviewUrl",
