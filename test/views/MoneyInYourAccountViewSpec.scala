@@ -57,14 +57,14 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
     }
 
     val testUrl = "testUrl"
+    val testUser = if (isAgent) agentUserConfirmedClient() else individualUser
 
     val viewModel: MoneyInYourAccountViewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditAndRefundModel, testUrl)
 
     lazy val page: HtmlFormat.Appendable =
       moneyInYourAccountView(
         viewModel,
-        isAgent = isAgent,
-        backUrl)(FakeRequest(), implicitly, testMessages)
+        backUrl)(FakeRequest(), testUser, testMessages)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }
