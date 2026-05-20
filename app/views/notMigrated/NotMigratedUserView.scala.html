@@ -27,19 +27,18 @@
     p: p)
 
 
-@(isAgent: Boolean,
-        backUrl: String)(
+@(backUrl: String)(
         implicit messages: Messages,
         user: common.auth.MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("notmigrated.user.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
-    @if(isAgent) {
+    @if(user.isAgent) {
         <div class="grid-row">
             <div class="column-two-thirds">
                 @h1(messages("notmigrated.user.heading"))
