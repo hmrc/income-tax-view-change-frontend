@@ -30,12 +30,12 @@
     orderedNumberList: orderedNumberList
 )
 
-@(isAgent: Boolean, buttonUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(buttonUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("noIncomeSources.error.title"),
     backUrl = Some("#"),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
