@@ -42,7 +42,7 @@
         appConfig: FrontendAppConfig
 )
 
-@(isAgent: Boolean, viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
     
@@ -300,7 +300,7 @@
 }
 
 @taxYearSummaryLink = @{
-    if (isAgent) {
+    if (user.isAgent) {
         returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
     } else {
         returns.controllers.routes.TaxYearsController.showTaxYears().url
