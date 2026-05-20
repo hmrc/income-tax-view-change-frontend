@@ -129,6 +129,7 @@ object NewCalcBreakdownUnitTestConstants {
         totalStateBenefitsIncomeExcStatePensionLumpSum = Some(9000.99))),
       taxCalculation = Some(TaxCalculation(
         incomeTax = IncomeTax(
+          winterFuelPaymentCharge = Some(500.99),
           totalIncomeReceivedFromAllSources = 12500,
           totalAllowancesAndDeductions = 12500,
           totalTaxableIncome = 12500,
@@ -692,6 +693,7 @@ object NewCalcBreakdownUnitTestConstants {
     class2VoluntaryContributions = true,
     class2NicsAmount = Some(10000),
     giftAidTax = Some(5000),
+    winterFuelPaymentCharge = Some(500.99),
     totalPensionSavingsTaxCharges = Some(5000),
     statePensionLumpSumCharges = Some(5000),
     totalStudentLoansRepaymentAmount = Some(5000),
@@ -905,6 +907,10 @@ object NewCalcBreakdownUnitTestConstants {
 
   val taxDueSummaryViewModelPensionLumpSum = TaxDueSummaryViewModel(
     statePensionLumpSumCharges = Some(5000)
+  )
+
+  val taxDueSummaryViewModelWinterFuelPayment = TaxDueSummaryViewModel(
+    winterFuelPaymentCharge = Some(5000)
   )
 
   val taxDueSummaryViewModelPensionSavings = TaxDueSummaryViewModel(

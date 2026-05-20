@@ -61,8 +61,8 @@ case class TaxDueSummaryViewModel(
                                    giftAidTaxChargeWhereBasicRateDiffers: Option[BigDecimal] = None,
                                    finalDeclarationOrTaxReturnIsSubmitted: Boolean = false,
                                    transitionProfitRow: Option[TransitionProfitRow] = None,
-                                   highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None
-
+                                   highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None,
+                                   winterFuelPaymentCharge: Option[BigDecimal] = None
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -149,8 +149,8 @@ object TaxDueSummaryViewModel {
             hicbc.rate,
             hicbc.highIncomeChildBenefitCharge
           )}
-        )
-
+        ),
+        winterFuelPaymentCharge = calc.taxCalculation.flatMap(tc => tc.incomeTax.winterFuelPaymentCharge)
       )
       case None => TaxDueSummaryViewModel()
     }

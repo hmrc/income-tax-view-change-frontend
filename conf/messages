@@ -857,6 +857,7 @@ taxCal_breakdown.table.cgt.due                                      = Capital Ga
 taxCal_breakdown.table.cgt.overpaid                                 = Capital Gains Tax calculated as overpaid
 
 taxCal_breakdown.table.giftAidTax                                            = Gift Aid tax charge
+taxCal_breakdown.table.winterFuelPaymentCharge                               = Winter fuel payment charge
 taxCal_breakdown.table.totalPensionSavingsTaxCharges                         = Total pension saving charges
 taxCal_breakdown.table.statePensionLumpSumCharges                            = State pension lump sum
 taxCal_breakdown.table.other_charges                                         = Other charges
