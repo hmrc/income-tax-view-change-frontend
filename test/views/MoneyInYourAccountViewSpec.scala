@@ -16,6 +16,7 @@
 
 package views
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
@@ -57,7 +58,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
     }
 
     val testUrl = "testUrl"
-    val testUser = if (isAgent) agentUserConfirmedClient() else individualUser
+    val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
 
     val viewModel: MoneyInYourAccountViewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditAndRefundModel, testUrl)
 

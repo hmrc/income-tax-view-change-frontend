@@ -55,7 +55,7 @@ class ConfirmationForAdjustingPoaController @Inject()(val authActions: AuthActio
           case Some(value) =>
             val isAmountZero: Boolean = value.equals(BigDecimal(0))
             val viewModel = ConfirmationForAdjustingPoaViewModel(poa.taxYear, isAmountZero)
-            EitherT.rightT(Ok(view(user.isAgent, viewModel)))
+            EitherT.rightT(Ok(view(viewModel)))
           case None =>
 
             EitherT.rightT(logAndRedirect(s"Error, New PoA Amount was not found in session"))

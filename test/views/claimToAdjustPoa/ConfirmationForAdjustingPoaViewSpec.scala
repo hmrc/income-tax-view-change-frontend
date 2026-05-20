@@ -16,6 +16,7 @@
 
 package views.claimToAdjustPoa
 
+import common.auth.MtdItUser
 import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -36,8 +37,9 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
   val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
   class Setup(isAgent: Boolean, isAmountZero: Boolean) {
+    val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
     val viewModel: ConfirmationForAdjustingPoaViewModel = ConfirmationForAdjustingPoaViewModel(TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAmountZero)
-    val view: Html = confirmationForAdjustingPoaView(isAgent = isAgent, viewModel)
+    val view: Html = confirmationForAdjustingPoaView(viewModel)(implicitly, testUser, testUser)
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements: Elements = groupButton.first().children()

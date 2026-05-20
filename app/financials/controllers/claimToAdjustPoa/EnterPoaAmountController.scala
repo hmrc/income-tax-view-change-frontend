@@ -56,7 +56,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
               val filledForm = session.newPoaAmount.fold(EnterPoaAmountForm.form)(value =>
                 EnterPoaAmountForm.form.fill(EnterPoaAmountForm(value))
               )
-              Ok(view(filledForm, viewModel, user.isAgent, routes.EnterPoaAmountController.submit(user.isAgent, mode)))
+              Ok(view(filledForm, viewModel, routes.EnterPoaAmountController.submit(user.isAgent, mode)))
             case Left(ex) =>
               logAndRedirect(s"Error while retrieving charge history details : ${ex.getMessage} - ${ex.getCause}")
           }
@@ -76,7 +76,7 @@ class EnterPoaAmountController @Inject()(val authActions: AuthActions,
   def handleForm(viewModel: PaymentOnAccountViewModel, mode: Mode)(implicit user: MtdItUser[_]): Future[Result] = {
     EnterPoaAmountForm.checkValueConstraints(EnterPoaAmountForm.form.bindFromRequest(), viewModel.totalAmountOne, viewModel.relevantAmountOne).fold(
       formWithErrors =>
-        Future.successful(BadRequest(view(formWithErrors, viewModel, user.isAgent, routes.EnterPoaAmountController.submit(user.isAgent, mode)))),
+        Future.successful(BadRequest(view(formWithErrors, viewModel, routes.EnterPoaAmountController.submit(user.isAgent, mode)))),
       validForm =>
         poaSessionService.setNewPoaAmount(validForm.amount).flatMap {
           case Left(ex) =>
