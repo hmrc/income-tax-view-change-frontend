@@ -22,7 +22,7 @@ import play.twirl.api.Html
 import testUtils.ViewSpec
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 
 import java.time.LocalDate
 

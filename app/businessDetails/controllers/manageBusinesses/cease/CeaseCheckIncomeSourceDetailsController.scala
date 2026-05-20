@@ -18,13 +18,10 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import businessDetails.enums.TriggeredMigration.TriggeredMigrationCeased
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.BeforeSubmissionPage
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import play.api.Logger
@@ -35,6 +32,9 @@ import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceD
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.enums.TriggeredMigration.TriggeredMigrationCeased
 import common.services.{AuditingService, SessionService}
 
 import java.time.LocalDate

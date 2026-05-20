@@ -16,9 +16,9 @@
 
 package models.incomeSourceDetails
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
+import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import common.auth.MtdItUser
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.services.DateServiceInterface
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{IncomeSourceId, IncomeSourceIdHash}

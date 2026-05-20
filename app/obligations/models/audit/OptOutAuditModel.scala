@@ -17,6 +17,8 @@
 package obligations.models.audit
 
 import common.auth.MtdItUser
+import common.enums.{AuditType, TransactionName}
+import common.enums.AuditType.OptOutQuarterlyReportingRequest
 import common.models.audit.ExtendedAuditModel
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -55,9 +57,9 @@ case class OptOutAuditModel(
                              `currentYear-1Crystallised`: Boolean
                            ) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
+  override val transactionName: String = TransactionName.OptOutQuarterlyReportingRequest
 
-  override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
+  override val auditType: String = OptOutQuarterlyReportingRequest
 
   override val detail: JsValue = Json.toJson(this)
 }
@@ -81,9 +83,9 @@ case class OptOutCompleteAuditModel(
                                      `currentYear-1Crystallised`: Boolean
                                    ) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.OptOutQuarterlyReportingRequest
+  override val transactionName: String = TransactionName.OptOutQuarterlyReportingRequest
 
-  override val auditType: String = enums.AuditType.OptOutQuarterlyReportingRequest
+  override val auditType: String = AuditType.OptOutQuarterlyReportingRequest
 
   override val detail: JsValue = Json.toJson(this)
 }

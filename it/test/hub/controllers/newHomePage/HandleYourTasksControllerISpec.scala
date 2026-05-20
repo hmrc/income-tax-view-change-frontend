@@ -17,9 +17,9 @@
 package hub.controllers.newHomePage
 
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.WiremockHelper
 import enums.ChargeType.ITSA_NI
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import helpers.servicemocks.IncomeTaxViewChangeStub

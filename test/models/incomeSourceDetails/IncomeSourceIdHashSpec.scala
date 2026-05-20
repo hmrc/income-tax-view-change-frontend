@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails
 
-import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
+import common.exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 import models.core.{IncomeSourceId, IncomeSourceIdHash}

@@ -16,8 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{MTDIndividual, MTDUserRole}
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{CheckMode, Mode, NormalMode}
@@ -37,8 +35,10 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesA
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}

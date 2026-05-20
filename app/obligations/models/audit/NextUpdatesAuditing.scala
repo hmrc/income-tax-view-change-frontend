@@ -18,14 +18,16 @@ package obligations.models.audit
 
 import common.utils.audit.Utilities.userAuditDetails
 import common.auth.MtdItUser
+import common.enums.AuditType.ObligationsPageView
+import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 import play.api.libs.json.{JsValue, Json}
 
 object NextUpdatesAuditing {
 
-  private val nextUpdateTransactionName = enums.TransactionName.ObligationsPageView
-  private val nextUpdateAuditType: String = enums.AuditType.ObligationsPageView
+  private val nextUpdateTransactionName = TransactionName.ObligationsPageView
+  private val nextUpdateAuditType: String = ObligationsPageView
 
   case class NextUpdatesAuditModel[A](user: MtdItUser[A]) extends ExtendedAuditModel {
     override val transactionName: String = nextUpdateTransactionName

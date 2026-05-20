@@ -16,16 +16,16 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseError
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.services.{DateService, DateServiceInterface, SessionService}
-import enums.MTDIndividual
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import org.mockito.ArgumentMatchers.any

@@ -19,9 +19,9 @@ package common.auth.actions
 import common.auth.AuthExceptions.NoAssignment
 import common.auth.FrontendAuthorisedFunctions
 import common.auth.actions.AuthActionsTestData.*
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.models.auth.AuthorisedAndEnrolledRequest
 import common.services.AuditingService
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

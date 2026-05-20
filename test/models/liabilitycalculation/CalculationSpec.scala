@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
 import org.scalatest.matchers.should.Matchers
 import testUtils.TestSupport
 

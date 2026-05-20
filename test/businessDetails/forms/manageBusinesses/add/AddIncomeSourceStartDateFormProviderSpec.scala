@@ -16,7 +16,7 @@
 
 package businessDetails.forms.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.IncomeSourceJourney.SelfEmployment
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}

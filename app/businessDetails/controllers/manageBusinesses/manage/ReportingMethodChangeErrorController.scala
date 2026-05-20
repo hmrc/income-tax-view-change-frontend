@@ -17,11 +17,8 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.IncomeSourcesUtils
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
@@ -32,6 +29,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.manage.ReportingMethodChangeErrorView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.exceptions.MissingSessionKey
 import common.services.SessionService
 
 import javax.inject.Inject

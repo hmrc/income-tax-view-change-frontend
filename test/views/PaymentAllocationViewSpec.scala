@@ -19,10 +19,10 @@ package views
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.exceptions.MissingFieldException
+import common.implicits.ImplicitDateFormatter
 import enums.ChargeType.*
-import exceptions.MissingFieldException
 import financials.controllers.routes as financialsRoutes
-import implicits.ImplicitDateFormatter
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.nodes.Element

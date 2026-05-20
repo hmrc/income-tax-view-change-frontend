@@ -26,4 +26,5 @@ object AuthUtils {
   val secondaryAgentEnrolmentName = "HMRC-MTD-IT-SUPP"
   val secondaryAgentAuthRule = "mtd-it-auth-supp"
 
+  val ORIGIN: String = "origin"
 }

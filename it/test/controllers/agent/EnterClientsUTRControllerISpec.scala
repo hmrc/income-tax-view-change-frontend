@@ -19,9 +19,9 @@ package controllers.agent
 import hub.audit.models.EnterClientUTRAuditModel
 import common.controllers.ControllerISpecHelper
 import common.controllers.agent.errors.routes as agentErrorRoutes
+import common.enums.MTDPrimaryAgent
 import common.helpers.servicemocks.{AuditStub, CitizenDetailsStub, MTDAgentAuthStub}
 import common.viewUtils.InternalUrlHelper
-import enums.MTDPrimaryAgent
 import helpers.servicemocks.*
 import play.api.http.Status.*
 import play.api.libs.json.Json

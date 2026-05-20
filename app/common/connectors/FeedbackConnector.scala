@@ -17,7 +17,7 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import forms.FeedbackForm
+import common.forms.FeedbackForm
 import play.api.Logger
 import play.api.http.HeaderNames
 import play.api.http.Status.OK

@@ -16,16 +16,16 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.services.IncomeSourceDetailsService
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.enums.MTDIndividual
+import common.exceptions.MissingFieldException
+import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.MTDIndividual
-import exceptions.MissingFieldException
-import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

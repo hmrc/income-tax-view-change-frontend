@@ -17,13 +17,15 @@
 package obligations.models.audit
 
 import common.auth.MtdItUser
+import common.enums.AuditType.OptOutTaxYearsPage
+import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import common.utils.audit.Utilities
 import play.api.libs.json.{JsValue, Json}
 
 case class OptOutNewAuditModel(optOutTaxYear: Seq[String])(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
-  override val transactionName: String = enums.TransactionName.OptOutTaxYearsPage
-  override val auditType: String = enums.AuditType.OptOutTaxYearsPage
+  override val transactionName: String = TransactionName.OptOutTaxYearsPage
+  override val auditType: String = OptOutTaxYearsPage
 
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++

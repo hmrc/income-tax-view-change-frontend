@@ -17,7 +17,8 @@
 package common.models.audit
 
 import common.auth.actions.AuthActionsTestData.defaultAuthorisedAndEnrolledRequest
-import enums.MTDSupportingAgent
+import common.enums.AuditType.AccessDeniedForSupportingAgent
+import common.enums.{MTDSupportingAgent, TransactionName}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.{testArn, testClientNameString, testCredId, testMtditid, testNino, testSaUtr}
@@ -25,8 +26,8 @@ import testUtils.TestSupport
 
 class AccessDeniedForSupportingAgentsModelSpec extends TestSupport {
 
-  val transactionName = enums.TransactionName.AccessDeniedForSupportingAgent.name
-  val auditType = enums.AuditType.AccessDeniedForSupportingAgent.name
+  val transactionName = TransactionName.AccessDeniedForSupportingAgent.name
+  val auditType = AccessDeniedForSupportingAgent.name
 
 
   val expectedAuditDetails: JsValue = Json.obj("mtditid" -> testMtditid,

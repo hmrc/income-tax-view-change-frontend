@@ -17,12 +17,12 @@
 package businessDetails.services.manageBusinesses
 
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import common.auth.actions.AuthActionsSpecHelper
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.mocks.services.{MockITSAStatusService, MockSessionService}
 import common.services.DateService
 import enums.AfterSubmissionPage
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import mocks.services.MockCalculationListService
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear

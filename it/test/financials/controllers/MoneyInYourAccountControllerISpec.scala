@@ -19,8 +19,8 @@ package financials.controllers
 import audit.models.ClaimARefundAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.CreditsRefundsRepay
 import models.core.ErrorModel

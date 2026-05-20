@@ -27,8 +27,8 @@ import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateV
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 

@@ -16,10 +16,10 @@
 
 package models
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import businessDetails.forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
 import common.auth.MtdItUser
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import common.mocks.services.MockDateService
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.mkFromQueryString

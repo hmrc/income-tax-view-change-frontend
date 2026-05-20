@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import enums.MTDIndividual
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm.*
 import models.core.NormalMode
 import org.jsoup.Jsoup
@@ -31,9 +30,10 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}

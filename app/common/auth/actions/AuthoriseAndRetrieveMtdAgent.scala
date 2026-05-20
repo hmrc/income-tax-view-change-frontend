@@ -21,10 +21,10 @@ import common.auth.AuthExceptions.NoAssignment
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.controllers.agent.routes as agentRoutes
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.models.auth.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import common.utils.AuthUtils.*
 import common.viewUtils.InternalUrlHelper
-import enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}

@@ -16,12 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.*
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{BeforeSubmissionPage, InitialPage}
-import implicits.ImplicitDateFormatterImpl
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
@@ -32,6 +29,9 @@ import common.views.html.errorPages.CustomNotFoundErrorView
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.implicits.ImplicitDateFormatterImpl
 import common.services.{DateService, SessionService}
 
 import java.time.LocalDate

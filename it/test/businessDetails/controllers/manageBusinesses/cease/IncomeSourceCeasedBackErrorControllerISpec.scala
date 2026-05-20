@@ -16,12 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import businessDetails.enums.IncomeSourceJourney.*
 import common.controllers.ControllerISpecHelper
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.services.SessionService
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

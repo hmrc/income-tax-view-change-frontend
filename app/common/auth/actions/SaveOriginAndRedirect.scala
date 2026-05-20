@@ -17,7 +17,7 @@
 package common.auth.actions
 
 import common.config.featureswitch.FeatureSwitching
-import forms.utils.SessionKeys
+import common.utils.AuthUtils.ORIGIN
 import models.OriginEnum
 import play.api.i18n.I18nSupport
 import play.api.mvc.Results.Redirect
@@ -28,14 +28,14 @@ import scala.concurrent.Future
 trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
 
   def saveOriginAndReturnToHomeWithoutQueryParams[A](request: Request[A], navBarFsDisabled: Boolean = true): Future[Result] = {
-    val originStringOpt: Option[String] = request.getQueryString(SessionKeys.origin)
+    val originStringOpt: Option[String] = request.getQueryString(ORIGIN)
     val redirectToOriginalCall: Result = Redirect(request.path)
 
     if (navBarFsDisabled) {
       Future.successful(redirectToOriginalCall)
     } else {
       originStringOpt.fold[Future[Result]](ifEmpty = Future.successful(redirectToOriginalCall))(originString =>
-        (OriginEnum(originString), request.session.get(SessionKeys.origin)) match {
+        (OriginEnum(originString), request.session.get(ORIGIN)) match {
           case (Some(originStringEnum), Some(sessionOrigin)) if originStringEnum.toString != sessionOrigin =>
             Future.successful(
               redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", originStringEnum.toString))(request)

@@ -18,10 +18,10 @@ package financials.controllers
 
 import audit.models.InitiatePayNowAuditModel
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
 import connectors.PayApiConnector
-import enums.{MTDIndividual, MTDSupportingAgent}
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*

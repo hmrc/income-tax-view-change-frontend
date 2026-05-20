@@ -16,7 +16,7 @@
 
 package common.models.auth
 
-import enums.MTDUserRole
+import common.enums.MTDUserRole
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.Name
 

@@ -16,9 +16,10 @@
 
 package common.models.audit
 
+import common.enums.AuditType.IncomeSourceDetailsResponse
+import common.enums.{MTDSupportingAgent, TransactionName}
 import common.models.auth.AuthorisedAndEnrolledRequest
 import common.utils.audit.Utilities.*
-import enums.MTDSupportingAgent
 import play.api.libs.json.{JsValue, Json}
 case class IncomeSourceDetailsResponseAuditModel(
                                                   mtdItUser: AuthorisedAndEnrolledRequest[_],
@@ -28,8 +29,8 @@ case class IncomeSourceDetailsResponseAuditModel(
                                                   yearOfMigration: Option[String]
                                                 ) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.IncomeSourceDetailsResponse
-  override val auditType: String = enums.AuditType.IncomeSourceDetailsResponse
+  override val transactionName: String = TransactionName.IncomeSourceDetailsResponse
+  override val auditType: String = IncomeSourceDetailsResponse
 
   override val detail: JsValue = {
     Json.obj("mtditid" -> mtdItUser.mtditId,

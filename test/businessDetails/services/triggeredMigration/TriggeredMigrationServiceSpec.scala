@@ -16,9 +16,9 @@
 
 package businessDetails.services.triggeredMigration
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import common.mocks.services.MockSessionService
 import models.core.{CessationModel, IncomeSourceId}
 import models.incomeSourceDetails.IncomeSourceDetailsModel

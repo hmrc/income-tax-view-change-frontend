@@ -20,8 +20,8 @@ import audit.models.ChargeSummaryAudit
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.*
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.GatewayPage.GatewayPage
 import common.services.{AuditingService, DateServiceInterface}
-import enums.GatewayPage.GatewayPage
 import financials.controllers.ChargeSummaryController.ErrorCode
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes

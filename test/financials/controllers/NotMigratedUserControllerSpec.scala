@@ -17,11 +17,11 @@
 package financials.controllers
 
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.services.{DateService, DateServiceInterface}
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
-import implicits.ImplicitDateFormatter
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application

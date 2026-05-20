@@ -19,10 +19,10 @@ package views
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatter
 import financials.controllers.routes as financialsRoutes
 import enums.CodingOutType.*
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import implicits.ImplicitDateFormatter
 import models.financialDetails.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel

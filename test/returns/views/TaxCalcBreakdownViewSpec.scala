@@ -16,7 +16,7 @@
 
 package views
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.TaxBands
 import models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, TransitionProfitRow}
 import models.liabilitycalculation.{Message, Messages}

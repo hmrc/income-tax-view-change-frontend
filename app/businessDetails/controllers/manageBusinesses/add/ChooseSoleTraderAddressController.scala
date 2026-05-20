@@ -16,10 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import jakarta.inject.Singleton
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
@@ -32,6 +30,8 @@ import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressVi
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.services.SessionService
 
 import javax.inject.Inject

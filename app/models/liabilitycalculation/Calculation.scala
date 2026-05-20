@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.TaxCalculation
 import play.api.libs.json.{Json, OFormat}
 

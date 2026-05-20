@@ -20,7 +20,7 @@
 @this()
 @(field: Field, parentForm: Option[Form[_]] = None)(implicit messages: Messages)
 
-@import forms.validation.ErrorMessageHelper._
+@import common.forms.validation.ErrorMessageHelper._
 
 @error = @{
     getFieldError(field, parentForm)

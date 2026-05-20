@@ -16,11 +16,13 @@
 
 package common.models.audit
 
+import common.enums.AuditType.AccessDeniedForSupportingAgent
+import common.enums.TransactionName
 import common.models.auth.AuthorisedAndEnrolledRequest
 import play.api.libs.json.{JsValue, Json}
 
 case class AccessDeniedForSupportingAgentAuditModel(mtdItUser: AuthorisedAndEnrolledRequest[_]) extends ExtendedAuditModel {
-  override val transactionName: String = enums.TransactionName.AccessDeniedForSupportingAgent
+  override val transactionName: String = TransactionName.AccessDeniedForSupportingAgent
   override val detail: JsValue = {
     Json.obj("mtditid" -> mtdItUser.mtditId,
       "agentReferenceNumber" -> mtdItUser.authUserDetails.agentReferenceNumber,
@@ -31,5 +33,5 @@ case class AccessDeniedForSupportingAgentAuditModel(mtdItUser: AuthorisedAndEnro
       "nino" -> mtdItUser.clientDetails.map(_.nino),
     "clientName" -> mtdItUser.optClientNameAsString)
   }
-  override val auditType: String = enums.AuditType.AccessDeniedForSupportingAgent
+  override val auditType: String = AccessDeniedForSupportingAgent
 }

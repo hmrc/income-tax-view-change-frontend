@@ -19,7 +19,7 @@ package obligations.viewUtils
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import implicits.ImplicitDateFormatter
+import common.implicits.ImplicitDateFormatter
 import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite

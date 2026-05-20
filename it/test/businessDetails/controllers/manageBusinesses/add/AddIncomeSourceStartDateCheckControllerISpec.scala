@@ -16,12 +16,12 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.{MTDIndividual, MTDUserRole}
 import AddIncomeSourceStartDateCheckForm.{responseNo, responseYes}
 import common.controllers.ControllerISpecHelper
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData

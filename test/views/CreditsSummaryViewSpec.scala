@@ -19,7 +19,7 @@ package views
 import _root_.implicits.ImplicitCurrencyFormatter._
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatter
+import common.implicits.ImplicitDateFormatter
 import models.creditDetailModel.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

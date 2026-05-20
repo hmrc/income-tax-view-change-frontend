@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.CalculationSummary.getTaxDue
 import models.liabilitycalculation._

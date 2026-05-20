@@ -18,9 +18,9 @@ package audit.models
 
 import common.utils.audit.Utilities.userAuditDetails
 import common.auth.MtdItUser
+import common.enums.AuditType.ClaimARefundResponse
+import common.enums.TransactionName.ClaimARefund
 import common.models.audit.ExtendedAuditModel
-import enums.AuditType.ClaimARefundResponse
-import enums.TransactionName.ClaimARefund
 import models.creditsandrefunds.{CreditsModel, Transaction}
 import models.financialDetails.*
 import play.api.Logger

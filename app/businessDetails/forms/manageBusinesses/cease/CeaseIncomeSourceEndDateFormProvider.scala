@@ -16,10 +16,10 @@
 
 package businessDetails.forms.manageBusinesses.cease
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.auth.MtdItUser
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.forms.mappings.Mappings
 import common.services.DateServiceInterface
-import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.validation.{Constraint, Valid}
 import play.api.i18n.Messages

@@ -16,12 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.enums.ReportingMethod
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.{AfterSubmissionPage, BeforeSubmissionPage}
 import models.UIJourneySessionData
 import models.admin.OptInOptOutContentUpdateR17
@@ -37,6 +35,8 @@ import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethod
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.services.{AuditingService, DateService, SessionService}
 
 import javax.inject.Inject

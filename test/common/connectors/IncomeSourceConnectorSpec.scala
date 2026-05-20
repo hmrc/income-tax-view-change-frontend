@@ -33,7 +33,6 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import common.connectors.{BaseConnectorSpec, IncomeSourceConnector}
 import common.models.audit.{ExtendedAuditModel, IncomeSourceDetailsResponseAuditModel}
 import common.models.auth.AuthorisedAndEnrolledRequest
 import common.services.AuditingService

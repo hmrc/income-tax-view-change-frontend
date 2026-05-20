@@ -16,7 +16,7 @@
 
 package forms.adjustPoa
 
-import forms.mappings.{Enumerable, Mappings}
+import common.forms.mappings.{Enumerable, Mappings}
 import models.claimToAdjustPoa.*
 import play.api.data.Form
 

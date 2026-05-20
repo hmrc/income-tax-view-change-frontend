@@ -17,8 +17,9 @@
 package financials.controllers
 
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.services.DateServiceInterface
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason}
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}

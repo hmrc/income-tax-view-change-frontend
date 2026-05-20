@@ -18,10 +18,10 @@ package obligations.controllers.reportingObligations.signUp
 
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
+import common.enums.JourneyType.{Opt, SignUpJourney}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
 import obligations.controllers.constants.ConfirmOptOutControllerConstants.emptyBodyString
-import enums.JourneyType.{Opt, SignUpJourney}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}

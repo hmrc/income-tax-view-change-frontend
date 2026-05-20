@@ -19,9 +19,9 @@ package financials.controllers
 import audit.models.WhatYouOweResponseAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.services.DateServiceInterface
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.*
 import models.core.SelfServeTimeToPayJourneyResponseModel

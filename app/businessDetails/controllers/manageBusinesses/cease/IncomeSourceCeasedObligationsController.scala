@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import enums.CannotGoBackPage
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.core.IncomeSourceId
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -36,10 +35,11 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.services.SessionService
 
 class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,
