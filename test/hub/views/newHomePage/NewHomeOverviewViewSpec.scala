@@ -72,7 +72,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
                    chargeItems: List[ChargeItem] = List.empty,
                    useRebrand: Boolean = false,
                    isRecentActivityEnabled: Boolean = false,
-                   creditsRefundsRepayEnabled: Boolean = false) {
+                   creditsRefundsRepayEnabled: Boolean = false,
+                   mortgageEvidenceEnabled: Boolean = true) {
 
     val testMessages: Messages = if (welshLang) {
       app.injector.instanceOf[MessagesApi].preferred(FakeRequest().withHeaders(HeaderNames.ACCEPT_LANGUAGE -> "cy"))
@@ -99,7 +100,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         useRebrand,
         true,
         isRecentActivityEnabled,
-        creditsRefundsRepayEnabled
+        creditsRefundsRepayEnabled,
+        mortgageEvidenceEnabled
       )(testMessages, appConfig, FakeRequest())
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
@@ -354,6 +356,21 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         linkText = "Proof of your income (SA302)",
         linkHref = "/report-quarterly/income-and-expenses/view/mortgage-evidence/proof-of-income"
       )
+    }
+
+    "display the correct 'Tax year summaries' section when mortgage evidence is disabled" in new TestSetup(mortgageEvidenceEnabled = false) {
+      val taxYearSection: Element = document.selectById("tax-year-overview-section")
+      taxYearSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Tax year summaries"
+      taxYearSection.hasCorrectOverviewCardLink(
+        linkText = "View all tax years",
+        linkHref = "/report-quarterly/income-and-expenses/view/tax-years"
+      )
+      taxYearSection.hasCorrectOverviewCardLink(
+        cardIndex = 1,
+        linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
+        linkHref = s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}"
+      )
+      taxYearSection.text() should not include "Proof of your income (SA302)"
     }
 
     "display the correct text when user does not have LSP or LPP" in new TestSetup() {
@@ -639,6 +656,21 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         linkText = "Proof of your income (SA302)",
         linkHref = "/report-quarterly/income-and-expenses/view/agents/mortgage-evidence/proof-of-income"
       )
+    }
+
+    "display the correct 'Tax year summaries' section when mortgage evidence is disabled" in new TestSetup(isAgent = true, mortgageEvidenceEnabled = false) {
+      val taxYearSection: Element = document.selectById("tax-year-overview-section")
+      taxYearSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Tax year summaries"
+      taxYearSection.hasCorrectOverviewCardLink(
+        linkText = "View all tax years",
+        linkHref = "/report-quarterly/income-and-expenses/view/agents/tax-years"
+      )
+      taxYearSection.hasCorrectOverviewCardLink(
+        cardIndex = 1,
+        linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
+        linkHref = s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}"
+      )
+      taxYearSection.text() should not include "Proof of your income (SA302)"
     }
 
     "display the correct 'Penalties and appeals' section" in new TestSetup(isAgent = true) {

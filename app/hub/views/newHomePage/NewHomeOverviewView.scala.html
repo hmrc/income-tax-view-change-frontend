@@ -53,7 +53,8 @@
         isGovUkRebrandEnabled: Boolean,
         penaltiesAndAppealsEnabled: Boolean,
         isRecentActivityEnabled: Boolean,
-        creditsRefundsRepayEnabled: Boolean)(
+        creditsRefundsRepayEnabled: Boolean,
+        mortgageEvidenceEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
@@ -126,8 +127,7 @@
     @incomeSection(isAgent = false)
     @SectionBreak
 
-    @taxYearSection(isAgent = false, taxYear = currentTaxYear)
-    @SectionBreak
+@taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled)    @SectionBreak
 
     @if(penaltiesAndAppealsEnabled){
         @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
@@ -149,8 +149,7 @@
     @incomeSection(isAgent = true)
     @SectionBreak
 
-    @taxYearSection(isAgent = true, taxYear = currentTaxYear)
-    @SectionBreak
+@taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled)    @SectionBreak
 
     @if(penaltiesAndAppealsEnabled){
         @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
