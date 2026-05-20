@@ -98,9 +98,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
 
           val redirectUrl = if (isAgent) {
-            controllers.routes.HomeController.showAgent().url
+            hub.controllers.routes.HomeController.showAgent().url
           } else {
-            controllers.routes.HomeController.show().url
+            hub.controllers.routes.HomeController.show().url
           }
 
           when(mockSignUpService.fetchSavedSignUpSessionData()(any(), any(), any()))
@@ -125,9 +125,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
 
 
           val redirectUrl = if (isAgent) {
-            controllers.routes.HomeController.showAgent().url
+            hub.controllers.routes.HomeController.showAgent().url
           } else {
-            controllers.routes.HomeController.show().url
+            hub.controllers.routes.HomeController.show().url
           }
 
           status(result) shouldBe SEE_OTHER
@@ -143,9 +143,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           val result = action(fakeRequest)
 
           val redirectUrl = if (isAgent) {
-            controllers.routes.HomeController.showAgent().url
+            hub.controllers.routes.HomeController.showAgent().url
           } else {
-            controllers.routes.HomeController.show().url
+            hub.controllers.routes.HomeController.show().url
           }
 
           status(result) shouldBe SEE_OTHER

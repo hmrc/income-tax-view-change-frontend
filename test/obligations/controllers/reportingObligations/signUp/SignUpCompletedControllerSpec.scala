@@ -122,9 +122,9 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              controllers.routes.HomeController.showAgent().url
+              hub.controllers.routes.HomeController.showAgent().url
             } else {
-              controllers.routes.HomeController.show().url
+              hub.controllers.routes.HomeController.show().url
             }
 
             status(result) shouldBe Status.SEE_OTHER
@@ -141,9 +141,9 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              controllers.routes.HomeController.showAgent().url
+              hub.controllers.routes.HomeController.showAgent().url
             } else {
-              controllers.routes.HomeController.show().url
+              hub.controllers.routes.HomeController.show().url
             }
 
             status(result) shouldBe Status.SEE_OTHER
