@@ -16,6 +16,7 @@
 
 package obligations.views.reportingObligations.signUp
 
+import common.auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
@@ -33,13 +34,14 @@ class SignUpTaxYearQuestionViewSpec extends TestSupport {
   val nextYearViewModel = SignUpTaxYearQuestionViewModel(NextSignUpTaxYear(ITSAStatus.Annual, TaxYear(2026, 2027), CurrentSignUpTaxYear(ITSAStatus.Annual, TaxYear(2025, 2026))))
 
   class Setup(viewModel: SignUpTaxYearQuestionViewModel, withError: Boolean = false) {
+    implicit val testUser: MtdItUser[?] = agentUserConfirmedClient()
     val form = if (withError) {
       SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, true).withError("sign-up-tax-year-question", "signUp.taxYearQuestion.error.currentYear")
     } else {
       SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, true)
     }
 
-    val pageDocument = org.jsoup.Jsoup.parse(contentAsString(signUpTaxYearQuestion(isAgent = true, viewModel, form, obligations.controllers.reportingObligations.signUp.routes.SignUpTaxYearQuestionController.submit(isAgent = true))))
+    val pageDocument = org.jsoup.Jsoup.parse(contentAsString(signUpTaxYearQuestion(viewModel, form, obligations.controllers.reportingObligations.signUp.routes.SignUpTaxYearQuestionController.submit(isAgent = true))))
   }
 
   object signUpTaxYearQuestionMessages {

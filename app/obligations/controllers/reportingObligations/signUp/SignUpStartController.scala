@@ -60,7 +60,6 @@ class SignUpStartController @Inject()(authActions: AuthActions,
                 withSessionData(isStart = true, viewModel.signUpTaxYear.taxYear, None) {
                   Future.successful(
                     Ok(signUpStart(
-                      isAgent,
                       dateService.getCurrentTaxYearEnd.equals(viewModel.signUpTaxYear.taxYear.endYear),
                       buttonUrl(isAgent, viewModel.signUpTaxYear.taxYear.startYear.toString)
                     ))
