@@ -79,7 +79,7 @@ class ConfirmOptOutUpdateController @Inject()(
                   )
                 } yield {
                   val reportingObligationsURL = reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
-                  Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), isAgent, reportingObligationsURL))
+                  Ok(view(CheckOptOutUpdateAnswersViewModel(selectedTaxYear, quarterlyUpdatesCount), reportingObligationsURL))
                 }
               }
             }
