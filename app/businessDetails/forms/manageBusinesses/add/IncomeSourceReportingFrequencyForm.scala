@@ -16,7 +16,7 @@
 
 package businessDetails.forms.manageBusinesses.add
 
-import forms.mappings.Constraints
+import common.forms.mappings.Constraints
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 

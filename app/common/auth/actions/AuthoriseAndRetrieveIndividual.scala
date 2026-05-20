@@ -19,17 +19,16 @@ package common.auth.actions
 import com.google.inject.Singleton
 import common.auth.{Constants, FrontendAuthorisedFunctions}
 import common.config.FrontendAppConfig
-import common.utils.AuthUtils.mtdEnrolmentName
-import common.controllers.routes as appRoutes
 import common.controllers.errors.routes as errorRoutes
+import common.controllers.routes as appRoutes
+import common.enums.MTDIndividual
 import common.models.audit.IvUpliftRequiredAuditModel
 import common.models.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest}
 import common.services.AuditingService
-import enums.MTDIndividual
-import forms.utils.SessionKeys
+import common.utils.AuthUtils.{ORIGIN, mtdEnrolmentName}
 import play.api.Logger
-import play.api.mvc.Results.Redirect
 import play.api.mvc.*
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
@@ -79,7 +78,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
   def ivUpliftRedirectUrl[A](implicit request: Request[A]):String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
-    @unused val origin = request.getQueryString(SessionKeys.origin)
+    @unused val origin = request.getQueryString(ORIGIN)
     val completionUrl: String = s"$host${appRoutes.UpliftSuccessController.success().url}"
     val failureUrl: String = s"$host${errorRoutes.UpliftFailedController.show().url}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"

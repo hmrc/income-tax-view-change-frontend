@@ -19,7 +19,7 @@ package businessDetails.forms.manageBusinesses.add
 import businessDetails.forms.models.ChooseTaxYearFormModel
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import forms.mappings.Constraints
+import common.forms.mappings.Constraints
 import play.api.data.Form
 import play.api.data.Forms.{boolean, mapping, optional}
 import play.api.data.validation.{Constraint, Invalid, Valid, ValidationError}

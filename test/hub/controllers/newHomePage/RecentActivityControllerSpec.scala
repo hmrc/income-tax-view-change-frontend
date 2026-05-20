@@ -16,8 +16,7 @@
 
 package hub.controllers.newHomePage
 
-import common.mocks.auth.MockAuthActions
-import enums.{MTDIndividual, MTDSupportingAgent}
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}

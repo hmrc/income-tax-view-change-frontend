@@ -18,8 +18,10 @@ package audit.models
 
 import common.utils.audit.Utilities.userAuditDetails
 import common.auth.MtdItUser
+import common.enums.AuditType.TaxYearOverviewResponse
+import common.enums.TransactionName
+import common.implicits.ImplicitDateParser
 import common.models.audit.ExtendedAuditModel
-import implicits.ImplicitDateParser
 import models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
@@ -35,8 +37,8 @@ case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],
                                            ) extends ExtendedAuditModel with ImplicitDateParser with PaymentSharedFunctions  {
 
 
-  override val transactionName: String = enums.TransactionName.TaxYearOverviewResponse
-  override val auditType: String = enums.AuditType.TaxYearOverviewResponse
+  override val transactionName: String = TransactionName.TaxYearOverviewResponse
+  override val auditType: String = TaxYearOverviewResponse
 
 
   private val taxYearSummaryJson = {

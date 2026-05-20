@@ -17,9 +17,9 @@
 package views
 
 import common.config.featureswitch.FeatureSwitching
+import common.exceptions.MissingFieldException
 import enums.ChargeType.*
 import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
-import exceptions.MissingFieldException
 import financials.controllers.routes as financialsRoutes
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}

@@ -18,13 +18,13 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod}
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.views.html.manageBusinesses.manage.ManageObligationsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.services.{DateService, SessionService}
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.CannotGoBackPage
 import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId

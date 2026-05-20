@@ -17,7 +17,7 @@
 package common.models.audit
 
 import common.auth.actions.AuthActionsTestData.defaultAuthorisedAndEnrolledRequest
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import play.api.libs.json.{JsArray, Json}
 import play.api.test.FakeRequest
 import testConstants.BaseTestConstants.*

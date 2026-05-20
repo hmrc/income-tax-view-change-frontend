@@ -22,9 +22,9 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.IncomeTaxCalculationConnector
 import common.controllers.BaseController
+import common.enums.JourneyType.TriggeredMigrationJourney
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, SessionService}
-import enums.JourneyType.TriggeredMigrationJourney
-import enums.TaxYearSummary.CalculationRecord.LATEST
+import common.enums.TaxYearSummary.CalculationRecord.LATEST
 import models.admin.TriggeredMigration
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger

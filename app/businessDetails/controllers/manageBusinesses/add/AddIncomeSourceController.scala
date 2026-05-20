@@ -18,7 +18,6 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.services.IncomeSourceDetailsService
 import businessDetails.utils.IncomeSourcesUtils
-import enums.JourneyType.Add
 import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
@@ -28,6 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.JourneyType.Add
 import common.services.SessionService
 
 import javax.inject.{Inject, Singleton}

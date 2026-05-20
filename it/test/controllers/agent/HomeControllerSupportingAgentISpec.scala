@@ -18,11 +18,11 @@ package controllers.agent
 
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import enums.MTDSupportingAgent
+import common.enums.MTDSupportingAgent
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import obligations.models.audit.NextUpdatesResponseAuditModel

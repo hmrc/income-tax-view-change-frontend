@@ -17,8 +17,8 @@
 package obligations.repositories
 
 import common.auth.MtdItUser
+import common.enums.JourneyType.OptOutJourney
 import common.mocks.services.{MockDateService, MockITSAStatusService}
-import enums.JourneyType.OptOutJourney
 import mocks.services.*
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear

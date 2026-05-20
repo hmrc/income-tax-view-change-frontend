@@ -16,10 +16,10 @@
 
 package common.services
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.services.IncomeSourceDetailsService
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.mocks.MockAuditingService
 import common.mocks.services.MockAsyncCacheApi
 import common.mocks.services.config.MockAppConfig

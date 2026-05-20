@@ -28,8 +28,8 @@ import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDeta
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.views.constants.ManageIncomeSourceDetailsViewConstants.*
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 

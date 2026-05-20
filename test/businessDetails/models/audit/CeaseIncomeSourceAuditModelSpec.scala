@@ -16,8 +16,9 @@
 
 package businessDetails.models.audit
 
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.enums.AuditType.CeaseIncomeSource
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole, TransactionName}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import obligations.testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import play.api.libs.json.{JsValue, Json}
@@ -27,8 +28,8 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class CeaseIncomeSourceAuditModelSpec extends TestSupport {
 
-  val transactionName = enums.TransactionName.CeaseIncomeSource.name
-  val auditType = enums.AuditType.CeaseIncomeSource.name
+  val transactionName = TransactionName.CeaseIncomeSource.name
+  val auditType = CeaseIncomeSource.name
   val cessationDate = "2022-08-01"
   val hcWithDeviceID = headerCarrier.copy(deviceID = Some("some device id"))
 

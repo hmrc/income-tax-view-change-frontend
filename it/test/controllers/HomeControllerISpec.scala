@@ -19,12 +19,12 @@ package controllers
 import hub.audit.models.HomeAudit
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import enums.MTDIndividual
+import common.enums.MTDIndividual
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.{ITSAStatusDetailsStub, MTDIndividualAuthStub}
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, PenaltyDetailsStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}

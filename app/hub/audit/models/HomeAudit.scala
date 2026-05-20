@@ -18,6 +18,8 @@ package hub.audit.models
 
 import common.utils.audit.Utilities.*
 import common.auth.MtdItUser
+import common.enums.AuditType.ItsaHomePage
+import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 
@@ -39,7 +41,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     case Left((date, _)) => Json.obj("nextUpdateDeadline" -> date.toString)
   }
 
-  override val transactionName: String = enums.TransactionName.ItsaHomePage
+  override val transactionName: String = TransactionName.ItsaHomePage
 
   override val detail: JsValue = Json.obj(
     "mtditid" -> mtdItUser.mtditid,
@@ -50,7 +52,7 @@ case class HomeAudit(mtdItUser: MtdItUser[_],
     Json.obj("credId"-> mtdItUser.credId) ++
     Json.obj("agentReferenceNumber"-> mtdItUser.arn)
 
-  override val auditType: String = enums.AuditType.ItsaHomePage
+  override val auditType: String = ItsaHomePage
 
 }
 

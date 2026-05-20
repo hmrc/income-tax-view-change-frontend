@@ -18,8 +18,8 @@ package controllers.agent
 
 import hub.audit.models.ConfirmClientDetailsAuditModel
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.helpers.servicemocks.AuditStub
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.jsoup.Jsoup

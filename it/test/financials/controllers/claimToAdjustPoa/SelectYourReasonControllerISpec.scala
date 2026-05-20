@@ -17,7 +17,7 @@
 package financials.controllers.claimToAdjustPoa
 
 import common.controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.adjustPoa.SelectYourReasonFormProvider
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData, SelectYourReason}

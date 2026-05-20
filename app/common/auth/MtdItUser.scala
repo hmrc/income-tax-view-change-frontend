@@ -16,8 +16,8 @@
 
 package common.auth
 
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.auth.{AgentClientDetails, AuthUserDetails}
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup

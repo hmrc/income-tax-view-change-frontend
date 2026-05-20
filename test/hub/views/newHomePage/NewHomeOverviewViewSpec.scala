@@ -18,7 +18,7 @@ package hub.views.newHomePage
 
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatter
+import common.implicits.ImplicitDateFormatter
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel

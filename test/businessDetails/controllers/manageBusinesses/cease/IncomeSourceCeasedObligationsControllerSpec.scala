@@ -16,14 +16,14 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.IncomeSourcesUtils
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.services.{DateService, DateServiceInterface, SessionService}
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.MTDIndividual
 import models.UIJourneySessionData
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}

@@ -19,7 +19,7 @@ package common.auth.actions
 import common.auth.MtdItUser
 import common.config.{FrontendAppConfig, ItvcErrorHandler}
 import common.controllers.bta.BtaNavBarController
-import forms.utils.SessionKeys
+import common.utils.AuthUtils.ORIGIN
 import models.OriginEnum
 import models.OriginEnum.{BTA, PTA}
 import models.admin.NavBarFs
@@ -49,7 +49,7 @@ class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarControll
     implicit val messages: Messages = messagesApi.preferred(request)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
     lazy val navigationBarDisabled = !isEnabled(NavBarFs)(request)
-    request.getQueryString(SessionKeys.origin) match {
+    request.getQueryString(ORIGIN) match {
       case Some(_) => saveOriginAndReturnToHomeWithoutQueryParams(request, navigationBarDisabled).map(Left(_))
       case None if navigationBarDisabled => Future.successful(Right(request))
       case None => retrieveCacheAndHandleNavBar(request)
@@ -57,7 +57,7 @@ class NavBarRetrievalAction @Inject()(val btaNavBarController: BtaNavBarControll
   }
 
   def retrieveCacheAndHandleNavBar[A](request: MtdItUser[A])(implicit hc: HeaderCarrier, messages: Messages): Future[Either[Result, MtdItUser[A]]] = {
-    (request.session.get(SessionKeys.origin), appConfig.itvcRebrand) match {
+    (request.session.get(ORIGIN), appConfig.itvcRebrand) match {
       case (Some(origin), true) if OriginEnum(origin).contains(PTA)  => Future.successful(Right(request.addServiceNavigation(createPtaServiceNavigation())))
       case (Some(origin), true) if OriginEnum(origin).contains(BTA)  => Future.successful(Right(request.addServiceNavigation(createBtaServiceNavigation())))
       case (Some(origin), false) if OriginEnum(origin).contains(PTA) => Future.successful(Right(request.addNavBar(ptaPartial()(request, request.messages, appConfig))))

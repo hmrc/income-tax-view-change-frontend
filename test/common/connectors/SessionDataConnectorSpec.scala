@@ -16,7 +16,6 @@
 
 package common.connectors
 
-import common.connectors.{BaseConnectorSpec, SessionDataConnector}
 import models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
 import models.sessionData.SessionDataModel
 import models.sessionData.SessionDataPostResponse.SessionDataPostSuccess

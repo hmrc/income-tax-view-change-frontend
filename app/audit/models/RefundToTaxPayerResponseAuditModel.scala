@@ -18,6 +18,8 @@ package audit.models
 
 import common.utils.audit.Utilities.userAuditDetails
 import common.auth.MtdItUser
+import common.enums.AuditType.RefundToTaxPayerResponse
+import common.enums.TransactionName.RefundToTaxPayer
 import common.models.audit.ExtendedAuditModel
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, TotalInterest}
 import play.api.libs.json.{JsValue, Json}
@@ -28,8 +30,8 @@ import java.time.format.DateTimeFormatter
 case class RefundToTaxPayerResponseAuditModel(repaymentHistory: RepaymentHistoryModel)
                                              (implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.RefundToTaxPayer
-  override val auditType: String = enums.AuditType.RefundToTaxPayerResponse
+  override val transactionName: String = RefundToTaxPayer
+  override val auditType: String = RefundToTaxPayerResponse
 
   val repaymentHistoryItem: Option[RepaymentHistory] = repaymentHistory.repaymentsViewerDetails.headOption
   val repaymentInterestContent: Option[TotalInterest] = repaymentHistoryItem.flatMap(_.aggregate)

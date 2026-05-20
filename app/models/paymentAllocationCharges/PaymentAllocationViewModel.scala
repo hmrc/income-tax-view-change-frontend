@@ -16,7 +16,7 @@
 
 package models.paymentAllocationCharges
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.*
 import models.financialDetails.DocumentDetail
 import models.paymentAllocations.AllocationDetail

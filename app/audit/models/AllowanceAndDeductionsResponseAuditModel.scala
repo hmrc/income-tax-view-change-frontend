@@ -18,6 +18,8 @@ package audit.models
 
 import common.utils.audit.Utilities.userAuditDetails
 import common.auth.MtdItUser
+import common.enums.AuditType.AllowancesDeductionsDetailsResponse
+import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.JsValue
@@ -26,8 +28,8 @@ import play.api.libs.json.Json
 case class AllowanceAndDeductionsResponseAuditModel(mtdItUser: MtdItUser[_],
                                                     viewModel: AllowancesAndDeductionsViewModel) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.AllowancesDeductionsDetailsResponse
-  override val auditType: String = enums.AuditType.AllowancesDeductionsDetailsResponse
+  override val transactionName: String = TransactionName.AllowancesDeductionsDetailsResponse
+  override val auditType: String = AllowancesDeductionsDetailsResponse
 
   override val detail: JsValue = {
     userAuditDetails(mtdItUser) ++

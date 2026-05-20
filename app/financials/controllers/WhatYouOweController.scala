@@ -20,8 +20,8 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.*
+import common.enums.GatewayPage.WhatYouOwePage
 import common.services.DateServiceInterface
-import enums.GatewayPage.WhatYouOwePage
 import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.I18nSupport

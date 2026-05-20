@@ -18,6 +18,8 @@ package audit.models
 
 import common.utils.audit.Utilities.*
 import common.auth.MtdItUser
+import common.enums.AuditType.WhatYouOweResponse
+import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import common.services.DateServiceInterface
 import models.financialDetails.{ChargeItem, CodingOutDetails, WhatYouOweChargesList}
@@ -30,8 +32,8 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
 
   val currentTaxYear: Int = dateService.getCurrentTaxYearEnd
 
-  override val transactionName: String = enums.TransactionName.WhatYouOweResponse
-  override val auditType: String = enums.AuditType.WhatYouOweResponse
+  override val transactionName: String = TransactionName.WhatYouOweResponse
+  override val auditType: String = WhatYouOweResponse
 
   private val docDetailsListJson: List[JsObject] =
     whatYouOweChargesList.chargesList.map(documentDetails) ++ whatYouOweChargesList.outstandingChargesModel.map(outstandingChargeDetails)

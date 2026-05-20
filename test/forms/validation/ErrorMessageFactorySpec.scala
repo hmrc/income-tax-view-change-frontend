@@ -16,7 +16,8 @@
 
 package forms.validation
 
-import forms.validation.models.{FieldError, SummaryError}
+import common.forms.validation.ErrorMessageFactory
+import common.forms.validation.models.{FieldError, SummaryError}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import enums.BeforeSubmissionPage
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 import models.core.IncomeSourceIdHash.mkFromQueryString
 import models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
@@ -33,11 +32,12 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.services.{DateService, SessionService}
 
 @Singleton

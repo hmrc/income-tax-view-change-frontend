@@ -18,11 +18,11 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.services.IncomeSourceDetailsService
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}
-import enums.{MTDIndividual, MTDSupportingAgent}
-import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

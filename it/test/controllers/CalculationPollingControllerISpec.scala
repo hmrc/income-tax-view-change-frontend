@@ -17,7 +17,7 @@
 package controllers
 
 import common.controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.utils.SessionKeys
 import helpers.servicemocks.*
 import models.liabilitycalculation.LiabilityCalculationError

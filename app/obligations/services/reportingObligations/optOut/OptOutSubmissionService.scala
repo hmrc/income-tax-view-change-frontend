@@ -17,8 +17,8 @@
 package obligations.services.reportingObligations.optOut
 
 import common.auth.MtdItUser
+import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.services.AuditingService
-import enums.JourneyType.{Opt, OptOutJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus

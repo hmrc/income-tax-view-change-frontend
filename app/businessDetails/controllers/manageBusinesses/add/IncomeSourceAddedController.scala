@@ -18,10 +18,8 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessesRoutes
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.services.IncomeSourceDetailsService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.*
@@ -34,6 +32,8 @@ import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligati
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.IncomeSourceType
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.services.{DateServiceInterface, SessionService}
 
 import java.time.LocalDate

@@ -16,7 +16,7 @@
 
 package testConstants
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}

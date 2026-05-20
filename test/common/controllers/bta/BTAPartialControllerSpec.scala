@@ -17,9 +17,9 @@
 package common.controllers.bta
 
 import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
-import enums.MTDIndividual
 import play.api
 import play.api.Application
 import play.api.http.Status

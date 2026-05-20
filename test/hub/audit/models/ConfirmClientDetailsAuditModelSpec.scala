@@ -16,15 +16,16 @@
 
 package hub.audit.models
 
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.enums.AuditType.ClientDetailsConfirmed
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, TransactionName}
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
 import testUtils.TestSupport
 
 class ConfirmClientDetailsAuditModelSpec extends TestSupport {
 
-  val transactionName = enums.TransactionName.ClientDetailsConfirmed.name
-  val auditType = enums.AuditType.ClientDetailsConfirmed.name
+  val transactionName = TransactionName.ClientDetailsConfirmed.name
+  val auditType = ClientDetailsConfirmed.name
 
   def getConfirmClientDetailsAuditModel(isSupportingAgent: Boolean): ConfirmClientDetailsAuditModel = {
     ConfirmClientDetailsAuditModel(clientName = "Test User", nino = testNinoAgent,

@@ -19,9 +19,9 @@ package obligations.services.reportingObligations
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.enums.{AuditType, TransactionName}
+import common.enums.AuditType.{ReportingObligationsPage, IncomeSourceDetailsResponse as _}
 import common.services.DateServiceInterface
-import enums.AuditType.IncomeSourceDetailsResponse as _
-import enums.{AuditType, TransactionName}
 import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, UnknownStatus, Voluntary}
@@ -156,7 +156,7 @@ class ReportingObligationsAuditService @Inject()(
 
     ReportingObligationsAuditModel(
       agentReferenceNumber = mtdItUser.arn,
-      auditType = enums.AuditType.ReportingObligationsPage.name,
+      auditType = ReportingObligationsPage.name,
       credId = mtdItUser.credId,
       mtditid = mtdItUser.mtditid,
       nino = mtdItUser.nino,

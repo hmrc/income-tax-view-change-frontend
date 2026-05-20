@@ -17,9 +17,9 @@
 package returns.controllers
 
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import connectors.CalculationListConnector
-import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService}

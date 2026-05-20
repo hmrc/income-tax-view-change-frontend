@@ -16,8 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
@@ -29,8 +27,10 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.controllers.ControllerISpecHelper
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.services.SessionService
 
 class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {

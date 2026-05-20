@@ -17,10 +17,10 @@
 package obligations.controllers.reportingObligations.optOut
 
 import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}
-import enums.MTDIndividual
 import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus

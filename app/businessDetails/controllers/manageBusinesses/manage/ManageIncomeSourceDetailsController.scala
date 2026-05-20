@@ -17,10 +17,8 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.InitialPage
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
@@ -39,6 +37,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.services.{DateService, ITSAStatusService, SessionService}
 
 import javax.inject.{Inject, Singleton}

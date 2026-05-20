@@ -16,7 +16,6 @@
 
 package businessDetails.views.constants
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
@@ -24,6 +23,7 @@ import models.itsaStatus.ITSAStatus
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.BusinessDetailsTestConstants.*
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.expectedAddress
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 
 object ManageIncomeSourceDetailsViewConstants {
 

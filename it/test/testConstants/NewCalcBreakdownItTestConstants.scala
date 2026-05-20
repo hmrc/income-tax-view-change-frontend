@@ -16,8 +16,8 @@
 
 package testConstants
 
+import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
-import enums.{MTDIndividual, MTDUserRole}
 import models.liabilitycalculation._
 import models.liabilitycalculation.taxcalculation._
 

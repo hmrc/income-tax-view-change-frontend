@@ -18,10 +18,10 @@ package common.controllers
 
 import common.auth.actions.AuthActionsTestData.defaultIncomeSourcesData
 import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.audit.IvOutcomeSuccessAuditModel
 import common.services.DateServiceInterface
-import enums.MTDIndividual
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.MtdItsaOptOut

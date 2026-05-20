@@ -16,9 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.MTDIndividual
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.MTDIndividual
 import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}

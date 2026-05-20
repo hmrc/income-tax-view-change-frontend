@@ -20,9 +20,9 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes
+import common.enums.MTDPrimaryAgent
 import common.mocks.services.admin.MockFeatureSwitchService
 import common.services.AuditingService
-import enums.MTDPrimaryAgent
 import models.admin.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear

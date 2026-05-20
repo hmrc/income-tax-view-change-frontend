@@ -16,10 +16,9 @@
 
 package common.connectors
 
-import common.connectors.IncomeTaxCalculationConnector
+import common.enums.TaxYearSummary.CalculationRecord
 import common.mocks.MockHttpV2
-import enums.TaxYearSummary.CalculationRecord
-import enums.TaxYearSummary.CalculationRecord.PREVIOUS
+import CalculationRecord.PREVIOUS
 import models.liabilitycalculation.*
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, Json}

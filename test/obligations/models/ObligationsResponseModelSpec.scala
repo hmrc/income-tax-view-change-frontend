@@ -16,7 +16,7 @@
 
 package obligations.models
 
-import implicits.ImplicitDateFormatter
+import common.implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import obligations.testConstants.NextUpdatesTestConstants
 import obligations.testConstants.NextUpdatesTestConstants.*
