@@ -93,7 +93,6 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
         Future.successful(Ok(creditsView(
           calendarYear = calendarYear,
           backUrl = backUrl,
-          isAgent = isAgent,
           utr = user.saUtr,
           btaNavPartial = user.btaNavPartial,
           serviceNavigationPartial = user.serviceNavigationPartial,
