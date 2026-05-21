@@ -45,6 +45,7 @@ class TaxYearsViewSpec extends ViewSpec {
                     calcs: List[Int],
                     itsaSubmissionFeatureSwitch: Boolean = false,
                     isPostFinalisationAmendmentR18Enabled: Boolean = false,
+                    isMortgageEvidenceEnabled: Boolean = false,
                     utr: Option[String] = None,
                     isAgent: Boolean = false,
                     isErrorContent: Boolean = false
@@ -56,6 +57,7 @@ class TaxYearsViewSpec extends ViewSpec {
         utr = utr,
         itsaSubmissionIntegrationEnabled = itsaSubmissionFeatureSwitch,
         isPostFinalisationAmendmentR18Enabled = isPostFinalisationAmendmentR18Enabled,
+        isMortgageEvidenceEnabled = isMortgageEvidenceEnabled,
         earliestSubmissionTaxYear = 2023,
         isAgent = isAgent,
         errorTaxYear = if (isErrorContent) Some(TaxYear.getCYPlusOneTaxYear) else None
@@ -73,6 +75,7 @@ class TaxYearsViewSpec extends ViewSpec {
     val agentErrorLinkText: String = "Self Assessment for Agents account (opens in new tab)."
     val errorAgentPreLinkText: String = s"To see information from before the ${TaxYear.getCYPlusOneTaxYear.startYear} to ${TaxYear.getCYPlusOneTaxYear.endYear} tax year, you need to log in to your"
     val errorAgentPostLinkText: String = "This will be a different Government Gateway ID and password to your Agent Services account."
+    val dropdownContentText: String = "You can view the proof of your income (SA302) page"
   }
 
   "individual" when {
@@ -200,6 +203,33 @@ class TaxYearsViewSpec extends ViewSpec {
         ) {
           val amendmentParagraph: Element = document.getElementById("pfa-amendment-text")
           amendmentParagraph.text() shouldBe messages("taxYears.r18.amendment.text")
+        }
+      }
+    }
+
+    "The TaxYears view with MortgageEvidence FS enabled" when {
+      "the user has multiple tax years" should {
+        "display the SA302 dropdown and text below the tax years list" in new TestSetup(
+          calcs = List(testYearPlusOne, testTaxYear),
+          isMortgageEvidenceEnabled = true
+        ) {
+          layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe messages("taxYears.dropdown.title")
+          document.getElementById("taxyears-sa302").text shouldBe pageContent.dropdownContentText
+          document.getElementById("taxyears-sa302-link").attr("href") shouldBe mockAppConfig.sa302
+        }
+      }
+    }
+
+    "TheTaxYears view with MortgageEvidence FS enabled for Agent" when {
+      "the user has multiple tax years" should {
+        "display the SA302 dropdown and text below the tax years list" in new TestSetup(
+          calcs = List(testYearPlusOne, testTaxYear),
+          isMortgageEvidenceEnabled = true,
+          isAgent = true
+        ) {
+          layoutContent.select(".govuk-details__summary").select("span").first().text shouldBe messages("taxYears.dropdown.title")
+          document.getElementById("taxyears-sa302").text shouldBe pageContent.dropdownContentText
+          document.getElementById("taxyears-sa302-link").attr("href") shouldBe mockAppConfig.sa302Agent
         }
       }
     }
