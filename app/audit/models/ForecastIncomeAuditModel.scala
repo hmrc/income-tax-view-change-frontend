@@ -18,8 +18,10 @@ package audit.models
 
 import common.utils.audit.Utilities.userAuditDetails
 import common.auth.MtdItUser
+import common.enums.AuditType.ForecastIncome
+import common.enums.TransactionName
+import common.implicits.ImplicitDateParser
 import common.models.audit.ExtendedAuditModel
-import implicits.ImplicitDateParser
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
 import utils.Utilities.*
@@ -28,8 +30,8 @@ import utils.Utilities.*
 case class ForecastIncomeAuditModel(user: MtdItUser[_], endOfYearEstimate: EndOfYearEstimate)
   extends ExtendedAuditModel with ImplicitDateParser {
 
-  override val transactionName: String = enums.TransactionName.ForecastIncome
-  override val auditType: String = enums.AuditType.ForecastIncome
+  override val transactionName: String = TransactionName.ForecastIncome
+  override val auditType: String = ForecastIncome
 
   private val totalEstimatedIncome: Option[Int] = endOfYearEstimate.totalEstimatedIncome
   private val incomeSource: Option[List[IncomeSource]] = endOfYearEstimate.incomeSource

@@ -16,7 +16,7 @@
 
 package models.core
 
-import exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
+import common.exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 
 import scala.util.Try
 

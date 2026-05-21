@@ -16,9 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.MTDIndividual
-import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.ManageIncomeSourceData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -30,10 +27,13 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.MTDIndividual
+import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}

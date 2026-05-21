@@ -33,7 +33,6 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import common.connectors.BusinessDetailsConnector
 import common.models.auth.AuthorisedAndEnrolledRequest
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any

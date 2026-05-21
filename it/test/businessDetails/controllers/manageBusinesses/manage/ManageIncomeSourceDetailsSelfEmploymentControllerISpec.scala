@@ -16,10 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.admin.{DisplayBusinessStartDate, NavBarFs}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField

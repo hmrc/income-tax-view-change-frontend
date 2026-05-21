@@ -16,9 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.ForeignProperty
+import common.enums.IncomeSourceJourney.ForeignProperty
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}

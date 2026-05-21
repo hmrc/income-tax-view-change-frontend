@@ -16,8 +16,8 @@
 
 package models.repaymentHistory
 
+import common.exceptions.MissingFieldException
 import common.services.DateServiceInterface
-import exceptions.MissingFieldException
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails._
 import play.api.Logger

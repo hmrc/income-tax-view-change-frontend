@@ -17,9 +17,9 @@
 package obligations.controllers
 
 import common.auth.MtdItUser
+import common.enums.MTDIndividual
 import common.helpers.ComponentSpecBase
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, MTDIndividualAuthStub}
-import enums.MTDIndividual
 import helpers.servicemocks.*
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus

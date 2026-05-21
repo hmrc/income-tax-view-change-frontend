@@ -17,10 +17,10 @@
 package financials.controllers
 
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.services.{DateService, DateServiceInterface}
-import enums.{MTDIndividual, MTDSupportingAgent}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import forms.utils.SessionKeys.gatewayPage

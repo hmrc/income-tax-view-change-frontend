@@ -17,8 +17,8 @@
 package controllers
 
 import audit.models.TaxYearSummaryResponseAuditModel
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import models.admin.*

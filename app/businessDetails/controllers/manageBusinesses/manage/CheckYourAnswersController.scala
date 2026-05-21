@@ -17,15 +17,11 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import businessDetails.enums.IncomeSourceJourney.*
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.BeforeSubmissionPage
-import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
@@ -37,6 +33,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.manage.CheckYourAnswersView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.exceptions.MissingSessionKey
 import common.services.{AuditingService, SessionService}
 
 import javax.inject.{Inject, Singleton}

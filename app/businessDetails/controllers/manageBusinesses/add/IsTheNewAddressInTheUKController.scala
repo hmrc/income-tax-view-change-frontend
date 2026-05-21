@@ -16,11 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.BeforeSubmissionPage
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{Mode, NormalMode}
@@ -33,6 +31,8 @@ import businessDetails.views.html.manageBusinesses.add.IsTheNewAddressInTheUKVie
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.services.SessionService
 
 import javax.inject.{Inject, Singleton}

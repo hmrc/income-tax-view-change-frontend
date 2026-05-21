@@ -16,8 +16,8 @@
 
 package models
 
+import common.exceptions.MissingFieldException
 import common.services.DateService
-import exceptions.MissingFieldException
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.scalatest.matchers.should.Matchers

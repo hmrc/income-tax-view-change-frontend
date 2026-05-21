@@ -26,7 +26,7 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 import java.time.LocalDate
 

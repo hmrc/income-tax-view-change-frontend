@@ -16,7 +16,6 @@
 
 package common.connectors.agent
 
-import common.connectors.agent.CitizenDetailsConnector
 import common.mocks.MockHttpV2
 import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.mvc.Http.Status

@@ -17,14 +17,14 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}

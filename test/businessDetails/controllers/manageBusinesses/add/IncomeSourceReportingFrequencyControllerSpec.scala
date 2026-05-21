@@ -16,8 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.{MTDIndividual, MTDUserRole}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import org.mockito.ArgumentMatchers
@@ -35,12 +33,14 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.notCompleted
 import java.time.LocalDate
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateService, DateServiceInterface, ITSAStatusService, SessionService}

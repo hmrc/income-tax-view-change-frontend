@@ -17,11 +17,11 @@
 package financials.controllers.claimToAdjustPoa
 
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
 import common.utils.sessionUtils
 import common.utils.sessionUtils.SessionKeys
-import enums.{MTDIndividual, MTDSupportingAgent}
 import generators.PoaGenerator
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}

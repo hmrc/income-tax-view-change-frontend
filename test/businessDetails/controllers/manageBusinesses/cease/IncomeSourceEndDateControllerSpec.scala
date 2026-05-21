@@ -16,8 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.MTDIndividual
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.*
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -37,8 +35,10 @@ import java.time.LocalDate
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.services.{DateService, DateServiceInterface, SessionService}

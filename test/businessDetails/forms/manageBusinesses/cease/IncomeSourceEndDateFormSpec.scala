@@ -17,9 +17,9 @@
 package businessDetails.forms.manageBusinesses.cease
 
 import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.models.DateFormElement
 import common.auth.MtdItUser
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.services.DateService
 import org.scalatest.Assertion
 import org.scalatest.matchers.should.Matchers

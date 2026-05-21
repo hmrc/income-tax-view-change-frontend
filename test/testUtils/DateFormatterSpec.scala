@@ -16,8 +16,7 @@
 
 package testUtils
 
-import implicits.ImplicitDateFormatter
-
+import common.implicits.ImplicitDateFormatter
 import java.time.LocalDate
 
 class DateFormatterSpec extends TestSupport with ImplicitDateFormatter {

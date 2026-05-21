@@ -17,8 +17,8 @@
 package obligations.controllers.reportingObligations.optOut
 
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear

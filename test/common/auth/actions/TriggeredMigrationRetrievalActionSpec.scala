@@ -16,15 +16,15 @@
 
 package common.auth.actions
 
-import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
+import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.{defaultIncomeSourcesData, getMtdItUser}
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.IncomeTaxCalculationConnector
+import common.enums.JourneyType.TriggeredMigrationJourney
 import common.mocks.services.MockSessionService
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
-import enums.JourneyType.TriggeredMigrationJourney
 import models.UIJourneySessionData
 import models.admin.{FeatureSwitchName, TriggeredMigration}
 import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}

@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import enums.MTDIndividual
 import org.jsoup.Jsoup
 import org.mockito.Mockito.mock
 import play.api
@@ -28,9 +27,10 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessInc
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.services.CreateBusinessDetailsService
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
 

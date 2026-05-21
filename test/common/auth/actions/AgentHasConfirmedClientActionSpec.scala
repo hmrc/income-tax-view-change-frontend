@@ -17,8 +17,8 @@
 package common.auth.actions
 
 import common.auth.actions.AuthActionsTestData.*
+import common.enums.MTDSupportingAgent
 import common.models.auth.AuthorisedAndEnrolledRequest
-import enums.MTDSupportingAgent
 import org.scalatest.Assertion
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder

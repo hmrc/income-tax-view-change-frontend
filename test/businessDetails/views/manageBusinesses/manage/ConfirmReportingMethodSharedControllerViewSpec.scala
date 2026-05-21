@@ -17,9 +17,9 @@
 package businessDetails.views.manageBusinesses.manage
 
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
-import businessDetails.enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
-import businessDetails.enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
+import common.enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
+import common.enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
+import common.enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -32,9 +32,9 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethodView
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import common.auth.MtdItUser
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 

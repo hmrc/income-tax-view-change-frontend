@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import enums.MTDIndividual
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import org.jsoup.Jsoup
@@ -34,8 +33,9 @@ import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessInc
 import scala.annotation.unused
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}

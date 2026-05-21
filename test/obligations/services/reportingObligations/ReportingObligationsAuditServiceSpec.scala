@@ -18,8 +18,8 @@ package obligations.services.reportingObligations
 
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
+import common.enums.MTDIndividual
 import common.services.DateService
-import enums.MTDIndividual
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import obligations.models.audit.reporting_obligations.*

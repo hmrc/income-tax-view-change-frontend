@@ -16,10 +16,10 @@
 
 package testConstants
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.IncomeSourceJourneyType
 import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import enums.CodingOutType._
-import enums.JourneyType.IncomeSourceJourneyType
 import models.UIJourneySessionData
 import models.incomeSourceDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}

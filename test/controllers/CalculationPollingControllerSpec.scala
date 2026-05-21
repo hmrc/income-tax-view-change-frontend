@@ -17,9 +17,9 @@
 package controllers
 
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
-import enums.{MTDIndividual, MTDSupportingAgent}
 import forms.utils.SessionKeys
 import mocks.services.MockCalculationPollingService
 import play.api

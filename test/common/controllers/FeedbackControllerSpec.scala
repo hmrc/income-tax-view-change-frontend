@@ -18,10 +18,10 @@ package common.controllers
 
 import common.connectors.FeedbackConnector
 import common.controllers.feedback.{FeedbackController, routes as feedbackRoutes}
+import common.enums.MTDIndividual
+import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.viewUtils.InternalUrlHelper
-import enums.MTDIndividual
-import implicits.ImplicitDateFormatter
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any

@@ -16,7 +16,7 @@
 
 package valiadtion.models
 
-import forms.validation.models.ErrorMessage
+import common.forms.validation.models.ErrorMessage
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.mockito.MockitoSugar

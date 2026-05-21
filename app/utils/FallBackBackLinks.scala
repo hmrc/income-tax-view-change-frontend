@@ -16,10 +16,10 @@
 
 package utils
 
+import common.enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import hub.controllers.routes._
 import financials.controllers.routes as financialsRoutes
 import returns.controllers.routes as returnsRoutes
-import enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 
 trait FallBackBackLinks {
 

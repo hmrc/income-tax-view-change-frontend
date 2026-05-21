@@ -18,12 +18,12 @@ package common.auth.actions
 
 import common.auth.actions.AuthActionsTestData.*
 import common.config.AgentItvcErrorHandler
+import common.enums.MTDPrimaryAgent
 import common.mocks.services.MockClientDetailsService
 import common.models.auth.AuthorisedAgentWithClientDetailsRequest
 import common.services.SessionDataService
 import common.services.agent.ClientDetailsService
 import common.utils.sessionUtils.SessionKeys
-import enums.MTDPrimaryAgent
 import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

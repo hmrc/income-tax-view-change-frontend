@@ -16,8 +16,8 @@
 
 package common.services
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData

@@ -22,9 +22,9 @@ import businessDetails.controllers.manageBusinesses.manage.routes as manageBusin
 import businessDetails.controllers.manageBusinesses.routes as manageYourBusinessRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import common.auth.MtdItUser
+import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import common.services.SessionService
 import enums.*
-import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result

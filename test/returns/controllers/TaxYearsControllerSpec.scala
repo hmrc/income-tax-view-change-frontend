@@ -17,10 +17,10 @@
 package returns.controllers
 
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
-import enums.{MTDIndividual, MTDSupportingAgent}
-import implicits.ImplicitDateFormatter
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application

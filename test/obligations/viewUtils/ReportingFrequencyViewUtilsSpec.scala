@@ -20,9 +20,9 @@ import common.auth.actions.AuthActionsTestData.defaultAuthUserDetails
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.enums.MTDIndividual
+import common.implicits.ImplicitDateFormatter
 import common.services.DateService
-import enums.MTDIndividual
-import implicits.ImplicitDateFormatter
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, Mandated, Voluntary}
 import obligations.services.reportingObligations.optOut.OptOutProposition

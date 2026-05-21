@@ -16,8 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
-import enums.MTDIndividual
 import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup
@@ -29,8 +27,10 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}

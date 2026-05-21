@@ -19,11 +19,11 @@ package common.helpers
 import com.github.tomakehurst.wiremock.client.WireMock
 import common.auth.{HeaderExtractor, MtdItUser}
 import common.config.FrontendAppConfig
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
+import common.implicits.ImplicitDateFormatterImpl
 import common.models.auth.AuthorisedAndEnrolledRequest
 import common.services.{DateService, DateServiceInterface}
-import enums.{MTDIndividual, MTDUserRole}
-import implicits.ImplicitDateFormatterImpl
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*

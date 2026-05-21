@@ -16,6 +16,8 @@
 
 package hub.audit.models
 
+import common.enums.AuditType.EnterClientUTR
+import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import play.api.libs.json.{JsObject, JsValue, Json}
 
@@ -27,9 +29,9 @@ case class EnterClientUTRAuditModel(isSuccessful: Boolean,
                                     credId: Option[String],
                                     isSupportingAgent: Option[Boolean]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.EnterClientUTR
+  override val transactionName: String = TransactionName.EnterClientUTR
 
-  override val auditType: String = enums.AuditType.EnterClientUTR
+  override val auditType: String = EnterClientUTR
 
   private val successOutcome: JsObject = Json.obj(
     "outcome" ->

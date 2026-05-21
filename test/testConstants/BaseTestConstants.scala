@@ -19,8 +19,8 @@ package testConstants
 import common.auth.actions.AuthActionsTestData.*
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.enums.MTDIndividual
 import common.models.auth.AuthorisedAndEnrolledRequest
-import enums.MTDIndividual
 import models.btaNavBar.ListLinks
 import models.core.Nino
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}

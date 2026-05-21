@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.IncomeTaxCalculationConnector
-import enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
+import common.enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
 import models.admin.PostFinalisationAmendmentsR18
 import models.liabilitycalculation.{LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger

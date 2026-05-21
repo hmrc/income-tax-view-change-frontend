@@ -17,9 +17,9 @@
 package views
 
 import common.config.FrontendAppConfig
+import common.implicits.ImplicitDateFormatter
 import common.services.DateServiceInterface
 import implicits.ImplicitCurrencyFormatter.*
-import implicits.ImplicitDateFormatter
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel

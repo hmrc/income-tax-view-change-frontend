@@ -18,11 +18,11 @@ package financials.controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
 import connectors.RepaymentHistoryConnector
 import hub.controllers.routes
-import enums.{MTDIndividual, MTDSupportingAgent}
 import mocks.connectors.MockRepaymentHistoryConnector
 import models.admin.PaymentHistoryRefunds
 import models.creditsandrefunds.RefundToTaxPayerViewModel

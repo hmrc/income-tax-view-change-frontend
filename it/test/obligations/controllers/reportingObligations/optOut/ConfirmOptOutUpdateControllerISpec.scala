@@ -17,9 +17,9 @@
 package obligations.controllers.reportingObligations.optOut
 
 import common.controllers.ControllerISpecHelper
+import common.enums.JourneyType.OptOutJourney
+import common.enums.{MTDIndividual, MTDUserRole}
 import obligations.controllers.constants.ConfirmOptOutUpdateControllerConstants.*
-import enums.JourneyType.OptOutJourney
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.admin.{NavBarFs, OptOutFs}

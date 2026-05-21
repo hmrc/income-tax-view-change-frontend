@@ -17,14 +17,15 @@
 package financials.controllers.claimToAdjustPoa
 
 import common.controllers.ControllerISpecHelper
-import enums._
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import enums.*
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 
 class PoaAdjustedControllerISpec extends ControllerISpecHelper {
 

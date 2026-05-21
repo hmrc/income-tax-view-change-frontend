@@ -17,7 +17,7 @@
 package common.services
 
 import common.config.FrontendAppConfig
-import enums.JourneyType.*
+import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, JourneyType, Manage, Operation}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}

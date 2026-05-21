@@ -16,9 +16,9 @@
 
 package businessDetails.utils
 
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger

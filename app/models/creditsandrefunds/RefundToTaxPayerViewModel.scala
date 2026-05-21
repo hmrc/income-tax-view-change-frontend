@@ -16,7 +16,7 @@
 
 package models.creditsandrefunds
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, TotalInterest}
 
 import java.time.LocalDate

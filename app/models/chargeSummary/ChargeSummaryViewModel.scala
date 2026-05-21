@@ -16,7 +16,7 @@
 
 package models.chargeSummary
 
-import enums.GatewayPage.*
+import common.enums.GatewayPage.GatewayPage
 import models.ChargeHistoryItem
 import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails.*

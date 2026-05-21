@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import common.enums.IncomeSourceJourney.IncomeSourceType
 import models.core.{AddressModel, IncomeSourceId}
 
 import java.time.LocalDate

@@ -17,7 +17,7 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import enums.TaxYearSummary.CalculationRecord
+import common.enums.TaxYearSummary.CalculationRecord
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
 import play.api.http.Status.*

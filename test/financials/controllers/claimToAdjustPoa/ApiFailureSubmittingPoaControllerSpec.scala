@@ -17,9 +17,9 @@
 package financials.controllers.claimToAdjustPoa
 
 import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
-import enums.{MTDIndividual, MTDSupportingAgent}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api

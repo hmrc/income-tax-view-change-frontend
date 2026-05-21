@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.utils.IncomeSourcesUtils
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -25,6 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSavedView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.IncomeSourceType
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

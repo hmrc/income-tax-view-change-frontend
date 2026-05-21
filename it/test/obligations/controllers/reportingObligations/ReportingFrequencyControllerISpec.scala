@@ -18,9 +18,9 @@ package obligations.controllers.reportingObligations
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.{OptOutFs, SignUpFs}
 import models.incomeSourceDetails.TaxYear

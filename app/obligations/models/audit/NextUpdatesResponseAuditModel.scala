@@ -17,8 +17,8 @@
 package obligations.models.audit
 
 import common.auth.MtdItUser
+import common.enums.AuditType.ViewObligationsResponse
 import common.models.audit.ExtendedAuditModel
-import enums.AuditType.ViewObligationsResponse
 import obligations.models.SingleObligationModel
 import play.api.libs.json.*
 

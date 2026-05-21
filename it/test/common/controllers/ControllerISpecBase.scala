@@ -19,8 +19,8 @@ package common.controllers
 import common.auth.HeaderExtractor
 import common.config.FrontendAppConfig
 import common.helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
+import common.implicits.ImplicitDateFormatterImpl
 import common.services.{DateService, DateServiceInterface}
-import implicits.ImplicitDateFormatterImpl
 import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}

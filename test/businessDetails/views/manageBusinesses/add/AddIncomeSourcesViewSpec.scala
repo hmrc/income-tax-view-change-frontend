@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,6 +24,7 @@ import play.twirl.api.HtmlFormat
 import testConstants.BusinessDetailsTestConstants._
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 
 class AddIncomeSourcesViewSpec extends TestSupport {
   val addIncomeSources: AddIncomeSourcesView = app.injector.instanceOf[AddIncomeSourcesView]

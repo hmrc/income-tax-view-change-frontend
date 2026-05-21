@@ -19,7 +19,7 @@ package common.controllers.feedback
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.connectors.FeedbackConnector
-import forms.FeedbackForm
+import common.forms.FeedbackForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

@@ -16,15 +16,15 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import businessDetails.mocks.services.MockTriggeredMigrationService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
 import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.MTDIndividual
+import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
-import enums.MTDIndividual
 import models.admin.TriggeredMigration
 import models.core.IncomeSourceId
 import org.mockito.ArgumentMatchers

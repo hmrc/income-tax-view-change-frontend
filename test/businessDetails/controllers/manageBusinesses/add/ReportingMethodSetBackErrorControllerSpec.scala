@@ -16,13 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
-import enums.MTDIndividual
 import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup

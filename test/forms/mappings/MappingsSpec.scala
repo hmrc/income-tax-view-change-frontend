@@ -16,6 +16,7 @@
 
 package forms.mappings
 
+import common.forms.mappings.{Enumerable, Mappings}
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

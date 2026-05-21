@@ -17,11 +17,13 @@
 package businessDetails.models.audit
 
 import common.utils.audit.Utilities.userAuditDetails
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseError
 import common.auth.MtdItUser
+import common.enums.AuditType.CeaseIncomeSource
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import common.enums.TransactionName
+import common.implicits.ImplicitDateParser
 import common.models.audit.ExtendedAuditModel
-import implicits.ImplicitDateParser
 import models.core.IncomeSourceId
 import play.api.libs.json.{JsObject, JsValue, Json}
 
@@ -45,8 +47,8 @@ case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
     )
   }
 
-  override val transactionName: String = enums.TransactionName.CeaseIncomeSource
-  override val auditType: String = enums.AuditType.CeaseIncomeSource
+  override val transactionName: String = TransactionName.CeaseIncomeSource
+  override val auditType: String = CeaseIncomeSource
   override val detail: JsValue = {
     val details = userAuditDetails(user) ++
       Json.obj(

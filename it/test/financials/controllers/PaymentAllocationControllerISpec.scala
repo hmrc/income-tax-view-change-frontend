@@ -19,7 +19,7 @@ package financials.controllers
 import audit.models.PaymentAllocationsResponseAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
