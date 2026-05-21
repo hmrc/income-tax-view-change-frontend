@@ -157,7 +157,6 @@ home.payments.heading                                           = Next charges d
 home.payments.daily-interest-charges                            = Daily interest charges
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
-home.updates.heading                                            = Your submission deadlines
 home.updates.view.reportingFrequency                            = View your deadlines
 home.paymentHistory.heading                                     = Payment history
 home.paymentHistory.view                                        = Payment history
@@ -1054,9 +1053,6 @@ nextUpdates.previousYears.link									   = tax years
 nextUpdates.crystallised            							   = Final declaration
 nextUpdates.quarterly                                              = Quarterly update
 nextUpdates.crystallisedAll            							   = All income sources
-nextUpdates.propertyIncome            							   = Property income
-nextUpdates.propertyIncome.UK                                      = UK property
-nextUpdates.propertyIncome.Foreign                                 = Foreign property
 nextUpdates.business            							       = Business income
 
 nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
@@ -2372,8 +2368,6 @@ incomeSources.add.incomeSourceReportingMethod.uk.caption                =   UK p
 incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Foreign property
 
 # manage uk property reporting method
-incomeSources.manage.propertyReportingMethod.heading.annual         = Confirm you want to report annually for the tax year {0} to {1}
-incomeSources.manage.propertyReportingMethod.heading.quarterly      = Confirm you want to report quarterly for the tax year {0} to {1}
 incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I want to switch to annual reporting
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
@@ -2395,7 +2389,6 @@ incomeSources.add.manageObligations.uk-property                       =   UK pro
 incomeSources.add.manageObligations.foreign-property                  =   Foreign property
 incomeSources.add.manageObligations.heading                           =   What you must do
 
-## used when OptInOptOutContentUpdateR17 enabled
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.title = {0} has been {1} Making Tax Digital for Income Tax for the {2} to {3} tax year
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.title                       = {0}
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.body = has been {0} Making Tax Digital for Income Tax for the {1} to {2} tax year
@@ -2462,15 +2455,12 @@ incomeSources.manage.new.business.details.annually                        =   An
 incomeSources.manage.new.business.details.quarterly.grace.period          =   Quarterly
 incomeSources.manage.new.business.details.annually.grace.period           =   Annual
 incomeSources.manage.new.business.details.trade.type                      =   Type of trade
-incomeSources.manage.new.business.details.reporting.frequency             =   View and change your reporting frequency for all your businesses
-incomeSources.manage.new.business.details.insetText                       =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
 
 incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   UK property
 
 incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Foreign property
 
-# Used when OptInOptOutContentUpdateR17 feature switch is enabled
 
 incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph      =   Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April {0}, you could be required to use the service.
 incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Depending on your circumstances, you may be able to
@@ -2584,15 +2574,6 @@ manageBusinesses.manage.propertyReportingMethod.new.confirm                     
 
 
 # manage income sources reporting method (old - content FS R17 disabled)
-manageBusinesses.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
-manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
-manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
-manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Foreign property
-manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Sole trader
-manageBusinesses.manage.propertyReportingMethod.description.annual         = If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software.
-manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
-manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
-manageBusinesses.manage.propertyReportingMethod.confirm                    = Confirm and save
 
 
 
@@ -3307,7 +3288,6 @@ reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is requi
 reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
 
-#new mandatory reporting messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.mandatoryReporting.heading.R17      = When Making Tax Digital for Income Tax is required
 reporting.frequency.mandatoryReporting.inset.R17        = You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold.
 reporting.frequency.mandatoryReporting.p1               = If this happens in the {0} to {1} tax year, you would be required to use Making Tax Digital for Income Tax for the {2} to {3} tax year.
@@ -3328,7 +3308,6 @@ reporting.frequency.compatibleSoftware.link.text = software compatible with Maki
 reporting.frequency.compatibleSoftware.p2        = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3        = For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return.
 
-#new compatible software messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.compatibleSoftware.heading.R17                      = When you need compatible software
 reporting.frequency.compatibleSoftware.p1.R17                           = Whether you are required or voluntarily signed up, you need
 reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
@@ -3349,7 +3328,6 @@ reporting.frequency.table.voluntary                                 = Quarterly
 reporting.frequency.table.annual                                    = Annual
 reporting.frequency.table.exempt                                    = Exempt
 
-#new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.table.heading.usingMTD                          = Using Making Tax Digital for Income Tax
 reporting.frequency.table.heading.status.R17                        = Your status
 reporting.frequency.table.MTD.isUsingMTD                            = Yes

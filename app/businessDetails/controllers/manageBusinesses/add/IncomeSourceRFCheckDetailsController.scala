@@ -22,7 +22,6 @@ import businessDetails.services.{CreateBusinessDetailsService, UpdateIncomeSourc
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.{AfterSubmissionPage, ReportingFrequencyPages}
-import models.admin.OptInOptOutContentUpdateR17
 import models.core.{IncomeSourceId, NormalMode}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.*
@@ -107,8 +106,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
             incomeSourceType,
             sessionData.incomeSourceReportingFrequencyData.nonEmpty,
             sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyCurrentYear),
-            sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyForNextYear),
-            isEnabled(OptInOptOutContentUpdateR17)
+            sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyForNextYear)
           ),
           postAction = postAction,
           isAgent,

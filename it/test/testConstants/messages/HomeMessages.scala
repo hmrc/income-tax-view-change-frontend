@@ -26,4 +26,6 @@ object HomeMessages extends ComponentSpecBase {
 
   def overdueUpdates(numberOverdue: String): String = messagesAPI("home.overdue.date.update.count", numberOverdue)
 
+  def nextUpdateDue(date: String): String = messagesAPI("home.updates.R17.nextUpdateDue", date)
+
 }

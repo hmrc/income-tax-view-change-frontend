@@ -21,7 +21,7 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.{DateServiceInterface, SessionService}
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure.defaultFailure
@@ -70,7 +70,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
       s"the user is authenticated as a $mtdRole" should {
         s"render the confirm opt out update page" that {
           "is for one year" in {
-            setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List(OptOutFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -90,7 +90,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           }
 
           "is for one year in V-M-M scenario with quarterly updates" in {
-            setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List(OptOutFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -110,7 +110,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           }
 
           "is for one year in V-M-V scenario with quarterly updates" in {
-            setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List(OptOutFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -130,7 +130,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
           }
 
           "is for one year in V-M-A scenario with quarterly updates" in {
-            setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List(OptOutFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -152,7 +152,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
         "render the home page" when {
           "the opt out feature switch is disabled" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List())
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -162,22 +162,6 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
               "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
             } else {
               "/report-quarterly/income-and-expenses/view"
-            }
-
-            status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(redirectUrl)
-          }
-          "the content update R17 feature switch is disabled" in {
-            setupMockSuccess(mtdRole, false, List(OptOutFs))
-            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-            val result = action(fakeRequest)
-
-            val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
-            } else {
-              "/report-quarterly/income-and-expenses/view/reporting-frequency"
             }
 
             status(result) shouldBe Status.SEE_OTHER
@@ -196,7 +180,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
       s"the user is authenticated as a $mtdRole" should {
 
         "redirect to the completion page if the opt out update request succeeds" in {
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -212,7 +196,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
         }
 
         "redirect to the OptOutError page if the updateTaxYearsITSAStatusRequest makes no updates" in {
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -227,7 +211,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
 
         "redirect to the opt out error page if the opt out update request fails (all fail)" in {
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -243,7 +227,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
         }
 
         "redirect to the opt out error page if the opt out update request fails (1 fail mid multiyear update loop)" in {
-          setupMockSuccess(mtdRole, false, List(OptOutFs, OptInOptOutContentUpdateR17))
+          setupMockSuccess(mtdRole, false, List(OptOutFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -260,7 +244,7 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
 
         "redirect to the home page" when {
           "the opt out feature switch is disabled" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List())
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -270,22 +254,6 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
               "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
             } else {
               "/report-quarterly/income-and-expenses/view"
-            }
-
-            status(result) shouldBe Status.SEE_OTHER
-            redirectLocation(result) shouldBe Some(redirectUrl)
-          }
-          "the content update R17 feature switch is disabled" in {
-            setupMockSuccess(mtdRole, false, List(OptOutFs))
-            mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
-            setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
-
-            val result = action(fakeRequest)
-
-            val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
-            } else {
-              "/report-quarterly/income-and-expenses/view/reporting-frequency"
             }
 
             status(result) shouldBe Status.SEE_OTHER

@@ -50,11 +50,7 @@
 )(implicit messages: Messages, user: common.auth.MtdItUser[_], dateService: DateServiceInterface)
 
 @getMessage(key: String, args: String*) = @{
-    if(viewModel.displayR17Content) {
-        messages(s"income-sources.check-details-reporting-frequency.r17.$key", args: _*)
-    } else {
-        messages(s"income-sources.check-details-reporting-frequency.$key", args: _*)
-    }
+    messages(s"income-sources.check-details-reporting-frequency.r17.$key", args: _*)
 }
 
 @getHeaderMessage(key: String, args: String*) = @{

@@ -68,7 +68,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
   val nextUpdatesViewModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(
     GroupedObligationsModel(BaseTestConstants.testSelfEmploymentId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#001", StatusFulfilled))),
     GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#002", StatusFulfilled)))
-  )).obligationsByDate(isR17ContentEnabled = true).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+  )).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
   })
 
@@ -98,7 +98,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
   }
 
   def mockViewModel: OngoingStubbing[NextUpdatesViewModel] = {
-    when(mockNextUpdatesService.getNextUpdatesViewModel(any(), any())(any()))
+    when(mockNextUpdatesService.getNextUpdatesViewModel(any())(any()))
       .thenReturn(nextUpdatesViewModel)
   }
 

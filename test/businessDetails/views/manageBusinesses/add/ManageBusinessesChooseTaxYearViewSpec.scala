@@ -36,8 +36,7 @@ class ManageBusinessesChooseTaxYearViewSpec extends TestSupport {
 
   class Setup(
                form: Form[ChooseTaxYearFormModel],
-               incomeSourceType: IncomeSourceType,
-               isOptInOptOutContentUpdateR17: Boolean
+               incomeSourceType: IncomeSourceType
              ) {
 
     val subHeadingText: String = incomeSourceType match {
@@ -61,8 +60,7 @@ class ManageBusinessesChooseTaxYearViewSpec extends TestSupport {
           postAction = postAction,
           currentTaxYear = Some(TaxYear(2023, 2024)),
           nextTaxYear = Some(TaxYear(2024, 2025)),
-          incomeSourceType = incomeSourceType,
-          isOptInOptOutContentUpdateR17 = isOptInOptOutContentUpdateR17
+          incomeSourceType = incomeSourceType
         )))
   }
 
@@ -70,70 +68,35 @@ class ManageBusinessesChooseTaxYearViewSpec extends TestSupport {
 
   incomeSourceTypes.foreach { incomeSourceType =>
 
-    s"ChoooseTaxYearView for incomeSourceType: $incomeSourceType" when {
+    s"ChoooseTaxYearView for incomeSourceType: $incomeSourceType" should {
 
-      "isOptInOptOutContentUpdateR17 is ON" should {
-
-        "have the correct title" in new Setup(chooseTaxYearForm(true), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
-          pageDocument.title() shouldBe "Which tax year(s) do you want to sign up for? - Manage your Self Assessment - GOV.UK"
-        }
-
-        "have the correct heading" in new Setup(chooseTaxYearForm(true), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
-          pageDocument.select("h1").text() shouldBe s"$subHeadingText Which tax year(s) do you want to sign up for?"
-        }
-
-        "have the correct sub-heading" in new Setup(chooseTaxYearForm(true), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
-          pageDocument.getElementById("choose-tax-year-subheading").text() shouldBe subHeadingText
-        }
-
-        "have the correct checkbox contents" in new Setup(chooseTaxYearForm(true), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
-          pageDocument.getElementsByTag("label").first().text() shouldBe "2023 to 2024"
-          pageDocument.getElementsByTag("label").last().text() shouldBe "2024 to 2025"
-        }
-
-        "have the correct button" in new Setup(chooseTaxYearForm(true), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
-          pageDocument.getElementById("continue-button").text() shouldBe "Continue"
-          pageDocument.getElementById("continue-button").attr("href") shouldBe ""
-        }
-
-        "have the correct error summary" in new Setup(chooseTaxYearForm(true).bind(Map("Invalid" -> "Invalid")), incomeSourceType, isOptInOptOutContentUpdateR17 = true) {
-          pageDocument.getElementById("error-summary-title").text() shouldBe "There is a problem"
-          pageDocument.getElementById("error-summary-link").text() shouldBe "Select the tax years you want to sign up for"
-          pageDocument.getElementById("error-summary-link").attr("href") shouldBe "#current-year-checkbox"
-          pageDocument.getElementById("choose-tax-year-error").text() shouldBe "Error: Select the tax years you want to sign up for"
-        }
+      "have the correct title" in new Setup(chooseTaxYearForm(), incomeSourceType = incomeSourceType) {
+        pageDocument.title() shouldBe "Which tax year(s) do you want to sign up for? - Manage your Self Assessment - GOV.UK"
       }
 
-      "isOptInOptOutContentUpdateR17 is OFF" should {
+      "have the correct heading" in new Setup(chooseTaxYearForm(), incomeSourceType = incomeSourceType) {
+        pageDocument.select("h1").text() shouldBe s"$subHeadingText Which tax year(s) do you want to sign up for?"
+      }
 
-        "have the correct title" in new Setup(chooseTaxYearForm(false), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = false) {
-          pageDocument.title() shouldBe "Which tax year(s) do you want to report quarterly for? - Manage your Self Assessment - GOV.UK"
-        }
+      "have the correct sub-heading" in new Setup(chooseTaxYearForm(), incomeSourceType = incomeSourceType) {
+        pageDocument.getElementById("choose-tax-year-subheading").text() shouldBe subHeadingText
+      }
 
-        "have the correct heading" in new Setup(chooseTaxYearForm(false), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = false) {
-          pageDocument.select("h1").text() shouldBe s"$subHeadingText Which tax year(s) do you want to report quarterly for?"
-        }
+      "have the correct checkbox contents" in new Setup(chooseTaxYearForm(), incomeSourceType = incomeSourceType) {
+        pageDocument.getElementsByTag("label").first().text() shouldBe "2023 to 2024"
+        pageDocument.getElementsByTag("label").last().text() shouldBe "2024 to 2025"
+      }
 
-        "have the correct sub-heading" in new Setup(chooseTaxYearForm(false), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = false) {
-          pageDocument.getElementById("choose-tax-year-subheading").text() shouldBe subHeadingText
-        }
+      "have the correct button" in new Setup(chooseTaxYearForm(), incomeSourceType = incomeSourceType) {
+        pageDocument.getElementById("continue-button").text() shouldBe "Continue"
+        pageDocument.getElementById("continue-button").attr("href") shouldBe ""
+      }
 
-        "have the correct checkbox contents" in new Setup(chooseTaxYearForm(false), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = false) {
-          pageDocument.getElementsByTag("label").first().text() shouldBe "2023 to 2024"
-          pageDocument.getElementsByTag("label").last().text() shouldBe "2024 to 2025"
-        }
-
-        "have the correct button" in new Setup(chooseTaxYearForm(false), incomeSourceType = incomeSourceType, isOptInOptOutContentUpdateR17 = false) {
-          pageDocument.getElementById("continue-button").text() shouldBe "Continue"
-          pageDocument.getElementById("continue-button").attr("href") shouldBe ""
-        }
-
-        "have the correct error summary" in new Setup(chooseTaxYearForm(false).bind(Map("Invalid" -> "Invalid")), incomeSourceType, isOptInOptOutContentUpdateR17 = false) {
-          pageDocument.getElementById("error-summary-title").text() shouldBe "There is a problem"
-          pageDocument.getElementById("error-summary-link").text() shouldBe "Select the tax years you want to report quarterly"
-          pageDocument.getElementById("error-summary-link").attr("href") shouldBe "#current-year-checkbox"
-          pageDocument.getElementById("choose-tax-year-error").text() shouldBe "Error: Select the tax years you want to report quarterly"
-        }
+      "have the correct error summary" in new Setup(chooseTaxYearForm().bind(Map("Invalid" -> "Invalid")), incomeSourceType) {
+        pageDocument.getElementById("error-summary-title").text() shouldBe "There is a problem"
+        pageDocument.getElementById("error-summary-link").text() shouldBe "Select the tax years you want to sign up for"
+        pageDocument.getElementById("error-summary-link").attr("href") shouldBe "#current-year-checkbox"
+        pageDocument.getElementById("choose-tax-year-error").text() shouldBe "Error: Select the tax years you want to sign up for"
       }
     }
   }

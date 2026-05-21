@@ -130,8 +130,6 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
         "are not overdue" in {
           val nextDetailsTile = NextUpdatesTileViewModel(dueDates = List(fixedDate),
             currentDate = fixedDate.minusDays(5),
-            
-            showOptInOptOutContentUpdateR17 = false,
             currentYearITSAStatus = ITSAStatus.NoStatus,
             nextQuarterlyUpdateDueDate = None,
             nextTaxReturnDueDate = None)
@@ -147,8 +145,6 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
         "are overdue" in {
           val nextDetailsTile = NextUpdatesTileViewModel(dueDates = List(fixedDate),
             currentDate = fixedDate.plusDays(5),
-            
-            showOptInOptOutContentUpdateR17 = false,
             currentYearITSAStatus = ITSAStatus.NoStatus,
             nextQuarterlyUpdateDueDate = None,
             nextTaxReturnDueDate = None)
@@ -168,8 +164,6 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
       "there are multiple overdue updates" in {
         val nextDetailsTile = NextUpdatesTileViewModel(List(fixedDate.minusDays(5), fixedDate.minusDays(10)),
           currentDate = fixedDate,
-          
-          showOptInOptOutContentUpdateR17 = false,
           currentYearITSAStatus = ITSAStatus.NoStatus,
           nextQuarterlyUpdateDueDate = None,
           nextTaxReturnDueDate = None)

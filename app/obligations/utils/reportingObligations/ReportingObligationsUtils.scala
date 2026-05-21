@@ -38,19 +38,11 @@ trait ReportingObligationsUtils extends FeatureSwitching {
   }
 
   def withOptOutRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(OptOutFs), isEnabled(OptInOptOutContentUpdateR17)) match {
-      case (true, true) => codeBlock
-      case (true, false) => redirectReportingFrequency(user.userType)
-      case _ => redirectHome(user.userType)
-    }
+    if (isEnabled(OptOutFs)) codeBlock else redirectHome(user.userType)
   }
 
   def withSignUpRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(SignUpFs), isEnabled(OptInOptOutContentUpdateR17)) match {
-      case (true, true)  => codeBlock
-      case (true, false) | (false, _) => redirectReportingFrequency(user.userType)
-      case _ => redirectHome(user.userType)
-    }
+    if (isEnabled(SignUpFs)) codeBlock else redirectHome(user.userType)
   }
 
   private def redirectHome(userType: Option[AffinityGroup]): Future[Result] =

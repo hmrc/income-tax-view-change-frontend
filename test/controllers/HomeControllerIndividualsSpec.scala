@@ -111,6 +111,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
     setupMockUserAuth
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
+    mockGetNextDueDates((None, None))
     val testHomeController = app.injector.instanceOf[HomeController]
 
     val homePageTitle = "Self Assessment - Manage your Self Assessment - GOV.UK"
@@ -486,8 +487,8 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
         "there is a future update date to display" in new Setup {
           setupMockFeatureSwitches()
           mockItsaStatusRetrievalAction()
-          setupNextUpdatesTests(futureDueDates, None, None)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupNextUpdatesTests(futureDueDates, None, Some(LocalDate.of(2100, 1, 1)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(TaxYear(staticTaxYear.endYear, staticTaxYear.endYear + 1) -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
@@ -500,14 +501,14 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2100"
+          document.select("#updates-tile p:nth-child(2)").text() shouldBe "Next tax return due: 1 January 2100"
         }
 
         "there is an overdue update date to display" in new Setup {
           setupMockFeatureSwitches()
           mockItsaStatusRetrievalAction()
-          setupNextUpdatesTests(overdueDueDates, None, None)
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupNextUpdatesTests(overdueDueDates, None, Some(LocalDate.of(2018, 1, 1)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(TaxYear(staticTaxYear.endYear, staticTaxYear.endYear + 1) -> baseStatusDetail)))
           setupMockGetFilteredChargesListFromFinancialDetails(emptyWhatYouOweChargesList.chargesList)
           setupMockHasMandatedOrVoluntaryStatusCurrentYear(true)
           setupMockGetPenaltySubmissionFrequency(baseStatusDetail.status)("Quarterly")
@@ -520,7 +521,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile p:nth-child(2)").text() shouldBe "Overdue 1 January 2018"
+          document.select("#updates-tile p:nth-child(2)").text() shouldBe "Next tax return due: 1 January 2018"
         }
 
         "there are no updates to display" in new Setup {
@@ -545,7 +546,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
-        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches()
         mockItsaStatusRetrievalAction()
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
@@ -581,7 +582,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       }
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
-        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches()
         mockItsaStatusRetrievalAction()
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val overdueDate1 = LocalDate.of(2000, 1, 1)
@@ -618,7 +619,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       }
 
       "render the home page controller with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
-        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches()
         mockItsaStatusRetrievalAction()
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextTaxReturnDueDate: LocalDate = LocalDate.of(currentTaxYear.endYear + 1, 1, 31)

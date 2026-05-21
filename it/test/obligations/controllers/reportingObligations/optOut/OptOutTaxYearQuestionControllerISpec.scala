@@ -24,7 +24,7 @@ import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
 import obligations.controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
@@ -135,8 +135,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - CY-1 Onwards (V, V, V)" in {
           val currentYear = "2021"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -168,8 +168,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - CY-1 Onwards (V, A, V)" in {
           val currentYear = "2021"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -201,8 +201,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - CY-1 Onwards (V, V, A)" in {
           val currentYear = "2021"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -234,8 +234,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - CY Onwards" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -267,8 +267,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - CY Onwards - NY Annual" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -300,8 +300,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - CY+1 Onwards" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -333,8 +333,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Mandated (CY-1)" in {
           val currentYear = "2021"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -366,8 +366,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Mandated" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -398,8 +398,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Mandated with quarterly updates" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -430,8 +430,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Annual (CY-1)" in {
           val currentYear = "2021"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
+          
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -464,8 +464,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Annual" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -497,8 +496,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Single Year Followed By Annual with quarterly updates" in {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -531,8 +529,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Next Year Opt Out with CY Annual" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -563,8 +560,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "render the opt out tax year question page - Next Year Opt Out with CY Mandated" in {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
-
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -597,8 +593,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "submit the answer to the opt out tax year question - single year" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-
-        stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+        stubAuthorised(mtdUserRole, List(OptOutFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
@@ -665,8 +660,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "submit the answer to the opt out tax year question - multi year" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-
-        stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+        stubAuthorised(mtdUserRole, List(OptOutFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
@@ -733,8 +727,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "submit the answer to the opt out tax year question - opt out followed by mandated redirects to check your answers" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-
-        stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+        stubAuthorised(mtdUserRole, List(OptOutFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
@@ -776,8 +769,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
       "get an error message if the user incorrectly submits to the form" in {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
-
-        stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+        stubAuthorised(mtdUserRole, List(OptOutFs))
         IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
@@ -800,7 +792,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         "redirect to the cannot go back page" in {
           val currentYear = "2021"
           val taxYear = TaxYear(2022, 2023)
-          stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+          stubAuthorised(mtdUserRole, List(OptOutFs))
           IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,

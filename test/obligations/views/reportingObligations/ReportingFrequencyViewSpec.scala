@@ -195,7 +195,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -234,7 +233,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -301,7 +299,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -336,7 +333,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -380,7 +376,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -423,7 +418,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -460,7 +454,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -494,7 +487,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -529,8 +521,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
-                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag),
+                  nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
             )
@@ -567,7 +558,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
               contentAsString(
                 view.apply(
                   viewModel = reportingFrequencyViewModel,
-                  optInOptOutContentUpdateR17IsEnabled = true,
                   nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
                 )
               )
@@ -610,7 +600,6 @@ class ReportingFrequencyViewSpec extends TestSupport {
             contentAsString(
               view.apply(
                 viewModel = reportingFrequencyViewModel,
-                optInOptOutContentUpdateR17IsEnabled = true,
                 nextUpdatesLink = nextUpdatesUrl(isAgentFlag)
               )
             )

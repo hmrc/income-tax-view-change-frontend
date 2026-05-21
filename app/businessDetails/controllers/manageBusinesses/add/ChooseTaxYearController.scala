@@ -22,7 +22,6 @@ import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.ReportingFrequencyPages
 import models.UIJourneySessionData
-import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
 import play.api.data.Form
@@ -77,7 +76,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
     incomeSourceRFService.redirectChecksForIncomeSourceRF(IncomeSourceJourneyType(Add, incomeSourceType),
       ReportingFrequencyPages, incomeSourceType, dateService.getCurrentTaxYearEnd, isAgent, isChange) { sessionData =>
 
-      val chooseTaxYearForm = form(isEnabled(OptInOptOutContentUpdateR17))
+      val chooseTaxYearForm = form()
 
       val filledOrEmptyForm: Form[ChooseTaxYearFormModel] = {
         if (isChange) {
@@ -104,8 +103,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
             currentTaxYear = if (displayOptionToChangeForCurrentTy(sessionData)) Some(dateService.getCurrentTaxYear) else None,
             nextTaxYear = if (displayOptionToChangeForNextTy(sessionData)) Some(dateService.getNextTaxYear) else None,
             incomeSourceType = incomeSourceType,
-            isChange = isChange,
-            isOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17)
+            isChange = isChange
           )))
     }
   }
@@ -116,7 +114,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
         val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
         sessionService.getMongo(journeyType).flatMap {
           case Right(Some(sessionData)) =>
-            val chooseTaxYearForm = form(isEnabled(OptInOptOutContentUpdateR17))
+            val chooseTaxYearForm = form()
             chooseTaxYearForm
               .bindFromRequest()
               .fold(
@@ -129,8 +127,7 @@ class ChooseTaxYearController @Inject()(authActions: AuthActions,
                       currentTaxYear = if (displayOptionToChangeForCurrentTy(sessionData)) Some(dateService.getCurrentTaxYear) else None,
                       nextTaxYear = if (displayOptionToChangeForNextTy(sessionData)) Some(dateService.getNextTaxYear) else None,
                       incomeSourceType = incomeSourceType,
-                      isChange = isChange,
-                      isOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17)
+                      isChange = isChange
                     ))
                   )
                 },

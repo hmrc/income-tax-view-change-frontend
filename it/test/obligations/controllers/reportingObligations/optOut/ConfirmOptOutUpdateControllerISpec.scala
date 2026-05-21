@@ -22,7 +22,7 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import obligations.controllers.constants.ConfirmOptOutUpdateControllerConstants.*
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.{NavBarFs, OptOutFs}
 import models.itsaStatus.ITSAStatus.*
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.reportingObligations.optOut.OptOutSessionData
@@ -65,7 +65,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
 
           s"render check opt-out update answers page" in {
-            stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+            stubAuthorised(mtdUserRole, List(OptOutFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             helper.stubOptOutInitialState(currentTaxYear(dateService),
@@ -87,7 +87,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 
         "has already completed the journey (according to session data)" should {
           s"redirect to the cannot go back page" in {
-            stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+            stubAuthorised(mtdUserRole, List(OptOutFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             helper.stubOptOutInitialState(currentTaxYear(dateService),
@@ -119,7 +119,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "redirect to the completion page" when {
             "user confirms opt-out for one-year scenario" in {
-              stubAuthorised(mtdUserRole, List(OptOutFs, OptInOptOutContentUpdateR17))
+              stubAuthorised(mtdUserRole, List(OptOutFs))
 
               IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 

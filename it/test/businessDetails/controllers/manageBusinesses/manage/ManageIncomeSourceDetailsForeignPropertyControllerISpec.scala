@@ -114,9 +114,9 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextByID("change-link-1")(messagesChangeLinkText),
-                elementTextByID("change-link-2")(messagesChangeLinkText),
-                elementTextByID("up-to-two-tax-years")(s"Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April $mandatoryFromYear, you could be required to report quarterly.")
+                elementTextByID("opt-out-link-1")(messagesOptOutLinkText),
+                elementTextByID("sign-up-link-2")(messagesSignUpLinkText),
+                elementTextByID("up-to-two-tax-years")(s"Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April $mandatoryFromYear, you could be required to use the service.")
               )
             }
 
@@ -139,8 +139,8 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextByID("change-link-1")(""),
-                elementTextByID("change-link-2")(messagesChangeLinkText)
+                elementTextByID("sign-up-link-1")(""),
+                elementTextByID("opt-out-link-2")(messagesOptOutLinkText)
               )
             }
 

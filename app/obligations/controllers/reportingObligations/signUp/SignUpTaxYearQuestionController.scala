@@ -40,10 +40,11 @@ class SignUpTaxYearQuestionController @Inject()(
                                                  val signUpService: SignUpService,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                               )(implicit val appConfig: FrontendAppConfig,
+                                               )(
+                                                 implicit val appConfig: FrontendAppConfig,
                                                  val mcc: MessagesControllerComponents,
-                                                 val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
+                                                 val ec: ExecutionContext
+                                               ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
 
   private def errorHandler(isAgent: Boolean): ShowInternalServerError =
     if (isAgent) itvcErrorHandlerAgent

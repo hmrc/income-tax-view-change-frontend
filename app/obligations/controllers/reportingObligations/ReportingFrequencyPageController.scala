@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.services.DateServiceInterface
 import obligations.controllers.routes as obligationsRoutes
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
+import models.admin.{OptOutFs, SignUpFs}
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
 import obligations.services.reportingObligations.ReportingObligationsAuditService
 import obligations.services.reportingObligations.optOut.OptOutService
@@ -86,7 +86,6 @@ class ReportingFrequencyPageController @Inject()(
                 Ok(
                   view(
                     viewModel,
-                    isEnabled(OptInOptOutContentUpdateR17),
                     nextUpdatesLink
                   )
                 )

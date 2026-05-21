@@ -64,6 +64,8 @@ class ManageIncomeSourceDetailsISpecHelper extends ControllerISpecHelper {
   val messagesAnnuallyGracePeriod: String = messagesAPI("incomeSources.manage.business-manage-details.annually.graceperiod")
   val messagesQuarterlyGracePeriod: String = messagesAPI("incomeSources.manage.business-manage-details.quarterly.graceperiod")
   val messagesChangeLinkText: String = messagesAPI("incomeSources.manage.business-manage-details.change")
+  val messagesSignUpLinkText: String = messagesAPI("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.signup")
+  val messagesOptOutLinkText: String = messagesAPI("incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.optOut")
   val messagesUnknown: String = messagesAPI("incomeSources.generic.unknown")
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]

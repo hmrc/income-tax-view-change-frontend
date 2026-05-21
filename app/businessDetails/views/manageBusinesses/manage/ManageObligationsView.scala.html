@@ -46,7 +46,6 @@
         changeTo: String,
         isAgent: Boolean,
         postAction: Call,
-        showOptInOptOutContentUpdateR17: Boolean,
         isCurrentTaxYear: Boolean
 )(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
@@ -57,12 +56,7 @@ messages(s"business.added.$key", args: _*)
 }
 
 @getUniqueMessage(key: String, args: String*) = @{
-    val messageKey = if (showOptInOptOutContentUpdateR17) {
-        s"incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.$key"
-    } else {
-        s"incomeSources.add.manageObligations.$key"
-    }
-    messages(messageKey, args: _*)
+    messages(s"incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.$key", args: _*)
 }
 
 @getBusinessName(name: String) = @{
@@ -84,8 +78,7 @@ s"${getMessage("table.heading.1")} ${quarterly.head.inboundCorrespondenceFrom.ge
 }
 
 @getPageTitle = @{
-    val actionOrPeriod = if (showOptInOptOutContentUpdateR17) getActionText(changeTo) else getPeriodMessage(changeTo)
-    val title = getUniqueMessage("title", getBusinessName(businessName), actionOrPeriod, s"${taxYear.startYear}", s"${taxYear.endYear}")
+    val title = getUniqueMessage("title", getBusinessName(businessName), getActionText(changeTo), s"${taxYear.startYear}", s"${taxYear.endYear}")
     title.trim
 }
 
@@ -99,8 +92,7 @@ s"${getMessage("table.heading.1")} ${quarterly.head.inboundCorrespondenceFrom.ge
 }
 
 @getPanelBody = @{
-    val actionOrPeriod = if (showOptInOptOutContentUpdateR17) getActionText(changeTo) else getPeriodMessage(changeTo)
-    getUniqueMessage("panel.body", actionOrPeriod, s"${taxYear.startYear}", s"${taxYear.endYear}")
+    getUniqueMessage("panel.body", getActionText(changeTo), s"${taxYear.startYear}", s"${taxYear.endYear}")
 }
 
 @manageBusinessesControllerURL = @{
@@ -134,115 +126,39 @@ s"${getMessage("table.heading.1")} ${quarterly.head.inboundCorrespondenceFrom.ge
             )
         )
 
-        @if(showOptInOptOutContentUpdateR17) {
-            <h2 class="govuk-heading-m">
-                @getUniqueMessage("heading")
-            </h2>
+        <h2 class="govuk-heading-m">
+            @getUniqueMessage("heading")
+        </h2>
 
-            @govukInsetText(InsetText(
-                content = Text(getUniqueMessage("inset"))
-            ))
+        @govukInsetText(InsetText(
+            content = Text(getUniqueMessage("inset"))
+        ))
 
-            @p() {
-                @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink")
-                @link(
-                    link = nextUpdatesControllerURL,
-                    messageKey = "incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link",
-                )
-                @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink")
-            }
-
-            @if(changeTo == "quarterly" && isCurrentTaxYear) {
-                @p() {
-                    @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2", s"${taxYear.startYear}", s"${taxYear.endYear}")
-                }
-            }
-
-            @p() {
-                @link(
-                    link = manageBusinessesControllerURL,
-                    messageKey = "incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link",
-                )
-                @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.afterLink")
-            }
-
-        } else {
-
-            <h2 class="govuk-label-wrapper">
-                <label class="govuk-label govuk-label--l govuk-!-margin-top-8">
-                @getUniqueMessage("heading")
-                </label>
-            </h2>
-
-            @if(sources.quarterlyObligationsDates.nonEmpty) {
-                <div class="box-simple" id="quarterly">
-                    <div class="page_headers govuk-heading-m"> @getMessage("quarterly.heading") </div>
-                    @p(){
-                        @getMessage("quarterly.p1")
-                    }
-
-                    @for(quarterlyPeriods <- sources.quarterlyObligationsDates) {
-                        @govukTable(Table(
-                            rows = quarterlyPeriods.map { quarterlyPeriod =>
-                               Seq(
-                                    TableRow(
-                                        content = Text(s"${quarterlyPeriod.inboundCorrespondenceFrom.toLongDate} ${getMessage("to")} ${quarterlyPeriod.inboundCorrespondenceTo.toLongDate}")
-                                    ),
-                                    TableRow(
-                                        content = Text(quarterlyPeriod.inboundCorrespondenceDue.toLongDate)
-                                    )
-                                )
-                            },
-                            head = Some(Seq(
-                                HeadCell(
-                                    content = Text(getQuarterlyTableHeading(quarterlyPeriods))
-                                ),
-                                HeadCell(
-                                    content = Text(getMessage("table.heading.2"))
-                                )
-                            )),
-                            caption = None,
-                            firstCellIsHeader = false
-                            ))
-                    }
-                </div>
-            }
-
-            <div class="box-simple" id="finalDec">
-                <div class="page_headers govuk-heading-m"> @getMessage("final.declaration.heading") </div>
-                @p(){
-                    @getMessage("final.declaration.text")
-                }
-
-                @govukTable(Table(
-                    rows = sources.finalDeclarationDates.map { finalDecDate =>
-                        Seq(
-                            TableRow(
-                                content = Text(s"${finalDecDate.inboundCorrespondenceFrom.getYear.toString} ${getMessage("to")} ${finalDecDate.inboundCorrespondenceTo.getYear.toString}")
-                            ),
-                            TableRow(
-                                content = Text(finalDecDate.inboundCorrespondenceDue.toLongDate)
-                            )
-                        )
-                    },
-                    head = Some(Seq(
-                        HeadCell(
-                            content = Text(getMessage("table.heading.1"))
-                        ),
-                        HeadCell(
-                            content = Text(getMessage("table.heading.2"))
-                        )
-                    )),
-                    caption = None,
-                    firstCellIsHeader = false
-                ))
-            </div>
-
-            <div class="govuk-!-margin-top-4"> </div>
-
-            @continueButton(
-                Some(getMessage("income.sources.button"))
+        @p() {
+            @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.beforeLink")
+            @link(
+                link = nextUpdatesControllerURL,
+                messageKey = "incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.link",
             )
+            @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para1.afterLink")
         }
+
+        @if(changeTo == "quarterly" && isCurrentTaxYear) {
+            @p() {
+                @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.para2", s"${taxYear.startYear}", s"${taxYear.endYear}")
+            }
+        }
+
+        @p() {
+            @link(
+                link = manageBusinessesControllerURL,
+                messageKey = "incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.link",
+            )
+            @messages("incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.manage.afterLink")
+        }
+
+        @continueButton(
+            Some(getMessage("income.sources.button"))
+        )
     }
 }

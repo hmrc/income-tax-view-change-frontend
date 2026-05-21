@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -162,8 +161,9 @@ class ManageObligationsControllerSpec
 
         s"the user is authenticated as a $mtdRole" should {
 
-          "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+          "render the page with current tax year" in {
+
+            setupMockSuccess(mtdRole, false, List())
             mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))

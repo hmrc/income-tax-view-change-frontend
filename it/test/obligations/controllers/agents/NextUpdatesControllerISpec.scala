@@ -170,11 +170,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
             res should have(
               httpStatus(OK),
               pageTitleAgent("nextUpdates.heading"),
-              elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
-              elementTextBySelector("#updates-software-link")
-              (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
-                "to keep digital records of all your business income and expenses. You must submit these " +
-                "updates through your software by each date shown."),
+              isElementVisibleById("updates-and-deadlines-tabs")(expectedValue = true),
             )
 
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)

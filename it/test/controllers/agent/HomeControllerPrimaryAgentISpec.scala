@@ -37,7 +37,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import testConstants.OutstandingChargesIntegrationTestConstants.*
-import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
+import testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
 
 import java.time.LocalDate
 
@@ -138,7 +138,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
                 )
 
@@ -212,7 +212,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
                 )
 
@@ -288,7 +288,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(overdue),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
                 )
 
@@ -362,7 +362,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(overdue),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
                 )
 
@@ -533,7 +533,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
                 )
@@ -603,7 +603,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
                 )
