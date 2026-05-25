@@ -128,14 +128,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       chargeReference = Some("chargeRef")
     ))
 
-  def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String]): PaymentHistoryAllocations =
+  def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String], taxYear: Option[String] = None): PaymentHistoryAllocations =
     PaymentHistoryAllocations(
       allocations = List(PaymentHistoryAllocation(
         dueDate = Some(LocalDate.parse(date)),
         amount = Some(amount),
         clearingSAPDocument = clearingSAPDocument,
         clearingId = clearingId,
-        taxYear = None)),
+        taxYear = taxYear)),
       chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   def codedOutEmptyAdjustmentHistory(originalAmount: BigDecimal): AdjustmentHistoryModel =
@@ -1383,6 +1383,56 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
             chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
             document.select(Selectors.table).select("a").size shouldBe 10
             document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url) shouldBe true
+          }
+
+          "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = false, paymentAllocations = paymentAllocations) {
+            verifyPaymentHistoryContent(expectedPaymentAllocationRows: _*)
+          }
+        }
+      }
+
+      "show payment allocations in history table when allocations are credits" when {
+
+        "credit allocations are present in the list" when {
+
+          val paymentAllocations = List(
+            paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", -1500.0, Some("123456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", -1600.0, Some("223456789012"), Some("PAYID01"), taxYear = Some("2026")),
+
+            paymentsForCharge(typePOA2, ITSA_WALES, "2018-04-01", -2400.0, Some("323456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typePOA2, NIC4_GB, "2018-04-15", -2500.0, Some("423456789012"), Some("PAYID01"), taxYear = Some("2026")),
+
+            paymentsForCharge(typeBalCharge, ITSA_ENGLAND_AND_NI, "2019-12-10", -3400.0, Some("523456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, NIC4_NI, "2019-12-11", -3500.0, Some("623456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, NIC2_WALES, "2019-12-12", -3600.0, Some("723456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, CGT, "2019-12-13", -3700.0, Some("823456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, SL, "2019-12-14", -3800.0, Some("923456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, VOLUNTARY_NIC2_GB, "2019-12-15", -3900.0, Some("023456789012"), Some("PAYID01"), taxYear = Some("2026")),
+          )
+
+          val expectedPaymentAllocationRows = List(
+            "30 Mar 2018 Payment allocated to Income Tax for first payment on account 2018 £1,500.00",
+            "31 Mar 2018 Payment allocated to Class 4 National Insurance for first payment on account 2018 £1,600.00",
+            "1 Apr 2018 Payment allocated to Income Tax for second payment on account 2018 £2,400.00",
+            "15 Apr 2018 Payment allocated to Class 4 National Insurance for second payment on account 2018 £2,500.00",
+            "10 Dec 2019 Payment allocated to Income Tax for Balancing payment 2018 £3,400.00",
+            "11 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment 2018 £3,500.00",
+            "12 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment 2018 £3,600.00",
+            "13 Dec 2019 Payment allocated to Capital Gains Tax for Balancing payment 2018 £3,700.00",
+            "14 Dec 2019 Payment allocated to Student Loans for Balancing payment 2018 £3,800.00",
+            "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for Balancing payment 2018 £3,900.00"
+          )
+
+          "chargeHistory enabled, having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
+            verifyPaymentHistoryContent(historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
+          }
+
+          "chargeHistory enabled with a matching link to the payment allocations page" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations) {
+            document.select(Selectors.table).select("a").size shouldBe 10
+            document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.CreditsSummaryController.showCreditsSummary(2026).url) shouldBe true
           }
 
           "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),
