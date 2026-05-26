@@ -34,12 +34,12 @@
         govukInsetText: GovukInsetText
 )
 
-@(isAgent: Boolean, isSigningUpForCY: Boolean, buttonUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(isSigningUpForCY: Boolean, buttonUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("signUp.start.heading"),
     backUrl = Some("#"),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 

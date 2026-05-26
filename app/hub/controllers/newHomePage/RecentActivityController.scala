@@ -81,7 +81,6 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: hub.view
     } yield {
       Ok(newHomeRecentActivityView(
         origin,
-        user.isAgent,
         yourTasksUrl(origin, user.isAgent),
         recentActivityUrl(origin, user.isAgent),
         overviewUrl(origin, user.isAgent),

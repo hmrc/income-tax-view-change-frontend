@@ -54,7 +54,7 @@ class YouMustWaitToSignUpController @Inject()(
     }
     auth.async { implicit user =>
       val model = YouMustWaitToSignUpViewModel(taxYear = dateService.getCurrentTaxYear)
-      Future.successful(Ok(view(model, isAgent)))
+      Future.successful(Ok(view(model)))
     }
   }
 }

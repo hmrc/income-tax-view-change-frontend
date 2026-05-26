@@ -16,6 +16,7 @@
 
 package obligations.views.reportingObligations.optOut
 
+import common.auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import obligations.forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
@@ -32,6 +33,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
   val optOutTaxYearQuestionView: OptOutTaxYearQuestionView = app.injector.instanceOf[OptOutTaxYearQuestionView]
 
   class Setup(submittedOptOutYear: String, state: OptOutState, numberOfQuarterlyUpdates: Int, previousItsaStatus: ITSAStatus, currentYearItsaStatus: ITSAStatus, nextYearItsaStatus: ITSAStatus, withError: Boolean = false) {
+    implicit val testUser: MtdItUser[?] = agentUserConfirmedClient()
     val previousYearTaxYear = PreviousOptOutTaxYear(previousItsaStatus, TaxYear(2024, 2025), false)
     val currentYearTaxYear = CurrentOptOutTaxYear(currentYearItsaStatus, TaxYear(2025, 2026))
     val nextYearTaxYear = NextOptOutTaxYear(nextYearItsaStatus, TaxYear(2026, 2027), currentYearTaxYear)
@@ -57,7 +59,7 @@ class OptOutTaxYearQuestionViewSpec extends TestSupport {
       OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear)
     }
 
-    val pageDocument = Jsoup.parse(contentAsString(optOutTaxYearQuestionView(isAgent = true, viewModel, form, obligations.controllers.reportingObligations.optOut.routes.OptOutTaxYearQuestionController.submit(isAgent = true))))
+    val pageDocument = Jsoup.parse(contentAsString(optOutTaxYearQuestionView(viewModel, form, obligations.controllers.reportingObligations.optOut.routes.OptOutTaxYearQuestionController.submit(isAgent = true))))
   }
 
   "Opt out tax year question page" when {

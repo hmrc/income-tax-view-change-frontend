@@ -16,6 +16,7 @@
 
 package financials.controllers
 
+import common.auth.MtdItUser
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
@@ -27,7 +28,8 @@ import play.api.Application
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.*
 import services.{CalculationService, CreditHistoryService}
-import testConstants.BaseTestConstants.{calendarYear2018, testSaUtr}
+import org.mockito.Mockito.reset
+import testConstants.BaseTestConstants.{calendarYear2018, testMtdItAgentUser, testMtdItUser, testSaUtr}
 import testConstants.FinancialDetailsTestConstants.*
 import views.html.CreditsSummaryView
 
@@ -57,6 +59,8 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
 
   override def beforeEach(): Unit = {
     super.beforeEach()
+    reset(mockItsaStatusConnector)
+    reset(mockIncomeSourceConnector)
   }
 
   lazy val creditsSummaryView: CreditsSummaryView = app.injector.instanceOf[CreditsSummaryView]
@@ -64,6 +68,7 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
   mtdAllRoles.foreach { mtdUserRole =>
 
     val isAgent = mtdUserRole != MTDIndividual
+    implicit val testUser: MtdItUser[_] = if (isAgent) testMtdItAgentUser else testMtdItUser
 
     s"show${if (isAgent) "AgentCreditsSummary" else ""}" when {
       val action = if (isAgent) testController.showAgentCreditsSummary(calendarYear2018) else testController.showCreditsSummary(calendarYear2018)
@@ -90,7 +95,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
@@ -124,7 +128,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = None,
                   calendarYear = calendarYear2018
@@ -155,7 +158,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
@@ -185,7 +187,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018
@@ -214,7 +215,6 @@ class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationS
                 val expectedContent: String = creditsSummaryView(
                   backUrl = backUrl,
                   utr = Some(testSaUtr),
-                  isAgent = isAgent,
                   charges = chargesList,
                   maybeAvailableCredit = financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment,
                   calendarYear = calendarYear2018

@@ -42,8 +42,8 @@ class SignUpOptOutCannotGoBackController @Inject()(
 
   def show(isAgent: Boolean, isSignUpJourney: Option[Boolean]): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     isSignUpJourney match {
-      case Some(true) => Future.successful(Ok(view(isAgent, isSignUp = true)))
-      case Some(false) => Future.successful(Ok(view(isAgent, isSignUp = false)))
+      case Some(true) => Future.successful(Ok(view(isSignUp = true)))
+      case Some(false) => Future.successful(Ok(view(isSignUp = false)))
       case _ => Future.successful(Redirect(routes.ReportingFrequencyPageController.show(isAgent)))
     }
   }

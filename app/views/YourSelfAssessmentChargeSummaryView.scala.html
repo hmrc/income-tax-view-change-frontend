@@ -72,7 +72,8 @@
     implicit request: Request[_],
     messages: Messages,
     appConfig: FrontendAppConfig,
-    dateService: DateServiceInterface
+    dateService: DateServiceInterface,
+    user: common.auth.MtdItUser[_]
 )
 
 @import implicitDateFormatter.longDate
@@ -230,6 +231,6 @@
         @paymentHistoryTable(viewModel)
     }
     @if(viewModel.isCredit && paymentAllocations.isDefined) {
-        @paymentAllocationTable(paymentAllocations.get, viewModel.isAgent, viewModel.creditsRefundRepayEnabled)
+        @paymentAllocationTable(paymentAllocations.get, viewModel.creditsRefundRepayEnabled)
     }
 }

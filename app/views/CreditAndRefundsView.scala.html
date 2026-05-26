@@ -40,7 +40,6 @@
         availableCreditContent: AvailableCreditContent
 )
 @(viewModel: MoneyInYourAccountViewModel,
-        isAgent: Boolean = false,
         backUrl: String)(implicit request: Request[_],
         user: MtdItUser[_],
         messages: Messages)
@@ -48,7 +47,7 @@
 @mainTemplate(
     pageTitle = messages("credit-and-refund.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
@@ -61,7 +60,7 @@
 
         @if(viewModel.hasAvailableCredit) {
             @if(viewModel.hasAllocatedCredit) {
-                @reservedContent(viewModel, isAgent)
+                @reservedContent(viewModel)
             }
             @howMuchCanIClaim(viewModel)
         }
@@ -71,7 +70,7 @@
         }
     }
 
-    @if(!isAgent) {
+    @if(!user.isAgent) {
         @continueButton(Some(messages("credit-and-refund.claim-refund-btn")), Some(s"${financialsRoutes.MoneyInYourAccountController.startRefund().url}"))
 
     }

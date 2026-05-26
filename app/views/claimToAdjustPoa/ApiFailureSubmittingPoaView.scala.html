@@ -33,9 +33,7 @@
         govukSummaryList : GovukSummaryList
 )
 
-@(
-        isAgent: Boolean,
-)(
+@()(
         implicit request: Request[_],
         messages: Messages,
         user: MtdItUser[_],
@@ -46,18 +44,18 @@
 }
 
 @getAdjustPoaFirstPageUrl = @{
-    claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent).url
+    claimToAdjustPoaRoutes.AmendablePoaController.show(user.isAgent).url
 }
 
 @getHomeUrl = @{
-    if(isAgent) hub.controllers.routes.HomeController.showAgent().url
+    if(user.isAgent) hub.controllers.routes.HomeController.showAgent().url
     else hub.controllers.routes.HomeController.show().url
 }
 
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = None,
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     useFallbackBackLink = true

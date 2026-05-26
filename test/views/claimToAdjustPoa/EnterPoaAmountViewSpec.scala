@@ -66,7 +66,7 @@ class EnterPoaAmountViewSpec extends TestSupport{
     .fill(EnterPoaAmountForm(7000))
 
   class Setup(isAgent: Boolean = false, form: Form[EnterPoaAmountForm] = EnterPoaAmountForm.form, viewModel: PaymentOnAccountViewModel = poAAmountViewModel()) {
-    val view: Html = enterAmountView(form, viewModel, isAgent, claimToAdjustPoaRoutes.EnterPoaAmountController.submit(isAgent, NormalMode))
+    val view: Html = enterAmountView(form, viewModel, claimToAdjustPoaRoutes.EnterPoaAmountController.submit(isAgent, NormalMode))
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val buttons = groupButton.first().children()

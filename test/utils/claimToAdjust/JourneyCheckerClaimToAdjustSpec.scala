@@ -67,10 +67,12 @@ class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAcco
   val whatYouNeedToKnowView: WhatYouNeedToKnowView = app.injector.instanceOf[WhatYouNeedToKnowView]
 
   def successfulFutureOk: PoaAmendmentData => Future[Result] = _ => {
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(isAgent = false, showIncreaseAfterPaymentContent = false))))
-}
+    implicit val user: MtdItUser[_] = tsTestUser
+    Future.successful(Ok(whatYouNeedToKnowView(whatYouNeedToKnowViewModel(isAgent = false, showIncreaseAfterPaymentContent = false))))
+  }
   def successfulFutureOkAgent: PoaAmendmentData => Future[Result] = _ => {
-    Future.successful(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(isAgent = true, showIncreaseAfterPaymentContent = true))))
+    implicit val user: MtdItUser[_] = tsTestUserAgent
+    Future.successful(Ok(whatYouNeedToKnowView(whatYouNeedToKnowViewModel(isAgent = true, showIncreaseAfterPaymentContent = true))))
   }
 
   override def beforeEach(): Unit = {

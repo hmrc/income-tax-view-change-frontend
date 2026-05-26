@@ -25,10 +25,10 @@
     bulletPointList: bulletPointList
 )
 
-@(isAgent: Boolean)(implicit request : Request[_], messages: Messages)
+@()(implicit request : Request[_], messages: Messages, user: common.auth.MtdItUser[_])
 
 @reportingObligationsURL = @{
-    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
+    reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent).url
 }
 
 @mainTemplate(messages("cannotUpdateReportingObligations.title"), showServiceName = false, isErrorPage = true) {

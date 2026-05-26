@@ -34,8 +34,8 @@
         govukSummaryList: GovukSummaryList
 )
 
-@(viewModel: RefundToTaxPayerViewModel, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String], isAgent: Boolean = false,
-        btaNavPartial: Option[Html] = None, origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
+@(viewModel: RefundToTaxPayerViewModel, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String],
+        btaNavPartial: Option[Html] = None, origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @getRepaymentSupplementItemSize(repaymentHistoryItem: RefundToTaxPayerViewModel) = @{
@@ -47,7 +47,7 @@
 @mainTemplate(
     pageTitle = messages("refund-to-taxpayer.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true,
     btaAndPtaServiceNavigation = serviceNavigationPartial

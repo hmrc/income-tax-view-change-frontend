@@ -71,7 +71,7 @@ class PoaAdjustedController @Inject()(val authActions: AuthActions,
   private def handleView(poa: PaymentOnAccountViewModel, session: PoaAmendmentData)(implicit user: MtdItUser[_]): Future[Result] = {
     poaSessionService.setCompletedJourney(hc, ec).flatMap {
       case Right(_) => Future.successful(
-        Ok(view(user.isAgent, poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
+        Ok(view(poa.taxYear, poa.totalAmountOne, showOverdueCharges(poa.taxYear, session.poaAdjustmentReason))))
       case Left(ex) =>
         Future.successful(logAndRedirect(s"Error setting journey completed flag in mongo${ex.getMessage} - ${ex.getCause}"))
     }

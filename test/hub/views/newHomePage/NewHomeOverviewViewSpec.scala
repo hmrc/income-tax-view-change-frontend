@@ -16,6 +16,7 @@
 
 package hub.views.newHomePage
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
@@ -33,6 +34,8 @@ import testUtils.{TestSupport, ViewSpec}
 import hub.views.html.newHomePage.NewHomeOverviewView
 
 import java.time.{LocalDate, Month}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
+import common.auth.actions.AuthActionsTestData.getMtdItUser
 
 
 class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {
@@ -83,10 +86,13 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
     val testUrl = "testUrl"
 
+    implicit val testUser: MtdItUser[?] =
+      if (isAgent) getMtdItUser(Agent)(FakeRequest())
+      else getMtdItUser(Individual)(FakeRequest())
+
     lazy val page: HtmlFormat.Appendable =
       newHomeOverviewView(
         origin,
-        isAgent,
         isSupportingAgent,
         currentTaxYear,
         yourTasksUrl,
@@ -102,7 +108,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         isRecentActivityEnabled,
         creditsRefundsRepayEnabled,
         mortgageEvidenceEnabled
-      )(testMessages, appConfig, FakeRequest())
+      )(testMessages, appConfig, FakeRequest(), testUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }

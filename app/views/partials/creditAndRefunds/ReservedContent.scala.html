@@ -26,7 +26,7 @@
         link: link,
         govukInsetText: GovukInsetText
 )
-@(viewModel: MoneyInYourAccountViewModel, isAgent: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {
@@ -43,7 +43,7 @@
         @messages("credit-and-refund.upcoming-allocated-credit-1-all", viewModel.allocatedCredit.toCurrencyString)
     }
     @link(
-        link = getWhatYouOwe(isAgent),
+        link = getWhatYouOwe(user.isAgent),
         messageKey = "credit-and-refund.upcoming-allocated-credit-2"
     )
     @messages("credit-and-refund.upcoming-allocated-credit-3")
