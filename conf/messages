@@ -263,6 +263,7 @@ new.home.overview.income.manage-income                          = Add, manage or
 new.home.overview.tax-year.sub-heading                          = Tax year summaries
 new.home.overview.tax-year.view-all-tax-years                   = View all tax years
 new.home.overview.tax-year.view-tax-years                       = View your {0}-{1} tax calculation and forecast
+new.home.overview.tax-year.proof-of-income                      = Proof of your income (SA302)
 new.home.overview.penalties.sub-heading                         = Penalties and appeals
 new.home.overview.penalties.check-penalties                     = Check Self Assessment penalties and appeals
 new.home.overview.penalties.check-lsp                           = View your late submission penalties
