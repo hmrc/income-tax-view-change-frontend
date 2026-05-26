@@ -16,8 +16,8 @@
 
 package views
 
-import config.FrontendAppConfig
-import implicits.ImplicitDateFormatter
+import common.config.FrontendAppConfig
+import common.implicits.ImplicitDateFormatter
 import models.creditsandrefunds.RefundToTaxPayerViewModel
 import models.repaymentHistory._
 import org.jsoup.select.Elements

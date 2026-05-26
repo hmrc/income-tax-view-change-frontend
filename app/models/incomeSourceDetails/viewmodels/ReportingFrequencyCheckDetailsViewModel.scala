@@ -16,11 +16,10 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import common.enums.IncomeSourceJourney.IncomeSourceType
 
 case class ReportingFrequencyCheckDetailsViewModel(incomeSourceType: IncomeSourceType,
                                                    changeReportingFrequency: Boolean,
                                                    isReportingQuarterlyCurrentYear: Boolean,
-                                                   isReportingQuarterlyForNextYear: Boolean,
-                                                   displayR17Content: Boolean)
+                                                   isReportingQuarterlyForNextYear: Boolean)
 

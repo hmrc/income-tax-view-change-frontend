@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
-@import businessDetails.enums.IncomeSourceJourney._
+@import _root_.common.implicits.ImplicitDateFormatterImpl
+@import common.enums.IncomeSourceJourney._
 @import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
 @import models.core._
 @import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
@@ -49,7 +49,7 @@
         origin: Option[String] = None,
         isTriggeredMigration: Boolean,
         overseasBusinessAddressEnabled: Boolean = false
-)(implicit messages: Messages, user: auth.MtdItUser[_])
+)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

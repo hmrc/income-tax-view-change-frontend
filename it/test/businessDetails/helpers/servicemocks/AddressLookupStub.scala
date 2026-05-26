@@ -16,7 +16,7 @@
 
 package businessDetails.helpers.servicemocks
 
-import helpers.{ComponentSpecBase, WiremockHelper}
+import common.helpers.{ComponentSpecBase, WiremockHelper}
 
 object AddressLookupStub extends ComponentSpecBase {
 

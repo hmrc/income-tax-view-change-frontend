@@ -17,11 +17,12 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService}
-import config.FrontendAppConfig
-import connectors.ITSAStatusConnector
-import enums.{MTDIndividual, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockSessionService}
+import common.config.FrontendAppConfig
+import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockDateService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{CheckMode, NormalMode}
@@ -34,7 +35,6 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, *}
-import services.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
@@ -183,9 +183,9 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
               val result: Future[Result] = action(fakeRequest)
 
               val homePageUrl = if (mtdRole == MTDIndividual) {
-                controllers.routes.HomeController.show().url
+                hub.controllers.routes.HomeController.show().url
               } else {
-                controllers.routes.HomeController.showAgent().url
+                hub.controllers.routes.HomeController.showAgent().url
               }
 
               status(result) shouldBe SEE_OTHER

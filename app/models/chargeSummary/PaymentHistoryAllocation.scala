@@ -16,7 +16,7 @@
 
 package models.chargeSummary
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
 import models.financialDetails.{FinancialDetail, MfaDebitUtils}
 
 import java.time.LocalDate

@@ -16,6 +16,7 @@
 
 package connectors
 
+import common.connectors.BaseConnectorSpec
 import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

@@ -16,9 +16,11 @@
 
 package businessDetails.models.audit
 
-import audit.Utilities
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.enums.AuditType.UpdateIncomeSource
+import common.enums.TransactionName
+import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class IncomeSourceReportingMethodAuditModel(isSuccessful: Boolean,
@@ -29,9 +31,9 @@ case class IncomeSourceReportingMethodAuditModel(isSuccessful: Boolean,
                                                  businessName: String
                                                 )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.UpdateIncomeSource
+  override val transactionName: String = TransactionName.UpdateIncomeSource
 
-  override val auditType: String = enums.AuditType.UpdateIncomeSource
+  override val auditType: String = UpdateIncomeSource
 
   private val successOutcome: JsObject = Json.obj(
     "outcome" ->

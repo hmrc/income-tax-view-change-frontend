@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import views.html.components._
+@import common.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Details
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -23,13 +23,14 @@
 @import views.html.partials.yourSelfAssessmentCharges.{ReviewAndReconciliationPoa1And2Explanations, WarningRARPoa}
 @import models.chargeSummary.ChargeSummaryViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
-@import implicits.ImplicitDateFormatterImpl
+@import common.implicits.ImplicitDateFormatterImpl
+@import common.config.FrontendAppConfig
 
 @this(
         p: p,
         link: link,
         govukDetails: GovukDetails,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         reviewAndReconciliationPoa1And2Explanations: ReviewAndReconciliationPoa1And2Explanations,
         govukWarningText: GovukWarningText,
         warningRARPoa: WarningRARPoa,
@@ -53,7 +54,9 @@
     content = HtmlContent(html)
 ))
 
+    @if(viewModel.chargeItem.hasAccruingInterest || viewModel.chargeItem.hasInterest) {
     @warningRARPoa(viewModel.dueDate.map(_.toLongDate).getOrElse(""))
+    }
 
 @html= {
 @p(){@messages("yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p1")}

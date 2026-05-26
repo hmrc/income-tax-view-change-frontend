@@ -16,10 +16,9 @@
 
 package controllers
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.featureswitch.FeatureSwitching
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.config.featureswitch.FeatureSwitching
 import forms.utils.SessionKeys
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -76,9 +75,9 @@ class CalculationPollingController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual().async {
       implicit user =>
         lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-          controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
+          returns.controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
         } else {
-          controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin)
+          returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin)
         }
 
         handleRequest(
@@ -95,9 +94,9 @@ class CalculationPollingController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent().async { implicit user =>
 
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-        controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
+        returns.controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
       } else {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
+        returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
       }
 
       handleRequest(

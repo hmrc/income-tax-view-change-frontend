@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
-@import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
-@import services.DateServiceInterface
+@import common.services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
@@ -24,8 +24,8 @@
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 
 
 @this(
@@ -43,14 +43,10 @@
     govukTable : GovukTable
 )
 
-@(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface, isR17ContentEnabled: Boolean, mtdThreshold: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, continueAction: Call, form: Form[IncomeSourceReportingFrequencyForm], incomeSourceType: IncomeSourceType, taxDateService: DateServiceInterface, mtdThreshold: String)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
-    if(isR17ContentEnabled) {
-        messages(s"incomeSources.add.reportingFrequency.r17.$key", args: _*)
-    } else {
-        messages(s"incomeSources.add.reportingFrequency.$key", args: _*)
-    }
+    messages(s"incomeSources.add.reportingFrequency.r17.$key", args: _*)
 }
 
 @getCaptionMessage = @{
@@ -163,10 +159,6 @@
             @getMessage("li2", mtdThreshold)
             </li>
         </ul>
-    }
-
-    @if(!isR17ContentEnabled) {
-        @reportingFrequencyTable()
     }
 
     @p(id = Some("paragraph-2")){

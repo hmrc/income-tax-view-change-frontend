@@ -32,28 +32,28 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeCon
 
 
   val payments: List[Payment] = List(
-    Payment(reference = Some("mfa1"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
+    Payment(taxYear = 2020, reference = Some("mfa1"), amount = Some(-10000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("mfa1"), lot = None, lotItem = None, dueDate = None,
       documentDate = LocalDate.parse("2020-04-13"), Some("AY777777202201"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004")),
-    Payment(reference = Some("mfa2"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
+    Payment(taxYear = 2020, reference = Some("mfa2"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("mfa2"), lot = None, lotItem = None, dueDate = None,
       documentDate = LocalDate.parse("2020-04-12"), Some("AY777777202210"), mainType = Some("ITSA Overpayment Relief"), mainTransaction = Some("4004")),
-    Payment(reference = Some("cutover1"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
+    Payment(taxYear = 2019, reference = Some("cutover1"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("desc1"), lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2019-12-25")),
       documentDate = LocalDate.parse("2019-04-25"), Some("AY777777202202"), mainType = Some("ITSA Cutover Credits"), mainTransaction = Some("6110")),
-    Payment(reference = Some("payment1"), amount = Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"),
+    Payment(taxYear = 9999, reference = Some("payment1"), amount = Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"),
       Some(LocalDate.parse("2019-12-26")), LocalDate.parse("2019-12-25"), Some("DOCID01"),
       mainType = Some("Payment"), mainTransaction = Some("0060")),
-    Payment(Some("payment2"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some(LocalDate.parse("2019-12-25")),
+    Payment(taxYear = 9999, Some("payment2"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some(LocalDate.parse("2019-12-25")),
       LocalDate.parse("2019-12-25"), Some("DOCID02"),
       mainType = Some("Payment"), mainTransaction = Some("0060")),
-    Payment(reference = Some("bcc1"), amount = Some(-12000.00), Some(-150.00), method = Some("method"),
+    Payment(taxYear = 2019, reference = Some("bcc1"), amount = Some(-12000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("bcc1"), lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2019-12-24")),
       documentDate = LocalDate.parse("2019-04-24"), Some("AY777777202203"), mainType = Some("SA Balancing Charge Credit"), mainTransaction = Some("4905")),
-    Payment(reference = Some("rar-poa1"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
+    Payment(taxYear = 2019, reference = Some("rar-poa1"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("desc1"), lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2019-12-23")),
       documentDate = LocalDate.parse("2019-04-20"), Some("AY777777202298"), mainType = Some("SA POA 1 Reconciliation Credit"), mainTransaction = Some("4912")),
-    Payment(reference = Some("rar-poa1"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
+    Payment(taxYear = 2019, reference = Some("rar-poa1"), amount = Some(-11000.00), Some(-150.00), method = Some("method"),
       documentDescription = Some("desc1"), lot = None, lotItem = None, dueDate = Some(LocalDate.parse("2019-12-23")),
       documentDate = LocalDate.parse("2019-04-20"), Some("AY777777202299"), mainType = Some("SA POA 2 Reconciliation Credit"), mainTransaction = Some("4914"))
   )
@@ -136,39 +136,39 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeCon
   val codedOutCharges = codedOutBcdCharges ++ codedOutPoaCharges
 
   private def groupedRepayments(isAgent: Boolean = false) = List(
-    (2021, List(PaymentHistoryEntry(LocalDate.parse("2021-08-20"), Repayment, Some(301.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber),
-      PaymentHistoryEntry(LocalDate.parse("2021-08-21"), Repayment, Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber))),
+    (2021, List(PaymentHistoryEntry(LocalDate.parse("2021-08-20"), Repayment, Some(301.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None),
+      PaymentHistoryEntry(LocalDate.parse("2021-08-21"), Repayment, Some(300.0), None, s"${if (isAgent) "agents/" else ""}refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None))),
   )
 
   private def groupedPayments(cutoverEnabled: Boolean = true, mfaEnabled: Boolean = true, isAgent: Boolean = false) = {
     val bcc = List(PaymentHistoryEntry(LocalDate.parse("2019-12-24"), BalancingChargeCreditType, Some(-12000.0), None,
-      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202203"))
+      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202203", Some(2019)))
     val cutover = if (cutoverEnabled) List(PaymentHistoryEntry(LocalDate.parse("2019-12-25"), CutOverCreditType, Some(-11000.0), None,
-      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202202")) else Nil
+      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202202", Some(2019))) else Nil
     val reviewAndReconcileCredits = List(
       PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PoaOneReconciliationCredit, Some(-11000.0), None,
-      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202298", "AY777777202298"),
+      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202298", "AY777777202298", Some(2019)),
       PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PoaTwoReconciliationCredit, Some(-11000.0), None,
-        s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202299", "AY777777202299"),
+        s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202299", "AY777777202299", Some(2019)),
     )
     val standardPayments = List(
-      PaymentHistoryEntry(LocalDate.parse("2019-12-25"), PaymentType, Some(10000), Some("DOCID02"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID02", "2019-12-25 &pound;10,000.00"),
-      PaymentHistoryEntry(LocalDate.parse("2019-12-26"), PaymentType, Some(10000), Some("DOCID01"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID01", "2019-12-26 &pound;10,000.00")
+      PaymentHistoryEntry(LocalDate.parse("2019-12-25"), PaymentType, Some(10000), Some("DOCID02"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID02", "2019-12-25 &pound;10,000.00", Some(9999)),
+      PaymentHistoryEntry(LocalDate.parse("2019-12-26"), PaymentType, Some(10000), Some("DOCID01"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID01", "2019-12-26 &pound;10,000.00", Some(9999))
     )
-    val mfa = if (mfaEnabled) List((2020, List(PaymentHistoryEntry(LocalDate.parse("2020-04-12"), MfaCreditType, Some(-11000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202210"),
-      PaymentHistoryEntry(LocalDate.parse("2020-04-13"), MfaCreditType, Some(-10000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202201")))) else List()
+    val mfa = if (mfaEnabled) List((2020, List(PaymentHistoryEntry(LocalDate.parse("2020-04-12"), MfaCreditType, Some(-11000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202210", Some(2020)),
+      PaymentHistoryEntry(LocalDate.parse("2020-04-13"), MfaCreditType, Some(-10000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202201", Some(2020))))) else List()
 
     mfa ++ List((2019, reviewAndReconcileCredits ++ bcc ++ cutover ++ standardPayments))
   }
 
   private def groupedCodedOutBcdCharges() = List(
-    (2018, List(PaymentHistoryEntry(date = LocalDate.of(2018, 3, 29), creditType = BalancingCharge, amount = codedOutDocumentDetailPayeSACi.originalAmount.some, transactionId = codedOutDocumentDetailPayeSACi.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02&codedOut=true", visuallyHiddenText = BalancingCharge.toString))),
-    (2017, List(PaymentHistoryEntry(date = LocalDate.of(2017, 3, 29), creditType = BalancingCharge, amount = balancingChargePaye.originalAmount.some, transactionId = balancingChargePaye.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=1040000126&codedOut=true", visuallyHiddenText = BalancingCharge.toString)))
+    (2018, List(PaymentHistoryEntry(date = LocalDate.of(2018, 3, 29), creditType = BalancingCharge, amount = codedOutDocumentDetailPayeSACi.originalAmount.some, transactionId = codedOutDocumentDetailPayeSACi.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02&codedOut=true", visuallyHiddenText = BalancingCharge.toString, Some(2021)))),
+    (2017, List(PaymentHistoryEntry(date = LocalDate.of(2017, 3, 29), creditType = BalancingCharge, amount = balancingChargePaye.originalAmount.some, transactionId = balancingChargePaye.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=1040000126&codedOut=true", visuallyHiddenText = BalancingCharge.toString, Some(2021))))
   )
 
   private def groupedCodedOutPoaCharges() = List(
-    (2016, List(PaymentHistoryEntry(date = LocalDate.of(2016, 3, 29), creditType = PoaTwoDebit, amount = poa2WithCodingutAccepted.originalAmount.some, transactionId = poa2WithCodingutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000124&codedOut=true", visuallyHiddenText = PoaTwoDebit.toString))),
-    (2015, List(PaymentHistoryEntry(date = LocalDate.of(2015, 3, 29), creditType = PoaOneDebit, amount = poa1WithCodingOutAccepted.originalAmount.some, transactionId = poa1WithCodingOutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000123&codedOut=true", visuallyHiddenText = PoaOneDebit.toString)))
+    (2016, List(PaymentHistoryEntry(date = LocalDate.of(2016, 3, 29), creditType = PoaTwoDebit, amount = poa2WithCodingutAccepted.originalAmount.some, transactionId = poa2WithCodingutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000124&codedOut=true", visuallyHiddenText = PoaTwoDebit.toString, Some(2023)))),
+    (2015, List(PaymentHistoryEntry(date = LocalDate.of(2015, 3, 29), creditType = PoaOneDebit, amount = poa1WithCodingOutAccepted.originalAmount.some, transactionId = poa1WithCodingOutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000123&codedOut=true", visuallyHiddenText = PoaOneDebit.toString, Some(2023))))
   )
 
   "RepaymentHistoryUtils" should {

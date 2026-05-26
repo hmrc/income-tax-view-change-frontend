@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import models.chargeSummary.ChargeSummaryViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 
 
 @this(
@@ -37,7 +37,7 @@
         bulletList: bulletPointList,
 )
 
-@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, postAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, postAction: Call)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 
 @getMessage(key: String) = @{

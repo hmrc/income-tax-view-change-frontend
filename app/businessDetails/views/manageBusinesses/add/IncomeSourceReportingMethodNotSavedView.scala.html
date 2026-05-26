@@ -14,11 +14,11 @@
  * limitations under the License.
  *@
 
-@import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 @this(
@@ -30,7 +30,7 @@
     link: link,
     continueButton: ContinueButton)
 
-@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     incomeSourceType match {

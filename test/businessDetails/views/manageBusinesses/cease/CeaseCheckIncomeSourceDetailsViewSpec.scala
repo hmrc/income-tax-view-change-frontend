@@ -29,7 +29,7 @@ import testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, 
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
 

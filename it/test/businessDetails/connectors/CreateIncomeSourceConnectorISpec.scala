@@ -16,10 +16,10 @@
 
 package businessDetails.connectors
 
-import _root_.helpers.servicemocks.AuditStub
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import businessDetails.models.createIncomeSource.*
 import com.github.tomakehurst.wiremock.client.WireMock
+import common.helpers.servicemocks.AuditStub
+import common.helpers.{ComponentSpecBase, WiremockHelper}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.{JsValue, Json}

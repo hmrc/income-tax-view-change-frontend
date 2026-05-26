@@ -16,8 +16,8 @@
 
 package businessDetails.services
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}

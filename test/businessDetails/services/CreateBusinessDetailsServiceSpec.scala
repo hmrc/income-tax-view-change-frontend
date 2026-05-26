@@ -16,13 +16,13 @@
 
 package businessDetails.services
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.*
 import businessDetails.connectors.CreateIncomeSourceConnector
 import businessDetails.connectors.helpers.IncomeSourcesDataHelper
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.models.createIncomeSource.*
-import config.featureswitch.FeatureSwitching
+import common.auth.actions.AuthActionsTestData.*
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import models.incomeSourceDetails.viewmodels.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

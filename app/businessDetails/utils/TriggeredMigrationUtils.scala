@@ -16,8 +16,8 @@
 
 package businessDetails.utils
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import models.admin.TriggeredMigration
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -29,8 +29,8 @@ trait TriggeredMigrationUtils extends FeatureSwitching {
   def withTriggeredMigrationFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (!isEnabled(TriggeredMigration)) {
       user.userType match {
-        case Some(Agent) => Future(Redirect(controllers.routes.HomeController.showAgent()))
-        case _ => Future(Redirect(controllers.routes.HomeController.show()))
+        case Some(Agent) => Future(Redirect(hub.controllers.routes.HomeController.showAgent()))
+        case _ => Future(Redirect(hub.controllers.routes.HomeController.show()))
       }
     } else {
       comeBlock

@@ -16,7 +16,7 @@
 
 package common.controllers
 
-import helpers.ComponentSpecBase
+import common.helpers.ComponentSpecBase
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.SEE_OTHER
 
@@ -56,7 +56,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
         httpStatus(SEE_OTHER),
-        redirectURI(controllers.routes.HomeController.show().url)
+        redirectURI(hub.controllers.routes.HomeController.show().url)
       )
     }
   }
@@ -78,7 +78,7 @@ class ItvcLanguageControllerISpec extends ComponentSpecBase {
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
         httpStatus(SEE_OTHER),
-        redirectURI(controllers.routes.HomeController.show().url)
+        redirectURI(hub.controllers.routes.HomeController.show().url)
       )
     }
 

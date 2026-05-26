@@ -14,15 +14,16 @@
  * limitations under the License.
  *@
 
-@import auth.MtdItUser
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.auth.MtdItUser
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 @import common.viewUtils.ExternalUrlHelper
+@import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 
 @this(
@@ -52,12 +53,12 @@
 }
 
 @getHomePageUrl = @{
-    if(isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url
+    if(isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else hub.controllers.routes.HomeController.show().url
 }
 
 @getWhatYouNeedToKnowUrl = @{
-    controllers.claimToAdjustPoa.routes.WhatYouNeedToKnowController.show(isAgent).url
+    claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(isAgent).url
 }
 
 @getTableHeading = @{

@@ -16,15 +16,15 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
-import connectors.ITSAStatusConnector
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.MTDIndividual
-import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
-import services.DateServiceInterface
-import mocks.services.{MockDateService, MockSessionService}
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.enums.MTDIndividual
+import common.implicits.ImplicitDateFormatter
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockDateService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 import models.UIJourneySessionData
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -40,7 +40,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.test.Helpers.*
-import services.{DateService, SessionService}
 import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 

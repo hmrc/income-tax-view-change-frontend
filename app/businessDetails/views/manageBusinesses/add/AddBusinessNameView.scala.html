@@ -16,13 +16,14 @@
 
 @import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.helpers.injected.{ErrorSummary, InputHelper}
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.helpers.injected.{ErrorSummary, InputHelper}
+@import common.views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         h1: h1,
         h2: h2,
         p: p,
@@ -38,7 +39,7 @@
 @(businessNameForm: Form[BusinessNameForm],
         isAgent: Boolean,
         postAction: Call,
-        backUrl: String)(implicit messages: Messages, user: auth.MtdItUser[_])
+        backUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @businessName = @{
     "business-name"

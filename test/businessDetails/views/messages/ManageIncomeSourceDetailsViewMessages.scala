@@ -28,15 +28,17 @@ object ManageIncomeSourceDetailsViewMessages {
   val dateStarted: String = "Date started"
   val typeOfTrade: String = "Type of trade"
   val quarterlyPeriodType: String = "Update period"
-  val reportingMethod1: String = "Reporting frequency 2022 to 2023"
-  val reportingMethod2: String = "Reporting frequency 2023 to 2024"
+  val reportingMethod1: String = "Using Making Tax Digital for Income Tax for 2022 to 2023"
+  val reportingMethod2: String = "Using Making Tax Digital for Income Tax for 2023 to 2024"
 
   val change: String = "Change"
   val quarterly: String = "Quarterly"
   val annually: String = "Annual"
+  val signUp: String = "Sign up"
+  val optOut: String = "Opt out"
 
-  val quarterlyGracePeriod: String = "Quarterly"
-  val annuallyGracePeriod: String = "Annual"
+  val quarterlyGracePeriod: String = "Yes"
+  val annuallyGracePeriod: String = "No"
 
   val standard: String = "Standard"
   val calendar: String = "Calendar"
@@ -56,6 +58,6 @@ object ManageIncomeSourceDetailsViewMessages {
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
   val opensInNewTabText: String = "(opens in new tab)"
 
-  val reportingFrequencyText: String = "View and change your reporting frequency for all your businesses"
-  val newBusinessInsetText: String = "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2024, you could be required to report quarterly."
+  val reportingFrequencyText: String = "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
+  val newBusinessInsetText: String = "Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April 2024, you could be required to use the service."
 }

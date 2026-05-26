@@ -15,13 +15,15 @@
  *@
 
 @import implicits.ImplicitCurrencyFormatter._
-@import implicits.ImplicitDateFormatterImpl
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.implicits.ImplicitDateFormatterImpl
+@import common.views.html.components._
+@import views.html.components.orderedNumberList
+@import common.views.html.layouts.unifiedLayout
 @import views.html.partials.paymentAllocations._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import enums.GatewayPage._
+@import common.enums.GatewayPage._
 @import java.time.LocalDate
+@import common.config.FrontendAppConfig
 
 
 @this(mainTemplate: unifiedLayout,
@@ -34,7 +36,7 @@
       p:p,
       govukInsetText: GovukInsetText,
       link: link,
-      appConfig: config.FrontendAppConfig,
+      appConfig: FrontendAppConfig,
       numberList: orderedNumberList
 )
 

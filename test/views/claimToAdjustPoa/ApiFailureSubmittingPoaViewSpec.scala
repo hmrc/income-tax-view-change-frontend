@@ -21,6 +21,7 @@ import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class ApiFailureSubmittingPoaViewSpec extends TestSupport {
 
@@ -39,8 +40,8 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
   }
 
   def getHomeControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url
+    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else hub.controllers.routes.HomeController.show().url
   }
 
   def executeTest(isAgent: Boolean): Unit = {
@@ -60,7 +61,7 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(0).text() shouldBe
           messages("claimToAdjustPoa.apiFailure.bullet1Text") + " " + messages("claimToAdjustPoa.apiFailure.bullet1Link")
         document.getElementById("link-1").attr("href") shouldBe
-          controllers.claimToAdjustPoa.routes.AmendablePoaController.show(isAgent).url
+          claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent).url
       }
       "render the second bullet point with the correct link" in new Setup(isAgent) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(1).text() shouldBe

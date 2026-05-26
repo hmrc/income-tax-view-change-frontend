@@ -17,10 +17,11 @@
 package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.audit.TriggeredMigrationStartAuditModel
-import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
+import common.enums.{MTDIndividual, MTDUserRole}
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
+import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus

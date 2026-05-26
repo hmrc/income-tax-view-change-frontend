@@ -16,11 +16,12 @@
 
 package controllers.agent
 
-import audit.models.ConfirmClientDetailsAuditModel
+import hub.audit.models.ConfirmClientDetailsAuditModel
 import common.controllers.ControllerISpecHelper
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
-import helpers.servicemocks.{AuditStub, IncomeTaxViewChangeStub}
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.helpers.servicemocks.AuditStub
+import common.helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status._
@@ -31,7 +32,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
   val path = "/agents/confirm-client-details"
 
-  s"GET ${controllers.agent.routes.ConfirmClientUTRController.show().url}" when {
+  s"GET ${hub.controllers.agent.routes.ConfirmClientUTRController.show().url}" when {
     s"a user is a primary agent (session data isSupportingAgent = false)" that {
       val isSupportingAgent = false
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
@@ -86,7 +87,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
     testNoClientDataFailure(path)
   }
 
-  s"POST ${controllers.agent.routes.ConfirmClientUTRController.submit().url}" when {
+  s"POST ${hub.controllers.agent.routes.ConfirmClientUTRController.submit().url}" when {
     s"a user is a primary agent (session data isSupportingAgent = false)" that {
       val isSupportingAgent = false
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, false)
@@ -101,7 +102,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.HomeController.showAgent().url)
+            redirectURI(hub.controllers.routes.HomeController.showAgent().url)
           )
           AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn,
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))
@@ -156,7 +157,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.HomeController.showAgent().url)
+            redirectURI(hub.controllers.routes.HomeController.showAgent().url)
           )
           AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn,
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))

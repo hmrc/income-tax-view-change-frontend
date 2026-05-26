@@ -16,9 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.UkProperty
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.MTDIndividual
+import common.enums.IncomeSourceJourney.UkProperty
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.MTDIndividual
 import models.admin.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
@@ -84,7 +84,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+              document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
               Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
 
@@ -107,11 +107,11 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+              document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
             }
 
             "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
-              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate, OptInOptOutContentUpdateR17))
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)

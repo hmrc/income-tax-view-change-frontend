@@ -16,13 +16,13 @@
 
 package views.claimToAdjustPoa
 
+import financials.controllers.routes as financialsRoutes
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.YouCannotGoBackView
-
 class YouCannotGoBackViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean) {
@@ -41,18 +41,18 @@ class YouCannotGoBackViewSpec extends TestSupport {
   }
 
   def getHomeControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url
+    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else hub.controllers.routes.HomeController.show().url
   }
 
   def getWhatYouOweControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.WhatYouOweController.showAgent().url
-    else controllers.routes.WhatYouOweController.show().url
+    if (isAgent) financialsRoutes.WhatYouOweController.showAgent().url
+    else financialsRoutes.WhatYouOweController.show().url
   }
 
   def getTaxYearSummaryControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(2024).url
-    else controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
+    if (isAgent) returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(2024).url
+    else returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
   }
 
   def executeTest(isAgent: Boolean): Unit = {

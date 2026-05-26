@@ -16,19 +16,19 @@
 
 package businessDetails.utils
 
-import auth.MtdItUser
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageYourBusinessRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import common.auth.MtdItUser
+import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
+import common.services.SessionService
 import enums.*
-import enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import models.UIJourneySessionData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.SessionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 

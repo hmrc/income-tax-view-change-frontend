@@ -16,8 +16,8 @@
 
 package obligations.services.reportingObligations.signUp
 
-import audit.AuditingService
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.services.{AuditingService, DateServiceInterface}
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
@@ -27,7 +27,6 @@ import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUp
 import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.SignUpProposition
 import play.api.Logging
-import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

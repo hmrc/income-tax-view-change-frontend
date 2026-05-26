@@ -16,12 +16,13 @@
 
 package connectors
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import models.core.ResponseModel.{ResponseModel, UnexpectedError}
 import models.core.{CorrelationId, Nino}
 import models.creditsandrefunds.CreditsModel
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}

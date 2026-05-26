@@ -27,8 +27,8 @@ import testUtils.ViewSpec
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import businessDetails.views.messages.IncomeSourceAddedMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.views.constants.IncomeSourceAddedObligationsConstants.*
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 import java.time.LocalDate
 

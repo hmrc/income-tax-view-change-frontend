@@ -23,7 +23,7 @@ import java.time.LocalDate
 
 object PaymentAllocationStatusSpec extends Properties("PaymentAllocationStatus_allocationStatus") {
 
-  val defaultPayment = Payment(reference = Some("ref"), amount = Some(0.00), method = Some("method"),
+  val defaultPayment = Payment(taxYear = 2018, reference = Some("ref"), amount = Some(0.00), method = Some("method"),
     lot = Some("lot2"), lotItem = Some("lotItem2"), documentDescription = None,
     dueDate = Some(LocalDate.parse("2018-12-12")), documentDate = LocalDate.parse("2018-12-12"), outstandingAmount = None, transactionId = Some("DOCID02"))
 

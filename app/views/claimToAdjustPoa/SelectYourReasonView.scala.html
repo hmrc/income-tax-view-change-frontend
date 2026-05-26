@@ -18,13 +18,15 @@
 @import models.core.Mode
 @import models.incomeSourceDetails.TaxYear
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
-@import views.html.components._
-@import views.html.helpers.injected.{ErrorSummary, InputHelper}
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.helpers.injected.{ErrorSummary, InputHelper}
+@import common.views.html.layouts.unifiedLayout
+@import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         h1WithCaption: h1WithCaption,
         h2: h2,
         p: p,
@@ -42,7 +44,7 @@
     taxYear: TaxYear,
     isAgent: Boolean,
     mode: Mode,
-    useFallbackLink: Boolean)(implicit messages: Messages, user: auth.MtdItUser[_])
+    useFallbackLink: Boolean)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @formContent = {
     @p(){
@@ -57,8 +59,8 @@
 }
 
 @getHomePageUrl = @{
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else         controllers.routes.HomeController.show().url
+    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else         hub.controllers.routes.HomeController.show().url
 }
 
 @mainTemplate( pageTitle = messages("claimToAdjustPoa.selectYourReason.title"),
@@ -78,7 +80,7 @@
 
     @formContent
 
-    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.SelectYourReasonController.submit(isAgent, mode), Symbol("id") -> "select-your-reason-form") {
+    @formWithCSRF(action = claimToAdjustPoaRoutes.SelectYourReasonController.submit(isAgent, mode), Symbol("id") -> "select-your-reason-form") {
         @govukRadios(
             Radios(
                 fieldset = Some(Fieldset(

@@ -16,9 +16,9 @@
 
 package models.financialDetails
 
+import common.services.DateServiceInterface
 import models.financialDetails.FinancialDetail.Types.*
 import play.api.libs.json.{Format, Json}
-import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -69,7 +69,8 @@ case class FinancialDetail(taxYear: String,
 
   def payments(implicit dateService: DateServiceInterface): Seq[Payment] = items match {
     case Some(subItems) => subItems.map { subItem =>
-      Payment(reference = subItem.paymentReference, amount = subItem.paymentAmount, outstandingAmount = None,
+      // value of 9999 used to indicate no taxYear
+      Payment(taxYear = 9999, reference = subItem.paymentReference, amount = subItem.paymentAmount, outstandingAmount = None,
         method = subItem.paymentMethod, documentDescription = None, lot = subItem.paymentLot, lotItem = subItem.paymentLotItem,
         dueDate = subItem.clearingDate, documentDate = dateService.getCurrentDate, transactionId = subItem.transactionId)
     }.filter(_.reference.isDefined)

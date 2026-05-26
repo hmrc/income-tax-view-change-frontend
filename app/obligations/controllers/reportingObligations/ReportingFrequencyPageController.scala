@@ -16,11 +16,12 @@
 
 package obligations.controllers.reportingObligations
 
-import auth.authV2.AuthActions
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.auth.AuthActions
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.services.DateServiceInterface
 import obligations.controllers.routes as obligationsRoutes
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
+import models.admin.{OptOutFs, SignUpFs}
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
 import obligations.services.reportingObligations.ReportingObligationsAuditService
 import obligations.services.reportingObligations.optOut.OptOutService
@@ -28,10 +29,9 @@ import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.viewUtils.ReportingFrequencyViewUtils
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.DateServiceInterface
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.MtdConstants
-import views.html.errorPages.templates.ErrorTemplate
+import common.views.html.errorPages.templates.ErrorTemplate
 import obligations.views.html.reportingObligations.ReportingFrequencyView
 
 import javax.inject.Inject
@@ -86,7 +86,6 @@ class ReportingFrequencyPageController @Inject()(
                 Ok(
                   view(
                     viewModel,
-                    isEnabled(OptInOptOutContentUpdateR17),
                     nextUpdatesLink
                   )
                 )

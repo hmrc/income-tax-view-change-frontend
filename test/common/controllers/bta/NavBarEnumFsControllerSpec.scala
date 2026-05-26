@@ -16,9 +16,10 @@
 
 package common.controllers.bta
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import connectors.BtaNavBarPartialConnector
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.connectors.BtaNavBarPartialConnector
+import common.services.BtaNavBarService
 import models.btaNavBar.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -26,7 +27,6 @@ import play.api
 import play.api.Application
 import play.api.i18n.{Lang, Messages}
 import play.api.inject.guice.GuiceApplicationBuilder
-import services.BtaNavBarService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

@@ -16,8 +16,8 @@
 
 package obligations.views.nextUpdates
 
-import auth.MtdItUser
-import config.FrontendAppConfig
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Annual
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
@@ -34,7 +34,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import testConstants.BusinessDetailsTestConstants.business1
 import testUtils.TestSupport
-import views.html.components.link
+import common.views.html.components.link
 
 import java.time.LocalDate
 
@@ -47,8 +47,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
   val linkComponent: link = app.injector.instanceOf[link]
 
   class Setup(quarterlyUpdateContentShow: Boolean = true,
-              isSupportingAgent: Boolean = false,
-              optInOptOutContentR17Enabled: Boolean = false) {
+              isSupportingAgent: Boolean = false) {
 
     val currentYear: TaxYear = TaxYear(2025, 2026)
 
@@ -83,7 +82,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
       NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
         business1.incomeSourceId,
         twoObligationsSuccessModel.obligations
-      ))).obligationsByDate(isR17ContentEnabled = true)(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+      ))).obligationsByDate(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
       })
 
@@ -96,7 +95,6 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           "testBackURL",
           isSupportingAgent = isSupportingAgent,
           whatTheUserCanDo = whatTheUserCanDoContentMulti,
-          optInOptOutContentR17Enabled = optInOptOutContentR17Enabled,
           taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status)
         )(implicitly, user)
       ))
@@ -104,28 +102,28 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
 
     "NextUpdatesOptOut view" when {
       "The reporting frequency FS is turned ON" should {
-        "have the correct title" in new Setup(optInOptOutContentR17Enabled = true) {
+        "have the correct title" in new Setup() {
           nextUpdatesDocument.title() shouldBe NextUpdatesTestConstants.title
         }
 
-        "have the correct heading" in new Setup(optInOptOutContentR17Enabled = true) {
+        "have the correct heading" in new Setup() {
           nextUpdatesDocument.select("h1").text() shouldBe NextUpdatesTestConstants.heading
         }
 
-        "not have the summary heading" in new Setup(optInOptOutContentR17Enabled = true) {
+        "not have the summary heading" in new Setup() {
           nextUpdatesDocument.select("summary").isEmpty shouldBe true
         }
 
-        "not have a summary section for quarterly updates" in new Setup(optInOptOutContentR17Enabled = true) {
+        "not have a summary section for quarterly updates" in new Setup() {
           nextUpdatesDocument.select("details h2").isEmpty shouldBe true
         }
 
-        "not have the details for quarterly updates" in new Setup(optInOptOutContentR17Enabled = true) {
+        "not have the details for quarterly updates" in new Setup() {
           Option(nextUpdatesDocument.getElementById("quarterly-dropdown-line1")) shouldBe None
           Option(nextUpdatesDocument.getElementById("quarterly-dropdown-line2")) shouldBe None
         }
 
-        s"not have the Submitting updates in software" in new Setup(optInOptOutContentR17Enabled = true) {
+        s"not have the Submitting updates in software" in new Setup() {
           Option(nextUpdatesDocument.getElementById("updates-software-heading")) shouldBe None
           Option(nextUpdatesDocument.getElementById("updates-software-link")) shouldBe None
         }

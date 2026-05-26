@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 @this(
 mainTemplate: unifiedLayout,
@@ -26,7 +26,7 @@ p: p,
 formWithCSRF: FormWithCSRF,
 continueButton: ContinueButton)
 
-@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @incomeSourceTypeText = @{
  incomeSourceType match {

@@ -16,19 +16,18 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.templates.ErrorTemplateWithLink
+import common.views.html.errorPages.templates.ErrorTemplateWithLink
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import common.auth.{AuthActions, MtdItUser}
+import common.config.FrontendAppConfig
+import common.enums.IncomeSourceJourney.IncomeSourceType
 
 class IncomeSourceNotCeasedController @Inject()(val authActions: AuthActions,
                                                 val errorTemplate: ErrorTemplateWithLink)

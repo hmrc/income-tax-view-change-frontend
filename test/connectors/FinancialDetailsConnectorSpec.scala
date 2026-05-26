@@ -16,23 +16,24 @@
 
 package connectors
 
-import audit.AuditingService
-import audit.models.{AuditModel, ExtendedAuditModel}
-import config.FrontendAppConfig
-import models.financialDetails._
+import common.config.FrontendAppConfig
+import common.connectors.BaseConnectorSpec
+import common.models.audit.{AuditModel, ExtendedAuditModel}
+import common.services.AuditingService
+import models.financialDetails.*
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import play.api.Configuration
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants._
-import testConstants.FinancialDetailsTestConstants._
-import testConstants.PaymentAllocationsTestConstants._
+import testConstants.BaseTestConstants.*
+import testConstants.FinancialDetailsTestConstants.*
+import testConstants.PaymentAllocationsTestConstants.*
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -328,7 +329,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
       val payments: Seq[Payment] =
         Seq(
-          Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
+          Payment(taxYear = 9999, reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
             method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
             dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01"))
         )
@@ -428,7 +429,7 @@ class FinancialDetailsConnectorSpec extends BaseConnectorSpec {
 
       val payments: Seq[Payment] =
         Seq(
-          Payment(reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
+          Payment(taxYear = 9999, reference = Some("reference"), amount = Some(100.00), outstandingAmount = None,
             method = Some("method"), documentDescription = None, lot = Some("lot"), lotItem = Some("lotItem"),
             dueDate = Some(fixedDate), documentDate = fixedDate, Some("DOCID01"))
         )

@@ -17,8 +17,9 @@
 package controllers
 
 import common.controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub, MTDIndividualAuthStub}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.helpers.servicemocks.MTDIndividualAuthStub
+import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Lang, Messages, MessagesApi}

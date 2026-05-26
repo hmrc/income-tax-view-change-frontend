@@ -16,7 +16,7 @@
 
 package connectors
 
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
+import common.helpers.{ComponentSpecBase, WiremockHelper}
 import models.core.ResponseModel.ResponseModel
 import models.core.{ErrorModel, Nino}
 import models.creditsandrefunds.CreditsModel
@@ -266,6 +266,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           val paymentFull: List[Payment] =
             List(
               Payment(
+                taxYear = 9999,
                 reference = Some("reference"),
                 amount = Some(100.00),
                 outstandingAmount = Some(1.00),
@@ -341,6 +342,7 @@ class FinancialDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           val paymentFull: List[Payment] =
             List(
               Payment(
+                taxYear = 9999,
                 reference = Some("reference"),
                 amount = Some(100.00),
                 outstandingAmount = Some(1.00),

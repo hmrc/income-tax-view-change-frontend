@@ -16,9 +16,9 @@
 
 package services
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import config.featureswitch.FeatureSwitching
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import enums.CodingOutType._
 import mocks.connectors.MockFinancialDetailsConnector
 import models.core.AccountingPeriodModel
@@ -27,7 +27,7 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status
 import testConstants.BaseTestConstants._
 import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
-import testConstants.FinancialDetailsTestConstants.{documentDetailModel, _}
+import testConstants.FinancialDetailsTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

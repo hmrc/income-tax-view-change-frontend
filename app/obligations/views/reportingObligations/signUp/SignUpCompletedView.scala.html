@@ -15,10 +15,11 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import common.viewUtils.ExternalUrlHelper
 @import obligations.models.reportingObligations.signUp.SignUpCompletedViewModel
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
@@ -34,7 +35,7 @@
 )
 
 
-@(viewModel: SignUpCompletedViewModel)(implicit messages: Messages, user: auth.MtdItUser[_], appConfig: config.FrontendAppConfig)
+@(viewModel: SignUpCompletedViewModel)(implicit messages: Messages, user: common.auth.MtdItUser[_], appConfig: FrontendAppConfig)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"signUp.completedSignUp.${viewModel.messageKey}.$key", args: _*)

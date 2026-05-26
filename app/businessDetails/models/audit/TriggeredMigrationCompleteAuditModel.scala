@@ -16,14 +16,16 @@
 
 package businessDetails.models.audit
 
-import audit.Utilities
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.enums.AuditType.TriggeredMigrationComplete
+import common.enums.TransactionName
+import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities
 import play.api.libs.json.{JsValue, Json}
 
 case class TriggeredMigrationCompleteAuditModel()(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
-  override val transactionName: String = enums.TransactionName.TriggeredMigrationComplete
-  override val auditType: String = enums.AuditType.TriggeredMigrationComplete
+  override val transactionName: String = TransactionName.TriggeredMigrationComplete
+  override val auditType: String = TriggeredMigrationComplete
 
   override val detail: JsValue =
     Utilities.userAuditDetails(user) ++

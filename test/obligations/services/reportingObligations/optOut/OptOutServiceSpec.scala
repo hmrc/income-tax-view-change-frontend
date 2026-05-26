@@ -16,6 +16,8 @@
 
 package obligations.services.reportingObligations.optOut
 
+import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.services.DateService
 import mocks.services.*
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
@@ -31,7 +33,6 @@ import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
-import services.DateService
 import testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 

@@ -16,7 +16,7 @@
 
 package audit.models
 
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import models.incomeSourceDetails.IncomeSourceDetailsModel

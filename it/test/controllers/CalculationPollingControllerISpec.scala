@@ -17,11 +17,12 @@
 package controllers
 
 import common.controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import forms.utils.SessionKeys
 import helpers.servicemocks.*
 import models.liabilitycalculation.LiabilityCalculationError
 import play.api.http.Status.*
+import returns.controllers.routes as returnsRoutes
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
 import testConstants.NewCalcBreakdownItTestConstants.*
@@ -59,9 +60,9 @@ class CalculationPollingControllerISpec extends ControllerISpecHelper {
 
                 val result = buildGETMTDClient(path, additionalCookies ++ Map(SessionKeys.calculationId -> "idOne")).futureValue
                 val expectedRedirectUrl = if(isAgent) {
-                  routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYearInt).url
+                  returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYearInt).url
                 } else {
-                  routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url
+                  returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url
                 }
                 result should have(
                   httpStatus(SEE_OTHER),
@@ -84,9 +85,9 @@ class CalculationPollingControllerISpec extends ControllerISpecHelper {
                   body = liabilityCalculationModelSuccessful
                 )
                 val taxSummUrl = if(mtdUserRole == MTDIndividual) {
-                  routes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url
+                  returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(testYearInt).url
                 } else {
-                  routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYearInt).url
+                  returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testYearInt).url
                 }
                 res.futureValue should have(
                   httpStatus(SEE_OTHER),
@@ -167,9 +168,9 @@ class CalculationPollingControllerISpec extends ControllerISpecHelper {
 
                 val result = buildGETMTDClient(finalCalcPath, additionalCookies ++ Map(SessionKeys.calculationId -> "idOne")).futureValue
                 val expectedRedirectUrl = if(isAgent) {
-                  routes.FinalTaxCalculationController.showAgent(testYearInt).url
+                  returnsRoutes.FinalTaxCalculationController.showAgent(testYearInt).url
                 } else {
-                  routes.FinalTaxCalculationController.show(testYearInt).url
+                  returnsRoutes.FinalTaxCalculationController.show(testYearInt).url
                 }
                 result should have(
                   httpStatus(SEE_OTHER),
@@ -192,9 +193,9 @@ class CalculationPollingControllerISpec extends ControllerISpecHelper {
                   body = liabilityCalculationModelSuccessful
                 )
                 val finalTaxCalUrl = if(mtdUserRole == MTDIndividual) {
-                  routes.FinalTaxCalculationController.show(testYearInt).url
+                  returnsRoutes.FinalTaxCalculationController.show(testYearInt).url
                 } else {
-                  routes.FinalTaxCalculationController.showAgent(testYearInt).url
+                  returnsRoutes.FinalTaxCalculationController.showAgent(testYearInt).url
                 }
                 res.futureValue should have(
                   httpStatus(SEE_OTHER),

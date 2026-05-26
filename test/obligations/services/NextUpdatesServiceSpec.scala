@@ -16,7 +16,7 @@
 
 package obligations.services
 
-import config.featureswitch.FeatureSwitching
+import common.config.featureswitch.FeatureSwitching
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.mocks.connectors.MockObligationsConnector
 import obligations.models.*
@@ -537,7 +537,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
           ))
         )
       )
-      TestNextUpdatesService.getNextUpdatesViewModel(obligations, true) shouldBe {
+      TestNextUpdatesService.getNextUpdatesViewModel(obligations) shouldBe {
         NextUpdatesViewModel(
           List(DeadlineViewModel(QuarterlyObligation, true, LocalDate.parse("2023-12-15"),
             List(ObligationWithIncomeType("nextUpdates.business", SingleObligationModel(LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-15"), "Quarterly", None, "#001", StatusFulfilled))),

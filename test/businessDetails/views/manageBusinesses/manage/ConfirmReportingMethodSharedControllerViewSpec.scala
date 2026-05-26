@@ -16,11 +16,10 @@
 
 package businessDetails.views.manageBusinesses.manage
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
-import businessDetails.enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
-import businessDetails.enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.enums.IncomeSourceJourney.ForeignProperty.{reportingMethodChangeErrorPrefix => foreignFormError}
+import common.enums.IncomeSourceJourney.SelfEmployment.{reportingMethodChangeErrorPrefix => seFormError}
+import common.enums.IncomeSourceJourney.UkProperty.{reportingMethodChangeErrorPrefix => ukFormError}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -33,8 +32,9 @@ import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethodView
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
+import common.auth.MtdItUser
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 
@@ -44,7 +44,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     ukPlusForeignPropertyWithSoleTraderIncomeSource, fakeRequestNoSession)
 
 
-  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, newReportingMethod: String, isCYPlus: Boolean, contentFeatureSwitchEnabled: Boolean) {
+  class Setup(isAgent: Boolean, incomeSourceType: IncomeSourceType, newReportingMethod: String, isCYPlus: Boolean) {
 
     private lazy val manageIncomeSourceDetailsController = manageYourBusinessRoutes.ManageIncomeSourceDetailsController
 
@@ -97,15 +97,6 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
     val pageFormHeadingOptOut = s"Do you want to opt out of the ${taxYearSet._1} to ${taxYearSet._2} tax year?"
     val pageContinue = "Continue"
 
-
-    //old messages (content R17 FS disabled)
-    val oldPageHeading = s"Change to $newReportingMethod reporting for ${taxYearSet._1} to ${taxYearSet._2} tax year"
-    val oldPageDescription: String = if (newReportingMethod == "quarterly") "Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software."
-    else "If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software."
-    val oldPageInset = "If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates."
-    val oldPageConfirm = "Confirm and save"
-
-
     def form(changeTo: String): Form[ChangeReportingMethodForm] = ChangeReportingMethodForm(changeTo)
 
     lazy val view: HtmlFormat.Appendable =
@@ -118,8 +109,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         newReportingMethod = newReportingMethod,
         isCurrentTaxYear = !isCYPlus,
         incomeSourceType = incomeSourceType,
-        form = form(testChangeToQuarterly).withError(FormError(formFieldName, getFormErrorMessage(incomeSourceType))),
-        optInOutContentFSEnabled = contentFeatureSwitchEnabled
+        form = form(testChangeToQuarterly).withError(FormError(formFieldName, getFormErrorMessage(incomeSourceType)))
       )
 
     lazy val document: Document = {
@@ -134,13 +124,12 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
   } yield {
     val isAgent = mtdRole == "Agent"
 
-    s"ConfirmReportingMethodView (new content - R17 content feature switch enabled) - $incomeSourceType - $mtdRole - $reportingMethod" should {
+    s"ConfirmReportingMethodView - $incomeSourceType - $mtdRole - $reportingMethod" should {
       "render the heading" in new Setup(
         isAgent,
         incomeSourceType,
         reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = true
+        isCYPlus = false
       ) {
         document.getElementsByClass("govuk-heading-xl").first().text() shouldBe getPageHeadingFor(reportingMethod = reportingMethod, CYPlus = false)
       }
@@ -149,8 +138,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isAgent,
         incomeSourceType,
         reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = true
+        isCYPlus = false
       ) {
         document.getElementById("back-fallback").text() shouldBe "Back"
         document.getElementById("back-fallback").attr("href") shouldBe manageYourBusinessRoutes.ManageIncomeSourceDetailsController.show(isAgent = isAgent, incomeSourceType, selfEmploymentId).url
@@ -160,8 +148,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isAgent,
         incomeSourceType,
         reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = true
+        isCYPlus = false
       ) {
         document.getElementsByClass("govuk-caption-xl").first().text().contains(pageSubHeading) shouldBe true
       }
@@ -170,8 +157,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
         isAgent,
         incomeSourceType,
         reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = true
+        isCYPlus = false
       ) {
         document.getElementById("continue-button").text() shouldBe pageContinue
       }
@@ -181,8 +167,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
           isAgent,
           incomeSourceType,
           reportingMethod,
-          isCYPlus = false,
-          contentFeatureSwitchEnabled = true
+          isCYPlus = false
         ) {
         if (reportingMethod == "quarterly") {
           document.getElementById("change-reporting-method-ul-description").text() shouldBe pageUlDescription
@@ -208,8 +193,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
           isAgent,
           incomeSourceType,
           reportingMethod,
-          isCYPlus = true,
-          contentFeatureSwitchEnabled = true
+          isCYPlus = true
         ) {
           if (reportingMethod == "quarterly") {
             document.getElementById("change-reporting-method-description-quarterly-CYplus").text() shouldBe pageDescriptionQuarterly
@@ -230,8 +214,7 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
           isAgent = isAgent,
           incomeSourceType,
           reportingMethod,
-          isCYPlus = true,
-          true
+          isCYPlus = true
         ) {
           if(reportingMethod == "quarterly") {
             document.getElementsByClass("govuk-fieldset__heading").select("h1").text() shouldBe pageFormHeadingSignUp
@@ -239,82 +222,6 @@ class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
             document.getElementsByClass("govuk-fieldset__heading").select("h1").text() shouldBe pageFormHeadingOptOut
           }
         }
-    }
-  }
-
-  //old content tests
-  for {
-    mtdRole <- List("Individual", "Agent")
-    incomeSourceType <- List(SelfEmployment, ForeignProperty, UkProperty)
-    reportingMethod <- List("annual", "quarterly")
-  } yield {
-    val isAgent = mtdRole == "Agent"
-
-    s"ConfirmReportingMethodView (old content - R17 content feature switch disabled) - $incomeSourceType - $mtdRole - $reportingMethod" should {
-      "render the heading" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = false
-      ) {
-        document.getElementsByClass("govuk-heading-xl").first().text() shouldBe oldPageHeading
-      }
-
-      "render the back link with the correct URL" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = false
-      ) {
-        document.getElementById("back-fallback").text() shouldBe "Back"
-        document.getElementById("back-fallback").attr("href") shouldBe manageYourBusinessRoutes.ManageIncomeSourceDetailsController.show(isAgent = isAgent, incomeSourceType, selfEmploymentId).url
-      }
-
-      "render the sub-heading" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = false
-      ) {
-        document.getElementsByClass("govuk-caption-xl").first().text().contains(pageSubHeading) shouldBe true
-      }
-
-      "render the main paragraph" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = false
-      ) {
-        document.getElementById("change-reporting-method-description").text() shouldBe oldPageDescription
-      }
-
-      "render the continue button" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = false
-      ) {
-        document.getElementById("confirm-button").text() shouldBe oldPageConfirm
-      }
-
-      "render the inset text if the user is quarterly" in new Setup(
-        isAgent = isAgent,
-        incomeSourceType = incomeSourceType,
-        reportingMethod,
-        isCYPlus = false,
-        contentFeatureSwitchEnabled = false
-      ) {
-        if (reportingMethod == "quarterly") {
-          document.getElementById("change-reporting-method-inset").text() shouldBe oldPageInset
-        } else {
-          Option(document.getElementById("change-reporting-method-inset")).isEmpty shouldBe true
-        }
-      }
     }
   }
 }

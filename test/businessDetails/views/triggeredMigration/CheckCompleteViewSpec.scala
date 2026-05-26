@@ -33,7 +33,7 @@ class CheckCompleteViewSpec extends TestSupport {
   val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   class Setup(isAgent: Boolean) {
-    val homeCall: Call = if(isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
+    val homeCall: Call = if(isAgent) hub.controllers.routes.HomeController.showAgent() else hub.controllers.routes.HomeController.show()
     val postAction = triggeredMigrationRoutes.CheckCompleteController.submit(isAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent), postAction)))
   }

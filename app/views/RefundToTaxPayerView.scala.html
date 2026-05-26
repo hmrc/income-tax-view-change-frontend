@@ -15,15 +15,16 @@
  *@
 
 @import _root_.implicits.ImplicitCurrencyFormatter._
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import models.creditsandrefunds.RefundToTaxPayerViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
-        appConfig: config.FrontendAppConfig,
+        appConfig: FrontendAppConfig,
         implicitDateFormatter: ImplicitDateFormatterImpl,
         h1: h1,
         p: p,

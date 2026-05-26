@@ -16,42 +16,43 @@
 
 package models.repaymentHistory
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
+import common.services.DateServiceInterface
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails._
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json
-import services.DateServiceInterface
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
+import financials.controllers.routes as financialsRoutes
 
 object RepaymentHistoryUtils {
 
   private def getControllerHref(transactionId: Option[String], isAgent: Boolean) = {
     if (isAgent) {
-      controllers.routes.PaymentAllocationsController.viewPaymentAllocationAgent(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
+      financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
     } else {
-      controllers.routes.PaymentAllocationsController.viewPaymentAllocation(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
+      financialsRoutes.PaymentAllocationsController.viewPaymentAllocation(transactionId.getOrElse(throw MissingFieldException("Transaction ID"))).url
     }
   }
 
   private def getCreditsLinkUrl(date: LocalDate, isAgent: Boolean) = {
     val year = date.getYear
     if (isAgent) {
-      controllers.routes.CreditsSummaryController.showAgentCreditsSummary(year).url
+      financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(year).url
     } else {
-      controllers.routes.CreditsSummaryController.showCreditsSummary(year).url
+      financialsRoutes.CreditsSummaryController.showCreditsSummary(year).url
     }
   }
 
   def getChargeLinkUrl(isAgent: Boolean, taxYear: Int, chargeId: String, codedOut: Option[Boolean] = None): String = {
     val baseUrl =
       if (isAgent) {
-        controllers.routes.ChargeSummaryController.showAgent(taxYear, chargeId).url
+        financialsRoutes.ChargeSummaryController.showAgent(taxYear, chargeId).url
       } else {
-        controllers.routes.ChargeSummaryController.show(taxYear, chargeId).url
+        financialsRoutes.ChargeSummaryController.show(taxYear, chargeId).url
       }
 
     codedOut match {
@@ -137,7 +138,8 @@ object RepaymentHistoryUtils {
       transactionId = payment.transactionId,
       amount = payment.amount,
       linkUrl = getControllerHref(payment.transactionId, isAgent),
-      visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}"
+      visuallyHiddenText = s"${payment.dueDate.get} ${payment.amount.getOrElse(throw MissingFieldException("Amount")).abs.toCurrency}",
+      taxYear = Some(payment.taxYear)
     )
   }
 
@@ -147,7 +149,8 @@ object RepaymentHistoryUtils {
       creditType = MfaCreditType,
       amount = payment.amount,
       linkUrl = getCreditsLinkUrl(payment.documentDate, isAgent),
-      visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}"
+      visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}",
+      taxYear = Some(payment.taxYear)
     )
   }
 
@@ -172,7 +175,8 @@ object RepaymentHistoryUtils {
           getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
         else
           getCreditsLinkUrl(dueDate, isAgent),
-        visuallyHiddenText = transactionId
+        visuallyHiddenText = transactionId,
+        taxYear = Some(payment.taxYear)
       )
     }
   }
@@ -184,7 +188,8 @@ object RepaymentHistoryUtils {
       amount = Some(chargeItem.originalAmount),
       transactionId = Some(chargeItem.transactionId),
       linkUrl = getChargeLinkUrl(isAgent, chargeItem.taxYear.endYear, chargeItem.transactionId, codedOut = Some(true)),
-      visuallyHiddenText = chargeItem.transactionType.toString
+      visuallyHiddenText = chargeItem.transactionType.toString,
+      taxYear = Some(chargeItem.taxYear.endYear)
     )
   }
 
@@ -194,7 +199,8 @@ object RepaymentHistoryUtils {
       creditType = Repayment,
       amount = repayment.totalRepaymentAmount,
       linkUrl = s"refund-to-taxpayer/${repayment.repaymentRequestNumber}",
-      visuallyHiddenText = s"${repayment.repaymentRequestNumber}"
+      visuallyHiddenText = s"${repayment.repaymentRequestNumber}",
+      taxYear = None
     )
   }
 

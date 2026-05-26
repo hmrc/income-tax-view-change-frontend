@@ -16,11 +16,11 @@
 
 package common.controllers.errors
 
-import audit.AuditingService
-import audit.models.IvOutcomeFailureAuditModel
+import common.models.audit.IvOutcomeFailureAuditModel
+import common.services.AuditingService
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.errorPages.UpliftFailedView
+import common.views.html.errorPages.UpliftFailedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

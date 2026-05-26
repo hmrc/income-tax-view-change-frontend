@@ -16,8 +16,11 @@
 
 package audit.models
 
-import audit.Utilities
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.enums.AuditType.AdjustPaymentsOnAccount
+import common.enums.TransactionName
+import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,
@@ -28,9 +31,9 @@ case class AdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,
                                              isDecreased: Boolean
                                             )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.AdjustPaymentsOnAccount
+  override val transactionName: String = TransactionName.AdjustPaymentsOnAccount
 
-  override val auditType: String = enums.AuditType.AdjustPaymentsOnAccount
+  override val auditType: String = AdjustPaymentsOnAccount
 
   private val successOutcome: JsObject = Json.obj(
     "outcome" ->

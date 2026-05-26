@@ -16,7 +16,7 @@
 
 package common.controllers.timeout
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
@@ -26,7 +26,7 @@ import testUtils.TestSupport
 class SessionTimeoutControllerSpec extends TestSupport {
 
   object TestSessionTimeoutController extends SessionTimeoutController(
-    app.injector.instanceOf[views.html.timeout.TimeoutView])(
+    app.injector.instanceOf[common.views.html.timeout.TimeoutView])(
     app.injector.instanceOf[FrontendAppConfig],
     app.injector.instanceOf[MessagesControllerComponents]
   )

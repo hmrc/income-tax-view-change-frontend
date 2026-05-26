@@ -16,9 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import businessDetails.services.CreateBusinessDetailsService
@@ -26,8 +23,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceNotAddedErrorView
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.utils.IncomeSourcesUtils
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.IncomeSourceType
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -16,10 +16,11 @@
 
 package obligations.services.reportingObligations.optOut.quarterlyupdates
 
-import audit.mocks.MockAuditingService
-import config.FrontendAppConfig
-import mocks.MockHttpV2
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import common.config.FrontendAppConfig
+import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.mocks.{MockAuditingService, MockHttpV2}
+import common.services.DateService
+import mocks.services.MockCalculationListService
 import obligations.connectors.ObligationsConnector
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService
@@ -31,7 +32,6 @@ import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
-import services.DateService
 import testConstants.BaseTestConstants.testNino
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse

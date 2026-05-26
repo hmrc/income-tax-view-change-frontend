@@ -1,0 +1,39 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.config.FrontendAppConfig
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
+
+
+@this(unifiedLayout: unifiedLayout,
+    appConfig: FrontendAppConfig,
+    h1: h1,
+    link: link,
+    p: p)
+
+
+@()(implicit request: Request[_], messages: Messages)
+
+@unifiedLayout(pageTitle = messages("not_enrolled.heading"), mainClass = None, showLogout = true, showBtaHeader = false, showServiceName = false, isErrorPage = true) {
+
+    @h1(msg=messages("not_enrolled.heading"), id=Some("page-heading"))
+    @p(id=Some("sign-up")){
+        @messages("not_enrolled.sign-up")
+        @link(id=Some("sign-up-link"), link = appConfig.signUpUrl, messageKey = "not_enrolled.sign-up.link", target = Some("_blank"), rel=Some("noreferrer noopener"), outerMessage = ".")
+    }
+
+}

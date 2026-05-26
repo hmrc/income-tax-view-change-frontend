@@ -16,10 +16,10 @@
 
 package utils.claimToAdjust
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import cats.data.EitherT
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.auth.MtdItUser
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
@@ -43,6 +43,7 @@ import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSessionService with MockClaimToAdjustService {
 
@@ -97,9 +98,9 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
         val resAgent = TestWithSessionAndPoaSpy.withSessionDataAndPoa(journeyState = BeforeSubmissionPage)(successfulFutureOkAgent)(agentUser, headerCarrier)
 
         status(res) shouldBe SEE_OTHER
-        redirectLocation(res) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(false).url)
+        redirectLocation(res) shouldBe Some(claimToAdjustPoaRoutes.YouCannotGoBackController.show(false).url)
         status(resAgent) shouldBe SEE_OTHER
-        redirectLocation(resAgent) shouldBe Some(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(true).url)
+        redirectLocation(resAgent) shouldBe Some(claimToAdjustPoaRoutes.YouCannotGoBackController.show(true).url)
       }
     }
 

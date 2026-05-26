@@ -16,9 +16,9 @@
 
 package models.repaymentHistory
 
+import common.services.DateServiceInterface
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
-import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -27,11 +27,16 @@ case class PaymentHistoryEntry(date: LocalDate,
                                amount: Option[BigDecimal],
                                transactionId: Option[String] = None,
                                linkUrl: String,
-                               visuallyHiddenText: String)(implicit val dateService: DateServiceInterface) {
+                               visuallyHiddenText: String,
+                               private val taxYear: Option[Int])(implicit val dateService: DateServiceInterface) {
 
   def getTaxYear: TaxYear = {
-    val endYear = dateService.getAccountingPeriodEndDate(date).getYear
-    TaxYear(endYear-1, endYear)
+    taxYear match {
+      case Some(taxEndYear) if taxEndYear != 9999 => TaxYear.forYearEnd(taxEndYear)
+      case _ =>
+        val endYear = dateService.getAccountingPeriodEndDate(date).getYear
+        TaxYear(endYear - 1, endYear)
+    }
   }
 
   private val creditTypes: Seq[CreditType] = Seq(

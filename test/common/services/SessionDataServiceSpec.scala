@@ -1,0 +1,108 @@
+/*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package common.services
+
+import common.utils.sessionUtils
+import common.utils.sessionUtils.SessionKeys
+import mocks.connectors.MockSessionDataConnector
+import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
+import testUtils.TestSupport
+
+class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
+
+  object TestSessionDataService extends SessionDataService(mockSessionDataConnector)
+
+  "SessionDataService.getSessionData(useCookie = true)" should {
+    "return a SessionGetSuccessResponse" when {
+      "the cookie contains the mtdId, utr and nino" in {
+        val response: SessionGetResponse = Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "not required"))
+        val request = fakeRequestWithActiveSession.withSession(
+          SessionKeys.clientUTR -> "three",
+          sessionUtils.SessionKeys.clientMTDID -> "one",
+          sessionUtils.SessionKeys.clientNino -> "two"
+        )
+
+        TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue shouldBe response
+      }
+    }
+
+    "return a SessionGetSuccessResponse" when {
+      "the cookie does not contain mtditid" in {
+        val request = fakeRequestWithActiveSession.withSession(
+          sessionUtils.SessionKeys.clientUTR -> "three",
+          sessionUtils.SessionKeys.clientNino -> "two"
+        )
+        val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
+        res.isLeft shouldBe true
+        res.swap shouldBe Right(SessionDataNotFound("Cookie does not contain agent data"))
+
+      }
+
+      "the cookie does not contain utr" in {
+        val request = fakeRequestWithActiveSession.withSession(
+          sessionUtils.SessionKeys.clientMTDID -> "one",
+          sessionUtils.SessionKeys.clientNino -> "two"
+        )
+
+        val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
+        res.isLeft shouldBe true
+        res.swap shouldBe Right(SessionDataNotFound("Cookie does not contain agent data"))
+
+      }
+
+      "the cookie does not contain nino" in {
+        val request = fakeRequestWithActiveSession.withSession(
+          sessionUtils.SessionKeys.clientMTDID -> "one",
+          sessionUtils.SessionKeys.clientUTR -> "two"
+        )
+
+        val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
+        res.isLeft shouldBe true
+        res.swap shouldBe Right(SessionDataNotFound("Cookie does not contain agent data"))
+      }
+
+      "the cookie does not contain session data" in {
+        val request = fakeRequestWithActiveSession
+
+        val res = TestSessionDataService.getSessionData(true)(request, headerCarrier).futureValue
+        res.isLeft shouldBe true
+        res.swap shouldBe Right(SessionDataNotFound("Cookie does not contain agent data"))
+      }
+    }
+  }
+
+  "SessionDataService.getSessionData(useCookie = false)" when {
+    val request = fakeRequestWithActiveSession
+    "the connector returns a success response" should {
+      "return the same success response" in {
+        val response: SessionGetResponse = Right(SessionDataGetSuccess(mtditid = "one", nino = "two", utr = "three", sessionId = "four"))
+        setupMockGetSessionData(response)
+
+        TestSessionDataService.getSessionData()(request, headerCarrier).futureValue shouldBe response
+      }
+    }
+    "the connector returns an error response" should {
+      "return the same error response" in {
+        val response: SessionGetResponse = Left(SessionDataNotFound("TEST ERROR!"))
+        setupMockGetSessionData(response)
+
+        TestSessionDataService.getSessionData()(request, headerCarrier).futureValue shouldBe response
+      }
+    }
+  }
+
+}

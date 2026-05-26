@@ -16,7 +16,8 @@
 
 package connectors
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
 import play.api.Logger
 import play.api.http.Status

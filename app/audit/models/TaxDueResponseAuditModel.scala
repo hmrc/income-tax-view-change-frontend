@@ -16,8 +16,11 @@
 
 package audit.models
 
-import audit.Utilities.userAuditDetails
-import auth.MtdItUser
+import common.utils.audit.Utilities.userAuditDetails
+import common.auth.MtdItUser
+import common.enums.AuditType.TaxCalculationDetailsResponse
+import common.enums.TransactionName
+import common.models.audit.ExtendedAuditModel
 import models.liabilitycalculation.ReliefsClaimed
 import models.liabilitycalculation.taxcalculation.*
 import models.liabilitycalculation.viewmodels.*
@@ -31,8 +34,8 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
 
   import implicits.ImplicitCurrencyFormatter.*
 
-  override val transactionName: String = enums.TransactionName.TaxCalculationDetailsResponse
-  override val auditType: String = enums.AuditType.TaxCalculationDetailsResponse
+  override val transactionName: String = TransactionName.TaxCalculationDetailsResponse
+  override val auditType: String = TaxCalculationDetailsResponse
 
 
   private def calcMessageCodeToString(id: String): Option[String] = {

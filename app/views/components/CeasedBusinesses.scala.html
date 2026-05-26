@@ -14,12 +14,12 @@
  * limitations under the License.
  *@
 
-@import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-@import implicits.ImplicitDateFormatterImpl
+@import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+@import common.implicits.ImplicitDateFormatterImpl
 @import models.incomeSourceDetails.viewmodels.CeasedBusinessDetailsViewModel
 @import uk.gov.hmrc.govukfrontend.views.Aliases._
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
-@import views.html.components.h2
+@import common.views.html.components.h2
 @import java.time.LocalDate
 
 @this(
@@ -32,7 +32,7 @@
         ceasedBusinesses: List[CeasedBusinessDetailsViewModel],
         displayStartDate: Boolean
 )(implicit messages: Messages,
-        user: auth.MtdItUser[_])
+        user: common.auth.MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

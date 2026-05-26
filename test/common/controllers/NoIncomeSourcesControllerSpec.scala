@@ -16,8 +16,8 @@
 
 package common.controllers
 
-import enums.{MTDIndividual, MTDPrimaryAgent}
-import mocks.auth.MockAuthActions
+import common.enums.{MTDIndividual, MTDPrimaryAgent}
+import common.mocks.auth.MockAuthActions
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*

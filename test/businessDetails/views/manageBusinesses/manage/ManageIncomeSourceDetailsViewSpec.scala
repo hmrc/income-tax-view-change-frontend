@@ -28,8 +28,8 @@ import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDeta
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.views.constants.ManageIncomeSourceDetailsViewConstants.*
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
@@ -49,6 +49,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   def h1()(implicit document: Document) = document.getElementsByClass("govuk-heading-xl")
 
   def changeLink(i: Int)(implicit document: Document) = document.getElementById(s"change-link-$i")
+  def signUpLink(i: Int)(implicit document: Document) = document.getElementById(s"sign-up-link-$i")
+  def optOutLink(i: Int)(implicit document: Document) = document.getElementById(s"opt-out-link-$i")
 
 
   class SelfEmploymentSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
@@ -63,7 +65,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -83,7 +84,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -103,7 +103,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -119,7 +118,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -139,7 +137,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -158,7 +155,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -177,7 +173,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -193,7 +188,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -213,7 +207,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -232,7 +225,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -251,7 +243,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -267,7 +258,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = false
       )(messages, implicitly)
     }
 
@@ -282,7 +272,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        showOptInOptOutContentUpdateR17 = true
       )(messages, implicitly)
     }
 
@@ -312,11 +301,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(5).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(6).text() shouldBe reportingMethod2
 
-      changeLink(1).text() shouldBe change
-      changeLink(2).text() shouldBe change
+      signUpLink(1).text() shouldBe signUp
+      optOutLink(2).text() shouldBe optOut
 
-      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
-      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
+      signUpLink(1).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
+      optOutLink(2).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
 
       summaryListRowValues().eq(0).text() shouldBe expectedBusinessName
       summaryListRowValues().eq(1).text() shouldBe expectedViewAddressString1
@@ -351,7 +340,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
     }
 
     "render the reporting frequency rows and content IF there are latency details" in new SelfEmploymentSetup(false) {
-      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April 2024, you could be required to report quarterly."
+      document.getElementById("up-to-two-tax-years").text() shouldBe "Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April 2024, you could be required to use the service."
       summaryListRowKeys().eq(5).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(6).text() shouldBe reportingMethod2
     }
@@ -363,7 +352,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "render the change links where status is Quarterly" in new SelfEmploymentCrystallisedSetup(false) {
       Option(changeLink(1)) shouldBe None
-      changeLink(2).text() shouldBe change
+      Option(document.getElementById("opt-out-link-2")) should not be None
+      document.getElementById("opt-out-link-2").text() shouldBe "Opt out"
     }
 
     "do not display change link when CY & CY-1 ITSA Status are unknown" in new SelfEmploymentUnknownsSetup(false) {
@@ -414,7 +404,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         testViewModel,
         isAgent = false,
         showStartDate = true,
-        showOptInOptOutContentUpdateR17 = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -455,7 +444,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         testViewModel,
         isAgent = false,
         showStartDate = true,
-        showOptInOptOutContentUpdateR17 = true,
         backUrl = backUrl(false)
       )(messages, implicitly)
 
@@ -487,7 +475,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          showOptInOptOutContentUpdateR17 = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -507,7 +494,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          showOptInOptOutContentUpdateR17 = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -528,7 +514,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          showOptInOptOutContentUpdateR17 = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -547,7 +532,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          showOptInOptOutContentUpdateR17 = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -567,7 +551,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          showOptInOptOutContentUpdateR17 = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -587,7 +570,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          showOptInOptOutContentUpdateR17 = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -607,7 +589,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          showOptInOptOutContentUpdateR17 = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -627,7 +608,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          showOptInOptOutContentUpdateR17 = true,
           backUrl = backUrl(false)
         )(messages, implicitly)
 
@@ -665,11 +645,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(5).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(6).text() shouldBe reportingMethod2
 
-      changeLink(1).text() shouldBe change
-      changeLink(2).text() shouldBe change
+      signUpLink(1).text() shouldBe signUp
+      optOutLink(2).text() shouldBe optOut
 
-      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
-      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
+      signUpLink(1).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2022-2023", changeTo = "quarterly")
+      optOutLink(2).attr("href") shouldBe changeReportingMethodUrl(id = "XA00001234", taxYear = "2023-2024", changeTo = "annual")
       summaryListRowValues().eq(0).text() shouldBe expectedBusinessName
       summaryListRowValues().eq(1).text() shouldBe expectedViewAddressString1
       summaryListRowValues().eq(2).text() shouldBe expectedBusinessStartDate
@@ -678,7 +658,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowValues().eq(6).text() shouldBe quarterlyGracePeriod
       document.getElementById("reportingFrequency").text() shouldBe reportingFrequencyText
       document.getElementById("reportingFrequency-link").attr("href") shouldBe reportingFrequencyLink(true)
-
     }
 
     "do not display start date if DisplayBusinessStartDate is disabled" in new SelfEmploymentSetup(true, startDateEnabled = false) {
@@ -706,11 +685,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
 
-      changeLink(1).text() shouldBe change
-      changeLink(2).text() shouldBe change
+      signUpLink(1).text() shouldBe signUp
+      optOutLink(2).text() shouldBe optOut
 
-      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
-      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      signUpLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      optOutLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
       summaryListRowValues().eq(1).text() shouldBe calendar
       summaryListRowValues().eq(2).text() shouldBe annuallyGracePeriod
@@ -744,7 +723,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "render the change links where status is Quarterly" in new UkCrystallisedSetup(false) {
       Option(changeLink(1)) shouldBe None
-      changeLink(2).text() shouldBe change
+      Option(document.getElementById("opt-out-link-2")) should not be None
+      document.getElementById("opt-out-link-2").text() shouldBe "Opt out"
     }
 
     "dont display change link when CY & CY-1 ITSA Status are unknown" in new UkSetupUnknowns(false) {
@@ -779,11 +759,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
 
-      changeLink(1).text() shouldBe change
-      changeLink(2).text() shouldBe change
+      signUpLink(1).text() shouldBe signUp
+      optOutLink(2).text() shouldBe optOut
 
-      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
-      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      signUpLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      optOutLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
       summaryListRowValues().eq(1).text() shouldBe calendar
       summaryListRowValues().eq(2).text() shouldBe annuallyGracePeriod
@@ -822,11 +802,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
 
-      changeLink(1).text() shouldBe change
-      changeLink(2).text() shouldBe change
+      signUpLink(1).text() shouldBe signUp
+      optOutLink(2).text() shouldBe optOut
 
-      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
-      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      signUpLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      optOutLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
       summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
       summaryListRowValues().eq(1).text() shouldBe calendar
       summaryListRowValues().eq(2).text() shouldBe annuallyGracePeriod
@@ -861,7 +841,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
     "render the change links where status is Quarterly" in new ForeignCrystallisedSetup(false) {
       Option(changeLink(1)) shouldBe None
-      changeLink(2).text() shouldBe change
+      Option(document.getElementById("opt-out-link-2")) should not be None
+      document.getElementById("opt-out-link-2").text() shouldBe "Opt out"
     }
 
     "dont display change link when CY & CY-1 ITSA Status are unknown" in new ForeignSetupUnknowns(false) {
@@ -894,11 +875,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
       summaryListRowKeys().eq(2).text() shouldBe reportingMethod1
       summaryListRowKeys().eq(3).text() shouldBe reportingMethod2
 
-      changeLink(1).text() shouldBe change
-      changeLink(2).text() shouldBe change
+      signUpLink(1).text() shouldBe signUp
+      optOutLink(2).text() shouldBe optOut
 
-      changeLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
-      changeLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
+      signUpLink(1).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2022-2023", changeTo = "quarterly")
+      optOutLink(2).attr("href") shouldBe changeReportingMethodUrl(taxYear = "2023-2024", changeTo = "annual")
 
       summaryListRowValues().eq(0).text() shouldBe expectedBusinessStartDate
       summaryListRowValues().eq(1).text() shouldBe calendar

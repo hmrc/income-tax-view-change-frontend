@@ -16,8 +16,9 @@
 
 package obligations.services.reportingObligations.optOut
 
-import auth.MtdItUser
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import common.auth.MtdItUser
+import common.mocks.services.{MockDateService, MockITSAStatusService}
+import mocks.services.MockCalculationListService
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector

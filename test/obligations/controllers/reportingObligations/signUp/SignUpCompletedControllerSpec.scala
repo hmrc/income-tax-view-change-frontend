@@ -16,10 +16,11 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import connectors.{ITSAStatusConnector}
-import enums.MTDIndividual
-import mocks.auth.MockAuthActions
-import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
+import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
+import common.mocks.auth.MockAuthActions
+import common.services.DateServiceInterface
+import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.mocks.services.MockSignUpService
@@ -32,7 +33,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
@@ -59,7 +59,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
       s"the user is authenticated as a $mtdRole" should {
         s"render the signUpCompleted page" that {
           "is for the current year" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+            setupMockSuccess(mtdRole, false, List(SignUpFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -74,7 +74,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             status(result) shouldBe OK
           }
           "is for next year" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+            setupMockSuccess(mtdRole, false, List(SignUpFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -91,7 +91,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
         }
         "render the error page" when {
           "no proposition returned" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+            setupMockSuccess(mtdRole, false, List(SignUpFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -102,7 +102,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
           "FetchSavedChosenTaxYear fails" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+            setupMockSuccess(mtdRole, false, List(SignUpFs))
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
@@ -113,18 +113,18 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             status(result) shouldBe INTERNAL_SERVER_ERROR
           }
         }
-        "render the reporting obligations page" when {
+        "redirect to the home page" when {
           "the sign up feature switch is disabled" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List())
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
             setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+              hub.controllers.routes.HomeController.showAgent().url
             } else {
-              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+              hub.controllers.routes.HomeController.show().url
             }
 
             status(result) shouldBe Status.SEE_OTHER
@@ -132,7 +132,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
           }
         }
 
-        "render the reporting frequency page" when {
+        "redirect to the home page" when {
           "the opt in opt out content R17 feature switch is disabled" in {
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
@@ -141,9 +141,9 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+              hub.controllers.routes.HomeController.showAgent().url
             } else {
-              "/report-quarterly/income-and-expenses/view/reporting-frequency"
+              hub.controllers.routes.HomeController.show().url
             }
 
             status(result) shouldBe Status.SEE_OTHER

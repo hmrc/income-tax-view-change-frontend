@@ -16,13 +16,13 @@
 
 package models.chargeSummary
 
-import enums.GatewayPage.*
+import common.enums.GatewayPage.GatewayPage
 import models.ChargeHistoryItem
 import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails.*
 import play.api.i18n.Messages
 import play.twirl.api.Html
-import controllers.routes.*
+import financials.controllers.routes.*
 import models.repaymentHistory.RepaymentHistoryUtils
 import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation
 

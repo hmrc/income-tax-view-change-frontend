@@ -16,13 +16,14 @@
 
 package obligations.controllers
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import enums.MTDIndividual
+import common.enums.MTDIndividual
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, MTDIndividualAuthStub}
 import helpers.servicemocks.*
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
-import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
+import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
+import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.ObligationsModel
@@ -94,10 +95,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           pageTitleIndividual("nextUpdates.heading")
         )
 
-        Then("the page displays the property obligation dates")
+        Then("the page displays the R17 tabs structure")
         res should have(
-          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          isElementVisibleById("updates-and-deadlines-tabs")(expectedValue = true),
         )
 
       }
@@ -128,10 +128,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           pageTitleIndividual("nextUpdates.heading")
         )
 
-        Then("the page displays the property obligation dates")
+        Then("the page displays the R17 tabs structure")
         res should have(
-          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          isElementVisibleById("updates-and-deadlines-tabs")(expectedValue = true),
         )
 
       }
@@ -158,10 +157,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           pageTitleIndividual("nextUpdates.heading")
         )
 
-        Then("the page displays all the business obligation dates")
+        Then("the page displays the R17 tabs structure")
         res should have(
-          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          isElementVisibleById("updates-and-deadlines-tabs")(expectedValue = true),
         )
 
       }
@@ -220,27 +218,20 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           pageTitleIndividual("nextUpdates.heading")
         )
 
-        Then("the page displays the property obligation dates")
+        Then("the page displays the R17 tabs structure")
         res should have(
-          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
+          isElementVisibleById("updates-and-deadlines-tabs")(expectedValue = true),
         )
 
         Then("the quarterly updates info sections")
         res should have(
-          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
-          elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
-          elementTextBySelector("#updates-software-link")
-          (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
-            "to keep digital records of all your business income and expenses. You must submit these " +
-            "updates through your software by each date shown."),
+          elementTextByID("active-quarterly-subheading")(expectedValue = "Quarterly updates due"),
         )
 
       }
 
       "the user has a Opt Out R17 Feature Switch Enabled" in {
-        stubGetFeatureSwitches(List(OptOutFs, OptInOptOutContentUpdateR17))
+        stubGetFeatureSwitches(List(OptOutFs))
 
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -306,7 +297,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
       }
 
       "the user has a Opt Out R17 Feature Switch Enabled - All ceased businesses" in {
-        stubGetFeatureSwitches(List(OptOutFs, OptInOptOutContentUpdateR17))
+        stubGetFeatureSwitches(List(OptOutFs))
 
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
@@ -369,12 +360,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           pageTitleIndividual("nextUpdates.heading")
         )
 
-        Then("the page displays the property obligation dates")
+        Then("the page displays the R17 tabs structure")
         res should have(
-          elementTextBySelector("#accordion-with-summary-sections-summary-1")(expectedValue = "Quarterly update"),
-          elementTextBySelector("#accordion-with-summary-sections-heading-1")(expectedValue = "1 January 2018"),
-          isElementVisibleById("#updates-software-heading")(expectedValue = false),
-          isElementVisibleById("#updates-software-link")(expectedValue = false),
+          isElementVisibleById("updates-and-deadlines-tabs")(expectedValue = true),
+          isElementVisibleById("updates-software-heading")(expectedValue = false),
+          isElementVisibleById("updates-software-link")(expectedValue = false),
         )
       }
     }

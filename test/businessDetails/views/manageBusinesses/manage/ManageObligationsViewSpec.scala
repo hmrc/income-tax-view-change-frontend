@@ -18,8 +18,6 @@ package businessDetails.views.manageBusinesses.manage
 
 import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 import play.twirl.api.Html
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
 import testUtils.ViewSpec
@@ -67,77 +65,40 @@ class ManageObligationsViewSpec extends ViewSpec {
   val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
 
-  val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
-  val validSECallNoName: Html = view(viewModelWithAllData, "Not Found", taxYear, annually, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
-  val validUKCall: Html = view(viewModelWithAllData, "UK property", taxYear, quarterly, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
-  val validFPCall: Html = view(viewModelWithAllData, "Foreign property", taxYear, annually, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
-  val validCallNoData: Html = view(emptyViewModel, "test name", taxYear, quarterly, isAgent = false, testCall, showOptInOptOutContentUpdateR17 = false, isCurrentTaxYear = false)
-  val quarterlyCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "quarterly", isAgent = false, testCall, showOptInOptOutContentUpdateR17 = true, isCurrentTaxYear = true)
-  val quarterlyCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "quarterly", isAgent = false, testCall, showOptInOptOutContentUpdateR17 = true, isCurrentTaxYear = false)
-  val annualCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "annual", isAgent = false, testCall, showOptInOptOutContentUpdateR17 = true, isCurrentTaxYear = false)
-  val annualCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "annual", isAgent = false, testCall, showOptInOptOutContentUpdateR17 = true, isCurrentTaxYear = false)
+  val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false)
+  val validSECallNoName: Html = view(viewModelWithAllData, "Not Found", taxYear, annually, isAgent = false, testCall, isCurrentTaxYear = false)
+  val validUKCall: Html = view(viewModelWithAllData, "UK property", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false)
+  val validFPCall: Html = view(viewModelWithAllData, "Foreign property", taxYear, annually, isAgent = false, testCall, isCurrentTaxYear = false)
+  val validCallNoData: Html = view(emptyViewModel, "test name", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false)
+  val quarterlyCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "quarterly", isAgent = false, testCall, isCurrentTaxYear = true)
+  val quarterlyCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "quarterly", isAgent = false, testCall, isCurrentTaxYear = false)
+  val annualCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "annual", isAgent = false, testCall, isCurrentTaxYear = false)
+  val annualCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "annual", isAgent = false, testCall, isCurrentTaxYear = false)
 
   //Testing banner for each mode/scenario, obligations are displayed the same for each so will only be tested once
 
   "Manage Obligations page" should {
     "Display the correct banner and heading" when {
       "Called on self employment with a name" in new Setup(validSECallWithName) {
-        panelText shouldBe "test name will report quarterly for the tax year 2023 to 2024"
-        firstH2Text shouldBe ManageObligationsMessages.h2
+        panelText shouldBe "test name has been signed up to Making Tax Digital for Income Tax for the 2023 to 2024 tax year"
+        firstH2Text shouldBe ManageObligationsMessages.headingR17
       }
       "Called on self employment with no name" in new Setup(validSECallNoName) {
-        panelText shouldBe "Sole trader business will report annually for the tax year 2023 to 2024"
-        firstH2Text shouldBe ManageObligationsMessages.h2
+        panelText shouldBe "Sole trader business has been opted out of Making Tax Digital for Income Tax for the 2023 to 2024 tax year"
+        firstH2Text shouldBe ManageObligationsMessages.headingR17
       }
       "Called on UK property" in new Setup(validUKCall) {
-        panelText shouldBe "UK property will report quarterly for the tax year 2023 to 2024"
-        firstH2Text shouldBe ManageObligationsMessages.h2
+        panelText shouldBe "UK property has been signed up to Making Tax Digital for Income Tax for the 2023 to 2024 tax year"
+        firstH2Text shouldBe ManageObligationsMessages.headingR17
       }
       "Called on foreign property" in new Setup(validFPCall) {
-        panelText shouldBe "Foreign property will report annually for the tax year 2023 to 2024"
-        firstH2Text shouldBe ManageObligationsMessages.h2
+        panelText shouldBe "Foreign property has been opted out of Making Tax Digital for Income Tax for the 2023 to 2024 tax year"
+        firstH2Text shouldBe ManageObligationsMessages.headingR17
       }
     }
     "Not display a back button" in new Setup(validSECallWithName) {
       Option(document.getElementById("back")).isDefined shouldBe false
     }
-    "Display quarterly obligations if the user has them" in new Setup(validSECallWithName) {
-      val quarterlySection: Element = layoutContent.getElementById("quarterly")
-      quarterlySection.text() should include(ManageObligationsMessages.quarterlyHeading)
-      quarterlySection.text() should include(ManageObligationsMessages.quarterlyText)
-
-      val tableHeadings: Elements = quarterlySection.getElementsByClass("govuk-table__head")
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading1 + " 2022 to 2023")
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading1 + " 2023 to 2024")
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading1 + " 2024 to 2025")
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading1 + " ")
-
-
-      val tableContent: Elements = quarterlySection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("6 January 2022 to 5 April 2022")
-      tableContent.text() should include("5 May 2022")
-
-      tableContent.text() should include("6 January 2023 to 5 April 2023")
-      tableContent.text() should include("5 May 2023")
-
-      tableContent.text() should include("6 January 2024 to 5 April 2024")
-      tableContent.text() should include("5 May 2024")
-    }
-
-    "Display final declaration obligations if the user has them" in new Setup(validSECallWithName) {
-      val finalDecSection: Element = layoutContent.getElementById("finalDec")
-      finalDecSection.text() should include(ManageObligationsMessages.finalDecHeading)
-      finalDecSection.text() should include(ManageObligationsMessages.finalDecText)
-
-      val tableHeadings: Elements = finalDecSection.getElementsByClass("govuk-table__head")
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading1)
-      tableHeadings.text() should include(ManageObligationsMessages.tableHeading2)
-
-      val tableContent: Elements = finalDecSection.getElementsByClass("govuk-table__body")
-      tableContent.text() should include("2022 to 2022")
-      tableContent.text() should include("3 January 2022")
-    }
-
     "Not display any obligation sections when user has no obligations" in new Setup(validCallNoData) {
       Option(layoutContent.getElementById("quarterly")) shouldBe None
       Option(layoutContent.getElementById("prevyears")) shouldBe None

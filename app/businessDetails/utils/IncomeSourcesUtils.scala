@@ -16,9 +16,9 @@
 
 package businessDetails.utils
 
-import auth.MtdItUser
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.Logger
@@ -54,8 +54,8 @@ trait IncomeSourcesUtils extends FeatureSwitching {
   def withOverseasBusinessFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (!isEnabled(OverseasBusinessAddress)) {
       user.userType match {
-        case Some(Agent) => Future(Redirect(controllers.routes.HomeController.showAgent()))
-        case _ => Future(Redirect(controllers.routes.HomeController.show()))
+        case Some(Agent) => Future(Redirect(hub.controllers.routes.HomeController.showAgent()))
+        case _ => Future(Redirect(hub.controllers.routes.HomeController.show()))
       }
     } else {
       comeBlock

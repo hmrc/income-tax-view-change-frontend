@@ -16,10 +16,10 @@
 
 package views
 
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatter
 import java.time.LocalDate
-import implicits.ImplicitDateFormatter
 import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -147,6 +147,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         document.hasTableWithCorrectSize(1, 3)
         document.hasTableWithCorrectHeadings(List("Date", "Description", "Tax year", "Amount"))
         document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
+        document.selectById("claim-a-refund-button").attribute("href").toString shouldBe "href=\"/report-quarterly/income-and-expenses/view/start-refund\""
       }
     }
 
@@ -160,6 +161,8 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
             .get()
         ) {
           document.title() shouldBe agentTitle
+          document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
+          document.selectById("claim-a-refund-button").attribute("href").toString shouldBe "href=\"/report-quarterly/income-and-expenses/view/agents/start-refund\""
           layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
         }
       }

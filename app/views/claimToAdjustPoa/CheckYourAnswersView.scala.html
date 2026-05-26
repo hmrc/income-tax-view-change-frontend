@@ -14,8 +14,8 @@
  * limitations under the License.
  *@
 
-@import auth.MtdItUser
-@import views.html.layouts.unifiedLayout
+@import common.auth.MtdItUser
+@import common.views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
@@ -23,9 +23,10 @@
 @import models.incomeSourceDetails.TaxYear
 @import models.claimToAdjustPoa.SelectYourReason
 @import models.claimToAdjustPoa.Increase
-@import views.html.components.link
-@import views.html.components.p
+@import common.views.html.components.link
+@import common.views.html.components.p
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 @this(
         govukButton : GovukButton,
@@ -57,8 +58,8 @@
 }
 
 @getHomePageUrl = @{
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else         controllers.routes.HomeController.show().url
+    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else         hub.controllers.routes.HomeController.show().url
 }
 
 @getConfirmButton = @{
@@ -136,7 +137,7 @@
         )
     ))
 
-    @formWithCSRF(action = controllers.claimToAdjustPoa.routes.CheckYourAnswersController.submit(isAgent)) {
+    @formWithCSRF(action = claimToAdjustPoaRoutes.CheckYourAnswersController.submit(isAgent)) {
 
         <div class="govuk-button-group">
 

@@ -16,8 +16,8 @@
 
 package connectors
 
-import _root_.helpers.{ComponentSpecBase, WiremockHelper}
 import com.github.tomakehurst.wiremock.client.WireMock._
+import common.helpers.{ComponentSpecBase, WiremockHelper}
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
 import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
 import models.core.CorrelationId

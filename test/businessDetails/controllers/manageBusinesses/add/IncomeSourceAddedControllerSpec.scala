@@ -16,15 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.authV2.AuthActions
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.services.IncomeSourceDetailsService
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.ITSAStatusConnector
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
-import mocks.services.{MockITSAStatusService, MockSessionService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.*
 import obligations.services.NextUpdatesService
@@ -35,12 +27,20 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
-import services.*
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 import testConstants.BusinessDetailsTestConstants.{year2018, year2019}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.*
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockITSAStatusService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 import obligations.mocks.services.MockNextUpdatesService
 
 import java.time.LocalDate

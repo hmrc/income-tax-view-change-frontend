@@ -14,9 +14,9 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.helpers.injected.ContinueButton
-@import views.html.helpers.injected.ErrorSummary
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.helpers.injected.ContinueButton
+@import common.views.html.helpers.injected.ErrorSummary
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import uk.gov.hmrc.govukfrontend.views.html.components.{GovukCheckboxes, Text}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
@@ -26,16 +26,16 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Fieldset
 @import uk.gov.hmrc.hmrcfrontend.views.config.HmrcSectionCaption
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
-@import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+@import common.enums.IncomeSourceJourney.IncomeSourceType
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.PageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.config.HmrcPageHeadingLegend
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.insettext.InsetText
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.Legend
-@import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+@import common.enums.IncomeSourceJourney.SelfEmployment
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import views.html.components._
+@import common.views.html.components._
 @import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 
 @this(
@@ -58,7 +58,7 @@
         isAgent: Boolean,
         backUrl: String,
         origin: Option[String] = None
-)(implicit user: auth.MtdItUser[_], messages: Messages)
+)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @messagesPrefix = @{ s"incomeSources.cease.${incomeSourceType.key}" }
 

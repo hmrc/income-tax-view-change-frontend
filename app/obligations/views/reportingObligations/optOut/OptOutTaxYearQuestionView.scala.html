@@ -16,8 +16,8 @@
 
 @import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, InsetText}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, GovukRadios, _}
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import obligations.models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
 
 @this(
@@ -31,7 +31,7 @@
         continueButton: ContinueButton
 )
 
-@(isAgent: Boolean, viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: auth.MtdItUser[_])
+@(isAgent: Boolean, viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"optout.taxYearQuestion.$key.${viewModel.messageSuffix}", args: _*)

@@ -16,12 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses
 
-import connectors.ITSAStatusConnector
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import exceptions.MissingFieldException
-import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
+import common.connectors.ITSAStatusConnector
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.exceptions.MissingFieldException
+import common.implicits.ImplicitDateFormatter
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 import models.admin.{DisplayBusinessStartDate, FeatureSwitchName}
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
@@ -30,7 +31,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
 import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome

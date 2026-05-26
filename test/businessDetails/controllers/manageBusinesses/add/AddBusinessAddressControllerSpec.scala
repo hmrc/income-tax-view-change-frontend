@@ -18,11 +18,12 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService}
-import config.FrontendAppConfig
-import connectors.ITSAStatusConnector
-import enums.{MTDIndividual, MTDSupportingAgent}
-import mocks.auth.MockAuthActions
-import mocks.services.{MockDateService, MockSessionService}
+import common.config.FrontendAppConfig
+import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockDateService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 import models.UIJourneySessionData
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, Country}
@@ -34,7 +35,6 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.*
-import services.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future

@@ -16,15 +16,15 @@
 
 package services.claimToAdjustPoa
 
-import auth.MtdItUser
 import cats.data.EitherT
+import common.auth.MtdItUser
+import common.services.DateServiceInterface
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.core.Nino
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.NOT_FOUND
-import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

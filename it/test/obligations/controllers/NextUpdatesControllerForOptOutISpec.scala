@@ -16,12 +16,13 @@
 
 package obligations.controllers
 
-import auth.MtdItUser
-import enums.MTDIndividual
-import helpers.ComponentSpecBase
+import common.auth.MtdItUser
+import common.enums.MTDIndividual
+import common.helpers.ComponentSpecBase
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, MTDIndividualAuthStub}
 import helpers.servicemocks.*
-import helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
-import helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
+import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus

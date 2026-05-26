@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import implicits.ImplicitDateParser
+import common.implicits.ImplicitDateParser
 import models.liabilitycalculation.{Message, Messages}
 import testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec

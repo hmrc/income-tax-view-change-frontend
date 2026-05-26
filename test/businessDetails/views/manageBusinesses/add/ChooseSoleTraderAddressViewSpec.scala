@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,6 +26,7 @@ import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 
 class ChooseSoleTraderAddressViewSpec extends TestSupport {
 

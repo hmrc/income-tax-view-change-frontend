@@ -16,10 +16,9 @@
 
 package repositories
 
-
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import helpers.ComponentSpecBase
+import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.helpers.ComponentSpecBase
 import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.mongodb.scala.bson.BsonDocument

@@ -16,11 +16,11 @@
 
 package services
 
-import auth.MtdItUser
-import config.FrontendAppConfig
-import config.featureswitch.FeatureSwitching
-import connectors.IncomeTaxCalculationConnector
-import enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.connectors.IncomeTaxCalculationConnector
+import common.enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
 import models.admin.PostFinalisationAmendmentsR18
 import models.liabilitycalculation.{LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger

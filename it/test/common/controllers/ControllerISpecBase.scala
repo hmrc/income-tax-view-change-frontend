@@ -16,10 +16,11 @@
 
 package common.controllers
 
-import auth.HeaderExtractor
-import config.FrontendAppConfig
-import helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
-import implicits.ImplicitDateFormatterImpl
+import common.auth.HeaderExtractor
+import common.config.FrontendAppConfig
+import common.helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
+import common.implicits.ImplicitDateFormatterImpl
+import common.services.{DateService, DateServiceInterface}
 import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
@@ -33,7 +34,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.testSessionId
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.language.LanguageUtils

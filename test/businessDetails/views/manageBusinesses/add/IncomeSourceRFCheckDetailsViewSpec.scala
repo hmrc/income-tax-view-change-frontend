@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -24,12 +23,13 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
 
   val view: IncomeSourceRFCheckDetailsView = app.injector.instanceOf[IncomeSourceRFCheckDetailsView]
 
-  class Setup(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = false, isReportingQuarterlyForNextYear: Boolean = false, isAgent: Boolean = false, displayR17Content: Boolean) {
+  class Setup(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = false, isReportingQuarterlyForNextYear: Boolean = false, isAgent: Boolean = false) {
 
     private val backUrl = "/back-url"
     private val postAction = Call("", "")
@@ -37,22 +37,21 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
       incomeSourceType,
       changeReportingFrequency,
       isReportingQuarterlyCurrentYear,
-      isReportingQuarterlyForNextYear,
-      displayR17Content
+      isReportingQuarterlyForNextYear
     )
 
     val pageDocument: Document = Jsoup.parse(contentAsString(view(viewModel, postAction, isAgent, backUrl)))
   }
 
-  def runTest(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = true, isReportingQuarterlyForNextYear: Boolean = true, displayR17Content: Boolean): Unit = {
-    "have the correct title" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear, displayR17Content = displayR17Content) {
+  def runTest(incomeSourceType: IncomeSourceType, changeReportingFrequency: Boolean = true, isReportingQuarterlyCurrentYear: Boolean = true, isReportingQuarterlyForNextYear: Boolean = true): Unit = {
+    "have the correct title" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) {
       pageDocument.title() shouldBe "Check your answers - Manage your Self Assessment - GOV.UK"
     }
-    "have the correct heading" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear, displayR17Content = displayR17Content) {
+    "have the correct heading" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) {
       pageDocument.select("h1").text() shouldBe "Check your answers"
     }
 
-    "have the correct subheading" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear, displayR17Content = displayR17Content) {
+    "have the correct subheading" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) {
       val subHeading: String = incomeSourceType match {
         case SelfEmployment => "Sole trader"
         case UkProperty => "UK property"
@@ -62,28 +61,18 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
       pageDocument.getElementsByClass("govuk-caption-xl").text().contains(subHeading) shouldBe true
     }
 
-    "have the correct summary heading and page contents" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear, displayR17Content = displayR17Content) {
+    "have the correct summary heading and page contents" in new Setup(incomeSourceType, changeReportingFrequency, isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) {
 
       val visuallyHidden = pageDocument.getElementsByClass("govuk-summary-list__actions").first().select(".govuk-visually-hidden").text()
       val visuallyHiddenLast = pageDocument.getElementsByClass("govuk-summary-list__actions").last().select(".govuk-visually-hidden").text()
 
-      if(displayR17Content) {
-        pageDocument.getElementsByClass("govuk-summary-list__key").first().text() shouldBe "Do you want to sign this new business up to Making Tax Digital for Income Tax?"
-        pageDocument.getElementsByClass("govuk-summary-list__actions").first().select(".govuk-visually-hidden").text() shouldBe "Do you want to sign this new business up to Making Tax Digital for Income Tax?"
-      } else {
-        pageDocument.getElementsByClass("govuk-summary-list__key").first().text() shouldBe "Do you want to change to report quarterly?"
-        pageDocument.getElementsByClass("govuk-summary-list__actions").first().select(".govuk-visually-hidden").text() shouldBe "Do you want to change to report quarterly?"
-      }
+      pageDocument.getElementsByClass("govuk-summary-list__key").first().text() shouldBe "Do you want to sign this new business up to Making Tax Digital for Income Tax?"
+      pageDocument.getElementsByClass("govuk-summary-list__actions").first().select(".govuk-visually-hidden").text() shouldBe "Do you want to sign this new business up to Making Tax Digital for Income Tax?"
 
       if (changeReportingFrequency) {
         pageDocument.getElementsByClass("govuk-summary-list__value").first().text() shouldBe "Yes"
-        if(displayR17Content) {
-          pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year(s) do you want to sign up for?"
-          pageDocument.getElementsByClass("govuk-summary-list__actions").last().select(".govuk-visually-hidden").text() shouldBe "Which tax year(s) do you want to sign up for?"
-        } else {
-          pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year(s) do you want to report quarterly for?"
-          pageDocument.getElementsByClass("govuk-summary-list__actions").last().select(".govuk-visually-hidden").text() shouldBe "Which tax year(s) do you want to report quarterly for?"
-        }
+        pageDocument.getElementsByClass("govuk-summary-list__key").last().text() shouldBe "Which tax year(s) do you want to sign up for?"
+        pageDocument.getElementsByClass("govuk-summary-list__actions").last().select(".govuk-visually-hidden").text() shouldBe "Which tax year(s) do you want to sign up for?"
 
         (isReportingQuarterlyCurrentYear, isReportingQuarterlyForNextYear) match {
           case (true, false) => pageDocument.getElementsByClass("govuk-summary-list__value").last().text() shouldBe "2023 to 2024"
@@ -105,24 +94,8 @@ class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {
   }
 
   List(SelfEmployment, UkProperty, ForeignProperty).foreach { incomeSourceType =>
-    s"run test for $incomeSourceType with change reporting frequency flag set to false" should {
-      runTest(incomeSourceType = incomeSourceType, changeReportingFrequency = false, displayR17Content = false)
-    }
-
-    s"run test for $incomeSourceType with change reporting frequency flag set to true with both tax years chosen" should {
-      runTest(incomeSourceType = incomeSourceType, displayR17Content = false)
-    }
-
-    s"run test for $incomeSourceType with isReportingQuarterlyCurrentYear flag set to false" should {
-      runTest(incomeSourceType = incomeSourceType, isReportingQuarterlyCurrentYear = false, displayR17Content = false)
-    }
-
-    s"run test for $incomeSourceType with isReportingQuarterlyForNextYear flag set to false" should {
-      runTest(incomeSourceType = incomeSourceType, isReportingQuarterlyForNextYear = false, displayR17Content = false)
-    }
-
-    s"run test for $incomeSourceType with isDisplayR17content flag set to true" should {
-      runTest(incomeSourceType = incomeSourceType, displayR17Content = true)
+    s"run test for $incomeSourceType" should {
+      runTest(incomeSourceType = incomeSourceType)
     }
   }
 }

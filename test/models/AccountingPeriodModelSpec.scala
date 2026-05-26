@@ -16,7 +16,7 @@
 
 package models
 
-import implicits.ImplicitDateFormatter
+import common.implicits.ImplicitDateFormatter
 import models.core.AccountingPeriodModel
 import models.core.AccountingPeriodModel.determineTaxYearFromPeriodEnd
 import org.scalatest.matchers.should.Matchers

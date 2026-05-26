@@ -14,15 +14,16 @@
  * limitations under the License.
  *@
 
-@import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+@import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
-@import views.html.components.{dateInput, p}
-@import views.html.helpers.injected.{ContinueButton, ErrorSummary}
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components.p
+@import views.html.components.dateInput
+@import common.views.html.helpers.injected.{ContinueButton, ErrorSummary}
+@import common.views.html.layouts.unifiedLayout
 @import java.time.LocalDate
-@import viewmodels.govuk.all.ErrorSummaryViewModel
-@import viewmodels.govuk.all.DateViewModel
-@import viewmodels.govuk.all.FluentDate
+@import common.viewmodels.govuk.all.ErrorSummaryViewModel
+@import common.viewmodels.govuk.all.DateViewModel
+@import common.viewmodels.govuk.all.FluentDate
 
 @this(mainTemplate: unifiedLayout,
         dateInput: dateInput,
@@ -37,7 +38,7 @@
         form: Form[LocalDate],
         postAction: Call,
         isAgent: Boolean = false,
-        backUrl: String)(implicit user: auth.MtdItUser[_], messages: Messages)
+        backUrl: String)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"${incomeSourceType.endDateMessagePrefix}.$key", args: _*)

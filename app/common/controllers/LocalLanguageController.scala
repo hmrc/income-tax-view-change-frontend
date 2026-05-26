@@ -33,5 +33,5 @@ class LocalLanguageController @Inject()(
       "cymraeg" -> Lang("cy")
     )
 
-  override def fallbackURL: String = controllers.routes.HomeController.show().url
+  override def fallbackURL: String = hub.controllers.routes.HomeController.show().url
 }

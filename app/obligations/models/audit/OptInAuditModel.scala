@@ -16,9 +16,11 @@
 
 package obligations.models.audit
 
-import audit.Utilities
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.enums.AuditType.OptInQuarterlyReportingRequest
+import common.enums.TransactionName
+import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities
 import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.services.reportingObligations.signUp.core.SignUpProposition
@@ -30,9 +32,9 @@ case class OptInAuditModel(
                             resolvedOutcome: ITSAStatusUpdateResponse
                           )(implicit user: MtdItUser[_]) extends ExtendedAuditModel {
 
-  override val transactionName: String = enums.TransactionName.OptInQuarterlyReportingRequest
+  override val transactionName: String = TransactionName.OptInQuarterlyReportingRequest
 
-  override val auditType: String = enums.AuditType.OptInQuarterlyReportingRequest
+  override val auditType: String = OptInQuarterlyReportingRequest
 
   val outcome: JsObject = {
     val outcome = resolvedOutcome match {

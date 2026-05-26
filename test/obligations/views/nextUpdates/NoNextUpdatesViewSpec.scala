@@ -16,7 +16,7 @@
 
 package obligations.views.nextUpdates
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import obligations.testConstants.NextUpdatesTestConstants
 import obligations.views.html.nextUpdates.NoNextUpdatesView
 import org.jsoup.Jsoup

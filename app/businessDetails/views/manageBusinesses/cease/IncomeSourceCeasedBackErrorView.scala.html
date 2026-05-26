@@ -14,10 +14,10 @@
  * limitations under the License.
  *@
 
-@import views.html.layouts.unifiedLayout
-@import views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
-@import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 
 @this(
@@ -29,7 +29,7 @@
     formWithCSRF: FormWithCSRF,
     continueButton: ContinueButton)
 
-@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType)(implicit user: auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType)(implicit user: common.auth.MtdItUser[_], messages: Messages)
 
 @getCeasedMessage = @{
     incomeSourceType match {
@@ -48,8 +48,8 @@
 }
 
 @getHomeUrl = @{
-    if(isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url
+    if(isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else hub.controllers.routes.HomeController.show().url
 }
 
 @mainTemplate(

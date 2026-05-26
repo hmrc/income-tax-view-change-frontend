@@ -16,12 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import connectors.ITSAStatusConnector
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.MTDIndividual
-import mocks.auth.MockAuthActions
-import mocks.services.{MockClientDetailsService, MockDateService, MockSessionService}
-import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
@@ -32,14 +26,19 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}
 import testConstants.BusinessDetailsTestConstants.testIncomeSource
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.IncomeSourcesUtils
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.MTDIndividual
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockClientDetailsService, MockDateService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 import obligations.mocks.services.MockNextUpdatesService
 
 import java.time.LocalDate
@@ -162,8 +161,9 @@ class ManageObligationsControllerSpec
 
         s"the user is authenticated as a $mtdRole" should {
 
-          "render the page with OptInOptOutContentUpdateR17 enabled and current tax year" in {
-            setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+          "render the page with current tax year" in {
+
+            setupMockSuccess(mtdRole, false, List())
             mockItsaStatusRetrievalAction(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetIncomeSourceDetails(getIncomeSourcesResponse(incomeSourceType))
             setupMockGetCurrentTaxYear(mockDateServiceInjected)(TaxYear.forYearEnd(2024))

@@ -16,15 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import enums.InitialPage
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
+import models.admin.DisplayBusinessStartDate
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -40,6 +35,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.services.{DateService, ITSAStatusService, SessionService}
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused
@@ -161,7 +161,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         viewModel = viewModel,
         isAgent = isAgent,
         showStartDate = isEnabled(DisplayBusinessStartDate),
-        showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
         backUrl = backUrl
       ))
     }
@@ -190,7 +189,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             viewModel = viewModel,
             isAgent = isAgent,
             showStartDate = isEnabled(DisplayBusinessStartDate),
-            showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
             backUrl = backUrl
           ))
         }.recover {

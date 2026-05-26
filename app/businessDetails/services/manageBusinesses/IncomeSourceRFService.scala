@@ -16,20 +16,20 @@
 
 package businessDetails.services.manageBusinesses
 
-import auth.MtdItUser
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import businessDetails.controllers.manageBusinesses.add.routes
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.utils.JourneyCheckerManageBusinesses
+import common.auth.MtdItUser
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.IncomeSourceJourney.IncomeSourceType
+import common.enums.JourneyType.IncomeSourceJourneyType
+import common.services.{DateService, ITSAStatusService, SessionService}
 import enums.JourneyState
-import enums.JourneyType.IncomeSourceJourneyType
 import models.UIJourneySessionData
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, LatencyDetails, TaxYear}
 import models.itsaStatus.StatusDetail
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.{DateService, ITSAStatusService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

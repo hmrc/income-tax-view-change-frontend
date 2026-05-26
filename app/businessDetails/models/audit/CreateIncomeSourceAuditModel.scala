@@ -16,14 +16,16 @@
 
 package businessDetails.models.audit
 
-import audit.Utilities.userAuditDetails
-import audit.models.ExtendedAuditModel
-import auth.MtdItUser
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import common.utils.audit.Utilities.userAuditDetails
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
+import common.auth.MtdItUser
+import common.enums.AuditType.CreateIncomeSource
+import common.enums.IncomeSourceJourney.IncomeSourceType
+import common.enums.TransactionName
+import common.models.audit.ExtendedAuditModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities._
+import utils.Utilities.*
 import utils.Converters.OptionExtension
 
 case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
@@ -36,8 +38,8 @@ case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
 
 
   private val isSuccessful = failureCategory.isEmpty
-  override val transactionName: String = enums.TransactionName.CreateIncomeSource
-  override val auditType: String = enums.AuditType.CreateIncomeSource
+  override val transactionName: String = TransactionName.CreateIncomeSource
+  override val auditType: String = CreateIncomeSource
 
   private val outcome: JsObject = {
     val outcome: JsObject = Json.obj("isSuccessful" -> isSuccessful)

@@ -16,16 +16,16 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
-import enums.MTDIndividual
-import mocks.auth.MockAuthActions
+import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
+import common.enums.MTDIndividual
+import common.mocks.auth.MockAuthActions
+import common.services.DateServiceInterface
 import models.admin.TriggeredMigration
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
 import scala.annotation.unused
@@ -58,8 +58,8 @@ class CheckCompleteControllerSpec extends MockAuthActions {
     val isAgent = mtdRole != MTDIndividual
 
     @unused val homeUrl = mtdRole match {
-      case MTDIndividual => controllers.routes.HomeController.show().url
-      case _             => controllers.routes.HomeController.showAgent().url
+      case MTDIndividual => hub.controllers.routes.HomeController.show().url
+      case _             => hub.controllers.routes.HomeController.showAgent().url
     }
 
     s"show(isAgent = $isAgent)" when {

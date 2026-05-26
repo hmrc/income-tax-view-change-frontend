@@ -16,30 +16,27 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import audit.AuditingService
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
-import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import businessDetails.enums.IncomeSourceJourney.*
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import enums.BeforeSubmissionPage
-import exceptions.MissingSessionKey
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
 import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.manage.CheckYourAnswersView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.exceptions.MissingSessionKey
+import common.services.{AuditingService, SessionService}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -71,8 +68,8 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
           incomeSourceType,
           incomeSourceIdOpt,
           backUrl = {
-            if (isAgent) controllers.routes.HomeController.showAgent()
-            else controllers.routes.HomeController.show()
+            if (isAgent) hub.controllers.routes.HomeController.showAgent()
+            else hub.controllers.routes.HomeController.show()
           }.url
         )
       }

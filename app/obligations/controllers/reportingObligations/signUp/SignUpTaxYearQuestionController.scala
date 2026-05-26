@@ -16,9 +16,9 @@
 
 package obligations.controllers.reportingObligations.signUp
 
-import auth.authV2.AuthActions
 import com.google.inject.Inject
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import obligations.controllers.errors.routes as errorRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
@@ -40,10 +40,11 @@ class SignUpTaxYearQuestionController @Inject()(
                                                  val signUpService: SignUpService,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                               )(implicit val appConfig: FrontendAppConfig,
+                                               )(
+                                                 implicit val appConfig: FrontendAppConfig,
                                                  val mcc: MessagesControllerComponents,
-                                                 val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
+                                                 val ec: ExecutionContext
+                                               ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
 
   private def errorHandler(isAgent: Boolean): ShowInternalServerError =
     if (isAgent) itvcErrorHandlerAgent

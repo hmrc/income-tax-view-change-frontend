@@ -16,6 +16,7 @@
 
 @import play.api.data.Field
 @import views.helpers.RadioOption
+@import common.views.html.helpers.injected.FieldErrorHelper
 
 @this(
     fieldErrorHelper: FieldErrorHelper
@@ -24,7 +25,7 @@
 @(field: Field, legend: String, options: Seq[RadioOption], parentForm: Option[Form[_]] = None, inline: Boolean = false,
 fieldSetClass: Option[String] = None, useTextForValue: Boolean = false)(implicit messages: Messages)
 
-@import forms.validation.ErrorMessageHelper._
+@import common.forms.validation.ErrorMessageHelper._
 
 @fieldSetClassValue = @{
     (inline, fieldSetClass) match {

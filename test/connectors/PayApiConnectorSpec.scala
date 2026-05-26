@@ -16,7 +16,8 @@
 
 package connectors
 
-import audit.AuditingService
+import common.connectors.BaseConnectorSpec
+import common.services.AuditingService
 import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

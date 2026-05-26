@@ -16,27 +16,28 @@
 
 package controllers.agent
 
-import audit.models.HomeAudit
-import auth.MtdItUser
+import hub.audit.models.HomeAudit
+import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import enums.MTDPrimaryAgent
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import common.enums.MTDPrimaryAgent
+import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.{AccountingPeriodModel, CessationModel}
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import obligations.models.audit.NextUpdatesResponseAuditModel
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
-import testConstants.OutstandingChargesIntegrationTestConstants._
-import testConstants.messages.HomeMessages.{noPaymentsDue, overdue, overduePayments, overdueUpdates}
+import testConstants.OutstandingChargesIntegrationTestConstants.*
+import testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
 
 import java.time.LocalDate
 
@@ -137,11 +138,15 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
                 )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate -> false)), Left(currentDate -> false)).detail)
+                verifyAuditContainsDetail(HomeAudit(
+                  testUser,
+                  Some(Left(currentDate -> false)),
+                  Left(currentDate -> false),
+                  userIsCYPlusOne = false).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
@@ -207,11 +212,15 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
                 )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, None, Left(currentDate -> false)).detail)
+                verifyAuditContainsDetail(HomeAudit(
+                  testUser,
+                  None,
+                  Left(currentDate -> false),
+                  userIsCYPlusOne = false).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
@@ -279,11 +288,15 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(overdue),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
                 )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Left(currentDate.minusDays(1) -> true)), Left(currentDate.minusDays(1) -> true)).detail)
+                verifyAuditContainsDetail(HomeAudit(
+                  testUser,
+                  Some(Left(currentDate.minusDays(1) -> true)),
+                  Left(currentDate.minusDays(1) -> true),
+                  userIsCYPlusOne = false).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
 
@@ -349,11 +362,15 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(overdue),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
                 )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Left(currentDate.minusDays(1) -> true)).detail)
+                verifyAuditContainsDetail(HomeAudit(
+                  testUser,
+                  Some(Right(2)),
+                  Left(currentDate.minusDays(1) -> true),
+                  userIsCYPlusOne = false).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
@@ -445,7 +462,11 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
                 )
 
-                verifyAuditContainsDetail(HomeAudit(testUser, Some(Right(2)), Right(2)).detail)
+                verifyAuditContainsDetail(HomeAudit(
+                  testUser,
+                  Some(Right(2)),
+                  Right(2),
+                  userIsCYPlusOne = false).detail)
                 verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
               }
             }
@@ -512,7 +533,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
                 )
@@ -582,7 +603,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "home.agent.heading"),
-                  elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                  elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                   elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
                   elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
                 )

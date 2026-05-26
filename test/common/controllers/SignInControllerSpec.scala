@@ -16,7 +16,7 @@
 
 package common.controllers
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*

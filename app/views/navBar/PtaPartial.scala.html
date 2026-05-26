@@ -24,14 +24,14 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.accountmenu.BusinessTaxAccount
 @import common.viewUtils.InternalUrlHelper
 
-@import config.FrontendAppConfig
+@import common.config.FrontendAppConfig
 
 @this(hmrcAccountMenu: HmrcAccountMenu)(implicit accountMenuConfig: AccountMenuConfig)
 @()(implicit request : Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @hmrcAccountMenu(AccountMenu(
     accountHome = AccountHome(
-        href = appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.show().url,
+        href = appConfig.itvcFrontendEnvironment + hub.controllers.routes.HomeController.show().url,
         active = true
     ),
     signOut = SignOut(href = InternalUrlHelper.signoutUrl),

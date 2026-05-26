@@ -16,12 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import connectors.ITSAStatusConnector
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
-import enums.MTDIndividual
-import implicits.ImplicitDateFormatter
-import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
 import models.UIJourneySessionData
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
@@ -32,13 +26,19 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSessionId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{noIncomeDetails, notCompletedUIJourneySessionData}
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.enums.MTDIndividual
+import common.implicits.ImplicitDateFormatter
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 
 
 class AddIncomeSourceStartDateControllerSpec extends MockAuthActions

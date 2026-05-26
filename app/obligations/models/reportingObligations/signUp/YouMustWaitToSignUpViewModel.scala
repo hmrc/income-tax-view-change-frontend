@@ -20,7 +20,7 @@ import models.incomeSourceDetails.TaxYear
 
 case class YouMustWaitToSignUpViewModel(taxYear: TaxYear) {
   //TODO - update with correct back url - MISUV-10514
-  val backUrl: String = controllers.routes.HomeController.show().url
+  val backUrl: String = hub.controllers.routes.HomeController.show().url
   val nextTaxYear: String = taxYear.endYear.toString
 
 }

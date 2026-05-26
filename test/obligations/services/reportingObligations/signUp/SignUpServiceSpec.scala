@@ -16,8 +16,8 @@
 
 package obligations.services.reportingObligations.signUp
 
-import enums.JourneyType.{Opt, SignUpJourney}
-import mocks.services.{MockDateService, MockITSAStatusService}
+import common.enums.JourneyType.{Opt, SignUpJourney}
+import common.mocks.services.{MockDateService, MockITSAStatusService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*

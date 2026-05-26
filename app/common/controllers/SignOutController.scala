@@ -16,9 +16,9 @@
 
 package common.controllers
 
-import auth.FrontendAuthorisedFunctions
 import com.google.inject.{Inject, Singleton}
-import config.FrontendAppConfig
+import common.auth.FrontendAuthorisedFunctions
+import common.config.FrontendAppConfig
 import play.api.mvc.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.{AffinityGroup, AuthorisationException}

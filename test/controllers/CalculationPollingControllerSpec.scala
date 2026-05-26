@@ -16,16 +16,18 @@
 
 package controllers
 
-import connectors.{ITSAStatusConnector}
-import enums.{MTDIndividual, MTDSupportingAgent}
+import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.mocks.auth.MockAuthActions
+import common.services.DateServiceInterface
 import forms.utils.SessionKeys
-import mocks.auth.MockAuthActions
 import mocks.services.MockCalculationPollingService
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
-import services.{CalculationPollingService, DateServiceInterface}
+import returns.controllers.routes as returnsRoutes
+import services.CalculationPollingService
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
 
@@ -64,9 +66,9 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
               val result = action()(fakeRequest.addingToSession(SessionKeys.calculationId -> testCalcId))
               status(result) shouldBe Status.SEE_OTHER
               val expectedUrl = if (isAgent) {
-                routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear).url
+                returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(testTaxYear).url
               } else {
-                routes.TaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear).url
+                returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(testTaxYear).url
               }
               redirectLocation(result) shouldBe Some(expectedUrl)
             }
@@ -81,9 +83,9 @@ class CalculationPollingControllerSpec extends MockAuthActions with MockCalculat
               val result = action(true)(fakeRequest.addingToSession(SessionKeys.calculationId -> testCalcId))
               status(result) shouldBe Status.SEE_OTHER
               val expectedUrl = if (isAgent) {
-                routes.FinalTaxCalculationController.showAgent(testTaxYear).url
+                returnsRoutes.FinalTaxCalculationController.showAgent(testTaxYear).url
               } else {
-                routes.FinalTaxCalculationController.show(testTaxYear).url
+                returnsRoutes.FinalTaxCalculationController.show(testTaxYear).url
               }
               redirectLocation(result) shouldBe Some(expectedUrl)
             }

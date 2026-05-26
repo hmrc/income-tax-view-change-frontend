@@ -16,9 +16,10 @@
 
 package obligations.services.reportingObligations.signUp
 
-import auth.MtdItUser
 import cats.data.OptionT
 import cats.implicits.*
+import common.auth.MtdItUser
+import common.services.{DateServiceInterface, ITSAStatusService}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
@@ -28,7 +29,6 @@ import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.SignUpProposition.*
 import obligations.services.reportingObligations.signUp.core.{SignUpInitialState, SignUpProposition}
 import play.api.Logger
-import services.{DateServiceInterface, ITSAStatusService}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

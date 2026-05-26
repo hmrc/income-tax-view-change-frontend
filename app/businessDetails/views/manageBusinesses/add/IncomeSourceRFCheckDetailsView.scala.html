@@ -14,16 +14,16 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
-@import businessDetails.enums.IncomeSourceJourney._
+@import _root_.common.implicits.ImplicitDateFormatterImpl
+@import common.enums.IncomeSourceJourney._
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
 @import models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
-@import services.DateServiceInterface
+@import common.services.DateServiceInterface
 @import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 @this(
@@ -47,14 +47,10 @@
         isAgent: Boolean,
         backUrl: String,
         origin: Option[String] = None
-)(implicit messages: Messages, user: auth.MtdItUser[_], dateService: DateServiceInterface)
+)(implicit messages: Messages, user: common.auth.MtdItUser[_], dateService: DateServiceInterface)
 
 @getMessage(key: String, args: String*) = @{
-    if(viewModel.displayR17Content) {
-        messages(s"income-sources.check-details-reporting-frequency.r17.$key", args: _*)
-    } else {
-        messages(s"income-sources.check-details-reporting-frequency.$key", args: _*)
-    }
+    messages(s"income-sources.check-details-reporting-frequency.r17.$key", args: _*)
 }
 
 @getHeaderMessage(key: String, args: String*) = @{

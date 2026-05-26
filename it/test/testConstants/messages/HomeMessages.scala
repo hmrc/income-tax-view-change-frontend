@@ -16,7 +16,7 @@
 
 package testConstants.messages
 
-import helpers.ComponentSpecBase
+import common.helpers.ComponentSpecBase
 
 object HomeMessages extends ComponentSpecBase {
 
@@ -25,5 +25,7 @@ object HomeMessages extends ComponentSpecBase {
   def overduePayments(numberOverdue: String): String = messagesAPI("home.overdue.date.payment.count", numberOverdue)
 
   def overdueUpdates(numberOverdue: String): String = messagesAPI("home.overdue.date.update.count", numberOverdue)
+
+  def nextUpdateDue(date: String): String = messagesAPI("home.updates.R17.nextUpdateDue", date)
 
 }

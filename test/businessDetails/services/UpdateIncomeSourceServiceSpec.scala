@@ -16,10 +16,10 @@
 
 package businessDetails.services
 
-import auth.MtdItUser
-import authV2.AuthActionsTestData.defaultMTDITUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import businessDetails.connectors.UpdateIncomeSourceConnector
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import obligations.testConstants.UpdateIncomeSourceTestConstants
 import obligations.testConstants.UpdateIncomeSourceTestConstants.{failureResponse, successResponse, taxYearSpecific}
 import org.mockito.ArgumentMatchers.any

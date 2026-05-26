@@ -16,7 +16,7 @@
 
 package obligations.mocks.services
 
-import implicits.ImplicitDateFormatter
+import common.implicits.ImplicitDateFormatter
 import obligations.models.{ObligationsErrorModel, ObligationsResponseModel}
 import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.{any, eq as matches}

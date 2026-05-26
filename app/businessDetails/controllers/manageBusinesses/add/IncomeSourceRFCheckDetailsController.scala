@@ -16,28 +16,25 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import audit.AuditingService
-import auth.MtdItUser
-import auth.authV2.AuthActions
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.models.audit.IncomeSourceReportingMethodAuditModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{CreateBusinessDetailsService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import enums.{AfterSubmissionPage, ReportingFrequencyPages}
-import models.admin.OptInOptOutContentUpdateR17
 import models.core.{IncomeSourceId, NormalMode}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.*
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{DateServiceInterface, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.IncomeSourceType
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.services.{AuditingService, DateServiceInterface, SessionService}
 
 import javax.inject.Inject
 import scala.annotation.unused
@@ -109,8 +106,7 @@ class IncomeSourceRFCheckDetailsController @Inject()(val checkDetailsView: Incom
             incomeSourceType,
             sessionData.incomeSourceReportingFrequencyData.nonEmpty,
             sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyCurrentYear),
-            sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyForNextYear),
-            isEnabled(OptInOptOutContentUpdateR17)
+            sessionData.incomeSourceReportingFrequencyData.exists(_.isReportingQuarterlyForNextYear)
           ),
           postAction = postAction,
           isAgent,

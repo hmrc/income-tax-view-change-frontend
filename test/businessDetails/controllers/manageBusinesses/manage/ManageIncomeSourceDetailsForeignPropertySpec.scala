@@ -16,10 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.ForeignProperty
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.MTDIndividual
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
+import common.enums.IncomeSourceJourney.ForeignProperty
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.MTDIndividual
+import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import org.jsoup.Jsoup
@@ -85,7 +85,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+              document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
               Option(document.getElementById("up-to-two-tax-years")) shouldBe None
             }
             "the user has a valid id parameter and latency information expired" in {
@@ -109,10 +109,10 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeFirstYearReportingMethodLink(document) shouldBe false
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
-              document.getElementById("reportingFrequency").text() shouldBe "View and change your reporting frequency for all your businesses"
+              document.getElementById("reportingFrequency").text() shouldBe "Depending on your circumstances, you may be able to view and change your reporting obligations for all your businesses."
             }
             "the user has a valid id parameter and OptInOptOutContentUpdateR17 is enabled" in {
-              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate, OptInOptOutContentUpdateR17))
+              setupMockSuccess(mtdUserRole, false, List(DisplayBusinessStartDate))
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockCreateSession(true)
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
@@ -264,7 +264,7 @@ class ManageIncomeSourceDetailsForeignPropertySpec extends ManageIncomeSourceDet
               hasChangeSecondYearReportingMethodLink(document) shouldBe false
               hasGracePeriodInfo(document) shouldBe false
               manageDetailsSummaryValues.get(0).text() shouldBe unknown
-              manageDetailsSummaryValues.get(1).text() shouldBe "Annual"
+              manageDetailsSummaryValues.get(1).text() shouldBe "No"
             }
 
             "the user has a valid id parameter, latency expired" in {

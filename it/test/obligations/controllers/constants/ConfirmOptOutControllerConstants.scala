@@ -16,11 +16,11 @@
 
 package obligations.controllers.constants
 
-import auth.MtdItUser
-import enums.MTDUserRole
-import helpers.servicemocks.BtaPartialStub.getTestUser
+import common.auth.MtdItUser
+import common.enums.MTDUserRole
+import common.helpers.servicemocks.BtaPartialStub.getTestUser
+import common.services.DateService
 import models.incomeSourceDetails.TaxYear
-import services.DateService
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 object ConfirmOptOutControllerConstants {

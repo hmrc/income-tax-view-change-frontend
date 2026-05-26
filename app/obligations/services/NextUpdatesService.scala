@@ -16,7 +16,8 @@
 
 package obligations.services
 
-import auth.MtdItUser
+import common.auth.MtdItUser
+import common.services.DateServiceInterface
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.*
 import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
@@ -24,7 +25,6 @@ import obligations.connectors.ObligationsConnector
 import obligations.models.*
 import obligations.services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
 import play.api.Logger
-import services.DateServiceInterface
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -56,9 +56,9 @@ class NextUpdatesService @Inject()(
     }
   }
 
-  def getNextUpdatesViewModel(obligationsModel: ObligationsModel, isR17ContentEnabled: Boolean)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
+  def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
     val allDeadlines =
-      obligationsModel.obligationsByDate(isR17ContentEnabled).flatMap { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
+      obligationsModel.obligationsByDate.flatMap { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         if (obligations.headOption.exists(_.obligation.obligationType == "Quarterly")) {
           val obligationsByType = obligationsModel.groupByQuarterPeriod(obligations)
           Some(
@@ -71,7 +71,7 @@ class NextUpdatesService @Inject()(
         } else None
       }.filterNot(deadline => deadline.standardQuarters.isEmpty && deadline.calendarQuarters.isEmpty)
 
-    val (missedDeadlines, remainingDeadlines) = if (isR17ContentEnabled) allDeadlines.partition(_.deadline.isBefore(dateService.getCurrentDate)) else (Seq.empty, allDeadlines)
+    val (missedDeadlines, remainingDeadlines) = allDeadlines.partition(_.deadline.isBefore(dateService.getCurrentDate))
 
     NextUpdatesViewModel(remainingDeadlines, missedDeadlines)
   }

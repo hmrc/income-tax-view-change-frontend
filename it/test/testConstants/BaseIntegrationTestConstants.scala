@@ -16,10 +16,10 @@
 
 package testConstants
 
-import auth.authV2.models.{AgentClientDetails, AuthUserDetails}
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.enums.{MTDIndividual, MTDUserRole}
+import common.models.auth.{AgentClientDetails, AuthUserDetails}
 import common.utils.sessionUtils.SessionKeys
-import enums.{MTDIndividual, MTDUserRole}
 import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}

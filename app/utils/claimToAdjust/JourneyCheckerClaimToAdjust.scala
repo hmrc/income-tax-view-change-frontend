@@ -16,7 +16,7 @@
 
 package utils.claimToAdjust
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.Logger
@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import utils.ErrorRecovery
 
 import scala.concurrent.{ExecutionContext, Future}
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 trait JourneyCheckerClaimToAdjust extends ErrorRecovery {
   self =>
@@ -54,7 +55,7 @@ trait JourneyCheckerClaimToAdjust extends ErrorRecovery {
   }
 
   def redirectToYouCannotGoBackPage(user: MtdItUser[_]): Result = {
-    Redirect(controllers.claimToAdjustPoa.routes.YouCannotGoBackController.show(user.isAgent).url)
+    Redirect(claimToAdjustPoaRoutes.YouCannotGoBackController.show(user.isAgent).url)
   }
 
   def showCannotGoBackErrorPage(journeyCompleted: Boolean, journeyState: JourneyState): Boolean = {

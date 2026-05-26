@@ -16,7 +16,7 @@
 
 package obligations.models
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
 import models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
 import play.api.libs.json._
@@ -27,20 +27,14 @@ sealed trait ObligationsResponseModel
 
 case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends ObligationsResponseModel {
 
-  def allDeadlinesWithSource(previous: Boolean = false, r17ContentEnabled: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] = {
+  def allDeadlinesWithSource(previous: Boolean = false)(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] = {
     val deadlines = obligations.flatMap { groupedObligationsModel =>
-      (mtdItUser.incomeSources.properties.find(_.incomeSourceId == groupedObligationsModel.identification), r17ContentEnabled) match {
-        case (Some(property), false) if property.incomeSourceType.contains("foreign-property") =>
-          groupedObligationsModel.obligations.map(deadline => Some(ObligationWithIncomeType(s"nextUpdates.propertyIncome.Foreign", deadline)))
-        case (Some(property), false) if property.incomeSourceType.contains("uk-property") =>
-          groupedObligationsModel.obligations.map(deadline => Some(ObligationWithIncomeType(s"nextUpdates.propertyIncome.UK", deadline)))
-        case (Some(_: PropertyDetailsModel), false) =>
-          groupedObligationsModel.obligations.map(deadline => Some(ObligationWithIncomeType(s"nextUpdates.propertyIncome", deadline)))
-        case (Some(property), true) if property.incomeSourceType.contains("foreign-property") =>
+      mtdItUser.incomeSources.properties.find(_.incomeSourceId == groupedObligationsModel.identification) match {
+        case Some(property) if property.incomeSourceType.contains("foreign-property") =>
           groupedObligationsModel.obligations.map(deadline => Some(ObligationWithIncomeType(s"nextUpdates.r17.tab.quarterly.table.income.source.foreign", deadline)))
-        case (Some(property), true) if property.incomeSourceType.contains("uk-property") =>
+        case Some(property) if property.incomeSourceType.contains("uk-property") =>
           groupedObligationsModel.obligations.map(deadline => Some(ObligationWithIncomeType(s"nextUpdates.r17.tab.quarterly.table.income.source.uk", deadline)))
-        case (Some(_: PropertyDetailsModel), true) =>
+        case Some(_: PropertyDetailsModel) =>
           groupedObligationsModel.obligations.map(deadline => Some(ObligationWithIncomeType(s"nextUpdates.r17.tab.quarterly.table.income.source.property", deadline)))
         case _ =>
           if (mtdItUser.incomeSources.businesses.exists(_.incomeSourceId == groupedObligationsModel.identification)) groupedObligationsModel.obligations.map {
@@ -70,8 +64,8 @@ case class ObligationsModel(obligations: Seq[GroupedObligationsModel]) extends O
   def allCrystallised(implicit mtdItUser: MtdItUser[_]): Seq[ObligationWithIncomeType] =
     allDeadlinesWithSource()(mtdItUser).filter(_.obligation.obligationType == "Crystallisation")
 
-  def obligationsByDate(isR17ContentEnabled: Boolean)(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[ObligationWithIncomeType])] =
-    allDeadlinesWithSource(r17ContentEnabled = isR17ContentEnabled).groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
+  def obligationsByDate(implicit mtdItUser: MtdItUser[_]): Seq[(LocalDate, Seq[ObligationWithIncomeType])] =
+    allDeadlinesWithSource().groupBy(_.obligation.due).toList.sortWith((x, y) => x._1.isBefore(y._1))
 
   def quarterlyUpdatesCounts(implicit mtdItUser: MtdItUser[_]): Int =
     allDeadlinesWithSource()(mtdItUser)

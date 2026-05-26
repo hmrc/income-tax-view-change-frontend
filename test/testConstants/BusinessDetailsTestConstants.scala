@@ -16,7 +16,7 @@
 
 package testConstants
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.IncomeSourceJourney.SelfEmployment
 import models.core.*
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.*

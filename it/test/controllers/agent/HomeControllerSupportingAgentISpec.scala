@@ -16,12 +16,13 @@
 
 package controllers.agent
 
-import auth.MtdItUser
+import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import enums.MTDSupportingAgent
-import helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import common.enums.MTDSupportingAgent
+import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import obligations.models.audit.NextUpdatesResponseAuditModel
@@ -32,7 +33,7 @@ import play.api.test.FakeRequest
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
-import testConstants.messages.HomeMessages.{overdue, overdueUpdates}
+import testConstants.messages.HomeMessages.{nextUpdateDue, overdue, overdueUpdates}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
@@ -99,7 +100,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
               )
 
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -134,7 +135,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(overdue),
               )
 
               verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser, "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -207,7 +208,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                 elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
               )
             }
@@ -240,7 +241,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
               result should have(
                 httpStatus(OK),
                 pageTitle(mtdUserRole, "home.agent.heading"),
-                elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+                elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
                 elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
               )
             }

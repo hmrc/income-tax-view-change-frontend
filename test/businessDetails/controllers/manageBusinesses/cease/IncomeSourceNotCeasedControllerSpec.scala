@@ -16,10 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import connectors.ITSAStatusConnector
-import enums.MTDIndividual
-import mocks.auth.MockAuthActions
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.MTDIndividual
+import common.mocks.auth.MockAuthActions
+import common.services.DateServiceInterface
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api
@@ -27,7 +28,6 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
 
 import scala.concurrent.Future

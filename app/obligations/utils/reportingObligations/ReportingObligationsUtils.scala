@@ -16,8 +16,8 @@
 
 package obligations.utils.reportingObligations
 
-import auth.MtdItUser
-import config.featureswitch.FeatureSwitching
+import common.auth.MtdItUser
+import common.config.featureswitch.FeatureSwitching
 import models.admin.*
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -38,25 +38,17 @@ trait ReportingObligationsUtils extends FeatureSwitching {
   }
 
   def withOptOutRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(OptOutFs), isEnabled(OptInOptOutContentUpdateR17)) match {
-      case (true, true) => codeBlock
-      case (true, false) => redirectReportingFrequency(user.userType)
-      case _ => redirectHome(user.userType)
-    }
+    if (isEnabled(OptOutFs)) codeBlock else redirectHome(user.userType)
   }
 
   def withSignUpRFChecks(codeBlock: => Future[Result])(implicit user: MtdItUser[_]): Future[Result] = {
-    (isEnabled(SignUpFs), isEnabled(OptInOptOutContentUpdateR17)) match {
-      case (true, true)  => codeBlock
-      case (true, false) | (false, _) => redirectReportingFrequency(user.userType)
-      case _ => redirectHome(user.userType)
-    }
+    if (isEnabled(SignUpFs)) codeBlock else redirectHome(user.userType)
   }
 
   private def redirectHome(userType: Option[AffinityGroup]): Future[Result] =
     userType match {
-      case Some(Agent) => Future.successful(Redirect(controllers.routes.HomeController.showAgent()))
-      case _ => Future.successful(Redirect(controllers.routes.HomeController.show()))
+      case Some(Agent) => Future.successful(Redirect(hub.controllers.routes.HomeController.showAgent()))
+      case _ => Future.successful(Redirect(hub.controllers.routes.HomeController.show()))
     }
 
   protected def redirectReportingFrequency(userType: Option[AffinityGroup]): Future[Result] =

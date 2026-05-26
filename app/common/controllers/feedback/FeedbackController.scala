@@ -16,15 +16,15 @@
 
 package common.controllers.feedback
 
-import auth.authV2.AuthActions
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import connectors.FeedbackConnector
-import forms.FeedbackForm
+import common.auth.AuthActions
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.connectors.FeedbackConnector
+import common.forms.FeedbackForm
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.feedback.{FeedbackView, FeedbackThankYouView}
+import common.views.html.feedback.{FeedbackView, FeedbackThankYouView}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

@@ -16,8 +16,8 @@
 
 package utils
 
-import auth.MtdItUser
-import config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.auth.MtdItUser
+import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import play.api.Logger
 import play.api.mvc.Result
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent

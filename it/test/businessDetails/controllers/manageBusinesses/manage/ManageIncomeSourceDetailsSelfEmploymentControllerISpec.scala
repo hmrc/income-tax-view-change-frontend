@@ -16,11 +16,12 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.{CalculationListStub, ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.{MTDIndividual, MTDUserRole}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
+import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
+import models.admin.{DisplayBusinessStartDate, NavBarFs}
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
@@ -175,8 +176,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             }
           }
 
-          "render the correct MTD usage content when OptInOptOutContentUpdateR17 is enabled" in {
-            stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate, OptInOptOutContentUpdateR17))
+          "render the correct MTD usage content" in {
+            stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
             val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))

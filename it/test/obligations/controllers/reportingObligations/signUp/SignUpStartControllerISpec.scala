@@ -17,11 +17,12 @@
 package obligations.controllers.reportingObligations.signUp
 
 import common.controllers.ControllerISpecHelper
-import enums.JourneyType.{Opt, SignUpJourney}
-import enums.MTDIndividual
-import helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxViewChangeStub}
+import common.enums.JourneyType.{Opt, SignUpJourney}
+import common.enums.MTDIndividual
+import common.helpers.servicemocks.ITSAStatusDetailsStub
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
+import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.reportingObligations.signUp.SignUpSessionData
@@ -57,7 +58,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
       s"a user is a $mtdUserRole" that {
         "is authenticated, with a valid enrolment" should {
           "render the sign up start page" in {
-            stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+            stubAuthorised(mtdUserRole, List(SignUpFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear)
@@ -86,7 +87,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
           }
 
           "render the sign up start page with CY only description" in {
-            stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+            stubAuthorised(mtdUserRole, List(SignUpFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear)
@@ -105,29 +106,11 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
               elementTextByID("sign-up-reporting-quarterly-text-2")(SignUpStartControllerISpec.cyOnlyDesc)
             )
           }
-
-          "be redirected to the reporting frequency page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
-            stubAuthorised(mtdUserRole, List(SignUpFs))
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-
-            val result = buildGETMTDClient(path, additionalCookies).futureValue
-
-            val redirectUrl = if (isAgent) {
-              obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
-            } else {
-              obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
-            }
-
-            result should have(
-              httpStatus(SEE_OTHER),
-              redirectURI(redirectUrl)
-            )
-          }
         }
 
         "has already completed the sign-up journey (according to session data)" should {
           "redirect to the cannot go back page" in {
-            stubAuthorised(mtdUserRole, List(OptInOptOutContentUpdateR17, SignUpFs))
+            stubAuthorised(mtdUserRole, List(SignUpFs))
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear, journeyComplete = true)

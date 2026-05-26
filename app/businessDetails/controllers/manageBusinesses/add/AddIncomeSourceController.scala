@@ -16,20 +16,19 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import auth.MtdItUser
-import auth.authV2.AuthActions
 import businessDetails.services.IncomeSourceDetailsService
 import businessDetails.utils.IncomeSourcesUtils
-import config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.JourneyType.Add
 import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.JourneyType.Add
+import common.services.SessionService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -47,8 +46,8 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
                                           val mcc: MessagesControllerComponents) extends FrontendController(mcc)
   with I18nSupport with IncomeSourcesUtils {
 
-  private lazy val homePageCall: Call = controllers.routes.HomeController.show()
-  private lazy val homePageCallAgent: Call = controllers.routes.HomeController.showAgent()
+  private lazy val homePageCall: Call = hub.controllers.routes.HomeController.show()
+  private lazy val homePageCallAgent: Call = hub.controllers.routes.HomeController.showAgent()
 
   def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
@@ -56,7 +55,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
         isAgent = false,
         homePageCall = homePageCall,
         sources = user.incomeSources,
-        backUrl = controllers.routes.HomeController.show().url
+        backUrl = hub.controllers.routes.HomeController.show().url
       )(implicitly, itvcErrorHandler)
   }
 
@@ -66,7 +65,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
         isAgent = true,
         homePageCall = homePageCallAgent,
         sources = mtdItUser.incomeSources,
-        backUrl = controllers.routes.HomeController.showAgent().url
+        backUrl = hub.controllers.routes.HomeController.showAgent().url
       )(implicitly, itvcErrorHandlerAgent)
 
   }

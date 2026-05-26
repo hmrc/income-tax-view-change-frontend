@@ -16,7 +16,7 @@
 
 package common.controllers
 
-import config.FrontendAppConfig
+import common.config.FrontendAppConfig
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

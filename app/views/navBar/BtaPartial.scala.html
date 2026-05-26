@@ -15,11 +15,12 @@
  *@
 
 @import play.twirl.api.Html
-@import views.html.components._
-@import views.html.layouts.unifiedLayout
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import common.config.FrontendAppConfig
 
 @this(
-    appConfig: config.FrontendAppConfig,
+    appConfig: FrontendAppConfig,
     layout: unifiedLayout,
     h2: h2,
     button: href_button,
@@ -35,6 +36,6 @@
 
     @p(id=Some("it-quarterly-reporting-p2"))(Html(messages("bta_partial.p2")))
 
-    @button(id=Some("it-quarterly-reporting-home-button"), href={appConfig.itvcFrontendEnvironment + controllers.routes.HomeController.show().url}, text=messages("bta_partial.home_button"))
+    @button(id=Some("it-quarterly-reporting-home-button"), href={appConfig.itvcFrontendEnvironment + hub.controllers.routes.HomeController.show().url}, text=messages("bta_partial.home_button"))
 
 </section>

@@ -16,22 +16,22 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import connectors.ITSAStatusConnector
-import enums.MTDIndividual
-import mocks.auth.MockAuthActions
-import mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.services.UpdateIncomeSourceService
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.enums.MTDIndividual
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 
 import scala.concurrent.Future
 
