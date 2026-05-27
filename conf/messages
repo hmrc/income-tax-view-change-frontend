@@ -1293,6 +1293,10 @@ whatYouOwe.adjust-poa.paid-3                                       = at any poin
 whatYouOwe.adjust-poa.paid-4                                       = 31 January {0}.
 whatYouOwe.adjust-poa.paid-5                                       =
 whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
+whatYouOwe.pre-mtd.heading                                         = You may still have payments due for your earlier Self Assessment tax years
+whatYouOwe.pre-mtd.body                                            = To check if you have outstanding payments you need to
+whatYouOwe.pre-mtd-link                                            = visit your previous Self Assessment online account
+whatYouOwe.pre-mtd-outstanding-charges                             = Any payment made will be used for outstanding tax for earlier Self Assessment tax years first, and will not be displayed here.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account

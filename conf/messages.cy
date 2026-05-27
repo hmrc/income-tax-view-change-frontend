@@ -1292,6 +1292,10 @@ whatYouOwe.adjust-poa.paid-3                                    = ar unrhyw adeg
 whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 whatYouOwe.interestChargesWarning                               = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
+whatYouOwe.pre-mtd.heading                                      = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol
+whatYouOwe.pre-mtd.body                                         = I wirio a oes gennych daliadau heb eu talu, mae angen i chi fynd i’ch
+whatYouOwe.pre-mtd-link                                         = cyfrif Hunanasesiad ar-lein blaenorol
+whatYouOwe.pre-mtd-outstanding-charges                          = Bydd unrhyw daliad a wneir yn cael ei ddefnyddio ar gyfer treth sydd heb eu talu ar gyfer blynyddoedd treth Hunanasesiad blaenorol yn gyntaf, ac ni fydd yn cael ei arddangos yma.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
