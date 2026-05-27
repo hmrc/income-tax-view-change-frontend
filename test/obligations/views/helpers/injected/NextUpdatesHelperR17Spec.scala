@@ -16,6 +16,7 @@
 
 package obligations.views.helpers.injected
 
+import common.auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
 import obligations.models.*
@@ -36,6 +37,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
 
   class Setup(isAgent: Boolean, currentObligations: NextUpdatesViewModel, currentYearStatus: ITSAStatus, nextYearStatus: ITSAStatus) {
     val nextUpdatesHelper = app.injector.instanceOf[NextUpdatesHelperR17]
+    implicit val testUser: MtdItUser[?] = if (isAgent) getAgentUser(FakeRequest()) else getIndividualUser(FakeRequest())
 
     val optOutProposition = OptOutProposition.createOptOutProposition(
       currentYear = TaxYear(2025, 2026),
@@ -45,7 +47,7 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       nextYearItsaStatus = nextYearStatus
     )
 
-    val html: HtmlFormat.Appendable = nextUpdatesHelper(isAgent, currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus))(implicitly, getIndividualUser(FakeRequest()))
+    val html: HtmlFormat.Appendable = nextUpdatesHelper(currentObligations, optOutProposition, false, taxYearStatusesCyNy = (currentYearStatus, nextYearStatus))
 
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }

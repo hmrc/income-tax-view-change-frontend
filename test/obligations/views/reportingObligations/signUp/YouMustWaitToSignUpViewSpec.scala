@@ -18,6 +18,7 @@ package obligations.views.reportingObligations.signUp
 
 import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.YouMustWaitToSignUpViewModel
+import common.auth.MtdItUser
 import obligations.views.html.reportingObligations.signUp.YouMustWaitToSignUpView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -29,9 +30,10 @@ class YouMustWaitToSignUpViewSpec extends TestSupport {
   val view: YouMustWaitToSignUpView = app.injector.instanceOf[YouMustWaitToSignUpView]
 
   class Setup(isAgent: Boolean, testDate: TaxYear = TaxYear(2024,2025)) {
+    implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
     val model: YouMustWaitToSignUpViewModel = YouMustWaitToSignUpViewModel(testDate)
 
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(model, isAgent)))
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(model)))
   }
 
   object SignUpCompletedViewMessages {

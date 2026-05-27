@@ -67,7 +67,6 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
     lazy val page: HtmlFormat.Appendable =
       newHomeHelpView(
         origin,
-        isAgent,
         yourTasksUrl,
         recentActivityUrl,
         overViewUrl,

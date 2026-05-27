@@ -36,7 +36,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
     "https://www.gov.uk/government/publications/rates-and-allowances-hmrc-interest-rates-for-late-and-early-payments/rates-and-allowances-hmrc-interest-rates#current-late-payment-and-repayment-interest-rates"
 
   class Setup(isAgent: Boolean = false, showIncreaseAfterPaymentContent: Boolean = false) {
-    val view: Html = whatYouNeedToKnowView(isAgent, whatYouNeedToKnowViewModel(isAgent, showIncreaseAfterPaymentContent))
+    val view: Html = whatYouNeedToKnowView(whatYouNeedToKnowViewModel(isAgent, showIncreaseAfterPaymentContent))
     val document: Document = Jsoup.parse(view.toString())
     val groupButton: Elements = document.select("div.govuk-button-group")
     val elements = groupButton.first().children()

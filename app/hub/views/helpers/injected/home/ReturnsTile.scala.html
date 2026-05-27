@@ -26,10 +26,10 @@
     link: link
 )
 
-@(viewModel: HomePageViewModel, isAgent: Boolean)(implicit messages: Messages, user: common.auth.MtdItUser[_], appConfig: FrontendAppConfig)
+@(viewModel: HomePageViewModel)(implicit messages: Messages, user: common.auth.MtdItUser[_], appConfig: FrontendAppConfig)
 
 @getReturnHref(year: Int) = @{
-    if (isAgent) {
+    if (user.isAgent) {
         returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(year).url
     } else {
         returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(year, viewModel.origin).url
@@ -39,21 +39,21 @@
 @currentReturnsLink = @{
     link(
         link = getReturnHref(viewModel.returnsTileViewModel.currentTaxYear.endYear),
-        messageKey = messages(s"home${if(isAgent) ".agent" else ""}.returns.viewLink", s"${viewModel.returnsTileViewModel.currentTaxYear.startYear}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
+        messageKey = messages(s"home${if(user.isAgent) ".agent" else ""}.returns.viewLink", s"${viewModel.returnsTileViewModel.currentTaxYear.startYear}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}")
     )
 }
 
 @returnsUpdateLink = @{
     link(
         link = appConfig.submissionFrontendTaxYearsPage(viewModel.returnsTileViewModel.currentTaxYear.endYear),
-        messageKey = messages(s"home${if(isAgent) ".agent" else ""}.your-returns.updatesLink", s"${viewModel.returnsTileViewModel.currentTaxYear.startYear}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}"),
+        messageKey = messages(s"home${if(user.isAgent) ".agent" else ""}.your-returns.updatesLink", s"${viewModel.returnsTileViewModel.currentTaxYear.startYear}", s"${viewModel.returnsTileViewModel.currentTaxYear.endYear}"),
         id = Some(s"updateReturn-link-${viewModel.returnsTileViewModel.currentTaxYear.endYear}"
     )
     )
 }
 
 @taxYearsControllerURL = @{
-    if(isAgent) {
+    if(user.isAgent) {
         returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
     } else {
         returns.controllers.routes.TaxYearsController.showTaxYears(viewModel.origin).url

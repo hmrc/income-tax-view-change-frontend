@@ -16,6 +16,7 @@
 
 package obligations.views.reportingObligations.optOut
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
@@ -34,6 +35,7 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
   val confirmOptOutUpdateSubmitURL: (Boolean, String) => String = (isAgent: Boolean, taxYear: String) => obligations.controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.submit(isAgent, taxYear).url
 
   class Setup(isAgent: Boolean = true) {
+    implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
     val reportingObligationsURL: String = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
 
     val pageDocument: Document = {
@@ -41,7 +43,6 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
         contentAsString(
           checkOptOutUpdateAnswersView(
             viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2025, 2026), 2),
-            isAgent = isAgent,
             reportingObligationsURL = reportingObligationsURL
           )
         )
@@ -98,7 +99,6 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
           contentAsString(
             checkOptOutUpdateAnswersView(
               viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 0),
-              isAgent = false,
               reportingObligationsURL = reportingObligationsURL
             )
           )
@@ -113,7 +113,6 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
           contentAsString(
             checkOptOutUpdateAnswersView(
               viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 2),
-              isAgent = false,
               reportingObligationsURL = reportingObligationsURL
             )
           )
@@ -131,7 +130,6 @@ class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
           contentAsString(
             checkOptOutUpdateAnswersView(
               viewModel = CheckOptOutUpdateAnswersViewModel(TaxYear(2023, 2024), 3),
-              isAgent = false,
               reportingObligationsURL = reportingObligationsURL
             )
           )

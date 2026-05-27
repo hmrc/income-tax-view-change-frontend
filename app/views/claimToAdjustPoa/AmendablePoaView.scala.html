@@ -40,7 +40,6 @@
 )
 
 @(
-        isAgent: Boolean,
         viewModel: PaymentOnAccountViewModel
 )(
         implicit request: Request[_],
@@ -53,12 +52,12 @@
 }
 
 @getHomePageUrl = @{
-    if(isAgent) hub.controllers.routes.HomeController.showAgent().url
+    if(user.isAgent) hub.controllers.routes.HomeController.showAgent().url
     else hub.controllers.routes.HomeController.show().url
 }
 
 @getWhatYouNeedToKnowUrl = @{
-    claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(isAgent).url
+    claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(user.isAgent).url
 }
 
 @getTableHeading = @{
@@ -116,7 +115,7 @@
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = Some("/"),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     useFallbackBackLink = true

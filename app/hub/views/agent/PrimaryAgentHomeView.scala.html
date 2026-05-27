@@ -58,22 +58,22 @@ viewModel: HomePageViewModel
 @tiles() = {
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @paymentsTile(viewModel, true)
-            @updatesTile(viewModel.nextUpdatesTileViewModel, true)
+            @paymentsTile(viewModel)
+            @updatesTile(viewModel.nextUpdatesTileViewModel, user.isAgent)
         </div>
     </div>
 
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @paymentHistoryTile(viewModel, true)
-            @returnsTile(viewModel, true)
+            @paymentHistoryTile(viewModel, user.isAgent)
+            @returnsTile(viewModel)
         </div>
     </div>
 
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, true)
-            @yourReportingObligationsTile(viewModel.yourReportingObligationsTileViewModel, true)
+            @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, user.isAgent)
+            @yourReportingObligationsTile(viewModel.yourReportingObligationsTileViewModel, user.isAgent)
         </div>
     </div>
 

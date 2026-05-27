@@ -36,8 +36,8 @@ class SignUpOptOutCannotGoBackViewSpec extends TestSupport {
 
   val view: SignUpOptOutCannotGoBackView = app.injector.instanceOf[SignUpOptOutCannotGoBackView]
 
-  class Setup(isAgent: Boolean = false, isSignUp: Boolean) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent = isAgent, isSignUp = isSignUp)))
+  class Setup(isSignUp: Boolean) {
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(isSignUp = isSignUp)))
   }
 
   "SignUpOptOutCannotGoBackView" when {

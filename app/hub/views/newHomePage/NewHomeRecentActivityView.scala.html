@@ -38,7 +38,6 @@
 )
 
 @(origin: Option[String] = None,
-        isAgent: Boolean,
         yourTasksUrl: String,
         recentActivityUrl: String,
         overviewUrl: String,
@@ -52,7 +51,7 @@
 @import implicitDateFormatter.longDate
 
 @pageHeading = @{
-    if (isAgent) {
+    if (user.isAgent) {
         user.optClientNameAsString.fold(messages("home.agent.heading")) {
             clientName => messages("home.agent.headingWithClientName", clientName)
         }
@@ -62,7 +61,7 @@
 @caption = @{
     if (user.usersRole == MTDSupportingAgent) {
         messages("home.agent.supporting.caption")
-    } else if (isAgent) {
+    } else if (user.isAgent) {
         messages("home.agent.primary.caption")
     } else {
         user.userName.fold("")(_.name.getOrElse(""))
@@ -70,7 +69,7 @@
 }
 
 @mainTemplate(
-    pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
+    pageTitle = if (user.isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial

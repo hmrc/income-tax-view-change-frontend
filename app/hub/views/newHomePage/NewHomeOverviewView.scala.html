@@ -39,7 +39,6 @@
 )
 
 @(origin: Option[String] = None,
-        isAgent: Boolean,
         isSupportingAgent: Boolean,
         currentTaxYear: TaxYear,
         yourTasksUrl: String,
@@ -59,7 +58,7 @@
 )
 
 @pageHeading = @{
-    if (isAgent) {
+    if (user.isAgent) {
         user.optClientNameAsString.fold(messages("home.agent.heading")) {
             clientName => messages("home.agent.headingWithClientName", clientName)
         }
@@ -69,7 +68,7 @@
 @caption = @{
     if (user.usersRole == MTDSupportingAgent) {
         messages("home.agent.supporting.caption")
-    } else if (isAgent) {
+    } else if (user.isAgent) {
         messages("home.agent.primary.caption")
     } else {
         user.userName.fold("")(_.name.getOrElse(""))
@@ -82,7 +81,7 @@
 }
 
 @mainTemplate(
-    pageTitle = if (isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
+    pageTitle = if (user.isAgent) messages("home.agent.heading") else if (isGovUkRebrandEnabled) messages("home.heading.new") else messages("home.heading"),
     backUrl = None,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
@@ -108,7 +107,7 @@
 
     <div class="govuk-!-padding-bottom-6"></div>
 
-    @{(isAgent, isSupportingAgent) match {
+    @{(user.isAgent, isSupportingAgent) match {
         case (true, false) => AgentSections(noChargesToPay)
         case (_, true) => SupportingAgentSections()
         case _ => IndividualSections(noChargesToPay)
@@ -130,7 +129,7 @@
 @taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled)    @SectionBreak
 
     @if(penaltiesAndAppealsEnabled){
-        @penaltiesSection(isAgent = false, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+        @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
     }
 }
 
@@ -152,7 +151,7 @@
 @taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled)    @SectionBreak
 
     @if(penaltiesAndAppealsEnabled){
-        @penaltiesSection(isAgent = true, isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
+        @penaltiesSection(isPenaltyPresent(LateSubmissionPenalty), isPenaltyPresent(FirstLatePaymentPenalty, SecondLatePaymentPenalty))
     }
 }
 

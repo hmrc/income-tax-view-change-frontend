@@ -46,10 +46,7 @@ class YouCannotGoBackController @Inject()(val authActions: AuthActions,
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
-        EitherT.rightT(Ok(view(
-          isAgent = user.isAgent,
-          poaTaxYear = poa.taxYear
-        )))
+        EitherT.rightT(Ok(view(poa.taxYear)))
       } recover logAndRedirect
   }
 }

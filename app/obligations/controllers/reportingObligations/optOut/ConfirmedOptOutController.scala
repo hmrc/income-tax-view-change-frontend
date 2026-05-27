@@ -112,7 +112,6 @@ class ConfirmedOptOutController @Inject()(val authActions: AuthActions,
                 Logger("application").debug(s"[ConfirmedOptOutController][show] Success, showing ConfirmedOptOutView for scenario: $viewScenario")
                 Ok(view(
                   viewModel = viewModel,
-                  isAgent = isAgent,
                   confirmedOptOutViewScenarios = viewScenario,
                   selfAssessmentTaxReturnLink = appConfig.logInFileSelfAssessmentTaxReturnLink,
                   compatibleSoftwareLink = appConfig.compatibleSoftwareLink

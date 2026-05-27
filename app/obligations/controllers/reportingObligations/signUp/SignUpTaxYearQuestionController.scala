@@ -60,7 +60,6 @@ class SignUpTaxYearQuestionController @Inject()(
                 withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear, None) {
                   Future(Ok(
                     view(
-                      isAgent,
                       viewModel,
                       SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY),
                       routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
@@ -85,7 +84,6 @@ class SignUpTaxYearQuestionController @Inject()(
             SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY).bindFromRequest().fold(
               formWithErrors => Future(BadRequest(
                 view(
-                  isAgent = isAgent,
                   viewModel = viewModel,
                   form = formWithErrors,
                   postAction = routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)

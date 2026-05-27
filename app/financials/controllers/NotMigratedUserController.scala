@@ -38,12 +38,12 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc)
   with I18nSupport with FeatureSwitching {
 
-  def handleShowRequest(errorHandler: ShowInternalServerError, isAgent: Boolean, backUrl: String)
+  def handleShowRequest(errorHandler: ShowInternalServerError, backUrl: String)
                        (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     {
       if (user.incomeSources.yearOfMigration.isEmpty) {
         Future {
-          Ok(notMigrated(isAgent, backUrl))
+          Ok(notMigrated(backUrl))
         }
       } else {
         Logger("application").error("Migrated user not allowed to access this page")
@@ -59,7 +59,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
 
   def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
-      handleShowRequest(errorHandler = itvcErrorHandler, isAgent = false,
+      handleShowRequest(errorHandler = itvcErrorHandler,
         backUrl = hub.controllers.routes.HomeController.show().url)
   }
 
@@ -74,7 +74,6 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
   def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandlerAgent,
-        isAgent = true,
         backUrl = hub.controllers.routes.HomeController.showAgent().url)
   }
 }

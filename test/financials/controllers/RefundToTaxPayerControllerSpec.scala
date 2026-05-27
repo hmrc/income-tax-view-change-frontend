@@ -18,7 +18,9 @@ package financials.controllers
 
 import audit.models.RefundToTaxPayerResponseAuditModel
 import common.connectors.ITSAStatusConnector
+import common.auth.actions.AuthActionsTestData.getMtdItUser
 import common.enums.{MTDIndividual, MTDSupportingAgent}
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
 import connectors.RepaymentHistoryConnector
@@ -153,9 +155,8 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
                 backUrl = paymentRefundHistoryBackLink(isAgent),
                 viewModel = testRefundViewModel,
                 saUtr = Some(testMtditid),
-                paymentHistoryRefundsEnabled = true,
-                isAgent = isAgent
-              ).toString
+                paymentHistoryRefundsEnabled = true
+              )(fakeRequest, implicitly, getMtdItUser(if (isAgent) Agent else Individual)(fakeRequest)).toString
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK

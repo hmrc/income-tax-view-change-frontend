@@ -33,7 +33,6 @@
 )
 
 @(
-        isAgent: Boolean,
         poaTaxYear: TaxYear
 )(
         implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_]
@@ -44,24 +43,24 @@
 }
 
 @tysLinkUrl = @{
-    if(isAgent) returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(poaTaxYear.endYear).url
+    if(user.isAgent) returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(poaTaxYear.endYear).url
     else returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(poaTaxYear.endYear).url
 }
 
 @wyoLinkUrl = @{
-    if(isAgent) financialsRoutes.WhatYouOweController.showAgent().url
+    if(user.isAgent) financialsRoutes.WhatYouOweController.showAgent().url
     else financialsRoutes.WhatYouOweController.show().url
 }
 
 @getHomeUrl = @{
-    if(isAgent) hub.controllers.routes.HomeController.showAgent().url
+    if(user.isAgent) hub.controllers.routes.HomeController.showAgent().url
     else hub.controllers.routes.HomeController.show().url
 }
 
 @mainTemplate(
     pageTitle = getMessage("heading"),
     backUrl = None,
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     useFallbackBackLink = true

@@ -27,8 +27,8 @@
     paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
 )
 
-@(paymentAllocations: PaymentAllocationViewModel, isAgent: Boolean, creditsRefundRepayEnabled: Boolean)(
-        implicit messages: Messages
+@(paymentAllocations: PaymentAllocationViewModel, creditsRefundRepayEnabled: Boolean)(
+        implicit messages: Messages, user: common.auth.MtdItUser[_]
 )
 
 @getMessage(key: String, args: String*) = @{
@@ -48,9 +48,9 @@
         </tr>
     </thead>
     @if(paymentAllocations.isLpiPayment) {
-        @paymentAllocationsForLpi(paymentAllocations, isAgent)
+        @paymentAllocationsForLpi(paymentAllocations)
     } else {
-        @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
+        @paymentAllocationsForNonLpi(paymentAllocations)
     }
-    @paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundRepayEnabled, isAgent)
+    @paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundRepayEnabled, user.isAgent)
 </table>

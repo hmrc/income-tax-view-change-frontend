@@ -44,14 +44,14 @@
         errorSummary: ErrorSummary
 )
 
-@(enterPoaForm: Form[EnterPoaAmountForm], viewModel: PaymentOnAccountViewModel, isAgent: Boolean, postAction: Call)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
+@(enterPoaForm: Form[EnterPoaAmountForm], viewModel: PaymentOnAccountViewModel, postAction: Call)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"claimToAdjustPoa.enterPoaAmount.$key", args: _*)
 }
 
 @getHomePageUrl = @{
-    if(isAgent) hub.controllers.routes.HomeController.showAgent().url
+    if(user.isAgent) hub.controllers.routes.HomeController.showAgent().url
     else hub.controllers.routes.HomeController.show().url
 }
 
@@ -130,7 +130,7 @@
 
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some("/"),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     useFallbackBackLink = true) {

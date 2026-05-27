@@ -16,6 +16,7 @@
 
 package views
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
@@ -25,7 +26,7 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
@@ -68,14 +69,14 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
     } else { messages }
     
     val testUrl = "testUrl"
+    val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
 
     val viewModel: MoneyInYourAccountViewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditAndRefundModel, testUrl)
 
     lazy val page: HtmlFormat.Appendable =
       creditAndRefundView(
         viewModel,
-        isAgent = isAgent,
-        backUrl)(FakeRequest(), implicitly, testMessages)
+        backUrl)(FakeRequest(), testUser, testMessages)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }

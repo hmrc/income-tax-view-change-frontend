@@ -60,7 +60,6 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
             EitherT.rightT(Ok(view(
               selectYourReasonForm = session.poaAdjustmentReason.fold(form)(form.fill),
               taxYear = poa.taxYear,
-              isAgent = user.isAgent,
               mode = mode,
               useFallbackLink = true)))
         }
@@ -74,7 +73,7 @@ class SelectYourReasonController @Inject()(val authActions: AuthActions,
           .bindFromRequest()
           .fold(
             formWithErrors =>
-              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, user.isAgent, mode, useFallbackLink = true)))
+              EitherT.rightT(BadRequest(view(formWithErrors, poa.taxYear, mode, useFallbackLink = true)))
             ,
             value => saveValueAndRedirect(mode, value, poa)
           )

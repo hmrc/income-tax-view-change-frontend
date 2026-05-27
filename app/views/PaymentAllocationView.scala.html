@@ -41,8 +41,8 @@
 )
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
-    isAgent: Boolean = false, btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(implicit request: Request[_], messages: Messages)
+    btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None,
+    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
 @import implicitDateFormatter._
 
 @pageTitle = @{
@@ -57,7 +57,7 @@
 @mainTemplate(
     pageTitle = pageTitle,
     backUrl = Some(backUrl),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true,
     gatewayPage = gatewayPage,
@@ -115,10 +115,10 @@
         </tr>
         </thead>
         @if(paymentAllocations.isLpiPayment) {
-            @paymentAllocationsForLpi(paymentAllocations, isAgent)
+            @paymentAllocationsForLpi(paymentAllocations)
         } else {
-            @paymentAllocationsForNonLpi(paymentAllocations, isAgent)
+            @paymentAllocationsForNonLpi(paymentAllocations)
         }
-        @paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundsRepayEnabled, isAgent)
+        @paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundsRepayEnabled, user.isAgent)
     </table>
 }}

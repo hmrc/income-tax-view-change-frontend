@@ -86,8 +86,8 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
           btaNavPartial = user.btaNavPartial,
           serviceNavigationPartial = user.serviceNavigationPartial,
-          isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
-          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages))
+          origin = origin, gatewayPage = sessionGatewayPage,
+          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages, user))
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
         Redirect(redirectUrl)

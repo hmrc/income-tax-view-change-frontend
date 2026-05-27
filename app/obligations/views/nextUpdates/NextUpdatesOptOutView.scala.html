@@ -43,7 +43,6 @@
     checks: NextUpdatesQuarterlyReportingContentChecks,
     optOutProposition: OptOutProposition,
     backUrl: String,
-    isAgent: Boolean = false,
     isSupportingAgent: Boolean = false,
     origin: Option[String] = None,
     whatTheUserCanDo: Html,
@@ -53,7 +52,7 @@
 @mainTemplate(
     pageTitle = messages("nextUpdates.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     origin = origin) {
@@ -62,7 +61,7 @@
 
     @p(id = Some("what-the-user-can-do")) { @whatTheUserCanDo }
 
-    @nextUpdatesHelperR17(isAgent, viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))
+    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))
 }
 
 @detailsContent = {

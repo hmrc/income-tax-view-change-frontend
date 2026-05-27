@@ -29,7 +29,7 @@ import testConstants.BaseIntegrationTestConstants.testNino
 object ITSAStatusDetailsStub extends ComponentSpecBase {
 
   def getUrl(taxYearRange: String = "23-24", futureYears: Boolean = false, nino: String): String =
-    s"/income-tax-view-change/itsa-status/status/$nino/$taxYearRange?futureYears=$futureYears&history=false"
+    s"/income-tax-obligations/itsa-status/status/$nino/$taxYearRange?futureYears=$futureYears&history=false"
 
   def stubGetITSAStatusDetails(status: String, taxYearRange: String = "2024-25"): StubMapping = {
     WiremockHelper.stubGet(getUrl(taxYearRange.takeRight(5), nino = testNino), OK,

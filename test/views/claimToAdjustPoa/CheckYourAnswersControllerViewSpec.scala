@@ -16,6 +16,7 @@
 
 package views.claimToAdjustPoa
 
+import common.auth.MtdItUser
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import models.core.CheckMode
@@ -31,12 +32,12 @@ class CheckYourAnswersControllerViewSpec extends TestSupport {
   class Setup(isAgent: Boolean, poaReason: SelectYourReason = MainIncomeLower) {
 
     val checkYourAnswers: CheckYourAnswersView = app.injector.instanceOf[CheckYourAnswersView]
+    implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
 
     val document: Document =
       Jsoup.parse(
         contentAsString(
           checkYourAnswers(
-            isAgent = isAgent,
             taxYear = TaxYear(2023, 2024),
             adjustedFirstPoaAmount = BigDecimal(3000.00),
             adjustedSecondPoaAmount = BigDecimal(3000.00),

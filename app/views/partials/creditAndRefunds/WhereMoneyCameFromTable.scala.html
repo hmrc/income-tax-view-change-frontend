@@ -33,7 +33,7 @@
     govukTable : GovukTable,
 )
 
-@(viewModel: MoneyInYourAccountViewModel, isAgent: Boolean)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
+@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
 @import implicitDateFormatter._
 
@@ -52,7 +52,7 @@
             content = HtmlContent(payment.date.toLongDateShort.toNonBreaking.toString)
         ),
         TableRow(
-            content = TableRowDescriptionLink(messages("money-in-your-account.where-from.payment-row.description", payment.effectiveDate.toLongDateShort), payment.descriptionLink(isAgent), index),
+            content = TableRowDescriptionLink(messages("money-in-your-account.where-from.payment-row.description", payment.effectiveDate.toLongDateShort), payment.descriptionLink(user.isAgent), index),
             attributes = Map("id" -> s"payment-$index")
         ),
         TableRow(
@@ -71,7 +71,7 @@
             content = HtmlContent(credit.date.toLongDateShort.toNonBreaking.toString)
         ),
         TableRow(
-            content = TableRowDescriptionLink("money-in-your-account.where-from.credit-row.description", credit.descriptionLink(isAgent), index),
+            content = TableRowDescriptionLink("money-in-your-account.where-from.credit-row.description", credit.descriptionLink(user.isAgent), index),
             attributes = Map("id" -> s"payment-$index")
         ),
         TableRow(

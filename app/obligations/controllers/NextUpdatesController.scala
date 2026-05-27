@@ -95,7 +95,6 @@ class NextUpdatesController @Inject()(
                     checks = checks,
                     optOutProposition = optOutProposition,
                     backUrl = backUrl.url,
-                    isAgent = isAgent,
                     isSupportingAgent = user.isSupportingAgent,
                     origin = origin,
                     whatTheUserCanDo = whatTheUserCanDoContent,

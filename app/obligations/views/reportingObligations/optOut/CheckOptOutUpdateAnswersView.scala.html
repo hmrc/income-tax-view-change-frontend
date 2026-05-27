@@ -32,16 +32,16 @@ govukButton: GovukButton,
 formWithCSRF: FormWithCSRF
 )
 
-@(viewModel: CheckOptOutUpdateAnswersViewModel, isAgent: Boolean, reportingObligationsURL: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: CheckOptOutUpdateAnswersViewModel, reportingObligationsURL: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @getPostAction = @{
-    obligations.controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.submit(isAgent, viewModel.startYear)
+    obligations.controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.submit(user.isAgent, viewModel.startYear)
 }
 
 @mainTemplate(
     pageTitle = messages("optout.checkAnswers.heading"),
     backUrl = Some("#"),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     useFallbackBackLink = true
