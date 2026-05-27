@@ -86,6 +86,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
     creditHistoryService.getCreditsHistory(calendarYear, user.nino).flatMap {
       case Right(credits) =>
         val charges: List[CreditDetailModel] = credits.sortBy(_.date.toEpochDay)
+
         val maybeAvailableCredit: Option[BigDecimal] =
           credits.flatMap(_.availableCredit.filter(_ > 0.00)).headOption
         auditCreditSummary(maybeAvailableCredit, charges)

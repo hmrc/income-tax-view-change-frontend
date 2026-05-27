@@ -36,7 +36,7 @@ sealed trait FinancialDetailsResponseModel
 // TODO-[2]: make financialDetails private val -> ~
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  codingDetails: List[CodingDetails] = List(),
-                                 private val documentDetails: List[DocumentDetail],
+                                 documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def dunningLockExists(documentId: String): Boolean = {
@@ -139,7 +139,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                 case Some(financialDetail: FinancialDetail) => (Some(financialDetail.taxYear), financialDetail.mainTransaction.exists(cr => creditsWithSummaryPages.contains(cr)), financialDetail.mainTransaction.contains(cutOver))
                 case None => (None, false, false)
               }
-
+              
               PaymentHistoryAllocation(
                 dueDate = subItem.dueDate,
                 amount = subItem.amount,
