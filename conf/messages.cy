@@ -2579,6 +2579,8 @@ manageBusinesses.manage.propertyReportingMethod.new.confirm                     
 
 # credits
 credit.description.balancingCharge                                      = Credyd o ordaliad treth
+credit.description.POA1RR-credit                                        = Credyd o taliad cyntaf ar gyfrif
+credit.description.POA2RR-credit                                        = Credyd o ail daliad ar gyfrif
 credit.description.cutOver                                              = Credyd o flwyddyn dreth gynharach
 credit.description.mfa                                                  = Credyd o ganlyniad i addasiad gan CThEF
 credit.description.repaymentInterest                                    = Credyd o log ar ad-daliadau
