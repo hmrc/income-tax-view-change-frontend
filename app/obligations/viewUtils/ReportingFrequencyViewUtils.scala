@@ -18,7 +18,6 @@ package obligations.viewUtils
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import common.config.featureswitch.FeatureSwitching
 import common.services.DateServiceInterface
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, ITSAStatus, Mandated, Voluntary}
