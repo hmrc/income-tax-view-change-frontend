@@ -38,7 +38,6 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
   def upcomingTaskCard(index:String): UpcomingTaskCard = UpcomingTaskCard(s"UpcomingContent$index", "UpcomingLinkText", "/Upcoming", "DueTag", None, Some("100"), MaturityLevel.Upcoming, SUBMISSIONS)
 
   class TestSetup(handleYourTasksViewModel: HandleYourTasksViewModel = defaultViewModel,
-                  isAgent: Boolean = false,
                   isGovUkRebrandEnabled: Boolean = true,
                   isRecentActivityEnabled: Boolean = false) {
 

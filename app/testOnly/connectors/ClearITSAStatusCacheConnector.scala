@@ -17,12 +17,7 @@
 package testOnly.connectors
 
 import common.connectors.RawResponseReads
-import play.api.Logger
-import play.api.http.Status.OK
-import play.api.libs.json.Json
-import play.api.libs.ws.{writeableOf_JsValue, writeableOf_urlEncodedForm}
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, Nino, SchemaModel, TrigMigUser}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
