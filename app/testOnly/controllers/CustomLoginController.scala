@@ -26,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import services.CalculationListService
 import testOnly.TestOnlyAppConfig
-import testOnly.connectors.{CustomAuthConnector, DynamicStubConnector}
+import testOnly.connectors.{ClearITSAStatusCacheConnector, CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.*
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
 import testOnly.utils.UserRepository
@@ -47,6 +47,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val dynamicStubConnector: DynamicStubConnector,
                                       val optOutCustomDataService: OptOutCustomDataService,
                                       val customAuthConnector: CustomAuthConnector,
+                                      val clearITSAStatusCacheConnector: ClearITSAStatusCacheConnector,
                                       val calculationListService: CalculationListService,
                                       val dynamicStubService: DynamicStubService,
                                       val ITSAStatusService: ITSAStatusService,
@@ -174,6 +175,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     val combinedItsaStatusFutureYear = optOutCustomDataService.stubITSAStatusFutureYearData(nino, taxYear, cyMinusOneItsaStatus, cyItsaStatus, cyPlusOneItsaStatus)
 
     for {
+      _ <- clearITSAStatusCacheConnector.overwriteItsaStatus(nino)
       _ <- crystallisationStatusResult
       _ <- itsaStatusCyMinusOneResult
       _ <- itsaStatusCyResult
