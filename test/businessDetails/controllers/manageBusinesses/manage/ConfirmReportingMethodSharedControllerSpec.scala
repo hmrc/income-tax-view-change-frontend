@@ -35,7 +35,7 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.services.{DateService, DateServiceInterface, SessionService}
-import common.mocks.services.{MockDateService, MockITSAStatusService, MockSessionService}
+import common.mocks.services.{MockDateService, MockSessionService}
 
 import scala.concurrent.Future
 

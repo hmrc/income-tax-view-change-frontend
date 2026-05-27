@@ -71,9 +71,6 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
   val currentDate: LocalDate = dateService.getCurrentDate
   private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, ITSAStatus.NoStatus, None, None)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, ITSAStatus.NoStatus, None, None)
-  private val viewModelTwoOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1)), currentDate, ITSAStatus.NoStatus, None, None)
   private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, ITSAStatus.NoStatus, None, None)
   private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, ITSAStatus.NoStatus, None, None)
 

@@ -20,11 +20,13 @@ val hmrcMongoVersion = "2.12.0"
 val currentScalaVersion = "3.3.6"
 val playVersion = "play-30"
 
+val wErrorScalacOption: String = "-Werror"
+
 scalacOptions ++= Seq(
   "-feature",
   "-Wconf:src=target/.*:silent",
   "-unchecked",
-  "-Werror")
+  wErrorScalacOption)
 
 val compile = Seq(
   ws,
@@ -132,6 +134,7 @@ lazy val it = project
   .settings(
     testForkedParallel := true
   )
+  .settings(scalacOptions += wErrorScalacOption)
   .settings(
     libraryDependencies ++= appDependenciesIt)
 

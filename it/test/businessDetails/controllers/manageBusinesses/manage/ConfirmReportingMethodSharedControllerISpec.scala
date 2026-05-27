@@ -25,7 +25,6 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
-import models.admin.NavBarFs
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -67,7 +66,6 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
   }
 
   private lazy val manageObligationsController = routes.ManageObligationsController
-  private lazy val checkYourAnswersController = routes.CheckYourAnswersController
 
   val newPrefix: String = "manageBusinesses.manage.propertyReportingMethod.new"
   val oldPrefix: String = "manageBusinesses.manage.propertyReportingMethod"

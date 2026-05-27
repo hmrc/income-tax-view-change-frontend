@@ -143,7 +143,6 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
             s"render the ${incomeSourceType.journeyType} Reporting Method page" when {
               val currentTaxYear = dateService.getCurrentTaxYearStart
               val taxYear1: Int = currentTaxYear.getYear
-              val taxYear2: Int = taxYear1 + 1
               "user is within latency period (before 23/24) - tax year 1 not crystallised" in {
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
