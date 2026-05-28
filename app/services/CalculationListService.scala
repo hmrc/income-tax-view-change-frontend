@@ -32,34 +32,20 @@ import scala.concurrent.{ExecutionContext, Future}
 class CalculationListService @Inject()(calculationListConnector: CalculationListConnector, dateService: DateService)
                                       (implicit ec: ExecutionContext) {
 
-  def getLegacyCalculationList(nino: String, taxYearEnd: String)
-                              (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
-    Logger("application").debug("" +
-      s"Requesting legacy calculation list (1404) data from the backend with nino / taxYearEnd: $nino - $taxYearEnd")
-    calculationListConnector.getLegacyCalculationList(nino, taxYearEnd)
-  }
-
-  def getCalculationList(nino: Nino, taxYearRange: String)
+  def getCalculationList(nino: Nino, taxYear: Int)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
     Logger("application").debug("" +
-      s"Requesting calculation list (1896) data from the backend with nino / taxYearRange: ${nino.value} - $taxYearRange")
-    calculationListConnector.getCalculationList(nino, taxYearRange)
+      s"Requesting calculation list (1896) data from the backend with nino / taxYear: ${nino.value} - $taxYear")
+    calculationListConnector.getCalculationList(nino, taxYear)
   }
 
-  private def getLegacyCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
-    calculationListConnector.getLegacyCalculationList(user.nino, taxYear.toString).flatMap {
+  private def getCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
+    calculationListConnector.getCalculationList(Nino(user.nino), taxYear).flatMap {
       case res: CalculationListModel => Future.successful(res.crystallised)
       case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
-      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
-    }
-  }
-
-  private def getTYSCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
-    val taxYearRange = s"${(taxYear - 1).toString.substring(2)}-${taxYear.toString.substring(2)}"
-    calculationListConnector.getCalculationList(Nino(user.nino), taxYearRange).flatMap {
-      case res: CalculationListModel => Future.successful(res.crystallised)
-      case err: CalculationListErrorModel if err.code == 404 => Future.successful(Some(false))
-      case err: CalculationListErrorModel => Future.failed(new InternalServerException(err.message))
+      case err: CalculationListErrorModel =>
+        Logger("application").error(s"CalculationListService#getLegacyCrystallisationResult: error received: ${err.code} - ${err.message}")
+        Future.failed(new InternalServerException(err.message)) // treat as non-crystallised instead of throwing
     }
   }
 
@@ -71,13 +57,10 @@ class CalculationListService @Inject()(calculationListConnector: CalculationList
 
     val currentTaxYearEnd = dateService.getCurrentTaxYearEnd
     val futureTaxYear = taxYear >= currentTaxYearEnd
-    val legacyTaxYear = taxYear <= 2023
-    val isCrystallised = (futureTaxYear, legacyTaxYear) match {
-      case (true, _) => Future.successful(Some(false)) /* tax year cannot be crystallised unless it is in the past */
-      case (_, true) => getLegacyCrystallisationResult(user, taxYear)
-      case (_, false) => getTYSCrystallisationResult(user, taxYear)
-    }
-
+    val isCrystallised = if futureTaxYear 
+      then Future.successful(Some(false)) /* tax year cannot be crystallised unless it is in the past */
+      else getCrystallisationResult(user, currentTaxYearEnd)
+    
     isCrystallised.map(_.contains(true))
   }
 }
