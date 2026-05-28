@@ -33,33 +33,54 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
                                          val appConfig: FrontendAppConfig
                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  def getCalculationListUrl(nino: String, taxYearRange: String): String = {
-    s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
+  def getLegacyCalculationListUrl(nino: String, taxYearEnd: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd"
   }
 
-  def getCalculationList(nino: Nino, taxYearRange: String, mtditid: String)
-                        (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
+  def getCalculationListUrl(nino: String, taxYearRange: String): String = {
+    s"${appConfig.itvcProtectedService}/income-tax-view-change/calculation-list/$nino/$taxYearRange"
+  }
 
-    val normalisedTaxYear = taxYearRange match {
-      case s if s.matches("""\d{2}-\d{2}""") => s"20${s.takeRight(2)}"
-      case other => other
-    }
+  def getLegacyCalculationList(nino: String, taxYearEnd: String)(implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
-    val url = getCalculationListUrl(nino.value, normalisedTaxYear)
-
-    http.get(url"$url")
-      .setHeader("mtditid" -> mtditid)
+    http.get(url"${getLegacyCalculationListUrl(nino, taxYearEnd)}")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>
           response.json.validate[CalculationListModel].fold(
             invalid => {
-              (response.json \ "calculations").validate[Seq[CalculationListModel]].asOpt.flatMap(_.headOption)
-                .getOrElse {
-                Logger("application").error("" +
-                  s"Json validation error parsing calculation list response, error $invalid")
-                CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
-              }
+              Logger("application").error("" +
+                s"Json validation error parsing legacy calculation list response, error $invalid")
+              CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing legacy calculation list response")
+            },
+            valid => valid
+          )
+        case status if status >= INTERNAL_SERVER_ERROR =>
+          Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+          CalculationListErrorModel(response.status, response.body)
+        case _ =>
+          Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
+          CalculationListErrorModel(response.status, response.body)
+      }
+    }
+  }
+
+  def getCalculationList(nino: Nino, taxYearRange: String)
+                        (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
+
+    val url = getCalculationListUrl(nino.value, taxYearRange)
+
+    http.get(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case OK =>
+          response.json.validate[CalculationListModel].fold(
+            invalid => {
+              Logger("application").error("" +
+                s"Json validation error parsing calculation list response, error $invalid")
+              CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation list response")
             },
             valid => valid
           )

@@ -123,7 +123,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   deadlines = allObligations
                 )
 
-                CalculationListStub.stubGetCalculationList(testNino, getCurrentTaxYearEnd.getYear.toString)(
+                CalculationListStub.stubGetLegacyCalculationList(testNino, getCurrentTaxYearEnd.getYear.toString)(
                   jsonResponse = CalculationListIntegrationTestConstants.successResponseCrystallised.toString()
                 )
 

@@ -43,7 +43,11 @@ trait MockHttpV2 extends UnitSpec with BeforeAndAfterEach {
       .get(ArgumentMatchers.eq(url"$url"))(ArgumentMatchers.any()))
       .thenReturn(mockRequestBuilder)
 
-    when(mockRequestBuilder.setHeader(any()))
+    when(mockRequestBuilder.setHeader(any[(String, String)]))
+      .thenReturn(mockRequestBuilder)
+
+    when(mockRequestBuilder
+      .setHeader(any[(String, String)]))
       .thenReturn(mockRequestBuilder)
 
     when(mockRequestBuilder
