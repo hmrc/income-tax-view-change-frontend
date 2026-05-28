@@ -72,6 +72,9 @@ with MockDateService {
     }
   val expectedDescriptionProof = "Proof of your income"
   val expectedDescriptionIncomplete = "Incomplete - cannot be used as proof of your income"
+  val expectedTaxYearOverviewKey = "Tax year overview"
+  val expectedDescriptionProofOfTax = "Proof of your tax"
+  val expectedDescriptionNotAvailableYet = "Not available yet"
   val view: ProofOfYourIncomeView = app.injector.instanceOf(classOf[ProofOfYourIncomeView])
   val authActions: AuthActions = app.injector.instanceOf(classOf[AuthActions])
 
@@ -101,7 +104,9 @@ with MockDateService {
             status(result) shouldBe Status.OK
 
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.select(".card-row-description-class").first().text shouldBe expectedDescriptionProof
+            document.select(".govuk-summary-list__key").text should include(expectedTaxYearOverviewKey)
+            document.select(".card-row-description-class").text should include(expectedDescriptionProof)
+            document.select(".card-row-description-class").text should include(expectedDescriptionProofOfTax)
           }
         }
 
@@ -123,7 +128,9 @@ with MockDateService {
             status(result) shouldBe Status.OK
 
             val document: Document = Jsoup.parse(contentAsString(result))
-            document.select(".card-row-description-class").first().text shouldBe expectedDescriptionIncomplete
+            document.select(".govuk-summary-list__key").text should include(expectedTaxYearOverviewKey)
+            document.select(".card-row-description-class").text should include(expectedDescriptionIncomplete)
+            document.select(".card-row-description-class").text should include(expectedDescriptionNotAvailableYet)
           }
         }
       }
