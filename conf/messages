@@ -279,6 +279,9 @@ newHome.overview.tax-year.proofOfIncome.card.sa302key           = SA302 tax calc
 newHome.overview.tax-year.proofOfIncome.card.legacy             = SA302 and tax year overview
 newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete = Incomplete - cannot be used as proof of your income
 newHome.overview.tax-year.proofOfIncome.card.sa302value.proof   = Proof of your income
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewKey = Tax year overview
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.proof = Proof of your tax
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.notAvailable = Not available yet
 newHome.overview.tax-year.proofOfIncome.card.sa302value.legacy  = Tax years before using Making Tax Digital for Income Tax
 newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = View
 

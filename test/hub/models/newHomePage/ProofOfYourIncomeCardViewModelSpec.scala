@@ -47,20 +47,30 @@ class ProofOfYourIncomeCardViewModelSpec extends TestSupport{
 
   "getCardRows" should {
     "return correct value if isLegacy = false and calculationType supports proof of income" in {
-      baseModel.getCardRows() shouldBe Some(CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.sa302key"),
-        messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.proof"),
-        Some(messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.action"))))
+      baseModel.getCardRows() shouldBe Seq(
+        CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.sa302key"),
+          messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.proof"),
+          Some(messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.action"))),
+        CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewKey"),
+          messages("newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.proof"),
+          Some(messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.action")))
+      )
     }
     "return correct value if isLegacy = false and calculationType supports incomplete journey" in {
       val model = baseModel.copy(calculationType = "IC")
-      model.getCardRows() shouldBe Some(CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.sa302key"),
-        messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete"),
-        Some(messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.action"))))
+      model.getCardRows() shouldBe Seq(
+        CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.sa302key"),
+          messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete"),
+          None),
+        CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewKey"),
+          messages("newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.notAvailable"),
+          None)
+      )
     }
 
     "return correct value if isLegacy = true" in {
       val model = baseModel.copy(isLegacy = true)
-      model.getCardRows() shouldBe  Some(CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.legacy"),
+      model.getCardRows() shouldBe Seq(CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.legacy"),
         messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.legacy"),
         Some(messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.action"))))
     }
