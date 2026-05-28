@@ -35,7 +35,6 @@ class NewHomeRecentActivityViewSpec extends TestSupport with FeatureSwitching wi
   val defaultViewModel = RecentActivityViewModel(Seq.empty)
 
   class TestSetup(recentActivityViewModel: RecentActivityViewModel = defaultViewModel,
-                  isAgent: Boolean = false,
                   isGovUkRebrandEnabled: Boolean = true) {
 
     val testMessages: Messages = messages

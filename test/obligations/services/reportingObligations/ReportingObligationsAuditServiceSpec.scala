@@ -16,7 +16,6 @@
 
 package obligations.services.reportingObligations
 
-import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.enums.MTDIndividual
 import common.services.DateService

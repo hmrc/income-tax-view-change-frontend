@@ -18,7 +18,6 @@ package obligations.services.reportingObligations
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import common.config.featureswitch.FeatureSwitching
 import common.enums.{AuditType, TransactionName}
 import common.enums.AuditType.{ReportingObligationsPage, IncomeSourceDetailsResponse as _}
 import common.services.DateServiceInterface
@@ -99,7 +98,7 @@ class ReportingObligationsAuditService @Inject()(
     }
   }
 
-  private def tableContentToItsaStatus(content: Option[String])(implicit messages: Messages, user: MtdItUser[_]): ITSAStatus = {
+  private def tableContentToItsaStatus(content: Option[String])(implicit messages: Messages): ITSAStatus = {
     content match {
       case Some(tableContent) if tableContent == messages("reporting.frequency.table.mandated.r17") => Mandated
       case Some(tableContent) if tableContent == messages("reporting.frequency.table.voluntary.r17") => Voluntary

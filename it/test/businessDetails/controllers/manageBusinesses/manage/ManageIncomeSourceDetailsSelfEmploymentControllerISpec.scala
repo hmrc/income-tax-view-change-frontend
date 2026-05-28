@@ -21,7 +21,7 @@ import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.admin.{DisplayBusinessStartDate, NavBarFs}
+import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK

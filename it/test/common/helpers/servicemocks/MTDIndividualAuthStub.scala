@@ -17,7 +17,6 @@
 package common.helpers.servicemocks
 
 import common.helpers.WiremockHelper.*
-import common.helpers.servicemocks.MTDAuthStub
 import play.api.http.Status
 import play.api.libs.json.{JsArray, JsString, JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.*
