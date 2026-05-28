@@ -22,7 +22,7 @@ import models.calculationList.CalculationListErrorModel
 import models.core.Nino
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
-import testConstants.BaseTestConstants.{testMtditid, testNino, testTaxYear}
+import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.CalculationListTestConstants
 import testUtils.TestSupport
 
