@@ -61,7 +61,7 @@ class ProofOfYourIncomeCardViewModelSpec extends TestSupport{
       model.getCardRows() shouldBe Seq(
         CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.sa302key"),
           messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete"),
-          None),
+          Some(messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.action"))),
         CardRows(messages("newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewKey"),
           messages("newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.notAvailable"),
           None)

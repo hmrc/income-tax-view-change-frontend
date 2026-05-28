@@ -56,7 +56,7 @@ case class ProofOfYourIncomeCardViewModel(taxYearStart: Int,
           taxYearOverviewCardBase.copy(rowDescription = messages("newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.proof"))
         )
         case "IF" | "IA" | "IC" => Seq(
-          sa302CardBase.copy(rowDescription = messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete"), action = None),
+          sa302CardBase.copy(rowDescription = messages("newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete")),
           taxYearOverviewCardBase.copy(rowDescription = messages("newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.notAvailable"), action = None)
         )
         case _ => Seq.empty
