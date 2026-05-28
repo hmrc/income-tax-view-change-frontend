@@ -33,14 +33,14 @@ class CalculationListConnector @Inject()(val http: HttpClientV2,
                                          val appConfig: FrontendAppConfig
                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  def getCalculationListUrl(nino: String, taxYearRange: String): String = {
-    s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYearRange"
+  def getCalculationListUrl(nino: String, taxYear: Int): String = {
+    s"${appConfig.incomeTaxCalculationService}/income-tax-calculation/calculation-list/$nino/$taxYear"
   }
 
-  def getCalculationList(nino: Nino, taxYearRange: String)
+  def getCalculationList(nino: Nino, taxYear: Int)
                         (implicit headerCarrier: HeaderCarrier): Future[CalculationListResponseModel] = {
 
-    val url = getCalculationListUrl(nino.value, taxYearRange)
+    val url = getCalculationListUrl(nino.value, taxYear)
 
     http.get(url"$url")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")

@@ -27,7 +27,7 @@ import models.core.Nino
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
-import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
@@ -126,7 +126,7 @@ trait ClaimToAdjustHelper {
     if (taxYear.isFutureTaxYear(dateService)) {
       Future.successful(true)
     } else {
-      calculationListConnector.getCalculationList(nino, taxYear.formatAsShortYearRange).flatMap {
+      calculationListConnector.getCalculationList(nino, taxYear.endYear).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
         case err: CalculationListErrorModel if err.code == 404 =>
           Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")

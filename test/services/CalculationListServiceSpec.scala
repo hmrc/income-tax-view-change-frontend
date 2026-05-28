@@ -21,7 +21,7 @@ import mocks.connectors.MockCalculationListConnector
 import models.calculationList.CalculationListErrorModel
 import models.core.Nino
 import org.mockito.Mockito.{mock, when}
-import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
+import play.api.http.Status.{IM_A_TEAPOT, INTERNAL_SERVER_ERROR, NOT_FOUND}
 import testConstants.BaseTestConstants.{testNino, testTaxYear, testTaxYearRange}
 import testConstants.CalculationListTestConstants
 import testUtils.TestSupport
@@ -106,7 +106,7 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).futureValue shouldBe false
       }
       "returns InternalServerException" in {
-        val error = CalculationListErrorModel(IM_A_TEAPOT, "I'm a teapot")
+        val error = CalculationListErrorModel(INTERNAL_SERVER_ERROR, "Internal Server Error")
         setupGetCalculationList(testNino, testTaxYearRange)(error)
         TestCalculationListService.determineTaxYearCrystallised(taxYearEnd.toInt).failed.futureValue.getMessage shouldBe error.message
       }
