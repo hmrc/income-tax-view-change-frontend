@@ -53,6 +53,7 @@
                         rel = Some("noreferrer noopener"),
                         target = Some("_blank"))
             }
+            @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("pre-mtd-outstanding-charges")))
     } else {
             @h2(msg = getMessage("sa-note-2-heading-agent"))
             @p(id = Some("sa-note-2-migrated")){
@@ -65,9 +66,8 @@
                         target = Some("_blank"))
                 @getMessage("sa-note-2-body-agent-2")
             }
+            @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
     }
-
-    @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("pre-mtd-outstanding-charges")))
 }
 
 @utr.map { utr =>

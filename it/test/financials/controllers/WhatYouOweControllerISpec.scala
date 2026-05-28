@@ -421,8 +421,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
-                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = false),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = false),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
                       isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
                       isElementVisibleById("no-payments-due")(expectedValue = true)
@@ -450,8 +450,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
-                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = false),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = false),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
                       isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
                       isElementVisibleById("no-payments-due")(expectedValue = true)
@@ -491,8 +491,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
-                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = false),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = false),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
                       isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
                       isElementVisibleById("no-payments-due")(expectedValue = true)
