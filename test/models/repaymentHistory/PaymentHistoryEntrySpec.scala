@@ -16,10 +16,10 @@
 
 package models.repaymentHistory
 
+import common.services.DateService
 import models.financialDetails.PaymentType
 import models.incomeSourceDetails.TaxYear
 import org.scalatest.matchers.should.Matchers
-import services.DateService
 import testUtils.TestSupport
 
 import java.time.LocalDate

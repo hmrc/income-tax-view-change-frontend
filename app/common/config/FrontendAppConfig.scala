@@ -46,6 +46,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //ITVC Protected Service
   lazy val itvcProtectedService: String = servicesConfig.baseUrl("income-tax-view-change")
+  
+  //Income tax obligations service
+  lazy val incomeTaxObligationsService: String = servicesConfig.baseUrl("income-tax-obligations")
 
   //Income tax calculation service
   lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
@@ -56,6 +59,11 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
+  
+  //individual sa302
+  def sa302:String = s"$itvcFrontendEnvironment/$baseUrl/mortgage-evidence/proof-of-income"
+  //agent sa302
+  def sa302Agent:String = s"$itvcFrontendEnvironment/$agentBaseUrl/mortgage-evidence/proof-of-income"
 
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")

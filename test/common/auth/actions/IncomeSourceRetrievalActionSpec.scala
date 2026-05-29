@@ -19,8 +19,8 @@ package common.auth.actions
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.IncomeSourceConnector
-import enums.{MTDIndividual, MTDPrimaryAgent}
+import common.connectors.IncomeSourceConnector
+import common.enums.{MTDIndividual, MTDPrimaryAgent}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion

@@ -42,7 +42,6 @@
 
 @(  selectYourReasonForm: Form[SelectYourReason],
     taxYear: TaxYear,
-    isAgent: Boolean,
     mode: Mode,
     useFallbackLink: Boolean)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
@@ -59,12 +58,12 @@
 }
 
 @getHomePageUrl = @{
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else         controllers.routes.HomeController.show().url
+    if (user.isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else              hub.controllers.routes.HomeController.show().url
 }
 
 @mainTemplate( pageTitle = messages("claimToAdjustPoa.selectYourReason.title"),
-               isAgent = isAgent,
+               isAgent = user.isAgent,
                useFallbackBackLink = useFallbackLink,
                backUrl = Some("/"),
                btaNavPartial = user.btaNavPartial,
@@ -80,7 +79,7 @@
 
     @formContent
 
-    @formWithCSRF(action = claimToAdjustPoaRoutes.SelectYourReasonController.submit(isAgent, mode), Symbol("id") -> "select-your-reason-form") {
+    @formWithCSRF(action = claimToAdjustPoaRoutes.SelectYourReasonController.submit(user.isAgent, mode), Symbol("id") -> "select-your-reason-form") {
         @govukRadios(
             Radios(
                 fieldset = Some(Fieldset(

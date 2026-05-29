@@ -19,6 +19,7 @@ package views.claimToAdjustPoa
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
+import common.auth.MtdItUser
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
@@ -28,20 +29,19 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
   class Setup(isAgent: Boolean) {
 
     val view: ApiFailureSubmittingPoaView = app.injector.instanceOf[ApiFailureSubmittingPoaView]
+    implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
 
     val document: Document =
       Jsoup.parse(
         contentAsString(
-          view(
-            isAgent = isAgent
-          )
+          view()
         )
       )
   }
 
   def getHomeControllerLink(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url
+    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else hub.controllers.routes.HomeController.show().url
   }
 
   def executeTest(isAgent: Boolean): Unit = {

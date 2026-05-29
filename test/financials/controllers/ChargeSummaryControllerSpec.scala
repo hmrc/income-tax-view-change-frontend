@@ -16,13 +16,15 @@
 
 package financials.controllers
 
-import connectors.ITSAStatusConnector
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, MTDIndividual, MTDSupportingAgent}
+import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
+import enums.{AdjustmentReversalReason, AmendedReturnReversalReason}
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
-import models.financialDetails.PoaTwoReconciliationCredit
+import models.financialDetails.{DocumentDetail, FinancialDetailsModel, PoaTwoReconciliationCredit}
 import models.repaymentHistory.RepaymentHistoryUtils
 import org.mockito.Mockito.when
 import play.api
@@ -30,7 +32,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import services.{ChargeHistoryService, DateServiceInterface, FinancialDetailsService, PaymentAllocationsService}
+import services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import testConstants.BaseTestConstants.testTaxYear
 import testConstants.FinancialDetailsTestConstants.*
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
@@ -610,6 +612,36 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 document.getElementById("poa-extra-charge-p2").text() shouldBe descriptionTextRARLpiBulletPara
                 document.getElementById("poa-extra-charge-p3").text() shouldBe descriptionTextRARLpiBulletList
                 document.getElementById("poa-extra-charge-p4").text() shouldBe descriptionTextRARLpiPara2
+              }
+
+              "not display the interest warning for a Review & Reconcile Debit Charge when there is no interest on the charge" in new Setup(
+                FinancialDetailsModel(
+                  balanceDetails = testFinancialDetailsModelWithReviewAndReconcileAndPoas.balanceDetails,
+                  documentDetails = List(
+                    DocumentDetail(fixedDateTwo.getYear, id1040000125, Some("ITSA- POA 1"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
+                      Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+                    DocumentDetail(fixedDateTwo.getYear, id1040000126, Some("ITSA- POA 2"), Some("documentText"), 50, 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
+                      Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+                    DocumentDetail(fixedDateTwo.getYear, id1040000123, Some("SA POA 1 Reconciliation Debit"), Some("documentText"), 0, 43.21, LocalDate.of(2018, 3, 29), Some(0), Some(100), Some("latePaymentInterestId"), None,
+                      Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(0), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30))),
+                    DocumentDetail(fixedDateTwo.getYear, id1040000124, Some("SA POA 2 Reconciliation Debit"), Some("documentText"), 75, 12.34, LocalDate.of(2018, 3, 29), Some(100), Some(100), Some("latePaymentInterestId"), None,
+                      Some(LocalDate.of(2018, 3, 29)), Some(LocalDate.of(2018, 3, 29)), Some(100), Some(100), Some("paymentLotItem"), Some("paymentLot"), effectiveDateOfPayment = Some(fixedDateTwo.minusDays(1)), documentDueDate = Some(fixedDateTwo.plusDays(30)))
+                  ),
+                  financialDetails = testFinancialDetailsModelWithReviewAndReconcileAndPoas.financialDetails
+                ), docId = id1040000123) {
+                setupMockSuccess(mtdUserRole, false, List(ChargeHistory))
+                mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
+                mockBothIncomeSources()
+
+                val result: Future[Result] = action(id1040000123)(fakeRequest)
+
+                status(result) shouldBe Status.OK
+                val document = JsoupParse(result).toHtmlDocument
+
+                document.getElementsByClass("govuk-caption-xl").text() shouldBe successCaption(startYear.toString, endYear.toString)
+                document.select("h1").text() shouldBe successHeadingForRAR1
+                document.getElementById("charge-amount-heading").text() shouldBe "You owe: £0.00"
+                document.getElementsByClass("govuk-warning-text__text").size() shouldBe 0
               }
 
               "provided with an id that matches a charge in the financial response" in new Setup(financialDetailsModel(accruingInterestAmount = Some(0.0)), docId = id1040000123) {

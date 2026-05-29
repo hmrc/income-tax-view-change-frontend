@@ -16,10 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import enums.JourneyType.{Add, IncomeSourceJourneyType}
 import jakarta.inject.Singleton
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
@@ -27,12 +25,14 @@ import models.incomeSourceDetails.{AddIncomeSourceData, Address, ChooseSoleTrade
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.services.SessionService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -55,8 +55,8 @@ class ChooseSoleTraderAddressController @Inject()(
     else itvcErrorHandler
 
   private def backUrl(isAgent: Boolean): String =
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else controllers.routes.HomeController.show().url
+    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else hub.controllers.routes.HomeController.show().url
 
   private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty
 
@@ -170,7 +170,7 @@ class ChooseSoleTraderAddressController @Inject()(
         )
       )
     } else {
-      val homeCall = if (isAgent) controllers.routes.HomeController.showAgent() else controllers.routes.HomeController.show()
+      val homeCall = if (isAgent) hub.controllers.routes.HomeController.showAgent() else hub.controllers.routes.HomeController.show()
       Future(Redirect(homeCall))
     }
   }

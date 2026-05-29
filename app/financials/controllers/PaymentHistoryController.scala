@@ -20,10 +20,10 @@ import audit.models.PaymentHistoryResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.services.AuditingService
-import enums.GatewayPage.PaymentHistoryPage
+import common.enums.GatewayPage.PaymentHistoryPage
+import common.implicits.ImplicitDateFormatter
+import common.services.{AuditingService, DateServiceInterface}
 import forms.utils.SessionKeys.gatewayPage
-import implicits.ImplicitDateFormatter
 import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
 import models.financialDetails.TransactionUtils
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
@@ -31,7 +31,7 @@ import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, PaymentHistoryService, RepaymentService}
+import services.{PaymentHistoryService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -85,7 +85,6 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
 
         Ok(paymentHistoryView(
           backUrl = backUrl,
-          isAgent = isAgent,
           saUtr = user.saUtr,
           viewModel = viewModel,
           btaNavPartial = user.btaNavPartial,
@@ -107,7 +106,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
       handleRequest(
         isAgent = false,
         origin = origin,
-        backUrl = controllers.routes.HomeController.show(origin).url
+        backUrl = hub.controllers.routes.HomeController.show(origin).url
       )
   }
 
@@ -115,7 +114,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
-        backUrl = controllers.routes.HomeController.showAgent().url
+        backUrl = hub.controllers.routes.HomeController.showAgent().url
       )
   }
 

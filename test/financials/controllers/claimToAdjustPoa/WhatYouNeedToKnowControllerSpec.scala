@@ -16,16 +16,17 @@
 
 package financials.controllers.claimToAdjustPoa
 
+import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
-import enums.{MTDIndividual, MTDSupportingAgent}
+import common.services.DateServiceInterface
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, PaymentOnAccountSessionService}
+import services.PaymentOnAccountSessionService
 import services.claimToAdjustPoa.ClaimToAdjustService
 
 import scala.concurrent.Future

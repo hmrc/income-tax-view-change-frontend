@@ -58,7 +58,7 @@ class WhatYouNeedToKnowController @Inject()(val authActions: AuthActions,
     implicit user =>
       withSessionDataAndPoa() { (_, poa) =>
         val viewModel = WhatYouNeedToKnowViewModel(poa.taxYear, poa.partiallyPaidAndTotalAmountLessThanPoa, getRedirect(poa))
-        EitherT.rightT(Ok(view(user.isAgent, viewModel)))
+        EitherT.rightT(Ok(view(viewModel)))
       } recover logAndRedirect
   }
 

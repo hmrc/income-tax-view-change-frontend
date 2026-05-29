@@ -59,12 +59,11 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
-          backUrl = controllers.routes.HomeController.show(origin).url,
-          isAgent = user.isAgent
+          backUrl = hub.controllers.routes.HomeController.show(origin).url
         ) recover logAndRedirect
     }
 
-  def handleRequest(isAgent: Boolean, backUrl: String)
+  def handleRequest(backUrl: String)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext, messages: Messages): Future[Result] = {
     creditService.getAllCredits map {
       case _ if !isEnabled(CreditsRefundsRepay) =>
@@ -72,7 +71,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
       case creditsModel: CreditsModel =>
         val viewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditsModel, appConfig.repaymentsUrl)
         auditClaimARefund(creditsModel)
-        Ok(moneyInYourAccountView(viewModel, isAgent, backUrl)(user, user, messages))
+        Ok(moneyInYourAccountView(viewModel, backUrl)(user, user, messages))
     }
   }
 
@@ -80,8 +79,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent() async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = controllers.routes.HomeController.showAgent().url,
-          isAgent = mtdItUser.isAgent
+          backUrl = hub.controllers.routes.HomeController.showAgent().url
         ) recover logAndRedirect
     }
   }

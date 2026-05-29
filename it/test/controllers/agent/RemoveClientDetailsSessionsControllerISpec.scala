@@ -17,7 +17,7 @@
 package controllers.agent
 
 import common.controllers.ControllerISpecHelper
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status._
 import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
@@ -27,7 +27,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
   val path = "/agents/remove-client-sessions"
 
-  s"GET ${controllers.agent.routes.EnterClientsUTRController.show().url}" when {
+  s"GET ${hub.controllers.agent.routes.EnterClientsUTRController.show().url}" when {
     s"a user is a primary agent (session data isSupportingAgent = false)" that {
       val isSupportingAgent = false
       val additionalCookies = getAgentClientDetailsForCookie(isSupportingAgent, true)
@@ -52,7 +52,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+            redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
           )
 
         }
@@ -85,7 +85,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+            redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
           )
 
         }

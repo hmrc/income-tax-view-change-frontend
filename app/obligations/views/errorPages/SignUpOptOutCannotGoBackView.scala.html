@@ -16,11 +16,11 @@
 
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
-@import models.homePage.HomePageViewModel
+@import hub.models.homePage.HomePageViewModel
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
-@import views.html.helpers.injected.home._
+@import hub.views.html.helpers.injected.home._
 @import obligations.controllers.{routes => obligationsRoutes}
 @import common.config.FrontendAppConfig
 
@@ -32,7 +32,7 @@
     link: link,
     bulletList: bulletPointList
 )
-@(isAgent: Boolean, isSignUp: Boolean)(
+@(isSignUp: Boolean)(
     implicit request: Request[_],
     messages: Messages,
     user: common.auth.MtdItUser[_],
@@ -67,7 +67,7 @@
             @link(
                 id=Some("links-section-upcoming-deadlines-link"),
                 link =
-                    if(isAgent) s"${obligationsRoutes.NextUpdatesController.showAgent()}"
+                    if(user.isAgent) s"${obligationsRoutes.NextUpdatesController.showAgent()}"
                     else s"${obligationsRoutes.NextUpdatesController.show()}",
                 messageKey = getMessages("linkText1")
             )
@@ -76,8 +76,8 @@
             @link(
                 id=Some("links-section-home-page-link"),
                 link =
-                    if(isAgent) s"${controllers.routes.HomeController.showAgent()}"
-                    else s"${controllers.routes.HomeController.show()}"
+                    if(user.isAgent) s"${hub.controllers.routes.HomeController.showAgent()}"
+                    else s"${hub.controllers.routes.HomeController.show()}"
                 ,
                 messageKey = getMessages("linkText2")
             )
@@ -88,7 +88,7 @@
 @mainTemplate(
     pageTitle = getMessages("heading"),
     mainClass = Some("full-width"),
-    isAgent = false,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {

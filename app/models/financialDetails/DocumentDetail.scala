@@ -16,13 +16,13 @@
 
 package models.financialDetails
 
+import common.services.DateServiceInterface
 import enums.CodingOutType.*
 import enums.DocumentType
 import enums.DocumentType.*
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
-import services.DateServiceInterface
 
 import java.time.LocalDate
 
@@ -48,6 +48,12 @@ case class DocumentDetail(taxYear: Int,
                           documentDueDate: Option[LocalDate] = None,
                           poaRelevantAmount: Option[BigDecimal] = None
                          ) {
+
+  def findTaxYear: Int = taxYear match {
+    case year if taxYear != 9999 => year
+    case year if effectiveDateOfPayment.isDefined => effectiveDateOfPayment.get.getYear
+    case _ => documentDate.getYear
+  }
 
   def credit: Option[BigDecimal] = originalAmount match {
     case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None

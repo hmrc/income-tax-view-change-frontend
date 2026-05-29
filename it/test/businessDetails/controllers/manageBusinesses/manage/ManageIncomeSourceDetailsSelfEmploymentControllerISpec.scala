@@ -16,12 +16,12 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.admin.{DisplayBusinessStartDate, OptInOptOutContentUpdateR17}
+import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
@@ -81,7 +81,6 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
-              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -113,8 +112,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
-
-              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))
@@ -176,8 +174,8 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             }
           }
 
-          "render the correct MTD usage content when OptInOptOutContentUpdateR17 is enabled" in {
-            stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate, OptInOptOutContentUpdateR17))
+          "render the correct MTD usage content" in {
+            stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
             val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 
             IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))

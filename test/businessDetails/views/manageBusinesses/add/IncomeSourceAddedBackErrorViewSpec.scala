@@ -24,7 +24,7 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedBackErrorView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
 

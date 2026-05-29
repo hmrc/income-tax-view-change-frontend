@@ -17,9 +17,9 @@
 package obligations.controllers
 
 import common.auth.MtdItUser
+import common.enums.MTDIndividual
 import common.helpers.ComponentSpecBase
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, MTDIndividualAuthStub}
-import enums.MTDIndividual
 import helpers.servicemocks.*
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
@@ -66,7 +66,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
+        CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
 
         val savedTaxYearOpn: Option[TaxYear] = optOutSessionDataRepository.fetchSavedIntent().futureValue
@@ -108,7 +108,7 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
-        CalculationListStub.stubGetLegacyCalculationList(testNino,
+        CalculationListStub.stubGetCalculationList(testNino,
           previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
 
         optOutSessionDataRepository.saveIntent(TaxYear.forYearEnd(2024)).futureValue

@@ -16,6 +16,7 @@
 
 package models.financialDetails
 
+import common.services.DateServiceInterface
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ChargeType.allChargeMainTransactions
 import models.financialDetails.CreditType.{creditsWithSummaryPages, cutOver}
@@ -24,7 +25,6 @@ import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
-import services.DateServiceInterface
 import services.claimToAdjustPoa.ClaimToAdjustHelper.poaDocumentDescriptions
 
 import java.time.LocalDate
@@ -36,7 +36,7 @@ sealed trait FinancialDetailsResponseModel
 // TODO-[2]: make financialDetails private val -> ~
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  codingDetails: List[CodingDetails] = List(),
-                                 private val documentDetails: List[DocumentDetail],
+                                 documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def dunningLockExists(documentId: String): Boolean = {
@@ -139,7 +139,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                 case Some(financialDetail: FinancialDetail) => (Some(financialDetail.taxYear), financialDetail.mainTransaction.exists(cr => creditsWithSummaryPages.contains(cr)), financialDetail.mainTransaction.contains(cutOver))
                 case None => (None, false, false)
               }
-
+              
               PaymentHistoryAllocation(
                 dueDate = subItem.dueDate,
                 amount = subItem.amount,

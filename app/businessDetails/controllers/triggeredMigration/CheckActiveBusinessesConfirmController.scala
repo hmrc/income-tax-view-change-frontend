@@ -18,7 +18,6 @@ package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
 import businessDetails.forms.triggeredMigration.CheckActiveBusinessesConfirmForm
-import businessDetails.services.CustomerFactsUpdateService
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
 import businessDetails.utils.TriggeredMigrationUtils
 import com.google.inject.{Inject, Singleton}
@@ -28,7 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckActiveBusinessesConfirmView
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
-import common.services.AuditingService
+import common.services.{AuditingService, CustomerFactsUpdateService}
 
 import scala.concurrent.{ExecutionContext, Future}
 

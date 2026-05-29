@@ -31,7 +31,6 @@
 )
 
 @(
-        isAgent: Boolean,
         origin: Option[String],
         viewModel: WhatYouOweViewModel
 )(
@@ -45,14 +44,14 @@
 }
 
 @getNoPaymentsDueText = {
-    @p(id = Some("no-payments-due"))(Html(getMessage(if(isAgent) "no-payments-due-agent" else "no-payments-due")))
+    @p(id = Some("no-payments-due"))(Html(getMessage(if(user.isAgent) "no-payments-due-agent" else "no-payments-due")))
 }
 
 @viewModel.whatYouOweChargesList.codedOutDetails.map { codedOutDetails =>
     @h2(getMessage("payments-made-heading"))
     @p(id = Some("payments-made-migrated"))(Html(
         getMessage("payments-made-body-1", codedOutDetails.amountCodedOut.toCurrencyString, (viewModel.currentTaxYear - 1).toString, viewModel.currentTaxYear.toString) +
-                link(link = viewModel.paymentHistoryControllerURL(isAgent, origin),
+                link(link = viewModel.paymentHistoryControllerURL(user.isAgent, origin),
                     messageKey = getMessage("payments-made-link"),
                     id = Some("payments-made-migrated-link"),
                     rel = Some("noreferrer noopener")).toString() +

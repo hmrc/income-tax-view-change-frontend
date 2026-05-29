@@ -19,6 +19,7 @@ package testOnly.controllers
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.services.DateServiceInterface
 import models.calculationList.CalculationListResponseModel
 import models.core.Nino
 import models.incomeSourceDetails.TaxYear
@@ -27,7 +28,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
-import services.{CalculationListService, DateServiceInterface}
+import services.CalculationListService
 import testOnly.services.DynamicStubService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -88,13 +89,8 @@ class OptOutTestDataController @Inject()(val authActions: AuthActions,
   }
 
   private def cyMinusOneCrystallisationStatusResult(nino: String, taxYear: TaxYear)
-                                                   (implicit hc: HeaderCarrier): Future[CalculationListResponseModel] = {
-
-    if (taxYear.endYear >= 2024) {
+                                                   (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[CalculationListResponseModel] = {
       calculationListService.getCalculationList(nino = Nino(nino), taxYearRange = taxYear.formatAsShortYearRange)
-    } else {
-      calculationListService.getLegacyCalculationList(nino = nino, taxYearEnd = taxYear.endYear.toString)
-    }
   }
 
   val show: Action[AnyContent] = authActions.asMTDIndividual().async {

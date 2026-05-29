@@ -18,21 +18,20 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod}
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.views.html.manageBusinesses.manage.ManageObligationsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.services.{DateService, SessionService}
 import enums.CannotGoBackPage
-import models.admin.OptInOptOutContentUpdateR17
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import obligations.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.{DateService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -114,7 +113,6 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                   changeTo = changeTo,
                   isAgent = isAgent,
                   postAction = successPostUrl(isAgent),
-                  showOptInOptOutContentUpdateR17 = isEnabled(OptInOptOutContentUpdateR17),
                   isCurrentTaxYear = dateService.getCurrentTaxYearStart.getYear == years.startYear
                 ))
               }

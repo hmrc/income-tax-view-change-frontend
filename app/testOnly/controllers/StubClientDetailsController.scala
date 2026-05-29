@@ -55,7 +55,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
   def submitWithParams(nino: String, utr: String): Action[AnyContent] = Action.async { implicit request =>
     matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)) map { response =>
       Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
-      Redirect(controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr))
+      Redirect(hub.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr))
     }
   }
 
@@ -67,7 +67,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
       ))), { data =>
         matchingStubConnector.stubClient(data) map { response =>
           Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
-          Redirect(controllers.agent.routes.EnterClientsUTRController.show())
+          Redirect(hub.controllers.agent.routes.EnterClientsUTRController.show())
         }
       }
     )

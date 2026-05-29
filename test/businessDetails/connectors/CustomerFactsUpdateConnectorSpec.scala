@@ -17,6 +17,7 @@
 package businessDetails.connectors
 
 import common.config.FrontendAppConfig
+import common.connectors.CustomerFactsUpdateConnector
 import common.mocks.{MockAuditingService, MockHttpV2}
 import play.api.Configuration
 import play.api.http.Status

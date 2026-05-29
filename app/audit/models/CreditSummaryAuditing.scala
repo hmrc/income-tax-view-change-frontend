@@ -16,6 +16,8 @@
 
 package audit.models
 
+import common.enums.AuditType.CreditsSummaryResponse
+import common.enums.TransactionName.CreditsSummary
 import common.models.audit.ExtendedAuditModel
 import models.creditDetailModel.CreditDetailModel
 import models.financialDetails.CreditType
@@ -59,8 +61,8 @@ object CreditSummaryAuditing {
                                  creditOnAccount: String,
                                  creditDetails: Seq[CreditSummaryDetails]) extends ExtendedAuditModel {
 
-    override val transactionName: String = enums.TransactionName.CreditsSummary
-    override val auditType: String = enums.AuditType.CreditsSummaryResponse
+    override val transactionName: String = CreditsSummary
+    override val auditType: String = CreditsSummaryResponse
 
     private def creditDetailToJson(credit: CreditSummaryDetails): JsObject = {
       Json.obj(

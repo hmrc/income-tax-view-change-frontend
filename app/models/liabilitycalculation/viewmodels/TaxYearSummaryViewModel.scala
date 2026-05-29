@@ -80,17 +80,17 @@ case class TaxYearSummaryViewModel(
 
   def getForecastSummaryHref(taxYear: Int, isAgent: Boolean): String = {
     if (isAgent) {
-      controllers.routes.ForecastIncomeSummaryController.showAgent(taxYear).url
+      returns.controllers.routes.ForecastIncomeSummaryController.showAgent(taxYear).url
     } else {
-      controllers.routes.ForecastIncomeSummaryController.show(taxYear).url
+      returns.controllers.routes.ForecastIncomeSummaryController.show(taxYear).url
     }
   }
 
   def getForecastTaxDueHref(taxYear: Int, isAgent: Boolean): String = {
     if (isAgent) {
-      controllers.routes.ForecastTaxCalcSummaryController.showAgent(taxYear).url
+      returns.controllers.routes.ForecastTaxCalcSummaryController.showAgent(taxYear).url
     } else {
-      controllers.routes.ForecastTaxCalcSummaryController.show(taxYear).url
+      returns.controllers.routes.ForecastTaxCalcSummaryController.show(taxYear).url
     }
   }
 

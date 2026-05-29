@@ -16,7 +16,7 @@
 
 package obligations.models.audit.reporting_obligations
 
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import play.api.libs.json.Json
 import testUtils.TestSupport
 

@@ -43,7 +43,7 @@ class NoIncomeSourcesController @Inject()(
 
     action.async { implicit user =>
       Future.successful(
-        Ok(noIncomeSourcesView(isAgent, appConfig.noIncomeSourcesContactUrl))
+        Ok(noIncomeSourcesView(appConfig.noIncomeSourcesContactUrl))
       )
     }
   }

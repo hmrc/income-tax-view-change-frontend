@@ -21,7 +21,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.services.AuditingService
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs}
+import models.admin.OptOutFs
 import obligations.models.ObligationsModel
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
@@ -60,7 +60,7 @@ class NextUpdatesController @Inject()(
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       action
     } else {
-      Future.successful(Ok(noNextUpdatesView(backUrl = controllers.routes.HomeController.show(origin).url)))
+      Future.successful(Ok(noNextUpdatesView(backUrl = hub.controllers.routes.HomeController.show(origin).url)))
     }
   }
 
@@ -73,7 +73,6 @@ class NextUpdatesController @Inject()(
           case obligations: ObligationsModel => obligations
           case _ => ObligationsModel(Nil)
         }
-        isR17ContentEnabled = isEnabled(OptInOptOutContentUpdateR17)
         isOptOutEnabled = isEnabled(OptOutFs)
 
         result <- nextUpdates.obligations match {
@@ -86,7 +85,7 @@ class NextUpdatesController @Inject()(
             val optOutSetup = {
               for {
                 (checks, optOutProposition) <- optOutService.nextUpdatesPageChecksAndProposition()
-                viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates, isR17ContentEnabled)
+                viewModel = nextUpdatesService.getNextUpdatesViewModel(nextUpdates)
               } yield {
                 val whatTheUserCanDoContent = nextUpdatesViewUtils.whatTheUserCanDo(isAgent)
 
@@ -96,11 +95,9 @@ class NextUpdatesController @Inject()(
                     checks = checks,
                     optOutProposition = optOutProposition,
                     backUrl = backUrl.url,
-                    isAgent = isAgent,
                     isSupportingAgent = user.isSupportingAgent,
                     origin = origin,
                     whatTheUserCanDo = whatTheUserCanDoContent,
-                    optInOptOutContentR17Enabled = isR17ContentEnabled,
                   taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status))
                 )
               }
@@ -118,7 +115,7 @@ class NextUpdatesController @Inject()(
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     getNextUpdates(
-      backUrl = controllers.routes.HomeController.show(origin),
+      backUrl = hub.controllers.routes.HomeController.show(origin),
       isAgent = false,
       errorHandler = itvcErrorHandler,
       origin = origin
@@ -128,7 +125,7 @@ class NextUpdatesController @Inject()(
   def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       getNextUpdates(
-        backUrl = controllers.routes.HomeController.showAgent(),
+        backUrl = hub.controllers.routes.HomeController.showAgent(),
         isAgent = true,
         errorHandler = agentItvcErrorHandler,
         origin = None

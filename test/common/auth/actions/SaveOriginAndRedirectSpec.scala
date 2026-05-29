@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import mocks.services.MockAsyncCacheApi
+import common.mocks.services.MockAsyncCacheApi
 import org.mockito.Mockito.mock
 import play.api.http.Status.SEE_OTHER
 import play.api.i18n.MessagesApi

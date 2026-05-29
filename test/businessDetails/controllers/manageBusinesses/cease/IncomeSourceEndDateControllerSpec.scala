@@ -16,10 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import connectors.ITSAStatusConnector
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.MTDIndividual
-import mocks.services.{MockDateService, MockSessionService}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.*
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -32,7 +28,6 @@ import play.api.http.Status
 import play.api.http.Status.*
 import play.api.mvc.*
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateService, DateServiceInterface, SessionService}
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 
@@ -40,8 +35,13 @@ import java.time.LocalDate
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockDateService, MockSessionService}
+import common.services.{DateService, DateServiceInterface, SessionService}
 
 class IncomeSourceEndDateControllerSpec extends MockAuthActions with MockSessionService with MockDateService{
 

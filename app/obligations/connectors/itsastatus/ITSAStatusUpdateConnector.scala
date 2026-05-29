@@ -16,9 +16,9 @@
 
 package obligations.connectors.itsastatus
 
-import connectors.RawResponseReads
 import ITSAStatusUpdateConnectorModel.*
 import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.libs.json.Json
@@ -45,7 +45,7 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
   }
 
   private def buildRequestUrlWith(userNino: String): String =
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/itsa-status/update/$userNino"
+    s"${appConfig.incomeTaxObligationsService}/income-tax-obligations/itsa-status/update/$userNino"
 
   private[connectors] def updateITSAStatus(userNino: String, requestBody: ITSAStatusUpdateRequest)
                                           (implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {

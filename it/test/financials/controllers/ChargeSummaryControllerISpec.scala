@@ -18,11 +18,10 @@ package financials.controllers
 
 import audit.models.ChargeSummaryAudit
 import common.auth.MtdItUser
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import enums.ChargeType.ITSA_ENGLAND_AND_NI
 import enums.CodingOutType.*
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import financials.controllers.ChargeSummaryISpecHelper
 import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.ChargeHistory

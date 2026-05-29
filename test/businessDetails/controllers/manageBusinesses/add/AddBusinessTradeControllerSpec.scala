@@ -17,13 +17,14 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
-import enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import mocks.services.MockSessionService
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 import models.UIJourneySessionData
 import models.admin.OverseasBusinessAddress
 import models.core.{AddressModel, CheckMode, Mode, NormalMode}
@@ -33,7 +34,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.*
-import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.business1
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
 

@@ -16,13 +16,14 @@
 
 package financials.controllers
 
+import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
-import enums.{MTDIndividual, MTDSupportingAgent}
+import common.mocks.services.MockDateService
+import common.services.{DateService, DateServiceInterface}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import forms.utils.SessionKeys.gatewayPage
-import mocks.services.MockDateService
 import models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import models.incomeSourceDetails.TaxYear
@@ -36,7 +37,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{DateService, DateServiceInterface, WhatYouOweService}
+import services.WhatYouOweService
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -141,9 +142,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
     moneyInYourAccountUrl = if (isAgent) MoneyInYourAccountController.showAgent().url else MoneyInYourAccountController.show().url,
     creditAndRefundEnabled = true,
     taxYearSummaryUrl = _ => if (isAgent)
-      controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
+      returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
     else
-      controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
+      returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
     claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(ctaViewModel(adjustPaymentsOnAccountFSEnabled, poaTaxYear)),
     lpp2Url = LPP2Url,
     adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url,

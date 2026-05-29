@@ -1,0 +1,87 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import uk.gov.hmrc.govukfrontend.views.Aliases._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import returns.views.html.partials.taxYearSummaryBreakdownPartial
+@import common.views.html.helpers.injected.ContinueButton
+@import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
+@import common.config.FrontendAppConfig
+@import common.views.html.components._
+@import views.html.components.h1_itsa
+@import common.views.html.layouts.unifiedLayout
+@import models.liabilitycalculation.viewmodels.CalculationSummary
+
+@this(layout: unifiedLayout,
+      breakdownPartial: taxYearSummaryBreakdownPartial,
+      inset: GovukInsetText,
+      form: FormWithCSRF,
+      continueButton: ContinueButton,
+      p: p,
+      h1Caption: h1_itsa,
+      govukInsetText : GovukInsetText
+)
+
+@(overview: CalculationSummary, taxYear: Int, isAgent: Boolean = false, backUrl: String, btaNavPartial: Option[Html] = None,
+        origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit messages: Messages, request: Request[_], appConfig: FrontendAppConfig)
+
+@headingText = @{
+    val key = s"final-tax-overview.${if(isAgent) "agent" else "individual"}.heading"
+
+    messages(key)
+}
+
+@subHeadingText = @{
+    val key = s"final-tax-overview.caption"
+    messages(key, (taxYear - 1).toString, taxYear.toString)
+}
+
+@insetContent = {
+    @messages("final-tax-overview.inset.1") <a class="govuk-link" href=@{appConfig.submissionFrontendTaxOverviewUrl(taxYear)}>@messages(s"final-tax-overview.${if(isAgent) "agent" else "individual"}.inset.2")</a>
+}
+
+@formCall = @{
+    if(isAgent) {
+        returns.controllers.routes.FinalTaxCalculationController.agentSubmit(taxYear)
+    } else {
+        returns.controllers.routes.FinalTaxCalculationController.submit(taxYear)
+    }
+}
+    
+@layout(
+    pageTitle = headingText,
+    backUrl = Some(backUrl),
+    itsaTaxYear = Some(taxYear),
+    btaNavPartial = btaNavPartial,
+    isAgent = isAgent,
+    btaAndPtaServiceNavigation = serviceNavigationPartial
+) {
+    @h1Caption(headingText, Some(subHeadingText))
+
+    @p(classes = "govuk-inset-text govuk-!-margin-bottom-6"){
+        @insetContent
+    }
+
+    @breakdownPartial(overview, taxYear, isFinalCalc = true, isAgent)
+
+    @p(classes = "govuk-body govuk-!-margin-top-7 govuk-!-margin-bottom-7") {
+        @messages(s"final-tax-overview.${if(isAgent) "agent" else "individual"}.chargeInfo.p")
+    }
+
+    @form(formCall) {
+        @continueButton()
+    }
+}

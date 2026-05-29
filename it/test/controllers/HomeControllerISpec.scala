@@ -16,15 +16,15 @@
 
 package controllers
 
-import audit.models.HomeAudit
+import hub.audit.models.HomeAudit
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import enums.MTDIndividual
+import common.enums.MTDIndividual
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.{ITSAStatusDetailsStub, MTDIndividualAuthStub}
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, PenaltyDetailsStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -140,7 +140,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             result should have(
               httpStatus(OK),
               pageTitleInd("home.heading.new"),
-              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate)
             )
 
@@ -213,7 +213,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             result should have(
               httpStatus(OK),
               pageTitleInd("home.heading.new"),
-              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
               elementTextBySelector("#payments-tile p:nth-child(2)")(noPaymentsDue)
             )
 
@@ -288,7 +288,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             result should have(
               httpStatus(OK),
               pageTitleInd("home.heading.new"),
-              elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(overdue),
               elementTextBySelector("#payments-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}")
             )
 
@@ -365,7 +365,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             result should have(
               httpStatus(OK),
               pageTitleInd("home.heading.new"),
-              elementTextBySelector("#updates-tile p:nth-child(2)")(s"$overdue ${currentDate.minusDays(1).toLongDate}"),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(overdue),
               elementTextBySelector("#payments-tile p:nth-child(2)")(overduePayments(numberOverdue = "2"))
             )
 
@@ -540,7 +540,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             result should have(
               httpStatus(OK),
               pageTitleInd("home.heading.new"),
-              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
             )
@@ -613,7 +613,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             result should have(
               httpStatus(OK),
               pageTitleInd("home.heading.new"),
-              elementTextBySelector("#updates-tile p:nth-child(2)")(currentDate.toLongDate),
+              elementTextBySelector("#updates-tile p:nth-child(2)")(nextUpdateDue(currentDate.toLongDate)),
               elementTextBySelector("#payments-tile p:nth-child(2)")(currentDate.toLongDate),
               elementTextBySelector("#income-sources-tile h2:nth-child(1)")("Your businesses")
             )

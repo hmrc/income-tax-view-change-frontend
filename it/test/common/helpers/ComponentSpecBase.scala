@@ -19,11 +19,11 @@ package common.helpers
 import com.github.tomakehurst.wiremock.client.WireMock
 import common.auth.{HeaderExtractor, MtdItUser}
 import common.config.FrontendAppConfig
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
+import common.implicits.ImplicitDateFormatterImpl
 import common.models.auth.AuthorisedAndEnrolledRequest
-import enums.{MTDIndividual, MTDUserRole}
-import helpers.*
-import implicits.ImplicitDateFormatterImpl
+import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*
@@ -39,7 +39,6 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseIntegrationTestConstants.*
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -159,6 +158,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.identity-verification-frontend.host" -> "http://stubIV.com",
     "microservice.services.income-tax-view-change.host" -> mockHost,
     "microservice.services.income-tax-view-change.port" -> mockPort,
+    "microservice.services.income-tax-obligations.host" -> mockHost,
+    "microservice.services.income-tax-obligations.port" -> mockPort,
     "microservice.services.self-assessment-api.host" -> mockHost,
     "microservice.services.self-assessment-api.port" -> mockPort,
     "microservice.services.business-account.host" -> mockHost,

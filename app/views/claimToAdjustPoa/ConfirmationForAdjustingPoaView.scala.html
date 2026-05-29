@@ -35,7 +35,7 @@
         formWithCSRF: FormWithCSRF
 )
 
-@(isAgent: Boolean, viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
+@(viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @getCorrectBody = @{
     if (viewModel.isAmountZero)   getMessage("p2")
@@ -43,8 +43,8 @@
 }
 
 @getHomePageUrl = @{
-    if (isAgent) controllers.routes.HomeController.showAgent().url
-    else         controllers.routes.HomeController.show().url
+    if (user.isAgent) hub.controllers.routes.HomeController.showAgent().url
+    else              hub.controllers.routes.HomeController.show().url
 }
 
 @getMessage(key: String, args: String*) = @{
@@ -52,12 +52,12 @@
 }
 
 @postAction = @{
-    claimToAdjustPoaRoutes.ConfirmationForAdjustingPoaController.submit(isAgent)
+    claimToAdjustPoaRoutes.ConfirmationForAdjustingPoaController.submit(user.isAgent)
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
      backUrl = Some("/"),
-     isAgent = isAgent,
+     isAgent = user.isAgent,
      btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
      useFallbackBackLink = true) {

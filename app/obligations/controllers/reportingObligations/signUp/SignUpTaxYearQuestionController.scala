@@ -40,10 +40,11 @@ class SignUpTaxYearQuestionController @Inject()(
                                                  val signUpService: SignUpService,
                                                  val itvcErrorHandler: ItvcErrorHandler,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler
-                                               )(implicit val appConfig: FrontendAppConfig,
+                                               )(
+                                                 implicit val appConfig: FrontendAppConfig,
                                                  val mcc: MessagesControllerComponents,
-                                                 val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
+                                                 val ec: ExecutionContext
+                                               ) extends FrontendController(mcc) with I18nSupport with JourneyCheckerSignUp {
 
   private def errorHandler(isAgent: Boolean): ShowInternalServerError =
     if (isAgent) itvcErrorHandlerAgent
@@ -59,7 +60,6 @@ class SignUpTaxYearQuestionController @Inject()(
                 withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear, None) {
                   Future(Ok(
                     view(
-                      isAgent,
                       viewModel,
                       SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY),
                       routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)
@@ -84,7 +84,6 @@ class SignUpTaxYearQuestionController @Inject()(
             SignUpTaxYearQuestionForm(viewModel.signUpTaxYear.taxYear, viewModel.signingUpForCY).bindFromRequest().fold(
               formWithErrors => Future(BadRequest(
                 view(
-                  isAgent = isAgent,
                   viewModel = viewModel,
                   form = formWithErrors,
                   postAction = routes.SignUpTaxYearQuestionController.submit(isAgent, taxYear)

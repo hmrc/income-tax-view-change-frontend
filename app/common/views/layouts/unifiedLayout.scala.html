@@ -26,7 +26,7 @@
 @import common.views.html.layouts.scripts.Scripts
 @import common.config.FrontendAppConfig
 @import common.views.html.helpers.injected.BackLinkWithFallback
-@import enums.GatewayPage._
+@import common.enums.GatewayPage._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderUrls
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderNames
 
@@ -104,8 +104,8 @@
         }
     }
 
-    val serviceUrl = if (isAgent) controllers.routes.HomeController.showAgent().url
-        else controllers.routes.HomeController.show().url
+    val serviceUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url
+        else hub.controllers.routes.HomeController.show().url
 
     if(useGovUkRebrand) {
         val navBar = btaAndPtaServiceNavigation match {

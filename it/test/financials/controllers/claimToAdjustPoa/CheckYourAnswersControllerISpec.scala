@@ -19,8 +19,8 @@ package financials.controllers.claimToAdjustPoa
 import audit.models.AdjustPaymentsOnAccountAuditModel
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess

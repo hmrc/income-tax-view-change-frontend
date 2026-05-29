@@ -16,6 +16,8 @@
 
 package audit.models
 
+import common.enums.AuditType.AdjustPaymentsOnAccount
+import common.enums.TransactionName
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import testUtils.TestSupport
@@ -24,8 +26,8 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class AdjustPaymentsOnAccountAuditModelSpec extends TestSupport {
 
-  val transactionName: String = enums.TransactionName.AdjustPaymentsOnAccount.name
-  val auditType: String = enums.AuditType.AdjustPaymentsOnAccount.name
+  val transactionName: String = TransactionName.AdjustPaymentsOnAccount.name
+  val auditType: String = AdjustPaymentsOnAccount.name
 
   def getAdjustPaymentsOnAccountAuditModel(isSuccessful: Boolean,isAgent: Boolean): AdjustPaymentsOnAccountAuditModel = {
     val typeOfUser = if(isAgent) getAgentUser(FakeRequest()) else getIndividualUser(FakeRequest())

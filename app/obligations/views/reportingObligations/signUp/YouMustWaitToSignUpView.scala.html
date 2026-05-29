@@ -15,7 +15,7 @@
  *@
 
 @import common.auth.MtdItUser
-@import services.DateServiceInterface
+@import common.services.DateServiceInterface
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
@@ -32,7 +32,6 @@
 
 @(
     viewModel: YouMustWaitToSignUpViewModel,
-    isAgent: Boolean,
     origin: Option[String] = None
 )(implicit user: MtdItUser[_], messages: Messages)
 
@@ -59,13 +58,13 @@
 }
 
 @mainTemplate(
-    pageTitle = if(isAgent) messages("youMustWait.agent.title", viewModel.nextTaxYear) else messages("youMustWait.title", viewModel.nextTaxYear),
-    backUrl = if(isAgent) None else Some(viewModel.backUrl),
+    pageTitle = if(user.isAgent) messages("youMustWait.agent.title", viewModel.nextTaxYear) else messages("youMustWait.title", viewModel.nextTaxYear),
+    backUrl = if(user.isAgent) None else Some(viewModel.backUrl),
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 
-    @if(!isAgent){
+    @if(!user.isAgent){
         @individualContent
     }else{
         @agentContent

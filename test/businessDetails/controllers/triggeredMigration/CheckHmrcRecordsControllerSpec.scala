@@ -16,21 +16,21 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import businessDetails.mocks.services.MockTriggeredMigrationService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
+import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.MTDIndividual
+import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import common.mocks.auth.MockAuthActions
-import connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
-import enums.MTDIndividual
+import common.services.DateServiceInterface
 import models.admin.TriggeredMigration
 import models.core.IncomeSourceId
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeUnconfirmed
 
 import scala.concurrent.Future

@@ -29,14 +29,14 @@
         link: link,
 )
 
-@(isAgent: Boolean, poaTaxYear: TaxYear, poaTotalAmount: BigDecimal, showOverdueCharges: Boolean)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
+@(poaTaxYear: TaxYear, poaTotalAmount: BigDecimal, showOverdueCharges: Boolean)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"claimToAdjustPoa.success.$key", args: _*)
 }
 
 @whatYouOweUrl = @{
-    if(isAgent) {
+    if(user.isAgent) {
         financialsRoutes.WhatYouOweController.showAgent().url
     } else {
         financialsRoutes.WhatYouOweController.show().url
@@ -44,7 +44,7 @@
 }
 
 @mainTemplate(pageTitle = getMessage("heading"),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 

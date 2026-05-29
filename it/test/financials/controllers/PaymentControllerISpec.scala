@@ -17,7 +17,7 @@
 package financials.controllers
 
 import common.controllers.ControllerISpecHelper
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.core.PaymentJourneyModel
 import play.api.http.Status.OK

@@ -20,12 +20,12 @@ import audit.models.PaymentAllocationsResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.GatewayPage.GatewayPage
+import common.implicits.ImplicitDateFormatterImpl
 import common.services.AuditingService
-import enums.GatewayPage.GatewayPage
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import forms.utils.SessionKeys.gatewayPage
-import implicits.ImplicitDateFormatterImpl
 import models.admin.CreditsRefundsRepay
 import models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
@@ -86,8 +86,8 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
           btaNavPartial = user.btaNavPartial,
           serviceNavigationPartial = user.serviceNavigationPartial,
-          isAgent = isAgent, origin = origin, gatewayPage = sessionGatewayPage,
-          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages))
+          origin = origin, gatewayPage = sessionGatewayPage,
+          creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages, user))
 
       case Left(PaymentAllocationError(Some(Http.Status.NOT_FOUND))) =>
         Redirect(redirectUrl)

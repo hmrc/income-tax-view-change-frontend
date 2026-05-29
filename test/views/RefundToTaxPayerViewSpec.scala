@@ -17,11 +17,12 @@
 package views
 
 import common.config.FrontendAppConfig
-import implicits.ImplicitDateFormatter
+import common.implicits.ImplicitDateFormatter
 import models.creditsandrefunds.RefundToTaxPayerViewModel
 import models.repaymentHistory._
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
+import common.auth.MtdItUser
 import testUtils.ViewSpec
 import views.html.RefundToTaxPayerView
 
@@ -207,9 +208,10 @@ class RefundToTaxPayerViewSpec extends ViewSpec with ImplicitDateFormatter {
       repaymentMethod = RefundToTaxPayerMessages.tableValueMethodTypeBacsPaymentOut
     )
 
-  class RefundToTaxPayerViewSetup(testRefundViewModel: RefundToTaxPayerViewModel, saUtr: Option[String] = Some("AY888881A"), isAgent: Boolean = false) extends Setup(
-    refundToTaxPayerView(testRefundViewModel, paymentHistoryRefundsEnabled = false, "testBackURL", saUtr, isAgent = isAgent)(FakeRequest(), implicitly)
-  )
+  class RefundToTaxPayerViewSetup(testRefundViewModel: RefundToTaxPayerViewModel, saUtr: Option[String] = Some("AY888881A"), isAgent: Boolean = false) extends Setup({
+    implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
+    refundToTaxPayerView(testRefundViewModel, paymentHistoryRefundsEnabled = false, "testBackURL", saUtr)(FakeRequest(), implicitly, testUser)
+  })
 
   "The refund to tax payer view with repayment history response model" should {
     "when the user has repayment history" should {

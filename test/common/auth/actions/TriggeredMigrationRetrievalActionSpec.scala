@@ -16,15 +16,15 @@
 
 package common.auth.actions
 
-import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
+import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
-import businessDetails.services.CustomerFactsUpdateService
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.{defaultIncomeSourcesData, getMtdItUser}
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import connectors.IncomeTaxCalculationConnector
-import enums.JourneyType.TriggeredMigrationJourney
-import mocks.services.MockSessionService
+import common.connectors.IncomeTaxCalculationConnector
+import common.enums.JourneyType.TriggeredMigrationJourney
+import common.mocks.services.MockSessionService
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import models.UIJourneySessionData
 import models.admin.{FeatureSwitchName, TriggeredMigration}
 import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
@@ -40,7 +40,6 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.{DateServiceInterface, ITSAStatusService}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

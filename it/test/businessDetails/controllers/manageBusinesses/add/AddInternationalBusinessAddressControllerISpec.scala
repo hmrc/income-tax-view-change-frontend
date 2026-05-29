@@ -19,8 +19,8 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.helpers.servicemocks.AddressLookupStub
 import businessDetails.testConstants.AddressLookupTestConstants
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.admin.OverseasBusinessAddress
 import play.api.http.Status.{OK, SEE_OTHER}

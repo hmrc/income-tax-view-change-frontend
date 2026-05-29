@@ -17,7 +17,7 @@
 package obligations.repositories
 
 import cats.data.OptionT
-import enums.JourneyType.{Opt, SignUpJourney}
+import common.enums.JourneyType.{Opt, SignUpJourney}
 import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.SignUpSessionData

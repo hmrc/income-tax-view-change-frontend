@@ -18,7 +18,7 @@ package services
 
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
+import common.enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import models.admin.FeatureSwitchName
 import models.liabilitycalculation.*

@@ -17,36 +17,32 @@
 package common.controllers
 
 import common.config.FrontendAppConfig
-import common.controllers.errors.routes as errorRoutes
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.controllers.agent.routes as agentRoutes
+import common.controllers.errors.routes as errorRoutes
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.helpers.ComponentSpecBase
-import common.helpers.servicemocks.{AuditStub, MTDAgentAuthStub, MTDIndividualAuthStub, SessionDataStub}
-import common.models.audit.AccessDeniedForSupportingAgentAuditModel
-import common.viewUtils.InternalUrlHelper
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.*
 import common.helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
 import common.helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
+import common.helpers.servicemocks.{AuditStub, MTDAgentAuthStub, MTDIndividualAuthStub, SessionDataStub}
+import common.models.audit.AccessDeniedForSupportingAgentAuditModel
+import common.viewUtils.InternalUrlHelper
 import models.admin.FeatureSwitchName
 import models.extensions.FinancialDetailsModelExtension
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
-import testOnly.repository.FeatureSwitchRepository
 
 trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModelExtension {
 
   val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 
-  val featureSwitchRepository = app.injector.instanceOf[FeatureSwitchRepository]
-
   override val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   def homeUrl(mtdUserRole: MTDUserRole): String = mtdUserRole match {
-    case MTDIndividual => controllers.routes.HomeController.show().url
-    case _ => controllers.routes.HomeController.showAgent().url
+    case MTDIndividual => hub.controllers.routes.HomeController.show().url
+    case _ => hub.controllers.routes.HomeController.showAgent().url
   }
 
   def stubAuthorised(mtdRole: MTDUserRole, featureSwitches: List[FeatureSwitchName] = List()): Unit = {
@@ -74,20 +70,20 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
   def testNoClientDataFailure(requestPath: String, optBody: Option[Map[String, Seq[String]]] = None): Unit = {
     "the user does not have client session data" should {
-      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" in {
+      s"redirect ($SEE_OTHER) to ${hub.controllers.agent.routes.EnterClientsUTRController.show().url}" in {
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         SessionDataStub.stubGetSessionDataResponseNotFound()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
         )
       }
     }
 
     "the user has client session data but citizen details not found" should {
-      s"redirect ($SEE_OTHER) to ${controllers.agent.routes.EnterClientsUTRController.show().url}" in {
+      s"redirect ($SEE_OTHER) to ${hub.controllers.agent.routes.EnterClientsUTRController.show().url}" in {
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         SessionDataStub.stubGetSessionDataResponseSuccess()
         stubGetCitizenDetails(status = 404)
@@ -95,7 +91,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
         )
       }
     }
@@ -184,7 +180,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
         )
       }
     }
@@ -223,7 +219,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(controllers.routes.HomeController.show().url)
+            redirectURI(hub.controllers.routes.HomeController.show().url)
           )
         }
       }

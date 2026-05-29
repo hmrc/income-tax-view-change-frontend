@@ -31,7 +31,7 @@
         continueButton: ContinueButton
 )
 
-@(isAgent: Boolean, viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"optout.taxYearQuestion.$key.${viewModel.messageSuffix}", args: _*)
@@ -43,7 +43,7 @@
 @mainTemplate(
     pageTitle = getMessage("title", startTaxYear, endTaxYear),
     backUrl = Some("#"),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 

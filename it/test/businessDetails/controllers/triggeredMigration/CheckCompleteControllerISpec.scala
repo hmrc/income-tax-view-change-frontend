@@ -17,14 +17,14 @@
 package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
-import enums.JourneyType.TriggeredMigrationJourney
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.UIJourneySessionData
 import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import common.controllers.ControllerISpecHelper
+import common.enums.JourneyType.TriggeredMigrationJourney
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
@@ -64,8 +64,8 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
     val homePageUrl: String =
-      if(mtdRole == MTDIndividual) controllers.routes.HomeController.show().url
-      else controllers.routes.HomeController.showAgent().url
+      if(mtdRole == MTDIndividual) hub.controllers.routes.HomeController.show().url
+      else hub.controllers.routes.HomeController.showAgent().url
 
     s"GET $path" when {
       s"user is $mtdRole" should {

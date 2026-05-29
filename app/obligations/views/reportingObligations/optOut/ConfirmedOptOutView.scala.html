@@ -35,7 +35,6 @@
 
 @(
     viewModel: ConfirmedOptOutViewModel,
-    isAgent: Boolean = false,
     confirmedOptOutViewScenarios: ConfirmedOptOutViewScenarios,
     selfAssessmentTaxReturnLink: String,
     compatibleSoftwareLink: String
@@ -286,7 +285,7 @@
 
 
 @yourReportingFrequencyBlock = @{
-    val reportingFrequencyUrl = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    val reportingFrequencyUrl = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(user.isAgent).url
     val reportingFrequencyLink = link(
         id = Some("your-reporting-frequency-link"),
         link = reportingFrequencyUrl,
@@ -305,7 +304,7 @@
         @p(id = Some("view-upcoming-updates")) {
             @link(
                 id = Some("view-upcoming-updates-link"),
-                link = if(isAgent) obligationsRoutes.NextUpdatesController.showAgent().url else obligationsRoutes.NextUpdatesController.show().url,
+                link = if(user.isAgent) obligationsRoutes.NextUpdatesController.showAgent().url else obligationsRoutes.NextUpdatesController.show().url,
                 messageKey = "optout.confirmedOptOut.viewUpcomingDeadlines.text"
             )
         }
@@ -384,7 +383,7 @@
 
 @mainTemplate(
     pageTitle = messages("optout.confirmedOptOut.heading"),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {

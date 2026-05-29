@@ -26,7 +26,7 @@ import play.twirl.api.HtmlFormat
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 import java.time.LocalDate
 
@@ -196,8 +196,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     val businessTrade = "Test Trade"
     val businessAddressAsString = "64 Zoo Lane Cbeebies ZO0 1AN United Kingdom"
 
-    val backUrl: String = if (isAgent) controllers.routes.HomeController.showAgent().url else
-      controllers.routes.HomeController.show().url
+    val backUrl: String = if (isAgent) hub.controllers.routes.HomeController.showAgent().url else
+      hub.controllers.routes.HomeController.show().url
     val postAction: Call = addBusinessRoutes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, mode = NormalMode)
 
 

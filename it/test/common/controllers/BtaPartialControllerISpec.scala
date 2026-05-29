@@ -16,7 +16,7 @@
 
 package common.controllers
 
-import enums.MTDIndividual
+import common.enums.MTDIndividual
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.*
 import testConstants.BaseIntegrationTestConstants.testMtditid

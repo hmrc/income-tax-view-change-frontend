@@ -17,8 +17,10 @@
 package obligations.services.reportingObligations.optOut.quarterlyupdates
 
 import common.config.FrontendAppConfig
+import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.mocks.{MockAuditingService, MockHttpV2}
-import mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import common.services.DateService
+import mocks.services.MockCalculationListService
 import obligations.connectors.ObligationsConnector
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService
@@ -30,7 +32,6 @@ import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
-import services.DateService
 import testConstants.BaseTestConstants.testNino
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
@@ -49,7 +50,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   implicit override val dateService: DateService = mockDateService
 
   override val appConfig: FrontendAppConfig = new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-    override lazy val itvcProtectedService: String = "http://localhost:9999"
+    override lazy val incomeTaxObligationsService: String = "http://localhost:9999"
   }
 
   val obligationsConnector: ObligationsConnector = new ObligationsConnector(mockHttpClientV2, mockAuditingService, appConfig)
@@ -60,7 +61,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
     nextUpdatesService, mockDateService, repository)
 
   def buildUrl(fromDate: LocalDate, toDate: LocalDate): String = {
-    s"http://localhost:9999/income-tax-view-change/$testNino/obligations/from/$fromDate/to/$toDate"
+    s"http://localhost:9999/income-tax-obligations/$testNino/obligations/from/$fromDate/to/$toDate"
   }
 
   def buildSuccessResponse(): HttpResponse = {

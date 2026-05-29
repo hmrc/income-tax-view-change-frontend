@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
 import common.config.ItvcErrorHandler
 import common.controllers.bta.BtaNavBarController
-import forms.utils.SessionKeys
+import common.utils.AuthUtils
 import models.admin.{FeatureSwitch, NavBarFs}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -94,7 +94,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
           "return PTA partial when origin in session = PTA" in {
             val ptaHtml = Html("<test>PTA</test>")
-            val req = fakeRequestWithActiveSession.withSession(SessionKeys.origin -> "PTA")
+            val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "PTA")
             val mtdReq =
               getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
 
@@ -111,7 +111,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
           "return BTA partial when origin in session = BTA" in {
             val btaHtml = Html("<test>BTA</test>")
-            val req = fakeRequestWithActiveSession.withSession(SessionKeys.origin -> "BTA")
+            val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "BTA")
             val mtdReq =
               getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
 
@@ -130,7 +130,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
         if (rebrand) {
           "return PTA ServiceNavigation when origin = PTA" in {
-            val req = fakeRequestWithActiveSession.withSession(SessionKeys.origin -> "PTA")
+            val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "PTA")
             val mtdReq = getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
 
             val result = action.invokeBlock(
@@ -142,7 +142,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
           }
 
           "return BTA ServiceNavigation when origin = BTA" in {
-            val req = fakeRequestWithActiveSession.withSession(SessionKeys.origin -> "BTA")
+            val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "BTA")
             val mtdReq = getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
 
             val result = action.invokeBlock(
@@ -167,7 +167,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
         "save origin from query params and redirect" in {
           val requestWithQuery =
             fakeRequestWithActiveSession.withTarget(
-              RequestTarget("http://test/testing", "/testing", Map(SessionKeys.origin -> Seq("pta")))
+              RequestTarget("http://test/testing", "/testing", Map(AuthUtils.ORIGIN -> Seq("pta")))
             )
 
           val mtdReq = getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(requestWithQuery)
@@ -176,7 +176,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some("/testing")
-          session(result).get(SessionKeys.origin) shouldBe Some("PTA")
+          session(result).get(AuthUtils.ORIGIN) shouldBe Some("PTA")
         }
       }
     }

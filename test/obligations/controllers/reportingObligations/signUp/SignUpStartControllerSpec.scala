@@ -16,10 +16,11 @@
 
 package obligations.controllers.reportingObligations.signUp
 
+import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
-import enums.MTDIndividual
-import models.admin.{OptInOptOutContentUpdateR17, SignUpFs}
+import common.services.DateServiceInterface
+import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.Voluntary
 import obligations.mocks.services.MockSignUpService
@@ -32,7 +33,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.DateServiceInterface
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
@@ -44,7 +44,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
       api.inject.bind[SignUpService].toInstance(mockSignUpService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
-  ).build()
+    ).build()
 
   lazy val testController = app.injector.instanceOf[SignUpStartController]
 
@@ -55,7 +55,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
       val action = testController.show(isAgent, Some("2025"))
       s"the user is authenticated as a $mtdRole" should {
         "render the sign up start page" in {
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
@@ -73,7 +73,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
         }
 
         "be redirected to the reporting frequency page if the chosen tax year intent is not found" in {
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17, SignUpFs))
+          setupMockSuccess(mtdRole, false, List(SignUpFs))
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(None))
@@ -91,16 +91,16 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           redirectLocation(result) shouldBe Some(obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url)
         }
 
-        "be redirected to the reporting frequency page if the sign up feature switch is disabled" in {
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+        "be redirected to the home page if the sign up feature switch is disabled" in {
+          setupMockSuccess(mtdRole, false, List())
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
 
           val redirectUrl = if (isAgent) {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
+            hub.controllers.routes.HomeController.showAgent().url
           } else {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
+            hub.controllers.routes.HomeController.show().url
           }
 
           when(mockSignUpService.fetchSavedSignUpSessionData()(any(), any(), any()))
@@ -112,7 +112,7 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
 
-        "be redirected to the reporting frequency page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
+        "be redirected to the home page if the OptInOptOutContentUpdateR17 feature switch is disabled" in {
           setupMockSuccess(mtdRole)
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -125,17 +125,17 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
 
 
           val redirectUrl = if (isAgent) {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
+            hub.controllers.routes.HomeController.showAgent().url
           } else {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
+            hub.controllers.routes.HomeController.show().url
           }
 
           status(result) shouldBe SEE_OTHER
           redirectLocation(result) shouldBe Some(redirectUrl)
         }
 
-        "be redirected to the reporting frequency page if the Sign Up feature switch is disabled" in {
-          setupMockSuccess(mtdRole, false, List(OptInOptOutContentUpdateR17))
+        "be redirected to the home page if the Sign Up feature switch is disabled" in {
+          setupMockSuccess(mtdRole, false, List())
           mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           mockIsSignUpTaxYearValid(Future.successful(Some(SignUpTaxYearQuestionViewModel(CurrentSignUpTaxYear(Voluntary, TaxYear(2025, 2026))))))
@@ -143,9 +143,9 @@ class SignUpStartControllerSpec extends MockAuthActions with MockSignUpService {
           val result = action(fakeRequest)
 
           val redirectUrl = if (isAgent) {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(true).url
+            hub.controllers.routes.HomeController.showAgent().url
           } else {
-            obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
+            hub.controllers.routes.HomeController.show().url
           }
 
           status(result) shouldBe SEE_OTHER

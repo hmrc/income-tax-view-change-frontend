@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import common.enums.IncomeSourceJourney.IncomeSourceType
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 case class IncomeSourceCeasedObligationsViewModel(

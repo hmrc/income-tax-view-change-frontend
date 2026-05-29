@@ -17,11 +17,12 @@
 package obligations.controllers.reportingObligations
 
 import common.config.FrontendAppConfig
+import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
-import enums.MTDIndividual
-import mocks.services.MockDateService
-import models.admin.{OptInOptOutContentUpdateR17, OptOutFs, SignUpFs}
+import common.mocks.services.MockDateService
+import common.services.{DateService, DateServiceInterface}
+import models.admin.{OptOutFs, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import obligations.mocks.services.{MockOptOutService, MockSignUpService}
@@ -37,7 +38,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.{DateService, DateServiceInterface}
 import testConstants.BaseTestConstants.{testMtditid, testNino}
 import testConstants.BusinessDetailsTestConstants.business1
 
@@ -78,10 +78,12 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
       val action = testController.show(isAgent)
       s"the user is authenticated as a $mtdRole" should {
         "render the reporting frequency page" when {
-          "the reporting frequency feature switch is enabled" in {
+          "the reporting frequency feature switches are enabled" in {
+
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-            when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(fixedTaxYear)
-            when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
+
+            when(mockDateServiceInjected.getCurrentDate).thenReturn(LocalDate.of(2023, 1, 1))
+            when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(TaxYear(2023, 2024))
             setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs))
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
@@ -127,9 +129,9 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   signUpTaxYears = Seq(TaxYear(2024, 2025)),
                   itsaStatusTable =
                     Seq(
-                      ("2023 to 2024", None, Some("Quarterly (mandatory)")),
-                      ("2024 to 2025", None, Some("Quarterly")),
-                      ("2025 to 2026", None, Some("Quarterly (mandatory)"))
+                      ("2023 to 2024", Some("Yes"), Some("Required")),
+                      ("2024 to 2025", Some("Yes"), Some("Voluntarily signed up")),
+                      ("2025 to 2026", Some("Yes"), Some("Required"))
                     ),
                   isAnyOfBusinessLatent = true,
                   displayCeasedBusinessWarning = false,
@@ -138,15 +140,16 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   isSignUpEnabled = true,
                   isOptOutEnabled = true
                 ),
-                optInOptOutContentUpdateR17IsEnabled = false,
-                nextUpdatesLink = if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url else obligations.controllers.routes.NextUpdatesController.show().url
+                nextUpdatesLink =
+                  if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url
+                  else obligations.controllers.routes.NextUpdatesController.show().url
               ).toString
           }
           "the reporting frequency and the R17 content feature switches are enabled" in {
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
-            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs, OptInOptOutContentUpdateR17))
+            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs))
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
@@ -203,7 +206,6 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   isSignUpEnabled = true,
                   isOptOutEnabled = true
                 ),
-                optInOptOutContentUpdateR17IsEnabled = true,
                 nextUpdatesLink = if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url else obligations.controllers.routes.NextUpdatesController.show().url
               ).toString
           }

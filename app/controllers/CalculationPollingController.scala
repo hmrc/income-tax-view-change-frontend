@@ -75,9 +75,9 @@ class CalculationPollingController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual().async {
       implicit user =>
         lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-          controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
+          returns.controllers.routes.FinalTaxCalculationController.show(taxYear, origin)
         } else {
-          controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin)
+          returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear, origin)
         }
 
         handleRequest(
@@ -94,9 +94,9 @@ class CalculationPollingController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent().async { implicit user =>
 
       lazy val successfulPollRedirect: Call = if (isFinalCalc) {
-        controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
+        returns.controllers.routes.FinalTaxCalculationController.showAgent(taxYear)
       } else {
-        controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
+        returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
       }
 
       handleRequest(

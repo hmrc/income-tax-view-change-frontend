@@ -17,11 +17,11 @@
 package businessDetails.forms.manageBusinesses.add
 
 import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import common.auth.MtdItUser
-import implicits.ImplicitDateFormatter
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.implicits.ImplicitDateFormatter
+import common.services.DateService
 import play.api.data.Form
-import services.DateService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

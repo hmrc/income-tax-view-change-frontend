@@ -16,13 +16,14 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import common.controllers.ControllerISpecHelper
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.JourneyType.Cease
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
-import enums.JourneyType.Cease
-import enums.{MTDIndividual, MTDUserRole}
+import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.UIJourneySessionData
 import models.core.IncomeSourceId.mkIncomeSourceId
@@ -30,7 +31,6 @@ import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import services.SessionService
 import testConstants.BaseIntegrationTestConstants._
 import testConstants.IncomeSourceIntegrationTestConstants._
 

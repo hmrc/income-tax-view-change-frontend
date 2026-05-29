@@ -16,8 +16,8 @@
 
 package models.liabilitycalculation.viewmodels
 
+import common.exceptions.MissingFieldException
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
-import exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
 import models.liabilitycalculation.{Message, Messages, PensionContributionDetail, PensionContributionReliefs, ReliefsClaimed, StudentLoan}
 import org.scalatest.OptionValues
@@ -73,6 +73,7 @@ class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionVa
           lossesAppliedToGeneralIncome = Some(12500),
           grossGiftAidPayments = Some(12500),
           giftAidTax = Some(5000.99),
+          winterFuelPaymentCharge = Some(500.99),
           marriageAllowanceTransferredInAmount = Some(5000.99),
           studentLoans = Some(List(StudentLoan(Some("01"), Some(5000.99), Some(5000.99), Some(5000.99), Some(5000.99), Some(1500), Some(20)))),
           reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),
@@ -144,6 +145,7 @@ class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionVa
           lossesAppliedToGeneralIncome = Some(12500),
           grossGiftAidPayments = Some(12500),
           giftAidTax = Some(5000.99),
+          winterFuelPaymentCharge = Some(500.99),
           marriageAllowanceTransferredInAmount = Some(5000.99),
           studentLoans = Some(List(StudentLoan(Some("01"), Some(5000.99), Some(5000.99), Some(5000.99), Some(5000.99), Some(1500), Some(20)))),
           reliefsClaimed = Some(List(ReliefsClaimed("vctSubscriptions", Some(5000.99)),

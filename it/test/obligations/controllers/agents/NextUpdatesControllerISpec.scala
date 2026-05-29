@@ -17,11 +17,11 @@
 package obligations.controllers.agents
 
 import common.controllers.ControllerISpecHelper
-import enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import models.admin.OptOutFs
 import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -157,7 +157,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
               taxYear = dateService.getCurrentTaxYear
             )
-            CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+            CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -170,11 +170,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
             res should have(
               httpStatus(OK),
               pageTitleAgent("nextUpdates.heading"),
-              elementTextBySelector("#updates-software-heading")(expectedValue = "Submitting updates in software"),
-              elementTextBySelector("#updates-software-link")
-              (expectedValue = "Use your compatible record keeping software (opens in new tab) " +
-                "to keep digital records of all your business income and expenses. You must submit these " +
-                "updates through your software by each date shown."),
+              isElementVisibleById("updates-and-deadlines-tabs")(expectedValue = true),
             )
 
             verifyAuditContainsDetail(NextUpdatesResponseAuditModel(getTestUser(MTDPrimaryAgent, incomeSourceDetails), "testId", currentObligations.obligations.flatMap(_.obligations)).detail)
@@ -243,7 +239,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   deadlines = currentObligations
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
-                CalculationListStub.stubGetLegacyCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
+                CalculationListStub.stubGetCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -279,7 +275,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   deadlines = currentObligations
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatAsShortYearRange)
-                CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+                CalculationListStub.stubGetCalculationListError(testNino, previousYear.endYear.toString)
 
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -315,7 +311,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                   deadlines = currentObligations
                 )
                 ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
-                CalculationListStub.stubGetLegacyCalculationListError(testNino, previousYear.endYear.toString)
+                CalculationListStub.stubGetCalculationListError(testNino, previousYear.endYear.toString)
 
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue

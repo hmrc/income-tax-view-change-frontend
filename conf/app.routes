@@ -8,78 +8,36 @@ GET         /assets/*file                                                 contro
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
 #Home Controller
-GET         /                                                             controllers.HomeController.show(origin: Option[String] ?= None)
-GET         /income-tax                                                   controllers.HomeController.show(origin: Option[String] ?= None)
-GET         /agents/client-income-tax                                     controllers.HomeController.showAgent()
-GET         /agents                                                       controllers.HomeController.showAgent()
-GET         /your-tasks                                                   controllers.newHomePage.HandleYourTasksController.show()
-GET         /agents/your-tasks                                            controllers.newHomePage.HandleYourTasksController.showAgent()
+GET         /                                                             hub.controllers.HomeController.show(origin: Option[String] ?= None)
+GET         /income-tax                                                   hub.controllers.HomeController.show(origin: Option[String] ?= None)
+GET         /agents/client-income-tax                                     hub.controllers.HomeController.showAgent()
+GET         /agents                                                       hub.controllers.HomeController.showAgent()
+GET         /your-tasks                                                   hub.controllers.newHomePage.HandleYourTasksController.show()
+GET         /agents/your-tasks                                            hub.controllers.newHomePage.HandleYourTasksController.showAgent()
+GET         /mortgage-evidence/proof-of-income                            hub.controllers.newHomePage.ProofOfYourIncomeController.show(origin: Option[String] ?= None)
+GET         /agents/mortgage-evidence/proof-of-income                     hub.controllers.newHomePage.ProofOfYourIncomeController.showAgent()
 
-GET         /recent-activity                                              controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
-GET         /agents/recent-activity                                       controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
 
-GET         /overview                                                     controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = false)
-GET         /help                                                         controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)
-GET         /agents/overview                                              controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
-GET         /agents/help                                                  controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
+GET         /recent-activity                                              hub.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
+GET         /agents/recent-activity                                       hub.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
 
-# Tax Year Summary
-GET         /tax-year-summary/:taxYear                                    controllers.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear: Int, origin: Option[String] ?= None)
-GET         /agents/tax-year-summary/:taxYear                             controllers.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear: Int)
-
-#IncomeSummary
-GET         /:taxYear/income                                              controllers.IncomeSummaryController.showIncomeSummary(taxYear: Int, origin: Option[String] ?= None, previousCalculation: Boolean ?= false)
-GET         /agents/:taxYear/income                                       controllers.IncomeSummaryController.showIncomeSummaryAgent(taxYear: Int, previousCalculation: Boolean ?= false)
-
-#Tax Due
-GET         /:taxYear/tax-calculation                                     controllers.TaxDueSummaryController.showTaxDueSummary(taxYear: Int, origin: Option[String] ?= None, previousCalculation: Boolean ?= false)
-
-#Agents Tax Due
-GET         /agents/:taxYear/tax-calculation                              controllers.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear: Int,previousCalculation: Boolean ?= false)
-
-#Deductions Summary
-GET         /:taxYear/allowances-and-deductions                           controllers.DeductionsSummaryController.showDeductionsSummary(taxYear: Int, origin: Option[String] ?= None, previousCalculation: Boolean ?= false)
-GET         /agents/:taxYear/allowances-and-deductions                    controllers.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear: Int, previousCalculation: Boolean ?= false)
-
-#TaxYears
-GET         /tax-years                                                    controllers.TaxYearsController.showTaxYears(origin: Option[String] ?= None)
-GET         /agents/tax-years                                             controllers.TaxYearsController.showAgentTaxYears()
+GET         /overview                                                     hub.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = false)
+GET         /help                                                         hub.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = false)
+GET         /agents/overview                                              hub.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
+GET         /agents/help                                                  hub.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
 
 #CalculationId details poller
 GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/calculation/:taxYear/submitted                        controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
 
-#InYear Tax
-GET         /tax-overview                                                 controllers.InYearTaxCalculationController.show(origin: Option[String] ?= None)
-GET         /agents/tax-overview                                          controllers.InYearTaxCalculationController.showAgent()
-
-#Final Tax URLs
-GET         /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.show(taxYear: Int, origin: Option[String] ?= None)
-POST        /:taxYear/final-tax-overview                                  controllers.FinalTaxCalculationController.submit(taxYear: Int)
+#Final Tax calculation poller URLs (shared with returns)
 GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 GET         /agents/:taxYear/final-tax-overview/calculate                 controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 
-#Final Tax URLs - agents
-GET         /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.showAgent(taxYear: Int)
-POST        /agents/:taxYear/final-tax-overview                           controllers.FinalTaxCalculationController.agentSubmit(taxYear: Int)
-
-#Forecast income summary
-GET         /:taxYear/forecast-income                                     controllers.ForecastIncomeSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
-GET         /agents/:taxYear/forecast-income                              controllers.ForecastIncomeSummaryController.showAgent(taxYear: Int)
-
-#Forecast Tax Calc Summary
-GET         /:taxYear/forecast-tax-calculation                            controllers.ForecastTaxCalcSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
-GET         /agents/:taxYear/forecast-tax-calculation                     controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
-
-# Users not migrated to ETMP
-GET          /how-to-claim-refund                                         controllers.NotMigratedUserController.show()
-GET          /agents/how-to-claim-refund                                  controllers.NotMigratedUserController.showAgent()
-
-GET          /how-to-claim-refund-external                                controllers.NotMigratedUserController.redirect()
-GET          /agents/how-to-claim-refund-external                         controllers.NotMigratedUserController.redirectAgent()
 
 ->          /                                                             common.Routes
 ->          /                                                             obligations.Routes
 ->          /                                                             businessDetails.Routes
 ->          /                                                             financialDetails.Routes
 ->          /                                                             claimToAdjustPoa.Routes
+->          /                                                             returns.Routes

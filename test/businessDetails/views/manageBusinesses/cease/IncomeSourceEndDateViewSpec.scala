@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.cease
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,6 +26,7 @@ import play.twirl.api.Html
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceEndDateView
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 
 import java.time.LocalDate
 

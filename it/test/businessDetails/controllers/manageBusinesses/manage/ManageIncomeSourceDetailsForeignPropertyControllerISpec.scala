@@ -16,9 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import businessDetails.enums.IncomeSourceJourney.ForeignProperty
+import common.enums.IncomeSourceJourney.ForeignProperty
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
@@ -80,7 +80,6 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
-              CalculationListStub.stubGetLegacyCalculationList(testNino, "2023")(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -104,7 +103,6 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
-              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
               CalculationListStub.stubGetCalculationList(testNino, taxYearShortString1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -114,9 +112,9 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextByID("change-link-1")(messagesChangeLinkText),
-                elementTextByID("change-link-2")(messagesChangeLinkText),
-                elementTextByID("up-to-two-tax-years")(s"Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April $mandatoryFromYear, you could be required to report quarterly.")
+                elementTextByID("opt-out-link-1")(messagesOptOutLinkText),
+                elementTextByID("sign-up-link-2")(messagesSignUpLinkText),
+                elementTextByID("up-to-two-tax-years")(s"Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April $mandatoryFromYear, you could be required to use the service.")
               )
             }
 
@@ -130,7 +128,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
-              CalculationListStub.stubGetLegacyCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
+              CalculationListStub.stubGetCalculationList(testNino, latencyDetailsCty.taxYear1)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -139,8 +137,8 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
                 pageTitle(mtdUserRole, "incomeSources.manage.business-manage-details.heading"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dt")("Date started"),
                 elementTextBySelectorList("#manage-details-table", "div:nth-of-type(1)", "dd")(businessStartDate),
-                elementTextByID("change-link-1")(""),
-                elementTextByID("change-link-2")(messagesChangeLinkText)
+                elementTextByID("sign-up-link-1")(""),
+                elementTextByID("opt-out-link-2")(messagesOptOutLinkText)
               )
             }
 

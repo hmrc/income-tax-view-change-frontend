@@ -1,3 +1,7 @@
+#######################################################################################################################
+## Common ##
+#######################################################################################################################
+
 outage-page.serviceDisplayName                                  = Manage your Self Assessment
 
 ## Base ##
@@ -78,6 +82,13 @@ agent.confirmClient.clientUtr                                   = Client’s Uni
 agent.confirmClient.changeClient                                = Change client
 agent.confirmClient.confirmContinue                             = Confirm and continue
 
+agent.confirmClient.supportingAgentAccess.p1                    = Supporting agents cannot access a client’s tax account information that shows:
+agent.confirmClient.supportingAgentAccess.bullet1               = payments, credits and refunds
+agent.confirmClient.supportingAgentAccess.bullet2               = returns
+agent.confirmClient.supportingAgentAccess.bullet3               = next charges due
+agent.confirmClient.supportingAgentAccess.bullet4               = penalties and appeals
+agent.confirmClient.supportingAgentAccess.link                  = Read more about the difference between main and supporting agents on GOV.UK
+
 ## Unauthorised Agent Page ##
 agent-unauthorised.heading                                      = You are not authorised to access this page
 agent-unauthorised.note                                         = You are a supporting agent for this client. Only their main agent can access records that show:
@@ -146,7 +157,6 @@ home.payments.heading                                           = Next charges d
 home.payments.daily-interest-charges                            = Daily interest charges
 home.payments.no-payments-due                                   = No payments due
 home.payments.view                                              = Check what you owe
-home.updates.heading                                            = Your submission deadlines
 home.updates.view.reportingFrequency                            = View your deadlines
 home.paymentHistory.heading                                     = Payment history
 home.paymentHistory.view                                        = Payment history
@@ -253,10 +263,24 @@ new.home.overview.income.manage-income                          = Add, manage or
 new.home.overview.tax-year.sub-heading                          = Tax year summaries
 new.home.overview.tax-year.view-all-tax-years                   = View all tax years
 new.home.overview.tax-year.view-tax-years                       = View your {0}-{1} tax calculation and forecast
+new.home.overview.tax-year.proof-of-income                      = Proof of your income (SA302)
 new.home.overview.penalties.sub-heading                         = Penalties and appeals
 new.home.overview.penalties.check-penalties                     = Check Self Assessment penalties and appeals
 new.home.overview.penalties.check-lsp                           = View your late submission penalties
 new.home.overview.penalties.check-lpp                           = View your late payment penalties
+newHome.overview.tax-year.proofOfIncome.pageTitle               = Proof of your income
+newHome.overview.tax-year.proofOfIncome.header                  = Proof of your income (SA302)
+newHome.overview.tax-year.proofOfIncome.p1                      = You can use your SA302 and tax year overview as proof of your income, for example if you’re applying for a mortgage and you’re self-employed.
+newHome.overview.tax-year.proofOfIncome.p2                      = The tax year is from 6 April to 5 April the following year.
+newHome.overview.tax-year.proofOfIncome.card.currentTY.header   = {0} to {1} current tax year
+newHome.overview.tax-year.proofOfIncome.card.previousTY.header  = {0} to {1} tax year
+newHome.overview.tax-year.proofOfIncome.card.legacy.header      = {0} to {1} tax year and earlier
+newHome.overview.tax-year.proofOfIncome.card.sa302key           = SA302 tax calculation
+newHome.overview.tax-year.proofOfIncome.card.legacy             = SA302 and tax year overview
+newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete = Incomplete - cannot be used as proof of your income
+newHome.overview.tax-year.proofOfIncome.card.sa302value.proof   = Proof of your income
+newHome.overview.tax-year.proofOfIncome.card.sa302value.legacy  = Tax years before using Making Tax Digital for Income Tax
+newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = View
 
 ### Help Tab
 new.home.help.heading                                           = Making Tax Digital
@@ -294,6 +318,65 @@ error.custom.heading                                            = There is a pro
 error.custom.message                                            = The page you’re trying to view has changed
 error.custom.link                                               = Return to Making Tax Digital for Income Tax
 
+
+## Timeout page ##
+timeout.heading                                                 = Your session has timed out
+timeout.signIn.1                                                = To view your quarterly reporting details, you’ll have to
+timeout.signIn.2                                                = sign in
+timeout.signIn.3                                                = using your Government Gateway ID.
+
+
+## BTA Partial ##
+bta_partial.heading                                             = Income Tax reporting through software
+bta_partial.p1                                                  = You’ve signed up to report your Income Tax through software. This will replace your Self Assessment tax return.
+bta_partial.p2                                                  = You can view your report deadlines, bills and an estimate for the next tax year.
+bta_partial.home_button                                         = View your Income Tax details
+
+## Not Enrolled
+not_enrolled.heading                                            = You cannot access this service
+not_enrolled.sign-up                                            = You need to
+not_enrolled.sign-up.link                                       = sign up for Making Tax Digital for Income Tax
+
+## Standard Error Page ##
+standardError.heading                                           = Sorry, there is a problem with the service
+standardError.message                                           = Try again later.
+
+global.error.InternalServerError500.title                       = Sorry, there is a problem with the service
+global.error.InternalServerError500.heading                     = Sorry, there is a problem with the service
+global.error.InternalServerError500.message                     = Try again later.
+
+## Beta Banner ##
+betaBanner.beta                                                 = BETA
+betaBanner.newService.new                                       = This is a new service. Help us improve it and
+betaBanner.feedback.link.new                                    = give your feedback
+
+betaBanner.newService                                           = This is a new service
+betaBanner.your                                                 = – your
+betaBanner.feedback                                             = feedback
+betaBanner.improve                                              = will help us to improve it.
+
+## Regimes
+regimes.UK = UK
+regimes.Scotland = Scotland
+regimes.Wales = Wales
+
+## Timeout
+button.continue                                                 = Stay signed in
+
+
+## Uplift Failure
+upliftFailure.title                                             = You cannot view this page
+upliftFailure.content                                           = This may be because:
+upliftFailure.sign.out                                          = Return to Sign in
+upliftFailure.bullet.1                                          = you took too long to enter information and the service has timed out
+upliftFailure.bullet.2                                          = you have failed to answer enough questions correctly
+upliftFailure.bullet.3                                          = we could not match your details to our system
+
+
+#######################################################################################################################
+## Returns ##
+#######################################################################################################################
+
 ## Tax Years Page ##
 taxYears.heading                                               = Your tax returns
 taxYears.description                                           = The tax year runs from 6 April to 5 April.
@@ -314,6 +397,10 @@ taxYears.oldSa.agent.content.1								   = To view a client’s summary from bef
 taxYears.oldSa.agent.content.2								   = Self Assessment for Agents account
 taxYears.oldSa.agent.content.3								   = This will be a different Government Gateway ID and password to your agent services account.
 taxYears.r18.amendment.text                                    = You can view the tax year summary pages to also see your options for amending the filed return for that year.
+taxYears.dropdown.title                                        = Help with proof of your income (SA302)
+taxYears.dropdown.content.1                                    = You can view the
+taxYears.dropdown.content.linkText                             = proof of your income (SA302)
+taxYears.dropdown.content.2                                    = page
 
 ## Tax Years Page - Error ##
 taxYears.error.subheading                                      = Your tax return information cannot currently be displayed here
@@ -485,6 +572,25 @@ tax-year-summary.message.C559105                                   = the amount 
 tax-year-summary.message.C559113                                   = for your foreign property, you need to submit either consolidated or detailed expenses but not both.
 tax-year-summary.message.C559114                                   = for your EEA furnished holiday lettings, you need to submit either consolidated or detailed expenses but not both.
 
+tax-year-summary.message.C119113                                   = Foreign Property - Consolidated expenses cannot be submitted with a full breakdown of expenses.
+tax-year-summary.message.C159113                                   = Foreign Property - Consolidated expenses cannot be submitted with a full breakdown of expenses, please resubmit.
+tax-year-summary.message.C55329                                    = Business entertainment disallowable expenses should not exceed the business entertainment allowable expenses. Please amend and resubmit.
+tax-year-summary.message.C55007                                    = Period submission does not align to cessation date of {0}. Please amend and resubmit.
+tax-year-summary.message.C55015                                    = Period submissions must support the quarter reporting type elected.
+tax-year-summary.message.C55016                                    = Period submissions must support the quarter reporting type elected.
+tax-year-summary.message.C55017                                    = Period submissions must support the quarter reporting type elected.
+tax-year-summary.message.C559200                                   = One or more of your business income sources has a quarter reporting type of CALENDAR, but you have not submitted a Business Source Adjustable Summary.
+tax-year-summary.message.C55326                                    = Periods of Account information is required for all Self Employments. Please submit.
+tax-year-summary.message.C55327                                    = One or more Self Employment income sources with standard reporting require a basis adjustment figure to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
+tax-year-summary.message.C55328                                    = One or more Self Employment income sources with calendar reporting require a basis adjustment figure and business source adjustments to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
+tax-year-summary.message.C55109                                    = Business Asset Disposal Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.message.C55110                                    = Investors Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.message.C55602                                    = Your Foreign property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+tax-year-summary.message.C55107                                    = One or more employments have no directorship declaration submitted. Please submit.
+tax-year-summary.message.C55108                                    = Please ensure that the Dividend Received from Directorships is not greater than UK Dividends.
+tax-year-summary.message.C55525                                    = Your UK property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+
+
 tax-year-summary.agent.message.header                              = We cannot show this calculation because:
 tax-year-summary.agent.message.action                              = You need to amend and resubmit your client’s return
 tax-year-summary.agent.message.C15014                              = a quarterly update cannot end after the accounting period end date of {0}.
@@ -562,6 +668,25 @@ tax-year-summary.agent.message.C559104                             = your client
 tax-year-summary.agent.message.C559105                             = the amount your client claimed for private use adjustment for their foreign property is more than the total allowable expenses.
 tax-year-summary.agent.message.C559113                             = for your client’s foreign property, they need to submit either consolidated or detailed expenses but not both.
 tax-year-summary.agent.message.C559114                             = for your client’s EEA furnished holiday lettings, they need to submit either consolidated or detailed expenses but not both.
+
+tax-year-summary.agent.message.C119113                             = Foreign Property - Consolidated expenses cannot be submitted with a full breakdown of expenses.
+tax-year-summary.agent.message.C159113                             = Foreign Property - Consolidated expenses cannot be submitted with a full breakdown of expenses, please resubmit.
+tax-year-summary.agent.message.C55329                              = Business entertainment disallowable expenses should not exceed the business entertainment allowable expenses. Please amend and resubmit.
+tax-year-summary.agent.message.C55007                              = Period submission does not align to cessation date of {0}. Please amend and resubmit.
+tax-year-summary.agent.message.C55015                              = Period submissions must support the quarter reporting type elected.
+tax-year-summary.agent.message.C55016                              = Period submissions must support the quarter reporting type elected.
+tax-year-summary.agent.message.C55017                              = Period submissions must support the quarter reporting type elected.
+tax-year-summary.agent.message.C559200                             = One or more of your business income sources has a quarter reporting type of CALENDAR, but you have not submitted a Business Source Adjustable Summary.
+tax-year-summary.agent.message.C55326                              = Periods of Account information is required for all Self Employments. Please submit.
+tax-year-summary.agent.message.C55327                              = One or more Self Employment income sources with standard reporting require a basis adjustment figure to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
+tax-year-summary.agent.message.C55328                              = One or more Self Employment income sources with calendar reporting require a basis adjustment figure and business source adjustments to be submitted when disapplying the late accounting date rule. Please amend and resubmit.
+tax-year-summary.agent.message.C55109                              = Business Asset Disposal Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.agent.message.C55110                              = Investors Relief cannot exceed {0}. Please amend and resubmit.
+tax-year-summary.agent.message.C55602                              = Your Foreign property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+tax-year-summary.agent.message.C55107                              = One or more employments have no directorship declaration submitted. Please submit.
+tax-year-summary.agent.message.C55108                              = Please ensure that the Dividend Received from Directorships is not greater than UK Dividends.
+tax-year-summary.agent.message.C55525                              = Your UK property income has exceeded the {0} threshold for cash basis accounting type. You must use accruals accounting type. Please amend and resubmit.
+
 
 tax-year-summary.adjust-poa-paragraph                              = You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account.
 tax-year-summary.adjust-poa                                        = Adjust payments on account
@@ -736,6 +861,7 @@ taxCal_breakdown.table.cgt.due                                      = Capital Ga
 taxCal_breakdown.table.cgt.overpaid                                 = Capital Gains Tax calculated as overpaid
 
 taxCal_breakdown.table.giftAidTax                                            = Gift Aid tax charge
+taxCal_breakdown.table.winterFuelPaymentCharge                               = Winter fuel payment charge
 taxCal_breakdown.table.totalPensionSavingsTaxCharges                         = Total pension saving charges
 taxCal_breakdown.table.statePensionLumpSumCharges                            = State pension lump sum
 taxCal_breakdown.table.other_charges                                         = Other charges
@@ -853,93 +979,57 @@ forecast_taxCalc.incomeTaxNicsCgtDue                            = Forecast Self 
 forecast_taxCalc.noForecast.heading                             = No forecast yet
 forecast_taxCalc.noForecast.text                                = You will be able to see your forecast for the whole year once you have sent an update.
 
+##Tax Years Overview Submissions Tab##
+submissionsTab.desc                                                  = This is a record of your completed and upcoming submissions for the tax year.
+submissionsTab.due                                                   = Due {0}
+submissionsTab.submission                                            = Submission
+submissionsTab.incomeSource                                          = Income source
+submissionsTab.dateSubmitted                                         = Date submitted
+submissionsTab.notReceived                                           = Not received
+submissionsTab.dateToDate                                            = {0} to {1}
+submissionsTab.updatePeriodDateToDate                                = The update period from {0} to {1}
+submissionsTab.obligationType.property                               = Property income
+submissionsTab.obligationType.business                               = Business
+submissionsTab.obligationType.crystallised                           = All income sources
+submissionsTab.submission.quarterly                                  = Quarterly update
+submissionsTab.submission.crystallised                               = Tax return
+
+## Final Tax Overview (Individual/Common Content)
+final-tax-overview.individual.heading                           = Your final tax overview
+final-tax-overview.caption                                      = 6 April {0} to 5 April {1}
+final-tax-overview.inset.1                                      = If you think this information is incorrect, you can
+final-tax-overview.individual.inset.2                           = check your Income Tax Return.
+final-tax-overview.individual.chargeInfo.p                      = The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest.
+
+## Final Tax Overview (Agent Content overrides)
+final-tax-overview.agent.heading                                = Your client’s final tax overview
+final-tax-overview.agent.chargeInfo.p                           = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
+final-tax-overview.agent.inset.2                                = check your client’s Income Tax Return.
+
+tax-year-summary.taxable-income.finalCalc                       = Total taxable income
+tax-year-summary.tax-due.finalCalc                              = Income Tax and National Insurance contributions
+
+
+## InYear Tax Overview (Individual/Common Content)
+inYear-tax-overview.individual.heading                           = Your tax overview 6 April {0} to {1}
+inYear-tax-overview.caption                                      = 6 April {0} to 5 April {1}
+inYear-tax-overview.individual.inset                             = This calculation is only based on your completed updates for this tax year up to {0}. It is not your final tax bill for the year. It is a year to date calculation based on the information that has been entered so far.
+InYear-tax-overview.goToTaxAccount                               = Go to Income Tax Account
+
+## InYear Tax Overview (Agent Content overrides)
+inYear-tax-overview.agent.heading                                = Your client’s tax overview 6 April {0} to {1}
+inYear-tax-overview.agent.inset                                  = This calculation is only based on your client’s completed updates for this tax year up to {0}. It is not their final tax bill for the year. It is a year to date calculation based on the information that has been entered so far.
+
+
+
+#######################################################################################################################
+## Obligations ##
+#######################################################################################################################
+
 ## NextUpdates Page ##
 obligations.heading                                             = Report deadlines
 obligations.quarterly.to                                        = to
 obligations.noReports                                           = You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month.
-
-## Credits Summary Page ##
-credits.heading                                                         = Credits in {0}
-credits.tableHead.date                                                  = Date
-credits.tableHead.type                                                  = Type
-credits.tableHead.status                                                = Status
-credits.tableHead.amount                                                = Amount
-credits.tableHead.type.value                                            = Credit from HMRC adjustment
-credits.table.status-fully-allocated                                    = Fully allocated
-credits.table.status-not-yet-allocated                                  = Not yet allocated
-credits.table.status-partially-allocated                                = Partially allocated
-credits.drop-down-list.name                                             = What are the credit types?
-credits.drop-down-list.balancing-charge-credit                          = Credit from overpaid tax
-credits.drop-down-list.balancing-charge-credit.value                    = This credit has been created as a result of you paying too much tax for a given tax year.
-credits.drop-down-list.credit-from-hmrc-adjustment                      = Credit from HMRC adjustment
-credits.drop-down-list.credit-from-hmrc-adjustment.value                = This credit has been created as a result of a relief applied by HMRC.
-credits.drop-down-list.credit-from-an-earlier-tax-year                  = Credit from an earlier tax year
-credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note          = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
-credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = This is money your client paid into their account before they were signed up for Making Tax Digital for Income Tax. Sign in to your
-credits.drop-down-list.sa-link                                          = Self Assessment online account
-credits.drop-down-list.sa-link-agent                                    = Self Assessment for Agents account
-credits.money-in-your-account-section.name                              = Money in your account
-credits.money-in-your-account-section.agent.name                        = Money in your client’s account
-credits.money-in-your-account-section.content                           = There is a total of {0} in your account. You can leave the money there to pay your next bill or
-credits.money-in-your-account-section.agent.name                        = Money in your client’s account
-credits.money-in-your-account-section.agent.content                     = There is a total of {0} in your client’s account. You can leave the money there to pay their next bill or
-credits.money-in-your-account-section.claim-a-refund-link               = claim a refund
-
-## Refund to taxpayer page ##
-refund-to-taxpayer.heading                                      = Refund to taxpayer
-refund-to-taxpayer.tableHead.estimated-date                     = Estimated issue date
-refund-to-taxpayer.tableHead.method                             = Method
-refund-to-taxpayer.tableHead.total-refund                       = Total refund
-refund-to-taxpayer.tableHead.further-details                    = Further details
-refund-to-taxpayer.tableHead.requested-on                       = Requested on
-refund-to-taxpayer.tableHead.refund-reference                   = Refund reference
-refund-to-taxpayer.tableHead.requested-amount                   = Requested amount
-refund-to-taxpayer.tableHead.refund-amount                      = Refund amount
-refund-to-taxpayer.tableHead.interest                           = Interest
-refund-to-taxpayer.tableHead.interest-value                     = {0} to {1} at {2}%
-refund-to-taxpayer.tableHead.total-interest                     = Total interest
-refund-to-taxpayer.tableHead.varied-interest-rates-value        = Rate of interest varied between {0}% and {1}% from {2} and {3}
-refund-to-taxpayer.method-type-bacs                             = Bacs
-refund-to-taxpayer.method-type-card                             = Card
-refund-to-taxpayer.method-type-postal-order                     = Postal Order
-refund-to-taxpayer.method-type-payable-order-repayment          = Payable order repayment
-refund-to-taxpayer.method-type-bacs-payment-out                 = BACS payment out
-
-## Timeout page ##
-timeout.heading                                                 = Your session has timed out
-timeout.signIn.1                                                = To view your quarterly reporting details, you’ll have to
-timeout.signIn.2                                                = sign in
-timeout.signIn.3                                                = using your Government Gateway ID.
-
-
-## BTA Partial ##
-bta_partial.heading                                             = Income Tax reporting through software
-bta_partial.p1                                                  = You’ve signed up to report your Income Tax through software. This will replace your Self Assessment tax return.
-bta_partial.p2                                                  = You can view your report deadlines, bills and an estimate for the next tax year.
-bta_partial.home_button                                         = View your Income Tax details
-
-## Not Enrolled
-not_enrolled.heading                                            = You cannot access this service
-not_enrolled.sign-up                                            = You need to
-not_enrolled.sign-up.link                                       = sign up for Making Tax Digital for Income Tax
-
-## Standard Error Page ##
-standardError.heading                                           = Sorry, there is a problem with the service
-standardError.message                                           = Try again later.
-
-global.error.InternalServerError500.title                       = Sorry, there is a problem with the service
-global.error.InternalServerError500.heading                     = Sorry, there is a problem with the service
-global.error.InternalServerError500.message                     = Try again later.
-
-## Beta Banner ##
-betaBanner.beta                                                 = BETA
-betaBanner.newService.new                                       = This is a new service. Help us improve it and
-betaBanner.feedback.link.new                                    = give your feedback
-
-betaBanner.newService                                           = This is a new service
-betaBanner.your                                                 = – your
-betaBanner.feedback                                             = feedback
-betaBanner.improve                                              = will help us to improve it.
 
 ## Obligations Page ##
 obligations.quarterlyUpdates                                       = Quarterly updates
@@ -968,9 +1058,6 @@ nextUpdates.previousYears.link									   = tax years
 nextUpdates.crystallised            							   = Final declaration
 nextUpdates.quarterly                                              = Quarterly update
 nextUpdates.crystallisedAll            							   = All income sources
-nextUpdates.propertyIncome            							   = Property income
-nextUpdates.propertyIncome.UK                                      = UK property
-nextUpdates.propertyIncome.Foreign                                 = Foreign property
 nextUpdates.business            							       = Business income
 
 nextUpdates.optOutOneYear.p.message                                = You are currently reporting quarterly on a voluntary basis for the {0} to {1} tax year. You can choose to
@@ -1042,6 +1129,65 @@ nextUpdates.updates.software.dec2       					       = compatible record keeping 
 nextUpdates.updates.software.dec3       					       = to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown.
 
 
+
+## Cannot Update Reporting Obligations
+cannotUpdateReportingObligations.title                          = Sorry, there is a problem with the service
+cannotUpdateReportingObligations.p1                             = We were unable to change your reporting obligations for one or more tax years.
+cannotUpdateReportingObligations.p2                             = Check which tax years have been updated or try again on
+cannotUpdateReportingObligations.link                           = your reporting obligations
+cannotUpdateReportingObligations.p3                             = page.
+
+
+#######################################################################################################################
+## Financials ##
+#######################################################################################################################
+
+## Credits Summary Page ##
+credits.heading                                                         = Credits in {0}
+credits.tableHead.date                                                  = Date
+credits.tableHead.type                                                  = Type
+credits.tableHead.status                                                = Status
+credits.tableHead.amount                                                = Amount
+credits.tableHead.type.value                                            = Credit from HMRC adjustment
+credits.table.status-fully-allocated                                    = Fully allocated
+credits.table.status-not-yet-allocated                                  = Not yet allocated
+credits.table.status-partially-allocated                                = Partially allocated
+credits.drop-down-list.name                                             = What are the credit types?
+credits.drop-down-list.balancing-charge-credit                          = Credit from overpaid tax
+credits.drop-down-list.balancing-charge-credit.value                    = This credit has been created as a result of you paying too much tax for a given tax year.
+credits.drop-down-list.credit-from-hmrc-adjustment                      = Credit from HMRC adjustment
+credits.drop-down-list.credit-from-hmrc-adjustment.value                = This credit has been created as a result of a relief applied by HMRC.
+credits.drop-down-list.credit-from-an-earlier-tax-year                  = Credit from an earlier tax year
+credits.drop-down-list.credit-from-an-earlier-tax-year.sa-note          = This is money you paid into your account before you signed up for Making Tax Digital for Income Tax. Visit your previous
+credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note    = This is money your client paid into their account before they were signed up for Making Tax Digital for Income Tax. Sign in to your
+credits.drop-down-list.sa-link                                          = Self Assessment online account
+credits.drop-down-list.sa-link-agent                                    = Self Assessment for Agents account
+credits.money-in-your-account-section.name                              = Money in your account
+credits.money-in-your-account-section.agent.name                        = Money in your client’s account
+credits.money-in-your-account-section.content                           = There is a total of {0} in your account. You can leave the money there to pay your next bill or
+credits.money-in-your-account-section.agent.name                        = Money in your client’s account
+credits.money-in-your-account-section.agent.content                     = There is a total of {0} in your client’s account. You can leave the money there to pay their next bill or
+credits.money-in-your-account-section.claim-a-refund-link               = claim a refund
+
+## Refund to taxpayer page ##
+refund-to-taxpayer.heading                                      = Refund to taxpayer
+refund-to-taxpayer.tableHead.estimated-date                     = Estimated issue date
+refund-to-taxpayer.tableHead.method                             = Method
+refund-to-taxpayer.tableHead.total-refund                       = Total refund
+refund-to-taxpayer.tableHead.further-details                    = Further details
+refund-to-taxpayer.tableHead.requested-on                       = Requested on
+refund-to-taxpayer.tableHead.refund-reference                   = Refund reference
+refund-to-taxpayer.tableHead.requested-amount                   = Requested amount
+refund-to-taxpayer.tableHead.refund-amount                      = Refund amount
+refund-to-taxpayer.tableHead.interest                           = Interest
+refund-to-taxpayer.tableHead.interest-value                     = {0} to {1} at {2}%
+refund-to-taxpayer.tableHead.total-interest                     = Total interest
+refund-to-taxpayer.tableHead.varied-interest-rates-value        = Rate of interest varied between {0}% and {1}% from {2} and {3}
+refund-to-taxpayer.method-type-bacs                             = Bacs
+refund-to-taxpayer.method-type-card                             = Card
+refund-to-taxpayer.method-type-postal-order                     = Postal Order
+refund-to-taxpayer.method-type-payable-order-repayment          = Payable order repayment
+refund-to-taxpayer.method-type-bacs-payment-out                 = BACS payment out
 
 ## Payment Due Page ##
 paymentDue.tax-year                                                = {0} to {1} tax year
@@ -1376,30 +1522,6 @@ chargeSummary.cancelledPayeInset-1                                 = You have pr
 chargeSummary.cancelledPayeInset-2                                 = through your PAYE tax code
 chargeSummary.cancelledPayeInset-3                                 = HMRC has been unable to collect all of these payments from you, so this is the remaining tax you need to pay.
 
-## Regimes
-regimes.UK = UK
-regimes.Scotland = Scotland
-regimes.Wales = Wales
-
-## Timeout
-button.continue                                                 = Stay signed in
-
-
-## Uplift Failure
-upliftFailure.title                                             = You cannot view this page
-upliftFailure.content                                           = This may be because:
-upliftFailure.sign.out                                          = Return to Sign in
-upliftFailure.bullet.1                                          = you took too long to enter information and the service has timed out
-upliftFailure.bullet.2                                          = you have failed to answer enough questions correctly
-upliftFailure.bullet.3                                          = we could not match your details to our system
-
-## Cannot Update Reporting Obligations
-cannotUpdateReportingObligations.title                          = Sorry, there is a problem with the service
-cannotUpdateReportingObligations.p1                             = We were unable to change your reporting obligations for one or more tax years.
-cannotUpdateReportingObligations.p2                             = Check which tax years have been updated or try again on
-cannotUpdateReportingObligations.link                           = your reporting obligations
-cannotUpdateReportingObligations.p3                             = page.
-
 ## Payment History Page ##
 paymentHistory.heading                                          = Payment history
 paymentHistory.info                                             = To view your client’s payment history from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
@@ -1485,48 +1607,6 @@ paymentAllocation.paymentAllocations.hmrcAdjustment.text        = HMRC adjustmen
 paymentAllocation.paymentAllocations.onAccount.table.description.poa = No Data
 
 
-##Tax Years Overview Submissions Tab##
-submissionsTab.desc                                                  = This is a record of your completed and upcoming submissions for the tax year.
-submissionsTab.due                                                   = Due {0}
-submissionsTab.submission                                            = Submission
-submissionsTab.incomeSource                                          = Income source
-submissionsTab.dateSubmitted                                         = Date submitted
-submissionsTab.notReceived                                           = Not received
-submissionsTab.dateToDate                                            = {0} to {1}
-submissionsTab.updatePeriodDateToDate                                = The update period from {0} to {1}
-submissionsTab.obligationType.property                               = Property income
-submissionsTab.obligationType.business                               = Business
-submissionsTab.obligationType.crystallised                           = All income sources
-submissionsTab.submission.quarterly                                  = Quarterly update
-submissionsTab.submission.crystallised                               = Tax return
-
-## Final Tax Overview (Individual/Common Content)
-final-tax-overview.individual.heading                           = Your final tax overview
-final-tax-overview.caption                                      = 6 April {0} to 5 April {1}
-final-tax-overview.inset.1                                      = If you think this information is incorrect, you can
-final-tax-overview.individual.inset.2                           = check your Income Tax Return.
-final-tax-overview.individual.chargeInfo.p                      = The amount you need to pay might be different if there are other charges or payments on your account, for example, late payment interest.
-
-## Final Tax Overview (Agent Content overrides)
-final-tax-overview.agent.heading                                = Your client’s final tax overview
-final-tax-overview.agent.chargeInfo.p                           = The amount your client needs to pay might be different if there are other charges or payments on their account, for example, late payment interest.
-final-tax-overview.agent.inset.2                                = check your client’s Income Tax Return.
-
-tax-year-summary.taxable-income.finalCalc                       = Total taxable income
-tax-year-summary.tax-due.finalCalc                              = Income Tax and National Insurance contributions
-
-
-## InYear Tax Overview (Individual/Common Content)
-inYear-tax-overview.individual.heading                           = Your tax overview 6 April {0} to {1}
-inYear-tax-overview.caption                                      = 6 April {0} to 5 April {1}
-inYear-tax-overview.individual.inset                             = This calculation is only based on your completed updates for this tax year up to {0}. It is not your final tax bill for the year. It is a year to date calculation based on the information that has been entered so far.
-InYear-tax-overview.goToTaxAccount                               = Go to Income Tax Account
-
-## InYear Tax Overview (Agent Content overrides)
-inYear-tax-overview.agent.heading                                = Your client’s tax overview 6 April {0} to {1}
-inYear-tax-overview.agent.inset                                  = This calculation is only based on your client’s completed updates for this tax year up to {0}. It is not their final tax bill for the year. It is a year to date calculation based on the information that has been entered so far.
-
-
 ## credits and refunds
 credit-and-refund.heading                                         = Claim a refund
 
@@ -1610,6 +1690,7 @@ money-in-your-account.where-from.payment-row.description                = Paymen
 money-in-your-account.where-from.credit-row.description                 = Credit from an earlier tax year
 money-in-your-account.where-from.refund-row.description                 = Refund in progress
 money-in-your-account.claim-refund.button-text                          = Claim a refund
+
 
 #######################################################################################################################
 ## Income Sources - Add ##
@@ -2292,8 +2373,6 @@ incomeSources.add.incomeSourceReportingMethod.uk.caption                =   UK p
 incomeSources.add.incomeSourceReportingMethod.fp.caption                =   Foreign property
 
 # manage uk property reporting method
-incomeSources.manage.propertyReportingMethod.heading.annual         = Confirm you want to report annually for the tax year {0} to {1}
-incomeSources.manage.propertyReportingMethod.heading.quarterly      = Confirm you want to report quarterly for the tax year {0} to {1}
 incomeSources.manage.propertyReportingMethod.checkbox.annual        = Yes, I want to switch to annual reporting
 incomeSources.manage.propertyReportingMethod.checkbox.quarterly     = Yes, I want to switch to quarterly reporting
 incomeSources.manage.propertyReportingMethod.error.quarterly        = Select that you want to switch to quarterly reporting
@@ -2315,7 +2394,6 @@ incomeSources.add.manageObligations.uk-property                       =   UK pro
 incomeSources.add.manageObligations.foreign-property                  =   Foreign property
 incomeSources.add.manageObligations.heading                           =   What you must do
 
-## used when OptInOptOutContentUpdateR17 enabled
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.title = {0} has been {1} Making Tax Digital for Income Tax for the {2} to {3} tax year
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.title                       = {0}
 incomeSources.add.manageObligations.OptInOptOutContentUpdateR17.panel.body = has been {0} Making Tax Digital for Income Tax for the {1} to {2} tax year
@@ -2382,15 +2460,12 @@ incomeSources.manage.new.business.details.annually                        =   An
 incomeSources.manage.new.business.details.quarterly.grace.period          =   Quarterly
 incomeSources.manage.new.business.details.annually.grace.period           =   Annual
 incomeSources.manage.new.business.details.trade.type                      =   Type of trade
-incomeSources.manage.new.business.details.reporting.frequency             =   View and change your reporting frequency for all your businesses
-incomeSources.manage.new.business.details.insetText                       =   Because this is still a new business, you can change how often you report for it for up to 2 tax years. From April {0}, you could be required to report quarterly.
 
 
 incomeSources.manage.new.uk.property.manage.details.uk.property.section              =   UK property
 
 incomeSources.manage.new.foreign.property.manage.details.foreign.property.section    =   Foreign property
 
-# Used when OptInOptOutContentUpdateR17 feature switch is enabled
 
 incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.paragraph      =   Because this is still a new business, for up to 2 tax years you can choose if you want to use Making Tax Digital for Income Tax. From April {0}, you could be required to use the service.
 incomeSources.manage.new.business.details.optInOptOutContentUpdateR17.reportingFrequencyPrefix       =   Depending on your circumstances, you may be able to
@@ -2504,20 +2579,13 @@ manageBusinesses.manage.propertyReportingMethod.new.confirm                     
 
 
 # manage income sources reporting method (old - content FS R17 disabled)
-manageBusinesses.manage.propertyReportingMethod.heading.annual             = Change to annual reporting for {0} to {1} tax year
-manageBusinesses.manage.propertyReportingMethod.heading.quarterly          = Change to quarterly reporting for {0} to {1} tax year
-manageBusinesses.manage.propertyReportingMethod.subHeading.UkProperty      = UK property
-manageBusinesses.manage.propertyReportingMethod.subHeading.ForeignProperty = Foreign property
-manageBusinesses.manage.propertyReportingMethod.subHeading.SelfEmployment  = Sole trader
-manageBusinesses.manage.propertyReportingMethod.description.annual         = If you change to annual reporting, you can submit your tax return through your HMRC online account or compatible software.
-manageBusinesses.manage.propertyReportingMethod.description.quarterly      = Changing to quarterly reporting will mean you need to submit your quarterly updates through compatible software.
-manageBusinesses.manage.propertyReportingMethod.inset.quarterly            = If you have submitted any income and expenses for this tax year to HMRC, this will be deleted from our records. So make sure you keep hold of this information because you will need to include it in your quarterly updates.
-manageBusinesses.manage.propertyReportingMethod.confirm                    = Confirm and save
 
 
 
 # credits
 credit.description.balancingCharge                                    = Credit from overpaid tax
+credit.description.POA1RR-credit                                      = Credit from first payment on account
+credit.description.POA2RR-credit                                      = Credit from second payment on account
 credit.description.cutOver                                            = Credit from an earlier tax year
 credit.description.mfa                                                = Credit from HMRC adjustment
 credit.description.repaymentInterest                                  = Credit from repayment interest
@@ -3227,7 +3295,6 @@ reporting.frequency.mandatoryReporting.inset      = Reporting quarterly is requi
 reporting.frequency.mandatoryReporting.text       = You can check the threshold for when reporting quarterly is mandatory in the
 reporting.frequency.mandatoryReporting.link.text  = criteria for people who will need to sign up for Making Tax Digital for Income Tax
 
-#new mandatory reporting messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.mandatoryReporting.heading.R17      = When Making Tax Digital for Income Tax is required
 reporting.frequency.mandatoryReporting.inset.R17        = You must use Making Tax Digital for Income Tax if your total gross income from self-employment or property, or both, exceeds the £50,000 threshold.
 reporting.frequency.mandatoryReporting.p1               = If this happens in the {0} to {1} tax year, you would be required to use Making Tax Digital for Income Tax for the {2} to {3} tax year.
@@ -3248,7 +3315,6 @@ reporting.frequency.compatibleSoftware.link.text = software compatible with Maki
 reporting.frequency.compatibleSoftware.p2        = There are both paid and free options for you or your agent to choose from.
 reporting.frequency.compatibleSoftware.p3        = For reporting annually, you can use either compatible software or your HMRC online account to submit your tax return.
 
-#new compatible software messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.compatibleSoftware.heading.R17                      = When you need compatible software
 reporting.frequency.compatibleSoftware.p1.R17                           = Whether you are required or voluntarily signed up, you need
 reporting.frequency.compatibleSoftware.link.text.R17                    = software compatible with Making Tax Digital for Income Tax
@@ -3269,7 +3335,6 @@ reporting.frequency.table.voluntary                                 = Quarterly
 reporting.frequency.table.annual                                    = Annual
 reporting.frequency.table.exempt                                    = Exempt
 
-#new table messages for reporting frequency with OptInOptOutContentUpdateR17 enabled:
 reporting.frequency.table.heading.usingMTD                          = Using Making Tax Digital for Income Tax
 reporting.frequency.table.heading.status.R17                        = Your status
 reporting.frequency.table.MTD.isUsingMTD                            = Yes
@@ -3650,7 +3715,6 @@ youMustWait.agent.button.text  = Enter another UTR
 newHome.yourTasks.h1                             = Your tasks
 newHome.navigation.yourTasks                     = Your tasks
 newHome.yourTasks.selfAssessment                 = Check what you owe and make a payment
-newHome.yourTasks.no-tasks.selfAssessment        = No tasks
 newHome.yourTasks.selfAssessment.upcomingCharge = You have an upcoming payment.
 newHome.yourTasks.selfAssessment.upcomingCharge.label = Due {0}
 newHome.yourTasks.selfAssessment.overdueCharge.single = You have an overdue amount to pay.

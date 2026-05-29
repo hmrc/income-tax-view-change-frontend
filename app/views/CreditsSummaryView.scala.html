@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import _root_.implicits.ImplicitCurrencyFormatter._
 @import models.financialDetails._
 @import common.auth.MtdItUser
@@ -45,7 +45,6 @@
     serviceNavigationPartial: Option[ServiceNavigation] = None,
     charges: List[CreditDetailModel],
     maybeAvailableCredit: Option[BigDecimal],
-    isAgent: Boolean = false,
     origin: Option[String] = None)(implicit request: Request[_], user: MtdItUser[_], messages: Messages)
 
 @import implicitDateFormatter.longDate
@@ -83,7 +82,7 @@
 }
 
 @moneyInYourAccountControllerURL = @{
-    if(isAgent) {
+    if(user.isAgent) {
         financialsRoutes.MoneyInYourAccountController.showAgent().url
     } else {
         financialsRoutes.MoneyInYourAccountController.show().url
@@ -91,14 +90,14 @@
 }
 
 @getMoneyInYourAccountSectioName = @{
-    if(isAgent) messages("credits.money-in-your-account-section.agent.name") else messages("credits.money-in-your-account-section.name")
+    if(user.isAgent) messages("credits.money-in-your-account-section.agent.name") else messages("credits.money-in-your-account-section.name")
 }
 
-@dropDownDetails(isAgent: Boolean) = {
+@dropDownDetails() = {
     @h2(msg = "credits.drop-down-list.credit-from-hmrc-adjustment", classes = "govuk-heading-s", optId = Some("h2-credit-from-hmrc-adjustment"))
     @p(id = Some("p-credit-from-hmrc-adjustment")){@messages("credits.drop-down-list.credit-from-hmrc-adjustment.value")}
     @h2(msg = "credits.drop-down-list.credit-from-an-earlier-tax-year", classes = "govuk-heading-s", optId = Some("h2-credit-from-an-earlier-tax-year"))
-    @if(isAgent) {
+    @if(user.isAgent) {
             @p(id = Some("sa-note-migrated-agent")) {
                 @messages("credits.drop-down-list.credit-from-an-earlier-tax-year.agent.sa-note")
                 @link(link = ExternalUrlHelper.saForAgents, messageKey = messages("credits.drop-down-list.sa-link-agent"),
@@ -119,10 +118,10 @@
     @p(id = Some("p-balancing-charge-credit")){@messages("credits.drop-down-list.balancing-charge-credit.value")}
 }
 
-@moneyInYourAccount(isAgent: Boolean) = {
+@moneyInYourAccount() = {
     @maybeAvailableCredit.map { availableCredit =>
         @h2(msg = getMoneyInYourAccountSectioName, classes = "govuk-heading-s", optId = Some("h2-money-in-your-account"))
-        @if(isAgent) {
+        @if(user.isAgent) {
             @p(id = Some("p-money-in-your-account")) {
                 @messages("credits.money-in-your-account-section.agent.content", availableCredit.toCurrencyString)
                 @link(link = moneyInYourAccountControllerURL, messageKey = messages("credits.money-in-your-account-section.claim-a-refund-link"),
@@ -143,7 +142,7 @@
 @mainTemplate(
     pageTitle = messages("credits.heading", s"$calendarYear"),
     backUrl = Some(backUrl),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = btaNavPartial,
     useFallbackBackLink = true,
     btaAndPtaServiceNavigation = serviceNavigationPartial
@@ -172,7 +171,7 @@
         </div>
     </div>
 
-    @detailsDropdown(messages("credits.drop-down-list.name"), dropDownDetails(isAgent))
+    @detailsDropdown(messages("credits.drop-down-list.name"), dropDownDetails())
 
-    @moneyInYourAccount(isAgent)
+    @moneyInYourAccount()
 }

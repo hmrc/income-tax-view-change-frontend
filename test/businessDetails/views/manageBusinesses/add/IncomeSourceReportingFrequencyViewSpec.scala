@@ -16,24 +16,23 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
-import mocks.services.MockDateService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.mocks.services.MockDateService
 
 import java.time.LocalDate
 
 class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateService {
   val view: IncomeSourceReportingFrequencyView = app.injector.instanceOf[IncomeSourceReportingFrequencyView]
 
-  class Setup(incomeSourceType: IncomeSourceType, hasR17Content: Boolean = false) {
+  class Setup(incomeSourceType: IncomeSourceType) {
     when(mockDateService.getCurrentTaxYearStart) thenReturn fixedDate
     when(mockDateService.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
 
@@ -43,46 +42,24 @@ class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateSe
       case ForeignProperty => "Foreign property"
     }
 
-    val (title, titleError, titleAgent, heading, paragraph1, reportingFrequencyUlLi1, reportingFrequencyUlLi2, paragraph2, reportingFrequencyFormH1, reportingFrequencyFormNoSelectionError, continueButtonText) =
-      if (hasR17Content) {
-        (
-          "Your new business is opted out of Making Tax Digital for Income Tax - Manage your Self Assessment - GOV.UK",
-          "Error: Your new business is opted out of Making Tax Digital for Income Tax - GOV.UK",
-          "Your new business is opted out of Making Tax Digital for Income Tax - Manage your client’s Income Tax updates - GOV.UK",
-          "Your new business is opted out of Making Tax Digital for Income Tax",
-          "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:",
-          "you are voluntarily signed up or required to use Making Tax Digital for Income Tax for your other businesses",
-          "your total gross income from self-employment or property, or both, exceed the £50,000 threshold",
-          "You can choose to sign this new business up to Making Tax Digital for Income Tax. This would mean submitting an update every 3 months in addition to your tax return.",
-          "Do you want to sign this new business up to Making Tax Digital for Income Tax?",
-          "Select yes if you want to sign this new business up to Making Tax Digital for Income Tax",
-          "Continue"
-        )
-      } else {
-        (
-          "Your new business is set to report annually - Manage your Self Assessment - GOV.UK",
-          "Error: Your new business is set to report annually - GOV.UK",
-          "Your new business is set to report annually - Manage your client’s Income Tax updates - GOV.UK",
-          "Your new business is set to report annually",
-          "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:",
-          "you are voluntarily opted in or required to report quarterly for your other businesses",
-          "your income from self-employment or property, or both, exceed the income threshold",
-          "You can choose to report quarterly, which means submitting an update every 3 months in addition to your tax return",
-          "Do you want to change to report quarterly?",
-          "Select yes if you want to report quarterly or select no if you want to report annually",
-          "Continue"
-        )
-      }
-
-    val pageDocument: Document = Jsoup.parse(contentAsString(view(hasR17Content, Call("", ""), IncomeSourceReportingFrequencyForm(false), incomeSourceType, dateService, hasR17Content, "£50,000")))
-  }
-
-  def getReportingFrequencyTableMessages(taxYear: Int): (String, String) = {
-    (s"Reporting frequency $taxYear to ${taxYear+1}", "Annual")
+    val (title, titleError, titleAgent, heading, paragraph1, reportingFrequencyUlLi1, reportingFrequencyUlLi2, paragraph2, reportingFrequencyFormH1, reportingFrequencyFormNoSelectionError, continueButtonText) = (
+      "Your new business is opted out of Making Tax Digital for Income Tax - Manage your Self Assessment - GOV.UK",
+      "Error: Your new business is opted out of Making Tax Digital for Income Tax - GOV.UK",
+      "Your new business is opted out of Making Tax Digital for Income Tax - Manage your client's Income Tax updates - GOV.UK",
+      "Your new business is opted out of Making Tax Digital for Income Tax",
+      "Because this is a new business, for up to 2 tax years you can submit its income and expenses once a year in your tax return, even if:",
+      "you are voluntarily signed up or required to use Making Tax Digital for Income Tax for your other businesses",
+      "your total gross income from self-employment or property, or both, exceed the £50,000 threshold",
+      "You can choose to sign this new business up to Making Tax Digital for Income Tax. This would mean submitting an update every 3 months in addition to your tax return.",
+      "Do you want to sign this new business up to Making Tax Digital for Income Tax?",
+      "Select yes if you want to sign this new business up to Making Tax Digital for Income Tax",
+      "Continue"
+    )
+    val pageDocument: Document = Jsoup.parse(contentAsString(view(false, Call("", ""), IncomeSourceReportingFrequencyForm(), incomeSourceType, dateService, "£50,000")))
   }
 
   def getWarningInsetTextMessage(currentTaxYearEnd: Int): String = {
-    s"From April ${currentTaxYearEnd + 1} when this 2-year tax period ends, you could be required to report quarterly."
+    s"From April ${currentTaxYearEnd + 1} when this 2-year tax period ends, you could be required to use Making Tax Digital for Income Tax for this new business."
   }
 
   val incomeSourceTypes: Seq[IncomeSourceType] = List(SelfEmployment, UkProperty, ForeignProperty)
@@ -105,17 +82,10 @@ class IncomeSourceReportingFrequencyViewSpec extends TestSupport with MockDateSe
       "have the correct page contents" in new Setup(incomeSourceType) {
         val thisTaxYear: Int = LocalDate.of(2023, 4, 6).getYear
         val warningInsetTextMessages: String = getWarningInsetTextMessage(currentTaxYearEnd = thisTaxYear + 1)
-        val documentTableC1: Elements = pageDocument.getElementsByTag("th")
-        val documentTableC2: Elements = pageDocument.getElementsByTag("td")
 
         pageDocument.getElementById("paragraph-1").text shouldBe paragraph1
         pageDocument.getElementById("inset-text-bullet-1").text shouldBe reportingFrequencyUlLi1
         pageDocument.getElementById("inset-text-bullet-2").text shouldBe reportingFrequencyUlLi2
-
-        documentTableC1.get(0).text shouldBe getReportingFrequencyTableMessages(thisTaxYear)._1
-        documentTableC2.get(0).text shouldBe getReportingFrequencyTableMessages(thisTaxYear)._2
-        documentTableC1.get(1).text shouldBe getReportingFrequencyTableMessages(thisTaxYear + 1)._1
-        documentTableC2.get(1).text shouldBe getReportingFrequencyTableMessages(thisTaxYear + 1)._2
 
         pageDocument.getElementById("paragraph-2").text shouldBe paragraph2
         pageDocument.getElementById("warning-inset").text shouldBe warningInsetTextMessages

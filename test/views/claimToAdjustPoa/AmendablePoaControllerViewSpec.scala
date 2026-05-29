@@ -16,6 +16,7 @@
 
 package views.claimToAdjustPoa
 
+import common.auth.MtdItUser
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
@@ -32,12 +33,12 @@ class AmendablePoaControllerViewSpec extends TestSupport {
   class Setup(isAgent: Boolean, poAFullyPaid: Boolean = false, poasHaveBeenAdjustedPreviously: Option[Boolean] = None) {
 
     val amendablePaymentOnAccount: AmendablePoaView = app.injector.instanceOf[AmendablePoaView]
+    implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
 
     val document: Document =
       Jsoup.parse(
         contentAsString(
           amendablePaymentOnAccount(
-            isAgent = isAgent,
             viewModel =
               PaymentOnAccountViewModel(
                 poaOneTransactionId = "poa-one-id",
@@ -50,7 +51,7 @@ class AmendablePoaControllerViewSpec extends TestSupport {
                 partiallyPaid = false,
                 fullyPaid = poAFullyPaid,
                 previouslyAdjusted = poasHaveBeenAdjustedPreviously
-              ),
+              )
           )
         )
       )
@@ -116,8 +117,8 @@ class AmendablePoaControllerViewSpec extends TestSupport {
     claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(isAgent).url
 
   def getCancelLinkUrl(isAgent: Boolean): String = {
-    if (isAgent) controllers.routes.HomeController.showAgent()
-    else         controllers.routes.HomeController.show()
+    if (isAgent) hub.controllers.routes.HomeController.showAgent()
+    else         hub.controllers.routes.HomeController.show()
   }.url
 
   executeTest(isAgent = true)

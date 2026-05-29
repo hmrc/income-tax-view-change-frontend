@@ -17,10 +17,11 @@
 package common.controllers
 
 import common.auth.actions.AuthActionsTestData.defaultIncomeSourcesData
+import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.audit.IvOutcomeSuccessAuditModel
-import connectors.ITSAStatusConnector
-import enums.MTDIndividual
+import common.services.DateServiceInterface
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.Voluntary
 import models.itsaStatus.StatusReason.MtdItsaOptOut
@@ -32,7 +33,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation}
-import services.DateServiceInterface
 import testConstants.BaseTestConstants.{testNino, testSaUtr}
 
 import scala.concurrent.Future
@@ -98,7 +98,7 @@ class UpliftSuccessControllerSpec extends MockAuthActions {
         whenReady(result) { response =>
           verifyAudit(expectedIvOutcomeSuccessAuditModel)
           response.header.status shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(controllers.routes.HomeController.show().url)
+          redirectLocation(result) shouldBe Some(hub.controllers.routes.HomeController.show().url)
         }
 
       }

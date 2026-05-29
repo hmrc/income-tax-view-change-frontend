@@ -22,8 +22,8 @@ import play.twirl.api.Html
 import testUtils.ViewSpec
 import businessDetails.views.html.manageBusinesses.add.AddBusinessTradeView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import common.enums.IncomeSourceJourney.SelfEmployment
 
 class AddBusinessTradeViewSpec extends ViewSpec {
 

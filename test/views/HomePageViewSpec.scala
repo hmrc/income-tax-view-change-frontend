@@ -20,9 +20,9 @@ import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDI
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import models.admin.PaymentHistoryRefunds
+import models.admin.FeatureSwitch
 import models.creditsandrefunds.CreditsModel
-import models.homePage.*
+import hub.models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus
 import models.itsaStatus.ITSAStatus.ITSAStatus
@@ -35,7 +35,8 @@ import play.twirl.api.HtmlFormat
 import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseTestConstants.*
 import testUtils.TestSupport
-import views.html.HomeView
+import hub.views.html.HomeView
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.util.Random
@@ -83,12 +84,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
   val overdueMessage = "! Warning You have overdue charges. You may be charged interest on these until they are paid in full."
   val overdueMessageForDunningLocks = "! Warning You have overdue payments and one or more of your tax decisions are being reviewed. You may be charged interest on these until they are paid in full."
   val currentDate: LocalDate = dateService.getCurrentDate
-  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
-  private val viewModelOneOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1)), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
-  private val viewModelThreeOverdue: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2018, 1, 1),
-    LocalDate.of(2018, 2, 1), LocalDate.of(2018, 3, 1)), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
-  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
-  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, showOptInOptOutContentUpdateR17 = false, ITSAStatus.NoStatus, None, None)
+  private val viewModelFuture: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, ITSAStatus.NoStatus, None, None)
+  private val viewModelNoUpdates: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(), currentDate, ITSAStatus.NoStatus, None, None)
+  private val viewModelOptOut: NextUpdatesTileViewModel = NextUpdatesTileViewModel(Seq(LocalDate.of(2100, 1, 1)), currentDate, ITSAStatus.NoStatus, None, None)
   val paymentTileOverdueDate: LocalDate = LocalDate.of(2020, 4, 6)
   val paymentTileFutureDate: LocalDate = LocalDate.of(2100, 4, 6)
   val paymentTileFutureDateLongFormat: String = paymentTileFutureDate.format(DateTimeFormatter.ofPattern("d MMMM YYYY"))
@@ -204,15 +202,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       "has a heading" in new Setup {
         getElementById("updates-tile").map(_.select("h2").text) shouldBe Some("Your submission deadlines")
       }
-      "has the date of the next update due" in new Setup {
-        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(updateDateLongDate)
-      }
-      "display an overdue tag when a single update is overdue" in new Setup(nextUpdatesTileViewModel = viewModelOneOverdue) {
-        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some("Overdue " + "1 January 2018")
-      }
-      "has the correct number of overdue updates when three updates are overdue" in new Setup(nextUpdatesTileViewModel = viewModelThreeOverdue) {
-        getElementById("updates-tile").map(_.select("p:nth-child(2)").text) shouldBe Some(multipleOverdueUpdates)
-      }
       "has a link to view updates" in new Setup {
         val link: Option[Elements] = getElementById("updates-tile").map(_.select("a"))
         link.map(_.attr("href")) shouldBe Some("/report-quarterly/income-and-expenses/view/submission-deadlines")
@@ -229,15 +218,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         link.map(_.text) shouldBe Some("View your deadlines")
       }
 
-      "has next update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with no overdue updates" in {
+      "has next update and tax return dates when ITSA status is Voluntary with no overdue updates" in {
         val testNextQuarterlyUpdateDueDate: LocalDate = LocalDate.of(2099, 11, 5)
         val testNextTaxReturnDueDate: LocalDate = LocalDate.of(testFutureTaxYear.endYear + 1, 1, 31)
 
         new Setup(
           nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(testNextQuarterlyUpdateDueDate),
             currentDate = LocalDate.of(testFutureTaxYear.startYear, 6, 24),
-            
-            showOptInOptOutContentUpdateR17 = true,
             currentYearITSAStatus = ITSAStatus.Voluntary,
             nextQuarterlyUpdateDueDate = Some(testNextQuarterlyUpdateDueDate),
             nextTaxReturnDueDate = Some(testNextTaxReturnDueDate))
@@ -256,7 +243,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         }
       }
 
-      "has overdue update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with 1 overdue update" in {
+      "has overdue update and tax return dates when ITSA status is Voluntary with 1 overdue update" in {
         val testOverdueUpdate: LocalDate = LocalDate.of(2000, 2, 5)
         val testNextQuarterlyUpdateDueDate: LocalDate = LocalDate.of(2099, 11, 5)
         val testNextTaxReturnDueDate: LocalDate = LocalDate.of(testFutureTaxYear.endYear + 1, 1, 31)
@@ -264,8 +251,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         new Setup(
           nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(testOverdueUpdate, testNextQuarterlyUpdateDueDate),
             currentDate = LocalDate.of(testFutureTaxYear.startYear, 6, 24),
-            
-            showOptInOptOutContentUpdateR17 = true,
             currentYearITSAStatus = ITSAStatus.Voluntary,
             nextQuarterlyUpdateDueDate = Some(testNextQuarterlyUpdateDueDate),
             nextTaxReturnDueDate = Some(testNextTaxReturnDueDate))
@@ -285,7 +270,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         }
       }
 
-      "has overdue count and tax return when OptInOptOutContentUpdateR17 is enabled and ITSA status is Voluntary with multiple overdue updates" in {
+      "has overdue count and tax return when ITSA status is Voluntary with multiple overdue updates" in {
         val testNextQuarterlyUpdateDueDate: LocalDate = LocalDate.of(2099, 11, 5)
         val testNextTaxReturnDueDate: LocalDate = LocalDate.of(testFutureTaxYear.endYear + 1, 1, 31)
 
@@ -297,8 +282,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               testNextQuarterlyUpdateDueDate
             ),
             currentDate = LocalDate.of(testFutureTaxYear.startYear, 6, 24),
-            
-            showOptInOptOutContentUpdateR17 = true,
             currentYearITSAStatus = ITSAStatus.Voluntary,
             nextQuarterlyUpdateDueDate = Some(testNextQuarterlyUpdateDueDate),
             nextTaxReturnDueDate = Some(testNextTaxReturnDueDate))
@@ -318,15 +301,13 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         }
       }
 
-      "has only tax return date when OptInOptOutContentUpdateR17 is enabled and ITSA status is Annual" in {
+      "has only tax return date when ITSA status is Annual" in {
         val testNextQuarterlyUpdateDueDate: LocalDate = LocalDate.of(2099, 11, 5)
         val testNextTaxReturnDueDate: LocalDate = LocalDate.of(testFutureTaxYear.endYear + 1, 1, 31)
 
         new Setup(
           nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(testNextQuarterlyUpdateDueDate),
             currentDate = LocalDate.of(testFutureTaxYear.startYear, 6, 24),
-            
-            showOptInOptOutContentUpdateR17 = true,
             currentYearITSAStatus = ITSAStatus.Annual,
             nextQuarterlyUpdateDueDate = Some(testNextQuarterlyUpdateDueDate),
             nextTaxReturnDueDate = Some(testNextTaxReturnDueDate))
@@ -345,11 +326,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         }
       }
 
-      "has overdue update and tax return dates when OptInOptOutContentUpdateR17 is enabled and ITSA status is Mandated with 1 overdue update" in new Setup(
+      "has overdue update and tax return dates when ITSA status is Mandated with 1 overdue update" in new Setup(
         nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq(LocalDate.of(2025, 4, 5)),
           currentDate = LocalDate.of(2025, 6, 24),
-          
-          showOptInOptOutContentUpdateR17 = true,
           currentYearITSAStatus = ITSAStatus.Mandated,
           nextQuarterlyUpdateDueDate = Some(LocalDate.of(2025, 4, 5)),
           nextTaxReturnDueDate = Some(LocalDate.of(2026, 1, 31)))
@@ -368,11 +347,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
       }
 
-      "has only title when OptInOptOutContentUpdateR17 is enabled and user has no obligations or tax return date" in new Setup(
+      "has only title when user has no obligations or tax return date" in new Setup(
         nextUpdatesTileViewModel = NextUpdatesTileViewModel(dueDates = Seq.empty,
           currentDate = LocalDate.of(2025, 6, 24),
-          
-          showOptInOptOutContentUpdateR17 = true,
           currentYearITSAStatus = ITSAStatus.Voluntary,
           None,
           nextTaxReturnDueDate = None)
@@ -468,7 +445,6 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some("Payment history and refunds")
       }
       "has a payment history heading when payment history feature switch is disabled" in new Setup(paymentHistoryEnabled = false, creditAndRefundEnabled = false) {
-        disable(PaymentHistoryRefunds)
         getElementById("payment-history-tile").map(_.select("h2").text) shouldBe Some("Payment history")
       }
       "has a link to the payment and refund history page" which {

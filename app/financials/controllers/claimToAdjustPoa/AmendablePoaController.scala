@@ -59,7 +59,7 @@ class AmendablePoaController @Inject()(val authActions: AuthActions,
         }.value.flatMap {
           case Right(viewModel) =>
             Future.successful(
-              Ok(view(user.isAgent, viewModel))
+              Ok(view(viewModel))
             )
           case Left(ex) =>
             Logger("application").error(s"Exception: ${ex.getMessage} - ${ex.getCause}")

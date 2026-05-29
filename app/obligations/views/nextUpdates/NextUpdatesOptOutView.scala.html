@@ -43,62 +43,25 @@
     checks: NextUpdatesQuarterlyReportingContentChecks,
     optOutProposition: OptOutProposition,
     backUrl: String,
-    isAgent: Boolean = false,
     isSupportingAgent: Boolean = false,
     origin: Option[String] = None,
     whatTheUserCanDo: Html,
-    optInOptOutContentR17Enabled: Boolean,
     taxYearStatusesCyNy: (ITSAStatus, ITSAStatus)
 )(implicit messages: Messages, user: common.auth.MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("nextUpdates.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     origin = origin) {
 
     @h1(msg = messages("nextUpdates.heading"))
 
-    @if(!optInOptOutContentR17Enabled) {
-        @checks.showUpdateTypeDetailsSection.map { _ =>
-            @detailsDropdown("nextUpdates.dropdown.info", detailsContent)
-        }
-    }
-
     @p(id = Some("what-the-user-can-do")) { @whatTheUserCanDo }
 
-    @if(optInOptOutContentR17Enabled) {
-        @nextUpdatesHelperR17(isAgent, viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))
-    } else {
-        @h2(msg = "nextUpdates.sub-heading")
-        @nextUpdatesHelper(viewModel)
-
-        @if(!isSupportingAgent){
-            @p(){
-                @messages("nextUpdates.previousYears.textOne")
-                @if(isAgent) {
-                    @link(link = controllers.routes.TaxYearsController.showAgentTaxYears().url, messageKey = "nextUpdates.previousYears.link")
-                }
-                @if(!isAgent) {
-                    @link(link = controllers.routes.TaxYearsController.showTaxYears(origin).url, messageKey = "nextUpdates.previousYears.link")
-                }
-                @messages("nextUpdates.previousYears.textTwo")
-            }
-        }
-
-        @checks.showUseCompatibleSoftwareSection.map { _ =>
-            @h3(messages("nextUpdates.updates.software.heading"), optId = Some("updates-software-heading"))
-            @p(){
-                <div id="updates-software-link" class="govuk-body app-get-help-link">
-                    @messages("nextUpdates.updates.software.dec1")
-                    @link(link = appConfig.compatibleSoftwareLink , target = Some("_blank"), messageKey = "nextUpdates.updates.software.dec2")
-                    @messages("nextUpdates.updates.software.dec3")
-                </div>
-            }
-        }
-    }
+    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))
 }
 
 @detailsContent = {

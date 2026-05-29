@@ -16,6 +16,7 @@
 
 package obligations.views.reportingObligations.signUp
 
+import common.auth.MtdItUser
 import obligations.views.html.reportingObligations.signUp.SignUpStartView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -28,7 +29,8 @@ class SignUpStartViewSpec extends TestSupport {
   val startButtonUrl = "/some/signUp/url"
 
   class Setup(isAgent: Boolean = true, isCY: Boolean) {
-    val pageDocument: Document = Jsoup.parse(contentAsString(signUpStartView(isAgent, isCY, startButtonUrl)))
+    implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
+    val pageDocument: Document = Jsoup.parse(contentAsString(signUpStartView(isCY, startButtonUrl)))
   }
 
   object signUpStart {

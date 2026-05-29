@@ -65,7 +65,6 @@ class OptOutTaxYearQuestionController @Inject()(
                 withSessionData(isStart = true, viewModel.taxYear.taxYear) {
                   Future(Ok(
                     view(
-                      isAgent,
                       viewModel,
                       OptOutTaxYearQuestionForm(viewModel.taxYear.taxYear),
                       routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)
@@ -122,7 +121,6 @@ class OptOutTaxYearQuestionController @Inject()(
                 Future {
                   BadRequest(
                     view(
-                      isAgent,
                       viewModel,
                       formWithErrors,
                       routes.OptOutTaxYearQuestionController.submit(isAgent, taxYear)

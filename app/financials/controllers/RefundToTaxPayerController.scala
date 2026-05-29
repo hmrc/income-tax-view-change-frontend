@@ -72,8 +72,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                       paymentHistoryRefundsEnabled = true,
                       backUrl, user.saUtr,
                       btaNavPartial = user.btaNavPartial,
-                      serviceNavigationPartial = user.serviceNavigationPartial,
-                      isAgent = user.isAgent))
+                      serviceNavigationPartial = user.serviceNavigationPartial))
               }
             case None => {
               Logger("application").error(s"No repayment details returned")
@@ -112,8 +111,8 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
   }
 
   lazy val homeUrl: Boolean => String = isAgent => if (isAgent) {
-    controllers.routes.HomeController.showAgent().url
+    hub.controllers.routes.HomeController.showAgent().url
   } else {
-    controllers.routes.HomeController.show().url
+    hub.controllers.routes.HomeController.show().url
   }
 }

@@ -39,7 +39,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
   "AddressLookupConnector" should {
     "addressLookupInitializeUrl" should {
       "return the initialising address" in {
-        disableAllSwitches()
 
         val result = TestAddressLookupConnector.addressLookupInitializeUrl
         result shouldBe s"$baseUrl/api/v2/init"
@@ -48,7 +47,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
 
     "getAddressDetailsUrl" should {
       "return the get url" in {
-        disableAllSwitches()
 
         val result = TestAddressLookupConnector.getAddressDetailsUrl("123")
         result shouldBe s"$baseUrl/api/v2/confirmed?id=123"
@@ -58,7 +56,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
     "initialiseAddressLookup" should {
       "return the redirect location" when {
         "location returned from the lookup-service (individual)(UK Only)" in {
-          disableAllSwitches()
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -71,7 +68,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
         "location returned from lookup-service (agent)(UK Only)" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
-          disableAllSwitches()
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -84,7 +80,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
         "location returned from lookup-service (individual)(Non-UK)" in {
-          disableAllSwitches()
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -97,7 +92,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
         "location returned from lookup-service (agent)(Non-UK)" in {
-          disableAllSwitches()
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -112,7 +106,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
       }
       "return the redirect location when on the Check page" when {
         "location returned from the lookup-service (individual) and mode = CheckMode" in {
-          disableAllSwitches()
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -125,7 +118,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
         "location returned from lookup-service (agent) when mode = CheckMode" in { //this is the only specific agent test, just to test that everything works with both possible json payloads
-          disableAllSwitches()
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = ACCEPTED,
@@ -141,7 +133,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
 
       "return an error" when {
         "non-standard status returned from lookup-service" in {
-          disableAllSwitches()
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = OK,
@@ -154,7 +145,6 @@ class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with 
           }
         }
         "non-standard status returned from lookup-service on Check page" in {
-          disableAllSwitches()
           beforeEach()
 
           setupMockHttpV2Post(TestAddressLookupConnector.addressLookupInitializeUrl)(HttpResponse(status = OK,

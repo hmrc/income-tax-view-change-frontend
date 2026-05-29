@@ -16,9 +16,6 @@
 
 package controllers
 
-import enums.MTDSupportingAgent
-import mocks.services.admin.MockFeatureSwitchService
-import models.admin.OptInOptOutContentUpdateR17
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.services.NextUpdatesService
@@ -38,13 +35,16 @@ import play.api.test.Injecting
 import play.twirl.api.Html
 import services.CreditService
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import views.html.HomeView
-import views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
-import views.html.newHomePage.*
-import views.html.helpers.injected.home.YourReportingObligationsTile
+import hub.controllers.HomeController
+import hub.views.html.HomeView
+import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import hub.views.html.newHomePage.*
+import hub.views.html.helpers.injected.home.YourReportingObligationsTile
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.enums.MTDSupportingAgent
+import common.mocks.services.admin.MockFeatureSwitchService
 import common.services.AuditingService
 
 import java.time.LocalDate
@@ -98,6 +98,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
+    mockGetNextDueDates((None, None))
 
     lazy val homePageTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
     lazy val homePageCaption = "You are signed in as a supporting agent"
@@ -120,8 +121,9 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           setupMockAgentWithClientAuth(true)
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(futureDueDates))
+          mockGetNextDueDates((None, Some(LocalDate.of(2100, 1, 1))))
           mockSingleBusinessIncomeSource()
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(TaxYear(staticTaxYear.endYear, staticTaxYear.endYear + 1) -> baseStatusDetail)))
           when(mockedOptInService.updateJourneyStatusInSessionData(any())(any(), any(), any()))
             .thenReturn(Future.successful(true))
           when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
@@ -133,7 +135,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           document.title shouldBe homePageTitle
           document.select("h1").text() shouldBe homePageHeading
           document.getElementsByClass("govuk-caption-xl").text() shouldBe homePageCaption
-          document.select("#updates-tile p:nth-child(2)").text() shouldBe "1 January 2100"
+          document.select("#updates-tile p:nth-child(2)").text() shouldBe "Next tax return due: 1 January 2100"
         }
 
         "there is an overdue update date to display" in new Setup {
@@ -141,15 +143,16 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           setupMockAgentWithClientAuth(true)
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(overdueDueDates))
+          mockGetNextDueDates((None, Some(LocalDate.of(2018, 1, 1))))
           mockSingleBusinessIncomeSource()
-          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
+          setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(TaxYear(staticTaxYear.endYear, staticTaxYear.endYear + 1) -> baseStatusDetail)))
 
           val result: Future[Result] = controller.showAgent()(fakeRequest)
 
           status(result) shouldBe Status.OK
           val document: Document = Jsoup.parse(contentAsString(result))
           document.title shouldBe homePageTitle
-          document.select("#updates-tile p:nth-child(2)").text() shouldBe "Overdue 1 January 2018"
+          document.select("#updates-tile p:nth-child(2)").text() shouldBe "Next tax return due: 1 January 2018"
         }
 
         "there are no updates to display" in new Setup {
@@ -188,7 +191,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (voluntary)" in new Setup {
-        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches()
         setupMockAgentWithClientAuth(isSupportingAgent)
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
         val nextQuarterlyUpdateDate: LocalDate = LocalDate.of(2024, 2, 5)
@@ -218,7 +221,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
 
       "render the homepage with the next updates tile and OptInOptOutContentUpdateR17 enabled for quarterly user (mandated) with overdue updates" in new Setup {
-        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches()
         setupMockAgentWithClientAuth(isSupportingAgent)
 
         val currentTaxYear: TaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)
@@ -252,7 +255,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
       }
 
       "render the home page with the next updates tile and OptInOptOutContentUpdateR17 enabled for annual user" in new Setup {
-        setupMockFeatureSwitches(OptInOptOutContentUpdateR17)
+        setupMockFeatureSwitches()
         setupMockAgentWithClientAuth(isSupportingAgent)
 
         val currentTaxYear = TaxYear(fixedDate.getYear, fixedDate.getYear + 1)

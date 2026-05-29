@@ -16,10 +16,11 @@
 
 package businessDetails.models.audit
 
-import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
+import common.enums.AuditType.CreateIncomeSource
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole, TransactionName}
 import enums.FailureCategory.ApiFailure
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, Json}
 import testConstants.BaseTestConstants.testSelfEmploymentId
@@ -30,8 +31,8 @@ import java.time.LocalDate
 
 class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
-  val transactionName = enums.TransactionName.CreateIncomeSource.name
-  val auditType = enums.AuditType.CreateIncomeSource.name
+  val transactionName = TransactionName.CreateIncomeSource.name
+  val auditType = CreateIncomeSource.name
   val hcWithDeviceID = headerCarrier.copy(deviceID = Some("some device id"))
   val failureCategory = ApiFailure
   val failureReason = "Failure Reason"

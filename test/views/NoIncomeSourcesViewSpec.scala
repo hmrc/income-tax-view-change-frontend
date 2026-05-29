@@ -26,8 +26,8 @@ class NoIncomeSourcesViewSpec extends ViewSpec {
 
   val testContactHmrcUrl = "/contact-hmrc"
 
-  def render(isAgent: Boolean = false): Html =
-    view(isAgent, testContactHmrcUrl)
+  def render(): Html =
+    view(testContactHmrcUrl)
 
   "No Income Sources page" should {
 

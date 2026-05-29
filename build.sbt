@@ -20,9 +20,13 @@ val hmrcMongoVersion = "2.12.0"
 val currentScalaVersion = "3.3.6"
 val playVersion = "play-30"
 
+val wErrorScalacOption: String = "-Werror"
+
 scalacOptions ++= Seq(
   "-feature",
-  "-Wconf:src=target/.*:silent")
+  "-Wconf:src=target/.*:silent",
+  "-unchecked",
+  wErrorScalacOption)
 
 val compile = Seq(
   ws,
@@ -103,7 +107,7 @@ lazy val microservice = Project(appName, file("."))
       "uk.gov.hmrc.hmrcfrontend.views.html.helpers._",
       "uk.gov.hmrc.hmrcfrontend.views.html.components.implicits._"
     ),
-    RoutesKeys.routesImport := Seq("businessDetails.enums.IncomeSourceJourney._", "models.admin._", "models.core._"),
+    RoutesKeys.routesImport := Seq("common.enums.IncomeSourceJourney._", "models.admin._", "models.core._"),
   )
   .settings(ThisBuild / scalacOptions += "-Wconf:msg=Flag.*repeatedly:s")
   .settings(
@@ -130,6 +134,7 @@ lazy val it = project
   .settings(
     testForkedParallel := true
   )
+  .settings(scalacOptions += wErrorScalacOption)
   .settings(
     libraryDependencies ++= appDependenciesIt)
 

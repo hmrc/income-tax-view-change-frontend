@@ -31,11 +31,11 @@ class SelectYourReasonViewSpec extends TestSupport {
 
   val selectYourReasonView: SelectYourReasonView = app.injector.instanceOf[SelectYourReasonView]
   lazy val form: Form[SelectYourReason] = new SelectYourReasonFormProvider().apply()
-  val view: Html = selectYourReasonView(form, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAgent = false, NormalMode, useFallbackLink = true)
+  val view: Html = selectYourReasonView(form, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), NormalMode, useFallbackLink = true)
   val document: Document = Jsoup.parse(view.toString())
 
   lazy val formError: Form[SelectYourReason] = new SelectYourReasonFormProvider().apply().withError("value", "claimToAdjustPoa.selectYourReason.error.required")
-  val viewWithErrors: Html = selectYourReasonView(formError, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), isAgent = false, NormalMode, useFallbackLink = true)
+  val viewWithErrors: Html = selectYourReasonView(formError, TaxYear(fixedDate.getYear, fixedDate.getYear + 1), NormalMode, useFallbackLink = true)
   val documentWithErrors: Document = Jsoup.parse(viewWithErrors.toString())
 
   val title = "Select Your Reason - Manage your Self Assessment - GOV.UK"

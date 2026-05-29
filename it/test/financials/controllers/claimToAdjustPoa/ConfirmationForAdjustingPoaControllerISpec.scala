@@ -17,8 +17,8 @@
 package financials.controllers.claimToAdjustPoa
 
 import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import routes._
-import enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import models.core.AccountingPeriodModel

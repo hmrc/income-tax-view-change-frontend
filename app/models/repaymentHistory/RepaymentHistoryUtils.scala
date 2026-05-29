@@ -16,13 +16,13 @@
 
 package models.repaymentHistory
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
+import common.services.DateServiceInterface
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import models.financialDetails._
+import models.financialDetails.*
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json
-import services.DateServiceInterface
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
@@ -38,12 +38,11 @@ object RepaymentHistoryUtils {
     }
   }
 
-  private def getCreditsLinkUrl(date: LocalDate, isAgent: Boolean) = {
-    val year = date.getYear
+  private def getCreditsLinkUrl(taxYear: Int, isAgent: Boolean) = {
     if (isAgent) {
-      financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(year).url
+      financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(taxYear).url
     } else {
-      financialsRoutes.CreditsSummaryController.showCreditsSummary(year).url
+      financialsRoutes.CreditsSummaryController.showCreditsSummary(taxYear).url
     }
   }
 
@@ -148,7 +147,7 @@ object RepaymentHistoryUtils {
       date = payment.documentDate,
       creditType = MfaCreditType,
       amount = payment.amount,
-      linkUrl = getCreditsLinkUrl(payment.documentDate, isAgent),
+      linkUrl = getCreditsLinkUrl(payment.taxYear, isAgent),
       visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}",
       taxYear = Some(payment.taxYear)
     )
@@ -174,7 +173,7 @@ object RepaymentHistoryUtils {
         linkUrl = if (hasCreditDrilldown)
           getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
         else
-          getCreditsLinkUrl(dueDate, isAgent),
+          getCreditsLinkUrl(payment.taxYear, isAgent),
         visuallyHiddenText = transactionId,
         taxYear = Some(payment.taxYear)
       )

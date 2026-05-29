@@ -16,15 +16,16 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.services.IncomeSourceDetailsService
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.enums.MTDIndividual
+import common.exceptions.MissingFieldException
+import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
-import enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import enums.MTDIndividual
-import exceptions.MissingFieldException
-import implicits.ImplicitDateFormatter
-import mocks.services.MockSessionService
+import common.mocks.services.MockSessionService
+import common.services.{DateServiceInterface, SessionService}
 import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -32,7 +33,6 @@ import play.api
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import services.{DateServiceInterface, SessionService}
 import testConstants.BusinessDetailsTestConstants.*
 import testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}

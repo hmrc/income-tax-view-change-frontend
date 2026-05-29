@@ -17,9 +17,11 @@
 package controllers
 
 import common.config.ItvcErrorHandler
+import common.connectors.ITSAStatusConnector
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import common.mocks.auth.MockAuthActions
-import connectors.ITSAStatusConnector
-import enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
+import common.mocks.services.{MockClientDetailsService, MockDateService, MockITSAStatusService}
+import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import mocks.services.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear

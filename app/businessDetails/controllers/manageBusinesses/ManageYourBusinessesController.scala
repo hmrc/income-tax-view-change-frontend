@@ -23,12 +23,12 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.ManageYourBusinessesView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.services.SessionService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -50,7 +50,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     handleRequest(
       sources = user.incomeSources,
       isAgent = false,
-      backUrl = controllers.routes.HomeController.show().url
+      backUrl = hub.controllers.routes.HomeController.show().url
     )(user, itvcErrorHandler)
   }
 
@@ -58,7 +58,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
     handleRequest(
       sources = user.incomeSources,
       isAgent = true,
-      backUrl = controllers.routes.HomeController.showAgent().url
+      backUrl = hub.controllers.routes.HomeController.showAgent().url
     )(user, itvcErrorHandlerAgent)
   }
 

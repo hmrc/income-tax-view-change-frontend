@@ -19,7 +19,7 @@ package views
 import _root_.implicits.ImplicitCurrencyFormatter._
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import implicits.ImplicitDateFormatter
+import common.implicits.ImplicitDateFormatter
 import models.creditDetailModel.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -80,6 +80,7 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
               maybeAvailableCredit: Option[BigDecimal] = None,
               isAgent: Boolean = false,
               backUrl: String = "testString") {
+    val testUser = if (isAgent) agentUserConfirmedClient() else individualUser
     lazy val page: HtmlFormat.Appendable =
       creditsSummaryView(
         calendarYear = testCalendarYear,
@@ -87,9 +88,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
         utr = utr,
         btaNavPartial = None,
         charges = creditCharges,
-        maybeAvailableCredit = maybeAvailableCredit,
-        isAgent = isAgent
-      )(FakeRequest(), implicitly, implicitly)
+        maybeAvailableCredit = maybeAvailableCredit
+      )(FakeRequest(), testUser, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }

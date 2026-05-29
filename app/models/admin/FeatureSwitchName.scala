@@ -59,8 +59,6 @@ object FeatureSwitchName {
       JsSuccess(PenaltiesAndAppeals)
     case JsString(PenaltiesBackendEnabled.name) =>
       JsSuccess(PenaltiesBackendEnabled)
-    case JsString(OptInOptOutContentUpdateR17.name) =>
-      JsSuccess(OptInOptOutContentUpdateR17)
     case JsString(SelfServeTimeToPayR17.name) =>
       JsSuccess(SelfServeTimeToPayR17)
     case JsString(TriggeredMigration.name) =>
@@ -114,7 +112,6 @@ object FeatureSwitchName {
       DisplayBusinessStartDate,
       PenaltiesAndAppeals,
       PenaltiesBackendEnabled,
-      OptInOptOutContentUpdateR17,
       SubmitClaimToAdjustToNrs,
       SelfServeTimeToPayR17,
       TriggeredMigration,
@@ -192,11 +189,6 @@ case object PenaltiesAndAppeals extends FeatureSwitchName {
 case object PenaltiesBackendEnabled extends FeatureSwitchName {
   override val name: String = "penalties-backend"
   override val toString: String = "Penalties Backend"
-}
-
-case object OptInOptOutContentUpdateR17 extends FeatureSwitchName {
-  override val name = "opt-in-opt-out-content-update-r17"
-  override val toString = "Opt In Opt Out Content Update R17"
 }
 
 case object SelfServeTimeToPayR17 extends FeatureSwitchName {

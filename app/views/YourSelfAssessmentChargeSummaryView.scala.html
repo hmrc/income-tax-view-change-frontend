@@ -15,9 +15,9 @@
  *@
 
 @import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import models.chargeSummary.ChargeSummaryViewModel
-@import services.DateServiceInterface
+@import common.services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import views.html.components.numberList
@@ -37,7 +37,7 @@
 @import java.time.LocalDate
 @import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
 @import common.viewUtils.ExternalUrlHelper
-@import exceptions.MissingFieldException
+@import common.exceptions.MissingFieldException
 @import common.config.FrontendAppConfig
 
 @this(
@@ -72,7 +72,8 @@
     implicit request: Request[_],
     messages: Messages,
     appConfig: FrontendAppConfig,
-    dateService: DateServiceInterface
+    dateService: DateServiceInterface,
+    user: common.auth.MtdItUser[_]
 )
 
 @import implicitDateFormatter.longDate
@@ -230,6 +231,6 @@
         @paymentHistoryTable(viewModel)
     }
     @if(viewModel.isCredit && paymentAllocations.isDefined) {
-        @paymentAllocationTable(paymentAllocations.get, viewModel.isAgent, viewModel.creditsRefundRepayEnabled)
+        @paymentAllocationTable(paymentAllocations.get, viewModel.creditsRefundRepayEnabled)
     }
 }

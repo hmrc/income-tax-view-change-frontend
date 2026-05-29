@@ -17,19 +17,18 @@
 package common.auth.actions
 
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import businessDetails.services.CustomerFactsUpdateService
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.connectors.IncomeTaxCalculationConnector
 import common.controllers.BaseController
-import connectors.IncomeTaxCalculationConnector
-import enums.JourneyType.TriggeredMigrationJourney
-import enums.TaxYearSummary.CalculationRecord.LATEST
+import common.enums.JourneyType.TriggeredMigrationJourney
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, SessionService}
+import common.enums.TaxYearSummary.CalculationRecord.LATEST
 import models.admin.TriggeredMigration
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, ITSAStatusService, SessionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -127,7 +126,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   private def isItsaStatusVoluntaryOrMandated()(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[Result, Boolean]] = {
     def redirectBasedOnUser: Future[Either[Result, Boolean]] =
-      Future(Left(if (user.isAgent) Redirect(controllers.routes.HomeController.showAgent()) else Redirect(controllers.routes.HomeController.show())))
+      Future(Left(if (user.isAgent) Redirect(hub.controllers.routes.HomeController.showAgent()) else Redirect(hub.controllers.routes.HomeController.show())))
 
     ITSAStatusService.getITSAStatusDetail(dateService.getCurrentTaxYear, futureYears = true, history = false).flatMap {
       itsaStatusList =>
@@ -173,9 +172,9 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   private def redirectToHome(isAgent: Boolean): Result = {
     if (isAgent) {
-      Redirect(controllers.routes.HomeController.showAgent())
+      Redirect(hub.controllers.routes.HomeController.showAgent())
     } else {
-      Redirect(controllers.routes.HomeController.show())
+      Redirect(hub.controllers.routes.HomeController.show())
     }
   }
 

@@ -68,11 +68,12 @@ class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSession
   val whatYouNeedToKnowView: WhatYouNeedToKnowView = app.injector.instanceOf[WhatYouNeedToKnowView]
 
   def successfulFutureOk: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
-    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = false, whatYouNeedToKnowViewModel(isAgent = false, showIncreaseAfterPaymentContent = false))))
+    EitherT.rightT(Ok(whatYouNeedToKnowView(whatYouNeedToKnowViewModel(isAgent = false, showIncreaseAfterPaymentContent = false))))
   }
 
   def successfulFutureOkAgent: (PoaAmendmentData, PaymentOnAccountViewModel) => EitherT[Future, Throwable, Result] = (_, _) => {
-    EitherT.rightT(Ok(whatYouNeedToKnowView(isAgent = true, whatYouNeedToKnowViewModel(isAgent = true, showIncreaseAfterPaymentContent = true))))
+    implicit val user: MtdItUser[_] = agentUser
+    EitherT.rightT(Ok(whatYouNeedToKnowView(whatYouNeedToKnowViewModel(isAgent = true, showIncreaseAfterPaymentContent = true))))
   }
 
   override implicit val individualUser: MtdItUser[_] =

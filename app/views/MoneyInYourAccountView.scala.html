@@ -15,9 +15,9 @@
  *@
 
 @import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-@import _root_.implicits.ImplicitDateFormatterImpl
+@import _root_.common.implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
-@import implicits.ImplicitDateFormatter
+@import common.implicits.ImplicitDateFormatter
 @import common.auth.MtdItUser
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.config.FrontendAppConfig
@@ -40,7 +40,6 @@
 )
 
 @(viewModel: MoneyInYourAccountViewModel,
-        isAgent: Boolean = false,
         backUrl: String)(implicit request: Request[_],
         user: MtdItUser[_],
         messages: Messages)
@@ -48,7 +47,7 @@
 @mainTemplate(
     pageTitle = messages("money-in-your-account.heading"),
     backUrl = Some(backUrl),
-    isAgent = isAgent,
+    isAgent = user.isAgent,
     useFallbackBackLink = true,
     btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
@@ -64,7 +63,7 @@
         @MoneyInAccountCreditExplanation(viewModel)
 
         @if(viewModel.creditRows.length > 0){
-            @whereMoneyCameFromTable(viewModel, isAgent)
+            @whereMoneyCameFromTable(viewModel)
         } else {}
 
         @ClaimRefundButton()
@@ -120,7 +119,7 @@
 @ClaimRefundButton() = @{
     continueButton(
         Some(messages("money-in-your-account.claim-refund.button-text")),
-        Some(if (isAgent)
+        Some(if (user.isAgent)
         s"${financialsRoutes.MoneyInYourAccountController.startRefundAgents().url}"
             else
         s"${financialsRoutes.MoneyInYourAccountController.startRefund().url}"

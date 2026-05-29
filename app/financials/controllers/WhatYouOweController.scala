@@ -20,12 +20,13 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.*
-import enums.GatewayPage.WhatYouOwePage
+import common.enums.GatewayPage.WhatYouOwePage
+import common.services.DateServiceInterface
 import forms.utils.SessionKeys.gatewayPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{DateServiceInterface, WhatYouOweService}
+import services.WhatYouOweService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOweView
@@ -33,7 +34,8 @@ import views.html.WhatYouOweView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
-import controllers.routes as appRoutes
+import hub.controllers.routes as appRoutes
+import returns.controllers.routes as returnsRoutes
 
 
 class WhatYouOweController @Inject()(val authActions: AuthActions,
@@ -71,7 +73,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
-        backUrl = controllers.routes.HomeController.show(origin).url,
+        backUrl = hub.controllers.routes.HomeController.show(origin).url,
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
         origin = origin
@@ -89,14 +91,14 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
 
   private def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (user.isAgent match {
     case true if user.incomeSources.yearOfMigration.isDefined  => routes.MoneyInYourAccountController.showAgent()
-    case true                                                  => appRoutes.NotMigratedUserController.showAgent()
+    case true                                                  => routes.NotMigratedUserController.showAgent()
     case false if user.incomeSources.yearOfMigration.isDefined => routes.MoneyInYourAccountController.show()
-    case false                                                 => appRoutes.NotMigratedUserController.show()
+    case false                                                 => routes.NotMigratedUserController.show()
   }).url
 
   private def getTaxYearSummaryUrl(origin: Option[String])(implicit user: MtdItUser[_]): Int => String = {
-    if (user.isAgent) appRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
-    else                appRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
+    if (user.isAgent) returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
+    else                returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
   }
 
   private def getAdjustPoaUrl(implicit user: MtdItUser[_]): String = claimToAdjustPoaRoutes.AmendablePoaController.show(user.isAgent).url

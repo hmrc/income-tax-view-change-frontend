@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitDateFormatterImpl
+@import common.implicits.ImplicitDateFormatterImpl
 @import implicits.ImplicitCurrencyFormatter._
 @import models.paymentAllocationCharges._
 @import _root_.implicits.HtmlFormatter.NbspString
@@ -22,11 +22,11 @@
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, isAgent: Boolean)(implicit messages: Messages)
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel)(implicit messages: Messages, user: common.auth.MtdItUser[_])
 @import implicitDateFormatter._
 
-@paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate, isAgent: Boolean) = @{
-    if(isAgent){
+@paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate) = @{
+    if(user.isAgent){
         financialsRoutes.ChargeSummaryController.showAgent(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
     } else {
         financialsRoutes.ChargeSummaryController.show(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
@@ -40,11 +40,11 @@
             <td class="govuk-table__cell">@paymentAllocation.clearingDateActual.toLongDateShort.toNonBreaking</td>
             <td class="govuk-table__cell" id="payment-allocation-@index">
                 @if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined && paymentAllocation.allocationDetailActual.mainType != Some("On Account")) {
-                    <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
+                    <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation)">
                         @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
                     </a>
                 } else if(paymentAllocation.allocationDetailActual.mainType == Some("On Account")) {
-                    <p class="govuk-body" style="display:block" href="@paymentAllocationHref(paymentAllocation, isAgent)">
+                    <p class="govuk-body" style="display:block" href="@paymentAllocationHref(paymentAllocation)">
                         @messages("paymentAllocation.paymentAllocations.onAccount.table.description.poa")
                     </p>
                 } else{

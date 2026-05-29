@@ -53,7 +53,6 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     DisplayBusinessStartDate,
     PenaltiesAndAppeals,
     PenaltiesBackendEnabled,
-    OptInOptOutContentUpdateR17,
     SelfServeTimeToPayR17,
     SubmitClaimToAdjustToNrs,
     TriggeredMigration,

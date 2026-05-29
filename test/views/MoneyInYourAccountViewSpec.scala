@@ -16,10 +16,11 @@
 
 package views
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.implicits.ImplicitDateFormatter
 import java.time.LocalDate
-import implicits.ImplicitDateFormatter
 import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -57,14 +58,14 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
     }
 
     val testUrl = "testUrl"
+    val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
 
     val viewModel: MoneyInYourAccountViewModel = MoneyInYourAccountViewModel.fromCreditsModel(creditAndRefundModel, testUrl)
 
     lazy val page: HtmlFormat.Appendable =
       moneyInYourAccountView(
         viewModel,
-        isAgent = isAgent,
-        backUrl)(FakeRequest(), implicitly, testMessages)
+        backUrl)(FakeRequest(), testUser, testMessages)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")
   }

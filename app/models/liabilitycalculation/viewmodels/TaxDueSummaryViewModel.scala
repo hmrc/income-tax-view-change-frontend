@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import exceptions.MissingFieldException
+import common.exceptions.MissingFieldException
 import models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.CalculationSummary.getTaxDue
 import models.liabilitycalculation._
@@ -62,6 +62,7 @@ case class TaxDueSummaryViewModel(
                                    finalDeclarationOrTaxReturnIsSubmitted: Boolean = false,
                                    transitionProfitRow: Option[TransitionProfitRow] = None,
                                    highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None,
+                                   winterFuelPaymentCharge: Option[BigDecimal] = None,
                                    pensionContributionReliefs: Option[PensionContributionReliefs] = None
                                  ) {
 
@@ -152,6 +153,7 @@ object TaxDueSummaryViewModel {
             hicbc.highIncomeChildBenefitCharge
           )}
         ),
+        winterFuelPaymentCharge = calc.taxCalculation.flatMap(tc => tc.incomeTax.winterFuelPaymentCharge),
         pensionContributionReliefs = calc.pensionContributionReliefs
       )
       case None => TaxDueSummaryViewModel()
