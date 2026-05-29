@@ -33,7 +33,7 @@ import play.api.http.Status
 import play.api.test.Helpers.*
 import services.PaymentHistoryService.PaymentHistoryError
 import services.{PaymentHistoryService, RepaymentService}
-
+import org.jsoup.Jsoup
 import scala.concurrent.Future
 
 class PaymentHistoryControllerSpec extends MockAuthActions
@@ -56,6 +56,10 @@ class PaymentHistoryControllerSpec extends MockAuthActions
   val testPayments: List[Payment] = List(
     Payment(9999, Some("AAAAA"), Some(10000), None, Some("Payment"), None, Some("lot"), Some("lotitem"), Some("2019-12-25"), "2019-12-25", Some("DOCID01")),
     Payment(9999, Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2007-03-23"), "2007-03-23", Some("DOCID02"))
+  )
+  val differentTaxYearToCalendarYearPayments: List[Payment] = List(
+    Payment(2021, Some("AAAAA"), Some(-10000), None, Some("Payment"), None, None, None, Some("2022-12-25"), "2022-12-25", Some("DOCID01"), mainTransaction = Some("6110")),
+    Payment(2023, Some("BBBBB"), Some(5000), None, Some("tnemyap"), None, Some("lot"), Some("lotitem"), Some("2024-03-23"), "2024-03-23", Some("DOCID02"))
   )
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -82,6 +86,39 @@ class PaymentHistoryControllerSpec extends MockAuthActions
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
               result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
+
+              val htmlContent = contentAsString(result)
+
+              val document = Jsoup.parse(htmlContent)
+
+              println("Document1: " + document)
+            }
+            "the user has charge from one year cutover credit tied to that charge from the next year" in {
+              setupMockSuccess(mtdUserRole)
+              mockItsaStatusRetrievalAction()
+              mockSingleBusinessIncomeSource()
+              when(paymentHistoryService.getPaymentHistory(any(), any()))
+                .thenReturn(Future.successful(Right(differentTaxYearToCalendarYearPayments)))
+              when(paymentHistoryService.getRepaymentHistory(any())(any(), any()))
+                .thenReturn(Future.successful(Right(List.empty[RepaymentHistory])))
+              when(paymentHistoryService.getChargesWithUpdatedDocumentDateIfChargeHistoryExists()(any(), any()))
+                .thenReturn(Future.successful(List.empty[ChargeItem]))
+
+              val result = action(fakeRequest)
+              status(result) shouldBe Status.OK
+              result.futureValue.session.get(gatewayPage) shouldBe Some("paymentHistory")
+
+              val htmlContent = contentAsString(result)
+
+              val document = Jsoup.parse(htmlContent)
+
+              val link = document.select("#payment-0 a.govuk-link")
+              link.isEmpty shouldBe false
+              if(isAgent){
+                link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2021"
+              }else{
+                link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2021"
+              }
             }
           }
 
