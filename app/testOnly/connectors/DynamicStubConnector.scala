@@ -17,16 +17,14 @@
 package testOnly.connectors
 
 import common.connectors.RawResponseReads
-import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import play.api.libs.ws.{writeableOf_JsValue, writeableOf_urlEncodedForm}
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, IncomeSourcesUser, LatentBusinessUser, Nino, SchemaModel}
+import testOnly.models.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import play.api.libs.ws.writeableOf_JsValue
-import play.api.libs.ws.writeableOf_urlEncodedForm
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
