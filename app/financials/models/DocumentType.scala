@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package enums
+package financials.models
 
 enum DocumentType(val key: String):
   case Poa1Charge extends DocumentType("ITSA- POA 1")

@@ -18,7 +18,7 @@ package services
 
 import common.auth.MtdItUser
 import connectors.ChargeHistoryConnector
-import enums.CreateReversalReason
+import financials.models.CreateReversalReason
 import models.chargeHistory._
 import models.financialDetails._
 import uk.gov.hmrc.http.HeaderCarrier
