@@ -49,12 +49,6 @@ case class DocumentDetail(taxYear: Int,
                           poaRelevantAmount: Option[BigDecimal] = None
                          ) {
 
-  def findTaxYear: Int = taxYear match {
-    case year if taxYear != 9999 => year
-    case year if effectiveDateOfPayment.isDefined => effectiveDateOfPayment.get.getYear
-    case _ => documentDate.getYear
-  }
-
   def credit: Option[BigDecimal] = originalAmount match {
     case _ if (paymentLotItem.isDefined && paymentLot.isDefined) => None
     case _ if (originalAmount >= 0) => None

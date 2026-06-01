@@ -2584,8 +2584,6 @@ manageBusinesses.manage.propertyReportingMethod.new.confirm                     
 
 # credits
 credit.description.balancingCharge                                    = Credit from overpaid tax
-credit.description.POA1RR-credit                                      = Credit from first payment on account
-credit.description.POA2RR-credit                                      = Credit from second payment on account
 credit.description.cutOver                                            = Credit from an earlier tax year
 credit.description.mfa                                                = Credit from HMRC adjustment
 credit.description.repaymentInterest                                  = Credit from repayment interest

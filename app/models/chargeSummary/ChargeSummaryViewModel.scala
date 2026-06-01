@@ -170,18 +170,12 @@ case class ChargeSummaryViewModel(
     val matchingPayment = payment.clearingId
     matchingPayment match {
       case Some(paymentId) => {
-        val matchingDocumentDetail = payments.documentDetails.find(_.transactionId.contains(paymentId))
-        val originalAmount = matchingDocumentDetail.map(_.originalAmount)
-        val isItACredit = originalAmount.exists(_ < 0) && matchingDocumentDetail.exists(_.taxYear != 9999)
-        val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
-
-        val link = (isItACredit, isAgent) match {
-          case (true, true) => CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
-          case (true, false) => CreditsSummaryController.showCreditsSummary(findTaxYear).url
-          case (false, true) => PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
-          case (false, false) => PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
+        val link: String = if (isAgent) {
+          PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
+        } else {
+          PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
         }
-        
+
         val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
         else if (payment.isCutoverCredit) messages("paymentHistory.cutOver")
         else messages(allocation.getPaymentAllocationTextInChargeSummary, taxYearFromCodingOut, taxYearToCodingOut)
