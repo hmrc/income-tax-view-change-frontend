@@ -20,7 +20,6 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
 import common.config.ItvcErrorHandler
 import common.controllers.bta.BtaNavBarController
-import common.models.admin.{FeatureSwitch, NavBarFs}
 import common.utils.AuthUtils
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,9 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.request.RequestTarget
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
-import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import views.html.navBar.PtaPartial
 
 import scala.concurrent.Future
 
@@ -41,16 +38,10 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
   private val featureSwitchNavBarEnabled = List(FeatureSwitch(NavBarFs, true))
 
-  def buildApp(useRebrand: Boolean): Application =
+  def buildApp(): Application =
     new GuiceApplicationBuilder()
-      .overrides(
-        api.inject.bind[BtaNavBarController].toInstance(mockBtaNavBarController),
-        api.inject.bind[PtaPartial].toInstance(mockPtaPartial),
-        api.inject.bind[ItvcErrorHandler].toInstance(mockItvcErrorHandler)
-      )
       .configure(
-        "feature-switches.read-from-mongo" -> "true",
-        "itvc.useRebrand" -> useRebrand.toString
+        "feature-switches.read-from-mongo" -> "true"
       )
       .build()
 
@@ -62,7 +53,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
   def defaultAsync: MtdItUser[_] => Future[Result] = _ => Future.successful(Results.Ok("Successful"))
 
-  private def sharedTests(app: Application, rebrand: Boolean): Unit = {
+  private def sharedTests(app: Application): Unit = {
 
     val action = app.injector.instanceOf[NavBarRetrievalAction]
 
@@ -90,46 +81,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
           contentAsString(result) shouldBe "Successful"
         }
 
-        if (!rebrand) {
-
-          "return PTA partial when origin in session = PTA" in {
-            val ptaHtml = Html("<test>PTA</test>")
-            val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "PTA")
-            val mtdReq =
-              getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
-
-            when(mockPtaPartial.apply()(any(), any(), any()))
-              .thenReturn(ptaHtml)
-
-            val result = action.invokeBlock(
-              mtdReq,
-              defaultAsyncBody(_.btaNavPartial shouldBe Some(ptaHtml))
-            )
-
-            status(result) shouldBe OK
-          }
-
-          "return BTA partial when origin in session = BTA" in {
-            val btaHtml = Html("<test>BTA</test>")
-            val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "BTA")
-            val mtdReq =
-              getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
-
-            when(mockBtaNavBarController.btaNavBarPartial(any())(any(), any()))
-              .thenReturn(Future.successful(btaHtml))
-
-            val result = action.invokeBlock(
-              mtdReq,
-              defaultAsyncBody(_.btaNavPartial shouldBe Some(btaHtml))
-            )
-
-            status(result) shouldBe OK
-          }
-
-        }
-
-        if (rebrand) {
-          "return PTA ServiceNavigation when origin = PTA" in {
+        "return PTA ServiceNavigation when origin = PTA" in {
             val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "PTA")
             val mtdReq = getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
 
@@ -152,7 +104,6 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
             status(result) shouldBe OK
           }
-        }
 
         "return unchanged request when no origin found" in {
           val mtdReq =
@@ -182,13 +133,8 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
     }
   }
 
-  "NavBarRetrievalAction when rebrand = true" when {
-    val app = buildApp(useRebrand = true)
-    sharedTests(app, rebrand = true)
-  }
-
-  "NavBarRetrievalAction when rebrand = false" when {
-    val app = buildApp(useRebrand = false)
-    sharedTests(app, rebrand = false)
+  "NavBarRetrievalAction" when {
+    val app = buildApp()
+    sharedTests(app)
   }
 }

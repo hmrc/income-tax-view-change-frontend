@@ -25,7 +25,6 @@ import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
 import testUtils.TestSupport
-import views.html.navBar.PtaPartial
 
 trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
 
@@ -38,7 +37,6 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   lazy val mockItvcErrorHandler = mock[ItvcErrorHandler]
 
   lazy val mockBtaNavBarController = mock[BtaNavBarController]
-  lazy val mockPtaPartial = mock[PtaPartial]
   lazy val mockFeatureSwitchService = mock[FeatureSwitchService]
   lazy val mockAgentErrorHandler = mock[AgentItvcErrorHandler]
 
