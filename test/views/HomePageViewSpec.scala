@@ -124,8 +124,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
       penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
-      dunningLockExists = dunningLockExists,
-      useGovUkRebrand = true
+      dunningLockExists = dunningLockExists
     )
 
     val home: HomeView = app.injector.instanceOf[HomeView]
@@ -156,7 +155,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
     }
 
     s"have the correct link to the government homepage" in new Setup {
-      document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
+      document.getElementsByClass("govuk-header__homepage-link").attr("href") shouldBe "https://www.gov.uk"
     }
 
     s"have the title ${messages("htmlTitle", messages("home.heading.new"))}" in new Setup() {

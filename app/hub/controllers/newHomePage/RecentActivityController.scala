@@ -85,7 +85,6 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: hub.view
         recentActivityUrl(origin, user.isAgent),
         overviewUrl(origin, user.isAgent),
         helpUrl(origin, user.isAgent),
-        appConfig.itvcRebrand,
         recentActivityViewModel)
       )
     }
