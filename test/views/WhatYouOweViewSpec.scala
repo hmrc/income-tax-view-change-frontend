@@ -21,7 +21,7 @@ import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import financials.controllers.routes as financialsRoutes
-import enums.CodingOutType.*
+import financials.models.CodingOutType.*
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}

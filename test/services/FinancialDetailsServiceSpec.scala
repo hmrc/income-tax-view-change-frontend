@@ -19,7 +19,7 @@ package services
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import enums.CodingOutType._
+import financials.models.CodingOutType.*
 import mocks.connectors.MockFinancialDetailsConnector
 import models.core.AccountingPeriodModel
 import models.financialDetails._

@@ -18,8 +18,8 @@ package financials.controllers
 
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
-import enums.AmendedReturnReversalReason
-import enums.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
+import financials.models.AmendedReturnReversalReason
+import financials.models.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService, MockPaymentAllocationsService}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.*

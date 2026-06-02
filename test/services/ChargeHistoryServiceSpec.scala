@@ -16,7 +16,7 @@
 
 package services
 
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason}
+import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason}
 import mocks.connectors.MockChargeHistoryConnector
 import models.chargeHistory._
 import models.claimToAdjustPoa.{Increase, MainIncomeLower}

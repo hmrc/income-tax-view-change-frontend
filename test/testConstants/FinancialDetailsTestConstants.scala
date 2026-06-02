@@ -17,8 +17,8 @@
 package testConstants
 
 import common.services.DateService
-import enums.ChargeType.NIC4_WALES
-import enums.CodingOutType._
+import financials.models.ChargeType.NIC4_WALES
+import financials.models.CodingOutType.*
 import models.creditDetailModel.CreditDetailModel
 import models.creditsandrefunds.{CreditsModel, Transaction}
 import models.financialDetails._
