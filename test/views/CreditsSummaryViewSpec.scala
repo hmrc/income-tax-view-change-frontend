@@ -16,19 +16,20 @@
 
 package views
 
-import _root_.implicits.ImplicitCurrencyFormatter._
+import _root_.implicits.ImplicitCurrencyFormatter.*
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import models.creditDetailModel.CreditDetailModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.helpers.CreditHistoryDataHelper
 import testConstants.BaseTestConstants.testMtditid
-import testConstants.FinancialDetailsTestConstants._
+import testConstants.FinancialDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummaryView
 
@@ -213,15 +214,21 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
         document.select("th:nth-child(3)").text() shouldBe creditsTableHeadStatusText
         document.select("th:nth-child(4)").text() shouldBe creditsTableHeadAmountText
 
-        document.selectById("balancing-charge-type-0").select("td:nth-child(1)").first().text() shouldBe "16 Apr 2018"
-        document.selectById("balancing-charge-type-0").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-        document.selectById("balancing-charge-type-0").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
-        document.selectById("balancing-charge-type-0").select("td:nth-child(4)").first().text() shouldBe "£800.00"
+        val tbody: Elements = document.select("tbody")
+        tbody.select("tr").size() shouldBe 2
 
-        document.selectById("balancing-charge-type-1").select("td:nth-child(1)").first().text() shouldBe "30 Jul 2018"
-        document.selectById("balancing-charge-type-1").select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
-        document.selectById("balancing-charge-type-1").select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
-        document.selectById("balancing-charge-type-1").select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
+        val chargeOne = tbody.select("tr").get(0)
+        val chargeTwo = tbody.select("tr").get(1)
+
+        chargeOne.select("td:nth-child(1)").first().text() shouldBe "16 Apr 2018"
+        chargeOne.select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
+        chargeOne.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusPartiallyAllocatedValue
+        chargeOne.select("td:nth-child(4)").first().text() shouldBe "£800.00"
+
+        chargeTwo.select("td:nth-child(1)").first().text() shouldBe "30 Jul 2018"
+        chargeTwo.select("td:nth-child(2)").first().text() shouldBe creditsTableHeadTypeValue
+        chargeTwo.select("td:nth-child(3)").first().text() shouldBe creditsTableStatusNotYetAllocatedValue
+        chargeTwo.select("td:nth-child(4)").first().text() shouldBe "£1,400.00"
 
         document.selectById("h2-credit-from-hmrc-adjustment").text() shouldBe creditsDropDownListCreditFomHmrcAdjustment
         document.selectById("h2-credit-from-hmrc-adjustment").nextElementSibling().text() shouldBe creditsDropDownListCreditFomHmrcAdjustmentValue
