@@ -107,7 +107,7 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
          "return an error when the request fails" in {
            WiremockHelper.stubGet(s"/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId", INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.getRepaymentHistoryByRepaymentId(Nino(nino), repaymentId).futureValue
+           val result = connector.getRepaymentHistoryByRepaymentId(Nino(nino), repaymentId).futureValue
 
            result shouldBe RepaymentHistoryErrorModel(500, "{}")
            WiremockHelper.verifyGet(s"/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId")
@@ -181,7 +181,7 @@ class RepaymentHistoryConnectorISpec extends AnyWordSpec with ComponentSpecBase 
          "return an error when the request fails" in {
            WiremockHelper.stubGet(s"/income-tax-financial-details/repayments/$nino", INTERNAL_SERVER_ERROR, "{}")
 
-          val result = connector.getRepaymentHistoryByNino(Nino(nino)).futureValue
+           val result = connector.getRepaymentHistoryByNino(Nino(nino)).futureValue
 
            result shouldBe RepaymentHistoryErrorModel(500, "{}")
            WiremockHelper.verifyGet(s"/income-tax-financial-details/repayments/$nino")

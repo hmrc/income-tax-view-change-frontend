@@ -109,11 +109,11 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
       "return a successful response" in {
 
-         WiremockHelper.stubPost(s"/income-tax-financial-details/submit-claim-to-adjust-poa", CREATED, s"""
-           {
-              "processingDate": "$processingDate"
-           }
-           """)
+        WiremockHelper.stubPost(s"/income-tax-financial-details/submit-claim-to-adjust-poa", CREATED, s"""
+          {
+             "processingDate": "$processingDate"
+          }
+          """)
 
         val result: Either[ClaimToAdjustPoaFailure, ClaimToAdjustPoaSuccess] =
           connector.postClaimToAdjustPoa(request).futureValue
@@ -125,12 +125,11 @@ class ClaimToAdjustPoaConnectorSpec extends AnyWordSpec with ComponentSpecBase {
 
         "successful response cannot be parsed" in {
 
-           WiremockHelper.stubPost(s"/income-tax-financial-details/submit-claim-to-adjust-poa", CREATED,
-             s"""
-           {
+          WiremockHelper.stubPost(s"/income-tax-financial-details/submit-claim-to-adjust-poa", CREATED, s"""
+            {
               "invalid": "response"
-           }
-           """)
+            }
+            """)
 
           val result: Either[ClaimToAdjustPoaFailure, ClaimToAdjustPoaSuccess] =
             connector.postClaimToAdjustPoa(request).futureValue
