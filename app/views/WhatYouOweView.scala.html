@@ -72,13 +72,18 @@
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
 
-    @if(viewModel.hasOverdueOrAccruingInterestCharges) {
-
+    @if(viewModel.hasOverdueOrAccruingInterestCharges || viewModel.hasCrystalisedInterest) {
         @govukWarningText(WarningText(
-            attributes = Map("id" -> "interest-charges-warning"),
-            content = Text(getMessage("interestChargesWarning"))
+        attributes = Map("id" -> "interest-charges-warning"),
+        content = Text(getMessage("interestChargesWarning.crystallised"))
         ))
-    }
+    }else {
+        @govukWarningText(WarningText(
+        attributes = Map("id" -> "interest-charges-warning"),
+        content = Text(getMessage("interestChargesWarning"))
+        ))
+}
+
 
     @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero) {
 

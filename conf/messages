@@ -1201,13 +1201,14 @@ whatYouOwe.payments-made-heading                                   = Payments be
 whatYouOwe.payments-made-body-1                                    = You’re paying {0} through your PAYE tax code for the {1} to {2} tax year. You can
 whatYouOwe.payments-made-link                                      = view your payment history
 whatYouOwe.payments-made-body-2                                    = to find out more information about these charges.
-whatYouOwe.sa-note-1-heading                                       = If you need help paying your Self Assessment charges
-whatYouOwe.sa-note-1-body-1                                        = If you’ve missed a payment deadline or you cannot pay the amount you owe, you might be able
+whatYouOwe.sa-note-1-heading                                       = Spread the cost of your Self Assessment
+whatYouOwe.sa-note-1-body-1                                        = If the deadline has passed or you cannot pay your tax bill in full, you may be able to
+whatYouOwe.sa-note-1-body-1-1                                      = to pay off what you owe in monthly instalments.
 whatYouOwe.sa-note-1-body-2                                        = If you’re up to date with your payments, you can
-whatYouOwe.sa-note-1-body-3                                        = which is a regular Direct Debit for Self Assessment.
+whatYouOwe.sa-note-1-body-3                                        = to make weekly or monthly payments towards your next tax bill so that you owe less at the deadline.
 whatYouOwe.sa-note-1-body-4                                        = If you’re confident the tax you owe is going to be lower than last year, you can
-whatYouOwe.sa-link-1-body-1                                        = set up a Self Assessment payment plan
-whatYouOwe.sa-link-1-body-2                                        = set up a Budget Payment plan
+whatYouOwe.sa-link-1-body-1                                        = arrange a payment plan
+whatYouOwe.sa-link-1-body-2                                        = set up a regular Direct Debit
 whatYouOwe.sa-link-1-body-3                                        = adjust payments on account for the {0} to {1} tax year
 whatYouOwe.sa-note-2-heading                                       = You may still have payments due for your earlier Self Assessment tax years
 whatYouOwe.sa-note-2-body                                          = To view your payment history from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
@@ -1293,6 +1294,8 @@ whatYouOwe.adjust-poa.paid-3                                       = at any poin
 whatYouOwe.adjust-poa.paid-4                                       = 31 January {0}.
 whatYouOwe.adjust-poa.paid-5                                       =
 whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
+whatYouOwe.interestChargesWarning.crystallised                     = Interest to date is estimated. To stop it increasing every day, pay the related tax in full. It can then take up to 3 working days for the total interest to be calculated and shown here.
+
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
