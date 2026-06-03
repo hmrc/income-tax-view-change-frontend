@@ -35,12 +35,11 @@
             TableRow(
                 attributes = Map("id" -> s"$messageKey-row"),
                 content = HtmlContent(messages(s"deduction_breakdown.table.$messageKey")),
-                classes = "govuk-table__cell"
             ),
             TableRow(
                 attributes = Map("id" -> s"$messageKey-value"),
                 content = HtmlContent(if (isNegative) data.toNegativeCurrency else data.toCurrency),
-                classes = "govuk-table__cell govuk-table__cell--numeric"
+                classes = "govuk-table__cell--numeric"
             )
         )
     }
@@ -87,11 +86,11 @@
         ) { tableRows =>
             @govukTable(Table(
                 caption = Some(messages("deduction_breakdown.dates", s"${taxYear-1}", s"$taxYear") + " " + messages("deduction_breakdown.heading")),
-                captionClasses = "govuk-table__caption govuk-table__caption--m govuk-visually-hidden",
+                captionClasses = "govuk-table__caption--m govuk-visually-hidden",
                 rows = tableRows,
                 head = Some(Seq(
-                    HeadCell(content = Text(messages("deduction_breakdown.table.header")), classes = "govuk-table__header"),
-                    HeadCell(content = Text(messages("deduction_breakdown.table.header.amount")), classes = "govuk-table__header govuk-table__header--numeric")
+                    HeadCell(content = Text(messages("deduction_breakdown.table.header"))),
+                    HeadCell(content = Text(messages("deduction_breakdown.table.header.amount")), classes = "govuk-table__header--numeric")
                 ))
             ))
         }
