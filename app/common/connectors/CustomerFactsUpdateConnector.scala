@@ -31,7 +31,7 @@ class CustomerFactsUpdateConnector @Inject()(val http: HttpClientV2,
                                             )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getCustomerFactsUpdateUrl(mtdId: String): String =
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/customer-facts/update/$mtdId"
+    s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/customer-facts/update/$mtdId"
 
   def updateCustomerFacts(mtdId: String)
                          (implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {

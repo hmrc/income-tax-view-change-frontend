@@ -21,7 +21,7 @@ import testConstants.BaseIntegrationTestConstants.testMtditid
 
 object CustomerFactsStub {
 
-  def getUrl: String = s"/income-tax-view-change/customer-facts/update/$testMtditid"
+  def getUrl: String = s"/income-tax-business-details/customer-facts/update/$testMtditid"
 
   def stubPutCustomerFactsResponse(): Unit = {
     WiremockHelper.stubPut(getUrl, 200, "")

@@ -38,9 +38,7 @@ class ChargeHistoryConnectorSpec extends TestSupport with MockHttpV2 with MockAu
 
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9090"
       }
-
     val connector = new ChargeHistoryConnector(mockHttpClientV2, getAppConfig)
   }
 

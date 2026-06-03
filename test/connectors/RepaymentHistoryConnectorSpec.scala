@@ -53,7 +53,6 @@ class RepaymentHistoryConnectorSpec extends TestSupport with MockHttpV2 with Moc
     val baseUrl = "http://localhost:9090"
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
     val connector = new RepaymentHistoryConnector(mockHttpClientV2, getAppConfig)
