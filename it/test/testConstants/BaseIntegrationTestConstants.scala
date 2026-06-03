@@ -145,14 +145,6 @@ object BaseIntegrationTestConstants {
 
   val quarterTypeElection: QuarterTypeElection = QuarterTypeElection("STANDARD", "2021")
 
-  val testNavLinks: NavContent = NavContent(
-    NavLinks("testEnHome", "testCyHome", "testUrl"),
-    NavLinks("testEnAccount", "testCyAccount", "testUrl"),
-    NavLinks("testEnMessages", "testCyMessages", "testUrl"),
-    NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-    NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
-  )
-
   val clientDetailsWithoutConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",
     SessionKeys.clientLastName -> "User",

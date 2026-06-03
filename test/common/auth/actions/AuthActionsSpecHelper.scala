@@ -18,7 +18,6 @@ package common.auth.actions
 
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConnector, ItvcErrorHandler}
 import common.connectors.IncomeSourceConnector
-import common.controllers.bta.BtaNavBarController
 import common.services.{AuditingService, SessionDataService}
 import common.services.admin.FeatureSwitchService
 import org.mockito.Mockito
@@ -36,7 +35,6 @@ trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
   lazy val mockSessionDataService = mock[SessionDataService]
   lazy val mockItvcErrorHandler = mock[ItvcErrorHandler]
 
-  lazy val mockBtaNavBarController = mock[BtaNavBarController]
   lazy val mockFeatureSwitchService = mock[FeatureSwitchService]
   lazy val mockAgentErrorHandler = mock[AgentItvcErrorHandler]
 
