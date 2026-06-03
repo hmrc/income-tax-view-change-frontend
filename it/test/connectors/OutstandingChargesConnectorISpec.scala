@@ -39,7 +39,7 @@ class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBas
           val idType = "fakeId"
           val idNumber = "1337"
           val taxYear: String = "2023"
-          val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
+          val url = s"/income-tax-financial-details/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
 
           val response: OutstandingChargesModel =
             OutstandingChargesModel(List(
@@ -63,7 +63,7 @@ class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBas
             val idType = "fakeId"
             val idNumber = "1337"
             val taxYear: String = "2023"
-            val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
+            val url = s"/income-tax-financial-details/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
 
             WiremockHelper.stubGet(url, OK, """{"bad_key":"bad_value"}""")
 
@@ -85,7 +85,7 @@ class OutstandingChargesConnectorISpec extends AnyWordSpec with ComponentSpecBas
             val idType = "fakeId"
             val idNumber = "1337"
             val taxYear: String = "2023"
-            val url = s"/income-tax-view-change/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
+            val url = s"/income-tax-financial-details/out-standing-charges/$idType/$idNumber/$taxYear-04-05"
 
             val response = """{"fake_error_key: "fake_error_value"}"""
 
