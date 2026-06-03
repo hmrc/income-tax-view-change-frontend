@@ -128,14 +128,14 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       chargeReference = Some("chargeRef")
     ))
 
-  def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String]): PaymentHistoryAllocations =
+  def paymentsForCharge(mainType: String, chargeType: String, date: String, amount: BigDecimal, clearingSAPDocument: Option[String], clearingId: Option[String], taxYear: Option[String] = None): PaymentHistoryAllocations =
     PaymentHistoryAllocations(
       allocations = List(PaymentHistoryAllocation(
         dueDate = Some(LocalDate.parse(date)),
         amount = Some(amount),
         clearingSAPDocument = clearingSAPDocument,
         clearingId = clearingId,
-        taxYear = None)),
+        taxYear = taxYear)),
       chargeMainType = Some(mainType), chargeType = Some(chargeType))
 
   def codedOutEmptyAdjustmentHistory(originalAmount: BigDecimal): AdjustmentHistoryModel =
@@ -382,7 +382,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
 
   val payments: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
-    documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot"))),
+    documentDetails = List(DocumentDetail(9999, "PAYID01", Some("Payment on Account"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot")),
+      DocumentDetail(2025, "123456789", Some("Reconciliation Credit"), Some("documentText"), 1200, 5000, LocalDate.of(2025, 2, 15), None, None, None, None, None, None, None, None, None, None, None, None, None, None)),
     financialDetails = List(FinancialDetail("9999", transactionId = Some("PAYID01"), items = Some(Seq(
       subItemWithClearingSapDocument("123456789012"),
       subItemWithClearingSapDocument("223456789012"),
@@ -394,8 +395,47 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       subItemWithClearingSapDocument("823456789012"),
       subItemWithClearingSapDocument("923456789012"),
       subItemWithClearingSapDocument("023456789012")
-    ))))
+    ))),
+      FinancialDetail("2025", Some("Reconciliation Credit"), Some("4905"), Some("123456789"), None, Some("1234"), None, Some(3800.00), Some(5000.00), None, Some(3800.00), Some("NIC4-GB"), None, None))
   )
+
+  val creditsWithBreakdownPages: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+    documentDetails = List(DocumentDetail(2026, "PAYID01", Some("POA 1 Reconciliation Credit"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot")),
+      DocumentDetail(2025, "123456789", Some("Reconciliation Credit"), Some("documentText"), 1200, 5000, LocalDate.of(2025, 2, 15), None, None, None, None, None, None, None, None, None, None, None, None, None, None)),
+    financialDetails = List(FinancialDetail("2026", transactionId = Some("PAYID01"), mainTransaction = Some("4912"), items = Some(Seq(
+      subItemWithClearingSapDocument("123456789012"),
+      subItemWithClearingSapDocument("223456789012"),
+      subItemWithClearingSapDocument("323456789012"),
+      subItemWithClearingSapDocument("423456789012"),
+      subItemWithClearingSapDocument("523456789012"),
+      subItemWithClearingSapDocument("623456789012"),
+      subItemWithClearingSapDocument("723456789012"),
+      subItemWithClearingSapDocument("823456789012"),
+      subItemWithClearingSapDocument("923456789012"),
+      subItemWithClearingSapDocument("023456789012")
+    ))),
+      FinancialDetail("2025", Some("Reconciliation Credit"), Some("4916"), Some("123456789"), None, Some("1234"), None, Some(3800.00), Some(5000.00), None, Some(3800.00), Some("NIC4-GB"), None, None))
+  )
+
+    val creditsWithoutBreakdownPages: FinancialDetailsModel = FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+      documentDetails = List(DocumentDetail(2026, "PAYID01", Some("POA 1 Reconciliation Credit"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot")),
+        DocumentDetail(2025, "123456789", Some("Reconciliation Credit"), Some("documentText"), 1200, 5000, LocalDate.of(2025, 2, 15), None, None, None, None, None, None, None, None, None, None, None, None, None, None)),
+      financialDetails = List(FinancialDetail("2026", transactionId = Some("PAYID01"), mainTransaction = Some("4915"), items = Some(Seq(
+        subItemWithClearingSapDocument("123456789012"),
+        subItemWithClearingSapDocument("223456789012"),
+        subItemWithClearingSapDocument("323456789012"),
+        subItemWithClearingSapDocument("423456789012"),
+        subItemWithClearingSapDocument("523456789012"),
+        subItemWithClearingSapDocument("623456789012"),
+        subItemWithClearingSapDocument("723456789012"),
+        subItemWithClearingSapDocument("823456789012"),
+        subItemWithClearingSapDocument("923456789012"),
+        subItemWithClearingSapDocument("023456789012")
+      ))),
+        FinancialDetail("2025", Some("Reconciliation Credit"), Some("4915"), Some("123456789"), None, Some("1234"), None, Some(3800.00), Some(5000.00), None, Some(3800.00), Some("NIC4-GB"), None, None))
+    )
 
   def checkPaymentProcessingInfo(document: Document): Unit = {
     document.select("#payment-days-note").text() shouldBe messages("chargeSummary.payment-days-note")
@@ -1058,7 +1098,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         document.select("#payment-history-table tr:nth-child(1)").text() shouldBe paymentHistoryText
         document.select("#payment-history-table tr:nth-child(2)").text() shouldBe MFADebitAllocation1
         document.select("#payment-history-table tr:nth-child(3)").text() shouldBe MFADebitAllocation2
-        // allocation link should be to agent payment allocation page
+        // allocation link should be to agent credits in 2018 screen
         document.select("#payment-history-table tr:nth-child(3) a").attr("href") shouldBe allocationLinkHref
       }
     }
@@ -1385,6 +1425,65 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           }
         }
       }
+
+      "show payment allocations in history table when allocations are credits" when {
+
+        "credit allocations are present in the list" when {
+
+          val paymentAllocations = List(
+            paymentsForCharge(typePOA1, ITSA_NI, "2018-03-30", -1500.0, Some("123456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typePOA1, NIC4_SCOTLAND, "2018-03-31", -1600.0, Some("223456789012"), Some("PAYID01"), taxYear = Some("2026")),
+
+            paymentsForCharge(typePOA2, ITSA_WALES, "2018-04-01", -2400.0, Some("323456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typePOA2, NIC4_GB, "2018-04-15", -2500.0, Some("423456789012"), Some("PAYID01"), taxYear = Some("2026")),
+
+            paymentsForCharge(typeBalCharge, ITSA_ENGLAND_AND_NI, "2019-12-10", -3400.0, Some("523456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, NIC4_NI, "2019-12-11", -3500.0, Some("623456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, NIC2_WALES, "2019-12-12", -3600.0, Some("723456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, CGT, "2019-12-13", -3700.0, Some("823456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, SL, "2019-12-14", -3800.0, Some("923456789012"), Some("PAYID01"), taxYear = Some("2026")),
+            paymentsForCharge(typeBalCharge, VOLUNTARY_NIC2_GB, "2019-12-15", -3900.0, Some("023456789012"), Some("PAYID01"), taxYear = Some("2026")),
+          )
+
+          val expectedPaymentAllocationRows = List(
+            "30 Mar 2018 Payment allocated to Income Tax for first payment on account 2018 £1,500.00",
+            "31 Mar 2018 Payment allocated to Class 4 National Insurance for first payment on account 2018 £1,600.00",
+            "1 Apr 2018 Payment allocated to Income Tax for second payment on account 2018 £2,400.00",
+            "15 Apr 2018 Payment allocated to Class 4 National Insurance for second payment on account 2018 £2,500.00",
+            "10 Dec 2019 Payment allocated to Income Tax for Balancing payment 2018 £3,400.00",
+            "11 Dec 2019 Payment allocated to Class 4 National Insurance for Balancing payment 2018 £3,500.00",
+            "12 Dec 2019 Payment allocated to Class 2 National Insurance for Balancing payment 2018 £3,600.00",
+            "13 Dec 2019 Payment allocated to Capital Gains Tax for Balancing payment 2018 £3,700.00",
+            "14 Dec 2019 Payment allocated to Student Loans for Balancing payment 2018 £3,800.00",
+            "15 Dec 2019 Payment allocated to Voluntary Class 2 National Insurance for Balancing payment 2018 £3,900.00"
+          )
+
+          "chargeHistory enabled, having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = creditsWithBreakdownPages) {
+            verifyPaymentHistoryContent(historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
+          }
+
+          "chargeHistory enabled with a matching link to the credits summary page when there isn't a charge breakdown page for a credit" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = creditsWithoutBreakdownPages) {
+            document.select(Selectors.table).select("a").size shouldBe 10
+            document.select(Selectors.table).select("a").forEach(el => println(el.attr("href")))
+            document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.CreditsSummaryController.showCreditsSummary(2026).url) shouldBe true
+          }
+
+          "chargeHistory enabled with a matching link to charge summary breakdown page for a credit when it's present" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = creditsWithBreakdownPages) {
+            document.select(Selectors.table).select("a").size shouldBe 10
+            document.select(Selectors.table).select("a").forEach(el => println(el.attr("href")))
+            document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.ChargeSummaryController.show(2026, "PAYID01").url) shouldBe true
+          }
+
+          "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = false, paymentAllocations = paymentAllocations, payments = creditsWithBreakdownPages) {
+            verifyPaymentHistoryContent(expectedPaymentAllocationRows: _*)
+          }
+        }
+      }
+
 
       "hide payment allocations in history table" when {
         "the allocations list is empty" when {

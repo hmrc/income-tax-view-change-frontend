@@ -36,7 +36,7 @@ sealed trait FinancialDetailsResponseModel
 // TODO-[2]: make financialDetails private val -> ~
 case class FinancialDetailsModel(balanceDetails: BalanceDetails,
                                  codingDetails: List[CodingDetails] = List(),
-                                 private val documentDetails: List[DocumentDetail],
+                                 documentDetails: List[DocumentDetail],
                                  financialDetails: List[FinancialDetail]) extends FinancialDetailsResponseModel {
 
   def dunningLockExists(documentId: String): Boolean = {
