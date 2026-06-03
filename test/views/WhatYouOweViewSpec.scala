@@ -57,6 +57,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saLink1_2: String = s"${messages("whatYouOwe.sa-link-1-body-2")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote1_2: String = s"${messages("whatYouOwe.sa-note-1-body-2")} $saLink1_2 ${messages("whatYouOwe.sa-note-1-body-3")}"
   val saNote1_3: String = s"${messages("whatYouOwe.sa-note-1-body-4")} ${messages("whatYouOwe.sa-link-1-body-3", "2024", "2025")}."
+  val saAdjustLink: String = s"${messages("whatYouOwe.sa-adjust-link-body", "2024", "2025")}"
   val saNote2Heading: String = messages("whatYouOwe.sa-note-2-heading")
   val saNote2HeadingAgent: String = messages("whatYouOwe.sa-note-2-heading-agent")
   val saLink2: String = s"${messages("whatYouOwe.sa-link-2")} ${messages("pagehelp.opensInNewTabText")}"
@@ -1235,7 +1236,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("sa-tax-bill") shouldBe None
         findElementById("sa-note-1-migrated-1") shouldBe None
         findElementById("sa-note-1-migrated-2") shouldBe None
-        findElementById("sa-note-1-migrated-3") shouldBe None
+        pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saAdjustLink
         pageDocument.getElementsByTag("h2").eq(1).text shouldBe preMtdHeading
         pageDocument.getElementById("sa-note-2-migrated").text shouldBe preMtdSaBody
       }

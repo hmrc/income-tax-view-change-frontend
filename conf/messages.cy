@@ -1207,6 +1207,7 @@ whatYouOwe.sa-note-1-body-4                                     = Os ydych chi�
 whatYouOwe.sa-link-1-body-1                                     = sefydlu cynllun talu Hunanasesiad
 whatYouOwe.sa-link-1-body-2                                     = sefydlu cynllun Taliad Cyllidebol
 whatYouOwe.sa-link-1-body-3                                     = addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+whatYouOwe.sa-adjust-link-body                                  = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 whatYouOwe.sa-note-2-heading                                    = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol
 whatYouOwe.sa-note-2-body                                       = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 whatYouOwe.sa-note-2-body-agent-1                               = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch

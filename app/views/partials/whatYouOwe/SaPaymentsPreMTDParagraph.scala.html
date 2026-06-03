@@ -30,6 +30,8 @@
 )
 @(
         utr: Option[String],
+        claimToAdjustTaxYear: Option[TaxYear],
+        adjustPoaUrl: String,
         isAgent: Boolean
 )(
         implicit request: Request[_],
@@ -40,7 +42,7 @@
 
 
 
-@saNoteParagraphContent(utr: String) = {
+@saNoteParagraphContent(utr: String, ctaTaxYear: Option[TaxYear]) = {
 
     @if(!isAgent) {
             @h2(msg = getMessage("pre-mtd.heading"))
@@ -68,10 +70,17 @@
             }
             @p(id=Some("outstanding-charges-note-migrated"))(content = Html(getMessage("outstanding-charges-note")))
     }
+    @ctaTaxYear.map { taxYear =>
+        @p(id = Some("sa-note-1-migrated-3"))(Html(
+            link(link = adjustPoaUrl,
+                messageKey = getMessage("sa-adjust-link-body", taxYear.startYear.toString, taxYear.endYear.toString),
+                outerMessage = "",
+                rel = Some("noreferrer noopener")).toString()))
+        }
 }
 
 @utr.map { utr =>
     <div id="payments-due-note">
-        @saNoteParagraphContent(utr)
+        @saNoteParagraphContent(utr, claimToAdjustTaxYear)
     </div>
 }
