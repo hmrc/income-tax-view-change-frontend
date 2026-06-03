@@ -170,10 +170,20 @@ case class ChargeSummaryViewModel(
     val matchingPayment = payment.clearingId
     matchingPayment match {
       case Some(paymentId) => {
-        val link: String = if (isAgent) {
-          PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
-        } else {
-          PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
+        val matchingDocumentDetail = payments.documentDetails.find(_.transactionId.contains(paymentId))
+        val matchingFinancialDetail = payments.financialDetails.find(_.transactionId.contains(paymentId))
+        val doesCreditHaveBreakdownPage = matchingFinancialDetail.exists(fd => fd.mainTransaction.exists(CreditType.creditsWithSummaryPages.contains))
+        val isItACredit = matchingDocumentDetail.exists(d => d.originalAmount < 0 && d.taxYear != 9999)
+        val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
+
+        val link: String = (isItACredit, doesCreditHaveBreakdownPage, isAgent, payment.taxYear.isDefined) match {
+          case (false, _, true, _)       => PaymentAllocationsController.viewPaymentAllocationAgent(paymentId).url
+          case (false, _, false, _)      => PaymentAllocationsController.viewPaymentAllocation(paymentId, origin).url
+          case (true, true, true, true)  => ChargeSummaryController.showAgent(payment.taxYear.get.toInt, paymentId).url
+          case (true, true, false, true) => ChargeSummaryController.show(payment.taxYear.get.toInt, paymentId, origin = origin).url
+          case (true, false, true, _)    => CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
+          case (true, false, false, _)   => CreditsSummaryController.showCreditsSummary(findTaxYear).url
+          case (true, true, _, false)    => CreditsSummaryController.showCreditsSummary(findTaxYear).url
         }
 
         val linkText: String = if (chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
