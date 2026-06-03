@@ -60,7 +60,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
     "the user is an Agent" should {
       "return the request unchanged" in {
         val mtdReq = getMtdItUser(Agent)
-        val result = action.invokeBlock(mtdReq, defaultAsyncBody(_.btaNavPartial shouldBe None))
+        val result = action.invokeBlock(mtdReq, defaultAsync)
 
         status(result) shouldBe OK
         contentAsString(result) shouldBe "Successful"
@@ -72,10 +72,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
         "return request unchanged when navbar FS is disabled" in {
           val mtdReq = getMtdItUser(affinityGroup)
-          val result = action.invokeBlock(
-            mtdReq,
-            defaultAsyncBody(_.btaNavPartial shouldBe None)
-          )
+          val result = action.invokeBlock(mtdReq, defaultAsync)
 
           status(result) shouldBe OK
           contentAsString(result) shouldBe "Successful"

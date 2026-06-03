@@ -147,9 +147,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
   "home" should {
 
-    "provided with a btaNavPartial" should {
+    "provided with a serviceNavigationPartial" should {
 
-      "render the btaNavPartial" in new Setup {
+      "render the bta service navigation" in new Setup {
         document.getElementById(s"bta-service-navigation").text shouldBe "testHome"
       }
     }

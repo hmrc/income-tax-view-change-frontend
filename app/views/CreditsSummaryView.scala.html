@@ -41,7 +41,6 @@
     calendarYear: Int,
     backUrl: String,
     utr: Option[String],
-    btaNavPartial: Option[Html] = None,
     serviceNavigationPartial: Option[ServiceNavigation] = None,
     charges: List[CreditDetailModel],
     maybeAvailableCredit: Option[BigDecimal],
@@ -143,7 +142,6 @@
     pageTitle = messages("credits.heading", s"$calendarYear"),
     backUrl = Some(backUrl),
     isAgent = user.isAgent,
-    btaNavPartial = btaNavPartial,
     useFallbackBackLink = true,
     btaAndPtaServiceNavigation = serviceNavigationPartial
 ) {

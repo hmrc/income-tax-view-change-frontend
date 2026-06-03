@@ -71,7 +71,6 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                       viewModel,
                       paymentHistoryRefundsEnabled = true,
                       backUrl, user.saUtr,
-                      btaNavPartial = user.btaNavPartial,
                       serviceNavigationPartial = user.serviceNavigationPartial))
               }
             case None => {

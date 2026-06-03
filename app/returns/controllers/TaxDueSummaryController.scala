@@ -94,7 +94,6 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
           startAVRTYear,
           backUrl = fallbackBackUrl,
           isAgent = isAgent,
-          btaNavPartial = user.btaNavPartial,
           serviceNavigationPartial = user.serviceNavigationPartial
         ))
     }

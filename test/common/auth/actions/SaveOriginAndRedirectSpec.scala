@@ -27,24 +27,18 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.GET
-import play.twirl.api.Html
-import testConstants.BaseTestConstants.testListLink
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import views.html.navBar.BtaNavBar
 
 import scala.concurrent.Future
 
 class SaveOriginAndRedirectSpec extends TestSupport with MockAsyncCacheApi with FeatureSwitching {
 
-  val testView: BtaNavBar = app.injector.instanceOf[BtaNavBar]
   lazy val successResponseWithoutOrigin: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome)
   lazy val successResponseWithBtaOriginAndWithoutSession: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome, fakeRequestQueryStringAndOriginWithoutSession("BTA"))
-    .addNavBar(testView.apply(testListLink))
 
   lazy val successResponseWithSessionOriginPTA: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome, fakeRequestQueryStringAndOrigin("BTA", "PTA"))
-    .addNavBar(Html(""))
 
   lazy val successResponseWithInvalidQueryString: MtdItUser[_] = defaultMTDITUser(Some(Individual), singleBusinessIncome, fakeRequestQueryStringAndOriginWithoutSession("INVALID"))
 

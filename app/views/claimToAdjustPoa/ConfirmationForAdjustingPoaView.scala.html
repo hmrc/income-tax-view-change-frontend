@@ -58,8 +58,7 @@
 @mainTemplate(pageTitle = getMessage("heading"),
      backUrl = Some("/"),
      isAgent = user.isAgent,
-     btaNavPartial = user.btaNavPartial,
-    btaAndPtaServiceNavigation = user.serviceNavigationPartial,
+     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
      useFallbackBackLink = true) {
 
     <span class="govuk-caption-xl" id="caption">@getMessage("caption", viewModel.poaTaxYear.startYear.toString, viewModel.poaTaxYear.endYear.toString)</span>

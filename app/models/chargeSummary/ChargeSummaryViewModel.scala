@@ -41,7 +41,6 @@ case class ChargeSummaryViewModel(
                                    penaltiesEnabled: Boolean,
                                    reviewAndReconcileCredit: Option[ChargeItem],
                                    isAgent: Boolean = false,
-                                   btaNavPartial: Option[Html] = None,
                                    serviceNavigationPartial: Option[ServiceNavigation] = None,
                                    origin: Option[String] = None,
                                    gatewayPage: Option[GatewayPage] = None,

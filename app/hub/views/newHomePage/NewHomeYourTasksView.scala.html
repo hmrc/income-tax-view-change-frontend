@@ -69,7 +69,6 @@
 @mainTemplate(
     pageTitle = if (user.isAgent) messages("home.agent.heading") else messages("home.heading.new"),
     backUrl = None,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 

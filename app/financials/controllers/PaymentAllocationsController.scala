@@ -84,7 +84,6 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
         val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
         auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
         Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
-          btaNavPartial = user.btaNavPartial,
           serviceNavigationPartial = user.serviceNavigationPartial,
           origin = origin, gatewayPage = sessionGatewayPage,
           creditsRefundsRepayEnabled = isEnabled(CreditsRefundsRepay))(implicitly, messages, user))

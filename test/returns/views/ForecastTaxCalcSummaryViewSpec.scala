@@ -21,7 +21,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.prop.TableDrivenPropertyChecks.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testNavHtml, testServiceNavigation, testTaxYear}
+import testConstants.BaseTestConstants.{testServiceNavigation, testTaxYear}
 import testUtils.ViewSpec
 import returns.views.html.ForecastTaxCalcSummaryView
 
@@ -93,10 +93,9 @@ class ForecastTaxCalcSummaryViewSpec extends ViewSpec {
   lazy val forecastTaxCalcView: ForecastTaxCalcSummaryView = app.injector.instanceOf[ForecastTaxCalcSummaryView]
 
   val view: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel, testTaxYear, backUrl, serviceNavigationPartial = Some(testServiceNavigation))
-  val viewModel2: HtmlFormat.Appendable = forecastTaxCalcView(endOfYearEstimateModel2, testTaxYear, backUrl, btaNavPartial = Some(testNavHtml))
 
   "The Forecast Tax Calc Summary View" when {
-    "provided with a btaNavPartial" should {
+    "provided with a serviceNavigationPartial" should {
       "render the BA service navigation" in new Setup(view) {
         document.getElementById(s"bta-service-navigation").text shouldBe "testHome"
       }
