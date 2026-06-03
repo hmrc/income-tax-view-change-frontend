@@ -83,7 +83,7 @@ class IncomeSourceConnectorSpec extends BaseConnectorSpec {
 
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
+        override lazy val incomeTaxBusinessDetailsBaseUrl: String = "http://localhost:9999"
 
         override def incomeSourceOverrides(): Option[Seq[String]] = Some(incomeSourceOverride)
       }

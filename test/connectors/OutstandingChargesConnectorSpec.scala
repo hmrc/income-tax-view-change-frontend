@@ -38,7 +38,6 @@ class OutstandingChargesConnectorSpec extends BaseConnectorSpec {
 
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
       }
 
     val connector = new OutstandingChargesConnector(mockHttpClientV2, getAppConfig)

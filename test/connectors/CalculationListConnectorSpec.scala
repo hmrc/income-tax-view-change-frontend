@@ -38,7 +38,6 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
   trait Setup {
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
         override lazy val incomeTaxCalculationService: String = "http://localhost:9999"
       }
 

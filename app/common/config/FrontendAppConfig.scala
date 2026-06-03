@@ -44,9 +44,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val agentBetaFeedbackUrl = s"/$agentBaseUrl/feedback"
   lazy val noIncomeSourcesContactUrl: String = s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier"
 
-  //ITVC Protected Service
-  lazy val itvcProtectedService: String = servicesConfig.baseUrl("income-tax-view-change")
-
   //Income tax obligations service
   lazy val incomeTaxObligationsService: String = servicesConfig.baseUrl("income-tax-obligations")
 
