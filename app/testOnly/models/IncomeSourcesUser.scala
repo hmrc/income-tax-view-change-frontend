@@ -24,5 +24,5 @@ case class IncomeSourcesUser(activeSoleTrader: Boolean,
                              ceasedBusiness: Boolean)
 
 object IncomeSourcesUser {
-  implicit val format: OFormat[IncomeSourcesUser] = Json.format[IncomeSourcesUser]
+  given format: OFormat[IncomeSourcesUser] = Json.format[IncomeSourcesUser]
 }
