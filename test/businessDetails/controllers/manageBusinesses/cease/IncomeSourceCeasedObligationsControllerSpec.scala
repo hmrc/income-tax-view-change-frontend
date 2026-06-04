@@ -23,8 +23,8 @@ import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
+import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface, SessionService}
-import models.UIJourneySessionData
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.mocks.services.MockNextUpdatesService

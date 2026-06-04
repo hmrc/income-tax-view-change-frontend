@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package common.models.sessionData
 
 import play.api.Logger
 import play.api.http.Status.{NOT_FOUND, OK}

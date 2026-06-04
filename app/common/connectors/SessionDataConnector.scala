@@ -17,9 +17,9 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import models.sessionData.SessionDataGetResponse.SessionGetResponse
-import models.sessionData.SessionDataModel
-import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import common.models.sessionData.SessionDataGetResponse.SessionGetResponse
+import common.models.sessionData.SessionDataModel
+import common.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2

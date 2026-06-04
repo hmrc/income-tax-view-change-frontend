@@ -18,14 +18,14 @@ package obligations.utils.reportingObligations
 
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import models.admin.*
+import common.models.admin.{OptOutFs, SignUpFs}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import scala.concurrent.Future
-import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 
 trait ReportingObligationsUtils extends FeatureSwitching {
 

@@ -19,7 +19,7 @@ package common.connectors
 import common.helpers.ComponentSpecBase
 import common.helpers.servicemocks.BtaNavBarPartialConnectorStub
 import common.helpers.servicemocks.BtaNavBarPartialConnectorStub.testNavLinkJson
-import models.btaNavBar.{NavContent, NavLinks}
+import common.models.btaNavBar.{NavContent, NavLinks}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.test.Injecting

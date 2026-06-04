@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package common.models.sessionData
 
-import models.sessionData.SessionDataGetResponse._
+import common.models.sessionData.SessionDataGetResponse._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsObject, Json, JsonValidationError}
 import testUtils.UnitSpec

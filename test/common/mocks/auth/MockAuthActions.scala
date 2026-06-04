@@ -27,11 +27,11 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUser
 import common.mocks.MockAuditingService
 import common.mocks.services.{MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
 import common.mocks.services.admin.MockFeatureSwitchService
+import common.models.admin.FeatureSwitchName
 import common.services.AuditingService
 import common.services.admin.FeatureSwitchService
 import common.viewUtils.InternalUrlHelper
 import mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
-import models.admin.FeatureSwitchName
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}
 import models.itsaStatus.*
 import models.itsaStatus.ITSAStatus.Voluntary

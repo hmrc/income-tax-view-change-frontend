@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.admin
+package common.models.admin
 
 import play.api.Logger
 import play.api.libs.json._

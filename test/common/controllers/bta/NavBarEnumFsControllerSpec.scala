@@ -19,8 +19,8 @@ package common.controllers.bta
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
 import common.connectors.BtaNavBarPartialConnector
+import common.models.btaNavBar.{ListLinks, NavContent, NavLinks}
 import common.services.BtaNavBarService
-import models.btaNavBar.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api

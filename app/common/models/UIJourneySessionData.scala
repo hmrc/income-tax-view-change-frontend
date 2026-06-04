@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package common.models
 
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import models.incomeSourceDetails.*

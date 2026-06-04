@@ -22,12 +22,12 @@ import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.controllers.agent.routes as agentRoutes
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockITSAStatusService
+import common.models.sessionData.SessionDataModel
 import common.services.DateServiceInterface
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
 import mocks.views.agent.MockConfirmClient
-import models.sessionData.SessionDataModel
-import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
+import common.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify}

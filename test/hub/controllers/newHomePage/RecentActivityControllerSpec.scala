@@ -19,8 +19,8 @@ package hub.controllers.newHomePage
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.models.admin.{NewHomePage, RecentActivity}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
-import models.admin.{NewHomePage, RecentActivity}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import hub.models.newHomePage.RecentActivityViewModel
 import obligations.models.ObligationsModel

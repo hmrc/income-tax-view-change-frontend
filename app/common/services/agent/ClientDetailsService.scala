@@ -18,11 +18,11 @@ package common.services.agent
 
 import common.connectors.BusinessDetailsConnector
 import common.connectors.agent.CitizenDetailsConnector
-import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails, ClientDetailsFailure}
+import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

@@ -20,8 +20,8 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.models.admin.DisplayBusinessStartDate
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
@@ -112,7 +112,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString1)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYearShortString2)
-              
+
               CalculationListStub.stubGetCalculationList(testNino, testTaxYearRange)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
 
               sessionService.getMongoKey(incomeSourceIdField, IncomeSourceJourneyType(Manage, SelfEmployment)).futureValue shouldBe Right(Some(thisTestSelfEmploymentId))

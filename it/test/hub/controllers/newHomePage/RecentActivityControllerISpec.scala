@@ -19,8 +19,8 @@ package hub.controllers.newHomePage
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.models.admin.{FeatureSwitchName, NewHomePage, RecentActivity}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{FeatureSwitchName, NewHomePage, RecentActivity}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.itsaStatus.ITSAStatus

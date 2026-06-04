@@ -18,8 +18,8 @@ package common.services
 
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
+import common.models.UIJourneySessionData
 import mocks.repositories.MockUIJourneySessionDataRepository
-import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.mockito.Mockito.when
 import testUtils.TestSupport

@@ -22,8 +22,8 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.UIJourneySessionData
 import common.services.{DateServiceInterface, SessionService}
-import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup
 import play.api

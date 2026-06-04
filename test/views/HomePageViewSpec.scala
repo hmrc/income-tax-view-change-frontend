@@ -20,7 +20,7 @@ import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDI
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import models.admin.FeatureSwitch
+import common.models.admin.FeatureSwitch
 import models.creditsandrefunds.CreditsModel
 import hub.models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}

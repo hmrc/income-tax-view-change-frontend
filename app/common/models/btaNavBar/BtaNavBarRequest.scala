@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.btaNavBar
+package common.models.btaNavBar
 
 import play.api.libs.json.{Format, Json}
 

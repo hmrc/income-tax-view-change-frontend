@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.services.IncomeSourceDetailsService
-import models.UIJourneySessionData
 import models.incomeSourceDetails.*
 import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
@@ -40,6 +39,7 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockITSAStatusService, MockSessionService}
+import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface, SessionService}
 import obligations.mocks.services.MockNextUpdatesService
 

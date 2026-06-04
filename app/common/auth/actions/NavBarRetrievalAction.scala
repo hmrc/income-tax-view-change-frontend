@@ -19,10 +19,10 @@ package common.auth.actions
 import common.auth.MtdItUser
 import common.config.{FrontendAppConfig, ItvcErrorHandler}
 import common.controllers.bta.BtaNavBarController
+import common.enums.OriginEnum
+import common.models.admin.NavBarFs
 import common.utils.AuthUtils.ORIGIN
-import models.OriginEnum
-import models.OriginEnum.{BTA, PTA}
-import models.admin.NavBarFs
+import OriginEnum.{BTA, PTA}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.*
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ServiceNavigationItem, Text}

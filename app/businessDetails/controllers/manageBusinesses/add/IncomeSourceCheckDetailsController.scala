@@ -22,8 +22,6 @@ import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.services.CreateBusinessDetailsService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.BeforeSubmissionPage
-import models.UIJourneySessionData
-import models.admin.OverseasBusinessAddress
 import models.core.NormalMode
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
@@ -37,6 +35,8 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.TriggeredMigrationAdded
+import common.models.UIJourneySessionData
+import common.models.admin.OverseasBusinessAddress
 import common.services.{AuditingService, SessionService}
 
 import javax.inject.Inject

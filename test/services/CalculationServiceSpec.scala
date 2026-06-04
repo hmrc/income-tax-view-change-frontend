@@ -19,8 +19,8 @@ package services
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
+import common.models.admin.FeatureSwitchName
 import mocks.connectors.MockIncomeTaxCalculationConnector
-import models.admin.FeatureSwitchName
 import models.liabilitycalculation.*
 import play.api.http.Status
 import testConstants.BaseTestConstants.*

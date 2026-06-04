@@ -21,10 +21,10 @@ import common.auth.actions.AuthActionsSpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.mocks.services.{MockITSAStatusService, MockSessionService}
+import common.models.UIJourneySessionData
 import common.services.DateService
 import enums.AfterSubmissionPage
 import mocks.services.MockCalculationListService
-import models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, NoStatus}
 import models.itsaStatus.{StatusDetail, StatusReason}

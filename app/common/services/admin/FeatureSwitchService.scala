@@ -19,7 +19,7 @@ package common.services.admin
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.FeatureSwitchConnector
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import common.models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
