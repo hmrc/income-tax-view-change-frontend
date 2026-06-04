@@ -106,8 +106,8 @@ GET          /agents/manage-your-businesses/add-uk-property/uk-property-added   
 GET          /manage-your-businesses/add-sole-trader/choose-address                                     businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController.show(isAgent: Boolean = false, isTriggeredMigration: Boolean ?= false)
 GET          /agents/manage-your-businesses/add-sole-trader/choose-address                              businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController.show(isAgent: Boolean = true, isTriggeredMigration: Boolean ?= false)
 
-POST         /manage-your-businesses/add-sole-trader/choose-address                                     businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController.submit(isAgent: Boolean = false)
-POST         /agents/manage-your-businesses/add-sole-trader/choose-address                              businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController.submit(isAgent: Boolean = true)
+POST         /manage-your-businesses/add-sole-trader/choose-address                                     businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController.submit(isAgent: Boolean = false, isTriggeredMigration: Boolean ?= false)
+POST         /agents/manage-your-businesses/add-sole-trader/choose-address                              businessDetails.controllers.manageBusinesses.add.ChooseSoleTraderAddressController.submit(isAgent: Boolean = true, isTriggeredMigration: Boolean ?= false)
 
 ###### Check details / Change ######
 
