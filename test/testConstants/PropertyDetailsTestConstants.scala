@@ -17,7 +17,7 @@
 package testConstants
 
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
-import models.core.{AccountingPeriodModel, CessationModel}
+import common.models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import obligations.models.{SingleObligationModel, StatusFulfilled}

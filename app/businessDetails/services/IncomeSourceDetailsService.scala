@@ -19,8 +19,8 @@ package businessDetails.services
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.IncomeSourceId
+import IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.*
 

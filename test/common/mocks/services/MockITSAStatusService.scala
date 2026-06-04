@@ -16,9 +16,9 @@
 
 package common.mocks.services
 
+import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import common.services.ITSAStatusService
 import models.incomeSourceDetails.*
-import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

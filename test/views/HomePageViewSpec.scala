@@ -21,11 +21,11 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.FeatureSwitch
+import common.models.itsaStatus.ITSAStatus
 import models.creditsandrefunds.CreditsModel
 import hub.models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import ITSAStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements

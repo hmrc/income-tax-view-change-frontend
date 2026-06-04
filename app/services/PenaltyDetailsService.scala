@@ -18,9 +18,9 @@ package services
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.models.itsaStatus.ITSAStatus
 import connectors.GetPenaltyDetailsConnector
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import ITSAStatus.ITSAStatus
 import models.penalties.GetPenaltyDetailsParser._
 import uk.gov.hmrc.http.HeaderCarrier
 

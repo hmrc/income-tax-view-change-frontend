@@ -26,8 +26,8 @@ import common.enums.TriggeredMigration.TriggeredMigrationCeased
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.core.IncomeSourceId
 import common.services.{DateServiceInterface, SessionService}
-import models.core.IncomeSourceId
 import obligations.testConstants.UpdateIncomeSourceTestConstants
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

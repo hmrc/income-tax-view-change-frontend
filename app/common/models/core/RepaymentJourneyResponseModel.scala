@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
+sealed trait RepaymentJourneyResponseModel
 
-case class CessationModel(date: Option[LocalDate])
+object RepaymentJourneyResponseModel {
 
-object CessationModel {
-  implicit val format: Format[CessationModel] = Json.format[CessationModel]
+  final case class RepaymentJourneyModel(nextUrl: String) extends RepaymentJourneyResponseModel
+
+  object RepaymentJourneyModel {
+    implicit val formats: OFormat[RepaymentJourneyModel] = Json.format[RepaymentJourneyModel]
+  }
+
+  final case class RepaymentJourneyErrorResponse(status: Int, message: String) extends RepaymentJourneyResponseModel
 }

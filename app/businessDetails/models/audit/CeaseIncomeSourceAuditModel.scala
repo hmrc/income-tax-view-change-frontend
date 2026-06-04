@@ -24,7 +24,7 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.TransactionName
 import common.implicits.ImplicitDateParser
 import common.models.audit.ExtendedAuditModel
-import models.core.IncomeSourceId
+import common.models.core.IncomeSourceId
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,

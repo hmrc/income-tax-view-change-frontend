@@ -16,8 +16,8 @@
 
 package hub.models.homePage
 
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus
+import ITSAStatus.ITSAStatus
 
 import java.time.LocalDate
 

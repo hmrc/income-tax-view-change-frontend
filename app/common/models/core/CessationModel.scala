@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
-trait PaymentJourneyResponse
+import java.time.LocalDate
 
-case class PaymentJourneyModel(journeyId: String, nextUrl: String) extends PaymentJourneyResponse
+case class CessationModel(date: Option[LocalDate])
 
-object PaymentJourneyModel {
-  implicit val formats: OFormat[PaymentJourneyModel] = Json.format[PaymentJourneyModel]
+object CessationModel {
+  implicit val format: Format[CessationModel] = Json.format[CessationModel]
 }
-
-case class PaymentJourneyErrorResponse(status: Int, message: String) extends PaymentJourneyResponse

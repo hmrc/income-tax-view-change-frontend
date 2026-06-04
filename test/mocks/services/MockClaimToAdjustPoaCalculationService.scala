@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.core.Nino
+import common.models.core.Nino
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

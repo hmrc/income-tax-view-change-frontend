@@ -19,8 +19,7 @@ package views.agent
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import hub.models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -36,6 +35,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.models.itsaStatus.ITSAStatus
 
 import java.time.{LocalDate, Month}
 import scala.annotation.unused

@@ -19,7 +19,7 @@ package helpers.servicemocks
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.helpers.WiremockHelper
-import models.core.{Nino, NinoResponseError, NinoResponseSuccess}
+import common.models.core.{Nino, NinoResponseError, NinoResponseSuccess}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.repaymentHistory.RepaymentHistoryModel

@@ -18,10 +18,10 @@ package obligations.services.reportingObligations.optOut
 
 import cats.data.OptionT
 import common.auth.MtdItUser
+import common.models.itsaStatus.ITSAStatus
 import common.services.{DateServiceInterface, ITSAStatusService}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import obligations.enums.ChosenTaxYear
 import obligations.enums.ChosenTaxYear.*
 import obligations.models.reportingObligations.optOut.*

@@ -20,10 +20,10 @@ import cats.data.OptionT
 import cats.implicits.*
 import common.auth.MtdItUser
 import common.models.UIJourneySessionData
+import common.models.itsaStatus.ITSAStatus
 import common.services.{DateServiceInterface, ITSAStatusService}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import ITSAStatus.ITSAStatus
 import obligations.models.reportingObligations.signUp.*
 import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.SignUpProposition.*

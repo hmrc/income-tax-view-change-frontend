@@ -19,8 +19,8 @@ package testOnly.services
 import common.config.FrontendAppConfig
 import common.services.DateServiceInterface
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.ITSAStatus
-import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json, OWrites, Writes}

@@ -19,10 +19,10 @@ package financials.controllers.claimToAdjustPoa
 import cats.data.EitherT
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.models.core.CheckMode
 import common.services.AuditingService
 import financials.controllers.claimToAdjustPoa.routes._
 import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
-import models.core.CheckMode
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}

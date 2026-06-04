@@ -16,8 +16,8 @@
 
 package models.incomeSourceDetails
 
-import models.core.IncomeSourceId._
-import models.core.IncomeSourceIdHash._
+import common.models.core.IncomeSourceId._
+import common.models.core.IncomeSourceIdHash._
 import org.scalacheck.Prop.forAll
 import org.scalacheck.{Gen, Properties}
 

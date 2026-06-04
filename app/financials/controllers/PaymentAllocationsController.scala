@@ -23,11 +23,11 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.GatewayPage.GatewayPage
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.admin.CreditsRefundsRepay
+import common.models.core.Nino
 import common.services.AuditingService
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import forms.utils.SessionKeys.gatewayPage
-import models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

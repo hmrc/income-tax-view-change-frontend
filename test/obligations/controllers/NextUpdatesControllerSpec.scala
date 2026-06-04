@@ -22,7 +22,7 @@ import common.mocks.services.MockDateService
 import common.models.admin.OptOutFs
 import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import obligations.mocks.services.{MockNextUpdatesService, MockOptOutService}
 import obligations.models.*
 import obligations.models.reportingObligations.optOut.*

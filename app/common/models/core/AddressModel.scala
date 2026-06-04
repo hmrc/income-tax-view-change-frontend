@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
-sealed trait RepaymentJourneyResponseModel
+case class AddressModel(
+                         addressLine1: Option[String],
+                         addressLine2: Option[String],
+                         addressLine3: Option[String],
+                         addressLine4: Option[String],
+                         postCode: Option[String],
+                         countryCode: Option[String]
+                       ) {
 
-object RepaymentJourneyResponseModel {
+  def countryName: String = "United Kingdom"
 
-  final case class RepaymentJourneyModel(nextUrl: String) extends RepaymentJourneyResponseModel
+}
 
-  object RepaymentJourneyModel {
-    implicit val formats: OFormat[RepaymentJourneyModel] = Json.format[RepaymentJourneyModel]
-  }
-
-  final case class RepaymentJourneyErrorResponse(status: Int, message: String) extends RepaymentJourneyResponseModel
+object AddressModel {
+  implicit val format: Format[AddressModel] = Json.format[AddressModel]
 }

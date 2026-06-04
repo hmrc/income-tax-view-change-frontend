@@ -17,8 +17,9 @@
 package testConstants
 
 import common.enums.IncomeSourceJourney.SelfEmployment
-import models.core.*
-import models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.{AccountingPeriodModel, AddressModel, CessationModel, ContactDetailsModel, ErrorModel}
+import common.models.core.*
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.*
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}

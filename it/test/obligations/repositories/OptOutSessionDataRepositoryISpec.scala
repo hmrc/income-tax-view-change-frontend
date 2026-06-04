@@ -17,8 +17,8 @@
 package obligations.repositories
 
 import common.helpers.ComponentSpecBase
+import common.models.itsaStatus.ITSAStatus.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.SingleObservableFuture

@@ -20,8 +20,8 @@ import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import common.auth.MtdItUser
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.services.DateServiceInterface
-import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import common.models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import play.api.libs.json.{Format, JsValue, Json, OFormat}
 import play.api.{Logger, Logging}
 import uk.gov.hmrc.crypto.Sensitive.SensitiveString

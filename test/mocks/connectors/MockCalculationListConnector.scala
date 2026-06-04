@@ -16,9 +16,9 @@
 
 package mocks.connectors
 
+import common.models.core.Nino
 import connectors.CalculationListConnector
 import models.calculationList.CalculationListResponseModel
-import models.core.Nino
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

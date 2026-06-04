@@ -20,7 +20,7 @@ import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSol
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import common.mocks.services.MockSessionService
-import models.core.{CessationModel, IncomeSourceId}
+import common.models.core.{CessationModel, IncomeSourceId}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BusinessDetailsTestConstants.business1

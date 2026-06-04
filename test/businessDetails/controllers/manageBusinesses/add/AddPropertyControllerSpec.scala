@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm.*
-import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api
@@ -36,6 +35,7 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.core.NormalMode
 import common.services.{DateServiceInterface, SessionService}
 
 class AddPropertyControllerSpec extends MockAuthActions with MockSessionService {

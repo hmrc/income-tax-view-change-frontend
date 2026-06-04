@@ -21,9 +21,9 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.PaymentHistoryRefunds
+import common.models.core.Nino
 import common.services.AuditingService
 import connectors.RepaymentHistoryConnector
-import models.core.Nino
 import models.creditsandrefunds.RefundToTaxPayerViewModel
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
