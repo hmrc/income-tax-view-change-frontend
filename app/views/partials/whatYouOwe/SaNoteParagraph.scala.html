@@ -62,6 +62,14 @@
                 target = Some("_blank")).toString() +
             getMessage("sa-note-1-body-3")))
 
+    @ctaTaxYear.map { taxYear =>
+        @p(id = Some("sa-note-1-migrated-3"))(Html(getMessage("sa-note-1-body-4") +
+        link(link = adjustPoaUrl,
+            messageKey = getMessage("sa-link-1-body-3", taxYear.startYear.toString, taxYear.endYear.toString),
+            outerMessage = ".",
+            rel = Some("noreferrer noopener")).toString()))
+    }
+
     @if(!user.isAgent) {
             @h2(msg = getMessage("sa-note-2-heading"))
             @p(id = Some("sa-note-2-migrated")){

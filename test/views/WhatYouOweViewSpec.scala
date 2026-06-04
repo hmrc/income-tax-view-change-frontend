@@ -51,8 +51,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val noPaymentsDue: String = messages("whatYouOwe.no-payments-due")
   val noPaymentsAgentDue: String = messages("whatYouOwe.no-payments-due-agent")
   val saNote1Heading: String = messages("whatYouOwe.sa-note-1-heading")
-  val saLink1_1: String = s"${messages("whatYouOwe.sa-link-1-body-1")} ${messages("pagehelp.opensInNewTabText")}"
-  val saNote1_1: String = s"${messages("whatYouOwe.sa-note-1-body-1")} $saLink1_1."
+  val saLink1_1: String = s"${messages("whatYouOwe.sa-link-1-body-1")}"
+  val saNote1_1: String = s"${messages("whatYouOwe.sa-note-1-body-1")} $saLink1_1 (opens in new tab) ${messages("whatYouOwe.sa-note-1-body-1-1")}"
   val saLink1_2: String = s"${messages("whatYouOwe.sa-link-1-body-2")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote1_2: String = s"${messages("whatYouOwe.sa-note-1-body-2")} $saLink1_2 ${messages("whatYouOwe.sa-note-1-body-3")}"
   val saNote1_3: String = s"${messages("whatYouOwe.sa-note-1-body-4")} ${messages("whatYouOwe.sa-link-1-body-3", "2024", "2025")}."
@@ -149,6 +149,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
+      hasCrystalisedInterest = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -177,7 +178,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     def verifySelfAssessmentLink(): Unit = {
       val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
-      anchor.text shouldBe saLink1_1
+      anchor.text shouldBe s"$saLink1_1 (opens in new tab)"
       anchor.attr("href") shouldBe "/self-serve-time-to-pay"
       anchor.attr("target") shouldBe "_blank"
     }
@@ -207,6 +208,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val wyoViewModelAgent: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
+      hasCrystalisedInterest = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,

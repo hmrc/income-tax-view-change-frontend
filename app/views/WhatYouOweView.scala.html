@@ -77,12 +77,7 @@
         attributes = Map("id" -> "interest-charges-warning"),
         content = Text(getMessage("interestChargesWarning.crystallised"))
         ))
-    }else {
-        @govukWarningText(WarningText(
-        attributes = Map("id" -> "interest-charges-warning"),
-        content = Text(getMessage("interestChargesWarning"))
-        ))
-}
+    }
 
 
     @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero) {
@@ -97,6 +92,9 @@
                 ),
                 HeadCell(
                     content = Text(getMessage("tableHead.tax-year"))
+                ),
+                HeadCell(
+                    content = Text(getMessage("tableHead.interest"))
                 ),
                 HeadCell(
                     content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking)
@@ -116,6 +114,9 @@
                         TableRow(
                             attributes = Map("id" -> "balancing-charge-tax-year-0"),
                             content = Text(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
+                        ),TableRow(
+                            attributes = Map("id" -> "balancing-charge-na"),
+                            content = Text(getMessage("tableRow.na"))
                         ),
                         TableRow(
                             attributes = Map("id" -> "balancing-charge-amount-due-0"),
@@ -136,6 +137,9 @@
                         TableRow(
                             attributes = Map("id" -> "balancing-charge-type-1"),
                             content = HtmlContent(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
+                        ),TableRow(
+                            attributes = Map("id" -> "balancing-charge-na"),
+                            content = HtmlContent(getMessage("tableRow.na"))
                         ),
                         TableRow(
                             attributes = Map("id" -> "balancing-charge-amount-due-1"),
@@ -159,6 +163,10 @@
                                 content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
                             ),
                             TableRow(
+                                attributes = Map("id" -> s"due-charge-na-$index"),
+                                content = HtmlContent(getMessage("tableRow.na"))
+                            ),
+                            TableRow(
                                 attributes = Map("id" -> s"due-charge-amount-due-$index"),
                                 content = HtmlContent(charge.remainingToPayOnCharge.toCurrency),
                                 format = Some("numeric")
@@ -176,6 +184,10 @@
                             TableRow(
                                 attributes = Map("id" -> s"accrued-interest-tax-year-$index"),
                                 content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
+                            ),TableRow(
+                                attributes = Map("id" -> s"accrued-interest-amount-$index"),
+                                content = HtmlContent(charge.accruingInterestAmount.get.toCurrency),
+                                format = Some("numeric")
                             ),
                             TableRow(
                                 attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
@@ -187,7 +199,7 @@
             ).flatten,
             caption = Some(getMessage("payments-due")),
             attributes = Map("id" -> "payments-due-table"),
-            captionClasses = "govuk-table__caption govuk-visually-hidden"
+            captionClasses = "govuk-table__caption govuk-table__caption--m"
         ))
     }
 

@@ -645,7 +645,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val allowancesAndDeductions: String = "Allowances and deductions"
     val totalIncomeDue: String = "Total income on which tax is due"
     val incomeTaxNationalInsuranceDue: String = "Self Assessment tax amount"
-    val chargeType: String = "Charge type"
+    val chargeType: String = "Tax details"
     val dueDate: String = "Due date"
     val amount: String = "Amount"
     val paymentOnAccount1: String = "First payment on account"
