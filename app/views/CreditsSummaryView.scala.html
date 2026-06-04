@@ -54,11 +54,6 @@
     messages(s"credits.$key", args: _*)
 }
 
-@*
-    outstandingAmount == original amount(not yet allocated)
-    outstandingAmount != original amount(partially allocated)
-    outstandingAmount == 0 (allocated)
-*@
 @getStatus(charges: ChargeItem) = @{
     charges.getChargePaidStatus match {
         case "paid" => getMessage("table.status-fully-allocated")
