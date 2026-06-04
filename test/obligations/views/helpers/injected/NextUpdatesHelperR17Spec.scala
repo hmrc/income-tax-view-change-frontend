@@ -469,9 +469,9 @@ class NextUpdatesHelperR17Spec extends TestSupport {
         pageDocument.getElementById("current-year-subheading").text() shouldBe "Tax return due"
       }
 
-      "display the compatible software link section in the current year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
+      "display the classic SA link section in the current year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
         pageDocument.getElementById("current-year-compatible-software-desc").text() shouldBe "As you are exempt from Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("annual-compatible-software-link").attr("href") shouldBe "https://www.gov.uk/log-in-file-self-assessment-tax-return"
       }
 
       "display correct tax return due date for the 2025-26 tax year in the current year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
@@ -482,9 +482,9 @@ class NextUpdatesHelperR17Spec extends TestSupport {
         pageDocument.getElementById("next-year-heading").text() shouldBe "2026 to 2027 tax year"
       }
 
-      "display the description containing the compatible software link in the next year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
+      "display the description containing the classic SA link in the next year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
         pageDocument.getElementById("next-year-desc").text() shouldBe "As you are exempt from Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."
-        pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
+        pageDocument.getElementById("annual-compatible-software-link-ny").attr("href") shouldBe "https://www.gov.uk/log-in-file-self-assessment-tax-return"
       }
 
       "display the deadline description for the next year tab" in new Setup(isAgent = false, obligationsModel, Exempt, Exempt) {
