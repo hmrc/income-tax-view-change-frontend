@@ -27,22 +27,23 @@
 
 
 @this(mainTemplate: unifiedLayout,
-      paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
-      paymentAllocationsForLpi: PaymentAllocationsForLpi,
-      paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
-      implicitDateFormatter: ImplicitDateFormatterImpl,
-      h1:h1,
-      h2: h2,
-      p:p,
-      govukInsetText: GovukInsetText,
-      link: link,
-      appConfig: FrontendAppConfig,
-      numberList: orderedNumberList
+        paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
+        paymentAllocationsForLpi: PaymentAllocationsForLpi,
+        paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1: h1,
+        h2: h2,
+        p: p,
+        govukInsetText: GovukInsetText,
+        link: link,
+        appConfig: FrontendAppConfig,
+        numberList: orderedNumberList,
+        govukTable: GovukTable
 )
 
 @(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
-    btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None,
-    origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
+        btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None,
+        origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
 @import implicitDateFormatter._
 
 @pageTitle = @{
@@ -71,54 +72,75 @@
     }
 
     @if(saUtr.isDefined && paymentAllocations.hasDocumentDetailWithCredit) {
-        @p(id=Some("sa-note-migrated")){
+        @p(id = Some("sa-note-migrated")) {
             @messages("paymentAllocation.sa.info")
             @link(link = appConfig.saViewLandPService(saUtr.get), messageKey = "taxYears.oldSa.content.link",
-            outerMessage = ".", id=Some("sa-note-migrated-link"), rel=Some("noreferrer noopener"), target = Some("_blank")
-           )
+                outerMessage = ".", id = Some("sa-note-migrated-link"), rel = Some("noreferrer noopener"), target = Some("_blank")
+            )
         }
     }
 
     <h2 class="govuk-heading-m" id="payment-amount">@messages("paymentAllocation.youPaid") @paymentAllocations.getOriginalAmount</h2>
 
-    @p(id= Some("payment-date")) {
+    @p(id = Some("payment-date")) {
         <b>@messages("paymentAllocation.paymentDate.p") @paymentAllocations.getEffectiveDateOfPayment.toLongDate</b>
     }
 
     <details class="govuk-details">
         <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text">
-                @messages("paymentAllocation.details.title")
+            @messages("paymentAllocation.details.title")
             </span>
         </summary>
         <div class="govuk-details__text">
-            @p(id=Some("paymentAllocation-intro")) {@messages("paymentAllocation.intro")}
+            @p(id = Some("paymentAllocation-intro")) {
+                @messages("paymentAllocation.intro")
+            }
 
             @numberList("paymentAllocation.condition-1", "paymentAllocation.condition-2", "paymentAllocation.condition-3")
 
-            @p(id=Some("paymentAllocation-outro")) {@messages("paymentAllocation.outro")}
+            @p(id = Some("paymentAllocation-outro")) {
+                @messages("paymentAllocation.outro")
+            }
         </div>
     </details>
 
-@if(paymentAllocations.showPaymentAllocationsTable()) {
+    @if(paymentAllocations.showPaymentAllocationsTable()) {
 
-    @h2(msg = "paymentAllocation.tableSection.heading")
+        @h2(msg = "paymentAllocation.tableSection.heading")
 
-    <table class="govuk-table" id="payment-allocation-table">
-        <caption class="govuk-table__caption heading-large govuk-visually-hidden">@messages("paymentAllocation.tableSection.heading")</caption>
-        <thead class="govuk-table__head">
-        <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.allocated-date")</th>
-            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.description")</th>
-            <th scope="col" class="govuk-table__header">@messages("paymentAllocation.tableHead.tax-year")</th>
-            <th scope="col" class="govuk-table__header govuk-table__header--numeric">@messages("paymentAllocation.tableHead.amount")</th>
-        </tr>
-        </thead>
-        @if(paymentAllocations.isLpiPayment) {
-            @paymentAllocationsForLpi(paymentAllocations)
-        } else {
-            @paymentAllocationsForNonLpi(paymentAllocations)
-        }
-        @paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundsRepayEnabled, user.isAgent)
-    </table>
-}}
+        @govukTable(Table(
+            caption = Some(messages("paymentAllocation.tableSection.heading")),
+            captionClasses = "govuk-table__caption heading-large govuk-visually-hidden",
+            head = Some(Seq(
+                HeadCell(
+                    content = Text(messages("paymentAllocation.tableHead.allocated-date"))
+                ),
+                HeadCell(
+                    content = Text(messages("paymentAllocation.tableHead.description"))
+                ),
+                HeadCell(
+                    content = Text(messages("paymentAllocation.tableHead.tax-year"))
+                ),
+                HeadCell(
+                    classes = "govuk-table__header govuk-table__header--numeric",
+                    content = Text(messages("paymentAllocation.tableHead.amount"))
+                )
+
+            )),
+            rows = Seq(
+                Seq(
+                    if(paymentAllocations.isLpiPayment) {
+                        // TODO fix it
+                         paymentAllocationsForLpi(paymentAllocations)
+                    } else {
+                        // TODO fix it
+                        // paymentAllocationsForNonLpi(paymentAllocations)
+                    }
+                    // TODO fix it
+                    // paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundsRepayEnabled, user.isAgent)
+                )
+            )
+        ))
+    }
+}
