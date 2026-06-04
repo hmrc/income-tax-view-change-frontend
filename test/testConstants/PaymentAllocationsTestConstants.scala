@@ -16,7 +16,7 @@
 
 package testConstants
 
-import enums.ChargeType.{ITSA_NIC4_INTEREST_GB, NIC4_WALES}
+import financials.models.ChargeType.{ITSA_NIC4_INTEREST_GB, NIC4_WALES}
 import models.financialDetails._
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
 import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}

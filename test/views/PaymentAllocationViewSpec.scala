@@ -21,7 +21,7 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.exceptions.MissingFieldException
 import common.implicits.ImplicitDateFormatter
-import enums.ChargeType.*
+import financials.models.ChargeType.*
 import financials.controllers.routes as financialsRoutes
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail

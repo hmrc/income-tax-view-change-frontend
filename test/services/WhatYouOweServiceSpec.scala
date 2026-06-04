@@ -21,8 +21,8 @@ import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.services.{AuditingService, DateService}
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
-import enums.ChargeType.NIC4_WALES
-import enums.CodingOutType.*
+import financials.models.ChargeType.NIC4_WALES
+import financials.models.CodingOutType.*
 import models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
 import models.financialDetails.*
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}

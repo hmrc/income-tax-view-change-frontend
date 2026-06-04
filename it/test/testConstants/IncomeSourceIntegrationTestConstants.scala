@@ -18,8 +18,8 @@ package testConstants
 
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.IncomeSourceJourneyType
-import enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
-import enums.CodingOutType._
+import financials.models.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
+import financials.models.CodingOutType._
 import models.UIJourneySessionData
 import models.incomeSourceDetails._
 import play.api.libs.json.{JsObject, JsValue, Json}

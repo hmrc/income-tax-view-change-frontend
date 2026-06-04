@@ -17,9 +17,9 @@
 package models.financialDetails
 
 import common.services.DateServiceInterface
-import enums.CodingOutType.*
-import enums.DocumentType
-import enums.DocumentType.*
+import financials.models.CodingOutType.*
+import financials.models.DocumentType.*
+import financials.models.DocumentType
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}

@@ -17,8 +17,8 @@
 package audit.models
 
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
-import enums.ChargeType.*
-import enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
+import financials.models.ChargeType.*
+import financials.models.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import common.services.DateService
 import models.chargeHistory.ChargeHistoryModel
