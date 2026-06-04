@@ -1295,6 +1295,7 @@ whatYouOwe.adjust-poa.paid-3                                    = ar unrhyw adeg
 whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 whatYouOwe.interestChargesWarning                               = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
+whatYouOwe.interestChargesWarning.crystallised                  = Mae’r llog hyd yma wedi’i amcangyfrif. Er mwyn ei atal rhag cynyddu bob dydd, talwch y dreth gysylltiedig yn llawn. Yna gall gymryd hyd at 3 diwrnod gwaith i gyfanswm y llog gael ei gyfrifo a’i ddangos yma.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
