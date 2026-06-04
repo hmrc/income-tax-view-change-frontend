@@ -96,7 +96,6 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
 
   def getOverwriteBusinessDataUrl(mtdid: String): String = {
@@ -123,7 +122,6 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
 
   def getOverwriteLatentBusinessDataUrl(mtdid: String): String = {
@@ -146,7 +144,6 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
 
   def getOverwriteObligationsDataUrl(nino: String): String = {
@@ -170,7 +167,6 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
 
   private def getOverwriteEstimatedRepaymentDateUrl(): String = {
@@ -192,7 +188,6 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
 
   def getOverwriteCalculationListUrl(nino: String, taxYearRange: String, crystallisationStatus: String): String = {
@@ -235,7 +230,5 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
-
 }
