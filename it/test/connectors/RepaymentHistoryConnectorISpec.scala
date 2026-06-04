@@ -19,7 +19,7 @@ package connectors
 import com.github.tomakehurst.wiremock.client.WireMock
 import common.helpers.servicemocks.AuditStub
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import models.core.Nino
+import common.models.core.Nino
 import models.repaymentHistory._
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

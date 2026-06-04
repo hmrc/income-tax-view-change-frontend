@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.core.{NinoResponseError, NinoResponseSuccess}
+import common.models.core.{NinoResponseError, NinoResponseSuccess}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseTestConstants._
 

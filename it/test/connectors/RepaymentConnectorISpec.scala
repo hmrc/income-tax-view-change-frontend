@@ -17,7 +17,7 @@
 package connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import common.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json

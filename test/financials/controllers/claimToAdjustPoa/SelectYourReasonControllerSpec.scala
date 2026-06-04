@@ -19,11 +19,11 @@ package financials.controllers.claimToAdjustPoa
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
+import common.models.core.{CheckMode, NormalMode}
 import common.services.DateServiceInterface
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.*
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import play.api

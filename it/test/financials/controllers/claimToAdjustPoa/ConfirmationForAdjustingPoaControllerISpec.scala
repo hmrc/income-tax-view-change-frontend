@@ -18,10 +18,10 @@ package financials.controllers.claimToAdjustPoa
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.models.core.AccountingPeriodModel
 import routes._
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
-import models.core.AccountingPeriodModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status._
 import play.api.libs.json.JsValue

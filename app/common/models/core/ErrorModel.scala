@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
 import play.api.libs.json.{Format, Json}
 
-case class RepaymentRefund(nino: String, fullAmount: BigDecimal)
+case class ErrorModel(code: Int, message: String)
 
-object RepaymentRefund {
-  implicit val format: Format[RepaymentRefund] = Json.format[RepaymentRefund]
+object ErrorModel {
+  implicit val format: Format[ErrorModel] = Json.format[ErrorModel]
 }

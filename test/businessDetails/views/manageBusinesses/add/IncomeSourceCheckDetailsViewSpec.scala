@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import models.core.NormalMode
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -27,6 +26,7 @@ import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.models.core.NormalMode
 
 import java.time.LocalDate
 

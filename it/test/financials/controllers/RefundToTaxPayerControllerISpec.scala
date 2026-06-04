@@ -22,8 +22,8 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.models.admin.PaymentHistoryRefunds
+import common.models.core.Nino
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.core.Nino
 import models.repaymentHistory.*
 import play.api.http.Status.*
 import testConstants.BaseIntegrationTestConstants.testMtditid

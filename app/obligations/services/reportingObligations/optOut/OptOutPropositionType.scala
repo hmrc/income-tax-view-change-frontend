@@ -16,7 +16,7 @@
 
 package obligations.services.reportingObligations.optOut
 
-import models.itsaStatus.ITSAStatus.{Annual, Dormant, Mandated, Voluntary}
+import common.models.itsaStatus.ITSAStatus.{Annual, Dormant, Mandated, Voluntary}
 
 sealed trait OptOutPropositionTypes {
   val proposition: OptOutProposition

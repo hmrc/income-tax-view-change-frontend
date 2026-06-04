@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-case class ErrorModel(code: Int, message: String)
+trait PaymentJourneyResponse
 
-object ErrorModel {
-  implicit val format: Format[ErrorModel] = Json.format[ErrorModel]
+case class PaymentJourneyModel(journeyId: String, nextUrl: String) extends PaymentJourneyResponse
+
+object PaymentJourneyModel {
+  implicit val formats: OFormat[PaymentJourneyModel] = Json.format[PaymentJourneyModel]
 }
+
+case class PaymentJourneyErrorResponse(status: Int, message: String) extends PaymentJourneyResponse

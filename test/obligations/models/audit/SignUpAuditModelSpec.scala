@@ -17,9 +17,9 @@
 package obligations.models.audit
 
 import common.auth.MtdItUser
+import common.models.itsaStatus.ITSAStatus
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.Annual
+import ITSAStatus.Annual
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import play.api.libs.json.Json
 import testUtils.TestSupport

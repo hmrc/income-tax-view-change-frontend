@@ -17,7 +17,6 @@
 package businessDetails.views.manageBusinesses.manage
 
 import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
-import models.itsaStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
@@ -30,6 +29,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.views.constants.ManageIncomeSourceDetailsViewConstants.*
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.models.itsaStatus.ITSAStatus
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 

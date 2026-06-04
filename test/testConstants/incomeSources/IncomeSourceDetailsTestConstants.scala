@@ -20,7 +20,7 @@ import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.UIJourneySessionData
-import models.core.{AddressModel, IncomeSourceId}
+import common.models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails._
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
 import testConstants.BaseTestConstants._

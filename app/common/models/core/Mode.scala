@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.mvc.JavascriptLiteral
 
-trait SelfServeTimeToPayJourneyResponse
+sealed trait Mode
 
-case class SelfServeTimeToPayJourneyResponseModel(journeyId: String, nextUrl: String) extends SelfServeTimeToPayJourneyResponse
+case object CheckMode extends Mode
+case object NormalMode extends Mode
 
-object SelfServeTimeToPayJourneyResponseModel {
-  implicit val formats: OFormat[SelfServeTimeToPayJourneyResponseModel] = Json.format[SelfServeTimeToPayJourneyResponseModel]
+object Mode {
+
+  def isChange(mode: Mode): Boolean = mode == CheckMode
+
+  implicit val jsLiteral: JavascriptLiteral[Mode] = {
+    case NormalMode => "NormalMode"
+    case CheckMode => "CheckMode"
+  }
 }
-
-case class SelfServeTimeToPayJourneyErrorResponse(status: Int, message: String) extends SelfServeTimeToPayJourneyResponse

@@ -16,10 +16,10 @@
 
 package services
 
+import common.models.core.Nino
 import common.services.DateService
 import mocks.connectors.MockCalculationListConnector
 import models.calculationList.CalculationListErrorModel
-import models.core.Nino
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
 import testConstants.BaseTestConstants.{testMtditid, testNino}

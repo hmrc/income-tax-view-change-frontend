@@ -21,9 +21,9 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{CreditsRefundsRepay, FilterCodedOutPoas, PenaltiesAndAppeals, SelfServeTimeToPayR17}
+import common.models.core.Nino
 import common.services.{AuditingService, DateServiceInterface}
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
-import models.core.Nino
 import models.financialDetails.ChargeItem.isAKnownTypeOfCharge
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
 import play.api.libs.json._
 

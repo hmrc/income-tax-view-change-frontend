@@ -16,14 +16,14 @@
 
 package businessDetails.views.constants
 
-import models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.itsaStatus.ITSAStatus
 import testConstants.BaseTestConstants.testSelfEmploymentId
 import testConstants.BusinessDetailsTestConstants.*
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.expectedAddress
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.models.itsaStatus.ITSAStatus
 
 object ManageIncomeSourceDetailsViewConstants {
 

@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package models.itsaStatus
+package common.models.core
 
 import play.api.libs.json.{Format, Json}
 
-sealed trait ITSAStatusResponse
-
-case class ITSAStatusResponseModel(taxYear: String,
-                                   itsaStatusDetails: Option[List[StatusDetail]] = None) extends ITSAStatusResponse
-
-case class ITSAStatusResponseError(status: Int, reason: String) extends ITSAStatusResponse
+import java.time.LocalDate
 
 
-object ITSAStatusResponseModel {
-  implicit val format: Format[ITSAStatusResponseModel] = Json.format[ITSAStatusResponseModel]
+case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
+  val determineTaxYear: Int = AccountingPeriodModel.determineTaxYearFromPeriodEnd(end)
 }
 
-object ITSAStatusResponseError {
-  implicit val format: Format[ITSAStatusResponseError] = Json.format[ITSAStatusResponseError]
+object AccountingPeriodModel {
+  implicit val format: Format[AccountingPeriodModel] = Json.format[AccountingPeriodModel]
+
+  def determineTaxYearFromPeriodEnd(periodEndDate: LocalDate): Int = {
+    val taxYearStartInApril = LocalDate.of(periodEndDate.getYear, 4, 6)
+    if (periodEndDate isBefore taxYearStartInApril) periodEndDate.getYear
+    else periodEndDate.getYear + 1
+  }
 }

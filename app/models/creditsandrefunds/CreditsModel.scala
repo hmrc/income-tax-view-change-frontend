@@ -16,7 +16,7 @@
 
 package models.creditsandrefunds
 
-import models.core.ResponseModel.{AResponseReads, SuccessModel}
+import common.models.core.ResponseModel.{AResponseReads, SuccessModel}
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json._

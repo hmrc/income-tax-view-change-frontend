@@ -18,8 +18,8 @@ package financials.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.models.core.PaymentJourneyModel
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.core.PaymentJourneyModel
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.testMtditid

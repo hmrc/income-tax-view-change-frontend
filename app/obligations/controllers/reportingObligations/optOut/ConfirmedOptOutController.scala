@@ -19,7 +19,7 @@ package obligations.controllers.reportingObligations.optOut
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
-import models.itsaStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus
 import obligations.controllers.errors.routes as obligationsErrorRoutes
 import obligations.enums.ChosenTaxYear.{CurrentTaxYear, NextTaxYear, NoChosenTaxYear, PreviousTaxYear}
 import obligations.models.reportingObligations.optOut.*

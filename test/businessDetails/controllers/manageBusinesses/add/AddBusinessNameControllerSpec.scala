@@ -24,8 +24,8 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.{DateServiceInterface, SessionService}
-import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
 import org.jsoup.Jsoup

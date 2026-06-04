@@ -18,8 +18,7 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import enums.BeforeSubmissionPage
 
-import models.core.IncomeSourceIdHash.mkFromQueryString
-import models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
+import common.models.core.IncomeSourceIdHash.mkFromQueryString
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -38,6 +37,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
 import common.services.{DateService, SessionService}
 
 @Singleton

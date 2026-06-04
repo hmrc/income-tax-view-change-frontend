@@ -19,9 +19,9 @@ package services
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
+import common.models.core.AccountingPeriodModel
 import financials.models.CodingOutType.*
 import mocks.connectors.MockFinancialDetailsConnector
-import models.core.AccountingPeriodModel
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status

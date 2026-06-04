@@ -17,8 +17,8 @@
 package connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
+import common.models.core.Nino
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
-import models.core.Nino
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting

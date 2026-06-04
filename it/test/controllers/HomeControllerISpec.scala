@@ -24,8 +24,8 @@ import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.{ITSAStatusDetailsStub, MTDIndividualAuthStub}
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import common.models.core.{AccountingPeriodModel, CessationModel}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, PenaltyDetailsStub}
-import models.core.{AccountingPeriodModel, CessationModel}
 import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import obligations.models.*

@@ -22,6 +22,7 @@ import common.config.featureswitch.*
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.GatewayPage
 import common.models.admin.{ChargeHistory, CreditsRefundsRepay, PenaltiesAndAppeals}
+import common.models.core.Nino
 import common.services.{AuditingService, DateServiceInterface}
 import financials.controllers.ChargeSummaryController.ErrorCode
 import financials.controllers.agent.errors.routes as agentErrorRoutes
@@ -30,7 +31,6 @@ import financials.controllers.routes as financialsRoutes
 import forms.utils.SessionKeys.gatewayPage
 import models.chargeHistory.*
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
-import models.core.Nino
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.paymentAllocationCharges.PaymentAllocationViewModel

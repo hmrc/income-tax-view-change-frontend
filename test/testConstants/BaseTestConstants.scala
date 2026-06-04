@@ -21,7 +21,8 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.enums.MTDIndividual
 import common.models.auth.AuthorisedAndEnrolledRequest
-import models.core.Nino
+import common.models.btaNavBar.ListLinks
+import common.models.core.Nino
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status

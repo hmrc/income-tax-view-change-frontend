@@ -17,10 +17,10 @@
 package services
 
 import common.auth.MtdItUser
+import common.models.core.Nino
 import common.services.DateService
 import connectors.CalculationListConnector
 import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
-import models.core.Nino
 import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}

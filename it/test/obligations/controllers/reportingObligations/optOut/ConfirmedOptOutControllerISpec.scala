@@ -20,9 +20,9 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
 import common.models.admin.OptOutFs
+import common.models.itsaStatus.ITSAStatus.*
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
 import obligations.helpers.OptOutSessionRepositoryHelper
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{OK, SEE_OTHER}

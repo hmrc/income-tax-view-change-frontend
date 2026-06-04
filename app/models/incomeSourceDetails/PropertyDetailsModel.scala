@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails
 
-import models.core.{AccountingPeriodModel, CessationModel}
+import common.models.core.{AccountingPeriodModel, CessationModel}
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate

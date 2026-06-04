@@ -18,11 +18,11 @@ package hub.services.newHomePage
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.models.itsaStatus.ITSAStatus
 import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import ITSAStatus.ITSAStatus
 import hub.models.newHomePage.*
 import hub.models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import hub.models.newHomePage.YourTasksCard.*

@@ -17,7 +17,7 @@
 package businessDetails.views.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
