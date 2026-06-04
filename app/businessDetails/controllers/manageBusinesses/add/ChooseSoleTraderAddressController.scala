@@ -149,8 +149,7 @@ class ChooseSoleTraderAddressController @Inject()(
     }
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent = isAgent).async { implicit user =>
-
+  def show(isAgent: Boolean, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent = isAgent, triggeredMigrationPage = isTriggeredMigration).async { implicit user =>
     if (isEnabled(OverseasBusinessAddress)) {
       val chooseSoleTraderAddressRadioOptionsWithIndex: Seq[(String, Int)] = buildAddressOptions(user)
       

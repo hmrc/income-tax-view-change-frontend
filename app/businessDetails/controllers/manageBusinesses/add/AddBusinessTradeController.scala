@@ -60,11 +60,11 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   private def getSuccessURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean, isOverseasBusinessAddress: Boolean, isNoAddressOnFile: Boolean): String = {
     ((isAgent, mode) match {
       case (false, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => routes.IsTheNewAddressInTheUKController.show(isAgent)
-      case (false, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent)
+      case (false, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent = isAgent, isTriggeredMigration = isTriggeredMigration)
       case (false, NormalMode) => routes.AddBusinessAddressController.show(mode, isTriggeredMigration)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
-      case (_, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => routes.IsTheNewAddressInTheUKController.show(isAgent)
-      case (_, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent)
+      case (_, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => routes.IsTheNewAddressInTheUKController.show(isAgent) //TODO check the problem doesn't occur here also
+      case (_, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent = isAgent, isTriggeredMigration = isTriggeredMigration)
       case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode, isTriggeredMigration)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
     }).url
