@@ -20,7 +20,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.OptOutJourney
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
-import common.models.admin.{NavBarFs, OptOutFs}
+import common.models.admin.OptOutFs
 import obligations.controllers.constants.ConfirmOptOutUpdateControllerConstants.*
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.itsaStatus.ITSAStatus.*
