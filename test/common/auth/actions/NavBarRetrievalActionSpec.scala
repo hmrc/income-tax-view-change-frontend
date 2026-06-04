@@ -18,11 +18,8 @@ package common.auth.actions
 
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
-import common.config.ItvcErrorHandler
-import common.controllers.bta.BtaNavBarController
+import common.models.admin.{FeatureSwitch, NavBarFs}
 import common.utils.AuthUtils
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
 import org.scalatest.Assertion
 import play.api
 import play.api.Application
