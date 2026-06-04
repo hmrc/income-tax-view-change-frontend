@@ -25,8 +25,8 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.admin.OverseasBusinessAddress
 import common.services.{DateServiceInterface, SessionService}
-import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

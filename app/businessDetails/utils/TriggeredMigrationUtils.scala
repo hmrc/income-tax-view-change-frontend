@@ -18,7 +18,7 @@ package businessDetails.utils
 
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import models.admin.TriggeredMigration
+import common.models.admin.TriggeredMigration
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent

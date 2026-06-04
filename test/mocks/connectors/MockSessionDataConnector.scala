@@ -17,8 +17,8 @@
 package mocks.connectors
 
 import common.connectors.SessionDataConnector
-import models.sessionData.SessionDataGetResponse.SessionGetResponse
-import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import common.models.sessionData.SessionDataGetResponse.SessionGetResponse
+import common.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach

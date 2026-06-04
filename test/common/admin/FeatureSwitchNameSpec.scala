@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models.admin
+package common.admin
 
+import common.models.admin.{FeatureSwitchName, ITSASubmissionIntegration, InvalidFS, NavBarFs}
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsString, Json}
 

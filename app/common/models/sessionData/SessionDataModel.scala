@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package common.models.sessionData
 
-object OriginEnum extends Enumeration {
-  type OriginValue = Value
-  val BTA, PTA = Value
+import play.api.libs.json.{Json, OFormat}
 
-  def apply(origin: String): Option[OriginValue] = values.find(origin.toUpperCase == _.toString)
+case class SessionDataModel(
+                             mtditid: String,
+                             nino: String,
+                             utr: String,
+                             isSupportingAgent: Boolean = false
+                           )
+
+object SessionDataModel {
+  implicit val formats: OFormat[SessionDataModel] = Json.format[SessionDataModel]
 }
+

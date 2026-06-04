@@ -17,7 +17,7 @@
 package common.services
 
 import common.config.FrontendAppConfig
-import models.btaNavBar.{ListLinks, NavContent, NavLinks}
+import common.models.btaNavBar.{ListLinks, NavContent, NavLinks}
 import play.api.i18n.{Lang, Messages}
 
 import javax.inject.Inject

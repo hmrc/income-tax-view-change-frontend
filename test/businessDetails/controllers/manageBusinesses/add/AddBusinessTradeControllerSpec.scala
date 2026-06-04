@@ -24,9 +24,9 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.UIJourneySessionData
+import common.models.admin.OverseasBusinessAddress
 import common.services.{DateServiceInterface, SessionService}
-import models.UIJourneySessionData
-import models.admin.OverseasBusinessAddress
 import models.core.{AddressModel, CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api

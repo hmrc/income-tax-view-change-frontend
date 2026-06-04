@@ -20,11 +20,11 @@ import audit.models.ChargeSummaryAudit
 import common.auth.MtdItUser
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
+import common.models.admin.ChargeHistory
 import financials.models.ChargeType.ITSA_ENGLAND_AND_NI
 import financials.models.CodingOutType.*
 import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.ChargeHistory
 import models.financialDetails.*
 import play.api.http.Status.*
 import play.api.libs.json.Json

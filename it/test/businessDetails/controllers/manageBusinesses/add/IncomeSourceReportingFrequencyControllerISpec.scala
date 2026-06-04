@@ -22,9 +22,9 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
+import common.models.UIJourneySessionData
 import common.services.{DateService, SessionService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.UIJourneySessionData
 import models.incomeSourceDetails._
 import models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK

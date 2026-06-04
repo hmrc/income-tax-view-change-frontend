@@ -17,8 +17,8 @@
 package common.services.admin
 
 import common.config.FrontendAppConfig
+import common.models.admin.{FeatureSwitch, FeatureSwitchName}
 import mocks.connectors.MockFeatureSwitchConnector
-import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}

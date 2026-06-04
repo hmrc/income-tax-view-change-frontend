@@ -17,8 +17,8 @@
 package common.auth.actions
 
 import common.config.featureswitch.FeatureSwitching
+import common.enums.OriginEnum
 import common.utils.AuthUtils.ORIGIN
-import models.OriginEnum
 import play.api.i18n.I18nSupport
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}

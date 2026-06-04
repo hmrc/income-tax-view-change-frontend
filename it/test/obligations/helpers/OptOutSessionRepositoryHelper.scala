@@ -18,7 +18,7 @@ package obligations.helpers
 
 import common.enums.JourneyType.OptOutJourney
 import common.helpers.CustomMatchers
-import models.UIJourneySessionData
+import common.models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.ITSAStatus
 import obligations.models.reportingObligations.optOut.OptOutSessionData

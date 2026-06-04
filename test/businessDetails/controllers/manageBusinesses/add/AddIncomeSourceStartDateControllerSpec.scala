@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import models.UIJourneySessionData
 import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -38,6 +37,7 @@ import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.UIJourneySessionData
 import common.services.{DateServiceInterface, SessionService}
 
 

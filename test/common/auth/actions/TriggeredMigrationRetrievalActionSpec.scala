@@ -24,9 +24,9 @@ import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.IncomeTaxCalculationConnector
 import common.enums.JourneyType.TriggeredMigrationJourney
 import common.mocks.services.MockSessionService
+import common.models.UIJourneySessionData
+import common.models.admin.{FeatureSwitchName, TriggeredMigration}
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
-import models.UIJourneySessionData
-import models.admin.{FeatureSwitchName, TriggeredMigration}
 import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
 import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}

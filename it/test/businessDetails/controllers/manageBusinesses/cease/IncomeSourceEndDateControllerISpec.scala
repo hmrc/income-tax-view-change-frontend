@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.UIJourneySessionData
 import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, incomeSourceIdField}
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -31,6 +30,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.models.UIJourneySessionData
 import common.services.SessionService
 
 class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {

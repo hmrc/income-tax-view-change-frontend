@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package common.models.sessionData
 
 import common.utils.sessionUtils.SessionKeys
 import common.services.agent.ClientDetailsService.ClientDetails

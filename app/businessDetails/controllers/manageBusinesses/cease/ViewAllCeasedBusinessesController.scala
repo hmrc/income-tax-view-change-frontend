@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -32,6 +31,7 @@ import businessDetails.utils.IncomeSourcesUtils
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.JourneyType.Manage
+import common.models.admin.DisplayBusinessStartDate
 import common.services.SessionService
 
 @Singleton

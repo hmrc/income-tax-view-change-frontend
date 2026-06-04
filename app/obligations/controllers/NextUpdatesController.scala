@@ -20,8 +20,8 @@ import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.models.admin.OptOutFs
 import common.services.AuditingService
-import models.admin.OptOutFs
 import obligations.models.ObligationsModel
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService

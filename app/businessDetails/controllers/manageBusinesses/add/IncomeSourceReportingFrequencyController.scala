@@ -21,7 +21,6 @@ import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.AfterSubmissionPage
-import models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
@@ -37,6 +36,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.models.UIJourneySessionData
 import common.services.{DateService, SessionService}
 
 import javax.inject.Inject

@@ -20,7 +20,7 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.implicits.ImplicitDateFormatter
-import models.admin.FeatureSwitchName
+import common.models.admin.FeatureSwitchName
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}

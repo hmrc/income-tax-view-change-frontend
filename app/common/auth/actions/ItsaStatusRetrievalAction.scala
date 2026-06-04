@@ -21,9 +21,9 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
 import common.controllers.BaseController
+import common.models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
 import common.models.auth.ItsaStatusRetrievalActionError
 import common.services.DateServiceInterface
-import models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}

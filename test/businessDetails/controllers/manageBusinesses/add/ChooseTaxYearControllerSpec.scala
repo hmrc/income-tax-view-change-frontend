@@ -23,8 +23,8 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
+import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface, SessionService}
-import models.UIJourneySessionData
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}
 import org.mockito.Mockito.mock
 import play.api

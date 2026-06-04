@@ -16,7 +16,7 @@
 
 package common.services
 
-import models.btaNavBar.*
+import common.models.btaNavBar.{ListLinks, NavContent, NavLinks}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
 import play.api.i18n.{Lang, Messages}

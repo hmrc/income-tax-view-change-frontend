@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.BeforeSubmissionPage
-import models.admin.OverseasBusinessAddress
 import models.core.{Mode, NormalMode}
 import models.incomeSourceDetails.{Address, BusinessDetailsModel}
 import play.api.Logger
@@ -32,6 +31,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.models.admin.OverseasBusinessAddress
 import common.services.SessionService
 
 import javax.inject.{Inject, Singleton}

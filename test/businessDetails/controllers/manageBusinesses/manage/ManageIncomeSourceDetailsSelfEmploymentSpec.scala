@@ -19,7 +19,7 @@ package businessDetails.controllers.manageBusinesses.manage
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
-import models.admin.DisplayBusinessStartDate
+import common.models.admin.DisplayBusinessStartDate
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import org.jsoup.Jsoup

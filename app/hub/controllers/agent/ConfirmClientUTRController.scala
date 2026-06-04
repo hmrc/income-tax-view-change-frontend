@@ -20,10 +20,10 @@ import hub.audit.models.ConfirmClientDetailsAuditModel
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
+import common.models.sessionData.SessionCookieData
 import common.services.{AuditingService, SessionDataService}
 import common.utils.sessionUtils.SessionKeys
-import models.sessionData.SessionCookieData
-import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
+import common.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

@@ -21,10 +21,10 @@ import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
+import common.models.UIJourneySessionData
+import common.models.admin.OptOutFs
 import obligations.controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.UIJourneySessionData
-import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus.*
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}

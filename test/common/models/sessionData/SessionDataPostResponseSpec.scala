@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package common.models.sessionData
 
-import models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponseReads, SessionDataPostSuccess}
+import common.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponseReads, SessionDataPostSuccess}
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import testUtils.UnitSpec

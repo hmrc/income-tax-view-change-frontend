@@ -17,13 +17,13 @@
 package common.auth
 
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.models.admin.FeatureSwitch
 import common.models.auth.{AgentClientDetails, AuthUserDetails}
 import play.api.mvc.{Request, WrappedRequest}
 import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.govukfrontend.views.Aliases.ServiceNavigation
-import models.admin.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 case class MtdItUser[A](mtditid: String,

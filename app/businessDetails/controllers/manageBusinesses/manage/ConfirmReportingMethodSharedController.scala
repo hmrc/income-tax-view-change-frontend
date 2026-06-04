@@ -21,7 +21,6 @@ import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.{AfterSubmissionPage, BeforeSubmissionPage}
-import models.UIJourneySessionData
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
@@ -36,6 +35,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.models.UIJourneySessionData
 import common.services.{AuditingService, DateService, SessionService}
 
 import javax.inject.Inject

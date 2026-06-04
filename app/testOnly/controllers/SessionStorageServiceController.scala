@@ -19,7 +19,7 @@ package testOnly.controllers
 import common.auth.{AuthActions, FrontendAuthorisedFunctions}
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.services.SessionDataService
-import models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
+import common.models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier

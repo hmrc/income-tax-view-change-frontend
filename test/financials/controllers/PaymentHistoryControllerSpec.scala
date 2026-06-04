@@ -20,9 +20,9 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
+import common.models.admin.PaymentHistoryRefunds
 import common.services.DateServiceInterface
 import forms.utils.SessionKeys.gatewayPage
-import models.admin.PaymentHistoryRefunds
 import models.financialDetails.{ChargeItem, Payment}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel}
 import org.mockito.ArgumentMatchers.any

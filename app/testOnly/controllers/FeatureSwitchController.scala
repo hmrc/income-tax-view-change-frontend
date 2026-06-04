@@ -18,9 +18,9 @@ package testOnly.controllers
 
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.models.admin.{FeatureSwitchName, InvalidFS}
 import common.services.admin.FeatureSwitchService
-import models.admin.FeatureSwitchName.allFeatureSwitches
-import models.admin.{FeatureSwitchName, InvalidFS}
+import common.models.admin.FeatureSwitchName.allFeatureSwitches
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

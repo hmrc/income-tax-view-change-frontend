@@ -26,9 +26,9 @@ import common.helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
 import common.helpers.servicemocks.CitizenDetailsStub.stubGetCitizenDetails
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.{AuditStub, MTDAgentAuthStub, MTDIndividualAuthStub, SessionDataStub}
+import common.models.admin.FeatureSwitchName
 import common.models.audit.AccessDeniedForSupportingAgentAuditModel
 import common.viewUtils.InternalUrlHelper
-import models.admin.FeatureSwitchName
 import models.extensions.FinancialDetailsModelExtension
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.libs.ws.WSResponse

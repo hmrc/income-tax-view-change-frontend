@@ -18,14 +18,14 @@ package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import models.UIJourneySessionData
-import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.TriggeredMigrationJourney
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.models.UIJourneySessionData
+import common.models.admin.TriggeredMigration
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import repositories.UIJourneySessionDataRepository

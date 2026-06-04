@@ -20,8 +20,8 @@ import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.models.admin.OverseasBusinessAddress
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.OverseasBusinessAddress
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse

@@ -19,7 +19,7 @@ package common.services
 import common.utils.sessionUtils
 import common.utils.sessionUtils.SessionKeys
 import mocks.connectors.MockSessionDataConnector
-import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
+import common.models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
 import testUtils.TestSupport
 
 class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {

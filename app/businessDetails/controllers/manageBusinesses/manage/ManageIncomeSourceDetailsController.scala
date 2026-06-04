@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.InitialPage
-import models.admin.DisplayBusinessStartDate
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.core.{IncomeSourceId, IncomeSourceIdHash}
@@ -39,6 +38,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.models.admin.DisplayBusinessStartDate
 import common.services.{DateService, ITSAStatusService, SessionService}
 
 import javax.inject.{Inject, Singleton}

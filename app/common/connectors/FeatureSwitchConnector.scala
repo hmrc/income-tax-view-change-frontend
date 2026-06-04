@@ -16,7 +16,7 @@
 
 package common.connectors
 
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import common.models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue

@@ -22,9 +22,9 @@ import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.IncomeSourceJourneyType
+import common.models.UIJourneySessionData
 import common.services.{DateService, ITSAStatusService, SessionService}
 import enums.JourneyState
-import models.UIJourneySessionData
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, LatencyDetails, TaxYear}
 import models.itsaStatus.StatusDetail
 import play.api.Logger

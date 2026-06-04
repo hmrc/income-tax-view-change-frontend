@@ -17,7 +17,7 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import models.btaNavBar.NavContent
+import common.models.btaNavBar.NavContent
 import play.api.Logger
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpReadsInstances, HttpResponse}

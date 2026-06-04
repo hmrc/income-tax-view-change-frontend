@@ -24,7 +24,7 @@ import common.models.auth.AuthorisedAgentWithClientDetailsRequest
 import common.services.SessionDataService
 import common.services.agent.ClientDetailsService
 import common.utils.sessionUtils.SessionKeys
-import models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
+import common.models.sessionData.SessionDataGetResponse.{SessionDataNotFound, SessionDataUnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion
