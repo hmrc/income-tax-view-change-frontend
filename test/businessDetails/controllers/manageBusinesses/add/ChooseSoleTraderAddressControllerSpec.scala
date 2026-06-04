@@ -72,7 +72,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
     s"show${if (mtdRole != MTDIndividual) "Agent" else ""}" when {
 
-      val action = testController.show(isAgent)
+      val action = testController.show(isAgent, isTriggeredMigration = false)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
 
       s"the user is authenticated as a $mtdRole" should {
@@ -125,8 +125,8 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
     s"submit() - isAgent == $isAgent" when {
 
-      val action = testController.submit(isAgent)
-      @unused val actionTrigMig = testController.submit(isAgent)
+      val action = testController.submit(isAgent, isTriggeredMigration = false)
+      @unused val actionTrigMig = testController.submit(isAgent, isTriggeredMigration = false)
       val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole).withMethod("POST")
 
       s"the user is authenticated as a $mtdRole" should {

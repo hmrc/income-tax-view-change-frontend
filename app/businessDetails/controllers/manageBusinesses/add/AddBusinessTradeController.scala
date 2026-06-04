@@ -63,7 +63,7 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
       case (false, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent = isAgent, isTriggeredMigration = isTriggeredMigration)
       case (false, NormalMode) => routes.AddBusinessAddressController.show(mode, isTriggeredMigration)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
-      case (_, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => routes.IsTheNewAddressInTheUKController.show(isAgent) //TODO check the problem doesn't occur here also
+      case (_, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => routes.IsTheNewAddressInTheUKController.show(isAgent, isTriggeredMigration)
       case (_, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent = isAgent, isTriggeredMigration = isTriggeredMigration)
       case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode, isTriggeredMigration)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
