@@ -80,11 +80,7 @@ viewModel: HomePageViewModel
 }
 
 @homeHeading = @{
-    if(viewModel.useGovUkRebrand) {
-        messages("home.heading.new")
-    } else {
-        messages("home.heading")
-    }
+    messages("home.heading.new")
 }
 
 @customLayout = {
@@ -131,7 +127,6 @@ viewModel: HomePageViewModel
     pageTitle = homeHeading,
     mainClass = Some("full-width"),
     isAgent = false,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
     @customLayout

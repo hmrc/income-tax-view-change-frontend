@@ -44,7 +44,6 @@
     pageTitle = getMessage("title", startTaxYear, endTaxYear),
     backUrl = Some("#"),
     isAgent = user.isAgent,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @formWithCSRF(action = postAction) {

@@ -141,7 +141,6 @@ feedback.thankYou                                               = Diolch
 feedback.received                                               = Mae eich adborth wedi dod i law.
 
 ## Home Page ##
-home.heading                                                    = Treth Incwm
 home.heading.new                                                = Hunanasesiad
 home.agent.primary.caption                                      = Rydych wedi mewngofnodi fel asiant ategol
 home.agent.supporting.caption                                   = Rydych wedi mewngofnodi fel asiant ategol

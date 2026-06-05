@@ -87,7 +87,6 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
         calendarYear = testCalendarYear,
         backUrl = backUrl,
         utr = utr,
-        btaNavPartial = None,
         charges = creditCharges,
         maybeAvailableCredit = maybeAvailableCredit
       )(FakeRequest(), testUser, implicitly)
