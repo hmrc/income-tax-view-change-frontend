@@ -24,7 +24,7 @@ import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{OptOutFs, SignUpFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
+import common.models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
 import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository

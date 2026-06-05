@@ -16,6 +16,6 @@
 
 package obligations.services.reportingObligations.signUp.core
 
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
 
 case class SignUpInitialState(currentYearItsaStatus: ITSAStatus, nextYearItsaStatus: ITSAStatus)

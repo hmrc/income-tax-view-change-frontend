@@ -16,8 +16,8 @@
 
 package obligations.services.reportingObligations.signUp
 
+import common.models.itsaStatus.ITSAStatus.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
 import obligations.services.reportingObligations.signUp.core.SignUpProposition
 import obligations.services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
 import org.scalatest.prop.TableDrivenPropertyChecks.*

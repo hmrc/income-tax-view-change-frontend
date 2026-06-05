@@ -19,7 +19,7 @@ package common.connectors
 import common.helpers.{ComponentSpecBase, WiremockHelper}
 import common.models.auth.AuthorisedAndEnrolledRequest
 import common.enums.MTDIndividual
-import models.core.{AccountingPeriodModel, AddressModel}
+import common.models.core.{AccountingPeriodModel, AddressModel}
 import models.incomeSourceDetails.*
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

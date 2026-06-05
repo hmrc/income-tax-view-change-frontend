@@ -14,12 +14,22 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.itsaStatus
 
 import play.api.libs.json.{Format, Json}
 
-case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
+sealed trait ITSAStatusResponse
 
-object PaymentDataModel {
-  implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]
+case class ITSAStatusResponseModel(taxYear: String,
+                                   itsaStatusDetails: Option[List[StatusDetail]] = None) extends ITSAStatusResponse
+
+case class ITSAStatusResponseError(status: Int, reason: String) extends ITSAStatusResponse
+
+
+object ITSAStatusResponseModel {
+  implicit val format: Format[ITSAStatusResponseModel] = Json.format[ITSAStatusResponseModel]
+}
+
+object ITSAStatusResponseError {
+  implicit val format: Format[ITSAStatusResponseError] = Json.format[ITSAStatusResponseError]
 }

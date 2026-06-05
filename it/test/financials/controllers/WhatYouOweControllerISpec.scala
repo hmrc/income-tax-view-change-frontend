@@ -25,7 +25,7 @@ import common.models.admin.CreditsRefundsRepay
 import common.services.DateServiceInterface
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.admin.*
-import models.core.SelfServeTimeToPayJourneyResponseModel
+import common.models.core.SelfServeTimeToPayJourneyResponseModel
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.*

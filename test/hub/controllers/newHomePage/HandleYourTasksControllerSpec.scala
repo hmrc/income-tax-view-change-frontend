@@ -20,12 +20,12 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import common.services.{AuditingService, DateService, DateServiceInterface, ITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
 import mocks.services.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import hub.models.newHomePage.HandleYourTasksViewModel
 import hub.models.newHomePage.MaturityLevel.Upcoming
 import hub.models.newHomePage.YourTaskCardType.FINANCIALS

@@ -21,7 +21,7 @@ import common.mocks.services.MockDateService
 import obligations.mocks.connectors.MockObligationsConnector
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import hub.models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import obligations.models.*
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}

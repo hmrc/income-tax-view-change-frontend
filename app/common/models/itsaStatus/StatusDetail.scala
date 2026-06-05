@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models.itsaStatus
+package common.models.itsaStatus
 
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
-import models.itsaStatus.StatusReason.StatusReason
+import ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import StatusReason.StatusReason
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
 case class StatusDetail(submittedOn: String,

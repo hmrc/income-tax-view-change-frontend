@@ -23,9 +23,9 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
+import common.models.core.NormalMode
 import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.core.NormalMode
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.businessTradeField
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

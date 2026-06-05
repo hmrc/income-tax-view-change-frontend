@@ -17,8 +17,8 @@
 package connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import models.core.ResponseModel.ResponseModel
-import models.core.{ErrorModel, Nino}
+import common.models.core.{ErrorModel, Nino}
+import common.models.core.ResponseModel.ResponseModel
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.{Payment, Payments, PaymentsError}
 import models.incomeSourceDetails.TaxYear

@@ -21,7 +21,7 @@ import common.auth.MtdItUser
 import common.enums.AuditType.PaymentAllocations
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
-import models.core.AccountingPeriodModel
+import common.models.core.AccountingPeriodModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import play.api.Logger

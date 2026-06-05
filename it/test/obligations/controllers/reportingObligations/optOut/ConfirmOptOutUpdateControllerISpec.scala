@@ -21,9 +21,9 @@ import common.enums.JourneyType.OptOutJourney
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
 import common.models.admin.OptOutFs
+import common.models.itsaStatus.ITSAStatus.*
 import obligations.controllers.constants.ConfirmOptOutUpdateControllerConstants.*
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.itsaStatus.ITSAStatus.*
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.repositories.OptOutContextData

@@ -17,10 +17,10 @@
 package models.incomeSourceDetails.viewmodels
 
 import common.enums.IncomeSourceJourney.IncomeSourceType
-import models.core.{AddressModel, IncomeSourceId}
+import common.models.itsaStatus.ITSAStatus
 import models.incomeSourceDetails.*
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import ITSAStatus.ITSAStatus
+import common.models.core.{AddressModel, IncomeSourceId}
 
 import java.time.LocalDate
 

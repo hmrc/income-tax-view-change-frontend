@@ -17,11 +17,11 @@
 package obligations.services.reportingObligations.optOut
 
 import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.models.itsaStatus.ITSAStatus.*
 import common.services.DateService
 import mocks.services.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
-import models.itsaStatus.{StatusDetail, StatusReason}
+import common.models.itsaStatus.{StatusDetail, StatusReason}
 import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService

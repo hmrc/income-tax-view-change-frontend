@@ -16,7 +16,7 @@
 
 package models
 
-import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
+import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.libs.json.{JsSuccess, Json}

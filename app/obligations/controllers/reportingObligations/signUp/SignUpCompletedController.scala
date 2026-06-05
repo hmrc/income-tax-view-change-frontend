@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
-import models.itsaStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus
 import obligations.models.reportingObligations.signUp.SignUpCompletedViewModel
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.utils.reportingObligations.{JourneyCheckerSignUp, ReportingObligationsUtils}

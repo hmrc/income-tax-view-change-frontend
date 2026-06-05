@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
-import models.core.CorrelationId.correlationId
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.{Format, Json}
 
-import java.util.UUID
-import java.util.UUID.randomUUID
+sealed trait NinoResponse
 
-case class CorrelationId(id: UUID = randomUUID()) {
-  def asHeader(): (String, String) = (correlationId, id.toString)
+case class NinoResponseSuccess(nino: String) extends NinoResponse
+
+case class NinoResponseError(status: Int, reason: String) extends NinoResponse
+
+object NinoResponseSuccess {
+  implicit val format: Format[NinoResponseSuccess] = Json.format[NinoResponseSuccess]
 }
 
-object CorrelationId {
-
-  val correlationId = "Correlation-Id"
-  def fromHeaderCarrier(hc: HeaderCarrier): Option[CorrelationId] = {
-    hc.headers(Seq(correlationId))
-      .headOption
-      .map(header => CorrelationId(UUID.fromString(header._2)))
-  }
+object NinoResponseError {
+  implicit val format: Format[NinoResponseError] = Json.format[NinoResponseError]
 }

@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
+case class ContactDetailsModel(phoneNumber: Option[String],
+                               mobileNumber: Option[String],
+                               faxNumber: Option[String],
+                               emailAddress: Option[String])
 
-
-case class AccountingPeriodModel(start: LocalDate, end: LocalDate) {
-  val determineTaxYear: Int = AccountingPeriodModel.determineTaxYearFromPeriodEnd(end)
-}
-
-object AccountingPeriodModel {
-  implicit val format: Format[AccountingPeriodModel] = Json.format[AccountingPeriodModel]
-
-  def determineTaxYearFromPeriodEnd(periodEndDate: LocalDate): Int = {
-    val taxYearStartInApril = LocalDate.of(periodEndDate.getYear, 4, 6)
-    if (periodEndDate isBefore taxYearStartInApril) periodEndDate.getYear
-    else periodEndDate.getYear + 1
-  }
+object ContactDetailsModel {
+  implicit val format: Format[ContactDetailsModel] = Json.format[ContactDetailsModel]
 }

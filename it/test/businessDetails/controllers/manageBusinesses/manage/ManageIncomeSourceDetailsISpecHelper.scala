@@ -21,7 +21,7 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.UIJourneySessionData
 import common.services.SessionService
-import models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.LatencyDetails
 import testConstants.BaseIntegrationTestConstants._
 

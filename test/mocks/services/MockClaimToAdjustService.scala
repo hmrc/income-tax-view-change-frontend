@@ -16,8 +16,8 @@
 
 package mocks.services
 
+import common.models.core.Nino
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.core.Nino
 import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

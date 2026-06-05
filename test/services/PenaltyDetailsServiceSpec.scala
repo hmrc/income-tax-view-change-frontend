@@ -16,8 +16,8 @@
 
 package services
 
+import common.models.itsaStatus.ITSAStatus
 import mocks.connectors.MockPenaltyDetailsConnector
-import models.itsaStatus.ITSAStatus
 import models.penalties.{GetPenaltyDetails, Totalisations}
 import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsSuccessResponse}
 import play.api.http.Status.INTERNAL_SERVER_ERROR

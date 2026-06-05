@@ -18,9 +18,9 @@ package obligations.services.reportingObligations
 
 import common.config.featureswitch.FeatureSwitching
 import common.enums.MTDIndividual
+import common.models.itsaStatus.ITSAStatus.*
 import common.services.DateService
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
 import obligations.models.audit.reporting_obligations.*
 import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import obligations.viewUtils.ReportingFrequencyViewUtils

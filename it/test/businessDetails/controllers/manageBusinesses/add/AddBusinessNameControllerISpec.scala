@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -32,6 +31,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.SessionService
 
 class AddBusinessNameControllerISpec extends ControllerISpecHelper {

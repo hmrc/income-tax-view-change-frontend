@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import common.connectors.ITSAStatusConnector
-import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseModel}
+import common.models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

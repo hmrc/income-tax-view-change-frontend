@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.core.Nino
+import common.models.core.Nino
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito._

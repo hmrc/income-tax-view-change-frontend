@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
-import play.api.mvc.JavascriptLiteral
+import play.api.libs.json.{Format, Json}
 
-sealed trait Mode
+case class RepaymentRefund(nino: String, fullAmount: BigDecimal)
 
-case object CheckMode extends Mode
-case object NormalMode extends Mode
-
-object Mode {
-
-  def isChange(mode: Mode): Boolean = mode == CheckMode
-
-  implicit val jsLiteral: JavascriptLiteral[Mode] = {
-    case NormalMode => "NormalMode"
-    case CheckMode => "CheckMode"
-  }
+object RepaymentRefund {
+  implicit val format: Format[RepaymentRefund] = Json.format[RepaymentRefund]
 }

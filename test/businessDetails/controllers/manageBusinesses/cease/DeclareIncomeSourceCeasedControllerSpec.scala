@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import models.core.NormalMode
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -36,6 +35,7 @@ import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.core.NormalMode
 import common.services.{DateServiceInterface, SessionService}
 
 class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockSessionService {

@@ -26,7 +26,7 @@ import common.models.UIJourneySessionData
 import common.services.{DateService, SessionService}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails._
-import models.itsaStatus.ITSAStatus.Voluntary
+import common.models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BaseIntegrationTestConstants._

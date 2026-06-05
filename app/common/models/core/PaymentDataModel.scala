@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
 import play.api.libs.json.{Format, Json}
 
-case class ContactDetailsModel(phoneNumber: Option[String],
-                               mobileNumber: Option[String],
-                               faxNumber: Option[String],
-                               emailAddress: Option[String])
+case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
 
-object ContactDetailsModel {
-  implicit val format: Format[ContactDetailsModel] = Json.format[ContactDetailsModel]
+object PaymentDataModel {
+  implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]
 }

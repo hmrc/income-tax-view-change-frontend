@@ -19,10 +19,10 @@ package obligations.services.reportingObligations.optOut
 import common.auth.MtdItUser
 import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.models.UIJourneySessionData
+import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optOutUpdateReason}
 import obligations.models.audit.OptOutNewAuditModel

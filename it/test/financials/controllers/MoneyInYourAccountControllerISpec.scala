@@ -22,8 +22,8 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.models.admin.CreditsRefundsRepay
+import common.models.core.ErrorModel
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.core.ErrorModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsValue, Json}
 import testConstants.ANewCreditAndRefundModel

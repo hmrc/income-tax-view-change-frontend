@@ -19,8 +19,8 @@ package connectors
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
-import models.core.ResponseModel.{ResponseModel, UnexpectedError}
-import models.core.{CorrelationId, Nino}
+import common.models.core.{CorrelationId, Nino}
+import common.models.core.ResponseModel.{ResponseModel, UnexpectedError}
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.incomeSourceDetails.{TaxYear, TaxYearRange}

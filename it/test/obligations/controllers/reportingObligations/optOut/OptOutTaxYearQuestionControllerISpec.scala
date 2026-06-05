@@ -23,10 +23,10 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
 import common.models.UIJourneySessionData
 import common.models.admin.OptOutFs
+import common.models.itsaStatus.ITSAStatus.*
 import obligations.controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.audit.OptOutNewAuditModel
 import obligations.models.reportingObligations.optOut.OptOutSessionData

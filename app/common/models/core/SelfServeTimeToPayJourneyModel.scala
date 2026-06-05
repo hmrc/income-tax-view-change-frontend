@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package models.core
+package common.models.core
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-case class AddressModel(
-                         addressLine1: Option[String],
-                         addressLine2: Option[String],
-                         addressLine3: Option[String],
-                         addressLine4: Option[String],
-                         postCode: Option[String],
-                         countryCode: Option[String]
-                       ) {
+trait SelfServeTimeToPayJourneyResponse
 
-  def countryName: String = "United Kingdom"
+case class SelfServeTimeToPayJourneyResponseModel(journeyId: String, nextUrl: String) extends SelfServeTimeToPayJourneyResponse
 
+object SelfServeTimeToPayJourneyResponseModel {
+  implicit val formats: OFormat[SelfServeTimeToPayJourneyResponseModel] = Json.format[SelfServeTimeToPayJourneyResponseModel]
 }
 
-object AddressModel {
-  implicit val format: Format[AddressModel] = Json.format[AddressModel]
-}
+case class SelfServeTimeToPayJourneyErrorResponse(status: Int, message: String) extends SelfServeTimeToPayJourneyResponse

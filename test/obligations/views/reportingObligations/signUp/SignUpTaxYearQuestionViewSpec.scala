@@ -17,8 +17,8 @@
 package obligations.views.reportingObligations.signUp
 
 import common.auth.MtdItUser
+import common.models.itsaStatus.ITSAStatus
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import obligations.forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}

@@ -22,9 +22,9 @@ import common.enums.MTDIndividual
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.UIJourneySessionData
 import common.models.admin.SignUpFs
+import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

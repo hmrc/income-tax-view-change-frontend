@@ -18,8 +18,8 @@ package services
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.models.core.Nino
 import connectors.FinancialDetailsConnector
-import models.core.Nino
 import models.financialDetails.FinancialDetailsModel
 import models.paymentAllocationCharges._
 import models.paymentAllocations.PaymentAllocations
