@@ -54,7 +54,7 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
       case calculationResponse: LiabilityCalculationResponse =>
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         val calculationSummary: CalculationSummary = CalculationSummary(calculationResponse)
-        Ok(view(calculationSummary, taxYear, isAgent = isAgent, backUrl, btaNavPartial = user.btaNavPartial, serviceNavigationPartial = user.serviceNavigationPartial))
+        Ok(view(calculationSummary, taxYear, isAgent = isAgent, backUrl, serviceNavigationPartial = user.serviceNavigationPartial))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         Logger("application").info("No calculation data returned from downstream.")

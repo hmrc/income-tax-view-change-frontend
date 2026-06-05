@@ -18,7 +18,7 @@ package common.services
 
 import common.config.FrontendAppConfig
 import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, JourneyType, Manage, Operation}
-import models.UIJourneySessionData
+import common.models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}
 import uk.gov.hmrc.http.HeaderCarrier

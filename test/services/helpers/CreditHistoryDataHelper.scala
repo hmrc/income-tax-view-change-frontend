@@ -17,7 +17,7 @@
 package services.helpers
 
 
-import enums.ChargeType.NIC4_WALES
+import financials.models.ChargeType.NIC4_WALES
 import models.creditDetailModel._
 import models.financialDetails._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel

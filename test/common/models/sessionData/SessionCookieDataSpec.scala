@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package common.models.sessionData
 
 import common.utils.sessionUtils.SessionKeys
 import testConstants.BaseTestConstants.{testFirstName, testMtditid, testNino, testSaUtr, testSecondName}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package common.models.sessionData
 
 import play.api.http.Status.{CONFLICT, OK}
 import play.api.libs.json.{Json, OFormat}

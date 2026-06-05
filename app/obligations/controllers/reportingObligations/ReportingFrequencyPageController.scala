@@ -19,9 +19,9 @@ package obligations.controllers.reportingObligations
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.models.admin.{OptOutFs, SignUpFs}
 import common.services.DateServiceInterface
 import obligations.controllers.routes as obligationsRoutes
-import models.admin.{OptOutFs, SignUpFs}
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
 import obligations.services.reportingObligations.ReportingObligationsAuditService
 import obligations.services.reportingObligations.optOut.OptOutService

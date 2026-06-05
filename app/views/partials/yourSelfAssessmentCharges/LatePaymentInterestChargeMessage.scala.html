@@ -17,6 +17,7 @@
 @import common.implicits.ImplicitDateFormatterImpl
 @import models.chargeSummary._
 @import models.financialDetails.MfaDebitCharge
+@import models.financialDetails.CreditType
 @import common.views.html.components._
 @import financials.controllers.routes as financialsRoutes
 
@@ -42,15 +43,21 @@
         messages("paymentHistory.cutOver")
     } else if (matchingPayment.isDefined) {
         val matchingDocumentDetail = viewModel.payments.documentDetails.find(_.transactionId.contains(matchingPayment.get))
+        val matchingFinancialDetail = viewModel.payments.financialDetails.find(_.transactionId.contains(matchingPayment.get))
+        val doesCreditHaveBreakdownPage = matchingFinancialDetail.exists(fd => fd.mainTransaction.exists(CreditType.creditsWithSummaryPages.contains))
         val originalAmount = matchingDocumentDetail.map(_.originalAmount)
         val isItACredit = originalAmount.exists(_ < 0) && matchingDocumentDetail.exists(_.taxYear != 9999)
         val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
 
-        val link = (isItACredit, viewModel.isAgent, payment.taxYear.isDefined) match {
-            case (false, true, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
-            case (false, false, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
-            case (true, true, true) => financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
-            case (true, false, true) => financialsRoutes.CreditsSummaryController.showCreditsSummary(findTaxYear).url
+        val link = {
+            (isItACredit, doesCreditHaveBreakdownPage, viewModel.isAgent, payment.taxYear.isDefined) match {
+                case (false, _, true, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
+                case (false, _, false, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
+                case (true, true, true, true) => financialsRoutes.ChargeSummaryController.showAgent(payment.taxYear.get.toInt, matchingPayment.get).url
+                case (true, true, false, true) => financialsRoutes.ChargeSummaryController.show(payment.taxYear.get.toInt, matchingPayment.get, viewModel.origin).url
+                case (true, false, true, true) => financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
+                case (true, false, false, true) => financialsRoutes.CreditsSummaryController.showCreditsSummary(findTaxYear).url
+            }
         }
 
         val linkText =

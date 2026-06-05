@@ -17,7 +17,7 @@
 package common.helpers.servicemocks
 
 import common.helpers.WiremockHelper
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import common.models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 

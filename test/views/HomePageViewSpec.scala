@@ -20,7 +20,7 @@ import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDI
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import models.admin.FeatureSwitch
+import common.models.admin.FeatureSwitch
 import models.creditsandrefunds.CreditsModel
 import hub.models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
@@ -124,8 +124,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
       penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
-      dunningLockExists = dunningLockExists,
-      useGovUkRebrand = true
+      dunningLockExists = dunningLockExists
     )
 
     val home: HomeView = app.injector.instanceOf[HomeView]
@@ -148,15 +147,15 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
   "home" should {
 
-    "provided with a btaNavPartial" should {
+    "provided with a serviceNavigationPartial" should {
 
-      "render the btaNavPartial" in new Setup {
+      "render the bta service navigation" in new Setup {
         document.getElementById(s"bta-service-navigation").text shouldBe "testHome"
       }
     }
 
     s"have the correct link to the government homepage" in new Setup {
-      document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
+      document.getElementsByClass("govuk-header__homepage-link").attr("href") shouldBe "https://www.gov.uk"
     }
 
     s"have the title ${messages("htmlTitle", messages("home.heading.new"))}" in new Setup() {

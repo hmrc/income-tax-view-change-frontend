@@ -19,8 +19,8 @@ package hub.controllers.newHomePage
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.FrontendAppConfig
+import common.models.admin.MortgageEvidence
 import common.services.{DateServiceInterface, ITSAStatusService}
-import models.admin.MortgageEvidence
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import hub.models.newHomePage.ProofOfYourIncomeCardViewModel

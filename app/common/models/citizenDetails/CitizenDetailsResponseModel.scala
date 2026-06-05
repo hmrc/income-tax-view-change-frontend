@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.citizenDetails
+package common.models.citizenDetails
 
 import models.readNullable
 import play.api.libs.functional.syntax._

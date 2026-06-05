@@ -21,8 +21,8 @@ import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSol
 import com.google.inject.Inject
 import common.enums.JourneyType.TriggeredMigrationJourney
 import common.enums.TriggeredMigration.TriggeredMigrationState
+import common.models.UIJourneySessionData
 import common.services.SessionService
-import models.UIJourneySessionData
 import models.core.IncomeSourceId
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import uk.gov.hmrc.http.HeaderCarrier

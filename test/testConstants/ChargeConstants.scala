@@ -17,7 +17,7 @@
 package testConstants
 
 import common.services.{DateService, DateServiceInterface}
-import enums.ChargeType.NIC4_WALES
+import financials.models.ChargeType.NIC4_WALES
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}

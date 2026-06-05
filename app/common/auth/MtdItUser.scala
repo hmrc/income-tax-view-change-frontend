@@ -17,13 +17,12 @@
 package common.auth
 
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.models.admin.FeatureSwitch
 import common.models.auth.{AgentClientDetails, AuthUserDetails}
 import play.api.mvc.{Request, WrappedRequest}
-import play.twirl.api.Html
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.retrieve.Name
 import uk.gov.hmrc.govukfrontend.views.Aliases.ServiceNavigation
-import models.admin.FeatureSwitch
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 case class MtdItUser[A](mtditid: String,
@@ -32,7 +31,6 @@ case class MtdItUser[A](mtditid: String,
                         authUserDetails: AuthUserDetails,
                         clientDetails: Option[AgentClientDetails],
                         incomeSources: IncomeSourceDetailsModel,
-                        btaNavPartial: Option[Html] = None,
                         serviceNavigationPartial: Option[ServiceNavigation] = None,
                         featureSwitches: List[FeatureSwitch] = List.empty // TODO: remove default
                        )(implicit request: Request[A]) extends WrappedRequest[A](request) {
@@ -60,8 +58,6 @@ case class MtdItUser[A](mtditid: String,
   val isSupportingAgent: Boolean = usersRole == MTDSupportingAgent
 
   def addFeatureSwitches(newFeatureSwitches: List[FeatureSwitch]) = copy(featureSwitches = newFeatureSwitches)
-
-  def addNavBar(partial: Html) = copy(btaNavPartial = Some(partial))
 
   def addServiceNavigation(partial: ServiceNavigation) = copy(serviceNavigationPartial = Some(partial))
 

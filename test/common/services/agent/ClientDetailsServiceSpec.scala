@@ -17,8 +17,8 @@
 package common.services.agent
 
 import businessDetails.mocks.connectors.MockBusinessDetailsConnector
+import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import mocks.connectors.*
-import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import common.services.agent.ClientDetailsService.{APIError, BusinessDetailsNotFound, CitizenDetailsNotFound}
 import testUtils.TestSupport

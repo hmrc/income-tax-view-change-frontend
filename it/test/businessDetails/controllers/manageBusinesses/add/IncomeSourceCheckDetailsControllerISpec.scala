@@ -20,8 +20,6 @@ import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.*
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.UIJourneySessionData
-import models.admin.OverseasBusinessAddress
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -34,6 +32,8 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
+import common.models.UIJourneySessionData
+import common.models.admin.OverseasBusinessAddress
 import common.services.SessionService
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {

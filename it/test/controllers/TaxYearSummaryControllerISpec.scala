@@ -21,7 +21,8 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import helpers.servicemocks.*
 import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
-import models.admin.*
+import common.models.admin.PostFinalisationAmendmentsR18
+import common.models.admin.*
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{IsMTD, LiabilityCalculationError}

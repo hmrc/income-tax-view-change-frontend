@@ -20,7 +20,6 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProp
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.auth.{AgentClientDetails, AuthUserDetails}
 import common.utils.sessionUtils.SessionKeys
-import models.btaNavBar.{NavContent, NavLinks}
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.core.{AddressModel, IncomeSourceId}
 import models.incomeSourceDetails.*
@@ -144,14 +143,6 @@ object BaseIntegrationTestConstants {
     latencyIndicator2 = "Q")
 
   val quarterTypeElection: QuarterTypeElection = QuarterTypeElection("STANDARD", "2021")
-
-  val testNavLinks: NavContent = NavContent(
-    NavLinks("testEnHome", "testCyHome", "testUrl"),
-    NavLinks("testEnAccount", "testCyAccount", "testUrl"),
-    NavLinks("testEnMessages", "testCyMessages", "testUrl"),
-    NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-    NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
-  )
 
   val clientDetailsWithoutConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",

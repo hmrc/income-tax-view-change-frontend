@@ -21,8 +21,8 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.models.admin.PaymentHistoryRefunds
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.PaymentHistoryRefunds
 import models.financialDetails.Payment
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse

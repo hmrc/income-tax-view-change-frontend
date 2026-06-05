@@ -34,8 +34,7 @@ class NewHomeRecentActivityViewSpec extends TestSupport with FeatureSwitching wi
 
   val defaultViewModel = RecentActivityViewModel(Seq.empty)
 
-  class TestSetup(recentActivityViewModel: RecentActivityViewModel = defaultViewModel,
-                  isGovUkRebrandEnabled: Boolean = true) {
+  class TestSetup(recentActivityViewModel: RecentActivityViewModel = defaultViewModel) {
 
     val testMessages: Messages = messages
 
@@ -44,8 +43,7 @@ class NewHomeRecentActivityViewSpec extends TestSupport with FeatureSwitching wi
       recentActivityUrl = "/recentActivityUrl",
       overviewUrl = "/overviewUrl",
       helpUrl = "/helpUrl",
-      recentActivityViewModel = recentActivityViewModel,
-      isGovUkRebrandEnabled = isGovUkRebrandEnabled
+      recentActivityViewModel = recentActivityViewModel
     )(testMessages, FakeRequest(), tsTestUser)
 
     lazy val document = Jsoup.parse(contentAsString(page))
@@ -53,13 +51,8 @@ class NewHomeRecentActivityViewSpec extends TestSupport with FeatureSwitching wi
 
 
   "New Home Recent Activity page" should {
-    "display the correct heading" when {
-      "useRebrand is false" in new TestSetup(isGovUkRebrandEnabled = false) {
-        document.getElementById("income-tax-heading").text() shouldBe "Income Tax"
-      }
-      "useRebrand is true" in new TestSetup(isGovUkRebrandEnabled = true) {
-        document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
-      }
+    "display the correct heading" in new TestSetup() {
+      document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
     }
 
     "display the correct h2" in new TestSetup() {

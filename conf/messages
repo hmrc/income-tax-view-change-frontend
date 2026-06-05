@@ -140,7 +140,6 @@ feedback.thankYou                                               = Thank you
 feedback.received                                               = Your feedback has been received.
 
 ## Home Page ##
-home.heading                                                    = Income Tax
 home.heading.new                                                = Self Assessment
 home.agent.primary.caption                                      = You are signed in as a main agent
 home.agent.supporting.caption                                   = You are signed in as a supporting agent

@@ -21,8 +21,8 @@ import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
+import common.models.admin.{OptOutFs, SignUpFs}
 import common.services.{DateService, DateServiceInterface}
-import models.admin.{OptOutFs, SignUpFs}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import obligations.mocks.services.{MockOptOutService, MockSignUpService}

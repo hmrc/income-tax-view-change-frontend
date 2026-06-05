@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import common.connectors.agent.CitizenDetailsConnector
-import models.citizenDetails.CitizenDetailsResponseModel
+import common.models.citizenDetails.CitizenDetailsResponseModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach

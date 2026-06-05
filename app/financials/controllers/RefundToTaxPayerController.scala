@@ -20,9 +20,9 @@ import audit.models.RefundToTaxPayerResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.models.admin.PaymentHistoryRefunds
 import common.services.AuditingService
 import connectors.RepaymentHistoryConnector
-import models.admin.PaymentHistoryRefunds
 import models.core.Nino
 import models.creditsandrefunds.RefundToTaxPayerViewModel
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
@@ -71,7 +71,6 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                       viewModel,
                       paymentHistoryRefundsEnabled = true,
                       backUrl, user.saUtr,
-                      btaNavPartial = user.btaNavPartial,
                       serviceNavigationPartial = user.serviceNavigationPartial))
               }
             case None => {

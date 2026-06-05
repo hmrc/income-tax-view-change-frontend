@@ -18,8 +18,8 @@ package controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.models.admin.PostFinalisationAmendmentsR18
 import helpers.servicemocks.*
-import models.admin.PostFinalisationAmendmentsR18
 import play.api.http.Status.*
 import testConstants.BaseIntegrationTestConstants.*
 import testConstants.IncomeSourceIntegrationTestConstants.*

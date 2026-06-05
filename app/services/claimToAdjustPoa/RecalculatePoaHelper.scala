@@ -19,6 +19,7 @@ package services.claimToAdjustPoa
 import audit.models.AdjustPaymentsOnAccountAuditModel
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
+import common.models.admin.SubmitClaimToAdjustToNrs
 import common.services.AuditingService
 import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PoaAmendmentData, SelectYourReason}
 import models.core.Nino
@@ -34,7 +35,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import utils.ErrorRecovery
 import financials.controllers.claimToAdjustPoa.routes._
-import models.admin.SubmitClaimToAdjustToNrs
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}

@@ -18,7 +18,7 @@ package common.config.featureswitch
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import models.admin.{FeatureSwitch, FeatureSwitchName}
+import common.models.admin.{FeatureSwitch, FeatureSwitchName}
 
 trait FeatureSwitching {
 

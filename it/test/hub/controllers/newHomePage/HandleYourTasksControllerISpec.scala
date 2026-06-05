@@ -19,11 +19,11 @@ package hub.controllers.newHomePage
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.WiremockHelper
-import enums.ChargeType.ITSA_NI
+import financials.models.ChargeType.ITSA_NI
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
 import models.core.{AccountingPeriodModel, CessationModel}
 import models.creditsandrefunds.CreditsModel
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -710,7 +710,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val testCreditModel = CreditsModel(0.0, 0.0, 0.0, creditAmount, None, None, Nil)
     val response: String = Json.toJson(testCreditModel).toString()
 
-    val url = s"/income-tax-view-change/$testNino/financial-details/credits/from/2022-04-06/to/2023-04-05"
+    val url = s"/income-tax-financial-details/$testNino/financial-details/credits/from/2022-04-06/to/2023-04-05"
 
     stubAuthorised(mtdUserRole, featureSwitches)
     IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)

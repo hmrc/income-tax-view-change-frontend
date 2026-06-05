@@ -14,18 +14,26 @@
  * limitations under the License.
  */
 
-package models.sessionData
+package financials.models
 
-import play.api.libs.json.{Json, OFormat}
-
-case class SessionDataModel(
-                             mtditid: String,
-                             nino: String,
-                             utr: String,
-                             isSupportingAgent: Boolean = false
-                           )
-
-object SessionDataModel {
-  implicit val formats: OFormat[SessionDataModel] = Json.format[SessionDataModel]
+sealed trait ReversalReason {
+  val value: String
+  override def toString: String = value
 }
 
+// Not part of String -> ReversalReason conversion:: do we need this item?
+case object  CreateReversalReason extends ReversalReason {
+  override val value: String = "create"
+}
+
+case object  AmendedReturnReversalReason extends ReversalReason {
+  override val value: String = "amend"
+}
+
+case object  AdjustmentReversalReason extends ReversalReason {
+  override val value: String = "adjustment"
+}
+
+case object  CustomerRequestReason extends ReversalReason {
+  override val value: String = "request"
+}

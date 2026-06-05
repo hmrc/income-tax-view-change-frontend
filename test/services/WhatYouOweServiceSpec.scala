@@ -19,11 +19,11 @@ package services
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
+import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
 import common.services.{AuditingService, DateService}
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
-import enums.ChargeType.NIC4_WALES
-import enums.CodingOutType.*
-import models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
+import financials.models.ChargeType.NIC4_WALES
+import financials.models.CodingOutType.*
 import models.financialDetails.*
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any

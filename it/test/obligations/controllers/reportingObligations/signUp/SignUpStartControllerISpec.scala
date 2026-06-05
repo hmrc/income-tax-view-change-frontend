@@ -20,9 +20,9 @@ import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.MTDIndividual
 import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.models.UIJourneySessionData
+import common.models.admin.SignUpFs
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.UIJourneySessionData
-import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.reportingObligations.signUp.SignUpSessionData

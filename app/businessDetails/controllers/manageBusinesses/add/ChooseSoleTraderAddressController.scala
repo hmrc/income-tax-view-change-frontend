@@ -19,8 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import jakarta.inject.Singleton
-import models.UIJourneySessionData
-import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, ChooseSoleTraderAddressUserAnswer, Country}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -32,6 +30,8 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.models.UIJourneySessionData
+import common.models.admin.OverseasBusinessAddress
 import common.services.SessionService
 
 import javax.inject.Inject

@@ -122,7 +122,7 @@ trait ViewSpec extends TestSupport {
     }
 
     def selectById(id: String): Element = {
-      element.select(Selectors.id(id)) getOrElse fail("element with id not found")
+      element.select(Selectors.id(id)) getOrElse fail(s"element with id $id not found")
     }
 
     def table(nthOfType: Int = 1): Element = {

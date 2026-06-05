@@ -22,11 +22,11 @@ import common.auth.actions.AuthActionsTestData.getMtdItUser
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.mocks.auth.MockAuthActions
+import common.models.admin.PaymentHistoryRefunds
 import common.services.DateServiceInterface
 import connectors.RepaymentHistoryConnector
 import hub.controllers.routes
 import mocks.connectors.MockRepaymentHistoryConnector
-import models.admin.PaymentHistoryRefunds
 import models.creditsandrefunds.RefundToTaxPayerViewModel
 import models.repaymentHistory.*
 import play.api

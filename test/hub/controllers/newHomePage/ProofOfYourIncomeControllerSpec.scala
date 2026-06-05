@@ -20,9 +20,9 @@ import common.auth.AuthActions
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.models.admin.{MortgageEvidence, NewHomePage}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import mocks.services.*
-import models.admin.{MortgageEvidence, NewHomePage}
 import models.itsaStatus.ITSAStatusResponseModel
 import models.liabilitycalculation.*
 import org.jsoup.Jsoup

@@ -20,8 +20,8 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
+import common.models.admin.{ChargeHistory, FeatureSwitch}
 import mocks.services.{MockCreditHistoryService, MockFinancialDetailsService}
-import models.admin.{ChargeHistory, FeatureSwitch}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset, when}

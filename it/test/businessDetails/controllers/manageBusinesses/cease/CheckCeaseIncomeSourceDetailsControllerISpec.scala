@@ -23,9 +23,9 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.Cease
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
+import common.models.UIJourneySessionData
 import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.UIJourneySessionData
 import models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.http.Status.{OK, SEE_OTHER}

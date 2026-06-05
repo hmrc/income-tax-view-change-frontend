@@ -18,9 +18,9 @@ package common.services
 
 import common.connectors.SessionDataConnector
 import common.utils.sessionUtils.SessionKeys
-import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
-import models.sessionData.SessionDataModel
-import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import common.models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
+import common.models.sessionData.SessionDataModel
+import common.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 

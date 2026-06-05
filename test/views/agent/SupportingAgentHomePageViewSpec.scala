@@ -112,7 +112,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
     "all features are enabled" should {
 
       s"have the correct link to the government homepage" in new TestSetup {
-        document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
+        document.getElementsByClass("govuk-header__homepage-link").attr("href") shouldBe "https://www.gov.uk"
       }
 
       s"have the title ${messages("htmlTitle.agent", messages("home.agent.heading"))}" in new TestSetup() {

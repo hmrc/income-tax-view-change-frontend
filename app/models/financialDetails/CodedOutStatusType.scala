@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import enums.CodingOutType._
+import financials.models.CodingOutType.*
 import play.api.libs.json._
 
 sealed trait CodedOutStatusType  {

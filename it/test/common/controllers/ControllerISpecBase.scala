@@ -100,8 +100,6 @@ trait ControllerISpecBase
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
-    "microservice.services.income-tax-view-change.host" -> mockHost,
-    "microservice.services.income-tax-view-change.port" -> mockPort,
     "microservice.services.itvc-dynamic-stub.host" -> mockHost,
     "microservice.services.itvc-dynamic-stub.port" -> mockPort,
     "microservice.services.self-assessment-api.host" -> mockHost,

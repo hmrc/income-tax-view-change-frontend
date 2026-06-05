@@ -105,7 +105,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 authUserDetails = getAuthUserDetails(Some(Individual), noIRSAEnrolments, hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-                btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 
@@ -142,7 +141,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 authUserDetails = getAuthUserDetails(Some(Individual), noIRSAEnrolments, hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-                btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 
@@ -182,7 +180,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 authUserDetails = getAuthUserDetails(Some(Individual), irsaEnrolments, hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-                btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 
@@ -219,7 +216,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 authUserDetails = getAuthUserDetails(Some(Individual), irsaEnrolments, hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-                btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 
@@ -256,7 +252,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 authUserDetails = getAuthUserDetails(Some(Agent), getAllEnrolmentsAgent(hasNino = true, hasSA = true), hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-                btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 
@@ -297,7 +292,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 authUserDetails = getAuthUserDetails(Some(Agent), getAllEnrolmentsAgent(hasNino = true, hasSA = true), hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-                btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 
@@ -327,7 +321,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 authUserDetails = getAuthUserDetails(Some(Individual), irsaEnrolments, hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-                btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 
@@ -356,7 +349,6 @@ class TaxYearSummaryServiceSpec extends TestSupport with FeatureSwitching {
                 authUserDetails = getAuthUserDetails(Some(Individual), irsaEnrolments, hasUserName = true),
                 clientDetails = None,
                 incomeSources = IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty),
-                btaNavPartial = None,
                 featureSwitches = List()
               )(FakeRequest())
 

@@ -24,8 +24,8 @@ import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
+import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface, SessionService}
-import models.UIJourneySessionData
 import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField

@@ -18,7 +18,7 @@ package obligations.repositories
 
 import cats.data.OptionT
 import common.enums.JourneyType.{Opt, OptOutJourney}
-import models.UIJourneySessionData
+import common.models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
 import models.itsaStatus.ITSAStatus
 import obligations.models.reportingObligations.optOut.OptOutSessionData

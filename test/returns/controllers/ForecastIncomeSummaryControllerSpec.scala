@@ -84,7 +84,6 @@ class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalcu
                 taxYear = testTaxYear,
                 backUrl = backlink,
                 isAgent = isAgent,
-                btaNavPartial = None
               ).toString
               contentAsString(result) shouldBe expectedContent
             }

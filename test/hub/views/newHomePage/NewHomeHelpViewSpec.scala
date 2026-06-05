@@ -45,7 +45,6 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
                    overViewUrl: String = "testOverviewUrl",
                    helpUrl: String = "testHelpUrl",
                    welshLang: Boolean = false,
-                   useRebrand: Boolean = false,
                    isRecentActivityEnabled: Boolean = false
                  ) {
 
@@ -71,7 +70,6 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
         recentActivityUrl,
         overViewUrl,
         helpUrl,
-        useRebrand,
         isRecentActivityEnabled
       )(testMessages, request, testUser)
 
@@ -81,13 +79,8 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
 
   "New Home Help page" should {
 
-    "display the correct heading" when {
-      "useRebrand is false" in new TestSetup() {
-        document.getElementById("income-tax-heading").text() shouldBe "Income Tax"
-      }
-      "useRebrand is true" in new TestSetup(useRebrand = true) {
-        document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
-      }
+    "display the correct heading" in new TestSetup() {
+      document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
     }
 
     "display the correct service navigation section" when {

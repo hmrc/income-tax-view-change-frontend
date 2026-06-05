@@ -65,7 +65,7 @@ class ForecastTaxCalcSummaryController @Inject()(val authActions: AuthActions,
               throw MissingFieldException("incomeTaxNicAmount and incomeTaxNicAndCgtAmount missing from response")
             } else {
               auditingService.extendedAudit(ForecastTaxCalculationAuditModel(user, model))
-              Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.btaNavPartial, user.serviceNavigationPartial))
+              Ok(forecastTaxCalcSummaryView(model, taxYear, backUrl(isAgent, taxYear, origin), isAgent, user.serviceNavigationPartial))
             }
           case _ => onError("No tax calculation data could be retrieved. Not found", isAgent, taxYear)
         }

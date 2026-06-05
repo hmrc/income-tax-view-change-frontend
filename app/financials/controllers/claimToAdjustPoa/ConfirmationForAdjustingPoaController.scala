@@ -21,7 +21,7 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.services.AuditingService
-import models.claimToAdjustPoa.ConfirmationForAdjustingPoaViewModel
+import models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}

@@ -14,26 +14,15 @@
  * limitations under the License.
  */
 
-package enums
+package financials.models
 
-sealed trait ReversalReason {
-  val value: String
-  override def toString: String = value
-}
-
-// Not part of String -> ReversalReason conversion:: do we need this item?
-case object  CreateReversalReason extends ReversalReason {
-  override val value: String = "create"
-}
-
-case object  AmendedReturnReversalReason extends ReversalReason {
-  override val value: String = "amend"
-}
-
-case object  AdjustmentReversalReason extends ReversalReason {
-  override val value: String = "adjustment"
-}
-
-case object  CustomerRequestReason extends ReversalReason {
-  override val value: String = "request"
-}
+enum DocumentType(val key: String):
+  case Poa1Charge extends DocumentType("ITSA- POA 1")
+  case Poa2Charge extends DocumentType("ITSA- POA 2")
+  case Poa1ReconciliationDebit extends DocumentType("POA 1 Reconciliation Debit")
+  case Poa2ReconciliationDebit extends DocumentType("POA 2 Reconciliation Debit")
+  case BalancingCharge extends DocumentType("ITSA BCD")
+  case TRMNewCharge extends DocumentType("TRM New Charge")
+  case TRMAmendCharge extends DocumentType("TRM Amend Charge")
+  //EXTEND WITH OTHER CHARGES
+  case OtherCharge extends DocumentType("Other")

@@ -18,8 +18,8 @@ package views
 
 import common.config.featureswitch.FeatureSwitching
 import common.exceptions.MissingFieldException
-import enums.ChargeType.*
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason, CustomerRequestReason}
+import financials.models.ChargeType.*
+import financials.models.*
 import financials.controllers.routes as financialsRoutes
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
@@ -64,7 +64,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       chargeItem = chargeItem.copy(dueDate = dueDate),
       backUrl = "testBackURL",
       gatewayPage = None,
-      btaNavPartial = None,
       paymentBreakdown = paymentBreakdown,
       paymentAllocations = paymentAllocations,
       reviewAndReconcileCredit = reviewAndReconcileCredit,
@@ -399,11 +398,11 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       FinancialDetail("2025", Some("Reconciliation Credit"), Some("4905"), Some("123456789"), None, Some("1234"), None, Some(3800.00), Some(5000.00), None, Some(3800.00), Some("NIC4-GB"), None, None))
   )
 
-  val credits: FinancialDetailsModel = FinancialDetailsModel(
+  val creditsWithBreakdownPages: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(DocumentDetail(2026, "PAYID01", Some("POA 1 Reconciliation Credit"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot")),
       DocumentDetail(2025, "123456789", Some("Reconciliation Credit"), Some("documentText"), 1200, 5000, LocalDate.of(2025, 2, 15), None, None, None, None, None, None, None, None, None, None, None, None, None, None)),
-    financialDetails = List(FinancialDetail("2026", transactionId = Some("PAYID01"), items = Some(Seq(
+    financialDetails = List(FinancialDetail("2026", transactionId = Some("PAYID01"), mainTransaction = Some("4912"), items = Some(Seq(
       subItemWithClearingSapDocument("123456789012"),
       subItemWithClearingSapDocument("223456789012"),
       subItemWithClearingSapDocument("323456789012"),
@@ -415,8 +414,27 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       subItemWithClearingSapDocument("923456789012"),
       subItemWithClearingSapDocument("023456789012")
     ))),
-      FinancialDetail("2025", Some("Reconciliation Credit"), Some("4905"), Some("123456789"), None, Some("1234"), None, Some(3800.00), Some(5000.00), None, Some(3800.00), Some("NIC4-GB"), None, None))
+      FinancialDetail("2025", Some("Reconciliation Credit"), Some("4916"), Some("123456789"), None, Some("1234"), None, Some(3800.00), Some(5000.00), None, Some(3800.00), Some("NIC4-GB"), None, None))
   )
+
+    val creditsWithoutBreakdownPages: FinancialDetailsModel = FinancialDetailsModel(
+      balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
+      documentDetails = List(DocumentDetail(2026, "PAYID01", Some("POA 1 Reconciliation Credit"), Some("documentText"), -5000, -15000, LocalDate.of(2018, 8, 6), None, None, None, None, None, None, None, None, Some("lotItem"), Some("lot")),
+        DocumentDetail(2025, "123456789", Some("Reconciliation Credit"), Some("documentText"), 1200, 5000, LocalDate.of(2025, 2, 15), None, None, None, None, None, None, None, None, None, None, None, None, None, None)),
+      financialDetails = List(FinancialDetail("2026", transactionId = Some("PAYID01"), mainTransaction = Some("4915"), items = Some(Seq(
+        subItemWithClearingSapDocument("123456789012"),
+        subItemWithClearingSapDocument("223456789012"),
+        subItemWithClearingSapDocument("323456789012"),
+        subItemWithClearingSapDocument("423456789012"),
+        subItemWithClearingSapDocument("523456789012"),
+        subItemWithClearingSapDocument("623456789012"),
+        subItemWithClearingSapDocument("723456789012"),
+        subItemWithClearingSapDocument("823456789012"),
+        subItemWithClearingSapDocument("923456789012"),
+        subItemWithClearingSapDocument("023456789012")
+      ))),
+        FinancialDetail("2025", Some("Reconciliation Credit"), Some("4915"), Some("123456789"), None, Some("1234"), None, Some(3800.00), Some(5000.00), None, Some(3800.00), Some("NIC4-GB"), None, None))
+    )
 
   def checkPaymentProcessingInfo(document: Document): Unit = {
     document.select("#payment-days-note").text() shouldBe messages("chargeSummary.payment-days-note")
@@ -1440,22 +1458,31 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
           )
 
           "chargeHistory enabled, having Payment created in the first row" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = credits) {
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = creditsWithBreakdownPages) {
             verifyPaymentHistoryContent(historyRowPOA1Created :: expectedPaymentAllocationRows: _*)
           }
 
-          "chargeHistory enabled with a matching link to the credits summary page" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = credits) {
+          "chargeHistory enabled with a matching link to the credits summary page when there isn't a charge breakdown page for a credit" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = creditsWithoutBreakdownPages) {
             document.select(Selectors.table).select("a").size shouldBe 10
+            document.select(Selectors.table).select("a").forEach(el => println(el.attr("href")))
             document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.CreditsSummaryController.showCreditsSummary(2026).url) shouldBe true
           }
 
+          "chargeHistory enabled with a matching link to charge summary breakdown page for a credit when it's present" in new TestSetup(chargeItem = chargeItemModel(),
+            chargeHistoryEnabled = true, paymentAllocations = paymentAllocations, payments = creditsWithBreakdownPages) {
+            document.select(Selectors.table).select("a").size shouldBe 10
+            document.select(Selectors.table).select("a").forEach(el => println(el.attr("href")))
+            document.select(Selectors.table).select("a").forall(_.attr("href") == financialsRoutes.ChargeSummaryController.show(2026, "PAYID01").url) shouldBe true
+          }
+
           "chargeHistory disabled" in new TestSetup(chargeItem = chargeItemModel(),
-            chargeHistoryEnabled = false, paymentAllocations = paymentAllocations, payments = credits) {
+            chargeHistoryEnabled = false, paymentAllocations = paymentAllocations, payments = creditsWithBreakdownPages) {
             verifyPaymentHistoryContent(expectedPaymentAllocationRows: _*)
           }
         }
       }
+
 
       "hide payment allocations in history table" when {
         "the allocations list is empty" when {
@@ -1491,7 +1518,6 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         chargeItem = chargeItemModel(dueDate = None),
         backUrl = "testBackURL",
         gatewayPage = None,
-        btaNavPartial = None,
         paymentBreakdown = paymentBreakdown,
         paymentAllocations = List(),
         payments = payments,
