@@ -19,7 +19,6 @@ package testConstants
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.auth.{AgentClientDetails, AuthUserDetails}
-import common.models.btaNavBar.{NavContent, NavLinks}
 import common.models.core.{AddressModel, IncomeSourceId}
 import common.models.itsaStatus.ITSAStatus
 import common.utils.sessionUtils.SessionKeys
