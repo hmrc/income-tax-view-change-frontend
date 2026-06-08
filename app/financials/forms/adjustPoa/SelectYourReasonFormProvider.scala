@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.adjustPoa
+package financials.forms.adjustPoa
 
 import common.forms.mappings.{Enumerable, Mappings}
 import models.claimToAdjustPoa.*
