@@ -19,18 +19,18 @@ package hub.services.newHomePage
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.itsaStatus.ITSAStatus
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import models.creditsandrefunds.CreditsModel
-import models.financialDetails.*
-import ITSAStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import financials.controllers.routes as financialsRoutes
+import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import hub.models.newHomePage.*
 import hub.models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import hub.models.newHomePage.YourTasksCard.*
+import models.creditsandrefunds.CreditsModel
+import models.financialDetails.*
+import obligations.controllers.routes as obligationsRoutes
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import obligations.controllers.{routes => obligationsRoutes}
-import financials.controllers.routes as financialsRoutes
 
 @Singleton
 class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {

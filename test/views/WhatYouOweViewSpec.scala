@@ -16,13 +16,14 @@
 
 package views
 
-import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
+import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.CodingOutType.*
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
@@ -40,7 +41,6 @@ import views.html.WhatYouOweView
 
 import java.time.LocalDate
 import scala.annotation.unused
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with ChargeConstants {
 
