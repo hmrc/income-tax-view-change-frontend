@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package repositories
+package financials.repositories
 
 import common.config.FrontendAppConfig
 import models.claimToAdjustPoa.PoaSessionData
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model._
+import org.mongodb.scala.model.*
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -56,7 +56,7 @@ class PoaAmendmentDataRepository @Inject()(
   ) {
 
   private def dataFilter(data: PoaSessionData): Bson = {
-    import Filters._
+    import Filters.*
     and(equal("sessionId", data.sessionId))
   }
 

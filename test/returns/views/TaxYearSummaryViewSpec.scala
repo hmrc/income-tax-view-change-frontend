@@ -20,23 +20,23 @@ import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatterImpl
 import common.viewUtils
 import common.viewUtils.ExternalUrlHelper
-import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
+import financials.controllers.routes as financialsRoutes
+import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
+import obligations.models.*
+import obligations.testConstants.NextUpdatesTestConstants.*
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
+import returns.views.html.TaxYearSummaryView
 import testConstants.ChargeConstants
 import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
-import obligations.testConstants.NextUpdatesTestConstants.*
 import testUtils.ViewSpec
-import returns.views.html.TaxYearSummaryView
-import obligations.models.*
 
 import java.time.LocalDate
-import financials.controllers.routes as financialsRoutes
 
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 

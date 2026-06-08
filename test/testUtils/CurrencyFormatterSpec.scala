@@ -16,7 +16,7 @@
 
 package testUtils
 
-import implicits.ImplicitCurrencyFormatter
+import financials.implicits.ImplicitCurrencyFormatter
 import play.twirl.api.Html
 
 class CurrencyFormatterSpec extends TestSupport with ImplicitCurrencyFormatter {

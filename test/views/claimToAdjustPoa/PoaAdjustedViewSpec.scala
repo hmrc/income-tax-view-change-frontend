@@ -17,7 +17,8 @@
 package views.claimToAdjustPoa
 
 import common.auth.MtdItUser
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import financials.controllers.routes as financialsRoutes
+import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,7 +26,6 @@ import play.api.i18n.*
 import play.twirl.api.Html
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.PoaAdjustedView
-import financials.controllers.routes as financialsRoutes
 
 class PoaAdjustedViewSpec extends TestSupport{
 

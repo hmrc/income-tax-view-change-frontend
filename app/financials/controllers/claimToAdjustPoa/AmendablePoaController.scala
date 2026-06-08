@@ -21,7 +21,7 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.Nino
 import enums.InitialPage
-import implicits.ImplicitCurrencyFormatter
+import financials.implicits.ImplicitCurrencyFormatter
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
