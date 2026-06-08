@@ -22,7 +22,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.{Mode, NormalMode}
 import financials.controllers.claimToAdjustPoa.routes._
-import forms.adjustPoa.SelectYourReasonFormProvider
+import financials.forms.adjustPoa.SelectYourReasonFormProvider
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.claimToAdjustPoa.{Increase, SelectYourReason}
 import play.api.i18n.I18nSupport

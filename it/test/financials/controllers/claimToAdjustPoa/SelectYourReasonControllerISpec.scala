@@ -19,7 +19,7 @@ package financials.controllers.claimToAdjustPoa
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.core.NormalMode
-import forms.adjustPoa.SelectYourReasonFormProvider
+import financials.forms.adjustPoa.SelectYourReasonFormProvider
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData, SelectYourReason}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

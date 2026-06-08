@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.adjustPoa
+package financials.forms.adjustPoa
 
 import play.api.data.Form
 import testUtils.TestSupport

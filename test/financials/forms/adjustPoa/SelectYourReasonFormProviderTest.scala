@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package forms.adjustPoa
+package financials.forms.adjustPoa
 
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import play.api.data.{Form, FormError}
