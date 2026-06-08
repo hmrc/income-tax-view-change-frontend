@@ -182,7 +182,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         Some(WhatYouOweViewModel(
           currentDate = dateService.getCurrentDate,
           hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestRARCharges,
-          hasCrystalisedInterest = crystallisedInterestPresent,
+          hasCrystallisedInterest = crystallisedInterestPresent,
           whatYouOweChargesList = whatYouOweChargesList,
           hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
           currentTaxYear = dateService.getCurrentTaxYearEnd,

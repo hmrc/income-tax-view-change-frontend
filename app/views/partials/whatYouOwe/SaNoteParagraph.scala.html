@@ -33,7 +33,8 @@
         claimToAdjustTaxYear: Option[TaxYear],
         selfServeTimeToPayStartUrl: String,
         adjustPoaUrl: String,
-        budgetPaymentPlanUrl: String
+        budgetPaymentPlanUrl: String,
+        isOverdueCharge: Boolean
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
@@ -43,24 +44,26 @@
 
 
 
-@saNoteParagraphContent(utr: String, ctaTaxYear: Option[TaxYear]) = {
+@saNoteParagraphContent(utr: String, ctaTaxYear: Option[TaxYear], isOverdueCharge: Boolean) = {
 
+   @if(isOverdueCharge){
     @h2(msg = getMessage("sa-note-1-heading"))
     @p(id = Some("sa-note-1-migrated-1")) {
-            @Html(getMessage("sa-note-1-body-1"))
-                @link(link = selfServeTimeToPayStartUrl,
-                outerMessage = "",
-                messageKey = getMessage("sa-link-1-body-1"),
-                rel = Some("noreferrer noopener"),
-                target = Some("_blank"))
-            @Html(getMessage("sa-note-1-body-1-1"))
+        @Html(getMessage("sa-note-1-body-1"))
+        @link(link = selfServeTimeToPayStartUrl,
+            outerMessage = "",
+            messageKey = getMessage("sa-link-1-body-1"),
+            rel = Some("noreferrer noopener"),
+            target = Some("_blank"))
+        @Html(getMessage("sa-note-1-body-1-1"))
     }
     @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
-            link(link = budgetPaymentPlanUrl,
-                messageKey = getMessage("sa-link-1-body-2"),
-                rel = Some("noreferrer noopener"),
-                target = Some("_blank")).toString() +
+    link(link = budgetPaymentPlanUrl,
+            messageKey = getMessage("sa-link-1-body-2"),
+            rel = Some("noreferrer noopener"),
+            target = Some("_blank")).toString() +
             getMessage("sa-note-1-body-3")))
+}
 
     @ctaTaxYear.map { taxYear =>
         @p(id = Some("sa-note-1-migrated-3"))(Html(getMessage("sa-note-1-body-4") +
@@ -100,6 +103,6 @@
 
 @utr.map { utr =>
     <div id="payments-due-note">
-        @saNoteParagraphContent(utr, claimToAdjustTaxYear)
+        @saNoteParagraphContent(utr, claimToAdjustTaxYear, isOverdueCharge)
     </div>
 }

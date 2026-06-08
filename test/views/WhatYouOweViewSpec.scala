@@ -64,7 +64,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saNote2Agent: String = s"${messages("whatYouOwe.sa-note-2-body-agent-1")} $saLink2Agent. ${messages("whatYouOwe.sa-note-2-body-agent-2")}"
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
   val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")} ${messages("pagehelp.opensInNewTabText")}")}."
-  val chargeType: String = messages("tax-year-summary.payments.charge-type")
+  val chargeType: String = messages("whatYouOwe.tableHead.charge-type")
   val taxYear: String = messages("whatYouOwe.tableHead.tax-year")
   val amountDue: String = messages("whatYouOwe.tableHead.amount-due")
   val paymentsMadeHeading: String = messages("whatYouOwe.payments-made-heading")
@@ -149,7 +149,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
-      hasCrystalisedInterest = false,
+      hasCrystallisedInterest = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -174,13 +174,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     def findElementById(id: String): Option[Element] = {
       Option(pageDocument.getElementById(id))
-    }
-
-    def verifySelfAssessmentLink(): Unit = {
-      val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
-      anchor.text shouldBe s"$saLink1_1 (opens in new tab)"
-      anchor.attr("href") shouldBe "/self-serve-time-to-pay"
-      anchor.attr("target") shouldBe "_blank"
     }
   }
 
@@ -208,7 +201,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val wyoViewModelAgent: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
-      hasCrystalisedInterest = false,
+      hasCrystallisedInterest = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -687,11 +680,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
           pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
-          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
-          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2Heading
           pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
         "not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
@@ -705,11 +694,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
           pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
-          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
-          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2Heading
           pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
 
         }
@@ -730,11 +715,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
           pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
-          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
-          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2Heading
           pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
 
@@ -754,11 +735,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
           pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
-          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
-          pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-          pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-          pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-          pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+          pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2Heading
           pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
         }
       }
@@ -1193,10 +1170,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
 
-      "have the link to their previous Self Assessment online account in the sa-note" in new TestSetup(charges = noChargesButCodedOutModel) {
-        verifySelfAssessmentLink()
-      }
-
       "not have button Pay now" in new TestSetup(charges = noChargesButCodedOutModel) {
         findElementById("payment-button") shouldBe None
       }
@@ -1204,11 +1177,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
-        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
-        pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-        pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-        pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-        pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2Heading
+        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2Heading
         pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
       }
     }
@@ -1227,10 +1196,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
       }
 
-      "have the link to their previous Self Assessment online account in the sa-note" in new TestSetup(charges = noChargesModel) {
-        verifySelfAssessmentLink()
-      }
-
       "not have button Pay now" in new TestSetup(charges = noChargesModel) {
         findElementById("payment-button") shouldBe None
       }
@@ -1238,11 +1203,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
-        pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-        pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-        pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-        pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2Heading
-        pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
+        pageDocument.getElementsByTag("h2").eq(1).text shouldBe saNote2Heading
       }
     }
 
@@ -1347,12 +1308,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
       pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
       pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
-      pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote1Heading
-      pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-      pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-      pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saNote1_3
-      pageDocument.getElementsByTag("h2").eq(3).text shouldBe saNote2HeadingAgent
-      pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2Agent
+      pageDocument.getElementsByTag("h2").eq(2).text shouldBe saNote2HeadingAgent
     }
 
     "the user has no charges but is coded out" should {
