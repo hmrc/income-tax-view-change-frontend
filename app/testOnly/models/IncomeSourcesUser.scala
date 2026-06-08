@@ -18,11 +18,11 @@ package testOnly.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class TrigMigUser(activeSoleTrader: Boolean,
-                       activeUkProperty: Boolean,
-                       activeForeignProperty: Boolean,
-                       ceasedBusiness: Boolean)
+case class IncomeSourcesUser(activeSoleTrader: Boolean,
+                             activeUkProperty: Boolean,
+                             activeForeignProperty: Boolean,
+                             ceasedBusiness: Boolean)
 
-object TrigMigUser {
-  implicit val format: OFormat[TrigMigUser] = Json.format[TrigMigUser]
+object IncomeSourcesUser {
+  given format: OFormat[IncomeSourcesUser] = Json.format[IncomeSourcesUser]
 }

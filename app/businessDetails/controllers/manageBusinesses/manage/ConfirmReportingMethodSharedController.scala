@@ -91,7 +91,6 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                 incomeSourceType: IncomeSourceType,
                                 soleTraderBusinessId: Option[IncomeSourceId]
                                )(implicit user: MtdItUser[_]): Future[Result] = {
-
     val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(_.value))
 
     (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {
