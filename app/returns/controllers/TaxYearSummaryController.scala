@@ -18,13 +18,16 @@ package returns.controllers
 
 import audit.models.TaxYearSummaryResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.TaxYearSummaryPage
 import common.implicits.ImplicitDateFormatter
 import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
 import common.services.{AuditingService, DateServiceInterface}
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.controllers.routes as financialsRoutes
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
@@ -36,20 +39,17 @@ import obligations.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
+import returns.views.html.TaxYearSummaryView
 import services.*
-import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import returns.views.html.TaxYearSummaryView
 
 import java.net.URI
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
-import financials.controllers.routes as financialsRoutes
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 //scalastyle:off
 @Singleton

@@ -16,22 +16,22 @@
 
 package services
 
-import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
 import common.services.{AuditingService, DateService}
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import financials.models.ChargeType.NIC4_WALES
 import financials.models.CodingOutType.*
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import models.financialDetails.*
 import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import services.claimToAdjustPoa.ClaimToAdjustService
+import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
-import financials.testConstants.ChargeConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier

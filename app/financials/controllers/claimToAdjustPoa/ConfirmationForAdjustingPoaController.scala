@@ -18,13 +18,13 @@ package financials.controllers.claimToAdjustPoa
 
 import cats.data.EitherT
 import common.auth.AuthActions
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.services.AuditingService
+import financials.services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}
 import models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}
+import play.api.mvc.*
 import services.{NrsService, PaymentOnAccountSessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa

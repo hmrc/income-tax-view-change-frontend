@@ -24,10 +24,12 @@ import common.services.DateServiceInterface
 import common.testConstants.BaseTestConstants
 import common.utils.sessionUtils
 import common.utils.sessionUtils.SessionKeys
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import generators.PoaGenerator
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -38,11 +40,9 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.claimToAdjustPoa.ClaimToAdjustService
 import services.PaymentOnAccountSessionService
 
 import scala.concurrent.Future
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class EnterPoaAmountControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
