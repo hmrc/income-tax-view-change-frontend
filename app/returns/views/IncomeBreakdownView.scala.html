@@ -34,7 +34,7 @@
         Seq(
             TableRow(
                 attributes = Map("id" -> s"$messageKey-row"),
-                content = HtmlContent(messages(s"income_breakdown.table.$messageKey")),
+                content = Text(messages(s"income_breakdown.table.$messageKey")),
             ),
             TableRow(
                 attributes = Map("id" -> s"$messageKey-value"),
@@ -49,7 +49,7 @@
     Seq(
         TableRow(
             attributes = Map("id" -> s"$messageKey-row"),
-            content = HtmlContent(messages(s"$messageKey")),
+            content = Text(messages(s"$messageKey")),
             classes = "govuk-table__header total-section"
         ),
         TableRow(
