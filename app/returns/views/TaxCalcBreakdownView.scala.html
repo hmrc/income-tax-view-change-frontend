@@ -19,7 +19,7 @@
 @import common.views.html.layouts.unifiedLayout
 @import implicits.ImplicitCurrencyFormatter._
 @import returns.views.html.partials.taxcalcbreakdown.CapitalGainsTaxTableNew
-@import returns.views.html.partials.taxcalcbreakdown.TableRow
+@import returns.views.html.partials.taxcalcbreakdown.{TableRow => TaxCalcTableRow}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 
@@ -27,9 +27,10 @@
 @this(
         mainTemplate: unifiedLayout,
         h1WithCaption: h1WithCaption,
-        tableRow: TableRow,
+        tableRow: TaxCalcTableRow,
         capitalGainsTaxTable: CapitalGainsTaxTableNew,
-        govukInsetText: GovukInsetText
+        govukInsetText: GovukInsetText,
+        govukTable: GovukTable
 )
 @(viewModel: TaxDueSummaryViewModel, taxYear: Int, startAVRTYear: Int, backUrl: String, isAgent: Boolean = false, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
 
@@ -73,6 +74,195 @@
             tableRow(s"$reliefsClaimedType", relief.amountUsed, isNegative = true)
         }
     }
+}
+
+@otherChargesTableHead = @{
+    Some(Seq(
+        HeadCell(
+            content = Text(messages("taxCal_breakdown.table.head.charge_type")),
+            classes = "bold"
+        ),
+        HeadCell(
+            content = Text(messages("taxCal_breakdown.table.amount")),
+            classes = "govuk-table__header--numeric bold"
+        )
+    ))
+}
+
+@otherChargesTableRows = @{
+    viewModel.totalStudentLoansRepaymentAmount.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.totalStudentLoansRepaymentAmount"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.payeUnderpaymentsCodedOut.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.payeUnderpaymentsCodedOut", s"${taxYear - 1}", s"$taxYear"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.saUnderpaymentsCodedOut.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.saUnderpaymentsCodedOut", s"${taxYear - 1}", s"$taxYear"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.studentLoans.toSeq.flatten.map { studentLoan =>
+        val label =
+            if (studentLoan.planTypeActual == "3")
+                messages("taxCal_breakdown.table.studentLoanPostGraduatePlan")
+            else
+                messages("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", studentLoan.planTypeActual)
+        Seq(
+            TableRow(content = Text(label)),
+            TableRow(content = Text(studentLoan.studentLoanRepaymentAmountActual.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    } ++
+    viewModel.totalAnnuityPaymentsTaxCharged.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.totalAnnuityPaymentsTaxCharged"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.totalRoyaltyPaymentsTaxCharged.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.totalRoyaltyPaymentsTaxCharged"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq
+}
+
+@deductionsTableHead = @{
+    Some(
+        Seq(
+            HeadCell(
+                content = Text(messages("taxCal_breakdown.table.head.deduction")),
+                classes = "bold"
+            ),
+            HeadCell(
+                content = Text(messages("taxCal_breakdown.table.amount")),
+                classes = "govuk-table__header--numeric bold"
+            )
+        )
+    )
+}
+
+@deductionsTableRows = @{
+    viewModel.taxDeductedAtSource.allFields.map { mapEntry =>
+        Seq(
+            TableRow(
+                content = Text(messages(s"taxCal_breakdown.table.taxDeductedAtSource.${mapEntry._1}"))
+            ),
+            TableRow(
+                content = Text(mapEntry._2.toNegativeCurrency.toString),
+                classes = "govuk-table__cell--numeric no-wrap"
+            )
+        )
+    } ++ Seq(Seq(
+        TableRow(
+            content = Text(messages("taxCal_breakdown.table.taxDeductedAtSource.total")),
+            classes = "govuk-table__header total-section"
+        ),
+        TableRow(
+            content = Text(viewModel.totalTaxDeducted.getOrElse(BigDecimal(0)).toCurrency.toString),
+            classes = "govuk-table__header govuk-table__header--numeric total-section-with-spacing"
+        ))
+    )
+}
+
+@niConTableHead = @{
+    Some(Seq(
+        HeadCell(
+            content = Text(messages("taxCal_breakdown.table.head.national_insurance_type")),
+            classes = "bold"
+        ),
+        HeadCell(
+            content = Text(messages("taxCal_breakdown.table.amount")),
+            classes = "govuk-table__header--numeric bold"
+        )
+    ))
+}
+
+@niConTableRows = @{
+    viewModel.nic4Bands.map { nicBands =>
+        for(band <- nicBands.filter(_.income > 0).sortBy(_.rate)) yield
+            Seq(
+                TableRow(
+                    content = Text(messages(
+                        "taxCal_breakdown.table.nic4",
+                        BigDecimal(band.income).toCurrencyString,
+                        s"${band.rate}"
+                    ))
+                ),
+                TableRow(
+                    content = Text(band.amount.toCurrencyString),
+                    classes = "govuk-table__cell--numeric"
+                )
+            )
+    }.toSeq.flatten ++ viewModel.class2NicsAmount.map { amount =>
+        Seq(
+            TableRow(
+                content = Text(messages(s"taxCal_breakdown.table.nic2.${viewModel.class2VoluntaryContributions}"))
+            ),
+            TableRow(
+                content = Text(amount.toCurrencyString),
+                classes = "govuk-table__cell--numeric"
+            )
+        )
+    }.toSeq
+}
+
+@additionalChargesTableHead = @{
+    Some(Seq(
+        HeadCell(
+            content = Text(messages("taxCal_breakdown.table.head.charge_type")),
+            classes = "bold"
+        ),
+        HeadCell(
+            content = Text(messages("taxCal_breakdown.table.amount")),
+            classes = "govuk-table__header--numeric bold"
+        )
+    ))
+}
+
+@additionalChargesTableRows = @{
+    viewModel.giftAidTax.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.giftAidTax"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.totalPensionSavingsTaxCharges.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.totalPensionSavingsTaxCharges"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.statePensionLumpSumCharges.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.statePensionLumpSumCharges"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.giftAidTaxChargeWhereBasicRateDiffers.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.giftAidTaxChargeWhereBasicRateDiffers"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.highIncomeChildBenefitCharge.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.highIncomeChildBenefitCharge"))),
+            TableRow(content = Text(amount.highIncomeChildBenefitCharge.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq ++
+    viewModel.winterFuelPaymentCharge.map { amount =>
+        Seq(
+            TableRow(content = Text(messages("taxCal_breakdown.table.winterFuelPaymentCharge"))),
+            TableRow(content = Text(amount.toCurrency.toString), classes = "govuk-table__cell--numeric")
+        )
+    }.toSeq
 }
 
 @mainTemplate(pageTitle = messages("taxCal_breakdown.heading"), backUrl = Some(backUrl), isAgent = isAgent,
@@ -350,6 +540,14 @@
                 }
             </tbody>
         </table>
+
+        @govukTable(Table(
+            head = additionalChargesTableHead,
+            rows = additionalChargesTableRows,
+            caption = Some(messages("taxCal_breakdown.additional_charges")),
+            captionClasses = "govuk-heading-l",
+            attributes = Map("id" -> "additional-charges-table")
+        ))
     }
 
     @if(viewModel.nic4Bands.exists(_.exists(_.income > 0)) ||
@@ -396,6 +594,14 @@
             }
             </tbody>
         </table>
+
+        @govukTable(Table(
+            head = niConTableHead,
+            rows = niConTableRows,
+            caption = Some(messages("taxCal_breakdown.national_insurance_contributions")),
+            captionClasses = "govuk-heading-l",
+            attributes = Map("id" -> "national-insurance-contributions-table")
+        ))
     }
 
     @capitalGainsTaxTable(viewModel.capitalGainsTax)
@@ -485,6 +691,14 @@
 
             </tbody>
         </table>
+
+        @govukTable(Table(
+            head = otherChargesTableHead,
+            rows = otherChargesTableRows,
+            caption = Some(messages("taxCal_breakdown.table.other_charges")),
+            captionClasses = "govuk-heading-l",
+            attributes = Map("id" -> "other-charges-table")
+        ))
     }
 
     @if(viewModel.taxDeductedAtSource.nonEmpty) {
@@ -515,6 +729,14 @@
                 </tr>
             </tbody>
         </table>
+
+        @govukTable(Table(
+            head = deductionsTableHead,
+            rows = deductionsTableRows,
+            caption = Some(messages("taxCal_breakdown.taxDeductedAtSource")),
+            captionClasses = "govuk-heading-l",
+            attributes = Map("id" -> "tax-deductions-table")
+        ))
     }
     <table class="govuk-table">
         <tr class="govuk-table__row">
@@ -522,4 +744,15 @@
             <td class="govuk-table__header govuk-table__header--numeric total-section-with-spacing">@viewModel.totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)).toCurrency</td>
         </tr>
     </table>
+
+    @govukTable(Table(
+        rows = Seq(Seq(
+            TableRow(
+                content = Text(messages("taxCal_breakdown.table.totalIncomeTaxAndNicsDue")),
+                classes = "govuk-table__header total-section-with-spacing"),
+            TableRow(
+                content = Text(viewModel.totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)).toCurrency.toString),
+                classes = "govuk-table__header govuk-table__header--numeric total-section-with-spacing"),
+        ))
+    ))
 }
