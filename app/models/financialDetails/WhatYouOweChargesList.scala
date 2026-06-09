@@ -75,6 +75,8 @@ case class WhatYouOweChargesList(
     else if(balanceDetails.balanceNotDuein30Days != 0) Some(balanceDetails.balanceNotDuein30Days)
     else None
   }
+
+  def hasInterestAccruing = chargesList.exists(_.hasAccruingInterest)
 }
 
 case class CodingOutDetails(amountCodedOut: BigDecimal, codingTaxYear: TaxYear)
