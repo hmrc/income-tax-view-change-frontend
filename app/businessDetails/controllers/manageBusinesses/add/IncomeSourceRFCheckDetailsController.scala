@@ -22,7 +22,6 @@ import businessDetails.services.{CreateBusinessDetailsService, UpdateIncomeSourc
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.{AfterSubmissionPage, ReportingFrequencyPages}
-import models.core.{IncomeSourceId, NormalMode}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.*
 import play.api.Logger
@@ -34,6 +33,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.models.core.{IncomeSourceId, NormalMode}
 import common.services.{AuditingService, DateServiceInterface, SessionService}
 
 import javax.inject.Inject

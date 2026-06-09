@@ -16,8 +16,8 @@
 
 package obligations.views.reportingObligations
 
+import common.models.itsaStatus.ITSAStatus.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutTestSupport}
 import obligations.views.html.reportingObligations.ReportingFrequencyView

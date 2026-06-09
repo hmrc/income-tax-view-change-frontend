@@ -21,9 +21,9 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
+import common.models.core.Nino
 import common.services.{DateService, DateServiceInterface}
 import mocks.services.MockPaymentAllocationsService
-import models.core.Nino
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

@@ -20,7 +20,7 @@ import common.enums.JourneyType.OptOutJourney
 import common.helpers.CustomMatchers
 import common.models.UIJourneySessionData
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.repositories.OptOutContextData
 import repositories.UIJourneySessionDataRepository

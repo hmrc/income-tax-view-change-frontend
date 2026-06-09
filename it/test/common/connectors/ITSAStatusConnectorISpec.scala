@@ -17,8 +17,8 @@
 package common.connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
+import common.models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import connectors.constants.ITSAStatusUpdateConnectorConstants.*
-import models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json

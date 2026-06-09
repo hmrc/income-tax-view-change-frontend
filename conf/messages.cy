@@ -279,6 +279,9 @@ newHome.overview.tax-year.proofOfIncome.card.sa302key           = Cyfrifiad Tret
 newHome.overview.tax-year.proofOfIncome.card.legacy             = SA302 a throsolwg o’r flwyddyn dreth
 newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete = Anghyflawn – ni ellir ei ddefnyddio fel tystiolaeth o’ch incwm
 newHome.overview.tax-year.proofOfIncome.card.sa302value.proof   = Tystiolaeth o’ch incwm
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewKey = Trosolwg o’r flwyddyn dreth
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.proof = Tystiolaeth o’ch treth
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.notAvailable = Ddim ar gael eto
 newHome.overview.tax-year.proofOfIncome.card.sa302value.legacy  = Blynyddoedd treth cyn defnyddio Troi Treth yn Ddigidol ar gyfer Treth Incwm
 newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = Bwrw golwg dros
 ### Help Tab
@@ -1207,6 +1210,7 @@ whatYouOwe.sa-note-1-body-4                                     = Os ydych chi�
 whatYouOwe.sa-link-1-body-1                                     = trefnu cynllun talu
 whatYouOwe.sa-link-1-body-2                                     = Debyd Uniongyrchol rheolaidd
 whatYouOwe.sa-link-1-body-3                                     = addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
+whatYouOwe.sa-adjust-link-body                                  = Addasu taliadau ar gyfrif ar gyfer blwyddyn dreth {0} i {1}
 whatYouOwe.sa-note-2-heading                                    = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol
 whatYouOwe.sa-note-2-body                                       = Er mwyn bwrw golwg dros eich hanes taliadau o’r adeg cyn i chi gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fynd i’ch
 whatYouOwe.sa-note-2-body-agent-1                               = Er mwyn bwrw golwg dros gyfrif eich cleient o’r adeg cyn iddo gofrestru ar gyfer y cynllun Troi Treth yn Ddigidol ar gyfer Treth Incwm, mae angen i chi fewngofnodi i’ch
@@ -1295,6 +1299,10 @@ whatYouOwe.adjust-poa.paid-4                                    = 31 Ionawr {0}
 whatYouOwe.adjust-poa.paid-5                                    = fan bellaf.
 whatYouOwe.interestChargesWarning                               = Bydd taliadau llog yn parhau i gynyddu bob dydd nes bod y taliadau y maent yn ymwneud â nhw yn cael eu talu’n llawn.
 whatYouOwe.interestChargesWarning.crystallised                  = Mae’r llog hyd yma wedi’i amcangyfrif. Er mwyn ei atal rhag cynyddu bob dydd, talwch y dreth gysylltiedig yn llawn. Yna gall gymryd hyd at 3 diwrnod gwaith i gyfanswm y llog gael ei gyfrifo a’i ddangos yma.
+whatYouOwe.pre-mtd.heading                                      = Gall fod gennych daliadau’n ddyledus o hyd ar gyfer eich blynyddoedd treth Hunanasesiad blaenorol
+whatYouOwe.pre-mtd.body                                         = I wirio a oes gennych daliadau heb eu talu, mae angen i chi fynd i’ch
+whatYouOwe.pre-mtd-link                                         = cyfrif Hunanasesiad ar-lein blaenorol
+whatYouOwe.pre-mtd-outstanding-charges                          = Bydd unrhyw daliad a wneir yn cael ei ddefnyddio ar gyfer treth sydd heb eu talu ar gyfer blynyddoedd treth Hunanasesiad blaenorol yn gyntaf, ac ni fydd yn cael ei arddangos yma.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif

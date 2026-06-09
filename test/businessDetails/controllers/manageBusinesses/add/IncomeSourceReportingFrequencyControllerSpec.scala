@@ -43,8 +43,8 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
+import common.models.itsaStatus.StatusDetail
 import common.services.{DateService, DateServiceInterface, ITSAStatusService, SessionService}
-import models.itsaStatus.StatusDetail
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 

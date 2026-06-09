@@ -20,8 +20,8 @@ import businessDetails.controllers.manageBusinesses.add.routes as addBusinessesR
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.models.core.Mode
 import common.viewUtils.InternalUrlHelper
-import models.core.Mode
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.Logger

@@ -23,9 +23,9 @@ import common.connectors.ITSAStatusConnector
 import common.models.admin.{FeatureSwitchName, `CY+1YouMustWaitToSignUpPageEnabled`}
 import common.services.DateServiceInterface
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.Voluntary
-import models.itsaStatus.StatusReason.MtdItsaOptOut
-import models.itsaStatus.{ITSAStatusResponseError, ITSAStatusResponseModel, StatusDetail}
+import common.models.itsaStatus.ITSAStatus.Voluntary
+import common.models.itsaStatus.{ITSAStatusResponseError, ITSAStatusResponseModel, StatusDetail}
+import common.models.itsaStatus.StatusReason.MtdItsaOptOut
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyBoolean}
 import org.mockito.Mockito.{never, reset, verify, when}

@@ -20,9 +20,9 @@ import audit.models.InitiatePayNowAuditModel
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
+import common.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import common.services.DateServiceInterface
 import connectors.PayApiConnector
-import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import play.api

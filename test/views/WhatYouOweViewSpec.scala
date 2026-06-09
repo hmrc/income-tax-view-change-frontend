@@ -16,13 +16,14 @@
 
 package views
 
-import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
+import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.CodingOutType.*
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
@@ -40,7 +41,6 @@ import views.html.WhatYouOweView
 
 import java.time.LocalDate
 import scala.annotation.unused
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec with ChargeConstants {
 
@@ -50,19 +50,24 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val whatYouOweAgentHeading: String = messages("whatYouOwe.heading-agent")
   val noPaymentsDue: String = messages("whatYouOwe.no-payments-due")
   val noPaymentsAgentDue: String = messages("whatYouOwe.no-payments-due-agent")
+  val preMtdHeading: String = messages("whatYouOwe.pre-mtd.heading")
   val saNote1Heading: String = messages("whatYouOwe.sa-note-1-heading")
   val saLink1_1: String = s"${messages("whatYouOwe.sa-link-1-body-1")}"
   val saNote1_1: String = s"${messages("whatYouOwe.sa-note-1-body-1")} $saLink1_1 (opens in new tab) ${messages("whatYouOwe.sa-note-1-body-1-1")}"
   val saLink1_2: String = s"${messages("whatYouOwe.sa-link-1-body-2")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote1_2: String = s"${messages("whatYouOwe.sa-note-1-body-2")} $saLink1_2 ${messages("whatYouOwe.sa-note-1-body-3")}"
   val saNote1_3: String = s"${messages("whatYouOwe.sa-note-1-body-4")} ${messages("whatYouOwe.sa-link-1-body-3", "2024", "2025")}."
+  val saAdjustLink: String = s"${messages("whatYouOwe.sa-adjust-link-body", "2024", "2025")}"
   val saNote2Heading: String = messages("whatYouOwe.sa-note-2-heading")
   val saNote2HeadingAgent: String = messages("whatYouOwe.sa-note-2-heading-agent")
   val saLink2: String = s"${messages("whatYouOwe.sa-link-2")} ${messages("pagehelp.opensInNewTabText")}"
+  val preMtdSaLink: String = s"${messages("whatYouOwe.pre-mtd-link")} ${messages("pagehelp.opensInNewTabText")}"
   val saLink2Agent: String = s"${messages("whatYouOwe.sa-link-2-agent")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote2: String = s"${messages("whatYouOwe.sa-note-2-body")} $saLink2."
+  val preMtdSaBody: String = s"${messages("whatYouOwe.pre-mtd.body")} $preMtdSaLink."
   val saNote2Agent: String = s"${messages("whatYouOwe.sa-note-2-body-agent-1")} $saLink2Agent. ${messages("whatYouOwe.sa-note-2-body-agent-2")}"
   val osChargesNote: String = messages("whatYouOwe.outstanding-charges-note")
+  val preMtdOsChargesNote: String = messages("whatYouOwe.pre-mtd-outstanding-charges")
   val paymentUnderReviewPara: String = s"${messages("whatYouOwe.dunningLock.text", s"${messages("whatYouOwe.dunningLock.link")} ${messages("pagehelp.opensInNewTabText")}")}."
   val chargeType: String = messages("whatYouOwe.tableHead.charge-type")
   val taxYear: String = messages("whatYouOwe.tableHead.tax-year")
@@ -1184,26 +1189,27 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the user has no charges at all" should {
 
-      s"have the title $whatYouOweTitle and page header and notes" in new TestSetup(charges = noChargesModel) {
+      s"have the title $whatYouOweTitle and page header and pre MTD notes" in new TestSetup(charges = noChargesModel) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsDue
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_3)
-        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote2)
-        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe osChargesNote
-
+        pageDocument.getElementsByTag("h2").eq(1).text shouldBe preMtdHeading
+        pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(preMtdSaBody)
+        pageDocument.getElementById("outstanding-charges-note-migrated").text shouldBe preMtdOsChargesNote
       }
 
       "not have button Pay now" in new TestSetup(charges = noChargesModel) {
         findElementById("payment-button") shouldBe None
       }
-      "not have payment made paragraph" in new TestSetup(charges = noChargesModel) {
+      "not have payment made or if need help paragraph " in new TestSetup(charges = noChargesModel) {
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
-        pageDocument.getElementsByTag("h2").eq(1).text shouldBe saNote2Heading
+        findElementById("sa-note-1-migrated-1") shouldBe None
+        findElementById("sa-note-1-migrated-2") shouldBe None
+        pageDocument.getElementById("sa-note-1-migrated-3").text shouldBe saAdjustLink
+        pageDocument.getElementsByTag("h2").eq(1).text shouldBe preMtdHeading
+        pageDocument.getElementById("sa-note-2-migrated").text shouldBe preMtdSaBody
       }
     }
 

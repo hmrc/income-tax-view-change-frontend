@@ -17,8 +17,8 @@
 package obligations.views.reportingObligations.optOut
 
 import common.auth.MtdItUser
+import common.models.itsaStatus.ITSAStatus.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
 import obligations.forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import obligations.models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
 import obligations.services.reportingObligations.optOut.*

@@ -16,6 +16,7 @@
 
 package models.core
 
+import common.models.core.{CheckMode, Mode, NormalMode}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 

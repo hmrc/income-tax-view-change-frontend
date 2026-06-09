@@ -17,7 +17,6 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import com.google.inject.Singleton
-import models.core.Mode
 import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -31,6 +30,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.UIJourneySessionData
+import common.models.core.Mode
 import common.services.SessionService
 
 import javax.inject.Inject

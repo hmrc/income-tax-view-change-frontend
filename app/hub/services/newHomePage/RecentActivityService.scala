@@ -22,7 +22,7 @@ import common.services.DateServiceInterface
 import obligations.connectors.ObligationsConnector
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import hub.models.newHomePage.{RecentActivityCard, RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import obligations.models.{ObligationsModel, SingleObligationModel}
 import models.repaymentHistory.RepaymentHistoryModel

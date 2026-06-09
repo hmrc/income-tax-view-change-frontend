@@ -22,7 +22,6 @@ import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService}
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.BeforeSubmissionPage
-import models.core.IncomeSourceId
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -35,6 +34,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.TriggeredMigrationCeased
+import common.models.core.IncomeSourceId
 import common.services.{AuditingService, SessionService}
 
 import java.time.LocalDate

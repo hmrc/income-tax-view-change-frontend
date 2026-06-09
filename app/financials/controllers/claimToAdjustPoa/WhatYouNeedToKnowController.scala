@@ -19,8 +19,8 @@ package financials.controllers.claimToAdjustPoa
 import cats.data.EitherT
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.models.core.NormalMode
 import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
-import models.core.NormalMode
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import services.PaymentOnAccountSessionService

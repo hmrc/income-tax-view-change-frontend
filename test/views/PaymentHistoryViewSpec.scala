@@ -16,17 +16,17 @@
 
 package views
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.implicits.ImplicitDateFormatter
 import common.services.DateServiceInterface
-import implicits.ImplicitCurrencyFormatter.*
+import financials.implicits.ImplicitCurrencyFormatter.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
-import common.auth.MtdItUser
 import testUtils.ViewSpec
 import views.html.PaymentHistoryView
 

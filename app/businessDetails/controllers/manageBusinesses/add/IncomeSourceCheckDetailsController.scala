@@ -22,7 +22,6 @@ import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.services.CreateBusinessDetailsService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.BeforeSubmissionPage
-import models.core.NormalMode
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
@@ -37,6 +36,7 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
+import common.models.core.NormalMode
 import common.services.{AuditingService, SessionService}
 
 import javax.inject.Inject

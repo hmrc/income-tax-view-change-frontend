@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm as form
 import businessDetails.utils.IncomeSourcesUtils
-import models.core.NormalMode
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -28,6 +27,7 @@ import businessDetails.views.html.manageBusinesses.add.AddPropertyView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import common.models.core.NormalMode
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

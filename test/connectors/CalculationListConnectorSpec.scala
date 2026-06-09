@@ -18,8 +18,8 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.mocks.{MockAuditingService, MockHttpV2}
+import common.models.core.Nino
 import models.calculationList.{CalculationListErrorModel, CalculationListResponseModel}
-import models.core.Nino
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json

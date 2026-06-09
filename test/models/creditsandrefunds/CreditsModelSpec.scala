@@ -16,7 +16,7 @@
 
 package models.creditsandrefunds
 
-import models.core.ErrorModel
+import common.models.core.ErrorModel
 import models.financialDetails._
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json._

@@ -21,7 +21,7 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService, MockSessionService}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService, SessionService}
 import mocks.services.MockCalculationListService
-import models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.mockito.Mockito.mock

@@ -20,8 +20,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRo
 import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.InitialPage
-import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{Mode, NormalMode}
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -34,6 +33,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.models.core.{Mode, NormalMode}
 import common.services.SessionService
 
 import javax.inject.Inject

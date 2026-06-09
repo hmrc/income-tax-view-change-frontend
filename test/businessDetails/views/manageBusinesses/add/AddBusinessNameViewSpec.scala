@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import models.core.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.data.{Form, FormError}
@@ -29,6 +28,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import common.enums.IncomeSourceJourney.SelfEmployment
+import common.models.core.{CheckMode, NormalMode}
 
 class AddBusinessNameViewSpec extends ViewSpec {
 

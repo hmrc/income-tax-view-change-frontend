@@ -17,7 +17,6 @@
 package controllers
 
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
@@ -45,6 +44,7 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.enums.MTDSupportingAgent
 import common.mocks.services.admin.MockFeatureSwitchService
+import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
 
 import java.time.LocalDate

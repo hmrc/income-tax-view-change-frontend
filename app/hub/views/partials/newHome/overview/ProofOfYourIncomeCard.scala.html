@@ -32,18 +32,18 @@ appConfig: common.config.FrontendAppConfig
     }
 }
 @getSummaryList = @{
-    val cardRows = model.getCardRows().get
+    val cardRows = model.getCardRows()
     govukSummaryList(SummaryList(
-        rows = Seq(
+        rows = cardRows.map { cardRow =>
             SummaryListRow(
                 key = Key(
-                    content = HtmlContent(cardRows.rowHeader)
+                    content = HtmlContent(cardRow.rowHeader)
                 ),
                 value = Value(
-                    content = HtmlContent(cardRows.rowDescription),
+                    content = HtmlContent(cardRow.rowDescription),
                     classes = "card-row-description-class"
                 ),
-                actions = cardRows.action.map { actionText =>
+                actions = cardRow.action.map { actionText =>
                     Actions(
                         items = Seq(
                             ActionItem(
@@ -55,7 +55,7 @@ appConfig: common.config.FrontendAppConfig
                     )
                 }
             )
-        )
+        }
     ))
 }
 

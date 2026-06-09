@@ -278,6 +278,9 @@ newHome.overview.tax-year.proofOfIncome.card.sa302key           = SA302 tax calc
 newHome.overview.tax-year.proofOfIncome.card.legacy             = SA302 and tax year overview
 newHome.overview.tax-year.proofOfIncome.card.sa302value.incomplete = Incomplete - cannot be used as proof of your income
 newHome.overview.tax-year.proofOfIncome.card.sa302value.proof   = Proof of your income
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewKey = Tax year overview
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.proof = Proof of your tax
+newHome.overview.tax-year.proofOfIncome.card.taxYearOverviewValue.notAvailable = Not available yet
 newHome.overview.tax-year.proofOfIncome.card.sa302value.legacy  = Tax years before using Making Tax Digital for Income Tax
 newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = View
 
@@ -1209,6 +1212,7 @@ whatYouOwe.sa-note-1-body-4                                        = If you’re
 whatYouOwe.sa-link-1-body-1                                        = arrange a payment plan
 whatYouOwe.sa-link-1-body-2                                        = set up a regular Direct Debit
 whatYouOwe.sa-link-1-body-3                                        = adjust payments on account for the {0} to {1} tax year
+whatYouOwe.sa-adjust-link-body                                     = Adjust payments on account for the {0} to {1} tax year
 whatYouOwe.sa-note-2-heading                                       = You may still have payments due for your earlier Self Assessment tax years
 whatYouOwe.sa-note-2-body                                          = To view your payment history from before you signed up to Making Tax Digital for Income Tax, you need to visit your previous
 whatYouOwe.sa-note-2-body-agent-1                                  = To view your client’s payment history from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
@@ -1297,6 +1301,10 @@ whatYouOwe.adjust-poa.paid-5                                       =
 whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
 whatYouOwe.interestChargesWarning.crystallised                     = Interest to date is estimated. To stop it increasing every day, pay the related tax in full. It can then take up to 3 working days for the total interest to be calculated and shown here.
 
+whatYouOwe.pre-mtd.heading                                         = You may still have payments due for your earlier Self Assessment tax years
+whatYouOwe.pre-mtd.body                                            = To check if you have outstanding payments you need to
+whatYouOwe.pre-mtd-link                                            = visit your previous Self Assessment online account
+whatYouOwe.pre-mtd-outstanding-charges                             = Any payment made will be used for outstanding tax for earlier Self Assessment tax years first, and will not be displayed here.
 
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account

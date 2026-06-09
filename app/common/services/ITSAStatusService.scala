@@ -20,8 +20,8 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
+import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import models.incomeSourceDetails.*
-import models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

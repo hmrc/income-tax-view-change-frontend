@@ -16,7 +16,7 @@
 
 package models
 
-import models.core.{NinoResponseError, NinoResponseSuccess}
+import common.models.core.{NinoResponseError, NinoResponseSuccess}
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants._

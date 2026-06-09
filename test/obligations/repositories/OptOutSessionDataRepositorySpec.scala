@@ -20,9 +20,9 @@ import common.auth.MtdItUser
 import common.enums.JourneyType.OptOutJourney
 import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.UIJourneySessionData
+import common.models.itsaStatus.ITSAStatus.*
 import mocks.services.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.mocks.connectors.MockITSAStatusUpdateConnector
 import obligations.models.reportingObligations.optOut.OptOutSessionData

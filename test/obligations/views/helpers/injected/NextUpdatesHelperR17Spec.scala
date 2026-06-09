@@ -18,7 +18,7 @@ package obligations.views.helpers.injected
 
 import common.auth.MtdItUser
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
+import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import obligations.testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}

@@ -18,7 +18,7 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
+import common.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import play.api.Logger
 import play.api.http.Status._
 import play.api.libs.json.Json

@@ -20,10 +20,10 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.ChargeHistory
+import common.models.core.Nino
 import common.services.DateServiceInterface
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import models.chargeHistory.ChargesHistoryErrorModel
-import models.core.Nino
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}

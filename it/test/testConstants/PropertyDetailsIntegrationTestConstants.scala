@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.core.{AccountingPeriodModel, CessationModel}
+import common.models.core.{AccountingPeriodModel, CessationModel}
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
 import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testLatencyDetails3, testPropertyIncomeId}
