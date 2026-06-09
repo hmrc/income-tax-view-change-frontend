@@ -16,7 +16,7 @@
 
 package views
 
-import _root_.implicits.ImplicitCurrencyFormatter.*
+import _root_.financials.implicits.ImplicitCurrencyFormatter.*
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter

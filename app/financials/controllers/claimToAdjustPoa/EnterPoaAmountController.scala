@@ -17,10 +17,10 @@
 package financials.controllers.claimToAdjustPoa
 
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.{CheckMode, Mode, Nino, NormalMode}
-import forms.adjustPoa.EnterPoaAmountForm
+import financials.forms.adjustPoa.EnterPoaAmountForm
 import models.claimToAdjustPoa.Increase
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import play.api.i18n.I18nSupport
