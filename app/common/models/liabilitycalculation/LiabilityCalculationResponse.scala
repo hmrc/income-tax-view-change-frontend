@@ -16,7 +16,7 @@
 
 package common.models.liabilitycalculation
 
-import common.enums.TaxYearSummary.CalcType.{amendmentTypes, crystallisedTypes}
+import common.enums.TaxYearSummary.CalculationType.{amendmentTypes, crystallisedTypes}
 import common.implicits.ImplicitDateFormatter
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.*
@@ -54,9 +54,9 @@ case class Metadata(
                      periodTo: Option[LocalDate] = None
                    ) {
 
-  def isCalculationCrystallised: Boolean = crystallisedTypes.contains(calculationType)
+  def isCalculationCrystallised: Boolean = crystallisedTypes.map(_.value).contains(calculationType)
 
-  def hasAnAmendment: Boolean = amendmentTypes.contains(calculationType)
+  def hasAnAmendment: Boolean = amendmentTypes.map(_.value).contains(calculationType)
 }
 
 object Metadata {

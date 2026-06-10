@@ -20,6 +20,8 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.TaxYearSummaryPage
+import common.enums.TaxYearSummary.*
+import common.enums.TaxYearSummary.CalculationType.notCrystallisedTypes
 import common.implicits.ImplicitDateFormatter
 import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
@@ -260,6 +262,8 @@ class TaxYearSummaryController @Inject()(
       )
 
     lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
+    val strCalcTypeValue: CalculationType = CalculationType.fromCalculationTypeValueToString(latestCalc.metadata.calculationType)
+    val isNotCrystallisedShowInset: Boolean = notCrystallisedTypes.contains(strCalcTypeValue)
 
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
@@ -280,7 +284,8 @@ class TaxYearSummaryController @Inject()(
         showNoTaxCalc = latestCalc.calculation.isEmpty,
         viewTaxCalcLink = selfAssessmentLink,
         selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
-        contactHmrcLink = appConfig.findHmrcContactsSALink()
+        contactHmrcLink = appConfig.findHmrcContactsSALink(),
+        isNotCrystallisedShowInset = isNotCrystallisedShowInset
       ))
     )
   }
@@ -335,6 +340,9 @@ class TaxYearSummaryController @Inject()(
       val taxYearViewScenarios =
         taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
 
+      val strCalcTypeValue: CalculationType = validLatestCalculation.map(liabilityCalculationResponse => CalculationType.fromCalculationTypeValueToString(liabilityCalculationResponse.metadata.calculationType)).getOrElse(UnknownCalculationType)
+      val isNotCrystallisedShowInset: Boolean = notCrystallisedTypes.contains(strCalcTypeValue)
+
       Future(
         Ok(taxYearSummaryView(
           taxYear = taxYear,
@@ -347,7 +355,8 @@ class TaxYearSummaryController @Inject()(
           showNoTaxCalc = true,
           viewTaxCalcLink = selfAssessmentLink,
           selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
-          contactHmrcLink = appConfig.findHmrcContactsSALink()
+          contactHmrcLink = appConfig.findHmrcContactsSALink(),
+          isNotCrystallisedShowInset = isNotCrystallisedShowInset
         ))
       )
     } else {
@@ -384,6 +393,9 @@ class TaxYearSummaryController @Inject()(
       val taxYearViewScenarios =
         taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
 
+      val strCalcTypeValue: CalculationType = validLatestCalculation.map(liabilityCalculationResponse => CalculationType.fromCalculationTypeValueToString(liabilityCalculationResponse.metadata.calculationType)).getOrElse(UnknownCalculationType)
+      val isNotCrystallisedShowInset: Boolean = notCrystallisedTypes.contains(strCalcTypeValue)
+
       Future(
         Ok(taxYearSummaryView(
           taxYear = taxYear,
@@ -396,7 +408,8 @@ class TaxYearSummaryController @Inject()(
           showNoTaxCalc = false,
           viewTaxCalcLink = selfAssessmentLink,
           selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
-          contactHmrcLink = appConfig.findHmrcContactsSALink()
+          contactHmrcLink = appConfig.findHmrcContactsSALink(),
+          isNotCrystallisedShowInset = isNotCrystallisedShowInset
         ))
       )
     }

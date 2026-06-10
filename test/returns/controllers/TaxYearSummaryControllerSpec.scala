@@ -273,6 +273,8 @@ class TaxYearSummaryControllerSpec
                     viewTaxCalcLink = Some("some fake url"),
                     selfAssessmentLink = "some fake url",
                     contactHmrcLink = "some fake url",
+                    isNotCrystallisedShowInset = false
+
                   ).toString
 
                 val result = action(fakeRequest)
@@ -322,7 +324,8 @@ class TaxYearSummaryControllerSpec
                   showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
-                  contactHmrcLink = ""
+                  contactHmrcLink = "",
+                  isNotCrystallisedShowInset = false
                 ).toString
 
                 val result = action(fakeRequest)
@@ -372,6 +375,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -669,6 +674,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
 
 
                 ).toString
@@ -724,6 +731,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
 
 
                 ).toString
@@ -778,7 +787,8 @@ class TaxYearSummaryControllerSpec
                   showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
-                  contactHmrcLink = ""
+                  contactHmrcLink = "",
+                  isNotCrystallisedShowInset = false
                 ).toString
 
                 val result = action(fakeRequest)
@@ -834,6 +844,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -880,6 +892,8 @@ class TaxYearSummaryControllerSpec
                     viewTaxCalcLink = Some("some fake url"),
                     selfAssessmentLink = "some fake url",
                     contactHmrcLink = "some fake url",
+                    isNotCrystallisedShowInset = false
+
 
 
                   ).toString
@@ -929,6 +943,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
                 ).toString()).text()
 
                 val result = action(fakeRequest)
@@ -976,8 +992,7 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
-
-
+                  isNotCrystallisedShowInset = false
                 ).toString
 
                 val result = action(fakeRequest)
