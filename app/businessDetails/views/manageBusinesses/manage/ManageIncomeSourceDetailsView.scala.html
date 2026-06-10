@@ -307,9 +307,19 @@ val rows = {
 
             val p1 = p(id = Some("expandable-standard-update-period"))(Html(messages(s"$messagePrefix.content.p1")))
             val p2 = p(id = Some("software-support"))(Html(messages(s"$messagePrefix.content.p2")))
+            val p3 = p(id = Some("software-support-p3"))(Html(messages(s"$messagePrefix.content.p3")))
 
-            val anchor = link( id = Some("learn-about-quarters-link"), target = Some("_blank"), link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl, messageKey = s"incomeSources.manage.quarterly-period.content.p3", outerMessage = messages("base.fullstop"))
-            val content = HtmlContent(p1.toString() + p2.toString() + anchor.toString())
+            val bullets = Html(
+            s"""
+            |<ul class="govuk-list govuk-list--bullet">
+                |  <li id="bullet-1">${messages(s"$messagePrefix.content.bullet1")}</li>
+                |  <li id="bullet-2">${messages(s"$messagePrefix.content.bullet2")}</li>
+                |</ul>
+            """.stripMargin
+            )
+
+            val anchor = link( id = Some("learn-about-quarters-link"), target = Some("_blank"), link = ExternalUrlHelper.quarterlyUpdatesGuidanceUrl, messageKey = s"incomeSources.manage.quarterly-period.content.p4")
+            val content = HtmlContent(p1.toString() + p2.toString() + p3.toString() + bullets.toString() + anchor.toString())
 
             govukDetails(Details(
                 id = Some("standard-update-period-dropdown"),

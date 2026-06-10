@@ -51,8 +51,11 @@ object ManageIncomeSourceDetailsViewMessages {
   val expectedBusinessStartDate: String = "1 January 2022"
 
   val expandableInfoStandardSummary: String = "What is a standard quarterly period?"
-  val expandableInfoStandardContentP1: String = "This business is reporting from 6 April in line with the tax year, also known as using standard update periods."
-  val expandableInfoStandardContentP2: String = "If your software supports it, you can choose to report using calendar update periods which end on the last day of the month."
+  val expandableInfoStandardContentP1: String = "Standard update periods align to the tax year (6 April to 5 April)."
+  val expandableInfoStandardContentP2: String = "If your accounting period doesn’t end on 31 March, standard update periods will make your record keeping simpler."
+  val expandableInfoStandardContentP3: String = "You can choose to report using calendar update periods (which run from 1 April to 31 March) instead. You can only make the change:"
+  val expandableInfoStandardContentBullet1: String = "in compatible software that supports this option"
+  val expandableInfoStandardContentBullet2: String = "before you send your first quarterly update of the tax year"
 
   val expandableInfoContentP3: String = "Learn more about standard and calendar quarters"
   val expandableMoreInfoLink = "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/send-quarterly-updates"
