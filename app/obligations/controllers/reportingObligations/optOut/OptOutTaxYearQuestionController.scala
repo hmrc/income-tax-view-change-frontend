@@ -23,7 +23,7 @@ import common.config.featureswitch.FeatureSwitching
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import obligations.controllers.errors.routes as errorRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
-import obligations.forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
+import obligations.forms.optOut.OptOutTaxYearQuestionForm
 import obligations.services.reportingObligations.optOut.{OptOutService, OptOutSubmissionService}
 import obligations.utils.reportingObligations.JourneyCheckerOptOut
 import obligations.views.html.reportingObligations.optOut.OptOutTaxYearQuestionView

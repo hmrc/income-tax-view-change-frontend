@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package obligations.forms.reportingObligations.optOut
+package obligations.forms.optOut
 
 import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.{mock, when}

@@ -14,33 +14,35 @@
  * limitations under the License.
  */
 
-package obligations.forms.reportingObligations.signUp
+package obligations.forms.optOut
 
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.i18n.Messages
 
-case class ChooseTaxYearForm(choice: Option[String])
+case class ConfirmOptOutMultiTaxYearChoiceForm(choice: Option[String])
 
-object ChooseTaxYearForm {
+object ConfirmOptOutMultiTaxYearChoiceForm {
 
   val choiceField: String = "choice"
-  val noResponseErrorMessageKey: String = "optIn.ConfirmOptInMultiTaxYearChoice.form.no-select.error"
+  val noResponseErrorMessageKey: String = "optOut.ConfirmOptOutMultiTaxYearChoice.form.no-select.error"
+  val csrfToken: String = "csrfToken"
 
-  def apply(optionValue: Seq[String])(implicit messages: Messages): Form[ChooseTaxYearForm] = {
+  def
+  apply(optionValue: List[String])(implicit messages: Messages): Form[ConfirmOptOutMultiTaxYearChoiceForm] = {
     val noSelectionErrorMessage: String = messages(noResponseErrorMessageKey)
 
     form(noSelectionErrorMessage, optionValue)
+
   }
 
-  def form(msg: String, optOutYears: Seq[String]): Form[ChooseTaxYearForm] =
-    Form[ChooseTaxYearForm](
-      mapping(
-        choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
-      )
-      (choice => ChooseTaxYearForm(choice))
-      (form => Some(form.choice))
+  def form(msg: String, optOutYears: List[String]): Form[ConfirmOptOutMultiTaxYearChoiceForm] = Form[ConfirmOptOutMultiTaxYearChoiceForm](
+    mapping(
+      choiceField -> optional(text).verifying(msg, optionalChoice => optionalChoice.nonEmpty && optOutYears.contains(optionalChoice.get))
     )
+    (choice => ConfirmOptOutMultiTaxYearChoiceForm(choice))(
+      form => Some(form.choice))
+  )
 
 
 }

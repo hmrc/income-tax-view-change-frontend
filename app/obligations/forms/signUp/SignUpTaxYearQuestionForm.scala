@@ -14,40 +14,39 @@
  * limitations under the License.
  */
 
-package obligations.forms.reportingObligations.optOut
+package obligations.forms.signUp
 
 import models.incomeSourceDetails.TaxYear
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional, text}
 import play.api.i18n.Messages
 
-object OptOutTaxYearQuestionForm {
+object SignUpTaxYearQuestionForm {
 
   val responseNo: String = "No"
   val responseYes: String = "Yes"
-  val response: String = "opt-out-tax-year-question"
-  val noSelectErrorMessageKey: String = "optout.taxYearQuestion.error"
+  val response: String = "sign-up-tax-year-question"
 
+  def apply(taxYear: TaxYear, signUpForCY: Boolean)(implicit messages: Messages): Form[SignUpTaxYearQuestionForm] = {
+    val noSelectionErrorMessage: String = if (signUpForCY) {
+      messages("signUp.taxYearQuestion.error.currentYear")
+    } else {
+      messages("signUp.taxYearQuestion.error.nextYear", taxYear.startYear.toString, taxYear.endYear.toString)
+    }
 
-  def apply(taxYear: TaxYear)(implicit messages: Messages): Form[OptOutTaxYearQuestionForm] = {
-    val noSelectionErrorMessage: String =
-      messages(noSelectErrorMessageKey,
-        taxYear.startYear.toString,
-        taxYear.endYear.toString)
-
-    Form[OptOutTaxYearQuestionForm](
+    Form[SignUpTaxYearQuestionForm](
       mapping(
         response -> optional(text)
           .verifying(noSelectionErrorMessage, value => value.nonEmpty && (value.contains(responseYes) || value.contains(responseNo)))
       )
-      (response => OptOutTaxYearQuestionForm(response))
+      (response => SignUpTaxYearQuestionForm(response))
       (form => Some(form.response))
     )
   }
 }
 
-case class OptOutTaxYearQuestionForm(response: Option[String]) {
+case class SignUpTaxYearQuestionForm(response: Option[String]) {
   def toFormMap: Map[String, Seq[String]] = Map(
-    OptOutTaxYearQuestionForm.response -> Seq(response.getOrElse("N/A"))
+    SignUpTaxYearQuestionForm.response -> Seq(response.getOrElse("N/A"))
   )
 }

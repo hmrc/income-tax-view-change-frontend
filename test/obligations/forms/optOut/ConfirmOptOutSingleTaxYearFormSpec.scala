@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package obligations.forms.reportingObligations.optOut
+package obligations.forms.optOut
 
 import models.incomeSourceDetails.TaxYear
-import obligations.forms.reportingObligations.optOut.ConfirmOptOutSingleTaxYearForm.*
+import obligations.forms.optOut.ConfirmOptOutSingleTaxYearForm.*
 import org.mockito.Mockito.{mock, when}
 import play.api.data.{Form, FormError}
 import play.api.i18n.Messages

@@ -22,7 +22,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure
 import obligations.controllers.errors.routes as errorRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
-import obligations.forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
+import obligations.forms.signUp.SignUpTaxYearQuestionForm
 import obligations.services.reportingObligations.signUp.{SignUpService, SignUpSubmissionService}
 import obligations.utils.reportingObligations.JourneyCheckerSignUp
 import obligations.views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
