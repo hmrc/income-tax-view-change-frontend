@@ -161,7 +161,7 @@
                                 attributes = Map("id" -> s"due-charge-tax-year-$index"),
                                 content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
                             )),
-                            Option.when(charge.hasAccruingInterest)(
+                            Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-na-$index"),
                                     content = HtmlContent(getMessage("tableRow.na"))
