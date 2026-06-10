@@ -25,6 +25,7 @@ import common.testConstants.BaseTestConstants
 import common.utils.sessionUtils
 import common.utils.sessionUtils.SessionKeys
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import generators.PoaGenerator
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
@@ -40,7 +41,6 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.PaymentOnAccountSessionService
 
 import scala.concurrent.Future
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import businessDetails.mocks.connectors.MockBusinessDetailsConnector
 import common.exceptions.{RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
-import connectors.RepaymentConnector
 import common.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import connectors.RepaymentConnector
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}

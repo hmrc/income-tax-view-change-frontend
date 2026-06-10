@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
-import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.models.core.ErrorModel
 import connectors.FinancialDetailsConnector
 import models.incomeSourceDetails.TaxYear

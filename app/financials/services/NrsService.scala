@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import connectors.NrsConnector
 import models.nrs.{NrsSubmission, NrsSuccessResponse}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
@@ -23,6 +23,7 @@ import common.models.admin.ChargeHistory
 import common.models.core.Nino
 import common.services.DateServiceInterface
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
+import financials.services.PaymentHistoryService.PaymentHistoryError
 import models.chargeHistory.ChargesHistoryErrorModel
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
@@ -30,7 +31,6 @@ import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, Re
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.NOT_FOUND
-import services.PaymentHistoryService.PaymentHistoryError
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

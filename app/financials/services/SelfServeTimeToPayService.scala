@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import common.exceptions.SelfServeTimeToPayJourneyException
 import common.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}

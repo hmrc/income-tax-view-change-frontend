@@ -24,6 +24,8 @@ import common.enums.GatewayPage.PaymentHistoryPage
 import common.implicits.ImplicitDateFormatter
 import common.models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
 import common.services.{AuditingService, DateServiceInterface}
+import common.views.html.errorPages.CustomNotFoundErrorView
+import financials.services.{PaymentHistoryService, RepaymentService}
 import forms.utils.SessionKeys.gatewayPage
 import models.financialDetails.TransactionUtils
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
@@ -31,12 +33,10 @@ import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.{PaymentHistoryService, RepaymentService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import views.html.PaymentHistoryView
-import common.views.html.errorPages.CustomNotFoundErrorView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

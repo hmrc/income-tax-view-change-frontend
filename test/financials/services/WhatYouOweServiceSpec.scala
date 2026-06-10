@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser

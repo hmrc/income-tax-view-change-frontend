@@ -18,14 +18,15 @@ package financials.controllers
 
 import audit.models.CreditSummaryAuditing
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.services.AuditingService
+import financials.controllers.routes as financialsRoutes
+import financials.services.CreditHistoryService
 import models.creditDetailModel.CreditDetailModel
 import play.api.Logger
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.CreditHistoryService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.CreditsSummaryView
@@ -33,7 +34,6 @@ import views.html.CreditsSummaryView
 import java.net.URI
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import financials.controllers.routes as financialsRoutes
 
 class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
                                          val authActions: AuthActions,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import financials.repositories.PoaAmendmentDataRepository
 import models.claimToAdjustPoa.{PoaAmendmentData, PoaSessionData, SelectYourReason}

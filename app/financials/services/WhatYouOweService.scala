@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import audit.models.WhatYouOweResponseAuditModel
 import common.auth.MtdItUser
