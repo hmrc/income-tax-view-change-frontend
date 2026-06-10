@@ -20,7 +20,7 @@ import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.libs.json.{JsSuccess, Json}
-import testConstants.ITSAStatusTestConstants._
+import businessDetails.testConstants.ITSAStatusTestConstants._
 import testUtils.TestSupport
 
 class ITSAStatusResponseSpec extends TestSupport with Matchers {

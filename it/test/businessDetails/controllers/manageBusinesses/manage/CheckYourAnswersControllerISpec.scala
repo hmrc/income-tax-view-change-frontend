@@ -30,8 +30,8 @@ import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.IncomeSourceIntegrationTestConstants.*
 
 import java.time.LocalDate
 import java.time.Month.APRIL

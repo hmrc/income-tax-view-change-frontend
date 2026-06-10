@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants
+package financials.testConstants
 
 import models.penalties.appealInformation.*
 import models.penalties.appealInformation.AppealLevelEnum.HmrcAppealLevel

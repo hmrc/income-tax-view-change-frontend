@@ -28,7 +28,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 

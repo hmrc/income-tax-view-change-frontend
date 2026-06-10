@@ -19,7 +19,7 @@ package models
 import models.paymentAllocations._
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import testConstants.PaymentDetailsTestConstants._
+import financials.testConstants.PaymentDetailsTestConstants._
 import testUtils.UnitSpec
 
 class PaymentDetailsSpec extends UnitSpec with Matchers {

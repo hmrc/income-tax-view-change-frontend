@@ -40,8 +40,8 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants.testSessionId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
+import common.testConstants.BaseTestConstants.testSessionId
+import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 
 import java.time.LocalDate
 

@@ -32,8 +32,8 @@ import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.PaymentOnAccountSessionService
-import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
+import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 

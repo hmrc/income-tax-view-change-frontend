@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package testConstants
+package financials.testConstants
 
+import common.testConstants.BaseTestConstants.*
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants._
 
 import java.time.LocalDate
 

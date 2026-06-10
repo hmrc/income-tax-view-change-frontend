@@ -23,7 +23,7 @@ import models.liabilitycalculation.{Message, Messages, ReliefsClaimed, StudentLo
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
-import testConstants.NewCalcBreakdownUnitTestConstants.*
+import financials.testConstants.NewCalcBreakdownUnitTestConstants.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 import scala.language.implicitConversions

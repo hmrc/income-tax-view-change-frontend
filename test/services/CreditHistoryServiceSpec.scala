@@ -23,7 +23,7 @@ import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.FinancialDetailsErrorModel
 import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails
+import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

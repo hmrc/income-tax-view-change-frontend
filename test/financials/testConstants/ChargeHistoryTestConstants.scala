@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package testConstants
+package financials.testConstants
 
-import models.chargeHistory._
+import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
+import models.chargeHistory.*
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 

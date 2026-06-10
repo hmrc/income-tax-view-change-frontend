@@ -23,7 +23,7 @@ import org.mockito.Mockito.{mock, when}
 import testUtils.TestSupport
 import org.mockito.ArgumentMatchers.any
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testConstants.BaseTestConstants.{expectedJourneyId, testSetUpPaymentPlanUrl}
+import common.testConstants.BaseTestConstants.{expectedJourneyId, testSetUpPaymentPlanUrl}
 
 import scala.concurrent.Future
 

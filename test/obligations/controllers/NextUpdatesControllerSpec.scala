@@ -23,6 +23,7 @@ import common.models.admin.OptOutFs
 import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import common.testConstants.BaseTestConstants
 import obligations.mocks.services.{MockNextUpdatesService, MockOptOutService}
 import obligations.models.*
 import obligations.models.reportingObligations.optOut.*
@@ -38,8 +39,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
+import common.testConstants.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
 
 import java.time.LocalDate
 import scala.concurrent.Future

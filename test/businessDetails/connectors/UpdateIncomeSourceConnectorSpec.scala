@@ -33,14 +33,14 @@
 package businessDetails.connectors
 
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponse
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants
 import common.config.FrontendAppConfig
 import common.mocks.{MockAuditingService, MockHttpV2}
-import obligations.testConstants.UpdateIncomeSourceTestConstants
-import obligations.testConstants.UpdateIncomeSourceTestConstants.*
+import UpdateIncomeSourceTestConstants.*
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

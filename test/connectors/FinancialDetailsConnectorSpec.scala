@@ -31,9 +31,9 @@ import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.*
-import testConstants.FinancialDetailsTestConstants.*
-import testConstants.PaymentAllocationsTestConstants.*
+import common.testConstants.BaseTestConstants.*
+import financials.testConstants.FinancialDetailsTestConstants.*
+import financials.testConstants.PaymentAllocationsTestConstants.*
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

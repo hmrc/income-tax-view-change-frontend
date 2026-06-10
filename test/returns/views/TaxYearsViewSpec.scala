@@ -23,7 +23,7 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.ViewSpec
 import returns.views.html.TaxYearsView
 

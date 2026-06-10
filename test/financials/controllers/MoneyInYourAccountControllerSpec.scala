@@ -32,9 +32,9 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.{CreditService, RepaymentService}
-import testConstants.ANewCreditAndRefundModel
-import testConstants.FinancialDetailsTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import financials.testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import financials.testConstants.ANewCreditAndRefundModel
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -21,7 +21,7 @@ import common.services.agent.ClientDetailsService.{ClientDetails, ClientDetailsF
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testConstants.BaseTestConstants.{testMtditid, testNino}
+import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package testConstants.incomeSources
+package common.testConstants
 
-import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.models.UIJourneySessionData
 import common.models.core.{AddressModel, IncomeSourceId}
-import models.incomeSourceDetails._
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.BusinessDetailsTestConstants.*
+import businessDetails.testConstants.PropertyDetailsTestConstants.*
+import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
-import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants._
-import testConstants.PropertyDetailsTestConstants._
 
 import java.time.LocalDate
 

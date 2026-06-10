@@ -33,7 +33,7 @@ import org.mockito.ArgumentMatchers.{any, same}
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
-import testConstants.ITSAStatusTestConstants.yearToStatus
+import businessDetails.testConstants.ITSAStatusTestConstants.yearToStatus
 import testUtils.TestSupport
 
 import scala.annotation.unused

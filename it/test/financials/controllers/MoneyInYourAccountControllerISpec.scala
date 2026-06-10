@@ -23,10 +23,10 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.models.admin.CreditsRefundsRepay
 import common.models.core.ErrorModel
+import financials.testConstants.ANewCreditAndRefundModel
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.ANewCreditAndRefundModel
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 

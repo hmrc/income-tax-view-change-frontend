@@ -21,7 +21,7 @@ import financials.models.ChargeType.NIC4_WALES
 import models.creditDetailModel._
 import models.financialDetails._
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import testConstants.BusinessDetailsTestConstants.fixedDate
+import businessDetails.testConstants.BusinessDetailsTestConstants.fixedDate
 
 import java.time.LocalDate
 

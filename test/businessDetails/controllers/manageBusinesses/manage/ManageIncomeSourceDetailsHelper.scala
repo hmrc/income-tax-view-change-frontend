@@ -27,7 +27,7 @@ import org.jsoup.select.Elements
 import org.mockito.Mockito.mock
 import play.api
 import services.*
-import testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
 
 trait ManageIncomeSourceDetailsHelper
   extends MockAuthActions

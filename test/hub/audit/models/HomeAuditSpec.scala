@@ -25,7 +25,7 @@ import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsArray, JsNull, JsNumber, JsObject, JsValue, Json}
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

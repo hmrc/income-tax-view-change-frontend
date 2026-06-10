@@ -27,8 +27,8 @@ import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, Financ
 import models.paymentAllocations.AllocationDetail
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
-import testConstants.PaymentAllocationsTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import financials.testConstants.PaymentAllocationsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.ViewSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.PaymentAllocationView

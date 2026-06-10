@@ -19,7 +19,7 @@ package models
 import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import testConstants.CitizenDetailsTestConstants.*
+import common.testConstants.CitizenDetailsTestConstants.*
 import testUtils.UnitSpec
 
 class CitizenDetailsResponseModelSpec extends UnitSpec with Matchers {

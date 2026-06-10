@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants
+package financials.testConstants
 
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import play.api.libs.json.{JsValue, Json}

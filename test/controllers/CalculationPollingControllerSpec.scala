@@ -28,8 +28,8 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import returns.controllers.routes as returnsRoutes
 import services.CalculationPollingService
-import testConstants.BaseTestConstants.testTaxYear
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
+import common.testConstants.BaseTestConstants.testTaxYear
+import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome
 
 @deprecated("Being moved to submission team", "MISUV-8977")
 class CalculationPollingControllerSpec extends MockAuthActions with MockCalculationPollingService {

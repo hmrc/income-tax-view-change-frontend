@@ -26,7 +26,7 @@ import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
 import scala.annotation.unused
 import scala.concurrent.Future

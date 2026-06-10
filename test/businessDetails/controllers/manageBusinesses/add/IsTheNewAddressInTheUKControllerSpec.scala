@@ -27,8 +27,8 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, invalidUKAddressNoPostCode}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
+import businessDetails.testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, invalidUKAddressNoPostCode}
+import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes

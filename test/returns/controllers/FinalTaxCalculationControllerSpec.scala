@@ -31,8 +31,8 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import services.CalculationService
-import testConstants.BaseTestConstants.testTaxYear
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import common.testConstants.BaseTestConstants.testTaxYear
+import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 
 import java.time.LocalDate
 import scala.concurrent.Future

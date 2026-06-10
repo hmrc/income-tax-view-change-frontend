@@ -21,7 +21,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.{testMtditid, testNino}
+import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

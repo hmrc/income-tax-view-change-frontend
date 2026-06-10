@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants.incomeSources
+package obligations.testConstants
 
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}

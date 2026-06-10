@@ -23,8 +23,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.testMtdItUser
-import testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
+import common.testConstants.BaseTestConstants.testMtdItUser
+import obligations.testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
 import testUtils.TestSupport
 
 import java.time.LocalDate

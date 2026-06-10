@@ -28,8 +28,8 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.CalculationService
-import testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
+import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import obligations.models.*
 import obligations.connectors.ObligationsConnector
 import obligations.mocks.connectors.MockObligationsConnector

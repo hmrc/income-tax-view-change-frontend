@@ -23,7 +23,7 @@ import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSASta
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutTestSupport}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.testNino
+import common.testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

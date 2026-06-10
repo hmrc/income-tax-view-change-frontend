@@ -22,8 +22,8 @@ import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.services.UpdateIncomeSourceService
 import common.connectors.ITSAStatusConnector

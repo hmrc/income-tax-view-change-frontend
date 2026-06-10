@@ -36,9 +36,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.PaymentOnAccountSessionService
 import services.claimToAdjustPoa.ClaimToAdjustService
-import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
+import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 

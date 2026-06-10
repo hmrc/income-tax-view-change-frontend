@@ -24,6 +24,7 @@ import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
 import common.services.{DateService, DateServiceInterface}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
+import financials.testConstants.ChargeConstants
 import forms.utils.SessionKeys.gatewayPage
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import models.incomeSourceDetails.TaxYear
@@ -38,8 +39,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.WhatYouOweService
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.*
+import financials.testConstants.FinancialDetailsTestConstants.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate

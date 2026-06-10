@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.{Html, HtmlFormat}
-import testConstants.BusinessDetailsTestConstants.*
+import businessDetails.testConstants.BusinessDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.*

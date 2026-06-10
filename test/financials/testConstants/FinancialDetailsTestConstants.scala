@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package testConstants
+package financials.testConstants
 
 import common.services.DateService
+import common.testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import financials.models.ChargeType.NIC4_WALES
 import financials.models.CodingOutType.*
 import models.creditDetailModel.CreditDetailModel
 import models.creditsandrefunds.{CreditsModel, Transaction}
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
-import testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
+import FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 
 import java.time.LocalDate
 

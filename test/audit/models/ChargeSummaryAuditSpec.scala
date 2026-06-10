@@ -31,9 +31,9 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json._
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.*
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.financialDetail
+import common.testConstants.BaseTestConstants.*
+import financials.testConstants.ChargeConstants
+import financials.testConstants.FinancialDetailsTestConstants.financialDetail
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 

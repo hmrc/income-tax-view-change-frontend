@@ -32,8 +32,8 @@ import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.ANewCreditAndRefundModel
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
+import financials.testConstants.ANewCreditAndRefundModel
 import testUtils.TestSupport
 import hub.views.html.HomeView
 

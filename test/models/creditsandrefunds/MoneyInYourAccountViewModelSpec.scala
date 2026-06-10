@@ -18,10 +18,10 @@ package models.creditsandrefunds
 
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
-import testConstants.ANewCreditAndRefundModel
 import testUtils.UnitSpec
 import java.time.LocalDate
 import financials.controllers.routes as financialsRoutes
+import financials.testConstants.ANewCreditAndRefundModel
 
 class MoneyInYourAccountViewModelSpec extends UnitSpec {
 

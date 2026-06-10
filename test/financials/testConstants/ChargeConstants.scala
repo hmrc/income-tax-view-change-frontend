@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package testConstants
+package financials.testConstants
 
 import common.services.{DateService, DateServiceInterface}
 import financials.models.ChargeType.NIC4_WALES
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
-import testConstants.FinancialDetailsTestConstants.{currentYear, dueDateDueIn30Days, dueDateMoreThan30Days, dueDateOverdue, fixedDate, futureFixedDate, id1040000123, id1040000124, id1040000125, id1040000126, noDunningLocks, oneDunningLock, outstandingChargesDueIn30Days, outstandingChargesDueInMoreThan30Days, outstandingChargesModel, testFinancialDetailsModelWithChargesOfSameType}
+import financials.testConstants.FinancialDetailsTestConstants.*
 
 import java.time.LocalDate
 import scala.annotation.unused

@@ -19,8 +19,8 @@ package common.connectors.agent
 import common.mocks.MockHttpV2
 import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.testSaUtr
-import testConstants.CitizenDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.testSaUtr
+import common.testConstants.CitizenDetailsTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 

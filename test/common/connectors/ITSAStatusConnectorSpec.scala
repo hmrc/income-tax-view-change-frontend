@@ -40,8 +40,8 @@ import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import play.api.Configuration
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testConstants.BaseTestConstants.*
-import testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, notFoundHttpResponse}
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, notFoundHttpResponse}
 import testUtils.TestSupport
 import uk.gov.hmrc.http.client.RequestBuilder
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -67,7 +67,7 @@ class ITSAStatusConnectorSpec extends TestSupport with MockHttpV2 with MockAudit
   }
 
   "getITSAStatusDetail" should {
-    import testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, successHttpResponse, successITSAStatusResponseModel}
+    import businessDetails.testConstants.ITSAStatusTestConstants.{badJsonHttpResponse, successHttpResponse, successITSAStatusResponseModel}
     val successResponse = successHttpResponse
     val successResponseBadJson = badJsonHttpResponse
     val notFoundResponse = notFoundHttpResponse

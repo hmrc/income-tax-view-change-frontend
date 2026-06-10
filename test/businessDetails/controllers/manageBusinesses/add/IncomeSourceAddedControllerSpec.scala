@@ -26,10 +26,10 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
-import testConstants.BusinessDetailsTestConstants.{year2018, year2019}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.*
+import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
+import businessDetails.testConstants.BusinessDetailsTestConstants.{year2018, year2019}
+import common.testConstants.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
+import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.*
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}

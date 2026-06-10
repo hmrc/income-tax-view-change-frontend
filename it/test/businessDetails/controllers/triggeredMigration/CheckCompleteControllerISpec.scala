@@ -31,7 +31,7 @@ import play.api.libs.ws.WSResponse
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
 class CheckCompleteControllerISpec extends ControllerISpecHelper {
 

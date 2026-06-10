@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
+import financials.testConstants.ANewCreditAndRefundModel
 import java.time.LocalDate
 import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import org.jsoup.Jsoup
@@ -29,7 +30,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
 import views.html.MoneyInYourAccountView
 

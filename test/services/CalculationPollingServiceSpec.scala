@@ -21,7 +21,7 @@ import mocks.services.{LockServiceDidNotAcquireMongoLock, MockCalculationService
 import models.liabilitycalculation._
 import org.scalatest.time.{Seconds, Span}
 import play.api.http.Status
-import testConstants.BaseTestConstants._
+import common.testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.mongo.lock.{LockService, MongoLockRepository}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

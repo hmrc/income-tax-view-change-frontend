@@ -24,8 +24,8 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants.testSessionId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{noIncomeDetails, notCompletedUIJourneySessionData}
+import common.testConstants.BaseTestConstants.testSessionId
+import common.testConstants.IncomeSourceDetailsTestConstants.{noIncomeDetails, notCompletedUIJourneySessionData}
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes

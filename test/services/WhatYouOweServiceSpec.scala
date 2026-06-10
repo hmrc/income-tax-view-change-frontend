@@ -29,9 +29,9 @@ import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingCharg
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import services.claimToAdjustPoa.ClaimToAdjustService
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import financials.testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import financials.testConstants.ChargeConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier

@@ -26,7 +26,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome2018and2019AndProp, businessInternational}
+import common.testConstants.IncomeSourceDetailsTestConstants.{businessIncome2018and2019AndProp, businessInternational}
 
 import scala.annotation.unused
 import scala.concurrent.Future
