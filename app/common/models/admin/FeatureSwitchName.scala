@@ -241,6 +241,6 @@ case object MortgageEvidence extends FeatureSwitchName {
 
 case object IdempotencyKeyForCreateIncomeSource extends FeatureSwitchName {
   override val name: String = "idempotency-key-for-create-income-source"
-  override val toString: String = "idempotency-key-for-create-income-source"
+  override val toString: String = "Idempotency Key for Create an Income Source"
 }
 
