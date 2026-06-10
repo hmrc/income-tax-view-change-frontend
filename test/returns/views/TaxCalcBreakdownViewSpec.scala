@@ -1050,21 +1050,10 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 2
-      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22209", "£5,000.99", "£15,000.00")
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.C22209","£15,000.00")
     }
 
     "A C22209 message" when {
-      "totalPensionContributionReliefs is missing" should {
-        "produce MissingFieldException" in {
-
-          val expectedException = intercept[MissingFieldException] {
-            taxCalcBreakdown(taxDueSummaryViewModelValidForC22209.copy(pensionContributionReliefs = None), taxYear2017, backUrl)
-          }
-
-          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Total Pension Contribution Reliefs"
-        }
-      }
-
       "getModifiedBaseTaxBand is missing" should {
         "produce MissingFieldException" in {
 
@@ -1311,31 +1300,10 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       val document: Document = Jsoup.parse(view.body)
 
       document.select(messageContentSelector).size shouldBe 2
-      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.agent.C22209", "£5,000.99", "£15,000.00")
+      document.select(messageContentSelector).get(1).text shouldBe messages("taxCal_breakdown.message.agent.C22209", "£15,000.00")
     }
 
     "A C22209 message" when {
-      "totalPensionContributionReliefs is missing" should {
-        "produce MissingFieldException" in {
-
-          val expectedException = intercept[MissingFieldException] {
-            taxCalcBreakdown(taxDueSummaryViewModelValidForC22209.copy(
-              pensionContributionReliefs = None,
-              lumpSumsBands = Some(Seq(TaxBands(
-                name = "BRT",
-                rate = 20.0,
-                income = 0,
-                taxAmount = 4000.00,
-                bandLimit = 15000,
-                apportionedBandLimit = 15000)
-              )),
-            ), taxYear2017, backUrl, isAgent = true)
-          }
-
-          expectedException.getMessage shouldBe "Missing Mandatory Expected Field: Total Pension Contribution Reliefs"
-        }
-      }
-
       "getModifiedBaseTaxBand is missing" should {
         "produce MissingFieldException" in {
 
