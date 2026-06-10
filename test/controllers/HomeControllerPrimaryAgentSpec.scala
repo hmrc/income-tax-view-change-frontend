@@ -19,13 +19,15 @@ package controllers
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import common.controllers.routes as appRoutes
 import common.enums.MTDPrimaryAgent
 import common.mocks.services.admin.MockFeatureSwitchService
-import common.models.admin.CreditsRefundsRepay
-import common.services.AuditingService
 import common.models.admin.*
 import common.models.itsaStatus.ITSAStatus
+import common.services.AuditingService
+import hub.controllers.HomeController
+import hub.views.html.HomeView
+import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import hub.views.html.newHomePage.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import obligations.services.NextUpdatesService
@@ -44,10 +46,6 @@ import play.api.test.Injecting
 import services.CreditService
 import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import hub.controllers.HomeController
-import hub.views.html.HomeView
-import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
-import hub.views.html.newHomePage.*
 
 import java.time.LocalDate
 import scala.annotation.unused
@@ -711,15 +709,6 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           }
         }
 
-        "redirect to the no income sources page when the agent user has no income sources" in new Setup {
-          setupMockAgentWithClientAuth(false)
-          mockNoIncomeSources()
-
-          val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient(isSupportingAgent = false))
-
-          status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(appRoutes.NoIncomeSourcesController.show(true).url)
-        }
       }
     }
   }

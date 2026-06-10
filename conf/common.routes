@@ -10,10 +10,6 @@ GET         /agents/not-authorised-to-view-client                         common
 
 GET         /agents/no-assignment                                         common.controllers.agent.NoAssignmentController.show()
 
-# No Income Sources Error page
-GET         /cannot-access-service                                        common.controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
-GET         /agents/cannot-access-service                                 common.controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
-
 #Feedback Routes
 GET         /feedback                                                     common.controllers.feedback.FeedbackController.show()
 GET         /agents/feedback                                              common.controllers.feedback.FeedbackController.showAgent()

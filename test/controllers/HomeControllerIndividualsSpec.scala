@@ -19,12 +19,15 @@ package controllers
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import common.controllers.routes as appRoutes
-import common.models.admin.{CreditsRefundsRepay, NewHomePage}
-import common.services.AuditingService
-import common.utils.sessionUtils.SessionKeys
 import common.models.admin.*
 import common.models.itsaStatus.ITSAStatus
+import common.services.AuditingService
+import common.utils.sessionUtils.SessionKeys
+import hub.controllers.HomeController
+import hub.views.html.HomeView
+import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
+import hub.views.html.helpers.injected.home.YourReportingObligationsTile
+import hub.views.html.newHomePage.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
@@ -47,11 +50,6 @@ import play.twirl.api.Html
 import services.CreditService
 import testConstants.ANewCreditAndRefundModel
 import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import hub.controllers.HomeController
-import hub.views.html.HomeView
-import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
-import hub.views.html.helpers.injected.home.YourReportingObligationsTile
-import hub.views.html.newHomePage.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -976,13 +974,4 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
       document.select("#payments-tile p:nth-child(2)").text shouldBe "1 January 2100"    }
   }
 
-  "redirect to the no income sources page when the user has no income sources" in new Setup {
-    setupMockUserAuth
-    mockNoIncomeSources()
-
-    val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
-
-    status(result) shouldBe SEE_OTHER
-    redirectLocation(result) shouldBe Some(appRoutes.NoIncomeSourcesController.show(false).url)
-  }
 }
