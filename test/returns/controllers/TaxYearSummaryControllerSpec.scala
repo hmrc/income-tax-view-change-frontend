@@ -49,7 +49,7 @@ import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import businessDetails.testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import financials.testConstants.FinancialDetailsTestConstants.*
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
-import common.testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
 import java.time.LocalDate
 import scala.annotation.unused
