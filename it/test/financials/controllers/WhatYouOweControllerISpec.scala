@@ -764,9 +764,9 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                             isElementVisibleById(s"money-in-your-account")(expectedValue = true),
                             elementTextBySelector("#money-in-your-account")(
                               messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}") + " " +
-                                messagesAPI("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
-                                messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}-2") + " " +
-                                messagesAPI("whatYouOwe.moneyOnAccount-3") + "."
+                                messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}-1") + " " +
+                                messagesAPI("whatYouOwe.moneyOnAccount-link") +
+                                messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}-2", "£300.00")
                             )
                           )
                         }

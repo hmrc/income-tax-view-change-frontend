@@ -141,10 +141,10 @@ class WhatYouOweControllerSpec extends MockAuthActions
     dunningLock = dunningLock,
     moneyInYourAccountUrl = if (isAgent) MoneyInYourAccountController.showAgent().url else MoneyInYourAccountController.show().url,
     creditAndRefundEnabled = true,
-    taxYearSummaryUrl = _ => if (isAgent)
-      returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
+    taxYearSummaryUrl = taxYearEnd => if (isAgent)
+      returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYearEnd).url
     else
-      returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
+      returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYearEnd).url,
     claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(ctaViewModel(adjustPaymentsOnAccountFSEnabled, poaTaxYear)),
     lpp2Url = LPP2Url,
     adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url,
@@ -167,6 +167,10 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
     when(mockDateServiceInterface.getCurrentDate).thenReturn(fixedDate)
     when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
+    when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
+    when(mockDateServiceInjected.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
+    when(mockDateServiceInjected.getCurrentTaxYearStart).thenReturn(LocalDate.of(fixedDate.getYear, 4, 6))
+    when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(TaxYear(fixedDate.getYear, fixedDate.getYear + 1))
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -272,7 +276,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
 
                 val result = action(fakeRequest)
-                contentAsString(result).contains("adjust payments on account for the 2017 to 2018 tax year") shouldBe true
+                contentAsString(result).contains("Adjust your payments on account for the 2017 to 2018 tax year") shouldBe true
               }
               "there are no adjustable POAs" in {
                 setupMockSuccess(mtdUserRole)
