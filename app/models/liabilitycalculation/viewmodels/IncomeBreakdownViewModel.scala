@@ -63,8 +63,7 @@ object IncomeBreakdownViewModel {
           chargeableAllOtherIncomeReceivedWhilstAbroad = c.foreignIncome.flatMap(fi => fi.chargeableAllOtherIncomeReceivedWhilstAbroad),
           totalOverseasIncomeAndGains = c.foreignIncome.flatMap(fi => fi.overseasIncomeAndGains.flatMap(oiag => Some(oiag.gainAmount))),
           totalForeignBenefitsAndGifts = c.foreignIncome.flatMap(fi => fi.totalForeignBenefitsAndGifts),
-          savingsAndGainsTaxableIncome = c.taxCalculation.flatMap(tc =>
-            Some(tc.incomeTax).flatMap(it => it.savingsAndGains.flatMap(sag => Some(sag.taxableIncome)))),
+          savingsAndGainsTaxableIncome = c.savingsAndGainsIncome.flatMap(x => x.totalUkSavingsAndGains) map { i => i: BigDecimal},
           totalOfAllGains = c.chargeableEventGainsIncome.flatMap(cegi => Some(cegi.totalOfAllGains)),
           dividendsTaxableIncome = c.dividendsIncome.flatMap(di => di.totalUkDividends).map(BigDecimal(_)),
           otherIncome = c.otherIncome.map(oi => oi.totalOtherIncome),
