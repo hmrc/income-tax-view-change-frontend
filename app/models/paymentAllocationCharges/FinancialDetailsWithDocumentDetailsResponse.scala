@@ -17,7 +17,7 @@
 package models.paymentAllocationCharges
 
 import models.financialDetails.{DocumentDetail, FinancialDetail}
-import models.readNullableList
+import common.models.readNullableList
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Json, OWrites, Reads, __}
 

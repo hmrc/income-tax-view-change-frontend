@@ -18,7 +18,7 @@ package common.mocks.services
 
 import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import common.services.ITSAStatusService
-import models.incomeSourceDetails.*
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

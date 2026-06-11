@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
+import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.BeforeSubmissionPage
 import play.api.Logger
@@ -33,7 +34,6 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{Mode, NormalMode}
-import common.services.SessionService
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused

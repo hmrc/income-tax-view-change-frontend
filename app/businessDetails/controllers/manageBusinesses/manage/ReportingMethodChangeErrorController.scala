@@ -17,7 +17,7 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.IncomeSourcesUtils
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
@@ -32,7 +32,6 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.exceptions.MissingSessionKey
 import common.models.core.IncomeSourceId
-import common.services.SessionService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

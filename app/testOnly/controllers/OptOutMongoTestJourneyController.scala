@@ -16,10 +16,10 @@
 
 package testOnly.controllers
 
+import businessDetails.services.SessionService
 import common.config.FrontendAppConfig
 import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.models.UIJourneySessionData
-import common.services.SessionService
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

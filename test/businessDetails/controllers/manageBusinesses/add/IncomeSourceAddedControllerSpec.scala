@@ -16,7 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.services.IncomeSourceDetailsService
+import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import models.incomeSourceDetails.*
 import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
@@ -40,14 +41,16 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockITSAStatusService, MockSessionService}
 import common.models.UIJourneySessionData
-import common.services.{DateService, DateServiceInterface, SessionService}
+import common.services.{DateService, DateServiceInterface}
 import obligations.mocks.services.MockNextUpdatesService
 
 import java.time.LocalDate
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdatesService with MockSessionService with MockITSAStatusService {
+class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdatesService
+  with MockSessionService with MockITSAStatusService
+  with MockIncomeSourceDetailsService{
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings

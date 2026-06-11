@@ -26,9 +26,9 @@ import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage,
 import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.creditsandrefunds.CreditsModel
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import obligations.models.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.OK

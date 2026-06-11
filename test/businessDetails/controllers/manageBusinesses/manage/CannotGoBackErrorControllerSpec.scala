@@ -16,13 +16,14 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

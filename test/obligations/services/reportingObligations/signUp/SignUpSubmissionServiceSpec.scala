@@ -17,8 +17,8 @@
 package obligations.services.reportingObligations.signUp
 
 import common.services.{AuditingService, DateService}
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Voluntary}
+import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}

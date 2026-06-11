@@ -16,8 +16,8 @@
 
 package obligations.services.reportingObligations.optOut.optoutproposition
 
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, NoStatus, Voluntary}
+import models.incomeSourceDetails.TaxYear
 import obligations.services.reportingObligations.optOut.OptOutTestSupport.*
 import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import testUtils.UnitSpec

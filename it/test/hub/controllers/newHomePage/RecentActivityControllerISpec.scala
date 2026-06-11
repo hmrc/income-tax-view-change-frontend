@@ -22,9 +22,9 @@ import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{FeatureSwitchName, NewHomePage, RecentActivity}
 import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import obligations.models.*
 import play.api.http.Status.{OK, SEE_OTHER}
 import testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
