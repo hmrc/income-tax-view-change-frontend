@@ -21,7 +21,7 @@
 @import common.views.html.layouts.unifiedLayout
 @import common.config.FrontendAppConfig
 @import common.viewUtils.ExternalUrlHelper
-@import models.itsaStatus.ITSAStatus.ITSAStatus
+@import common.models.itsaStatus.ITSAStatus.ITSAStatus
 @import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 @import obligations.services.reportingObligations.optOut.OptOutProposition
 
@@ -53,7 +53,6 @@
     pageTitle = messages("nextUpdates.heading"),
     backUrl = Some(backUrl),
     isAgent = user.isAgent,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     origin = origin) {
 

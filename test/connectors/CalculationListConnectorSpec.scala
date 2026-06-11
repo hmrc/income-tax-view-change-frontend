@@ -18,8 +18,8 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.mocks.{MockAuditingService, MockHttpV2}
+import common.models.core.Nino
 import models.calculationList.{CalculationListErrorModel, CalculationListResponseModel}
-import models.core.Nino
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json
@@ -38,7 +38,6 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
   trait Setup {
     def getAppConfig: FrontendAppConfig =
       new FrontendAppConfig(app.injector.instanceOf[ServicesConfig], app.injector.instanceOf[Configuration]) {
-        override lazy val itvcProtectedService: String = "http://localhost:9999"
         override lazy val incomeTaxCalculationService: String = "http://localhost:9999"
       }
 

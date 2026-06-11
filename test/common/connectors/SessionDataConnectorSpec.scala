@@ -16,9 +16,9 @@
 
 package common.connectors
 
-import models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
-import models.sessionData.SessionDataModel
-import models.sessionData.SessionDataPostResponse.SessionDataPostSuccess
+import common.models.sessionData.SessionDataGetResponse.SessionDataGetSuccess
+import common.models.sessionData.SessionDataModel
+import common.models.sessionData.SessionDataPostResponse.SessionDataPostSuccess
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.OK

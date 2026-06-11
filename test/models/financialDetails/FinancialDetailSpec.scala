@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import enums.ChargeType._
+import financials.models.ChargeType.*
 import models.financialDetails.FinancialDetail.{getMessageKeyByTypes, getMessageKeyForChargeType, getMessageKeyForMainType}
 import testConstants.FinancialDetailsTestConstants.financialDetail
 import testUtils.UnitSpec

@@ -19,7 +19,7 @@ package common.connectors
 import common.enums.MTDIndividual
 import common.helpers.{ComponentSpecBase, WiremockHelper}
 import common.models.auth.AuthorisedAndEnrolledRequest
-import models.core.{AccountingPeriodModel, AddressModel}
+import common.models.core.{AccountingPeriodModel, AddressModel}
 import models.incomeSourceDetails.*
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -44,7 +44,7 @@ class IncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val nino = "AB123456A"
           val testMtditid = "XAITSA123456"
 
-          val url = s"/income-tax-view-change/income-sources/$testMtditid"
+          val url = s"/income-tax-business-details/income-sources/$testMtditid"
 
           val business =
             BusinessDetailsModel(
@@ -102,7 +102,7 @@ class IncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBase {
         "return IncomeSourceDetailsError with some response body" in {
           val testMtditid = "XAITSA123456"
 
-          val url = s"/income-tax-view-change/income-sources/$testMtditid"
+          val url = s"/income-tax-business-details/income-sources/$testMtditid"
 
           implicit val testAuthorisedAndEnrolled: AuthorisedAndEnrolledRequest[_] =
             AuthorisedAndEnrolledRequest(

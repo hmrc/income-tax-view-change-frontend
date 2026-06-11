@@ -19,9 +19,9 @@ package financials.controllers
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
+import common.models.admin.CreditsRefundsRepay
 import common.services.DateServiceInterface
 import mocks.services.{MockCreditService, MockRepaymentService}
-import models.admin.CreditsRefundsRepay
 import models.financialDetails.FinancialDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

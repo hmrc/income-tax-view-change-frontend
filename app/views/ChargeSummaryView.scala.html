@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.common.implicits.ImplicitDateFormatterImpl
 @import models.financialDetails.ChargeType
 @import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
@@ -319,7 +319,7 @@
     }
 }
 
-@mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent, btaNavPartial = viewModel.btaNavPartial,
+@mainTemplate(pageTitle = messages(viewModel.pageTitle), backUrl = Some(viewModel.backUrl), isAgent = viewModel.isAgent,
     useFallbackBackLink = true, gatewayPage = viewModel.gatewayPage, btaAndPtaServiceNavigation = viewModel.serviceNavigationPartial) {
 
     @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {

@@ -22,9 +22,9 @@ import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.PaymentHistoryPage
 import common.implicits.ImplicitDateFormatter
+import common.models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
 import common.services.{AuditingService, DateServiceInterface}
 import forms.utils.SessionKeys.gatewayPage
-import models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
 import models.financialDetails.TransactionUtils
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
@@ -87,7 +87,6 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
           backUrl = backUrl,
           saUtr = user.saUtr,
           viewModel = viewModel,
-          btaNavPartial = user.btaNavPartial,
           serviceNavigationPartial = user.serviceNavigationPartial,
           groupedPayments = paymentHistoryEntries,
           paymentHistoryAndRefundsEnabled = isEnabled(PaymentHistoryRefunds)

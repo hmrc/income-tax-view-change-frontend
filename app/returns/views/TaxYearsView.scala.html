@@ -40,7 +40,6 @@
     isMortgageEvidenceEnabled: Boolean,
     earliestSubmissionTaxYear: Int,
     isAgent: Boolean = false,
-    btaNavPartial: Option[Html] = None,
     serviceNavigationPartial: Option[ServiceNavigation] = None,
     origin: Option[String] = None,
     errorTaxYear: Option[TaxYear] = None,
@@ -105,7 +104,6 @@
     pageTitle = messages("taxYears.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = btaNavPartial,
     useFallbackBackLink = true,
     btaAndPtaServiceNavigation = serviceNavigationPartial
 ) {

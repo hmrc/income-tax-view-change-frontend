@@ -19,8 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import jakarta.inject.Singleton
-import models.UIJourneySessionData
-import models.admin.OverseasBusinessAddress
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, ChooseSoleTraderAddressUserAnswer, Country}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -32,6 +30,8 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.models.UIJourneySessionData
+import common.models.admin.OverseasBusinessAddress
 import common.services.SessionService
 
 import javax.inject.Inject
@@ -81,11 +81,12 @@ class ChooseSoleTraderAddressController @Inject()(
   private def handleValidForm(
                                isAgent: Boolean,
                                validForm: ChooseSoleTraderAddressForm,
+                               isTriggeredMigration: Boolean
                              )(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
 
     val formResponse = validForm.response
     lazy val isNewAddress = ChooseSoleTraderAddressUserAnswer(None, None, None, None, None, None, true)
-    lazy val isAddressInTheUkPage = Redirect(routes.IsTheNewAddressInTheUKController.show(isAgent))
+    lazy val isAddressInTheUkPage = Redirect(routes.IsTheNewAddressInTheUKController.show(isAgent, isTriggeredMigration))
     lazy val showGenericErrorPage = errorHandler(isAgent).showInternalServerError()
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, SelfEmployment)).flatMap {
@@ -104,8 +105,8 @@ class ChooseSoleTraderAddressController @Inject()(
                   case (Some(addressLine1), postcode@Some(_)) if addressLine1.nonEmpty && postcode.nonEmpty => Some(Address(Seq(addressLine1), postcode, Some(Country(Some("GB"), Some("United Kingdom")))))
                   case _ => None
                 }
-                val redirectCallByType = if isAgent then routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment)
-                else routes.IncomeSourceCheckDetailsController.show(SelfEmployment)
+                val redirectCallByType = if isAgent then routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
+                else routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
                 val redirect: Result = Redirect(redirectCallByType)
                 val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(
                   chooseSoleTraderAddress = Some(previousBusinessAddressDetails),
@@ -149,8 +150,7 @@ class ChooseSoleTraderAddressController @Inject()(
     }
   }
 
-  def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent = isAgent).async { implicit user =>
-
+  def show(isAgent: Boolean, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent = isAgent, triggeredMigrationPage = isTriggeredMigration).async { implicit user =>
     if (isEnabled(OverseasBusinessAddress)) {
       val chooseSoleTraderAddressRadioOptionsWithIndex: Seq[(String, Int)] = buildAddressOptions(user)
       
@@ -161,7 +161,7 @@ class ChooseSoleTraderAddressController @Inject()(
       Future(
         Ok(
           view(
-            postAction = routes.ChooseSoleTraderAddressController.submit(isAgent),
+            postAction = routes.ChooseSoleTraderAddressController.submit(isAgent, isTriggeredMigration),
             isAgent = isAgent,
             form = form,
             chooseSoleTraderAddressRadioOptionsWithIndex = chooseSoleTraderAddressRadioOptionsWithIndex,
@@ -175,8 +175,9 @@ class ChooseSoleTraderAddressController @Inject()(
     }
   }
 
-  def submit(isAgent: Boolean): Action[AnyContent] =
-    authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def submit(isAgent: Boolean, isTriggeredMigration: Boolean): Action[AnyContent] =
+
+    authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
       val addressOptions: Seq[(String, Int)] = buildAddressOptions(user)
       
       val radioButtonValues = addressOptions.map { case (_, id) => id.toString }
@@ -188,7 +189,7 @@ class ChooseSoleTraderAddressController @Inject()(
             Future {
               BadRequest(
                 view(
-                  postAction = routes.ChooseSoleTraderAddressController.submit(isAgent),
+                  postAction = routes.ChooseSoleTraderAddressController.submit(isAgent, isTriggeredMigration),
                   isAgent = isAgent,
                   form = formWithErrors,
                   chooseSoleTraderAddressRadioOptionsWithIndex = addressOptions,
@@ -197,7 +198,9 @@ class ChooseSoleTraderAddressController @Inject()(
               )
             }
           },
-          validForm => handleValidForm(isAgent, validForm)
+          validForm => {
+            handleValidForm(isAgent, validForm, isTriggeredMigration)
+          }
         )
     }
 }

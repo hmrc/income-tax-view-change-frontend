@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.IncomeTaxCalculationConnector
 import common.enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
-import models.admin.PostFinalisationAmendmentsR18
+import common.models.admin.PostFinalisationAmendmentsR18
 import models.liabilitycalculation.{LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier

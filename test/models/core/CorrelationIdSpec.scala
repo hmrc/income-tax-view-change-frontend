@@ -16,6 +16,7 @@
 
 package models.core
 
+import common.models.core.CorrelationId
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier
 

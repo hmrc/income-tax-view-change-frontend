@@ -14,60 +14,96 @@
  * limitations under the License.
  *@
 
-@import implicits.ImplicitCurrencyFormatter._
+@import financials.implicits.ImplicitCurrencyFormatter._
 @import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
-@import views.html.components.table
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this(mainTemplate: unifiedLayout,
-      h1WithCaption: h1WithCaption,
-      p: p,
-      table : table
+@this(
+        mainTemplate: unifiedLayout,
+        h1WithCaption: h1WithCaption,
+        p: p,
+        govukTable: GovukTable
 )
 
-@(incomeBreakdownViewModel: IncomeBreakdownViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, btaNavPartial: Option[Html] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
+@(incomeBreakdownViewModel: IncomeBreakdownViewModel, taxYear: Int, backUrl: String, isAgent: Boolean = false, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages)
+
+@tableRow(messageKey: String, dataItem: Option[BigDecimal], isNegative: Boolean = false): Option[Seq[TableRow]] = @{
+    dataItem.map { data =>
+        Seq(
+            TableRow(
+                attributes = Map("id" -> s"$messageKey-row"),
+                content = Text(messages(s"income_breakdown.table.$messageKey")),
+            ),
+            TableRow(
+                attributes = Map("id" -> s"$messageKey-value"),
+                content = HtmlContent(if (isNegative) data.toNegativeCurrency else data.toCurrency),
+                classes = "govuk-table__cell--numeric"
+            )
+        )
+    }
+}
+
+@totalRow(messageKey: String, dataItem: Option[BigDecimal]): Seq[TableRow] = @{
+    Seq(
+        TableRow(
+            attributes = Map("id" -> s"$messageKey-row"),
+            content = Text(messages(s"$messageKey")),
+            classes = "govuk-table__header total-section"
+        ),
+        TableRow(
+            attributes = Map("id" -> s"$messageKey-value"),
+            content = HtmlContent(dataItem.getOrElse(BigDecimal(0)).toCurrency),
+            classes = "govuk-table__header govuk-table__header--numeric total-section"
+        )
+    )
+}
 
 @mainTemplate(pageTitle = messages("income_breakdown.heading", s"${taxYear - 1}", s"$taxYear"), backUrl = Some(backUrl),
-    isAgent = isAgent, btaNavPartial = btaNavPartial, useFallbackBackLink = true, btaAndPtaServiceNavigation = serviceNavigationPartial) {
+    isAgent = isAgent, useFallbackBackLink = true, btaAndPtaServiceNavigation = serviceNavigationPartial) {
 
     @h1WithCaption(
         heading = messages("income_breakdown.heading"),
         captionMsg = messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear")
     )
 
-    @table(
-        tableCaptionMessage = "income_breakdown.heading",
-        tableCaptionSecondaryMessage = messages("income_breakdown.dates", s"${taxYear - 1}", s"$taxYear"),
-        tableCaptionId = "income_breakdown" ,
-        headerRow = ("income_breakdown.table.header", "income_breakdown.table.header.amount"),
-        rows = Seq(
-            ("employment", incomeBreakdownViewModel.totalPayeEmploymentAndLumpSumIncome, false),
-            ("benefits_received", incomeBreakdownViewModel.totalBenefitsInKind, false),
-            ("allowable_expenses", incomeBreakdownViewModel.totalEmploymentExpenses, true),
-            ("self_employment", incomeBreakdownViewModel.totalSelfEmploymentProfit, false),
-            ("income_from_partnerships", incomeBreakdownViewModel.incomeFromPartnerships, false),
-            ("property", incomeBreakdownViewModel.totalPropertyProfit, false),
-            ("profit_uk_furnished_holiday", incomeBreakdownViewModel.totalFHLPropertyProfit, false),
-            ("profit_foreign_property", incomeBreakdownViewModel.totalForeignPropertyProfit, false),
-            ("profit_eea_holiday", incomeBreakdownViewModel.totalEeaFhlProfit, false),
-            ("foreign_dividends_income", incomeBreakdownViewModel.chargeableForeignDividends, false),
-            ("foreign_saving_income", incomeBreakdownViewModel.chargeableForeignSavingsAndGains, false),
-            ("foreign_pensions", incomeBreakdownViewModel.chargeableOverseasPensionsStateBenefitsRoyalties, false),
-            ("foreign_income_abroad", incomeBreakdownViewModel.chargeableAllOtherIncomeReceivedWhilstAbroad, false),
-            ("foreign_income_gains", incomeBreakdownViewModel.totalOverseasIncomeAndGains, false),
-            ("foreign_benefits_gifts", incomeBreakdownViewModel.totalForeignBenefitsAndGifts, false),
-            ("bbsi", incomeBreakdownViewModel.savingsAndGainsTaxableIncome, false),
-            ("gains_insurance", incomeBreakdownViewModel.totalOfAllGains, false),
-            ("dividends", incomeBreakdownViewModel.dividendsTaxableIncome, false),
-            ("occupational_pensions", incomeBreakdownViewModel.totalOccupationalPensionIncome, false),
-            ("state_benefit", incomeBreakdownViewModel.totalStateBenefitsIncome, false),
-            ("share_schemes", incomeBreakdownViewModel.totalShareSchemesIncome, false),
-            ("other_income", incomeBreakdownViewModel.otherIncome, false)
-        ),
-        totalRow = Some(("income_breakdown.total", incomeBreakdownViewModel.totalIncomeReceived))
-    )
+    @defining(
+        Seq(
+            tableRow("employment", incomeBreakdownViewModel.totalPayeEmploymentAndLumpSumIncome),
+            tableRow("benefits_received", incomeBreakdownViewModel.totalBenefitsInKind),
+            tableRow("allowable_expenses", incomeBreakdownViewModel.totalEmploymentExpenses, true),
+            tableRow("self_employment", incomeBreakdownViewModel.totalSelfEmploymentProfit),
+            tableRow("income_from_partnerships", incomeBreakdownViewModel.incomeFromPartnerships),
+            tableRow("property", incomeBreakdownViewModel.totalPropertyProfit),
+            tableRow("profit_uk_furnished_holiday", incomeBreakdownViewModel.totalFHLPropertyProfit),
+            tableRow("profit_foreign_property", incomeBreakdownViewModel.totalForeignPropertyProfit),
+            tableRow("profit_eea_holiday", incomeBreakdownViewModel.totalEeaFhlProfit),
+            tableRow("foreign_dividends_income", incomeBreakdownViewModel.chargeableForeignDividends),
+            tableRow("foreign_saving_income", incomeBreakdownViewModel.chargeableForeignSavingsAndGains),
+            tableRow("foreign_pensions", incomeBreakdownViewModel.chargeableOverseasPensionsStateBenefitsRoyalties),
+            tableRow("foreign_income_abroad", incomeBreakdownViewModel.chargeableAllOtherIncomeReceivedWhilstAbroad),
+            tableRow("foreign_income_gains", incomeBreakdownViewModel.totalOverseasIncomeAndGains),
+            tableRow("foreign_benefits_gifts", incomeBreakdownViewModel.totalForeignBenefitsAndGifts),
+            tableRow("bbsi", incomeBreakdownViewModel.savingsAndGainsTaxableIncome),
+            tableRow("gains_insurance", incomeBreakdownViewModel.totalOfAllGains),
+            tableRow("dividends", incomeBreakdownViewModel.dividendsTaxableIncome),
+            tableRow("occupational_pensions", incomeBreakdownViewModel.totalOccupationalPensionIncome),
+            tableRow("state_benefit", incomeBreakdownViewModel.totalStateBenefitsIncome),
+            tableRow("share_schemes", incomeBreakdownViewModel.totalShareSchemesIncome),
+            tableRow("other_income", incomeBreakdownViewModel.otherIncome)
+        ).flatten :+ totalRow("income_breakdown.total", incomeBreakdownViewModel.totalIncomeReceived)
+    ) { tableRows =>
+        @govukTable(Table(
+            caption = Some(messages("income_breakdown.heading") + " " + messages("income_breakdown.dates", s"${taxYear-1}", s"$taxYear")),
+            captionClasses = "govuk-table__caption--m govuk-visually-hidden",
+            rows = tableRows,
+            head = Some(Seq(
+                HeadCell(content = Text(messages("income_breakdown.table.header"))),
+                HeadCell(content = Text(messages("income_breakdown.table.header.amount")), classes = "govuk-table__header--numeric")
+            ))
+        ))
+    }
 
     @p(){@messages("income_breakdown.guidance_software")}
 }

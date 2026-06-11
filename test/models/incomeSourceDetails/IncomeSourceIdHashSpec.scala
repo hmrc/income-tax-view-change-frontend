@@ -17,9 +17,9 @@
 package models.incomeSourceDetails
 
 import common.exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
-import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import common.models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
+import common.models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
 import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
 import testUtils.UnitSpec
 

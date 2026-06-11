@@ -19,7 +19,7 @@ package models.financialDetails
 import common.config.FrontendAppConfig
 import common.exceptions.MissingFieldException
 import common.services.{DateService, DateServiceInterface}
-import enums.CodingOutType.CODING_OUT_CLASS2_NICS
+import financials.models.CodingOutType.CODING_OUT_CLASS2_NICS
 import models.financialDetails.ChargeItem.filterAllowedCharges
 import testConstants.BaseTestConstants.app
 import testConstants.ChargeConstants

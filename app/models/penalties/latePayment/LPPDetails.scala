@@ -43,9 +43,9 @@ case class LPPDetails(
                        penaltyChargeReference: Option[String],
                        penaltyChargeDueDate: Option[LocalDate],
                        appealInformation: Option[Seq[AppealInformationType]],
-                       principalChargeDocNumber: String,
+                       principalChargeDocNumber: Option[String],
                        principalChargeMainTransaction: String,
-                       principalChargeSubTransaction: String,
+                       principalChargeSubTransaction: Option[String],
                        principalChargeBillingFrom: LocalDate,
                        principalChargeBillingTo: LocalDate,
                        principalChargeDueDate: LocalDate,
@@ -77,9 +77,9 @@ object LPPDetails extends JsonUtils {
         penaltyChargeReference <- (json \ "penaltyChargeReference").validateOpt[String]
         penaltyChargeDueDate <- (json \ "penaltyChargeDueDate").validateOpt[LocalDate]
         appealInformation <- (json \ "appealInformation").validateOpt[Seq[AppealInformationType]]
-        principalChargeDocNumber <- (json \ "principalChargeDocNumber").validate[String]
+        principalChargeDocNumber <- (json \ "principalChargeDocNumber").validateOpt[String]
         principalChargeMainTransaction <- (json \ "principalChargeMainTransaction").validate[String]
-        principalChargeSubTransaction <- (json \ "principalChargeSubTransaction").validate[String]
+        principalChargeSubTransaction <- (json \ "principalChargeSubTransaction").validateOpt[String]
         principalChargeBillingFrom <- (json \ "principalChargeBillingFrom").validate[LocalDate]
         principalChargeBillingTo <- (json \ "principalChargeBillingTo").validate[LocalDate]
         principalChargeDueDate <- (json \ "principalChargeDueDate").validate[LocalDate]

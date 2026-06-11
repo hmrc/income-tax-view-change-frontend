@@ -21,10 +21,11 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
+import common.models.admin.CreditsRefundsRepay
 import common.services.DateServiceInterface
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.*
-import models.core.SelfServeTimeToPayJourneyResponseModel
+import common.models.admin.*
+import common.models.core.SelfServeTimeToPayJourneyResponseModel
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.*
@@ -421,8 +422,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
-                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = false),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = false),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
                       isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
                       isElementVisibleById("no-payments-due")(expectedValue = true)
@@ -450,8 +451,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
-                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = false),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = false),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
                       isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
                       isElementVisibleById("no-payments-due")(expectedValue = true)
@@ -491,8 +492,8 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
-                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
-                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
+                      isElementVisibleById("sa-note-1-migrated-1")(expectedValue = false),
+                      isElementVisibleById("sa-note-1-migrated-2")(expectedValue = false),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
                       isElementVisibleById("outstanding-charges-note-migrated")(expectedValue = true),
                       isElementVisibleById("no-payments-due")(expectedValue = true)

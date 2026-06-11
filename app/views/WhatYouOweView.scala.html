@@ -15,7 +15,7 @@
  *@
 
 @import _root_.common.implicits.ImplicitDateFormatterImpl
-@import _root_.implicits.ImplicitCurrencyFormatter._
+@import _root_.financials.implicits.ImplicitCurrencyFormatter._
 @import common.auth.MtdItUser
 @import models.financialDetails.WhatYouOweViewModel
 @import common.services.DateServiceInterface
@@ -41,6 +41,7 @@
         govukButton: GovukButton,
         mainTemplate: unifiedLayout,
         saNoteParagraph: SaNoteParagraph,
+        saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
         govukWarningText: GovukWarningText,
         taxYearSummaryLink: TaxYearSummaryLink,
         paymentsMadeContent: PaymentsMadeContent,
@@ -67,7 +68,6 @@
     isAgent = user.isAgent,
     pageTitle = getHeading,
     backUrl = Some(viewModel.backUrl),
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
@@ -194,11 +194,18 @@
         origin = origin,
         viewModel = viewModel)
 
+    @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
+    @saPaymentsPreMTDParagraph(utr = viewModel.utr,
+        claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+        adjustPoaUrl = viewModel.adjustPoaUrl,
+        isAgent = user.isAgent)
+    } else {
     @saNoteParagraph(utr = viewModel.utr,
         claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
         selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl,
         adjustPoaUrl = viewModel.adjustPoaUrl,
         budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL)
+    }
 
     @if(viewModel.creditAndRefundEnabled) {
         @viewModel.whatYouOweChargesList.availableCredit.map { ac =>

@@ -21,14 +21,12 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.Header
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 @import common.views.html.layouts.scripts.Scripts
 @import common.config.FrontendAppConfig
 @import common.views.html.helpers.injected.BackLinkWithFallback
 @import common.enums.GatewayPage._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderUrls
-@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.header.v2.HeaderNames
 
 
 @this(
@@ -42,7 +40,6 @@
     hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
     backLink: back_link,
     backLinkFallback: BackLinkWithFallback,
-    languageSwitch: HmrcLanguageSelect,
     mainContentLayout: mainContentLayout,
     scripts: Scripts,
     a: link
@@ -59,7 +56,6 @@
     isAgent: Boolean = false,
     itsaTaxYear: Option[Int] = None,
     form: Option[Form[_]] = None,
-    btaNavPartial: Option[Html] = None,
     btaAndPtaServiceNavigation: Option[ServiceNavigation] = None,
     origin: Option[String] = None,
     useFallbackBackLink: Boolean = true,
@@ -69,32 +65,16 @@
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 
-@feedbackUrl = @{
-    if(isAgent) appConfig.agentBetaFeedbackUrl
-    else appConfig.betaFeedbackUrl
-}
-
 @feedbackBanner = {
-    @if(useGovUkRebrand) {
-        @messages("betaBanner.newService.new")
-        @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link.new", id=Some("agent-feedback-url"), target=Some("_blank"), outerMessage=messages("base.fullstop")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link.new", target=Some("_blank"), id=Some("individuals-feedback-url"), outerMessage=messages("base.fullstop")) }
-    } else {
-        @messages("betaBanner.newService")
-        @messages("betaBanner.your")
-        @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("agent-feedback-url")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback", id=Some("individuals-feedback-url")) }
-        @messages("betaBanner.improve")
-    }
+    @messages("betaBanner.newService.new")
+    @if(isAgent) { @a(link=appConfig.agentBetaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link.new", id=Some("agent-feedback-url"), target=Some("_blank"), outerMessage=messages("base.fullstop")) } else { @a(link=appConfig.betaFeedbackUrl, classes="govuk-link", messageKey="betaBanner.feedback.link.new", target=Some("_blank"), id=Some("individuals-feedback-url"), outerMessage=messages("base.fullstop")) }
 }
-
-@useGovUkRebrand = @{ appConfig.itvcRebrand }
 
 @defaultServiceNavigation(serviceName: Option[String], serviceUrl: String) = @{
     ServiceNavigation(serviceName = serviceName, serviceUrl = Some(serviceUrl)).withLanguageToggle()
 }
 
 @siteHeader = @{
-
-    val oldServiceName = if (isAgent) Some(messages("agent.header.serviceName")) else Some(messages("header.serviceName"))
 
     val serviceName = {
         (showServiceName, isAgent) match {
@@ -107,40 +87,18 @@
     val serviceUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url
         else hub.controllers.routes.HomeController.show().url
 
-    if(useGovUkRebrand) {
-        val navBar = btaAndPtaServiceNavigation match {
-            case Some(nav) => nav.copy(serviceName = serviceName, serviceUrl = Some(serviceUrl)).withLanguageToggle()
-            case None => defaultServiceNavigation(serviceName, serviceUrl)
-        }
+    val navBar = btaAndPtaServiceNavigation match {
+        case Some(nav) => nav.copy(serviceName = serviceName, serviceUrl = Some(serviceUrl)).withLanguageToggle()
+        case None => defaultServiceNavigation(serviceName, serviceUrl)
+    }
 
-        hmrcHeader(HeaderParams(
-            headerUrls = HeaderUrls(
-                homepageUrl = ExternalUrlHelper.homepageLink,
-                serviceUrl = serviceUrl,
-                signOutHref = Some(InternalUrlHelper.signoutUrl)
-            ),
-            banners = Banners(
-                userResearchBanner = Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
-                displayHmrcBanner = false,
-                phaseBanner = Some(
-                    PhaseBanner(
-                        tag = Some(Tag(content = Text("Beta"))),
-                        content = HtmlContent(feedbackBanner)
-                    )
-                ),
-                additionalBannersBlock = None
-            ),
-            language = CurrentLanguage(),
-            serviceNavigation = Some(navBar)
-        ))
-    } else {
-        hmrcHeader(Header(
+    hmrcHeader(HeaderParams(
+        headerUrls = HeaderUrls(
             homepageUrl = ExternalUrlHelper.homepageLink,
-            serviceName = if(showServiceName) oldServiceName else None,
-            serviceUrl = serviceUrl,
-            language = CurrentLanguage(),
-            signOutHref = Some(InternalUrlHelper.signoutUrl),
-            userResearchBanner =  Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
+            signOutHref = Some(InternalUrlHelper.signoutUrl)
+        ),
+        banners = Banners(
+            userResearchBanner = Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
             displayHmrcBanner = false,
             phaseBanner = Some(
                 PhaseBanner(
@@ -149,8 +107,10 @@
                 )
             ),
             additionalBannersBlock = None
-        ))
-    }
+        ),
+        language = CurrentLanguage(),
+        serviceNavigation = Some(navBar)
+    ))
 }
 
 @head = {
@@ -172,20 +132,6 @@
 }
 
 @beforeContentBlock = {
-    @if(!useGovUkRebrand) {
-        @{btaNavPartial.getOrElse(())}
-    }
-
-        @if(!useGovUkRebrand) {
-            <div id="language-switch">
-                @languageSwitch(LanguageSelect(
-                    if (messages.lang.code == "cy") Cy else En,
-                    (En, InternalUrlHelper.switchLocaleToEnglishUrl),
-                    (Cy, InternalUrlHelper.switchLocaleToWelshUrl)
-                ))
-            </div>
-        }
-
         @if(useFallbackBackLink) {
             @backUrl.map(backLinkFallback(_, gatewayPage))
         } else {

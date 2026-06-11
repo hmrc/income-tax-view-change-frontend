@@ -26,12 +26,12 @@ import common.services.agent.ClientDetailsService
 import common.utils.AuthUtils.*
 import common.utils.sessionUtils.SessionKeys
 import hub.forms.agent.ClientsUTRForm
-import models.sessionData.SessionCookieData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.models.sessionData.SessionCookieData
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import hub.views.html.agent.EnterClientsUTRView

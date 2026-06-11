@@ -20,8 +20,6 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRo
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessesRoutes
 import businessDetails.services.IncomeSourceDetailsService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import models.UIJourneySessionData
-import models.core.IncomeSourceId
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import play.api.Logger
@@ -34,6 +32,8 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.models.UIJourneySessionData
+import common.models.core.IncomeSourceId
 import common.services.{DateServiceInterface, SessionService}
 
 import java.time.LocalDate

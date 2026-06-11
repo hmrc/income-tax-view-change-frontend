@@ -20,10 +20,10 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.models.UIJourneySessionData
+import common.models.core.NormalMode
 import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.UIJourneySessionData
-import models.core.NormalMode
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

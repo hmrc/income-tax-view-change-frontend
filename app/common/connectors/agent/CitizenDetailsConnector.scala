@@ -18,7 +18,7 @@ package common.connectors.agent
 
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
-import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
+import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel, CitizenDetailsResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK

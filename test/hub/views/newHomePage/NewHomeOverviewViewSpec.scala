@@ -73,7 +73,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
                    ctaViewModel: WYOClaimToAdjustViewModel = WYOClaimToAdjustViewModel(poaTaxYear = Some(TaxYear(2025, 2026))),
                    welshLang: Boolean = false,
                    chargeItems: List[ChargeItem] = List.empty,
-                   useRebrand: Boolean = false,
                    isRecentActivityEnabled: Boolean = false,
                    creditsRefundsRepayEnabled: Boolean = false,
                    mortgageEvidenceEnabled: Boolean = true) {
@@ -103,7 +102,6 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         moneyInYourAccount,
         ctaViewModel,
         chargeItems,
-        useRebrand,
         true,
         isRecentActivityEnabled,
         creditsRefundsRepayEnabled,
@@ -116,13 +114,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
   "New Home Overview page for Individuals" should {
 
-    "display the correct heading" when {
-      "useRebrand is false" in new TestSetup() {
-        document.getElementById("income-tax-heading").text() shouldBe "Income Tax"
-      }
-      "useRebrand is true" in new TestSetup(useRebrand = true) {
-        document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
-      }
+    "display the correct heading" in new TestSetup() {
+      document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
     }
 
     "display the correct service navigation section" when {

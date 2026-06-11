@@ -21,9 +21,9 @@ import common.auth.MtdItUser
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import common.mocks.services.MockDateService
-import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.IncomeSourceIdHash.mkFromQueryString
-import models.core.{IncomeSourceId, IncomeSourceIdHash}
+import common.models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
+import common.models.core.IncomeSourceIdHash.mkFromQueryString
 import models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.scalatest.matchers.should.Matchers
 import testConstants.BaseTestConstants.*

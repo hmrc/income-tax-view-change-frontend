@@ -21,7 +21,8 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import helpers.servicemocks.*
 import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
-import models.admin.*
+import common.models.admin.PostFinalisationAmendmentsR18
+import common.models.admin.*
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{IsMTD, LiabilityCalculationError}
@@ -340,7 +341,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
                   elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")(balancingPayment),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$overdue $class2Nic")
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")(s"$overdue $class2Nic")
 
                 )
               }
@@ -389,8 +390,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $class2Nic"),
-                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "th")(s"$overdue $cancelledPayeSA")
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(s"$overdue $class2Nic"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(1)")(s"$overdue $cancelledPayeSA")
                 )
               }
 
@@ -439,7 +440,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   res should have(
                     httpStatus(OK),
                     pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                    elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "th")(s"$overdue $balancingPayment"),
+                    elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(s"$overdue $balancingPayment"),
                     elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(2)", "a")(class2Nic),
                     elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(3)", "a")(cancelledPayeSA)
                   )
@@ -656,12 +657,12 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "tax-year-summary.heading"),
-                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "th")(s"$hmrcAdjustment"),
-                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")("22 Apr 2021"),
-                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("£2,234.00"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "th")(s"$hmrcAdjustment"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")("23 Apr 2021"),
-                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("£1,234.00"),
+                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(1)")(s"$hmrcAdjustment"),
+                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("22 Apr 2021"),
+                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("£2,234.00"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(1)")(s"$hmrcAdjustment"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(2)")("23 Apr 2021"),
+                  elementTextBySelectorList("#payments", "table", "tr:nth-of-type(2)", "td:nth-of-type(3)")("£1,234.00"),
                   elementCountBySelector("#payments-table", "tbody", "tr")(2)
                 )
               }

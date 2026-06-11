@@ -19,8 +19,7 @@ package views.agent
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import hub.models.homePage.*
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -39,6 +38,7 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.models.itsaStatus.ITSAStatus
 
 class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
@@ -112,7 +112,7 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
     "all features are enabled" should {
 
       s"have the correct link to the government homepage" in new TestSetup {
-        document.getElementsByClass("govuk-header__link").attr("href") shouldBe "https://www.gov.uk"
+        document.getElementsByClass("govuk-header__homepage-link").attr("href") shouldBe "https://www.gov.uk"
       }
 
       s"have the title ${messages("htmlTitle.agent", messages("home.agent.heading"))}" in new TestSetup() {

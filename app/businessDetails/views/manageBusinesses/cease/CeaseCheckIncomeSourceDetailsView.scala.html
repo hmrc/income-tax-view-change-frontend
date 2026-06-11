@@ -22,9 +22,9 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import common.enums.IncomeSourceJourney._
 @import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
-@import models.core.AddressModel
+@import common.models.core.AddressModel
 @import play.twirl.api.HtmlFormat
-@import models.core._
+@import common.models.core._
 @import common.views.html.components._
 @import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 
@@ -124,7 +124,6 @@
     pageTitle = messages("cease-check-answers.title"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = request.btaNavPartial,
     btaAndPtaServiceNavigation = request.serviceNavigationPartial,
     useFallbackBackLink = true) {
 

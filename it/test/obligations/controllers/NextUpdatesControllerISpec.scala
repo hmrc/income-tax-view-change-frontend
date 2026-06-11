@@ -23,9 +23,9 @@ import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, MTDIndivid
 import helpers.servicemocks.*
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import models.admin.OptOutFs
+import common.models.admin.OptOutFs
+import common.models.itsaStatus.ITSAStatus
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import obligations.models.ObligationsModel
 import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*

@@ -19,10 +19,10 @@ package obligations.controllers.reportingObligations.optOut
 import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
+import common.models.admin.OptOutFs
+import common.models.itsaStatus.ITSAStatus
 import common.services.DateServiceInterface
-import models.admin.OptOutFs
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockOptOutService
 import obligations.models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel

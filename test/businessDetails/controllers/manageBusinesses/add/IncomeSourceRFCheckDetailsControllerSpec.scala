@@ -25,8 +25,8 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProp
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
+import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface, SessionService}
-import models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

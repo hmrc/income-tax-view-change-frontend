@@ -19,7 +19,7 @@ package common.connectors.agent
 import com.github.tomakehurst.wiremock.client.WireMock
 import common.helpers.servicemocks.AuditStub
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
+import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting

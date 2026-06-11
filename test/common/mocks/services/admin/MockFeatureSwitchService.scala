@@ -16,8 +16,8 @@
 
 package common.mocks.services.admin
 
+import common.models.admin.{FeatureSwitch, FeatureSwitchName}
 import common.services.admin.FeatureSwitchService
-import models.admin.{FeatureSwitch, FeatureSwitchName}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}

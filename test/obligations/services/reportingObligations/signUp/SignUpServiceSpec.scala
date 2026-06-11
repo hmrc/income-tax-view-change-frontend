@@ -18,10 +18,10 @@ package obligations.services.reportingObligations.signUp
 
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.mocks.services.{MockDateService, MockITSAStatusService}
-import models.UIJourneySessionData
+import common.models.UIJourneySessionData
+import common.models.itsaStatus.ITSAStatus.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.*
-import models.itsaStatus.{StatusDetail, StatusReason}
+import common.models.itsaStatus.{StatusDetail, StatusReason}
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData, SignUpTaxYearQuestionViewModel}
 import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}

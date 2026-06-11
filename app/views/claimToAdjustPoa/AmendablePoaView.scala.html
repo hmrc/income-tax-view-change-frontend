@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import _root_.implicits.ImplicitCurrencyFormatter._
+@import _root_.financials.implicits.ImplicitCurrencyFormatter._
 @import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 @import common.viewUtils.ExternalUrlHelper
 @import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
@@ -116,7 +116,6 @@
     pageTitle = getMessage("heading"),
     backUrl = Some("/"),
     isAgent = user.isAgent,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     useFallbackBackLink = true
 ) {

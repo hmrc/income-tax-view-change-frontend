@@ -17,8 +17,8 @@
 package connectors
 
 import common.connectors.BaseConnectorSpec
+import common.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import common.services.AuditingService
-import models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.libs.json.Json

@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import models.core.{CheckMode, Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.FormError
@@ -27,6 +26,7 @@ import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateC
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.models.core.{CheckMode, Mode, NormalMode}
 
 import java.time.LocalDate
 

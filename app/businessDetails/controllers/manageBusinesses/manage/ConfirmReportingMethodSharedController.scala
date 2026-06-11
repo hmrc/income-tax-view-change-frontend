@@ -21,8 +21,6 @@ import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.{AfterSubmissionPage, BeforeSubmissionPage}
-import models.UIJourneySessionData
-import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
 import play.api.Logger
@@ -36,6 +34,8 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.models.UIJourneySessionData
+import common.models.core.IncomeSourceId
 import common.services.{AuditingService, DateService, SessionService}
 
 import javax.inject.Inject
@@ -91,7 +91,6 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                 incomeSourceType: IncomeSourceType,
                                 soleTraderBusinessId: Option[IncomeSourceId]
                                )(implicit user: MtdItUser[_]): Future[Result] = {
-
     val maybeIncomeSourceId: Option[IncomeSourceId] = user.incomeSources.getIncomeSourceId(incomeSourceType, soleTraderBusinessId.map(_.value))
 
     (getTaxYearModel(taxYear), getReportingMethod(changeTo), maybeIncomeSourceId) match {

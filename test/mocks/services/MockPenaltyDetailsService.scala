@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

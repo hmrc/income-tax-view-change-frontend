@@ -18,11 +18,11 @@ package financials.controllers
 
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import common.services.DateServiceInterface
-import enums.{AdjustmentReversalReason, AmendedReturnReversalReason}
+import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason}
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
-import models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel, PoaTwoReconciliationCredit}
 import models.repaymentHistory.RepaymentHistoryUtils

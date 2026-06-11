@@ -19,8 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.BeforeSubmissionPage
-import models.admin.OverseasBusinessAddress
-import models.core.{Mode, NormalMode}
 import models.incomeSourceDetails.{Address, BusinessDetailsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -32,6 +30,8 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.models.admin.OverseasBusinessAddress
+import common.models.core.{Mode, NormalMode}
 import common.services.SessionService
 
 import javax.inject.{Inject, Singleton}
@@ -60,11 +60,11 @@ class AddBusinessTradeController @Inject()(val authActions: AuthActions,
   private def getSuccessURL(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean, isOverseasBusinessAddress: Boolean, isNoAddressOnFile: Boolean): String = {
     ((isAgent, mode) match {
       case (false, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => routes.IsTheNewAddressInTheUKController.show(isAgent)
-      case (false, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent)
+      case (false, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent = isAgent, isTriggeredMigration = isTriggeredMigration)
       case (false, NormalMode) => routes.AddBusinessAddressController.show(mode, isTriggeredMigration)
       case (false, _) => routes.IncomeSourceCheckDetailsController.show(SelfEmployment, isTriggeredMigration)
-      case (_, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => routes.IsTheNewAddressInTheUKController.show(isAgent)
-      case (_, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent)
+      case (_, NormalMode) if isOverseasBusinessAddress && isNoAddressOnFile => routes.IsTheNewAddressInTheUKController.show(isAgent, isTriggeredMigration)
+      case (_, NormalMode) if isOverseasBusinessAddress => routes.ChooseSoleTraderAddressController.show(isAgent = isAgent, isTriggeredMigration = isTriggeredMigration)
       case (_, NormalMode) => routes.AddBusinessAddressController.showAgent(mode, isTriggeredMigration)
       case (_, _) => routes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment, isTriggeredMigration)
     }).url

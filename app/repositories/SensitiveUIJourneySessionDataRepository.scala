@@ -18,7 +18,7 @@ package repositories
 
 import common.config.FrontendAppConfig
 import common.enums.JourneyType.{JourneyType, Operation}
-import models.{SensitiveUIJourneySessionData, UIJourneySessionData}
+import common.models.{SensitiveUIJourneySessionData, UIJourneySessionData}
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._

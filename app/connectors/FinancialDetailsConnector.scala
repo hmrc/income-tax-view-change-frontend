@@ -19,8 +19,8 @@ package connectors
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
-import models.core.ResponseModel.{ResponseModel, UnexpectedError}
-import models.core.{CorrelationId, Nino}
+import common.models.core.{CorrelationId, Nino}
+import common.models.core.ResponseModel.{ResponseModel, UnexpectedError}
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.incomeSourceDetails.{TaxYear, TaxYearRange}
@@ -42,7 +42,7 @@ class FinancialDetailsConnector @Inject()(
                                            appConfig: FrontendAppConfig
                                          )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
-  private[connectors] val baseUrl = s"${appConfig.itvcProtectedService}/income-tax-view-change"
+  private[connectors] val baseUrl = s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details"
 
   private[connectors] def getChargesUrl(nino: String, from: String, to: String): String =
     baseUrl + s"/$nino/financial-details/charges/from/$from/to/$to"

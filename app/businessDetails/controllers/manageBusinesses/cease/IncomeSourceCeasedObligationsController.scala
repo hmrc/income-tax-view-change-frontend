@@ -17,9 +17,7 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import enums.CannotGoBackPage
-import models.UIJourneySessionData
-import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
@@ -40,6 +38,8 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
+import common.models.UIJourneySessionData
+import common.models.core.IncomeSourceId
 import common.services.SessionService
 
 class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,

@@ -19,10 +19,10 @@ package obligations.controllers.reportingObligations.signUp
 import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
+import common.models.admin.SignUpFs
 import common.services.DateServiceInterface
-import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.Voluntary
+import common.models.itsaStatus.ITSAStatus.Voluntary
 import obligations.mocks.services.MockSignUpService
 import obligations.models.reportingObligations.signUp.{SignUpSessionData, SignUpTaxYearQuestionViewModel}
 import obligations.services.reportingObligations.signUp.SignUpService

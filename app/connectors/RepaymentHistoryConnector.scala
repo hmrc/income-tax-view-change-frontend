@@ -18,7 +18,7 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
-import models.core.Nino
+import common.models.core.Nino
 import models.repaymentHistory.*
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -34,11 +34,11 @@ class RepaymentHistoryConnector @Inject()(val http: HttpClientV2,
                                            )(implicit val ec: ExecutionContext) extends RawResponseReads {
 
   def getAllRepaymentHistoryUrl(nino: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino"
+    s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/repayments/$nino"
   }
 
   def getRepaymentHistoryByIdUrl(nino: String, repaymentId: String): String = {
-    s"${appConfig.itvcProtectedService}/income-tax-view-change/repayments/$nino/repaymentId/$repaymentId"
+    s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/repayments/$nino/repaymentId/$repaymentId"
   }
 
   def getRepaymentHistoryByRepaymentId(nino: Nino, repaymentId: String)

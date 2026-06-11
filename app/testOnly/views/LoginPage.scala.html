@@ -18,7 +18,7 @@
 @import testOnly.models._
 @import common.views.html.layouts.unifiedLayout
 @import play.api.libs.json.Json
-@import models.itsaStatus.ITSAStatus
+@import common.models.itsaStatus.ITSAStatus
 @import views.html.helper.CSPNonce
 
 @this(
@@ -30,7 +30,7 @@
     form: FormWithCSRF
 )
 
-@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], trigMigUser: String)(implicit request: Request[_], messages: Messages)
+@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], incomeSourcesUsers: Seq[String], latentBusinessUser: String)(implicit request: Request[_], messages: Messages)
 
 @ITSAOptions = @{
     ITSAStatus.values.unsorted.map { status =>
@@ -63,24 +63,33 @@
     <link href='/report-quarterly/income-and-expenses/view/assets/stylesheets/application.css' media="screen" rel="stylesheet" type="text/css" />
 
     <script @CSPNonce.attr>
-        function optOutCustomData(answer, customPrefixes) {
-            const ninoPrefix = answer.value.substring(0, 2);
+        function optOutCustomData(answer, customUser) {
+            const ninoValue = answer.value
 
-            if (customPrefixes.includes(ninoPrefix)) {
+            if (customUser.includes(ninoValue)) {
                 document.getElementById("OptOutCustomDataDropdowns").classList.remove("display-none");
             } else {
                 document.getElementById("OptOutCustomDataDropdowns").classList.add("display-none");
             }
         }
 
-        function trigMigCustomData(answer, customPrefixes) {
+        function IncomeSourcesCustomData(answer, customNino) {
             const ninoValue = answer.value;
-            const ninoPrefix = ninoValue.substring(0, 2);
 
-            if (customPrefixes.includes(ninoPrefix) || customPrefixes.includes(ninoValue)) {
-                document.getElementById("trigMigCheckboxes").classList.remove("display-none");
+            if (customNino.includes(ninoValue)) {
+                document.getElementById("incomeSourcesCheckboxes").classList.remove("display-none");
             } else {
-                document.getElementById("trigMigCheckboxes").classList.add("display-none");
+                document.getElementById("incomeSourcesCheckboxes").classList.add("display-none");
+            }
+        }
+
+        function latentBusinessCustomData(answer, customNino) {
+            const ninoValue = answer.value;
+
+            if (customNino.includes(ninoValue)) {
+                document.getElementById("latentBusinessDropdowns").classList.remove("display-none");
+            } else {
+                document.getElementById("latentBusinessDropdowns").classList.add("display-none");
             }
         }
 
@@ -88,16 +97,19 @@
             const ninoSelect = document.getElementById("nino");
 
             if (ninoSelect) {
-                const customPrefixes = JSON.parse(ninoSelect.getAttribute("data-custom-prefixes") || "[]");
-                const trigMigPrefixes = JSON.parse(ninoSelect.getAttribute("data-trig-mig-prefixes") || "[]");
+                const reportingObligationsUsers = JSON.parse(ninoSelect.getAttribute("data-reporting-obligations-users") || "[]");
+                const incomeSourcesUsers = JSON.parse(ninoSelect.getAttribute("data-income-sources-users") || "[]");
+                const latentBusinessUsers = JSON.parse(ninoSelect.getAttribute("data-latent-business-users") || "[]");
 
                 ninoSelect.addEventListener("change", function () {
-                    optOutCustomData(this, customPrefixes);
-                    trigMigCustomData(this, trigMigPrefixes);
+                    optOutCustomData(this, reportingObligationsUsers);
+                    IncomeSourcesCustomData(this, incomeSourcesUsers);
+                    latentBusinessCustomData(this, latentBusinessUsers);
                 });
 
-                optOutCustomData(ninoSelect, customPrefixes);
-                trigMigCustomData(ninoSelect, trigMigPrefixes);
+                optOutCustomData(ninoSelect, reportingObligationsUsers);
+                IncomeSourcesCustomData(ninoSelect, incomeSourcesUsers);
+                latentBusinessCustomData(ninoSelect, latentBusinessUsers);
             }
         });
     </script>
@@ -110,11 +122,28 @@
                 NINO
             </label>
             <select class="govuk-select" id="nino" name="nino"
-                    data-custom-prefixes='@Html(Json.toJson(optOutCustomDataUserPrefixes).toString)'
-                    data-trig-mig-prefixes='@Html(Json.toJson(Seq(trigMigUser)).toString)'>
-                @for(user <- users) {
-                <option value="@user.nino">@user.nino - @user.description</option>
+                    data-reporting-obligations-users='@Html(Json.toJson(optOutCustomDataUserPrefixes).toString)'
+                    data-income-sources-users='@Html(Json.toJson(incomeSourcesUsers).toString)'
+                    data-latent-business-users='@Html(Json.toJson(Seq(latentBusinessUser)).toString)'>
+
+            @for((category, groupedUsers) <- users
+            .groupBy(_.category)
+            .toSeq
+            .sortBy { case (category, _) =>
+                category match {
+                    case "Misc"       => (0, "")
+                    case "Financials" => (2, "")
+                    case other        => (1, other)
                 }
+            }) {
+                <optgroup label="@category">
+                @for(user <- groupedUsers.sortBy(_.nino)) {
+                    <option value="@user.nino">
+                        @user.nino - @user.description
+                    </option>
+                }
+                </optgroup>
+            }
             </select>
         </div>
 
@@ -184,7 +213,7 @@
             ))
         </div>
 
-        <div class="display-none" id="trigMigCheckboxes">
+        <div class="display-none" id="incomeSourcesCheckboxes">
             <h2 class="govuk-heading-m" id="business-data-heading">Business/Property Data</h2>
             <div class="govuk-warning-text">
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -253,6 +282,40 @@
                     ),
                 )
             )
+        </div>
+
+        <div class="display-none" id="latentBusinessDropdowns">
+            @govukSelect(Select(
+                id = "latentBusinessYear1",
+                name = "latentBusinessYear1",
+                items = Seq(
+                    SelectItem(
+                        value = Some("Annual"),
+                        text = "Annual"
+                    ),
+                    SelectItem(
+                        value = Some("Quarterly"),
+                        text = "Quarterly"
+                    )
+                ),
+                label = Label(content = Text("Latency Indicator CY"))
+            ))
+
+            @govukSelect(Select(
+                id = "latentBusinessYear2",
+                name = "latentBusinessYear2",
+                items = Seq(
+                    SelectItem(
+                        value = Some("Annual"),
+                        text = "Annual"
+                    ),
+                    SelectItem(
+                        value = Some("Quarterly"),
+                        text = "Quarterly"
+                    )
+                ),
+                label = Label(content = Text("Latency Indicator CY+1"))
+            ))
         </div>
 
         @govukButton(Button(content = Text("Login")))

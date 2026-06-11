@@ -16,7 +16,7 @@
 
 package models
 
-import models.core.PaymentDataModel
+import common.models.core.PaymentDataModel
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import testConstants.BaseTestConstants._

@@ -16,9 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import models.UIJourneySessionData
-import models.admin.OverseasBusinessAddress
-import models.core.{CheckMode, Mode, NormalMode}
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,6 +38,9 @@ import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
+import common.models.UIJourneySessionData
+import common.models.admin.OverseasBusinessAddress
+import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.{DateServiceInterface, SessionService}
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {

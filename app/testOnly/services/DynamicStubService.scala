@@ -19,11 +19,11 @@ package testOnly.services
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
+import common.models.itsaStatus.ITSAStatusResponseModel
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import testOnly.connectors.DynamicStubConnector
-import testOnly.models.{DataModel, Nino, TrigMigUser}
+import testOnly.models.{DataModel, IncomeSourcesUser, LatentBusinessUser, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
@@ -68,15 +68,20 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     dynamicStubConnector.overwriteItsaStatus(nino, taxYearRange, ITSAStatus)
   }
 
-  def overwriteBusinessData(mtdid: String, trigMigUser: TrigMigUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+  def overwriteBusinessData(mtdid: String, incomeSourcesUser: IncomeSourcesUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     Logger("application").debug("Overwriting business data (5266) via the dynamic stub")
     
-    dynamicStubConnector.overwriteBusinessData(mtdid, trigMigUser)
+    dynamicStubConnector.overwriteBusinessData(mtdid, incomeSourcesUser)
+  }
+  
+  def overwriteLatentBusinessData(mtdid: String, latentBusinessUser: LatentBusinessUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+    Logger("application").debug("Overwriting latent business data (5266) via the dynamic stub")
+    
+    dynamicStubConnector.overwriteLatentBusinessData(mtdid, latentBusinessUser)
   }
 
   def overwriteObligationsData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     Logger("application").debug("Overwriting obligations data (1330) via the dynamic stub")
-
     dynamicStubConnector.overwriteObligationsData(nino)
   }
 

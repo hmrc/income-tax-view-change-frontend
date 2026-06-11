@@ -20,11 +20,11 @@ import com.google.inject.{Inject, Singleton}
 import common.auth.{AuthActions, MtdItUser}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.models.admin.{PaymentHistoryRefunds, RecentActivity}
+import common.models.itsaStatus.ITSAStatus
 import common.services.{DateServiceInterface, ITSAStatusService}
-import models.admin.{PaymentHistoryRefunds, RecentActivity}
 import models.financialDetails.Payment
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -85,7 +85,6 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: hub.view
         recentActivityUrl(origin, user.isAgent),
         overviewUrl(origin, user.isAgent),
         helpUrl(origin, user.isAgent),
-        appConfig.itvcRebrand,
         recentActivityViewModel)
       )
     }

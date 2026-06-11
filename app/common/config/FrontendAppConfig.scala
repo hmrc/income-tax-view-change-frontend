@@ -44,22 +44,25 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val agentBetaFeedbackUrl = s"/$agentBaseUrl/feedback"
   lazy val noIncomeSourcesContactUrl: String = s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier"
 
-  //ITVC Protected Service
-  lazy val itvcProtectedService: String = servicesConfig.baseUrl("income-tax-view-change")
-  
   //Income tax obligations service
   lazy val incomeTaxObligationsService: String = servicesConfig.baseUrl("income-tax-obligations")
+
+  //Income tax business details service
+  lazy val incomeTaxBusinessDetailsBaseUrl: String = servicesConfig.baseUrl("income-tax-business-details")
 
   //Income tax calculation service
   lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
 
+  //Income tax financial details service
+  lazy val incomeTaxFinancialDetailsService: String = servicesConfig.baseUrl("income-tax-financial-details")
+  
   //Address lookup service
   lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
   lazy val addressLookupExternalHost: String = servicesConfig.getString("address-lookup.external-host")
 
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
-  
+
   //individual sa302
   def sa302:String = s"$itvcFrontendEnvironment/$baseUrl/mortgage-evidence/proof-of-income"
   //agent sa302
@@ -197,8 +200,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val readFeatureSwitchesFromMongo: Boolean = servicesConfig.getBoolean("feature-switches.read-from-mongo")
   
-  lazy val itvcRebrand: Boolean = servicesConfig.getBoolean("itvc.useRebrand")
-
   lazy val isTimeMachineEnabled: Boolean = servicesConfig.getBoolean("feature-switch.enable-time-machine")
   lazy val timeMachineAddYears: Int = servicesConfig.getInt("time-machine.add-years")
   lazy val timeMachineAddDays: Int = servicesConfig.getInt("time-machine.add-days")

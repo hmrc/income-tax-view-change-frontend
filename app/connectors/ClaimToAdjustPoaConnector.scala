@@ -17,9 +17,9 @@
 package connectors
 
 import common.config.FrontendAppConfig
+import common.models.core.CorrelationId
 import models.claimToAdjustPoa.ClaimToAdjustPoaRequest
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
-import models.core.CorrelationId
 import play.api.Logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -34,7 +34,7 @@ class ClaimToAdjustPoaConnector @Inject() ( frontendAppConfig: FrontendAppConfig
                                             val http: HttpClientV2)
                                           ( implicit val ec: ExecutionContext ) {
 
-  val endpoint = s"${frontendAppConfig.itvcProtectedService}/income-tax-view-change/submit-claim-to-adjust-poa"
+  val endpoint = s"${frontendAppConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/submit-claim-to-adjust-poa"
 
   def postClaimToAdjustPoa(request: ClaimToAdjustPoaRequest)(implicit hc: HeaderCarrier
   ): Future[ClaimToAdjustPoaResponse] = {

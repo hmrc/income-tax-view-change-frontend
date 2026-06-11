@@ -16,9 +16,9 @@
 
 package businessDetails.models.triggeredMigration.viewModels
 
-import models.core.IncomeSourceId
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased, TriggeredMigrationState}
+import common.models.core.IncomeSourceId
 
 case class CheckHmrcRecordsViewModel(soleTraderBusinesses: List[CheckHmrcRecordsSoleTraderDetails],
                                      hasActiveUkProperty: Boolean,

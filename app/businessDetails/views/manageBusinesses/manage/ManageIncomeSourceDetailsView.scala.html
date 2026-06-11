@@ -16,7 +16,7 @@
 
 @import _root_.common.implicits.ImplicitDateFormatterImpl
 @import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-@import models.core.AddressModel
+@import common.models.core.AddressModel
 @import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.details.Details
@@ -324,7 +324,6 @@ val rows = {
     pageTitle = messages("incomeSources.manage.new.business.details.heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @hmrcPageHeading(PageHeading(

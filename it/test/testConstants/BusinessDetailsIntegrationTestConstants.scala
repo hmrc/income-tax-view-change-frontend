@@ -16,7 +16,7 @@
 
 package testConstants
 
-import models.core.{AccountingPeriodModel, AddressModel, CessationModel}
+import common.models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import models.incomeSourceDetails.BusinessDetailsModel
 import testConstants.BaseIntegrationTestConstants._
 

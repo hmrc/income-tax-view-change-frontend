@@ -18,8 +18,8 @@ package common.mocks.services
 
 import common.auth.actions.AuthActionsTestData.sessionGetSuccessResponse
 import common.services.SessionDataService
-import models.sessionData.SessionDataGetResponse.SessionDataNotFound
-import models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import common.models.sessionData.SessionDataGetResponse.SessionDataNotFound
+import common.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

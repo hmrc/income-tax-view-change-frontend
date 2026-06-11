@@ -22,10 +22,10 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
+import common.models.UIJourneySessionData
+import common.models.admin.OverseasBusinessAddress
+import common.models.core.{CheckMode, NormalMode}
 import common.services.{DateService, DateServiceInterface, SessionService}
-import models.UIJourneySessionData
-import models.admin.OverseasBusinessAddress
-import models.core.{CheckMode, NormalMode}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, Country}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any

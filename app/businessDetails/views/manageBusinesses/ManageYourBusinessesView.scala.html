@@ -24,7 +24,7 @@
 @import common.enums.IncomeSourceJourney.UkProperty
 @import common.enums.IncomeSourceJourney.ForeignProperty
 @import common.enums.IncomeSourceJourney.SelfEmployment
-@import models.core._
+@import common.models.core._
 @import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 @import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 @import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
@@ -124,7 +124,6 @@
 @mainTemplate(pageTitle = getMessage("heading"),
     backUrl = Some(backUrl),
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @h1(msg = getMessage("heading"), id = Some("manage-your-businesses-h1"))

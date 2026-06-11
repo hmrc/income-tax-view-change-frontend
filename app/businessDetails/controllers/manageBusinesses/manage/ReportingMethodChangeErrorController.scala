@@ -19,8 +19,7 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.services.UpdateIncomeSourceService
 import businessDetails.utils.IncomeSourcesUtils
-import models.core.IncomeSourceId
-import models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -32,6 +31,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.exceptions.MissingSessionKey
+import common.models.core.IncomeSourceId
 import common.services.SessionService
 
 import javax.inject.Inject

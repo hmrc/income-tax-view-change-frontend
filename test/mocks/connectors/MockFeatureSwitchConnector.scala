@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import common.connectors.FeatureSwitchConnector
-import models.admin.FeatureSwitch
+import common.models.admin.FeatureSwitch
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

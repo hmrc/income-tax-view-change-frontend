@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -29,6 +28,7 @@ import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.models.core.NormalMode
 
 class AddIncomeSourceStartDateViewSpec extends TestSupport {
 

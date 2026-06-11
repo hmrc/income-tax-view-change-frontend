@@ -19,7 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
-@import _root_.implicits.ImplicitCurrencyFormatter._
+@import _root_.financials.implicits.ImplicitCurrencyFormatter._
 @import models.incomeSourceDetails.TaxYear
 @import models.claimToAdjustPoa.SelectYourReason
 @import models.claimToAdjustPoa.Increase
@@ -94,7 +94,6 @@
     pageTitle = getMessage("heading"),
     backUrl = Some("/"),
     isAgent = user.isAgent,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial,
     useFallbackBackLink = true
 ) {

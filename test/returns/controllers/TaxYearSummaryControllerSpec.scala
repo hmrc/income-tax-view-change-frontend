@@ -19,11 +19,12 @@ package returns.controllers
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
+import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
 import connectors.CalculationListConnector
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService}
-import models.admin.*
+import common.models.admin.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*

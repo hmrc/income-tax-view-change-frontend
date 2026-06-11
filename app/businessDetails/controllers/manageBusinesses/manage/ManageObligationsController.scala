@@ -24,9 +24,9 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.models.core.IncomeSourceId
 import common.services.{DateService, SessionService}
 import enums.CannotGoBackPage
-import models.core.IncomeSourceId
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import obligations.services.NextUpdatesService
 import play.api.Logger

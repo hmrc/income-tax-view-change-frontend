@@ -21,8 +21,8 @@ import businessDetails.testConstants.AddressLookupTestConstants
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
+import common.models.admin.OverseasBusinessAddress
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.admin.OverseasBusinessAddress
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import testConstants.BaseIntegrationTestConstants.testMtditid

@@ -16,7 +16,7 @@
 
 package obligations.models.reportingObligations.optOut
 
-import models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
+import common.models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, NoStatus, Voluntary}
 import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, MultiYearOptOutDefault, NextOptOutTaxYear, NextYearOptOut, OneYearOptOutFollowedByAnnual, OneYearOptOutFollowedByMandated, OptOutState, OptOutTaxYear, PreviousOptOutTaxYear}
 import obligations.services.reportingObligations.optOut.*
 

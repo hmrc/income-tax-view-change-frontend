@@ -18,9 +18,9 @@ package obligations.viewUtils
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.models.itsaStatus.ITSAStatus
 import common.services.DateServiceInterface
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, ITSAStatus, Mandated, Voluntary}
+import ITSAStatus.{Annual, DigitallyExempt, Exempt, ITSAStatus, Mandated, Voluntary}
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import play.api.i18n.Messages
 

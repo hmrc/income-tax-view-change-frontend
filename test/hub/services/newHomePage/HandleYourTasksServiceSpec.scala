@@ -18,11 +18,11 @@ package hub.services.newHomePage
 
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
+import common.models.itsaStatus.ITSAStatus
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import ITSAStatus.ITSAStatus
 import hub.models.newHomePage.MaturityLevel.Upcoming
 import hub.models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import hub.models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}

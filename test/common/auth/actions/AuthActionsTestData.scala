@@ -20,15 +20,14 @@ import common.utils.AuthUtils.*
 import businessDetails.forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
 import common.auth.MtdItUser
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.models.admin.FeatureSwitch
 import common.models.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest}
+import common.models.sessionData.SessionCookieData
 import common.utils.sessionUtils.SessionKeys
-import models.admin.FeatureSwitch
 import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import models.sessionData.SessionCookieData
-import models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound}
+import common.models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import play.twirl.api.Html
 import testConstants.BaseTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.*
@@ -126,7 +125,6 @@ object AuthActionsTestData {
   def getMtdItUser(
                     affinityGroup: AffinityGroup,
                     featureSwitches: List[FeatureSwitch] = List.empty,
-                    btaNavBar: Option[Html] = None,
                     isSupportingAgent: Boolean = false,
                     incomeSources: IncomeSourceDetailsModel = defaultIncomeSourcesData
                   )(implicit request: Request[_]): MtdItUser[Any] = {
@@ -148,7 +146,6 @@ object AuthActionsTestData {
       getAuthUserDetails(Some(affinityGroup), enrolments, true),
       optClientDetails,
       incomeSources,
-      btaNavBar,
       featureSwitches = featureSwitches
     )(request)
   }

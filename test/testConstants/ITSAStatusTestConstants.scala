@@ -16,8 +16,9 @@
 
 package testConstants
 
+import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseError, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus._
+import common.models.itsaStatus.*
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import play.mvc.Http.Status

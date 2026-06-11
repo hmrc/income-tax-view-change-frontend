@@ -21,14 +21,14 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.*
 import common.config.*
 import common.enums.MTDSupportingAgent
+import common.models.admin.{CreditsRefundsRepay, FilterCodedOutPoas, ITSASubmissionIntegration, MortgageEvidence, NewHomePage, PaymentHistoryRefunds, PenaltiesAndAppeals, PenaltiesBackendEnabled, RecentActivity}
+import common.models.core.Nino
+import common.models.itsaStatus.ITSAStatus
 import common.services.{AuditingService, DateServiceInterface, ITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
-import models.admin.*
-import models.core.Nino
 import models.financialDetails.*
 import hub.models.homePage.*
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
@@ -204,8 +204,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
             yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
             penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
             dunningLockExists = dunningLockExists,
-            origin = origin,
-            useGovUkRebrand = appConfig.itvcRebrand
+            origin = origin
           )
 
           val mandationStatus =
@@ -292,14 +291,14 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         Ok(newHomeOverviewView(origin, user.isSupportingAgent, dateService.getCurrentTaxYear,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
-          appConfig.itvcRebrand, isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence)))
+          isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence)))
       }
     }
   }
 
   def handleHelp(origin: Option[String] = None, isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      Future.successful(Ok(newHomeHelpView(origin, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), appConfig.itvcRebrand, isEnabled(RecentActivity))))
+      Future.successful(Ok(newHomeHelpView(origin, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), isEnabled(RecentActivity))))
   }
 
   private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {

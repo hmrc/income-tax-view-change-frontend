@@ -23,7 +23,7 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import play.twirl.api.HtmlFormat
-@import models.core._
+@import common.models.core._
 @import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 @this(
@@ -295,7 +295,6 @@
     backUrl = Some(backUrl),
     useFallbackBackLink = true,
     isAgent = isAgent,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @hmrcPageHeading(PageHeading(

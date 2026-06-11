@@ -19,13 +19,12 @@ package testConstants
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.auth.{AgentClientDetails, AuthUserDetails}
+import common.models.core.{AddressModel, IncomeSourceId}
+import common.models.itsaStatus.ITSAStatus
 import common.utils.sessionUtils.SessionKeys
-import models.btaNavBar.{NavContent, NavLinks}
-import models.core.IncomeSourceId.mkIncomeSourceId
-import models.core.{AddressModel, IncomeSourceId}
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
-import models.itsaStatus.ITSAStatus
 import play.api.http.Status
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -144,14 +143,6 @@ object BaseIntegrationTestConstants {
     latencyIndicator2 = "Q")
 
   val quarterTypeElection: QuarterTypeElection = QuarterTypeElection("STANDARD", "2021")
-
-  val testNavLinks: NavContent = NavContent(
-    NavLinks("testEnHome", "testCyHome", "testUrl"),
-    NavLinks("testEnAccount", "testCyAccount", "testUrl"),
-    NavLinks("testEnMessages", "testCyMessages", "testUrl"),
-    NavLinks("testEnHelp", "testCyHelp", "testUrl"),
-    NavLinks("testEnForm", "testCyForm", "testUrl", Some(1)),
-  )
 
   val clientDetailsWithoutConfirmation: Map[String, String] = Map(
     SessionKeys.clientFirstName -> "Test",

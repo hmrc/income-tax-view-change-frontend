@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import _root_.implicits.ImplicitCurrencyFormatter._
+@import _root_.financials.implicits.ImplicitCurrencyFormatter._
 @import _root_.common.implicits.ImplicitDateFormatterImpl
 @import models.creditsandrefunds.RefundToTaxPayerViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -35,7 +35,7 @@
 )
 
 @(viewModel: RefundToTaxPayerViewModel, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String],
-        btaNavPartial: Option[Html] = None, origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
+        origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @getRepaymentSupplementItemSize(repaymentHistoryItem: RefundToTaxPayerViewModel) = @{
@@ -48,7 +48,6 @@
     pageTitle = messages("refund-to-taxpayer.heading"),
     backUrl = Some(backUrl),
     isAgent = user.isAgent,
-    btaNavPartial = btaNavPartial,
     useFallbackBackLink = true,
     btaAndPtaServiceNavigation = serviceNavigationPartial
 ) {

@@ -19,8 +19,8 @@ package businessDetails.controllers.triggeredMigration
 import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
+import common.models.admin.TriggeredMigration
 import common.services.DateServiceInterface
-import models.admin.TriggeredMigration
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api

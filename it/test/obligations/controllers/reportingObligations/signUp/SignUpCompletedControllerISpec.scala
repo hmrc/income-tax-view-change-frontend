@@ -19,12 +19,12 @@ package obligations.controllers.reportingObligations.signUp
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.models.UIJourneySessionData
+import common.models.admin.SignUpFs
+import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.UIJourneySessionData
-import models.admin.SignUpFs
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
-import models.itsaStatus.ITSAStatus.{Annual, Mandated}
+import ITSAStatus.{Annual, Mandated}
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

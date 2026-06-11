@@ -16,7 +16,7 @@
 
 package businessDetails.views.messages
 
-import models.core.AddressModel
+import common.models.core.AddressModel
 
 object ManageIncomeSourceDetailsViewMessages {
 

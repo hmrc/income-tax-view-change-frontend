@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import models.core.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
@@ -27,6 +26,7 @@ import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressVi
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.models.core.NormalMode
 
 class ChooseSoleTraderAddressViewSpec extends TestSupport {
 

@@ -18,7 +18,7 @@ package hub.models.homePage
 
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
 
 import java.time.LocalDate
 
@@ -31,8 +31,7 @@ case class HomePageViewModel(utr: Option[String],
                              yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel,
                              penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel,
                              dunningLockExists: Boolean = false,
-                             origin: Option[String] = None,
-                             useGovUkRebrand: Boolean = false)
+                             origin: Option[String] = None)
 
 case class NextPaymentsTileViewModel(nextPaymentDueDate: Option[LocalDate], overDuePaymentsCount: Int,
                                      paymentsAccruingInterestCount: Int) {

@@ -19,9 +19,9 @@ package businessDetails.controllers.manageBusinesses.manage
 import common.enums.IncomeSourceJourney.ForeignProperty
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
-import models.admin.DisplayBusinessStartDate
+import common.models.admin.DisplayBusinessStartDate
+import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status

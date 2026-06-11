@@ -24,9 +24,9 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.MTDIndividual
 import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import common.mocks.auth.MockAuthActions
+import common.models.admin.TriggeredMigration
+import common.models.core.IncomeSourceId
 import common.services.DateServiceInterface
-import models.admin.TriggeredMigration
-import models.core.IncomeSourceId
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api

@@ -38,7 +38,6 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
   def upcomingTaskCard(index:String): UpcomingTaskCard = UpcomingTaskCard(s"UpcomingContent$index", "UpcomingLinkText", "/Upcoming", "DueTag", None, Some("100"), MaturityLevel.Upcoming, SUBMISSIONS)
 
   class TestSetup(handleYourTasksViewModel: HandleYourTasksViewModel = defaultViewModel,
-                  isGovUkRebrandEnabled: Boolean = true,
                   isRecentActivityEnabled: Boolean = false) {
 
     val testMessages: Messages = messages
@@ -49,7 +48,6 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
       overviewUrl = "/overviewUrl",
       helpUrl = "/helpUrl",
       viewModel = handleYourTasksViewModel,
-      isGovUkRebrandEnabled = isGovUkRebrandEnabled,
       isRecentActivityEnabled = isRecentActivityEnabled
     )(testMessages, FakeRequest(), tsTestUser)
 
@@ -57,13 +55,8 @@ class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with Im
   }
 
   "New Home Your Tasks page" should {
-    "display the correct heading" when {
-      "useRebrand is false" in new TestSetup(isGovUkRebrandEnabled = false) {
-        document.getElementById("income-tax-heading").text() shouldBe "Income Tax"
-      }
-      "useRebrand is true" in new TestSetup(isGovUkRebrandEnabled = true) {
-        document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
-      }
+    "display the correct heading" in new TestSetup() {
+      document.getElementById("income-tax-heading").text() shouldBe "Self Assessment"
     }
 
     "display the correct service navigation section" when {

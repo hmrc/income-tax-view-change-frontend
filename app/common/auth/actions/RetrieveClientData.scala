@@ -23,7 +23,7 @@ import common.services.SessionDataService
 import common.services.agent.ClientDetailsService
 import common.utils.sessionUtils.SessionKeys
 import hub.controllers.agent.routes
-import models.sessionData.SessionDataGetResponse.SessionDataNotFound
+import common.models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}

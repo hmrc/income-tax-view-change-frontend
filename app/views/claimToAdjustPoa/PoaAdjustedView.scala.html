@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.TaxYear
 @import common.views.html.components._
-@import _root_.implicits.ImplicitCurrencyFormatter._
+@import _root_.financials.implicits.ImplicitCurrencyFormatter._
 @import financials.controllers.routes as financialsRoutes
 
 @this(
@@ -45,7 +45,6 @@
 
 @mainTemplate(pageTitle = getMessage("heading"),
     isAgent = user.isAgent,
-    btaNavPartial = user.btaNavPartial,
     btaAndPtaServiceNavigation = user.serviceNavigationPartial) {
 
     @govukPanel(Panel(

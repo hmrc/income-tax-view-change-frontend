@@ -21,10 +21,10 @@ import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
+import common.models.admin.TriggeredMigration
+import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import models.admin.TriggeredMigration
 import models.incomeSourceDetails.TaxYear
-import models.itsaStatus.ITSAStatus
 import org.scalatest.Assertion
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
