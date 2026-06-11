@@ -22,8 +22,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import services.FinancialDetailsService
-import testConstants.BaseTestConstants.testTaxYear
-import testConstants.FinancialDetailsTestConstants._
+import common.testConstants.BaseTestConstants.testTaxYear
+import financials.testConstants.FinancialDetailsTestConstants._
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

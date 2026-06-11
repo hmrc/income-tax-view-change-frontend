@@ -21,7 +21,7 @@ import models.nrs.{IdentityData, NrsMetadata, NrsSubmission, NrsSuccessResponse,
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Headers
 import play.api.test.FakeRequest
-import testConstants.ChecksumUtils._
+import common.testConstants.ChecksumUtils.*
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, User}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name}
 

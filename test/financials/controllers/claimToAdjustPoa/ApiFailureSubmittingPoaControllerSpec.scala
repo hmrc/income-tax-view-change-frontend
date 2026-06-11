@@ -25,7 +25,7 @@ import org.jsoup.nodes.Document
 import play.api
 import play.api.Application
 import play.api.test.Helpers.{HTML, OK, contentAsString, contentType, defaultAwaitTimeout, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome
+import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome
 
 class ApiFailureSubmittingPoaControllerSpec extends MockAuthActions {
 

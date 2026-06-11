@@ -33,7 +33,7 @@ import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
 import services.CreditService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import hub.controllers.HomeController
 import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}

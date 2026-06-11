@@ -32,7 +32,7 @@ import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.errorResponse
+import common.testConstants.IncomeSourceDetailsTestConstants.errorResponse
 
 import scala.concurrent.Future
 

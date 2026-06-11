@@ -28,7 +28,7 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 import common.models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate

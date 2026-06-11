@@ -32,7 +32,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.PaymentOnAccountSessionService
 import services.claimToAdjustPoa.ClaimToAdjustService
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
+import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
 import scala.concurrent.Future
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes

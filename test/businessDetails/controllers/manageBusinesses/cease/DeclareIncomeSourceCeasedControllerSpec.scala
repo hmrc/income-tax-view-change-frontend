@@ -26,7 +26,7 @@ import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
+import common.testConstants.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import common.connectors.ITSAStatusConnector

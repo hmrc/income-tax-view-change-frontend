@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package testConstants
+package businessDetails.testConstants
 
 import common.enums.IncomeSourceJourney.SelfEmployment
-import common.models.core.{AccountingPeriodModel, AddressModel, CessationModel, ContactDetailsModel, ErrorModel}
-import common.models.core.*
 import common.models.core.IncomeSourceId.mkIncomeSourceId
+import common.models.core.*
+import common.testConstants.BaseTestConstants.*
 import models.incomeSourceDetails.viewmodels.*
 import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import testConstants.BaseTestConstants.*
 import obligations.testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 
 import java.time.{LocalDate, Month}

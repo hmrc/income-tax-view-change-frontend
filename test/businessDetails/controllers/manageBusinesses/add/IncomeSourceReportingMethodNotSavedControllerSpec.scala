@@ -23,7 +23,7 @@ import play.api
 import play.api.Application
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderNoLatency
+import common.testConstants.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderNoLatency
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes

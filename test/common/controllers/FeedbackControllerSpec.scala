@@ -33,8 +33,8 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testAuthSuccessResponse}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testAuthSuccessResponse}
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 import uk.gov.hmrc.auth.core.InvalidBearerToken
 
 import scala.concurrent.Future

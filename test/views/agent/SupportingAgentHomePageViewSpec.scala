@@ -26,7 +26,7 @@ import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import hub.views.html.agent.SupportingAgentHomeView

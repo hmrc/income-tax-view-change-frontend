@@ -40,8 +40,8 @@ import org.mockito.Mockito.when
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

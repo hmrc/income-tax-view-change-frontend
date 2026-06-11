@@ -22,7 +22,7 @@ import common.enums.TransactionName
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import obligations.testConstants.NextUpdatesTestConstants.*
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {

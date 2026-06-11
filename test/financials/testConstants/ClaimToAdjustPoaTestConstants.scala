@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package testConstants.claimToAdjustPoa
+package financials.testConstants
 
 import common.models.core.NormalMode
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import models.chargeHistory.ChargeHistoryModel
 import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 object ClaimToAdjustPoaTestConstants {
 

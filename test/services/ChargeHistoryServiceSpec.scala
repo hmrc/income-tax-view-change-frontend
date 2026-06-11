@@ -22,7 +22,7 @@ import models.chargeHistory._
 import models.claimToAdjustPoa.{Increase, MainIncomeLower}
 import models.financialDetails.DocumentDetail
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
+import common.testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
 import testUtils.TestSupport
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

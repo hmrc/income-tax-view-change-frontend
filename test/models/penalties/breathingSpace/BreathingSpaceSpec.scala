@@ -17,7 +17,7 @@
 package models.penalties.breathingSpace
 
 import play.api.libs.json.{JsObject, Json}
-import testConstants.PenaltiesTestConstants.breathingSpace
+import financials.testConstants.PenaltiesTestConstants.breathingSpace
 import testUtils.TestSupport
 
 class BreathingSpaceSpec extends TestSupport {

@@ -27,8 +27,8 @@ import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import services.claimToAdjustPoa.ClaimToAdjustService
-import testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.*
+import common.testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
+import financials.testConstants.ClaimToAdjustPoaTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

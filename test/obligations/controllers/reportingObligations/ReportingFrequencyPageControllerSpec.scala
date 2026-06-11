@@ -38,8 +38,8 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import testConstants.BaseTestConstants.{testMtditid, testNino}
-import testConstants.BusinessDetailsTestConstants.business1
+import common.testConstants.BaseTestConstants.{testMtditid, testNino}
+import obligations.testConstants.BusinessDetailsTestConstants.business1
 
 import java.time.LocalDate
 import scala.concurrent.Future

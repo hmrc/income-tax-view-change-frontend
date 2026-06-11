@@ -28,7 +28,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import services.PaymentOnAccountSessionService
 import services.claimToAdjustPoa.ClaimToAdjustService
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
+import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
 import scala.concurrent.Future
 

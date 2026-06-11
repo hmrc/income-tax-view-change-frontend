@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
-import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseError, ITSAStatusResponseModel, StatusDetail, StatusReason}
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.*
+import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import play.mvc.Http.Status

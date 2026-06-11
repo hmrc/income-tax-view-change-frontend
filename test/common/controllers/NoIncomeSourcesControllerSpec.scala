@@ -21,7 +21,7 @@ import common.mocks.auth.MockAuthActions
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
+import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 
 class NoIncomeSourcesControllerSpec extends MockAuthActions {
 

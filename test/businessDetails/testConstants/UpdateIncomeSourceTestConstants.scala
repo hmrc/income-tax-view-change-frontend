@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package obligations.testConstants
+package businessDetails.testConstants
 
-import businessDetails.models.updateIncomeSource.{Cessation, TaxYearSpecific, UpdateIncomeSourceRequestModel, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
+import businessDetails.models.updateIncomeSource.*
+import common.testConstants.BaseTestConstants.testNino
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.testNino
 import uk.gov.hmrc.http.HttpResponse
 
 import java.time.LocalDate

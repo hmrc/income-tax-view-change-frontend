@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
-import common.auth.actions.AuthActionsTestData.*
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.*
 import common.config.FrontendAppConfig
 import common.enums.MTDIndividual
 import common.models.auth.AuthorisedAndEnrolledRequest
@@ -26,9 +26,9 @@ import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRan
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
 import play.api.test.FakeRequest
-import testConstants.BusinessDetailsTestConstants.business1
-import testConstants.PropertyDetailsTestConstants.propertyDetails
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import businessDetails.testConstants.BusinessDetailsTestConstants.business1
+import businessDetails.testConstants.PropertyDetailsTestConstants.propertyDetails
+import IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import testUtils.UnitSpec
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}

@@ -25,9 +25,9 @@ import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails._
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status
-import testConstants.BaseTestConstants._
-import testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
-import testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.BaseTestConstants._
+import businessDetails.testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
+import financials.testConstants.FinancialDetailsTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

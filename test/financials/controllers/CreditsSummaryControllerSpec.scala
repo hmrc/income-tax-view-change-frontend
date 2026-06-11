@@ -29,8 +29,8 @@ import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.*
 import services.{CalculationService, CreditHistoryService}
 import org.mockito.Mockito.reset
-import testConstants.BaseTestConstants.{calendarYear2018, testMtdItAgentUser, testMtdItUser, testSaUtr}
-import testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.{calendarYear2018, testMtdItAgentUser, testMtdItUser, testSaUtr}
+import financials.testConstants.FinancialDetailsTestConstants.*
 import views.html.CreditsSummaryView
 
 

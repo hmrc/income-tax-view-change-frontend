@@ -33,9 +33,9 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import financials.testConstants.ChargeConstants
+import financials.testConstants.FinancialDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import views.html.WhatYouOweView
 

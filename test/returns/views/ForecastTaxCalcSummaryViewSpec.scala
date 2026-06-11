@@ -21,7 +21,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.prop.TableDrivenPropertyChecks.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testServiceNavigation, testTaxYear}
+import common.testConstants.BaseTestConstants.{testServiceNavigation, testTaxYear}
 import testUtils.ViewSpec
 import returns.views.html.ForecastTaxCalcSummaryView
 

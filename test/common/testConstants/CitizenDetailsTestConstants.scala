@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
 import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants._
+import common.testConstants.BaseTestConstants.*
 
 object CitizenDetailsTestConstants {
   val testValidCitizenDetailsModelJson: JsValue = Json.obj(

@@ -23,8 +23,8 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.testSessionId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.testSessionId
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}

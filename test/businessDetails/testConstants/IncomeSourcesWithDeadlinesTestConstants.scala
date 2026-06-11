@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package testConstants
+package businessDetails.testConstants
 
 import obligations.models.ObligationsModel
-import testConstants.BusinessDetailsTestConstants.{business2, obligationsDataSuccessModel}
 import obligations.testConstants.NextUpdatesTestConstants.nextUpdatesDataPropertySuccessModel
+import businessDetails.testConstants.BusinessDetailsTestConstants.{business2, obligationsDataSuccessModel}
 
 object IncomeSourcesWithDeadlinesTestConstants {
   val businessAndPropertyIncomeWithDeadlines = ObligationsModel(Seq(obligationsDataSuccessModel,

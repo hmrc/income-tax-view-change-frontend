@@ -26,7 +26,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
-import testConstants.BaseTestConstants.{testNino, testUserTypeIndividual}
+import common.testConstants.BaseTestConstants.{testNino, testUserTypeIndividual}
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.language.LanguageUtils
 import common.views.html.components.link

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package testConstants
+package businessDetails.testConstants
 
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import common.models.core.{AccountingPeriodModel, CessationModel}
+import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
 import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import obligations.models.{SingleObligationModel, StatusFulfilled}
-import testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
-import testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5}
 import obligations.testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
+import businessDetails.testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5}
 
 import java.time.LocalDate
 

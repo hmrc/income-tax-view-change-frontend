@@ -33,9 +33,9 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
 import services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
-import testConstants.BaseTestConstants.testTaxYear
-import testConstants.FinancialDetailsTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.testTaxYear
+import financials.testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import java.time.LocalDate
 import scala.concurrent.Future

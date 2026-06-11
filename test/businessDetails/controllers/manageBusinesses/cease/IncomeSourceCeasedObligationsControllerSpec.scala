@@ -37,10 +37,10 @@ import play.api
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
-import testConstants.BusinessDetailsTestConstants.testIncomeSource
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
+import common.testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
+import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSource
+import common.testConstants.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
+import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 
 import java.time.LocalDate
 import scala.concurrent.Future

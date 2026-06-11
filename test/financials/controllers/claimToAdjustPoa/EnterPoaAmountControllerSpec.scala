@@ -21,6 +21,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants
 import common.utils.sessionUtils
 import common.utils.sessionUtils.SessionKeys
 import generators.PoaGenerator
@@ -39,7 +40,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import services.claimToAdjustPoa.ClaimToAdjustService
 import services.PaymentOnAccountSessionService
-import testConstants.BaseTestConstants
 
 import scala.concurrent.Future
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes

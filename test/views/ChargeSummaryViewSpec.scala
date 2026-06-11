@@ -21,6 +21,7 @@ import common.exceptions.MissingFieldException
 import financials.models.ChargeType.*
 import financials.models.*
 import financials.controllers.routes as financialsRoutes
+import financials.testConstants.ChargeConstants
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*
@@ -30,8 +31,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import play.twirl.api.Html
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.*
+import financials.testConstants.FinancialDetailsTestConstants.*
 import testUtils.ViewSpec
 import views.html.ChargeSummaryView
 

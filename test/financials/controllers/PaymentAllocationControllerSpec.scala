@@ -32,7 +32,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.PaymentAllocationsService
-import testConstants.PaymentAllocationsTestConstants.*
+import financials.testConstants.PaymentAllocationsTestConstants.*
 
 import scala.concurrent.Future
 

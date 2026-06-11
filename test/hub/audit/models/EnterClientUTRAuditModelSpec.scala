@@ -19,7 +19,7 @@ package hub.audit.models
 import common.enums.AuditType.EnterClientUTR
 import common.enums.TransactionName
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
+import common.testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
 import testUtils.TestSupport
 
 class EnterClientUTRAuditModelSpec extends TestSupport {

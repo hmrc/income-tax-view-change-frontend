@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
-import common.models.core.PaymentDataModel
+import common.models.core.{NinoResponseError, NinoResponseSuccess}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants._
+import common.testConstants.BaseTestConstants.*
 
-object PaymentDataTestConstants {
+object NinoLookupTestConstants {
+  val testNinoModel: NinoResponseSuccess = NinoResponseSuccess(nino = testNino)
+  val testNinoModelJson: JsValue = Json.obj(
+    "nino" -> testNino
+  )
 
-  val testTaxType = "mtdfb-itsa"
-  val testAmountInPence = 10000
-
-  val testPaymentDataModel: PaymentDataModel = PaymentDataModel(testTaxType, testMtditid, testAmountInPence, testPaymentRedirectUrl)
-
-  val testPaymentDataJson: JsValue =
-    Json.obj(
-      "taxType" -> testTaxType,
-      "taxReference" -> testMtditid,
-      "amountInPence" -> testAmountInPence,
-      "returnUrl" -> testPaymentRedirectUrl
-    )
-
+  val testNinoErrorModel: NinoResponseError = NinoResponseError(testErrorStatus, testErrorMessage)
+  val testNinoErrorModelJson: JsValue = Json.obj(
+    "status" -> testErrorStatus,
+    "reason" -> testErrorMessage
+  )
 }

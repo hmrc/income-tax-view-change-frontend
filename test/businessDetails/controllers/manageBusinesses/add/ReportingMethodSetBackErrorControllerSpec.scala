@@ -30,8 +30,8 @@ import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import testConstants.BaseTestConstants.testSessionId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.testSessionId
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 

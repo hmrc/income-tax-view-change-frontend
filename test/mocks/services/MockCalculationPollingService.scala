@@ -21,7 +21,7 @@ import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import services.CalculationPollingService
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.UnitSpec
 
 import scala.annotation.nowarn

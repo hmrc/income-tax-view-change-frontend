@@ -27,7 +27,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, singleUKPropertyIncome2024}
+import common.testConstants.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, singleUKPropertyIncome2024}
 
 class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 

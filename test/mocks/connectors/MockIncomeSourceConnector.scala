@@ -21,8 +21,8 @@ import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetails
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

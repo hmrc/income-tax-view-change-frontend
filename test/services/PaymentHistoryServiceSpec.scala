@@ -27,7 +27,7 @@ import models.incomeSourceDetails.TaxYear
 import org.mockito.Mockito.mock
 import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
 import services.PaymentHistoryService.PaymentHistoryError
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.oldUserDetails
+import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

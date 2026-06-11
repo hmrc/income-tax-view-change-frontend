@@ -31,9 +31,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
-import testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import businessDetails.testConstants.BusinessDetailsTestConstants.viewBusinessDetailsViewModel
+import businessDetails.testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService {
 

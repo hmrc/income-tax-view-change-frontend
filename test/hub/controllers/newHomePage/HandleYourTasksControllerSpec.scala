@@ -22,7 +22,9 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import common.services.{AuditingService, DateService, DateServiceInterface, ITSAStatusService}
+import common.testConstants.BaseTestConstants
 import common.utils.sessionUtils.SessionKeys
+import financials.testConstants.ANewCreditAndRefundModel
 import mocks.services.*
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
@@ -46,7 +48,6 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
 import services.*
 import hub.services.newHomePage.HandleYourTasksService
-import testConstants.{ANewCreditAndRefundModel, BaseTestConstants}
 import hub.views.html.newHomePage.NewHomeYourTasksView
 
 import java.time.{LocalDate, Month}

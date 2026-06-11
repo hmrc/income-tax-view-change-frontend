@@ -29,7 +29,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import play.mvc.Http.Status.NO_CONTENT
-import testConstants.BaseTestConstants.testSessionId
+import common.testConstants.BaseTestConstants.testSessionId
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 

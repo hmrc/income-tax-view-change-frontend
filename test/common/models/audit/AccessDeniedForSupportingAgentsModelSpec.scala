@@ -21,7 +21,7 @@ import common.enums.AuditType.AccessDeniedForSupportingAgent
 import common.enums.{MTDSupportingAgent, TransactionName}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{testArn, testClientNameString, testCredId, testMtditid, testNino, testSaUtr}
+import common.testConstants.BaseTestConstants.{testArn, testClientNameString, testCredId, testMtditid, testNino, testSaUtr}
 import testUtils.TestSupport
 
 class AccessDeniedForSupportingAgentsModelSpec extends TestSupport {

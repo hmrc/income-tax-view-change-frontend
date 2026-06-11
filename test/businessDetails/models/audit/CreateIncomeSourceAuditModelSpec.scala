@@ -23,7 +23,7 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUser
 import enums.FailureCategory.ApiFailure
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, Json}
-import testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

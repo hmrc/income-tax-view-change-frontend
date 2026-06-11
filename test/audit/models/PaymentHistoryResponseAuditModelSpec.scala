@@ -20,7 +20,7 @@ import common.auth.actions.AuthActionsTestData.*
 import models.financialDetails.Payment
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.libs.json._
-import testConstants.BaseTestConstants._
+import common.testConstants.BaseTestConstants._
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup._

@@ -32,8 +32,8 @@ import play.api.inject
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import hub.services.newHomePage.RecentActivityService
 import services.PaymentHistoryService
-import testConstants.BaseTestConstants.{testMtditid, testNino}
-import testConstants.BusinessDetailsTestConstants.business1
+import common.testConstants.BaseTestConstants.{testMtditid, testNino}
+import businessDetails.testConstants.BusinessDetailsTestConstants.business1
 
 import java.time.LocalDate
 import scala.concurrent.Future

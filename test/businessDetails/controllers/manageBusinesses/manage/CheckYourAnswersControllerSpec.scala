@@ -24,8 +24,8 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.UpdateIncomeSourceService

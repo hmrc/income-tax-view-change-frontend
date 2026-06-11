@@ -41,12 +41,11 @@ import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, *}
 import services.*
 import services.claimToAdjustPoa.ClaimToAdjustService
-import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
-import testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.*
-import testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
+import businessDetails.testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import financials.testConstants.FinancialDetailsTestConstants.*
+import returns.testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import returns.views.html.TaxYearSummaryView
 import obligations.models.*
 import obligations.services.NextUpdatesService
@@ -55,6 +54,7 @@ import java.time.LocalDate
 import scala.annotation.unused
 import scala.concurrent.Future
 import financials.controllers.routes as financialsRoutes
+import financials.testConstants.ChargeConstants
 
 class TaxYearSummaryControllerSpec
   extends MockAuthActions

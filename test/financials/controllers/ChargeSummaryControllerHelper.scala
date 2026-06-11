@@ -20,6 +20,7 @@ import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import financials.models.AmendedReturnReversalReason
 import financials.models.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
+import financials.testConstants.{ChargeConstants, PaymentAllocationsTestConstants}
 import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService, MockPaymentAllocationsService}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.*
@@ -28,8 +29,7 @@ import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers.INTERNAL_SERVER_ERROR
-import testConstants.FinancialDetailsTestConstants.financialDetail
-import testConstants.{ChargeConstants, PaymentAllocationsTestConstants}
+import financials.testConstants.FinancialDetailsTestConstants.financialDetail
 
 import java.time.LocalDate
 import scala.concurrent.Future

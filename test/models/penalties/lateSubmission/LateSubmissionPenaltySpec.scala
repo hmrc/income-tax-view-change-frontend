@@ -17,7 +17,7 @@
 package models.penalties.lateSubmission
 
 import play.api.libs.json.{JsValue, Json}
-import testConstants.PenaltiesTestConstants.lateSubmissionPenalty
+import financials.testConstants.PenaltiesTestConstants.lateSubmissionPenalty
 import testUtils.TestSupport
 
 class LateSubmissionPenaltySpec extends TestSupport {

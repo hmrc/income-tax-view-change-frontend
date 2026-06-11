@@ -36,7 +36,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 

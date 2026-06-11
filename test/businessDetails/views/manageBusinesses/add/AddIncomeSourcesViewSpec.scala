@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testConstants.BusinessDetailsTestConstants._
+import businessDetails.testConstants.BusinessDetailsTestConstants._
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}

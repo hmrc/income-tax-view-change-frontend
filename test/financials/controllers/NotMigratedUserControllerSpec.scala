@@ -28,7 +28,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.PaymentHistoryService
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeNotMigrated
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeNotMigrated
 
 class NotMigratedUserControllerSpec extends MockAuthActions
   with ImplicitDateFormatter with MockDateService {

@@ -19,7 +19,7 @@ package models
 import models.repaymentHistory.{HipRepaymentHistoryResponse, RepaymentHistoryModel}
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
-import testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, repaymentHistoryTwoRSI, validRepaymentHistoryOneRSIJson, validRepaymentHistoryTwoRSIJson}
+import financials.testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, repaymentHistoryTwoRSI, validRepaymentHistoryOneRSIJson, validRepaymentHistoryTwoRSIJson}
 import testUtils.UnitSpec
 
 class RepaymentHistoryResponseModelSpec extends UnitSpec with Matchers {

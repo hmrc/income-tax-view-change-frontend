@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
+import financials.testConstants.ANewCreditAndRefundModel
 import models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -28,7 +29,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.ANewCreditAndRefundModel
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditAndRefundsView
 

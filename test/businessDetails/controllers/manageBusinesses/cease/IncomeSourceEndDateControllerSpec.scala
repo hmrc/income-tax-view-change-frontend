@@ -37,8 +37,8 @@ import play.api.http.Status
 import play.api.http.Status.*
 import play.api.mvc.*
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 
 import java.time.LocalDate
 import scala.concurrent.Future

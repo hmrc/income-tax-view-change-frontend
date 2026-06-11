@@ -26,8 +26,7 @@ import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.ANewCreditAndRefundModel
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import hub.views.html.agent.PrimaryAgentHomeView
@@ -41,6 +40,7 @@ import java.time.{LocalDate, Month}
 import scala.annotation.unused
 import scala.util.Try
 import financials.controllers.routes as financialsRoutes
+import financials.testConstants.ANewCreditAndRefundModel
 
 class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
