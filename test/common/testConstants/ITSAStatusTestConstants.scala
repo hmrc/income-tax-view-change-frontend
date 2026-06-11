@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package businessDetails.testConstants
+package common.testConstants
 
 import common.models.itsaStatus.*
 import models.incomeSourceDetails.TaxYear

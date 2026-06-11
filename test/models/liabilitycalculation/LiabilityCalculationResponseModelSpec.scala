@@ -23,7 +23,7 @@ import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status
 import play.api.i18n.Lang
 import play.api.libs.json._
-import financials.testConstants.NewCalcBreakdownUnitTestConstants._
+import returns.testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.TestSupport
 
 import scala.io.Source

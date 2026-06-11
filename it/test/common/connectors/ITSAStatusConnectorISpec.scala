@@ -22,7 +22,7 @@ import connectors.constants.ITSAStatusUpdateConnectorConstants.*
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
-import businessDetails.testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson, successITSAStatusResponseModel}
+import common.testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson, successITSAStatusResponseModel}
 
 class ITSAStatusConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 

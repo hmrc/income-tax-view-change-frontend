@@ -30,7 +30,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
-import businessDetails.testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023}
+import common.testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023}
 import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 import java.time.LocalDate

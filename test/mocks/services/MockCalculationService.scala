@@ -22,7 +22,7 @@ import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import services.CalculationService
 import common.testConstants.BaseTestConstants._
-import financials.testConstants.NewCalcBreakdownUnitTestConstants._
+import returns.testConstants.NewCalcBreakdownUnitTestConstants._
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

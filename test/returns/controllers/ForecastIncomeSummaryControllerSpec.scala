@@ -27,7 +27,7 @@ import play.api.http.Status
 import play.api.test.Helpers.*
 import services.CalculationService
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
-import financials.testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import returns.views.html.ForecastIncomeSummaryView
 

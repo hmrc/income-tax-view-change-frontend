@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.testConstants
+package returns.testConstants
 
 import models.liabilitycalculation.*
 import models.liabilitycalculation.taxcalculation.*

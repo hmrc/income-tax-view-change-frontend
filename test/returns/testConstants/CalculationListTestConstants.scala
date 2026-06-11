@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.testConstants
+package returns.testConstants
 
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import play.api.libs.json.{JsValue, Json}
