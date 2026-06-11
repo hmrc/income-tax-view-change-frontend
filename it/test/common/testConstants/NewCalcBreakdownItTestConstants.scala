@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
 import common.enums.{MTDIndividual, MTDUserRole}
 import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
-import models.liabilitycalculation._
-import models.liabilitycalculation.taxcalculation._
+import models.liabilitycalculation.*
+import models.liabilitycalculation.taxcalculation.*
 
 object NewCalcBreakdownItTestConstants {
 

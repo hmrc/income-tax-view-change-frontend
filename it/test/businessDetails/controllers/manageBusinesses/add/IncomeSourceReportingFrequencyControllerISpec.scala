@@ -30,10 +30,10 @@ import models.incomeSourceDetails.*
 import common.models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
-import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants._
+import common.testConstants.CalculationListIntegrationTestConstants
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
+import common.testConstants.IncomeSourceIntegrationTestConstants._
 
 import java.time.LocalDate
 import java.time.Month.APRIL

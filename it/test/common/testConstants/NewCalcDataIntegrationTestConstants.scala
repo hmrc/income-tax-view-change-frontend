@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
 import models.liabilitycalculation.LiabilityCalculationResponse
-import play.api.libs.json._
+import play.api.libs.json.*
 
 object NewCalcDataIntegrationTestConstants {
 

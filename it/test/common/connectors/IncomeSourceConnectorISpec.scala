@@ -25,7 +25,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.defaultAuthUserDetails
+import common.testConstants.BaseIntegrationTestConstants.defaultAuthUserDetails
 
 import java.time.LocalDate
 

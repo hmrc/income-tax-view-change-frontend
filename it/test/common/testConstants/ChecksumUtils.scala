@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package testConstants.messages
+package common.testConstants
 
-import common.helpers.ComponentSpecBase
+import java.security.MessageDigest
 
-object WhatYouOweMessages extends ComponentSpecBase {
+object ChecksumUtils {
 
-  val hmrcAdjustment: String = messagesAPI("whatYouOwe.hmrcAdjustment.text")
-  val hmrcAdjustmentHeading: String = messagesAPI("whatYouOwe.hmrcAdjustment.heading")
-  val hmrcAdjustmentLine1: String = messagesAPI("whatYouOwe.hmrcAdjustment.line1")
-  val underReview: String = messagesAPI("whatYouOwe.paymentUnderReview")
+  def calculateSha256(input: Array[Byte]): String =
+    MessageDigest.getInstance("SHA-256").digest(input).map("%02x".format(_)).mkString
 
+  implicit class ByteArrayWithSha256(bytes: Array[Byte]) {
+    def calculateSha256: String = ChecksumUtils.calculateSha256(bytes)
+  }
 }

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package testConstants
+package businessDetails.testConstants
 
 import common.models.core.{AccountingPeriodModel, CessationModel}
+import common.testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testLatencyDetails3, testPropertyIncomeId}
 import models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testLatencyDetails3, testPropertyIncomeId}
-import testConstants.BusinessDetailsIntegrationTestConstants.endYear
+import BusinessDetailsIntegrationTestConstants.endYear
 
 import java.time.LocalDate
 

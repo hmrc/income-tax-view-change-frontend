@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
 import common.helpers.ComponentSpecBase
 import play.api.libs.json.{JsValue, Json}

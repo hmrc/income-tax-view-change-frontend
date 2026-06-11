@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
 import cats.implicits.catsSyntaxOptionId
-import models.nrs.{IdentityData, NrsMetadata, NrsSubmission, NrsSuccessResponse, RawPayload, SearchKeys}
+import common.testConstants.ChecksumUtils.*
+import models.nrs.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Headers
 import play.api.test.FakeRequest
-import common.testConstants.ChecksumUtils.*
+import uk.gov.hmrc.auth.core.retrieve.*
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, User}
-import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name}
 
 import java.time.{Instant, LocalDate}
 

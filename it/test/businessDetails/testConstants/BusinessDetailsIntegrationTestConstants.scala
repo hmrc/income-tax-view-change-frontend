@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package testConstants
+package businessDetails.testConstants
 
 import common.models.core.{AccountingPeriodModel, AddressModel, CessationModel}
+import common.testConstants.BaseIntegrationTestConstants.*
 import models.incomeSourceDetails.BusinessDetailsModel
-import testConstants.BaseIntegrationTestConstants._
+import models.incomeSourceDetails.viewmodels.DatesModel
+import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 
@@ -198,4 +200,53 @@ object BusinessDetailsIntegrationTestConstants {
     address = expectedAddress,
     latencyDetails = Some(testLatencyDetails3)
   )
+
+  val taxYear: Int = 2022
+
+  val datesModelSeq2022: Seq[DatesModel] = Seq(
+    DatesModel(
+      LocalDate.of(2022, 1, 6),
+      LocalDate.of(2022, 4, 5),
+      LocalDate.of(2022, 5, 5),
+      "#001",
+      false,
+      obligationType = "Quarterly"
+    )
+  )
+
+  val datesModelSeq2023: Seq[DatesModel] = Seq(
+    DatesModel(
+      LocalDate.of(2023, 1, 6),
+      LocalDate.of(2023, 4, 5),
+      LocalDate.of(2023, 5, 5),
+      "#001",
+      false,
+      obligationType = "Quarterly"
+    )
+  )
+
+  val testQuarterlyObligationDates: Seq[Seq[DatesModel]] = Seq(datesModelSeq2022, datesModelSeq2023)
+
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
+    GroupedObligationsModel("123", List(
+      SingleObligationModel(
+        LocalDate.of(2022, 1, 6),
+        LocalDate.of(2022, 4, 5),
+        LocalDate.of(2022, 5, 5),
+        "Quarterly",
+        None,
+        "#001",
+        StatusFulfilled
+      ),
+      SingleObligationModel(
+        LocalDate.of(2022, 1, 6),
+        LocalDate.of(2022, 4, 5),
+        LocalDate.of(2022, 5, 5),
+        "Quarterly",
+        None,
+        "#002",
+        StatusFulfilled
+      )
+    ))
+  ))
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants
+package common.testConstants
 
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.IncomeSourceJourneyType
@@ -23,10 +23,10 @@ import financials.models.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import financials.models.CodingOutType.*
 import models.incomeSourceDetails.*
 import play.api.libs.json.{JsObject, JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.*
-import testConstants.PaymentHistoryTestConstraints.oldBusiness1
-import testConstants.PropertyDetailsIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.*
+import financials.testConstants.PaymentHistoryTestConstraints.oldBusiness1
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

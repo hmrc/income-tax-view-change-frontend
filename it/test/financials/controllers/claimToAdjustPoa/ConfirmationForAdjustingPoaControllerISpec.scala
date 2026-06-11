@@ -27,10 +27,10 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status.*
 import play.api.libs.json.JsValue
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.address
-import financials.testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import services.PaymentOnAccountSessionService
+import common.testConstants.BaseIntegrationTestConstants._
+import financials.testConstants.FinancialDetailsTestConstants.{testFinancialDetailsErrorModelJson, address}
+import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
 import java.time.LocalDate
 

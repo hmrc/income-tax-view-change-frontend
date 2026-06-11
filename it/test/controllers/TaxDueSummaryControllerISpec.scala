@@ -25,11 +25,11 @@ import common.helpers.servicemocks.AuditStub.verifyAuditEvent
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.*
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import testConstants.NewCalcDataIntegrationTestConstants.*
-import testConstants.messages.TaxDueSummaryMessages.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import common.testConstants.NewCalcDataIntegrationTestConstants.*
+import common.testConstants.messages.TaxDueSummaryMessages.*
 
 import java.time.LocalDate
 

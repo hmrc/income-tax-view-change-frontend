@@ -30,10 +30,10 @@ import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObli
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
+import common.testConstants.BaseIntegrationTestConstants._
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
-import testConstants.messages.HomeMessages.{nextUpdateDue, overdue, overdueUpdates}
+import common.testConstants.messages.HomeMessages.{nextUpdateDue, overdue, overdueUpdates}
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {

@@ -30,9 +30,9 @@ import obligations.models.ObligationsModel
 import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 import play.api.http.Status.*
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.CalculationListIntegrationTestConstants
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 class NextUpdatesControllerISpec extends ControllerISpecHelper {
 

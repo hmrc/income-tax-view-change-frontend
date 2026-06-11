@@ -23,9 +23,9 @@ import common.helpers.servicemocks.AuditStub
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
+import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
+import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 object ForecastTaxSummaryControllerTestConstants {
 

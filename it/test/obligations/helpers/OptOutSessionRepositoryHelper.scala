@@ -24,7 +24,7 @@ import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.repositories.OptOutContextData
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.testSessionId
+import common.testConstants.BaseIntegrationTestConstants.testSessionId
 
 class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) extends CustomMatchers {
 

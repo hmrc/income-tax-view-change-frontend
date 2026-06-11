@@ -31,11 +31,10 @@ import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsMode
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.address
-import financials.testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
+import common.testConstants.BaseIntegrationTestConstants._
+import financials.testConstants.FinancialDetailsTestConstants.{testFinancialDetailsErrorModelJson, address}
+import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import financials.testConstants.ClaimToAdjustPoaTestConstants.validSession
 
 import java.time.LocalDate
 

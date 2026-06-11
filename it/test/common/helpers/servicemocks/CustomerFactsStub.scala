@@ -17,7 +17,7 @@
 package common.helpers.servicemocks
 
 import common.helpers.WiremockHelper
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
 
 object CustomerFactsStub {
 

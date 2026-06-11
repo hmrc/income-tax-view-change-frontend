@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package testConstants.messages
+package common.testConstants.messages
 
 import common.helpers.ComponentSpecBase
 

@@ -41,7 +41,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import common.testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSource
 import common.testConstants.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
-import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
+import obligations.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 
 import java.time.LocalDate
 import scala.concurrent.Future
