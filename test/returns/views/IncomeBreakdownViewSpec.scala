@@ -60,6 +60,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
     totalEmploymentExpenses = Some(7007.07),
     totalSelfEmploymentProfit = Some(1001.01),
     totalPropertyProfit = Some(2002.02),
+    totalUKOtherPropertyProfit = Some(1234.56),
     totalFHLPropertyProfit = Some(6003.00),
     totalForeignPropertyProfit = Some(6004.00),
     totalEeaFhlProfit = Some(6005.00),
@@ -190,7 +191,7 @@ class IncomeBreakdownViewSpec extends ViewSpec {
         "has a total property profit line with the correct value" in new Setup(view) {
           val row: Element = layoutContent.table().select("tr").get(5)
           row.select("td").first().text() shouldBe messages("income_breakdown.table.property")
-          row.select("td").last().text() shouldBe "£2,002.02"
+          row.select("td").last().text() shouldBe "£1,234.56"
         }
 
         "has an Profit from UK furnished line with the correct value" in new Setup(view) {
