@@ -92,6 +92,8 @@
         Table(
             caption = Some(messages("tax-year-summary.tax-calculation")),
             captionClasses = "govuk-table__caption govuk-visually-hidden",
+            attributes = Map("id" -> s"$tableId-income-deductions-contributions-table"),
+            firstCellIsHeader = true,
             head = Some(Seq(
                 HeadCell(
                     content = Text(messages("tax-year-summary.section"))
@@ -105,42 +107,41 @@
                 Option.when(isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear, isPrevious).url, messageKey = messages("tax-year-summary.income")))),
-                        TableRow(content = Text(overview.income.toCurrencyString))
+                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"))
                     )
                 ),
                 Option.when(!isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear, origin).url, messageKey = messages("tax-year-summary.income")))),
-                        TableRow(content = Text(overview.income.toCurrencyString))
+                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"))
                     )
                 ),
                 Option.when(isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear).url, messageKey = messages("tax-year-summary.deductions")))),
-                        TableRow(content = Text(overview.deductions.toCurrencyString))
+                        TableRow(content = Text(overview.deductions.toCurrencyString), format = Some("numeric"))
                     )
                 ),
                 Option.when(!isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear, origin).url, messageKey = messages("tax-year-summary.deductions")))),
-                        TableRow(content = Text(overview.deductions.toCurrencyString))
+                        TableRow(content = Text(overview.deductions.toCurrencyString), format = Some("numeric"))
                     )
-                //            TODO needs to be BOLD
                 ) ++ Some(Seq(
                     TableRow(content = Text(messages(s"tax-year-summary.taxable-income.finalCalc"))),
-                    TableRow(content = Text(overview.totalTaxableIncome.toCurrencyString))
+                    TableRow(content = Text(overview.totalTaxableIncome.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                 )
                 ),
                 Option.when(isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear).url, messageKey = messages(s"tax-year-summary.tax-due.finalCalc")))),
-                        TableRow(content = Text(overview.income.toCurrencyString))
+                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
                 Option.when(!isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin).url, messageKey = messages(s"tax-year-summary.tax-due.finalCalc")))),
-                        TableRow(content = Text(overview.income.toCurrencyString))
+                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
             ).flatten
@@ -157,11 +158,12 @@
 
     @overviewDescription
 
-    @* TODO finish transforming to GOV.UK table component *@
     @govukTable(
         Table(
             caption = Some(messages("tax-year-summary.tax-calculation")),
             captionClasses = "govuk-table__caption govuk-visually-hidden",
+            attributes = Map("id" -> s"$tableId-income-deductions-contributions-table"),
+            firstCellIsHeader = true,
             head = Some(Seq(
                 HeadCell(
                     content = Text(messages("tax-year-summary.section"))
@@ -175,42 +177,41 @@
                 Option.when(isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(taxYear, isPrevious).url, messageKey = messages("tax-year-summary.income")))),
-                        TableRow(content = Text(overview.income.toCurrencyString))
+                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"))
                     )
                 ),
                 Option.when(!isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.IncomeSummaryController.showIncomeSummary(taxYear, origin, isPrevious).url, messageKey = messages("tax-year-summary.income")))),
-                        TableRow(content = Text(overview.income.toCurrencyString))
+                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"))
                     )
                 ),
                 Option.when(isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(taxYear, isPrevious).url, messageKey = messages("tax-year-summary.deductions")))),
-                        TableRow(content = Text(overview.deductions.toCurrencyString))
+                        TableRow(content = Text(overview.deductions.toCurrencyString), format = Some("numeric"))
                     )
                 ),
                 Option.when(!isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.DeductionsSummaryController.showDeductionsSummary(taxYear, origin, isPrevious).url, messageKey = messages("tax-year-summary.deductions")))),
-                        TableRow(content = Text(overview.deductions.toCurrencyString))
+                        TableRow(content = Text(overview.deductions.toCurrencyString), format = Some("numeric"))
                     )
-                    //            TODO needs to be BOLD
                 ) ++ Some(Seq(
                     TableRow(content = Text(messages(s"tax-year-summary.taxable-income"))),
-                    TableRow(content = Text(overview.totalTaxableIncome.toCurrencyString))
+                    TableRow(content = Text(overview.totalTaxableIncome.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                 )
                 ),
                 Option.when(isAgent)(
                     Seq(
-                        TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due")))),
-                        TableRow(content = Text(overview.income.toCurrencyString))
+                        TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due"), classes = "govuk-!-font-weight-bold"))),
+                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
                 Option.when(!isAgent)(
                     Seq(
-                        TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due")))),
-                        TableRow(content = Text(overview.taxDue.toCurrencyString))
+                        TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due"), classes = "govuk-!-font-weight-bold"))),
+                        TableRow(content = Text(overview.taxDue.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
             ).flatten
