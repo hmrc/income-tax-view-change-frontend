@@ -91,6 +91,7 @@ object NewCalcBreakdownUnitTestConstants {
       incomeSummaryTotals = Some(IncomeSummaryTotals(
         totalSelfEmploymentProfit = Some(12500),
         totalPropertyProfit = Some(12500),
+        totalUKOtherPropertyProfit = Some(12500),
         totalFHLPropertyProfit = Some(12500),
         totalForeignPropertyProfit = Some(12500),
         totalEeaFhlProfit = Some(12500)
@@ -388,6 +389,7 @@ object NewCalcBreakdownUnitTestConstants {
       incomeSummaryTotals = Some(IncomeSummaryTotals(
         totalSelfEmploymentProfit = Some(12500),
         totalPropertyProfit = Some(12500),
+        totalUKOtherPropertyProfit = Some(12500),
         totalFHLPropertyProfit = Some(12500),
         totalForeignPropertyProfit = Some(12500),
         totalEeaFhlProfit = Some(12500)
