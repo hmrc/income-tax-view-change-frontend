@@ -45,7 +45,7 @@ class AddInternationalBusinessAddressController @Inject()(val authActions: AuthA
                                                          )
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
   
-  def show(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def show(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
       handleRequest(isAgent, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
   }
 
