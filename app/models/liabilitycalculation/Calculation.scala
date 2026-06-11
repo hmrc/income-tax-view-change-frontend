@@ -203,8 +203,8 @@ object PensionContributionReliefs {
   implicit val format: OFormat[PensionContributionReliefs] = Json.format[PensionContributionReliefs]
 }
 
-case class PensionContributionDetail(regularPensionContributions: BigDecimal,
-                                     oneOffPensionContributionsPaid: BigDecimal)
+case class PensionContributionDetail(regularPensionContributions: Option[BigDecimal],
+                                     oneOffPensionContributionsPaid: Option[BigDecimal])
 
 object PensionContributionDetail {
   implicit val format: OFormat[PensionContributionDetail] = Json.format[PensionContributionDetail]

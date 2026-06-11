@@ -73,8 +73,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
       PensionContributionReliefs(
         BigDecimal(3000.99),
         PensionContributionDetail(
-          BigDecimal(0.00),
-          BigDecimal(0.00)
+          Some(BigDecimal(0.00)),
+          Some(BigDecimal(0.00))
         )
       )
     ),
@@ -960,8 +960,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           PensionContributionReliefs(
             BigDecimal(5000.99),
             PensionContributionDetail(
-              BigDecimal(0.00),
-              BigDecimal(0.00)
+              Some(BigDecimal(0.00)),
+              Some(BigDecimal(0.00))
             )
           )
         ),
@@ -1018,8 +1018,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
                 PensionContributionReliefs(
                   BigDecimal(5000.99),
                   PensionContributionDetail(
-                    BigDecimal(0.00),
-                    BigDecimal(0.00)
+                    Some(BigDecimal(0.00)),
+                    Some(BigDecimal(0.00))
                   )
                 )
               ),
@@ -1224,8 +1224,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
           PensionContributionReliefs(
             BigDecimal(5000.99),
             PensionContributionDetail(
-              BigDecimal(0.00),
-              BigDecimal(0.00)
+              Some(BigDecimal(0.00)),
+              Some(BigDecimal(0.00))
             )
           )
         ),

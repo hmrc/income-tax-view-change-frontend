@@ -268,8 +268,8 @@ class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionVa
           PensionContributionReliefs(
             amount,
             PensionContributionDetail(
-              BigDecimal(0.00),
-              BigDecimal(0.00)
+              Some(BigDecimal(0.00)),
+              Some(BigDecimal(0.00))
             )
           )
         ))
