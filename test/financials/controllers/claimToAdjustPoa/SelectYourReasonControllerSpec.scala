@@ -24,7 +24,6 @@ import common.services.DateServiceInterface
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.*
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application
@@ -36,6 +35,7 @@ import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
 import scala.concurrent.Future
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import models.incomeSourceDetails.TaxYear
 
 class SelectYourReasonControllerSpec extends MockAuthActions with MockClaimToAdjustService with MockPaymentOnAccountSessionService with MockCalculationListService {
 

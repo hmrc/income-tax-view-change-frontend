@@ -28,7 +28,6 @@ import generators.PoaGenerator
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -43,6 +42,7 @@ import services.PaymentOnAccountSessionService
 
 import scala.concurrent.Future
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import models.incomeSourceDetails.TaxYear
 
 class EnterPoaAmountControllerSpec extends MockAuthActions
   with MockClaimToAdjustService

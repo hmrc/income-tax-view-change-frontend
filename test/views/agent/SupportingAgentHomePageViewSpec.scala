@@ -18,7 +18,6 @@ package views.agent
 
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import hub.models.homePage.*
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -39,6 +38,7 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.itsaStatus.ITSAStatus
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 
 class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 

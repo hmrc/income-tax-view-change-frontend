@@ -24,7 +24,6 @@ import common.models.admin.{PaymentHistoryRefunds, RecentActivity}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateServiceInterface, ITSAStatusService}
 import models.financialDetails.Payment
-import models.incomeSourceDetails.TaxYear
 import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -33,6 +32,7 @@ import services.{PaymentHistoryService, WhatYouOweService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import hub.utils.HomePageUtils
+import models.incomeSourceDetails.TaxYear
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -27,7 +27,6 @@ import common.services.AuditingService
 import common.models.admin.*
 import common.models.itsaStatus.ITSAStatus
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
@@ -48,6 +47,7 @@ import hub.controllers.HomeController
 import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import hub.views.html.newHomePage.*
+import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 import scala.annotation.unused

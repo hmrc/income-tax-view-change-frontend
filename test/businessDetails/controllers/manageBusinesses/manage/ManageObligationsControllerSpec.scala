@@ -31,6 +31,7 @@ import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSour
 import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.services.SessionService
 import businessDetails.utils.IncomeSourcesUtils
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -38,7 +39,7 @@ import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockClientDetailsService, MockDateService, MockSessionService}
-import common.services.{DateService, DateServiceInterface, SessionService}
+import common.services.{DateService, DateServiceInterface}
 import obligations.mocks.services.MockNextUpdatesService
 
 import java.time.LocalDate

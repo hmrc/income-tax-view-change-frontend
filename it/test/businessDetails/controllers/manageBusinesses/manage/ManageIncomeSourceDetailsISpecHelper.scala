@@ -16,11 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.UIJourneySessionData
-import common.services.SessionService
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.LatencyDetails
 import testConstants.BaseIntegrationTestConstants._

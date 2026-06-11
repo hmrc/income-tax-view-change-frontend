@@ -24,8 +24,8 @@ import common.models.admin.FeatureSwitch
 import common.models.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest}
 import common.models.sessionData.SessionCookieData
 import common.utils.sessionUtils.SessionKeys
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import common.models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound}
+import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import common.testConstants.BaseTestConstants.*

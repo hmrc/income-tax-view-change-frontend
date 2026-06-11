@@ -22,10 +22,10 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.audit.IvOutcomeSuccessAuditModel
 import common.services.DateServiceInterface
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus.Voluntary
 import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
 import common.models.itsaStatus.StatusReason.MtdItsaOptOut
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

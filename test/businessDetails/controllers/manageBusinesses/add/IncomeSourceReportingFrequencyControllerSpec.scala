@@ -34,7 +34,7 @@ import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
-import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -44,7 +44,7 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
 import common.models.itsaStatus.StatusDetail
-import common.services.{DateService, DateServiceInterface, ITSAStatusService, SessionService}
+import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 

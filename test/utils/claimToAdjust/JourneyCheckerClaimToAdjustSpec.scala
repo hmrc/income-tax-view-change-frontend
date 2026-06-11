@@ -22,7 +22,6 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import mocks.services.MockPaymentOnAccountSessionService
 import models.claimToAdjustPoa.PoaAmendmentData
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers
@@ -39,6 +38,7 @@ import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 class JourneyCheckerClaimToAdjustSpec extends TestSupport with MockPaymentOnAccountSessionService {
 

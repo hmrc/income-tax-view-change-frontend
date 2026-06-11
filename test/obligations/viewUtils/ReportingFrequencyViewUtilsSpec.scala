@@ -23,8 +23,8 @@ import common.config.featureswitch.FeatureSwitching
 import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.services.DateService
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Exempt, Mandated, Voluntary}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}

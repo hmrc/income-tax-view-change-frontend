@@ -24,7 +24,6 @@ import common.models.admin.FeatureSwitch
 import common.models.itsaStatus.ITSAStatus
 import models.creditsandrefunds.CreditsModel
 import hub.models.homePage.*
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import ITSAStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -36,6 +35,7 @@ import common.testConstants.BaseTestConstants.*
 import financials.testConstants.ANewCreditAndRefundModel
 import testUtils.TestSupport
 import hub.views.html.HomeView
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

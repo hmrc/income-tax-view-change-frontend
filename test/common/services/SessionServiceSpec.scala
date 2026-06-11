@@ -16,6 +16,7 @@
 
 package common.services
 
+import businessDetails.services.SessionService
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import common.models.UIJourneySessionData

@@ -27,7 +27,6 @@ import common.models.admin.*
 import common.models.itsaStatus.ITSAStatus
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
@@ -52,6 +51,7 @@ import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import hub.views.html.helpers.injected.home.YourReportingObligationsTile
 import hub.views.html.newHomePage.*
+import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 import scala.concurrent.Future

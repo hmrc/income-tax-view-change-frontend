@@ -28,7 +28,6 @@ import common.services.{AuditingService, DateServiceInterface, ITSAStatusService
 import common.utils.sessionUtils.SessionKeys
 import models.financialDetails.*
 import hub.models.homePage.*
-import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
@@ -40,6 +39,7 @@ import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import hub.utils.HomePageUtils
+import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}

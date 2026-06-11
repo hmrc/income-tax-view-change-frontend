@@ -21,7 +21,6 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -36,6 +35,7 @@ import hub.views.html.newHomePage.NewHomeOverviewView
 import java.time.{LocalDate, Month}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.auth.actions.AuthActionsTestData.getMtdItUser
+import models.incomeSourceDetails.TaxYear
 
 
 class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {

@@ -16,6 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses
 
+import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.services.SessionService
+import businessDetails.services.IncomeSourceDetailsService
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.exceptions.MissingFieldException
@@ -23,7 +26,7 @@ import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.admin.{DisplayBusinessStartDate, FeatureSwitchName}
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 import models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -35,13 +38,16 @@ import businessDetails.testConstants.BusinessDetailsTestConstants.viewBusinessDe
 import businessDetails.testConstants.PropertyDetailsTestConstants.viewUkPropertyDetailsViewModel
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
-class ManageYourBusinessesControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService {
+class ManageYourBusinessesControllerSpec extends MockAuthActions
+  with ImplicitDateFormatter with MockSessionService
+  with MockIncomeSourceDetailsService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[SessionService].toInstance(mockSessionService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+      api.inject.bind[IncomeSourceDetailsService].toInstance(mockIncomeSourceDetailsService)
     ).build()
 
   lazy val testManageYourBusinessesController: ManageYourBusinessesController = app.injector.instanceOf[ManageYourBusinessesController]

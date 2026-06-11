@@ -29,6 +29,7 @@ import common.testConstants.IncomeSourceDetailsTestConstants.{noIncomeDetails, n
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -38,7 +39,7 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
 import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 
 
 class AddIncomeSourceStartDateControllerSpec extends MockAuthActions

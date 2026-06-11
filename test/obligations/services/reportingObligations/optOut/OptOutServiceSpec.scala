@@ -20,8 +20,8 @@ import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.itsaStatus.ITSAStatus.*
 import common.services.DateService
 import mocks.services.*
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{StatusDetail, StatusReason}
+import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService

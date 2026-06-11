@@ -30,13 +30,14 @@ import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.core.NormalMode
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 
 class AddPropertyControllerSpec extends MockAuthActions with MockSessionService {
 

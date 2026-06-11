@@ -17,13 +17,14 @@
 package common.auth.actions
 
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import businessDetails.services.SessionService
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.IncomeTaxCalculationConnector
 import common.controllers.BaseController
 import common.enums.JourneyType.TriggeredMigrationJourney
-import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, SessionService}
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import common.enums.TaxYearSummary.CalculationRecord.LATEST
 import common.models.admin.TriggeredMigration
 import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
@@ -153,6 +154,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
     }
   }
 
+  //ToDo remove this method when copied into new service - a new approach is going to be used for this.
   private def checkIfRecentlyConfirmed()(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(TriggeredMigrationJourney).map {
       case Right(Some(data)) =>

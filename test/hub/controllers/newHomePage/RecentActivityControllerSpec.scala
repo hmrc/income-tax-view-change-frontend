@@ -21,7 +21,6 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.admin.{NewHomePage, RecentActivity}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import hub.models.newHomePage.RecentActivityViewModel
 import obligations.models.ObligationsModel
 import org.mockito.ArgumentMatchers.any
@@ -31,6 +30,7 @@ import play.api.http.Status
 import play.api.inject
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import hub.services.newHomePage.RecentActivityService
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 import services.PaymentHistoryService
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsTestConstants.business1

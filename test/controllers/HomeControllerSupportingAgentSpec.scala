@@ -16,7 +16,6 @@
 
 package controllers
 
-import models.incomeSourceDetails.TaxYear
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
@@ -46,6 +45,7 @@ import common.enums.MTDSupportingAgent
 import common.mocks.services.admin.MockFeatureSwitchService
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
+import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 import scala.concurrent.Future

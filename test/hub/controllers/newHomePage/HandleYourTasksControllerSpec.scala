@@ -27,7 +27,6 @@ import common.utils.sessionUtils.SessionKeys
 import financials.testConstants.ANewCreditAndRefundModel
 import mocks.services.*
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import hub.models.newHomePage.HandleYourTasksViewModel
 import hub.models.newHomePage.MaturityLevel.Upcoming
 import hub.models.newHomePage.YourTaskCardType.FINANCIALS
@@ -49,6 +48,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, sta
 import services.*
 import hub.services.newHomePage.HandleYourTasksService
 import hub.views.html.newHomePage.NewHomeYourTasksView
+import models.incomeSourceDetails.TaxYear
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future

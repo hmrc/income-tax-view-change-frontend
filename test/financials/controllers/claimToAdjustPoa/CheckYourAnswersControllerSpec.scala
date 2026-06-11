@@ -23,7 +23,6 @@ import common.services.DateServiceInterface
 import mocks.services.{MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
-import models.incomeSourceDetails.TaxYear
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
@@ -33,6 +32,7 @@ import services.PaymentOnAccountSessionService
 
 import scala.concurrent.Future
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import models.incomeSourceDetails.TaxYear
 
 class CheckYourAnswersControllerSpec extends MockAuthActions with MockClaimToAdjustService with MockPaymentOnAccountSessionService with MockClaimToAdjustPoaCalculationService {
 
