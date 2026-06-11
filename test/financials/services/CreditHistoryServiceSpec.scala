@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
-import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
+import financials.services.CreditHistoryService.CreditHistoryError
 import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.FinancialDetailsErrorModel
-import services.CreditHistoryService.CreditHistoryError
 import services.helpers.CreditHistoryDataHelper
 import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import testUtils.TestSupport

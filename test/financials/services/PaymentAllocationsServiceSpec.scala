@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import mocks.connectors.MockFinancialDetailsConnector
 import mocks.services.MockFinancialDetailsService

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services.claimToAdjustPoa
+package financials.services.claimToAdjustPoa
 
 import common.models.core.Nino
 import connectors.ClaimToAdjustPoaConnector

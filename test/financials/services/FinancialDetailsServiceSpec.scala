@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
-import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.AccountingPeriodModel
 import financials.models.CodingOutType.*
 import mocks.connectors.MockFinancialDetailsConnector
-import models.financialDetails._
+import models.financialDetails.*
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status
 import common.testConstants.BaseTestConstants._

@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import common.exceptions.SelfServeTimeToPayJourneyException
 import common.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import connectors.SelfServeTimeToPayConnector
-import org.mockito.Mockito.{mock, when}
-import testUtils.TestSupport
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import common.testConstants.BaseTestConstants.{expectedJourneyId, testSetUpPaymentPlanUrl}
+import testUtils.TestSupport
 
 import scala.concurrent.Future
 

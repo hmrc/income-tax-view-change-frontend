@@ -18,11 +18,11 @@ package financials.controllers.claimToAdjustPoa
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import financials.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.JsValue
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.{testTaxYearPoa, validFinancialDetailsResponseBody, validSession}

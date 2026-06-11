@@ -17,6 +17,7 @@
 package models.financialDetails
 
 import common.services.DateServiceInterface
+import financials.services.claimToAdjustPoa.ClaimToAdjustHelper.poaDocumentDescriptions
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.ChargeType.allChargeMainTransactions
 import models.financialDetails.CreditType.{creditsWithSummaryPages, cutOver}
@@ -25,7 +26,6 @@ import models.incomeSourceDetails.TaxYear
 import models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
-import services.claimToAdjustPoa.ClaimToAdjustHelper.poaDocumentDescriptions
 
 import java.time.LocalDate
 import scala.util.{Failure, Success, Try}

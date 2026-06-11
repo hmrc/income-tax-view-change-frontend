@@ -17,8 +17,8 @@
 package models.chargeHistory
 
 import financials.models.*
+import financials.services.claimToAdjustPoa.ClaimToAdjustHelper.isPoaDocumentDescription
 import play.api.libs.json.{Format, Json}
-import services.claimToAdjustPoa.ClaimToAdjustHelper.isPoaDocumentDescription
 import utils.JsonUtils
 
 import java.time.{LocalDate, LocalDateTime}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package services.claimToAdjustPoa
+package financials.services.claimToAdjustPoa
 
 import cats.data.EitherT
 import common.auth.MtdItUser

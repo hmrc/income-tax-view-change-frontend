@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason}
 import mocks.connectors.MockChargeHistoryConnector
-import models.chargeHistory._
+import models.chargeHistory.*
 import models.claimToAdjustPoa.{Increase, MainIncomeLower}
 import models.financialDetails.DocumentDetail
 import play.api.http.Status.INTERNAL_SERVER_ERROR

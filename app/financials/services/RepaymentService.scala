@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import common.exceptions.{RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
-import connectors.RepaymentConnector
 import common.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import connectors.RepaymentConnector
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

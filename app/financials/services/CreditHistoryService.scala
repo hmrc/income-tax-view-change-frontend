@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package services
+package financials.services
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
-import models.creditDetailModel._
-import models.financialDetails._
-import services.CreditHistoryService.CreditHistoryError
+import financials.services.CreditHistoryService.CreditHistoryError
+import models.creditDetailModel.*
+import models.financialDetails.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

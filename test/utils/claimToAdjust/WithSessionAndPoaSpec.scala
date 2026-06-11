@@ -16,11 +16,14 @@
 
 package utils.claimToAdjust
 
-import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import cats.data.EitherT
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.services.PaymentOnAccountSessionService
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
@@ -34,8 +37,6 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.PaymentOnAccountSessionService
-import services.claimToAdjustPoa.ClaimToAdjustService
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
@@ -43,7 +44,6 @@ import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class WithSessionAndPoaSpec extends TestSupport with MockPaymentOnAccountSessionService with MockClaimToAdjustService {
 

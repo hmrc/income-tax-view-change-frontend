@@ -20,11 +20,11 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.core.NormalMode
 import financials.forms.adjustPoa.SelectYourReasonFormProvider
+import financials.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData, SelectYourReason}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.PaymentOnAccountSessionService
 import testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
