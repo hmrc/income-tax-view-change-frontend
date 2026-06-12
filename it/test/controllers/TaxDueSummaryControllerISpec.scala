@@ -93,7 +93,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
-                  elementTextByID("additional_charges")(additionCharges),
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges),
                   elementTextByID("student-repayment-plan0X")(studentPlan),
                   elementTextByID("graduate-repayment-plan")(postgraduatePlan),
                 )
@@ -115,7 +115,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
-                  elementTextByID("additional_charges")(additionCharges)
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges)
                 )
               }
 
@@ -136,7 +136,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
-                  elementTextByID("additional_charges")(additionCharges)
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges)
                 )
               }
 
@@ -156,7 +156,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
                 res should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
-                  elementTextByID("additional_charges")(additionCharges)
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges)
                 )
               }
 
@@ -179,7 +179,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
                 )
 
                 res shouldNot have(
-                  elementTextByID("additional_charges")(additionCharges)
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges)
                 )
               }
 

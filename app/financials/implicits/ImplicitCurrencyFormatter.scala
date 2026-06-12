@@ -42,6 +42,11 @@ trait ImplicitCurrencyFormatter {
       }
     }
 
+    def toNegativeCurrencyString: String = {
+      // Ascii unicode minus sign
+      "\u2212" + x.abs.toCurrencyString
+    }
+
     def toPence: Long = (x * 100).toLong
   }
 
