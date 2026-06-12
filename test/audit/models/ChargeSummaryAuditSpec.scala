@@ -24,9 +24,9 @@ import financials.models.ChargeType.*
 import financials.models.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import financials.models.chargeHistory.ChargeHistoryModel
+import financials.models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.financialDetail
-import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers

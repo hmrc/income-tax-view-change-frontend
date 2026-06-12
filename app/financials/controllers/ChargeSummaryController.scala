@@ -30,10 +30,10 @@ import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.controllers.routes as financialsRoutes
 import financials.models.chargeHistory.*
+import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import financials.utils.FallBackBackLinks
 import forms.utils.SessionKeys.gatewayPage
-import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.financialDetails.*
 import models.paymentAllocationCharges.PaymentAllocationViewModel
 import play.api.Logger

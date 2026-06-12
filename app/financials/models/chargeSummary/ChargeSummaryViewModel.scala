@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.chargeSummary
+package financials.models.chargeSummary
 
 import common.enums.GatewayPage.GatewayPage
 import financials.controllers.routes.*
