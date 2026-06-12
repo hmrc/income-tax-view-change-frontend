@@ -123,14 +123,8 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
               val shouldSetIdempotencyKey = isEnabled(IdempotencyKeyForCreateIncomeSource) && incomeSources.operation == Add
               val idempotencyKey = Option.when(shouldSetIdempotencyKey)(generateIdempotencyKey)
               val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString, addIncomeSourceData = idempotencyKey.map(key => AddIncomeSourceData(idempotencyKey = Some(key))))
-
-              val setupF = if (shouldSetIdempotencyKey) {
-                sessionService.setMongoData(data)
-              } else {
-                Future.successful(())
-              }
-
-              setupF.flatMap(_ => codeBlock(data))
+              
+              if (shouldSetIdempotencyKey) sessionService.setMongoData(data).flatMap(_ => codeBlock(data)) else codeBlock(data)
             }
           case _ => journeyRestartUrl(isTriggeredMigration)(user)
         }
