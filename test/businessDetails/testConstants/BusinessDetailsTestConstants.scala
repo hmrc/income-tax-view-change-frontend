@@ -616,4 +616,25 @@ object BusinessDetailsTestConstants {
   val obligationsAllDeadlinesSuccessNotValidObligationType: ObligationsModel = ObligationsModel(
     Seq(GroupedObligationsModel(testSelfEmploymentId, List(businessNotValidObligationType))))
 
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
+    GroupedObligationsModel("123", List(SingleObligationModel(
+      LocalDate.of(taxYear, 1, 6),
+      LocalDate.of(taxYear, 4, 5),
+      LocalDate.of(taxYear, 5, 5),
+      "Quarterly",
+      None,
+      "#001",
+      StatusFulfilled),
+      SingleObligationModel(
+        LocalDate.of(taxYear, 1, 6),
+        LocalDate.of(taxYear, 4, 5),
+        LocalDate.of(taxYear, 5, 5),
+        "Quarterly",
+        None,
+        "#002",
+        StatusFulfilled
+      )
+    ))
+  ))
+  
 }

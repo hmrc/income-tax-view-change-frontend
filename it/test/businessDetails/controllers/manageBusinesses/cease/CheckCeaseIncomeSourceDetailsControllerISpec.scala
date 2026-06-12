@@ -31,8 +31,8 @@ import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import common.testConstants.BaseIntegrationTestConstants._
+import common.testConstants.IncomeSourceIntegrationTestConstants._
 
 import java.time.LocalDate
 class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper {

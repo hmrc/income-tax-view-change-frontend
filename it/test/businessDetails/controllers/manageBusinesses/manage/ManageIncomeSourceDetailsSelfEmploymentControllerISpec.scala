@@ -26,9 +26,9 @@ import models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
 import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.CalculationListIntegrationTestConstants
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 import java.time.LocalDate
 

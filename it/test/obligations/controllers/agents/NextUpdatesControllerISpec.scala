@@ -30,9 +30,9 @@ import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObli
 import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.address
-import testConstants.CalculationListIntegrationTestConstants
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.CalculationListIntegrationTestConstants
+import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.address
 
 import java.time.LocalDate
 

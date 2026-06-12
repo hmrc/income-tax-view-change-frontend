@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package testConstants
+package financials.testConstants
 
 import common.helpers.ComponentSpecBase
 import common.services.DateServiceInterface
+import common.testConstants.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
 import financials.models.ChargeType.NIC4_WALES
-import models.financialDetails._
+import models.financialDetails.*
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import common.testConstants.IncomeSourceIntegrationTestConstants.{id1040000123, noDunningLock, noInterestLock}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
-import testConstants.IncomeSourceIntegrationTestConstants.{id1040000123, noDunningLock, noInterestLock}
 
 import java.time.LocalDate
 

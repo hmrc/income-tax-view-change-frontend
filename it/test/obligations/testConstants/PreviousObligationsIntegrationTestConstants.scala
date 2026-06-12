@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package testConstants
+package obligations.testConstants
 
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import obligations.models.{GroupedObligationsModel, SingleObligationModel, StatusFulfilled}
-import testConstants.BaseIntegrationTestConstants.testMtditid
 
 import java.time.LocalDate
 

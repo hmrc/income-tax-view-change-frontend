@@ -23,8 +23,8 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 class PoaAdjustedControllerISpec extends ControllerISpecHelper {
 

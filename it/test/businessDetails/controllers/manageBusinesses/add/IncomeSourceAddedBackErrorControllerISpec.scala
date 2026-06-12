@@ -26,8 +26,8 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {
 

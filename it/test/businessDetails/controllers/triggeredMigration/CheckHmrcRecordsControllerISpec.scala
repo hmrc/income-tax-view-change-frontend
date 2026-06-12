@@ -28,9 +28,9 @@ import models.incomeSourceDetails.TaxYear
 import org.scalatest.Assertion
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 
 import scala.concurrent.Future
 

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package testConstants.messages
+package common.testConstants.messages
 
 import common.helpers.ComponentSpecBase
 
-object TaxDueSummaryMessages  extends ComponentSpecBase {
+object WhatYouOweMessages extends ComponentSpecBase {
 
-  val voluntaryClass2Nics: String = messagesAPI("taxCal_breakdown.table.nic2.true")
-  val nonVoluntaryClass2Nics: String = messagesAPI("taxCal_breakdown.table.nic2.false")
-  val additionCharges: String = messagesAPI("taxCal_breakdown.additional_charges")
-  val studentPlan: String = messagesAPI("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", "1")
-  val postgraduatePlan: String = messagesAPI("taxCal_breakdown.table.studentLoanPostGraduatePlan")
+  val hmrcAdjustment: String = messagesAPI("whatYouOwe.hmrcAdjustment.text")
+  val hmrcAdjustmentHeading: String = messagesAPI("whatYouOwe.hmrcAdjustment.heading")
+  val hmrcAdjustmentLine1: String = messagesAPI("whatYouOwe.hmrcAdjustment.line1")
+  val underReview: String = messagesAPI("whatYouOwe.paymentUnderReview")
+
 }

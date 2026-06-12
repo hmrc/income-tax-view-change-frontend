@@ -21,7 +21,7 @@ import common.enums.MTDUserRole
 import common.helpers.servicemocks.BtaPartialStub.getTestUser
 import common.services.DateService
 import models.incomeSourceDetails.TaxYear
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 object ConfirmOptOutControllerConstants {
 

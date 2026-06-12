@@ -23,7 +23,7 @@ import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.UIJourneySessionData
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.LatencyDetails
-import testConstants.BaseIntegrationTestConstants._
+import common.testConstants.BaseIntegrationTestConstants._
 
 import java.time.LocalDate
 import java.time.Month.APRIL

@@ -25,7 +25,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.*
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 import java.time.LocalDate
 

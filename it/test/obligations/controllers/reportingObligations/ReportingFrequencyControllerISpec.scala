@@ -28,8 +28,8 @@ import models.incomeSourceDetails.TaxYear
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
 import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 

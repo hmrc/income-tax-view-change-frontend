@@ -26,9 +26,9 @@ import helpers.servicemocks.*
 import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
   

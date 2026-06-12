@@ -31,12 +31,12 @@ import obligations.models.audit.NextUpdatesResponseAuditModel
 import org.jsoup.Jsoup
 import play.api.http.Status.*
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.CalculationListIntegrationTestConstants
-import testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
-import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.NewCalcBreakdownItTestConstants.*
-import testConstants.messages.TaxYearSummaryMessages.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.CalculationListIntegrationTestConstants
+import CalculationListIntegrationTestConstants.successResponseNonCrystallised
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.NewCalcBreakdownItTestConstants.*
+import common.testConstants.messages.TaxYearSummaryMessages.*
 import financials.controllers.routes as financialsRoutes
 
 import java.time.LocalDate

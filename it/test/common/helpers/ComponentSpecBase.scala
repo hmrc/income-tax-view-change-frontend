@@ -39,7 +39,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.language.LanguageUtils
 

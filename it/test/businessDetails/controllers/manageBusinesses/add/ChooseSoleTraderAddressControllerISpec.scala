@@ -23,8 +23,8 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUser
 import common.models.admin.OverseasBusinessAddress
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
 

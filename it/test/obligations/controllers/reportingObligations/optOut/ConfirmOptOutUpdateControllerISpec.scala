@@ -31,8 +31,8 @@ import play.api.http.Status
 import play.api.http.Status.OK
 import play.mvc.Http.Status.SEE_OTHER
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 

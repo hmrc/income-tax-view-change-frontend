@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package businessDetails.testConstants
+package obligations.testConstants
 
+import common.models.core.AddressModel
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
@@ -28,6 +29,7 @@ object IncomeSourcesObligationsIntegrationTestConstants {
   val datesModelSeq2023: Seq[DatesModel] = Seq(generateDatesModel(taxYear + 1))
   val datesModel: DatesModel = (generateDatesModel(taxYear + 1))
 
+  val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
 
   val testQuarterlyObligationDates = Seq(datesModelSeq2022, datesModelSeq2023)
 

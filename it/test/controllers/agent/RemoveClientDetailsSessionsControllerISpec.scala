@@ -20,8 +20,8 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
-import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
+import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 

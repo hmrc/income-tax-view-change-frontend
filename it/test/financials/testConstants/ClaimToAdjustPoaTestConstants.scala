@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package testConstants.claimToAdjustPoa
+package financials.testConstants
 
+import common.testConstants.BaseIntegrationTestConstants.testDate
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
+import common.testConstants.IncomeSourceIntegrationTestConstants.testValidFinancialDetailsModelJson
 import play.api.libs.json.JsValue
-import testConstants.BaseIntegrationTestConstants.testDate
-import testConstants.IncomeSourceIntegrationTestConstants.testValidFinancialDetailsModelJson
 
 object ClaimToAdjustPoaTestConstants {
 

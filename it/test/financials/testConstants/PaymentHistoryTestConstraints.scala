@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package testConstants
+package financials.testConstants
 
 import common.models.core.AccountingPeriodModel
+import common.testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestSelfEmploymentId, testIncomeSource, testSelfEmploymentId}
 import models.incomeSourceDetails.BusinessDetailsModel
-import testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, otherTestSelfEmploymentId, testIncomeSource, testSelfEmploymentId}
-import testConstants.BusinessDetailsIntegrationTestConstants.address
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.address
 
 import java.time.LocalDate
 

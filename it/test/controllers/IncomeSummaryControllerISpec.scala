@@ -20,9 +20,9 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import play.api.http.Status.*
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 class IncomeSummaryControllerISpec extends ControllerISpecHelper {
 

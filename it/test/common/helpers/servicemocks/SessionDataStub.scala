@@ -19,7 +19,7 @@ package common.helpers.servicemocks
 import common.helpers.WiremockHelper
 import play.api.http.Status
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
 
 object SessionDataStub {
 

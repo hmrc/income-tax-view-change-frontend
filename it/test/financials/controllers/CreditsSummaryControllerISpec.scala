@@ -27,8 +27,8 @@ import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelCreditAndRefundsJsonV2}
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelCreditAndRefundsJsonV2}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSummaryDataHelper {

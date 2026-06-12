@@ -29,8 +29,8 @@ import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class SignUpStartControllerISpec extends ControllerISpecHelper {
 
