@@ -121,14 +121,14 @@
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22208"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22208" else s"taxCal_breakdown.message.C22208",viewModel.giftAidTaxActual.toCurrencyString,
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22208" else s"taxCal_breakdown.message.C22208",viewModel.totalPensionContributionReliefsActual.toCurrencyString,
                 BigDecimal(viewModel.getModifiedBaseTaxBandActual.apportionedBandLimit).toCurrencyString)
         )))
     }
 
     @if(viewModel.messages.exists(_.allMessages.exists(_.id=="C22209"))){
         @govukInsetText(InsetText(content = HtmlContent(
-            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22209" else s"taxCal_breakdown.message.C22209",viewModel.giftAidTaxActual.toCurrencyString,
+            messages(if(isAgent) s"taxCal_breakdown.message.agent.C22209" else s"taxCal_breakdown.message.C22209", 
                 BigDecimal(viewModel.getModifiedBaseTaxBandActual.apportionedBandLimit).toCurrencyString)
         )))
     }
