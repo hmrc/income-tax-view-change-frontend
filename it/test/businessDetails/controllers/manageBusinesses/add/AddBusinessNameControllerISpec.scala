@@ -31,8 +31,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.await
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 import play.api.test.Helpers.defaultAwaitTimeout
 import scala.concurrent.ExecutionContext
 
