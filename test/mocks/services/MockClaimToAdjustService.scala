@@ -17,9 +17,9 @@
 package mocks.services
 
 import common.models.core.Nino
+import common.models.incomeSourceDetails.TaxYear
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

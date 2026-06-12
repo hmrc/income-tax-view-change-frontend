@@ -19,6 +19,7 @@ package financials.controllers.claimToAdjustPoa
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
@@ -26,7 +27,6 @@ import financials.services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService,
 import mocks.services.{MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
-import models.incomeSourceDetails.TaxYear
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}

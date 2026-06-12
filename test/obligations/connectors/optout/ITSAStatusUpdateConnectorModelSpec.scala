@@ -16,7 +16,7 @@
 
 package obligations.connectors.optout
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateRequest
 import org.scalatest.matchers.should.Matchers

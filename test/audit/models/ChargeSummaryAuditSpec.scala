@@ -20,11 +20,11 @@ import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDI
 import financials.models.ChargeType.*
 import financials.models.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.DateService
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike

@@ -20,7 +20,6 @@ import common.auth.actions.AuthActionsTestData.*
 import common.implicits.ImplicitDateParser
 import common.models.core.AccountingPeriodModel
 import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.taxyearsummary.TaxYearSummaryChargeItem
@@ -28,6 +27,7 @@ import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObli
 import org.scalatest.wordspec.AnyWordSpecLike
 import common.testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import financials.testConstants.ChargeConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup

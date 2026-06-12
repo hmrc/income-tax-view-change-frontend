@@ -24,7 +24,7 @@ import common.models.admin.SignUpFs
 import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import ITSAStatus.{Annual, Mandated}
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

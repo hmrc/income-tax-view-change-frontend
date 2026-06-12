@@ -22,7 +22,7 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.UIJourneySessionData
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.LatencyDetails
+import common.models.incomeSourceDetails.LatencyDetails
 import common.testConstants.BaseIntegrationTestConstants._
 
 import java.time.LocalDate

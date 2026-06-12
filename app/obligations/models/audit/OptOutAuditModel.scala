@@ -20,8 +20,8 @@ import common.auth.MtdItUser
 import common.enums.{AuditType, TransactionName}
 import common.enums.AuditType.OptOutQuarterlyReportingRequest
 import common.models.audit.ExtendedAuditModel
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
-import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import play.api.libs.json.*

@@ -20,6 +20,7 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.models.core.{CheckMode, Mode, NormalMode}
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.testConstants.BaseTestConstants
 import common.utils.sessionUtils
@@ -31,7 +32,6 @@ import generators.PoaGenerator
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

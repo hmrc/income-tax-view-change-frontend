@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails
+package common.models.incomeSourceDetails
 
 import common.models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import play.api.libs.json.{Format, Json}

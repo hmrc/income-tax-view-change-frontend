@@ -24,10 +24,11 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.IncomeSourceJourneyType
 import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import common.models.itsaStatus.StatusDetail
 import common.services.{DateService, ITSAStatusService}
 import enums.JourneyState
-import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, LatencyDetails, TaxYear}
+import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect

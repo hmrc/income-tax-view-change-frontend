@@ -18,6 +18,7 @@ package views
 
 import common.config.featureswitch.FeatureSwitching
 import common.exceptions.MissingFieldException
+import common.models.incomeSourceDetails.TaxYear
 import financials.models.ChargeType.*
 import financials.models.*
 import financials.controllers.routes as financialsRoutes
@@ -25,7 +26,6 @@ import financials.testConstants.ChargeConstants
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements

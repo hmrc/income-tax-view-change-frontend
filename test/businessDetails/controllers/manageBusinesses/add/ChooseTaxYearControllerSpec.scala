@@ -25,8 +25,9 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
-import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}
+import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application

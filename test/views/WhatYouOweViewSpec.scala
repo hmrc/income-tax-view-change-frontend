@@ -20,12 +20,12 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.CodingOutType.*
 import models.financialDetails.*
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.*
 import org.jsoup.Jsoup

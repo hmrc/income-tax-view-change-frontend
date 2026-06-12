@@ -20,8 +20,8 @@ import common.enums.IncomeSourceJourney.ForeignProperty
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.DisplayBusinessStartDate
+import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*

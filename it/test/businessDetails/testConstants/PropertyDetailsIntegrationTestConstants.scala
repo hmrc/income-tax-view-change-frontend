@@ -18,7 +18,7 @@ package businessDetails.testConstants
 
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testLatencyDetails3, testPropertyIncomeId}
-import models.incomeSourceDetails.PropertyDetailsModel
+import common.models.incomeSourceDetails.PropertyDetailsModel
 import play.api.libs.json.{JsValue, Json}
 import BusinessDetailsIntegrationTestConstants.endYear
 

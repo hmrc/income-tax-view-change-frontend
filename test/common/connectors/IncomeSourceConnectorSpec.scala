@@ -35,8 +35,8 @@ package common.connectors
 import common.config.FrontendAppConfig
 import common.models.audit.{ExtendedAuditModel, IncomeSourceDetailsResponseAuditModel}
 import common.models.auth.AuthorisedAndEnrolledRequest
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import common.services.AuditingService
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}

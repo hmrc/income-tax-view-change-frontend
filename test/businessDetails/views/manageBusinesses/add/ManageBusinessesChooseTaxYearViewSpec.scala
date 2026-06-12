@@ -27,7 +27,7 @@ import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRou
 import businessDetails.forms.manageBusinesses.add.ChooseTaxYearForm
 import businessDetails.forms.models.ChooseTaxYearFormModel
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 class ManageBusinessesChooseTaxYearViewSpec extends TestSupport {
 

@@ -17,7 +17,7 @@
 package common.helpers.servicemocks
 
 import common.helpers.WiremockHelper
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.http.Status.OK
 import play.api.libs.json.JsValue
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}

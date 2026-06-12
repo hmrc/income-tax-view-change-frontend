@@ -21,12 +21,12 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockClientDetailsService, MockDateService, MockITSAStatusService}
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import financials.services.*
 import mocks.services.*
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import obligations.mocks.services.MockNextUpdatesService
 import obligations.services.NextUpdatesService
 import org.jsoup.Jsoup

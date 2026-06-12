@@ -24,6 +24,7 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, LatencyDetails}
 import common.services.DateService
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.*

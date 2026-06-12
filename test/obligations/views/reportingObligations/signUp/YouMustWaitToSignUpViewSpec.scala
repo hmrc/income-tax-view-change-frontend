@@ -18,7 +18,7 @@ package obligations.views.reportingObligations.signUp
 
 import obligations.models.reportingObligations.signUp.YouMustWaitToSignUpViewModel
 import common.auth.MtdItUser
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.views.html.reportingObligations.signUp.YouMustWaitToSignUpView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

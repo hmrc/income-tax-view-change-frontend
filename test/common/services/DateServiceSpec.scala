@@ -19,7 +19,7 @@ package common.services
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.FrontendAppConfig
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset}
 import common.testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport

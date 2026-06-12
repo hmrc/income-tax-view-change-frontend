@@ -16,7 +16,7 @@
 
 package obligations.views.reportingObligations.signUp
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.SignUpCompletedViewModel
 import obligations.views.html.reportingObligations.signUp.SignUpCompletedView
 import org.jsoup.Jsoup

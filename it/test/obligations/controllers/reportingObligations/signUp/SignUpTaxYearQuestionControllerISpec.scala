@@ -23,10 +23,10 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
 import common.models.UIJourneySessionData
 import common.models.admin.SignUpFs
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import obligations.controllers.constants.ConfirmOptOutControllerConstants.emptyBodyString
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.TaxYear
 import obligations.helpers.ITSAStatusUpdateConnectorStub
 import obligations.models.audit.SignUpAuditModel
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}

@@ -16,7 +16,7 @@
 
 package obligations.models.reportingObligations.optOut
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 case class CheckOptOutUpdateAnswersViewModel(optOutTaxYear: TaxYear, quarterlyUpdatesCount: Int) {
   val startYear: String = optOutTaxYear.startYear.toString

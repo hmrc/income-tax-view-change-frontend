@@ -17,7 +17,7 @@
 package services
 
 import common.auth.MtdItUser
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*
 import models.taxyearsummary.*
 import play.api.Logger

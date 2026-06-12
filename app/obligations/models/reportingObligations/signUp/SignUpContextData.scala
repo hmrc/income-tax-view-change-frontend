@@ -16,7 +16,7 @@
 
 package obligations.models.reportingObligations.signUp
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Json, OFormat}
 
 case class SignUpContextData(

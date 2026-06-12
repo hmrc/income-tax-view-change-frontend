@@ -24,6 +24,7 @@ import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, BusinessDetailsModel, PropertyDetailsModel}
 import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.*

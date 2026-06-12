@@ -18,9 +18,9 @@ package hub.audit.models
 
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.models.itsaStatus.ITSAStatus
 import hub.models.homePage.NextUpdatesTileViewModel
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike

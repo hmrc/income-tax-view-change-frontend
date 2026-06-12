@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.mocks.services.MockDateService
 import common.models.UIJourneySessionData
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import org.mockito.ArgumentMatchers.any
