@@ -23,7 +23,7 @@ import common.models.audit.ExtendedAuditModel
 import common.services.DateServiceInterface
 import common.utils.audit.Utilities.userAuditDetails
 import financials.models.chargeHistory.ChargeHistoryModel
-import models.chargeSummary.PaymentHistoryAllocations
+import financials.models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}

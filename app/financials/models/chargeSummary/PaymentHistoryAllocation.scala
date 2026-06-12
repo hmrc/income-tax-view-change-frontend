@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.chargeSummary
+package financials.models.chargeSummary
 
 import common.exceptions.MissingFieldException
 import models.financialDetails.{FinancialDetail, MfaDebitUtils}

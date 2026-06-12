@@ -22,9 +22,9 @@ import financials.controllers.routes as financialsRoutes
 import financials.models.*
 import financials.models.ChargeType.*
 import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
+import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
