@@ -26,13 +26,6 @@ GET         /help                                                         hub.co
 GET         /agents/overview                                              hub.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
 GET         /agents/help                                                  hub.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
 
-#CalculationId details poller
-GET         /calculation/:taxYear/submitted                               controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
-GET         /agents/calculation/:taxYear/submitted                        controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = false, origin: Option[String] ?= None)
-
-#Final Tax calculation poller URLs (shared with returns)
-GET         /:taxYear/final-tax-overview/calculate                        controllers.CalculationPollingController.calculationPoller(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
-GET         /agents/:taxYear/final-tax-overview/calculate                 controllers.CalculationPollingController.calculationPollerAgent(taxYear: Int, isFinalCalc: Boolean = true, origin: Option[String] ?= None)
 
 
 ->          /                                                             common.Routes

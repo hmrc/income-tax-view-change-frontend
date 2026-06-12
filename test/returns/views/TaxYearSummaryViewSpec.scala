@@ -20,23 +20,23 @@ import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatterImpl
 import common.viewUtils
 import common.viewUtils.ExternalUrlHelper
-import implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
+import financials.controllers.routes as financialsRoutes
+import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
+import financials.testConstants.ChargeConstants
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
+import obligations.models.*
+import obligations.testConstants.NextUpdatesTestConstants.*
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
-import obligations.testConstants.NextUpdatesTestConstants.*
-import testUtils.ViewSpec
 import returns.views.html.TaxYearSummaryView
-import obligations.models.*
+import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
+import testUtils.ViewSpec
 
 import java.time.LocalDate
-import financials.controllers.routes as financialsRoutes
 
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
@@ -1129,8 +1129,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         val paymentTypeText: Element = layoutContent.getElementById("paymentTypeText-0")
         val paymentTypeLinkOption: Option[Element] = Option(layoutContent.getElementById("paymentTypeLink-0"))
         val paymentTabRow: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
-        paymentTabRow.getElementsByClass("govuk-table__cell").first().text() shouldBe "No data"
-        paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(0).toCurrencyString
+        paymentTabRow.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "No data"
+        paymentTabRow.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(0).toCurrencyString
         paymentTypeText.text shouldBe remainingBalance
         paymentTypeLinkOption.isEmpty shouldBe true
       }
@@ -1138,16 +1138,16 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display payments on account on the payments table when coding out is accepted" in new Setup(testPaymentOnAccountChargesCodedOutAcceptedView()) {
         val paymentTypeText1: Element = layoutContent.getElementById("paymentTypeLink-0")
         val paymentTabRow1: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
-        paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "No data"
-        paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "No data"
+        paymentTabRow1.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText1.text shouldBe codedOutPoa1
         paymentTypeText1.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
 
         val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
         val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
-        paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "No data"
-        paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "No data"
+        paymentTabRow2.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text shouldBe codedOutPoa2
         paymentTypeText2.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
@@ -1156,16 +1156,16 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display payments on account on the payments table when coding out is cancelled" in new Setup(testPaymentOnAccountChargesCodedOutCancelledView()) {
         val paymentTypeText1: Element = layoutContent.getElementById("paymentTypeLink-0")
         val paymentTabRow1: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(1)
-        paymentTabRow1.getElementsByClass("govuk-table__cell").first().text() shouldBe "31 Mar 2040"
-        paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "31 Mar 2040"
+        paymentTabRow1.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText1.text() shouldBe cancelledPaye
         paymentTypeText1.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url
 
         val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
         val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
-        paymentTabRow2.getElementsByClass("govuk-table__cell").first().text() shouldBe "31 Mar 2040"
-        paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe BigDecimal(1400).toCurrencyString
+        paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "31 Mar 2040"
+        paymentTabRow2.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text() shouldBe cancelledPaye
         paymentTypeText2.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           testYear, fullDocumentDetailModel.transactionId).url

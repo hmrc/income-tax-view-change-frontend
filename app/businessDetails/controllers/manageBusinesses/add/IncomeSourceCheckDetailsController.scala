@@ -19,10 +19,9 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
-import businessDetails.services.CreateBusinessDetailsService
+import businessDetails.services.{CreateBusinessDetailsService, SessionService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.BeforeSubmissionPage
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -37,7 +36,8 @@ import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
-import common.services.{AuditingService, SessionService}
+import common.services.AuditingService
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 import javax.inject.Inject
 import scala.annotation.unused

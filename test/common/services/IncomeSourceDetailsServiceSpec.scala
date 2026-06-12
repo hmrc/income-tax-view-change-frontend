@@ -30,10 +30,10 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.*
 import obligations.mocks.services.MockNextUpdatesService
 import play.api.cache.AsyncCacheApi
-import testConstants.BaseTestConstants.*
-import testConstants.BusinessDetailsTestConstants.*
-import testConstants.PropertyDetailsTestConstants.{testStartDate as _, *}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.BusinessDetailsTestConstants.*
+import businessDetails.testConstants.PropertyDetailsTestConstants.{testStartDate as _, *}
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 import testUtils.TestSupport
 
 import scala.util.Success

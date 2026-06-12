@@ -18,24 +18,23 @@ package financials.controllers
 
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.*
 import common.enums.GatewayPage.WhatYouOwePage
 import common.services.DateServiceInterface
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.services.WhatYouOweService
 import forms.utils.SessionKeys.gatewayPage
+import hub.controllers.routes as appRoutes
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.WhatYouOweService
+import returns.controllers.routes as returnsRoutes
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.WhatYouOweView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
-import hub.controllers.routes as appRoutes
-import returns.controllers.routes as returnsRoutes
 
 
 class WhatYouOweController @Inject()(val authActions: AuthActions,

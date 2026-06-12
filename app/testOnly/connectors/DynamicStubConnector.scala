@@ -20,12 +20,11 @@ import common.connectors.RawResponseReads
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import play.api.libs.ws.{writeableOf_JsValue, writeableOf_urlEncodedForm}
 import testOnly.TestOnlyAppConfig
-import testOnly.models.{DataModel, Nino, SchemaModel, TrigMigUser}
+import testOnly.models.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import play.api.libs.ws.writeableOf_JsValue
-import play.api.libs.ws.writeableOf_urlEncodedForm
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -97,20 +96,19 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
 
   def getOverwriteBusinessDataUrl(mtdid: String): String = {
     s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/business-data/$mtdid"
   }
 
-  def overwriteBusinessData(mtdid: String, trigMigUser: TrigMigUser)
+  def overwriteBusinessData(mtdid: String, incomeSourcesUser: IncomeSourcesUser)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
 
     val url = getOverwriteBusinessDataUrl(mtdid)
 
-    val requestJson = Json.toJson(trigMigUser)
+    val requestJson = Json.toJson(incomeSourcesUser)
 
     http.post(url"$url")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
@@ -124,7 +122,28 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
+  }
+
+  def getOverwriteLatentBusinessDataUrl(mtdid: String): String = {
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/latent-business-data/$mtdid"
+  }
+
+  def overwriteLatentBusinessData(mtdid: String, latentBusinessUser: LatentBusinessUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+    val url = getOverwriteLatentBusinessDataUrl(mtdid)
+
+    val requestJson = Json.toJson(latentBusinessUser)
+
+    http.post(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .withBody(requestJson)
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case OK => (): Unit
+        case _ =>
+          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+      }
+    }
   }
 
   def getOverwriteObligationsDataUrl(nino: String): String = {
@@ -148,7 +167,6 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
 
   private def getOverwriteEstimatedRepaymentDateUrl(): String = {
@@ -170,7 +188,6 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
 
   def getOverwriteCalculationListUrl(nino: String, taxYearRange: String, crystallisationStatus: String): String = {
@@ -213,7 +230,5 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
-    Future(())
   }
-
 }

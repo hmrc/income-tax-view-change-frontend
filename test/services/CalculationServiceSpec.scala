@@ -23,7 +23,7 @@ import common.models.admin.FeatureSwitchName
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import models.liabilitycalculation.*
 import play.api.http.Status
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 
 class CalculationServiceSpec extends TestSupport with MockIncomeTaxCalculationConnector with FeatureSwitching {

@@ -17,7 +17,7 @@
 package controllers.constants
 
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
 
 import java.time.LocalDate
 

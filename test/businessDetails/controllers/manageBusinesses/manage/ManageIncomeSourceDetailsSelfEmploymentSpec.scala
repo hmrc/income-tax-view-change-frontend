@@ -27,7 +27,7 @@ import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 

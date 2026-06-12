@@ -30,8 +30,8 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
-import testConstants.BaseTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

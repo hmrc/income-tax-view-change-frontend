@@ -22,18 +22,19 @@ import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.models.admin.PaymentHistoryRefunds
 import common.services.DateServiceInterface
+import financials.services.PaymentHistoryService.PaymentHistoryError
+import financials.services.{PaymentHistoryService, RepaymentService}
 import forms.utils.SessionKeys.gatewayPage
 import models.financialDetails.{ChargeItem, Payment}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel}
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.PaymentHistoryService.PaymentHistoryError
-import services.{PaymentHistoryService, RepaymentService}
-import org.jsoup.Jsoup
+
 import scala.concurrent.Future
 
 class PaymentHistoryControllerSpec extends MockAuthActions
@@ -115,9 +116,9 @@ class PaymentHistoryControllerSpec extends MockAuthActions
               val link = document.select("#payment-0 a.govuk-link")
               link.isEmpty shouldBe false
               if(isAgent){
-                link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2021"
+                link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2022"
               }else{
-                link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2021"
+                link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2022"
               }
             }
           }

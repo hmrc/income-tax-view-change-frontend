@@ -21,14 +21,14 @@ import com.google.inject.Singleton
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.{Mode, NormalMode}
-import financials.controllers.claimToAdjustPoa.routes._
-import forms.adjustPoa.SelectYourReasonFormProvider
+import financials.controllers.claimToAdjustPoa.routes.*
+import financials.forms.adjustPoa.SelectYourReasonFormProvider
+import financials.services.PaymentOnAccountSessionService
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.claimToAdjustPoa.{Increase, SelectYourReason}
 import play.api.i18n.I18nSupport
-import play.api.mvc._
-import services.PaymentOnAccountSessionService
-import services.claimToAdjustPoa.ClaimToAdjustService
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.SelectYourReasonView

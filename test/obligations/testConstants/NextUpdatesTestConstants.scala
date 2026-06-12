@@ -18,7 +18,7 @@ package obligations.testConstants
 
 import obligations.models.*
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId}
+import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId}
 
 import java.time.LocalDate
 

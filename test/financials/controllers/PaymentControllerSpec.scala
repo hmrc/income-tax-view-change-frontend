@@ -28,8 +28,8 @@ import org.mockito.Mockito.*
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
-import testConstants.PaymentDataTestConstants.*
+import common.testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
+import financials.testConstants.PaymentDataTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.http.HeaderCarrier
 

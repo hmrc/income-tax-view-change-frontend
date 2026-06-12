@@ -17,7 +17,7 @@
 package views.claimToAdjustPoa
 
 import common.models.core.NormalMode
-import forms.adjustPoa.SelectYourReasonFormProvider
+import financials.forms.adjustPoa.SelectYourReasonFormProvider
 import models.claimToAdjustPoa.SelectYourReason
 import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup

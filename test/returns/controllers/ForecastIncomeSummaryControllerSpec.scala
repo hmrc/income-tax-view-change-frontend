@@ -26,9 +26,9 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import services.CalculationService
-import testConstants.BaseTestConstants.{testMtditid, testTaxYear}
-import testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
+import returns.testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
+import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import returns.views.html.ForecastIncomeSummaryView
 
 class ForecastIncomeSummaryControllerSpec extends MockAuthActions with MockCalculationService {

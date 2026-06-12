@@ -22,7 +22,7 @@ import common.controllers.routes as appRoutes
 import org.scalatest.Assertion
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
+import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import scala.concurrent.Future

@@ -17,7 +17,7 @@
 package businessDetails.views.constants
 
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants._
+import obligations.testConstants.IncomeSourcesObligationsTestConstants._
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 

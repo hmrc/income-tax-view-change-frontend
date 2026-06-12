@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.InitialPage
 import common.models.core.IncomeSourceId.mkIncomeSourceId
@@ -39,7 +40,7 @@ import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.admin.DisplayBusinessStartDate
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.itsaStatus.ITSAStatus
-import common.services.{DateService, ITSAStatusService, SessionService}
+import common.services.{DateService, ITSAStatusService}
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused

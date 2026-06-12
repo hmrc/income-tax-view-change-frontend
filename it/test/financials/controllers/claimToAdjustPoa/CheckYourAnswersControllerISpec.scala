@@ -20,20 +20,20 @@ import audit.models.AdjustPaymentsOnAccountAuditModel
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.models.core.AccountingPeriodModel
+import financials.controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
+import financials.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import services.PaymentOnAccountSessionService
-import testConstants.BaseIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
 import testConstants.BusinessDetailsIntegrationTestConstants.address
-import testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
+import financials.testConstants.FinancialDetailsTestConstants.testFinancialDetailsErrorModelJson
 import testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.validSession
 

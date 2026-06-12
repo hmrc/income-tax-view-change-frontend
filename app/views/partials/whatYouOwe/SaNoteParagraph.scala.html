@@ -18,7 +18,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import models.incomeSourceDetails.TaxYear
 @import common.viewUtils.ExternalUrlHelper
 @import common.config.FrontendAppConfig
 
@@ -30,9 +29,7 @@
 )
 @(
         utr: Option[String],
-        claimToAdjustTaxYear: Option[TaxYear],
         selfServeTimeToPayStartUrl: String,
-        adjustPoaUrl: String,
         budgetPaymentPlanUrl: String
 )(
         implicit request: Request[_],
@@ -43,28 +40,23 @@
 
 
 
-@saNoteParagraphContent(utr: String, ctaTaxYear: Option[TaxYear]) = {
+@saNoteParagraphContent(utr: String) = {
 
     @h2(msg = getMessage("sa-note-1-heading"))
     @p(id = Some("sa-note-1-migrated-1"))(Html(getMessage("sa-note-1-body-1") +
-            link(link = selfServeTimeToPayStartUrl,
-                outerMessage = ".",
-                messageKey = getMessage("sa-link-1-body-1"),
-                rel = Some("noreferrer noopener"),
-                target = Some("_blank")).toString()))
-    @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
             link(link = budgetPaymentPlanUrl,
                 messageKey = getMessage("sa-link-1-body-2"),
                 rel = Some("noreferrer noopener"),
                 target = Some("_blank")).toString() +
+            " " +
             getMessage("sa-note-1-body-3")))
-    @ctaTaxYear.map { taxYear =>
-        @p(id = Some("sa-note-1-migrated-3"))(Html(getMessage("sa-note-1-body-4") +
-                link(link = adjustPoaUrl,
-                    messageKey = getMessage("sa-link-1-body-3", taxYear.startYear.toString, taxYear.endYear.toString),
-                    outerMessage = ".",
-                    rel = Some("noreferrer noopener")).toString()))
-    }
+    @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
+            link(link = selfServeTimeToPayStartUrl,
+                messageKey = getMessage("sa-link-1-body-1"),
+                rel = Some("noreferrer noopener"),
+                target = Some("_blank")).toString() +
+            " " +
+            getMessage("sa-note-1-body-4")))
 
     @if(!user.isAgent) {
             @h2(msg = getMessage("sa-note-2-heading"))
@@ -96,6 +88,6 @@
 
 @utr.map { utr =>
     <div id="payments-due-note">
-        @saNoteParagraphContent(utr, claimToAdjustTaxYear)
+        @saNoteParagraphContent(utr)
     </div>
 }

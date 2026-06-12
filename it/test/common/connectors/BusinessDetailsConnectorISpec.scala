@@ -20,7 +20,7 @@ import common.helpers.{ComponentSpecBase, WiremockHelper}
 import common.models.auth.AuthorisedAndEnrolledRequest
 import common.enums.MTDIndividual
 import common.models.core.{AccountingPeriodModel, AddressModel}
-import models.incomeSourceDetails.*
+import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json

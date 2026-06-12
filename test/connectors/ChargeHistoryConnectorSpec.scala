@@ -22,8 +22,8 @@ import models.chargeHistory.ChargesHistoryResponse.ChargesHistoryResponse
 import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import play.api.Configuration
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.{chargeReference, testMtditid}
-import testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModelParsing, testValidChargeHistoryModel}
+import common.testConstants.BaseTestConstants.{chargeReference, testMtditid}
+import financials.testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModelParsing, testValidChargeHistoryModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

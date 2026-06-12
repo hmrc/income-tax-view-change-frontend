@@ -20,9 +20,10 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import common.services.DateServiceInterface
-import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason}
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
+import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason}
+import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel, PoaTwoReconciliationCredit}
 import models.repaymentHistory.RepaymentHistoryUtils
@@ -32,10 +33,9 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
-import testConstants.BaseTestConstants.testTaxYear
-import testConstants.FinancialDetailsTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.testTaxYear
+import financials.testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import java.time.LocalDate
 import scala.concurrent.Future

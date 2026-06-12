@@ -16,11 +16,11 @@
 
 package audit.models
 
-import common.utils.audit.Utilities.userAuditDetails
 import common.auth.MtdItUser
 import common.enums.AuditType.TaxCalculationDetailsResponse
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
+import common.utils.audit.Utilities.userAuditDetails
 import models.liabilitycalculation.ReliefsClaimed
 import models.liabilitycalculation.taxcalculation.*
 import models.liabilitycalculation.viewmodels.*
@@ -32,7 +32,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
                                     viewModel: TaxDueSummaryViewModel,
                                     taxYear: Int) extends ExtendedAuditModel {
 
-  import implicits.ImplicitCurrencyFormatter.*
+  import financials.implicits.ImplicitCurrencyFormatter.*
 
   override val transactionName: String = TransactionName.TaxCalculationDetailsResponse
   override val auditType: String = TaxCalculationDetailsResponse

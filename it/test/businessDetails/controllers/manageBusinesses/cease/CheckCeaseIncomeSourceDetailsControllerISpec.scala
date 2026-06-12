@@ -18,13 +18,13 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.Cease
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.models.UIJourneySessionData
-import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData

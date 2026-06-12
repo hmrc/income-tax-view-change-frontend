@@ -19,8 +19,8 @@ package common.helpers.servicemocks
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.helpers.{ComponentSpecBase, WiremockHelper}
 import common.models.itsaStatus.ITSAStatus
-import models.incomeSourceDetails.TaxYear
 import ITSAStatus.ITSAStatus
+import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsArray, Json}
 import testConstants.BaseIntegrationTestConstants.testNino

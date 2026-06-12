@@ -20,7 +20,7 @@ import models.chargeHistory.ChargesHistoryResponse.ChargesHistoryResponseReads
 import org.scalatest.matchers.should.Matchers
 import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
-import testConstants.ChargeHistoryTestConstants._
+import financials.testConstants.ChargeHistoryTestConstants._
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 

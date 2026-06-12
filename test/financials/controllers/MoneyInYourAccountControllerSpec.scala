@@ -21,6 +21,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.models.admin.CreditsRefundsRepay
 import common.services.DateServiceInterface
+import financials.services.{CreditService, RepaymentService}
 import mocks.services.{MockCreditService, MockRepaymentService}
 import models.financialDetails.FinancialDetailsModel
 import org.jsoup.Jsoup
@@ -31,10 +32,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.{CreditService, RepaymentService}
-import testConstants.ANewCreditAndRefundModel
-import testConstants.FinancialDetailsTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import financials.testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import financials.testConstants.ANewCreditAndRefundModel
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -18,7 +18,8 @@ package models.repaymentHistory
 
 import common.exceptions.MissingFieldException
 import common.services.DateServiceInterface
-import implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import financials.controllers.routes as financialsRoutes
+import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import models.financialDetails.*
 import play.api.Logger
 import play.api.i18n.Messages
@@ -26,7 +27,6 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
-import financials.controllers.routes as financialsRoutes
 
 object RepaymentHistoryUtils {
 
@@ -38,11 +38,12 @@ object RepaymentHistoryUtils {
     }
   }
 
-  private def getCreditsLinkUrl(taxYear: Int, isAgent: Boolean) = {
+  private def getCreditsLinkUrl(date: LocalDate, isAgent: Boolean) = {
+    val year = date.getYear
     if (isAgent) {
-      financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(taxYear).url
+      financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(year).url
     } else {
-      financialsRoutes.CreditsSummaryController.showCreditsSummary(taxYear).url
+      financialsRoutes.CreditsSummaryController.showCreditsSummary(year).url
     }
   }
 
@@ -147,7 +148,7 @@ object RepaymentHistoryUtils {
       date = payment.documentDate,
       creditType = MfaCreditType,
       amount = payment.amount,
-      linkUrl = getCreditsLinkUrl(payment.taxYear, isAgent),
+      linkUrl = getCreditsLinkUrl(payment.documentDate, isAgent),
       visuallyHiddenText = s"${payment.transactionId.getOrElse(throw MissingFieldException("Transaction ID"))}",
       taxYear = Some(payment.taxYear)
     )
@@ -173,7 +174,7 @@ object RepaymentHistoryUtils {
         linkUrl = if (hasCreditDrilldown)
           getChargeLinkUrl(isAgent, payment.documentDate.getYear, transactionId)
         else
-          getCreditsLinkUrl(payment.taxYear, isAgent),
+          getCreditsLinkUrl(dueDate, isAgent),
         visuallyHiddenText = transactionId,
         taxYear = Some(payment.taxYear)
       )

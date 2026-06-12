@@ -21,12 +21,12 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.Nino
 import enums.InitialPage
-import implicits.ImplicitCurrencyFormatter
+import financials.implicits.ImplicitCurrencyFormatter
+import financials.services.PaymentOnAccountSessionService
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.PaymentOnAccountSessionService
-import services.claimToAdjustPoa.ClaimToAdjustService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.ErrorRecovery
 import utils.claimToAdjust.WithSessionAndPoa

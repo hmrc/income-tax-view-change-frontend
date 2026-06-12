@@ -26,10 +26,10 @@ import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.core.IncomeSourceIdHash.mkFromQueryString
 import models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.scalatest.matchers.should.Matchers
-import testConstants.BaseTestConstants.*
-import testConstants.BusinessDetailsTestConstants.{testLatencyDetails, *}
-import testConstants.PropertyDetailsTestConstants.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.BusinessDetailsTestConstants.{testLatencyDetails, *}
+import businessDetails.testConstants.PropertyDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 import testUtils.UnitSpec
 
 import java.time.LocalDate

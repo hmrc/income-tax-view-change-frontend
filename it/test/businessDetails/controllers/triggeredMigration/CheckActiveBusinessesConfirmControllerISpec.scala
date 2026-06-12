@@ -28,7 +28,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.testMtditid
 import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed, singleBusinessIncomeWithYearOfMigration}
+import common.testConstants.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed, singleBusinessIncomeWithYearOfMigration}
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
 

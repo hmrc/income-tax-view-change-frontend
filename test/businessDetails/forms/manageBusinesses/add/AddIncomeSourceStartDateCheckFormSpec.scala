@@ -22,7 +22,7 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.implicits.ImplicitDateFormatter
 import common.services.DateService
 import play.api.data.Form
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.noIncomeDetails
+import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

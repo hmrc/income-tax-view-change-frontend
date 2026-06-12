@@ -27,7 +27,7 @@ import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset, when}
 import play.api
 import play.api.Application
-import testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import testUtils.TestSupport
 
 import java.time.LocalDate

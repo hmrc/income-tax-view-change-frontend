@@ -26,13 +26,13 @@ import common.services.DateServiceInterface
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.admin.*
 import common.models.core.SelfServeTimeToPayJourneyResponseModel
+import financials.testConstants.ChargeConstants
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
-import testConstants.ChargeConstants
 import testConstants.FinancialDetailsIntegrationTestConstants.*
 import testConstants.IncomeSourceIntegrationTestConstants.*
 import testConstants.OutstandingChargesIntegrationTestConstants.*
@@ -764,9 +764,9 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                             isElementVisibleById(s"money-in-your-account")(expectedValue = true),
                             elementTextBySelector("#money-in-your-account")(
                               messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}") + " " +
-                                messagesAPI("whatYouOwe.moneyOnAccount-1") + " £300.00" + " " +
-                                messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}-2") + " " +
-                                messagesAPI("whatYouOwe.moneyOnAccount-3") + "."
+                                messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}-1") + " " +
+                                messagesAPI("whatYouOwe.moneyOnAccount-link") +
+                                messagesAPI(s"whatYouOwe.moneyOnAccount${if (mtdUserRole != MTDIndividual) "-agent" else ""}-2", "£300.00")
                             )
                           )
                         }

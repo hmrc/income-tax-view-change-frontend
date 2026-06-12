@@ -17,17 +17,17 @@
 package utils.claimToAdjust
 
 import common.auth.MtdItUser
-import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
+import enums.*
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.services.PaymentOnAccountSessionService
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import services.PaymentOnAccountSessionService
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ErrorRecovery
 
 import scala.concurrent.{ExecutionContext, Future}
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 trait JourneyCheckerClaimToAdjust extends ErrorRecovery {
   self =>

@@ -16,7 +16,7 @@
 
 package models
 
-import testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, propertyDetails}
+import businessDetails.testConstants.PropertyDetailsTestConstants.{ceasedPropertyDetails, propertyDetails}
 import testUtils.UnitSpec
 
 class PropertyDetailsModelSpec extends UnitSpec {
