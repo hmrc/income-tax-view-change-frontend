@@ -29,6 +29,7 @@ import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.controllers.routes as financialsRoutes
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
+import financials.utils.FallBackBackLinks
 import forms.utils.SessionKeys.gatewayPage
 import models.chargeHistory.*
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
@@ -41,7 +42,6 @@ import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.FallBackBackLinks
 import views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
 
 import javax.inject.Inject

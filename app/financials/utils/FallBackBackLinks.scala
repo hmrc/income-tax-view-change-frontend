@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package utils
+package financials.utils
 
 import common.enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
-import hub.controllers.routes._
 import financials.controllers.routes as financialsRoutes
+import hub.controllers.routes.*
 import returns.controllers.routes as returnsRoutes
 
 trait FallBackBackLinks {

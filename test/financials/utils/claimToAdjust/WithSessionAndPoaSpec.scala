@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package utils.claimToAdjust
+package financials.utils.claimToAdjust
 
 import cats.data.EitherT
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
+import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
@@ -37,9 +40,6 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
-import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
-import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 

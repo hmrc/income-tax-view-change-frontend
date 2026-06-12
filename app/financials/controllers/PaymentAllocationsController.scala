@@ -28,6 +28,7 @@ import common.services.AuditingService
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.services.PaymentAllocationsService
+import financials.utils.FallBackBackLinks
 import forms.utils.SessionKeys.gatewayPage
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.i18n.{I18nSupport, Messages}
@@ -35,7 +36,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.FallBackBackLinks
 import views.html.PaymentAllocationView
 
 import javax.inject.{Inject, Singleton}

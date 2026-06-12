@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package financials.utils
 
 import common.enums.GatewayPage.{NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import testUtils.TestSupport
