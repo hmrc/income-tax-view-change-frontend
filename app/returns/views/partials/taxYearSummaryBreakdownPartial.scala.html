@@ -86,8 +86,6 @@
 
 @if(isFinalCalc){
   @h2(msg = messages("tax-year-summary.tax-calculation"), classes = "govuk-heading-l", optId = Some("calculation-panel-heading"))
-
-    //    TODO finish transforming to GOV.UK table component
     @govukTable(
         Table(
             caption = Some(messages("tax-year-summary.tax-calculation")),
@@ -135,13 +133,13 @@
                 Option.when(isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear).url, messageKey = messages(s"tax-year-summary.tax-due.finalCalc")))),
-                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
+                        TableRow(content = Text(overview.taxDue.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
                 Option.when(!isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummary(taxYear, origin).url, messageKey = messages(s"tax-year-summary.tax-due.finalCalc")))),
-                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
+                        TableRow(content = Text(overview.taxDue.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
             ).flatten
@@ -205,7 +203,7 @@
                 Option.when(isAgent)(
                     Seq(
                         TableRow(content = HtmlContent(link(link = returns.controllers.routes.TaxDueSummaryController.showTaxDueSummaryAgent(taxYear, isPrevious).url, messageKey = messages(s"tax-year-summary.tax-due"), classes = "govuk-!-font-weight-bold"))),
-                        TableRow(content = Text(overview.income.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
+                        TableRow(content = Text(overview.taxDue.toCurrencyString), format = Some("numeric"), classes = "govuk-!-font-weight-bold")
                     )
                 ),
                 Option.when(!isAgent)(
