@@ -18,12 +18,12 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.mocks.{MockAuditingService, MockHttpV2}
-import models.chargeHistory.ChargesHistoryResponse.ChargesHistoryResponse
-import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import common.testConstants.BaseTestConstants.{chargeReference, testMtditid}
+import financials.models.chargeHistory.ChargesHistoryResponse.ChargesHistoryResponse
+import financials.models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import financials.testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModelParsing, testValidChargeHistoryModel}
 import play.api.Configuration
 import play.mvc.Http.Status
-import common.testConstants.BaseTestConstants.{chargeReference, testMtditid}
-import financials.testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModelParsing, testValidChargeHistoryModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

@@ -16,8 +16,8 @@
 
 package mocks.services
 
+import financials.models.chargeHistory.{AdjustmentHistoryModel, ChargeHistoryModel, ChargesHistoryErrorModel}
 import financials.services.ChargeHistoryService
-import models.chargeHistory.{AdjustmentHistoryModel, ChargeHistoryModel, ChargesHistoryErrorModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

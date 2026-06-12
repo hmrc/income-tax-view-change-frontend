@@ -16,13 +16,13 @@
 
 package audit.models
 
-import common.utils.audit.Utilities.userAuditDetails
 import common.auth.MtdItUser
 import common.enums.AuditType.ChargeSummary
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import common.services.DateServiceInterface
-import models.chargeHistory.ChargeHistoryModel
+import common.utils.audit.Utilities.userAuditDetails
+import financials.models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear

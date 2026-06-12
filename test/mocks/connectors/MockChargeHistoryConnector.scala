@@ -17,10 +17,10 @@
 package mocks.connectors
 
 import connectors.ChargeHistoryConnector
-import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
+import financials.models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import testUtils.UnitSpec
 

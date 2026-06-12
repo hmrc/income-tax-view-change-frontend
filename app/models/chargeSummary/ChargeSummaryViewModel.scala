@@ -17,13 +17,13 @@
 package models.chargeSummary
 
 import common.enums.GatewayPage.GatewayPage
+import financials.controllers.routes.*
+import financials.models.chargeHistory.AdjustmentHistoryModel
 import models.ChargeHistoryItem
-import models.chargeHistory.AdjustmentHistoryModel
 import models.financialDetails.*
+import models.repaymentHistory.RepaymentHistoryUtils
 import play.api.i18n.Messages
 import play.twirl.api.Html
-import financials.controllers.routes.*
-import models.repaymentHistory.RepaymentHistoryUtils
 import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation
 
 import java.time.LocalDate

@@ -16,13 +16,13 @@
 
 package financials.services
 
+import common.testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
+import financials.models.chargeHistory.*
 import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason}
 import mocks.connectors.MockChargeHistoryConnector
-import models.chargeHistory.*
 import models.claimToAdjustPoa.{Increase, MainIncomeLower}
 import models.financialDetails.DocumentDetail
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import common.testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
 import testUtils.TestSupport
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

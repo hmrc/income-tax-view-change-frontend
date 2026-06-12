@@ -28,10 +28,10 @@ import financials.controllers.ChargeSummaryController.ErrorCode
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.controllers.routes as financialsRoutes
+import financials.models.chargeHistory.*
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import financials.utils.FallBackBackLinks
 import forms.utils.SessionKeys.gatewayPage
-import models.chargeHistory.*
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear

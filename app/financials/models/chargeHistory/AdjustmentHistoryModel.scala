@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.chargeHistory
+package financials.models.chargeHistory
 
 import financials.models.ReversalReason
 
