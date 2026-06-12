@@ -838,7 +838,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the income row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val incomeLink: Element = layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(1) th:nth-child(1) a")
+        val incomeLink: Element = layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(1) a")
         incomeLink.text shouldBe income
         incomeLink.attr("href") shouldBe returns.controllers.routes.IncomeSummaryController.showIncomeSummary(testYear).url
         layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe modelComplete(crystallised = false).income.toCurrencyString
@@ -944,7 +944,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val allowancesLink: Element = layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(2) th:nth-child(1) a")
+        val allowancesLink: Element = layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(2) a")
         allowancesLink.text shouldBe allowancesAndDeductions
         allowancesLink.attr("href") shouldBe returns.controllers.routes.DeductionsSummaryController.showDeductionsSummary(testYear).url
         layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "£2.02"
@@ -956,7 +956,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the Income Tax and National Insurance Contributions Due row in the Tax Calculation tab" in new Setup(estimateView()) {
-        val totalTaxDueLink: Element = layoutContent.selectHead(" #calculation-income-deductions-contributions-table tr:nth-child(4) th:nth-child(1) a")
+        val totalTaxDueLink: Element = layoutContent.selectHead(" #calculation-income-deductions-contributions-table tr:nth-child(4) a")
         totalTaxDueLink.text shouldBe incomeTaxNationalInsuranceDue
         totalTaxDueLink.attr("href") shouldBe returns.controllers.routes.TaxDueSummaryController.showTaxDueSummary(testYear).url
         layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(4) td:nth-child(2)").text shouldBe modelComplete(crystallised = false).taxDue.toCurrencyString
@@ -1346,14 +1346,14 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       }
 
       "display the income row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
-        val incomeLink: Element = layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(1) th:nth-child(1) a")
+        val incomeLink: Element = layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(1) a")
         incomeLink.text shouldBe income
         incomeLink.attr("href") shouldBe returns.controllers.routes.IncomeSummaryController.showIncomeSummaryAgent(testYear).url
         layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(1) td:nth-child(2)").text shouldBe modelComplete(crystallised = false).income.toCurrencyString
       }
 
       "display the Allowances and deductions row in the Tax Calculation tab" in new Setup(estimateView(isAgent = true)) {
-        val allowancesLink: Element = layoutContent.selectHead(" #calculation-income-deductions-contributions-table tr:nth-child(2) th:nth-child(1) a")
+        val allowancesLink: Element = layoutContent.selectHead(" #calculation-income-deductions-contributions-table tr:nth-child(2) a")
         allowancesLink.text shouldBe allowancesAndDeductions
         allowancesLink.attr("href") shouldBe returns.controllers.routes.DeductionsSummaryController.showDeductionsSummaryAgent(testYear).url
         layoutContent.selectHead("#calculation-income-deductions-contributions-table tr:nth-child(2) td:nth-child(2)").text shouldBe "£2.02"
