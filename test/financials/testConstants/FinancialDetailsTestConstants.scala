@@ -23,7 +23,7 @@ import financials.models.CodingOutType.*
 import models.creditDetailModel.CreditDetailModel
 import models.creditsandrefunds.{CreditsModel, Transaction}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 import FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}

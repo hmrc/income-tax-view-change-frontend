@@ -23,7 +23,7 @@ import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.{AddressModel, IncomeSourceId}
 import common.models.itsaStatus.ITSAStatus
 import common.utils.sessionUtils.SessionKeys
-import models.incomeSourceDetails.*
+import common.models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import play.api.http.Status
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
