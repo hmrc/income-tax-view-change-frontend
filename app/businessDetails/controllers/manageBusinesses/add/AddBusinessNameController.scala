@@ -27,7 +27,6 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.core.{Mode, NormalMode}
-import common.services.SessionDataService
 import enums.{FreshInitialPage, InitialPage}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
@@ -35,6 +34,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -25,7 +25,6 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.IdempotencyKeyForCreateIncomeSource
 import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, idempotencyKeyField}
 import org.jsoup.Jsoup

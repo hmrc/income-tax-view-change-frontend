@@ -26,7 +26,6 @@ import common.auth.MtdItUser
 import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import common.models.UIJourneySessionData
 import common.models.admin.IdempotencyKeyForCreateIncomeSource
-import common.services.SessionDataService
 import enums.*
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger

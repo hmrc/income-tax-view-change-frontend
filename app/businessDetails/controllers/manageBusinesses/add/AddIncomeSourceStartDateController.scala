@@ -26,7 +26,7 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.{DateService, SessionService}
+import common.services.DateService
 import common.views.html.errorPages.CustomNotFoundErrorView
 import enums.{BeforeSubmissionPage, FreshInitialPage, InitialPage}
 import models.incomeSourceDetails.AddIncomeSourceData
