@@ -17,7 +17,10 @@
 package common.auth.actions
 
 import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import common.controllers.routes as appRoutes
+import common.models.admin.NoIncomeSourcesRedirect
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
@@ -26,26 +29,28 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RedirectIfNoIncomeSourcesAction @Inject()()
+class RedirectIfNoIncomeSourcesAction @Inject()(frontendAppConfig: FrontendAppConfig)
                                      (implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[MtdItUser, MtdItUser] {
+  extends ActionRefiner[MtdItUser, MtdItUser] with FeatureSwitching {
+
+  override val appConfig: FrontendAppConfig = frontendAppConfig
 
   private val logger = Logger("application")
 
-  override protected def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] =  {
-    if (request.incomeSources.hasAnyIncomeSources) {
-      Future.successful(Right(request))
-    } else {
+  override protected def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
+    implicit val req: MtdItUser[A] = request
 
-      logger.info(
-        s"[RedirectIfNoIncomeSourcesAction][refine] User has no income sources. Redirecting to no income sources page. isAgent=${request.isAgent}"
-      )
-
-      Future.successful(
-        Left(
-          Redirect(appRoutes.NoIncomeSourcesController.show(request.isAgent))
+    if (isEnabled(NoIncomeSourcesRedirect)) {
+      if (req.incomeSources.hasAnyIncomeSources) {
+        Future.successful(Right(req))
+      } else {
+        logger.info(
+          s"[RedirectIfNoIncomeSourcesAction][refine] User has no income sources. Redirecting to no income sources page. isAgent=${req.isAgent}"
         )
-      )
+        Future.successful(Left(Redirect(appRoutes.NoIncomeSourcesController.show(req.isAgent))))
+      }
+    } else {
+      Future.successful(Right(req))
     }
   }
 }
