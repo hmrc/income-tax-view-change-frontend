@@ -16,6 +16,8 @@
 
 package models.incomeSourceDetails
 
+import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
+
 object LatencyYear {
   def apply(taxYear: String, reportingMethod: String): LatencyYear = {
     reportingMethod match {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails
+package common.models.incomeSourceDetails
 
 import common.auth.MtdItUser
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}

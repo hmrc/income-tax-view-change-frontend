@@ -16,7 +16,7 @@
 
 package obligations.forms.reportingObligations.signUp
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import play.api.data.Form
 import play.api.data.Forms.{boolean, mapping, optional}
 import play.api.i18n.Messages

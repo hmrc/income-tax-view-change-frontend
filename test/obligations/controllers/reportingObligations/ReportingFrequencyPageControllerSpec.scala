@@ -22,9 +22,9 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.admin.{OptOutFs, SignUpFs}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.mocks.services.{MockOptOutService, MockSignUpService}
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutService}

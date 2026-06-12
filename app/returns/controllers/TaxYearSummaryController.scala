@@ -24,6 +24,7 @@ import common.enums.GatewayPage.TaxYearSummaryPage
 import common.implicits.ImplicitDateFormatter
 import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
+import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateServiceInterface}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
@@ -31,7 +32,6 @@ import financials.services.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.taxyearsummary.TaxYearSummaryChargeItem

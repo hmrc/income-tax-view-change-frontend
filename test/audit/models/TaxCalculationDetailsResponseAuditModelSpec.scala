@@ -19,7 +19,7 @@ package audit.models
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers

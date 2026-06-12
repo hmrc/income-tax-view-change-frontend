@@ -21,6 +21,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.models.core.IncomeSourceId
 import IncomeSourceId.mkIncomeSourceId
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.*
 

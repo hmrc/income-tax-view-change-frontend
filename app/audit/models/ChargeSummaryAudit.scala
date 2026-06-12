@@ -21,11 +21,11 @@ import common.auth.MtdItUser
 import common.enums.AuditType.ChargeSummary
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import models.chargeHistory.ChargeHistoryModel
 import models.chargeSummary.PaymentHistoryAllocations
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.JsonUtils
 

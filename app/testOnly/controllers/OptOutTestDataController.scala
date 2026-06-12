@@ -20,10 +20,10 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.Nino
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatusResponseModel
 import common.services.DateServiceInterface
 import models.calculationList.CalculationListResponseModel
-import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json

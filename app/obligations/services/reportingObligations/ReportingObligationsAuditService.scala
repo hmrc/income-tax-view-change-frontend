@@ -20,9 +20,9 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.enums.{AuditType, TransactionName}
 import common.enums.AuditType.{ReportingObligationsPage, IncomeSourceDetailsResponse as _}
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, UnknownStatus, Voluntary}
-import models.incomeSourceDetails.TaxYear
 import obligations.models.audit.reporting_obligations.*
 import obligations.services.reportingObligations.optOut.*
 import obligations.viewUtils.ReportingFrequencyViewUtils

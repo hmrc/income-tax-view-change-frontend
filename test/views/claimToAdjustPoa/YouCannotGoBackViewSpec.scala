@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import common.auth.MtdItUser
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.YouCannotGoBackView
 class YouCannotGoBackViewSpec extends TestSupport {

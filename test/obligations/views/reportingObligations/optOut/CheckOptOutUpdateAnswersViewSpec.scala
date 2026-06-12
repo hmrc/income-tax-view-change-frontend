@@ -18,7 +18,7 @@ package obligations.views.reportingObligations.optOut
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
 import obligations.views.html.reportingObligations.optOut.CheckOptOutUpdateAnswersView
 import obligations.views.messages.CheckOptOutUpdateAnswersMessages as viewMessages

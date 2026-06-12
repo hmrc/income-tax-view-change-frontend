@@ -16,8 +16,8 @@
 
 package obligations.views.messages
 
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
-import models.incomeSourceDetails.TaxYear
 import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, OptOutTaxYear}
 
 object ConfirmedOptOutMessages {

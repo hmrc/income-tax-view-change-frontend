@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import testUtils.UnitSpec
 

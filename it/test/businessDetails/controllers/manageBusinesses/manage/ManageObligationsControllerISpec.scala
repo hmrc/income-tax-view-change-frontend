@@ -18,7 +18,7 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.viewmodels.ObligationsViewModel
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, ManageIncomeSourceData}
+import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
@@ -32,6 +32,7 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.Manage
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 
 
 class ManageObligationsControllerISpec extends ControllerISpecHelper {

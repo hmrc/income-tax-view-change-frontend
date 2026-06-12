@@ -18,13 +18,13 @@ package views
 
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatterImpl
+import common.models.incomeSourceDetails.TaxYear
 import common.viewUtils
 import common.viewUtils.ExternalUrlHelper
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import financials.testConstants.ChargeConstants
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.liabilitycalculation.{Message, Messages}
 import models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}

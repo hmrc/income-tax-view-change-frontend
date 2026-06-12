@@ -18,10 +18,10 @@ package views.claimToAdjustPoa
 
 import _root_.financials.implicits.ImplicitCurrencyFormatter.*
 import common.models.core.NormalMode
+import common.models.incomeSourceDetails.TaxYear
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.forms.adjustPoa.EnterPoaAmountForm
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements

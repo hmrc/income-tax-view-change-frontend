@@ -18,13 +18,13 @@ package financials.controllers
 
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
+import common.models.incomeSourceDetails.TaxYear
 import financials.models.AmendedReturnReversalReason
 import financials.models.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import financials.testConstants.{ChargeConstants, PaymentAllocationsTestConstants}
 import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService, MockPaymentAllocationsService}
 import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

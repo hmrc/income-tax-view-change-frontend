@@ -22,6 +22,7 @@ import common.config.featureswitch.*
 import common.enums.MTDSupportingAgent
 import common.models.admin.*
 import common.models.core.Nino
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.{AuditingService, DateServiceInterface, ITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
@@ -30,7 +31,6 @@ import hub.audit.models.HomeAudit
 import hub.models.homePage.*
 import hub.utils.HomePageUtils
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService

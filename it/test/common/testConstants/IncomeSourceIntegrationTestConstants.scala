@@ -19,6 +19,7 @@ package common.testConstants
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.IncomeSourceJourneyType
 import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import financials.models.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import financials.models.CodingOutType.*
 import models.incomeSourceDetails.*

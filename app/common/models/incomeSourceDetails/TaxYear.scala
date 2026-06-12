@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.incomeSourceDetails
+package common.models.incomeSourceDetails
 
 import common.services.DateServiceInterface
 import play.api.libs.json.{Format, JsError, JsNumber, Reads}

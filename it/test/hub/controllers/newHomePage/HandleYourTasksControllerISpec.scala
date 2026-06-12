@@ -28,7 +28,7 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.creditsandrefunds.CreditsModel
 import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import obligations.models.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.OK

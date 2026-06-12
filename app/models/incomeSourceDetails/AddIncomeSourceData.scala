@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import common.models.incomeSourceDetails.{ChooseSoleTraderAddressUserAnswer, SensitiveChooseSoleTraderAddressRadioAnswer}
 import play.api.libs.json.*
 import uk.gov.hmrc.crypto.Sensitive.{SensitiveBoolean, SensitiveInstant, SensitiveString}
 import uk.gov.hmrc.crypto.json.JsonEncryption
