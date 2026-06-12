@@ -22,10 +22,11 @@ import models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, Transitio
 import models.liabilitycalculation.{Message, Messages}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
-import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.jsoup.select.Elements
+import org.scalatest.prop.TableDrivenPropertyChecks.*
 import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
-import testConstants.NewCalcBreakdownUnitTestConstants._
+import testConstants.NewCalcBreakdownUnitTestConstants.*
 import testUtils.ViewSpec
 import returns.views.html.TaxCalcBreakdownView
 
@@ -633,7 +634,8 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         }
 
         "has the correct heading" in new Setup(view) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
+          val table: Elements = pageContent(pageContentSelector).select("#additional-charges-table")
+          table.select("caption").text() shouldBe sectionHeadingAdditionalChar
         }
 
         "has a table header section" in new Setup(view) {
@@ -643,28 +645,32 @@ abstract class TaxCalcBreakdownViewBehaviour extends ViewSpec {
         }
 
         "has only a Gift Aid line with the correct heading and table" in new Setup(viewAdChGiftAid) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
+          val table: Elements = pageContent(pageContentSelector).select("#additional-charges-table")
+          table.select("caption").text() shouldBe sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
           row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.giftAidTax")
           row.select("td").last().text() shouldBe "£5,000.00"
         }
 
         "has only a Pensions Saving line with the correct heading and table" in new Setup(viewAdChPensionSavings) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
+          val table: Elements = pageContent(pageContentSelector).select("#additional-charges-table")
+          table.select("caption").text() shouldBe sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
           row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.totalPensionSavingsTaxCharges")
           row.select("td").last().text() shouldBe "£5,000.00"
         }
 
         "has only a Pensions Lump Sum line with the correct heading and table" in new Setup(viewAdChPensionLumpSum) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
+          val table: Elements = pageContent(pageContentSelector).select("#additional-charges-table")
+          table.select("caption").text() shouldBe sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
           row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.statePensionLumpSumCharges")
           row.select("td").last().text() shouldBe "£5,000.00"
         }
 
         "has only a Winter Fuel Payment Line with the correct heading and table" in new Setup(viewAdChWinterFuelPaymentCharge) {
-          pageContent(pageContentSelector).selectById("additional_charges").text shouldBe sectionHeadingAdditionalChar
+          val table: Elements = pageContent(pageContentSelector).select("#additional-charges-table")
+          table.select("caption").text() shouldBe sectionHeadingAdditionalChar
           val row: Element = pageContent(pageContentSelector).table().select("tr").get(1)
           row.select("td").first().text() shouldBe messages("taxCal_breakdown.table.winterFuelPaymentCharge")
           row.select("td").last().text() shouldBe "£5,000.00"
