@@ -23,7 +23,7 @@ import common.services.DateServiceInterface
 import connectors.{CalculationListConnector, ChargeHistoryConnector}
 import financials.models.DocumentType.{Poa1Charge, Poa2Charge}
 import models.calculationList.{CalculationListErrorModel, CalculationListModel}
-import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.financialDetails.*
 import play.api.Logger

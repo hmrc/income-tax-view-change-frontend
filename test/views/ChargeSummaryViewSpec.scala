@@ -20,11 +20,12 @@ import common.config.featureswitch.FeatureSwitching
 import common.exceptions.MissingFieldException
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.ViewSpec
-import financials.models.ChargeType.*
-import financials.models.*
 import financials.controllers.routes as financialsRoutes
+import financials.models.*
+import financials.models.ChargeType.*
+import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import financials.testConstants.ChargeConstants
-import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
+import financials.testConstants.FinancialDetailsTestConstants.*
 import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import models.financialDetails.*
 import org.jsoup.Jsoup

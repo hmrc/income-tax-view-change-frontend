@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.chargeHistory
+package financials.models.chargeHistory
 
 import play.api.Logger
 import play.api.http.Status.{FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}

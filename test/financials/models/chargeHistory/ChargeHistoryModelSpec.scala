@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.chargeHistory
+package financials.models.chargeHistory
 
 import common.testUtils.UnitSpec
 import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason}
