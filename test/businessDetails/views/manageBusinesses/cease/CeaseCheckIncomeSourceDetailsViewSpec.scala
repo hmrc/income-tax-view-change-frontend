@@ -24,8 +24,8 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
-import testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testIncomeSource, testTradeName}
+import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
+import businessDetails.testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testIncomeSource, testTradeName}
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes

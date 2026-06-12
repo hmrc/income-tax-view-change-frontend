@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
@@ -27,15 +28,15 @@ import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{AddressModel, CheckMode, Mode, NormalMode}
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.*
-import testConstants.BusinessDetailsTestConstants.business1
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import businessDetails.testConstants.BusinessDetailsTestConstants.business1
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 

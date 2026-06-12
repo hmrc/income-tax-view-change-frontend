@@ -22,6 +22,7 @@ import common.viewUtils
 import common.viewUtils.ExternalUrlHelper
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
+import financials.testConstants.ChargeConstants
 import models.financialDetails.*
 import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
@@ -32,8 +33,7 @@ import obligations.testConstants.NextUpdatesTestConstants.*
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
 import returns.views.html.TaxYearSummaryView
-import testConstants.ChargeConstants
-import testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
+import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
 import testUtils.ViewSpec
 
 import java.time.LocalDate

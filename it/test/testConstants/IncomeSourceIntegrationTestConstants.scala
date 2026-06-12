@@ -20,13 +20,13 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.IncomeSourceJourneyType
 import common.models.UIJourneySessionData
 import financials.models.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
-import financials.models.CodingOutType._
-import models.incomeSourceDetails._
+import financials.models.CodingOutType.*
+import models.incomeSourceDetails.*
 import play.api.libs.json.{JsObject, JsValue, Json}
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants._
+import testConstants.BaseIntegrationTestConstants.*
+import testConstants.BusinessDetailsIntegrationTestConstants.*
 import testConstants.PaymentHistoryTestConstraints.oldBusiness1
-import testConstants.PropertyDetailsIntegrationTestConstants._
+import testConstants.PropertyDetailsIntegrationTestConstants.*
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

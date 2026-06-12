@@ -20,9 +20,9 @@ import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import common.auth.MtdItUser
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import play.api.libs.json.Json
-import testConstants.ANewCreditAndRefundModel
-import testConstants.BaseTestConstants.*
-import testConstants.CreditAndRefundConstants.documentDetailWithDueDateFinancialDetailListModel
+import common.testConstants.BaseTestConstants.*
+import financials.testConstants.ANewCreditAndRefundModel
+import financials.testConstants.CreditAndRefundConstants.documentDetailWithDueDateFinancialDetailListModel
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

@@ -26,9 +26,9 @@ import models.liabilitycalculation.{Message, Messages}
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.scalatest.wordspec.AnyWordSpecLike
-import testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
-import testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
-import testConstants.ChargeConstants
+import common.testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
+import businessDetails.testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
+import financials.testConstants.ChargeConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

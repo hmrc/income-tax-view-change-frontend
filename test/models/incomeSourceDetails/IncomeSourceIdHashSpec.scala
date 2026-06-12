@@ -20,7 +20,7 @@ import common.exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.core.IncomeSourceIdHash.mkIncomeSourceIdHash
-import testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
+import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testSelfEmploymentId2, testSelfEmploymentIdValidation}
 import testUtils.UnitSpec
 
 class IncomeSourceIdHashSpec extends UnitSpec {

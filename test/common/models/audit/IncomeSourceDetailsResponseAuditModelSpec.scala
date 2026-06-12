@@ -20,7 +20,7 @@ import common.auth.actions.AuthActionsTestData.defaultAuthorisedAndEnrolledReque
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import play.api.libs.json.{JsArray, Json}
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -24,7 +25,6 @@ import businessDetails.views.html.manageBusinesses.cease.IncomeSourceCeasedBackE
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.IncomeSourceJourney.IncomeSourceType
-import common.services.SessionService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -20,9 +20,9 @@ import common.enums.AuditType.CeaseIncomeSource
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole, TransactionName}
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import obligations.testConstants.UpdateIncomeSourceTestConstants.failureResponse
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseTestConstants.*
+import common.testConstants.BaseTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

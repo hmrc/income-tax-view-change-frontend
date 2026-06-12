@@ -16,9 +16,9 @@
 
 package common.mocks.services
 
+import businessDetails.services.SessionService
 import common.enums.JourneyType.IncomeSourceJourneyType
 import common.models.UIJourneySessionData
-import common.services.SessionService
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.*
 import org.mockito.Mockito.*

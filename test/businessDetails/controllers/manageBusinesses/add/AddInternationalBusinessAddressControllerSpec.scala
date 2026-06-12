@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService}
+import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import common.config.FrontendAppConfig
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
@@ -25,7 +25,7 @@ import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{CheckMode, NormalMode}
-import common.services.{DateService, DateServiceInterface, SessionService}
+import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, Country}
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +35,7 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, *}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 

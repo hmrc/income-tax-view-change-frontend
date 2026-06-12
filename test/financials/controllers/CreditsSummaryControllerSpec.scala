@@ -21,16 +21,17 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
+import financials.services.CreditHistoryService
 import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService}
 import models.financialDetails.{BalanceDetails, DocumentDetail}
+import org.mockito.Mockito.reset
 import play.api
 import play.api.Application
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.*
-import services.{CalculationService, CreditHistoryService}
-import org.mockito.Mockito.reset
-import testConstants.BaseTestConstants.{calendarYear2018, testMtdItAgentUser, testMtdItUser, testSaUtr}
-import testConstants.FinancialDetailsTestConstants.*
+import services.CalculationService
+import common.testConstants.BaseTestConstants.{calendarYear2018, testMtdItAgentUser, testMtdItUser, testSaUtr}
+import financials.testConstants.FinancialDetailsTestConstants.*
 import views.html.CreditsSummaryView
 
 

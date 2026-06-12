@@ -23,7 +23,7 @@ import org.mockito.ArgumentMatchers.{any, eq as matches}
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import testConstants.IncomeSourcesWithDeadlinesTestConstants.*
+import businessDetails.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
 import testUtils.UnitSpec
 
 import java.time.LocalDate

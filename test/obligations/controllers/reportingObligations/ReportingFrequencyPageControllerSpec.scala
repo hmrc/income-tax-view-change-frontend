@@ -23,8 +23,8 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.admin.{OptOutFs, SignUpFs}
 import common.services.{DateService, DateServiceInterface}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.mocks.services.{MockOptOutService, MockSignUpService}
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutService}
@@ -38,8 +38,8 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import testConstants.BaseTestConstants.{testMtditid, testNino}
-import testConstants.BusinessDetailsTestConstants.business1
+import common.testConstants.BaseTestConstants.{testMtditid, testNino}
+import obligations.testConstants.BusinessDetailsTestConstants.business1
 
 import java.time.LocalDate
 import scala.concurrent.Future

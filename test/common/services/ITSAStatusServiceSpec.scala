@@ -19,9 +19,9 @@ package common.services
 import mocks.connectors.MockITSAStatusConnector
 import models.incomeSourceDetails.{LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
 import org.mockito.Mockito.{mock, when}
-import testConstants.BaseTestConstants.{testMtdItUser, testNino}
-import testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetails5}
-import testConstants.ITSAStatusTestConstants.*
+import common.testConstants.BaseTestConstants.{testMtdItUser, testNino}
+import businessDetails.testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetails5}
+import common.testConstants.ITSAStatusTestConstants.*
 import testUtils.TestSupport
 
 class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {

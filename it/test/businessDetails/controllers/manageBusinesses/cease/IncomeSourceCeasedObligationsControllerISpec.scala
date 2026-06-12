@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceDetailsModel}
 import play.api.http.Status.OK
@@ -30,7 +31,6 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.Cease
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
-import common.services.SessionService
 
 import java.time.LocalDate
 

@@ -21,7 +21,7 @@ import businessDetails.controllers.triggeredMigration.routes as triggeredMigrati
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.*
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
-import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import businessDetails.services.SessionService
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSessionId}
@@ -34,7 +34,7 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUser
 import common.helpers.servicemocks.AuditStub
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
-import common.services.SessionService
+import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 

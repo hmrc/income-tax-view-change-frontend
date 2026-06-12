@@ -17,8 +17,8 @@
 package obligations.views.helpers.injected
 
 import common.auth.MtdItUser
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
+import models.incomeSourceDetails.TaxYear
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import obligations.testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}
@@ -28,7 +28,7 @@ import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BusinessDetailsTestConstants.business1
+import obligations.testConstants.BusinessDetailsTestConstants.business1
 import testUtils.TestSupport
 
 import java.time.LocalDate

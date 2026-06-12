@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod}
+import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.views.html.manageBusinesses.manage.ManageObligationsView
 import common.auth.{AuthActions, MtdItUser}
@@ -25,7 +26,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.core.IncomeSourceId
-import common.services.{DateService, SessionService}
+import common.services.DateService
 import enums.CannotGoBackPage
 import models.incomeSourceDetails.TaxYear.getTaxYearModel
 import obligations.services.NextUpdatesService

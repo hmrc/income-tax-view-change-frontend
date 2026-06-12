@@ -17,6 +17,7 @@
 package businessDetails.services.manageBusinesses
 
 import businessDetails.controllers.manageBusinesses.add.routes
+import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -24,7 +25,7 @@ import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.IncomeSourceJourneyType
 import common.models.UIJourneySessionData
 import common.models.itsaStatus.StatusDetail
-import common.services.{DateService, ITSAStatusService, SessionService}
+import common.services.{DateService, ITSAStatusService}
 import enums.JourneyState
 import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, LatencyDetails, TaxYear}
 import play.api.Logger

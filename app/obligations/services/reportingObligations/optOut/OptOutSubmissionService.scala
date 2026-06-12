@@ -21,8 +21,8 @@ import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.models.UIJourneySessionData
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
-import models.incomeSourceDetails.TaxYear
 import ITSAStatus.{ITSAStatus, Mandated, Voluntary}
+import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, optOutUpdateReason}
 import obligations.models.audit.OptOutNewAuditModel

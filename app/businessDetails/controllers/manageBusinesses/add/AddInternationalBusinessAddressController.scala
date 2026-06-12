@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.services.AddressLookupService
+import businessDetails.services.{AddressLookupService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
 import com.google.inject.Inject
 import common.auth.{AuthActions, MtdItUser}
@@ -25,7 +25,6 @@ import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.core.Mode
-import common.services.SessionService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

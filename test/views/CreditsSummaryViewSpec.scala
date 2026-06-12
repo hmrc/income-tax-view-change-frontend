@@ -28,8 +28,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.helpers.CreditHistoryDataHelper
-import testConstants.BaseTestConstants.testMtditid
-import testConstants.FinancialDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.testMtditid
+import financials.testConstants.FinancialDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummaryView
 

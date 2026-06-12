@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.CannotGoBackPage
 import play.api.Logger
@@ -27,7 +28,6 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.services.SessionService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

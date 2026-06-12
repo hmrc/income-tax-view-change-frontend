@@ -22,7 +22,7 @@ import models.nrs.NrsSuccessResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS}
-import testConstants.NrsUtils.*
+import common.testConstants.NrsUtils.*
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 import scala.concurrent.Future

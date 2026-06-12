@@ -20,7 +20,7 @@ import org.jsoup.nodes.Element
 import play.api.mvc.Call
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.agent.errorPages.ClientRelationshipFailure
+import common.views.html.errorPages.agent.ClientRelationshipFailure
 
 
 class ClientDetailsFailureViewSpec extends ViewSpec {

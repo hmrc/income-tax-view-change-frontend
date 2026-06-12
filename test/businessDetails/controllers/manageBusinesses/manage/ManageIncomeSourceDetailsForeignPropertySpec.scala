@@ -26,7 +26,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 

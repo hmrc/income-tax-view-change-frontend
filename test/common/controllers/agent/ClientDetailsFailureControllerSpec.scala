@@ -24,9 +24,9 @@ import play.api
 import play.api.Application
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
+import common.testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 import uk.gov.hmrc.auth.core.InsufficientEnrolments
-import views.html.agent.errorPages.ClientRelationshipFailure
+import common.views.html.errorPages.agent.ClientRelationshipFailure
 
 class ClientDetailsFailureControllerSpec extends MockAuthActions
   with MockClientRelationshipFailure

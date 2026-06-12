@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -26,13 +25,13 @@ import businessDetails.views.html.manageBusinesses.cease.ViewAllCeasedBusinesses
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
-import businessDetails.services.IncomeSourceDetailsService
+import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.JourneyType.Manage
 import common.models.admin.DisplayBusinessStartDate
-import common.services.SessionService
+import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 @Singleton
 class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: ViewAllCeasedBusinessesView,

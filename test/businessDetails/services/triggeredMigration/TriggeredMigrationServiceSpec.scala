@@ -23,8 +23,8 @@ import common.mocks.services.MockSessionService
 import common.models.core.{CessationModel, IncomeSourceId}
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BusinessDetailsTestConstants.business1
-import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
+import businessDetails.testConstants.BusinessDetailsTestConstants.business1
+import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
 import testUtils.TestSupport
 
 import java.time.LocalDate

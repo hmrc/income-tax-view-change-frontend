@@ -23,8 +23,8 @@ import models.calculationList.{CalculationListErrorModel, CalculationListRespons
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants._
-import testConstants.CalculationListTestConstants
+import common.testConstants.BaseTestConstants._
+import returns.testConstants.CalculationListTestConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

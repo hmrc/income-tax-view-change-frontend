@@ -25,7 +25,7 @@ import org.jsoup.nodes.{Document, Element}
 import org.scalatest.prop.TableDrivenPropertyChecks.*
 import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
-import testConstants.NewCalcBreakdownUnitTestConstants.*
+import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
 import testUtils.ViewSpec
 import returns.views.html.TaxCalcBreakdownView
 

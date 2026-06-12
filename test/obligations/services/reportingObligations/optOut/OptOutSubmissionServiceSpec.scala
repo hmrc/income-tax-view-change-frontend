@@ -29,7 +29,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseTestConstants.testSessionId
+import common.testConstants.BaseTestConstants.testSessionId
 import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 

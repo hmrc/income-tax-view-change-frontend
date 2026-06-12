@@ -21,7 +21,7 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.FrontendAppConfig
 import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset}
-import testConstants.BaseTestConstants.testNino
+import common.testConstants.BaseTestConstants.testNino
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

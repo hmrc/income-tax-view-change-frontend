@@ -23,8 +23,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Configuration
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.*
-import testConstants.OutstandingChargesTestConstants.*
+import common.testConstants.BaseTestConstants.*
+import financials.testConstants.OutstandingChargesTestConstants.*
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

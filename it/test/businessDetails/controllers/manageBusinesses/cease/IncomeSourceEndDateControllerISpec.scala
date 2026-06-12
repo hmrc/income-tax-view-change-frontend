@@ -26,12 +26,12 @@ import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse,
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
-import common.services.SessionService
 
 class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
 

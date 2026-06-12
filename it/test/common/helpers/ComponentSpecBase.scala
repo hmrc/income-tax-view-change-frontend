@@ -17,7 +17,7 @@
 package common.helpers
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import common.auth.{HeaderExtractor, MtdItUser}
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
@@ -41,24 +41,12 @@ import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
 import testConstants.BaseIntegrationTestConstants.*
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
-import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
 import java.time.Month.APRIL
 import javax.inject.Singleton
 import scala.concurrent.{Await, ExecutionContext}
-
-@Singleton
-class TestHeaderExtractor extends HeaderExtractor {
-
-  override def extractHeader(request: play.api.mvc.Request[_], session: play.api.mvc.Session): HeaderCarrier = {
-    HeaderCarrierConverter
-      .fromRequestAndSession(request, request.session)
-      .copy(authorization = Some(Authorization("Bearer")))
-  }
-
-}
 
 @Singleton
 class TestDateService extends DateServiceInterface {
@@ -182,10 +170,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.penalties.port" -> mockPort,
     "microservice.services.penalties.host" -> mockHost,
     "microservice.services.stub.port" -> mockPort,
-    "calculation-polling.interval" -> "500",
-    "calculation-polling.timeout" -> "3000",
-    "calculation-polling.attempts" -> "10",
-    "calculation-polling.delayBetweenAttemptInMilliseconds" -> "500",
     "auditing.consumer.baseUri.host" -> mockHost,
     "auditing.consumer.baseUri.port" -> mockPort,
     "microservice.services.address-lookup-frontend.port" -> mockPort,
@@ -223,7 +207,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   override implicit lazy val app: Application =
     new GuiceApplicationBuilder()
       .in(Environment.simple(mode = Mode.Dev))
-      .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
       .overrides(bind[DateServiceInterface].to[TestDateService])
       .configure(config)
       .build()

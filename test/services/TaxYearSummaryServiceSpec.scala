@@ -27,7 +27,7 @@ import models.liabilitycalculation.*
 import models.taxyearsummary.*
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.{saEnrolment, testMtditid, testNino}
+import common.testConstants.BaseTestConstants.{saEnrolment, testMtditid, testNino}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.Enrolments

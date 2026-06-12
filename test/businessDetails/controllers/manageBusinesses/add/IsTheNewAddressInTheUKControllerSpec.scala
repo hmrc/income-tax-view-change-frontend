@@ -27,11 +27,12 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, invalidUKAddressNoPostCode}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
+import businessDetails.testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, invalidUKAddressNoPostCode}
+import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
@@ -41,7 +42,7 @@ import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
 

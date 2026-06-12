@@ -18,6 +18,7 @@ package common.controllers
 
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
+import common.views.html.NoIncomeSourcesView
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -27,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NoIncomeSourcesController @Inject()(
-                                           val noIncomeSourcesView: views.html.NoIncomeSourcesView,
+                                           val noIncomeSourcesView: NoIncomeSourcesView,
                                            val authActions: AuthActions
                                          )(
                                            implicit

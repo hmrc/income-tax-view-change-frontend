@@ -23,7 +23,7 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, foreignPropertyIncome, ukPropertyIncome}
+import common.testConstants.IncomeSourceDetailsTestConstants.{businessIncome, foreignPropertyIncome, ukPropertyIncome}
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes

@@ -16,12 +16,11 @@
 
 package businessDetails.views.manageBusinesses.manage
 
-import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.{Html, HtmlFormat}
-import testConstants.BusinessDetailsTestConstants.*
+import businessDetails.testConstants.BusinessDetailsTestConstants.*
 import testUtils.{TestSupport, ViewSpec}
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.*
@@ -30,6 +29,7 @@ import businessDetails.controllers.manageBusinesses.manage.routes as manageYourB
 import businessDetails.views.constants.ManageIncomeSourceDetailsViewConstants.*
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.models.itsaStatus.ITSAStatus
+import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 

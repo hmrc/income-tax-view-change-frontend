@@ -16,11 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

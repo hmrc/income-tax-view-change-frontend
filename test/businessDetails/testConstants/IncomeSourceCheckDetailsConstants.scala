@@ -20,7 +20,7 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
-import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
+import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
 
 import java.time.LocalDate
 

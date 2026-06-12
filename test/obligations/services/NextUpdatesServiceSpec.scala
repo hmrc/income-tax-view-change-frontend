@@ -26,7 +26,7 @@ import obligations.testConstants.NextUpdatesTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
+import obligations.testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
 import testUtils.TestSupport
 
 import java.time.LocalDate

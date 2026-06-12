@@ -23,7 +23,7 @@ import models.liabilitycalculation.{Message, Messages, PensionContributionDetail
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers
-import testConstants.NewCalcBreakdownUnitTestConstants.*
+import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 

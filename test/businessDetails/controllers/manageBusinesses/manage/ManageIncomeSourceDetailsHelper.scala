@@ -16,10 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService, MockSessionService}
-import common.services.{DateService, DateServiceInterface, ITSAStatusService, SessionService}
+import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import mocks.services.MockCalculationListService
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.nodes.{Document, Element}
@@ -27,7 +28,7 @@ import org.jsoup.select.Elements
 import org.mockito.Mockito.mock
 import play.api
 import services.*
-import testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
 
 trait ManageIncomeSourceDetailsHelper
   extends MockAuthActions

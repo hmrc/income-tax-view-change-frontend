@@ -17,8 +17,8 @@
 package obligations.services.reportingObligations.optOut
 
 import common.models.itsaStatus.ITSAStatus
-import models.incomeSourceDetails.TaxYear
 import ITSAStatus.{Annual, ITSAStatus, NoStatus, Voluntary}
+import models.incomeSourceDetails.TaxYear
 
 trait OptOutTaxYear {
   val taxYear: TaxYear

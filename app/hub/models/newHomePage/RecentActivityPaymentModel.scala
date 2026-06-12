@@ -17,7 +17,6 @@
 package hub.models.newHomePage
 
 import models.incomeSourceDetails.TaxYear
-
 import java.time.LocalDate
 
 case class RecentActivityPaymentModel(amount: BigDecimal, dateOfPayment: LocalDate){

@@ -22,8 +22,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.{finalDeclaration2024_2025taxYear, taxYear2024_2025quarterlyDates}
 import testUtils.ViewSpec
+import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.{finalDeclaration2024_2025taxYear, taxYear2024_2025quarterlyDates}
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import businessDetails.views.messages.IncomeSourceAddedMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes

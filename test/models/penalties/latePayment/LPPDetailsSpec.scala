@@ -17,7 +17,7 @@
 package models.penalties.latePayment
 
 import play.api.libs.json.Json
-import testConstants.PenaltiesTestConstants.{lppDetailsFull, lppDetailsJson}
+import financials.testConstants.PenaltiesTestConstants.{lppDetailsFull, lppDetailsJson}
 import testUtils.TestSupport
 
 class LPPDetailsSpec extends TestSupport {

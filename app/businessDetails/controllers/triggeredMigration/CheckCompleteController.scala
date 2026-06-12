@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import businessDetails.services.SessionService
 import businessDetails.utils.TriggeredMigrationUtils
 import com.google.inject.{Inject, Singleton}
 import play.api.i18n.I18nSupport
@@ -24,7 +25,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
-import common.services.SessionService
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
