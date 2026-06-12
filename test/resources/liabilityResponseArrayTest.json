@@ -94,6 +94,7 @@
     "incomeSummaryTotals": {
       "totalSelfEmploymentProfit": 12500,
       "totalPropertyProfit": 12500,
+      "totalUKOtherPropertyProfit": 12500,
       "totalFHLPropertyProfit": 12500,
       "totalForeignPropertyProfit": 12500,
       "totalEeaFhlProfit": 12500
