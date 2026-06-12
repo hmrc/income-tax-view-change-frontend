@@ -90,7 +90,18 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         result shouldBe Right(CreateBusinessIncomeSourceRequest(testMtditid,
           List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
             AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
-            Some("someBusinessTrade"), "2022-11-11", None, None))))
+            Some("someBusinessTrade"), "2022-11-11", None, None)),
+          idempotencyKey = None, addIncomeSource = None))
+      }
+
+      "convert to correct CreateBusinessIncomeSourceRequest model when idempotency key is present" in {
+        val viewModel = createBusinessViewModel.copy(idempotencyKey = Some("key"))
+        val result = UnderTestCreateBusinessDetailsService.convertToCreateBusinessIncomeSourceRequest(viewModel)
+        result shouldBe Right(CreateBusinessIncomeSourceRequest(testMtditid,
+          List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
+            AddressDetails("businessAddressLine1", None, None, None, Some("GB"), Some("SE15 4ER")),
+            Some("someBusinessTrade"), "2022-11-11", None, None)),
+          idempotencyKey = Some("key"), addIncomeSource = Some(true)))
       }
 
       "convert to correct CreateBusinessIncomeSourceRequest model with trimmed address lines" in {
@@ -103,7 +114,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         result shouldBe Right(CreateBusinessIncomeSourceRequest(testMtditid,
           List(BusinessDetails("2022-11-11", "2022-11-11", "someBusinessName",
             AddressDetails("businessAddressLine1", Some("Address Place 2"), None, None, Some("GB"), Some("SE15 4ER")),
-            Some("someBusinessTrade"), "2022-11-11", None, None))))
+            Some("someBusinessTrade"), "2022-11-11", None, None)),
+          idempotencyKey = None, addIncomeSource = None))
       }
     }
 
@@ -119,7 +131,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        incomeSourceType = ForeignProperty
+        incomeSourceType = ForeignProperty,
+        idempotencyKey = None
       )
       val result = UnderTestCreateBusinessDetailsService.createForeignProperty(viewModel)
 
@@ -149,7 +162,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
 
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        incomeSourceType = UkProperty
+        incomeSourceType = UkProperty,
+        idempotencyKey = None
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
 
@@ -163,7 +177,8 @@ class CreateBusinessDetailsServiceSpec extends TestSupport with FeatureSwitching
         })
       val viewModel = CheckPropertyViewModel(
         tradingStartDate = LocalDate.of(2011, 1, 1),
-        incomeSourceType = UkProperty
+        incomeSourceType = UkProperty,
+        idempotencyKey = None
       )
       val result = UnderTestCreateBusinessDetailsService.createUKProperty(viewModel)
       result.futureValue match {

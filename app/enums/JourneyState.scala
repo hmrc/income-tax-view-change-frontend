@@ -25,6 +25,11 @@ case object InitialPage extends JourneyState {
   override val key: String = "Initial"
 }
 
+case object FreshInitialPage extends JourneyState {
+  //for the start page of every Journey when in normal mode (any page the user can hit without an open mongo session)
+  override val key: String = "FreshStart"
+}
+
 case object CannotGoBackPage extends JourneyState {
   //any You Cannot Go Back page, to prevent infinite redirects
   override val key: String = "CannotGoBack"

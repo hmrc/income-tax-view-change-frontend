@@ -50,7 +50,8 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
     businessAddressLine4 = Some("Test City"),
     businessCountryCode = Some("GB"),
     businessCountryName = Some("United Kingdom"),
-    addressId = None
+    addressId = None,
+    idempotencyKey = None
   )
   
   val createBusinessViewModelTrailing: CheckBusinessDetailsViewModel = createBusinessViewModel.copy(
@@ -61,11 +62,13 @@ class CreateIncomeSourceAuditModelSpec extends TestSupport {
 
   val createForeignPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
-    incomeSourceType = ForeignProperty)
+    incomeSourceType = ForeignProperty,
+    idempotencyKey = None)
 
   val createUKPropertyViewModel = CheckPropertyViewModel(
     tradingStartDate = LocalDate.of(2022, 1, 1),
-    incomeSourceType = UkProperty)
+    incomeSourceType = UkProperty,
+    idempotencyKey = None)
 
   def getCreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                       mtdUserRole: MTDUserRole,

@@ -26,6 +26,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
+import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IncomeSourcesUtils extends FeatureSwitching {
@@ -62,4 +63,5 @@ trait IncomeSourcesUtils extends FeatureSwitching {
     }
   }
 
+  def generateIdempotencyKey = UUID.randomUUID().toString
 }
