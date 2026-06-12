@@ -98,7 +98,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
         cessationDate = Some(""),
         cessationReason = None
       )
-    )
+    ),
+    idempotencyKey = None, addIncomeSource = None
   )
 
   val createForeignPropertyRequest: CreateForeignPropertyIncomeSourceRequest = CreateForeignPropertyIncomeSourceRequest(
@@ -106,7 +107,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
     foreignPropertyDetails = PropertyDetails(
       "01-02-2023",
       "01-02-2023"
-    )
+    ),
+    idempotencyKey = None, addIncomeSource = None
   )
 
   val createUKPropertyRequest: CreateUKPropertyIncomeSourceRequest = CreateUKPropertyIncomeSourceRequest(
@@ -114,7 +116,8 @@ class CreateIncomeSourceConnectorISpec extends AnyWordSpec with ComponentSpecBas
     ukPropertyDetails = PropertyDetails(
       "01-02-2023",
       "01-02-2023"
-    )
+    ),
+    idempotencyKey = None, addIncomeSource = None
   )
 
   val successfulApiResponse: String =

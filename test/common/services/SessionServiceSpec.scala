@@ -66,7 +66,7 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
 
       "getMongoKey method " should {
         "return the correct session value for given key" in {
-          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
+          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(businessName = Some("my business"))))
           mockRepositoryGet(Some(sessionData))
           TestSessionService.getMongoKey("businessName", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec).futureValue shouldBe Right(Some("my business"))
         }
@@ -74,14 +74,14 @@ class SessionServiceSpec extends TestSupport with MockUIJourneySessionDataReposi
 
       "getMongoKeyTyped method with type" should {
         "get string value" in {
-          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(Some("my business"))))
+          val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(businessName =  Some("my business"))))
           mockRepositoryGet(Some(sessionData))
           TestSessionService.getMongoKeyTyped[String]("businessName", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
             .futureValue shouldBe Right(Some("my business"))
         }
         "get LocalDate value" in {
           val sessionData = UIJourneySessionData("session-123456", "ADD-SE", Some(AddIncomeSourceData(
-            Some("my business"), Some("plumbing"), Some(LocalDate.of(2023, 5, 23)))))
+            businessName = Some("my business"), businessTrade = Some("plumbing"), dateStarted = Some(LocalDate.of(2023, 5, 23)))))
           mockRepositoryGet(Some(sessionData))
           TestSessionService.getMongoKeyTyped[LocalDate]("dateStarted", IncomeSourceJourneyType(Add, SelfEmployment))(headerCarrier, ec)
             .futureValue shouldBe Right(Some(LocalDate.parse("2023-05-23")))

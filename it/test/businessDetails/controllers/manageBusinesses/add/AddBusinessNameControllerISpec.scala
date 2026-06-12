@@ -16,15 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import common.testConstants.BaseIntegrationTestConstants.testMtditid
-import common.testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
-
-import scala.concurrent.ExecutionContext
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import businessDetails.services.SessionService
@@ -32,9 +23,26 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.models.admin.IdempotencyKeyForCreateIncomeSource
 import common.models.core.{CheckMode, Mode, NormalMode}
+import common.services.SessionService
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, idempotencyKeyField}
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
+import play.api.test.Helpers.await
+import testConstants.BaseIntegrationTestConstants.testMtditid
+import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import play.api.test.Helpers.defaultAwaitTimeout
+import scala.concurrent.ExecutionContext
 
 class AddBusinessNameControllerISpec extends ControllerISpecHelper {
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    await(sessionService.deleteSession(Add))
+  }
 
   val formHint: String = messagesAPI("add-business-name.p1") + " " +
     messagesAPI("add-business-name.p2", "'")
@@ -78,6 +86,25 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 
               lazy val document: Document = Jsoup.parse(result.body)
               document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(mode = NormalMode, mtdUserRole != MTDIndividual)
+
+              result should have(
+                httpStatus(OK),
+                pageTitle(mtdUserRole, "add-business-name.heading1"),
+                elementTextByID("continue-button")(continueButtonText)
+              )
+            }
+          }
+          "render the Add Business Name page with an idempotency key generated" when {
+            "using the manage businesses journey with idempotency FS enabled" in {
+              stubAuthorised(mtdUserRole, List(IdempotencyKeyForCreateIncomeSource))
+              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+
+              val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+              lazy val document: Document = Jsoup.parse(result.body)
+              document.getElementsByClass("govuk-back-link").attr("href") shouldBe backUrl(mode = NormalMode, mtdUserRole != MTDIndividual)
+
+              sessionService.getMongoKeyTyped[String](idempotencyKeyField, journeyType).futureValue should matchPattern { case Right(Some(_)) => }
 
               result should have(
                 httpStatus(OK),

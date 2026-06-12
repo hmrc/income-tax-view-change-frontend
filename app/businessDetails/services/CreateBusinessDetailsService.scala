@@ -75,6 +75,8 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     Try {
       CreateBusinessIncomeSourceRequest(
         mtdbsa = user.mtditid,
+        idempotencyKey = viewModel.idempotencyKey,
+        addIncomeSource = if(viewModel.idempotencyKey.isDefined) Some(true) else None,
         businessDetails = List(
           BusinessDetails(
             accountingPeriodStartDate = viewModel.businessStartDate.get.format(DateTimeFormatter.ISO_LOCAL_DATE),
@@ -115,6 +117,8 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     Try(
       CreateForeignPropertyIncomeSourceRequest(
         mtdbsa = user.mtditid,
+        idempotencyKey = viewModel.idempotencyKey,
+        addIncomeSource = if(viewModel.idempotencyKey.isDefined) Some(true) else None,
         foreignPropertyDetails = PropertyDetails(
           tradingStartDate = viewModel.tradingStartDate.toString,
           startDate = viewModel.tradingStartDate.toString
@@ -140,6 +144,8 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
     Try(
       CreateUKPropertyIncomeSourceRequest(
         mtdbsa = user.mtditid,
+        idempotencyKey = viewModel.idempotencyKey,
+        addIncomeSource = if(viewModel.idempotencyKey.isDefined) Some(true) else None,
         ukPropertyDetails = PropertyDetails(
           tradingStartDate = viewModel.tradingStartDate.toString,
           startDate = viewModel.tradingStartDate.toString
