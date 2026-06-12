@@ -125,7 +125,7 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
               val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString, addIncomeSourceData = idempotencyKey.map(key => AddIncomeSourceData(idempotencyKey = Some(key))))
 
               val setupF = if (shouldSetIdempotencyKey) {
-                  sessionService.setMongoData(data)
+                sessionService.setMongoData(data)
               } else {
                 Future.successful(())
               }
