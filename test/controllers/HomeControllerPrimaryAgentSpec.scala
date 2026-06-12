@@ -712,6 +712,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
 
         "redirect to the no income sources page when the agent user has no income sources" in new Setup {
           setupMockAgentWithClientAuth(false)
+          setupMockFeatureSwitches(NoIncomeSourcesRedirect)
           mockNoIncomeSources()
 
           val result: Future[Result] = controller.showAgent()(fakeRequestConfirmedClient(isSupportingAgent = false))

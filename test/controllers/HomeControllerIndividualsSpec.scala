@@ -977,6 +977,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   "redirect to the no income sources page when the user has no income sources" in new Setup {
     setupMockUserAuth
+    setupMockFeatureSwitches(NoIncomeSourcesRedirect)
     mockNoIncomeSources()
 
     val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)
