@@ -17,7 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
-import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.AfterSubmissionPage
@@ -37,7 +37,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.UIJourneySessionData
-import common.services.{DateService, SessionService}
+import common.services.DateService
 
 import javax.inject.Inject
 import scala.annotation.unused

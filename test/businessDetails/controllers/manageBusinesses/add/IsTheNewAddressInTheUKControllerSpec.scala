@@ -32,6 +32,7 @@ import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPrope
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
@@ -41,7 +42,7 @@ import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
 

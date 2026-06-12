@@ -18,7 +18,7 @@ package views
 
 import play.twirl.api.Html
 import testUtils.ViewSpec
-import views.html.NoIncomeSourcesView
+import common.views.html.NoIncomeSourcesView
 
 class NoIncomeSourcesViewSpec extends ViewSpec {
 

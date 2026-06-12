@@ -18,7 +18,6 @@ package views.claimToAdjustPoa
 
 import common.auth.MtdItUser
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -27,6 +26,7 @@ import testUtils.TestSupport
 import views.html.claimToAdjustPoa.AmendablePoaView
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
+import models.incomeSourceDetails.TaxYear
 
 class AmendablePoaControllerViewSpec extends TestSupport {
 

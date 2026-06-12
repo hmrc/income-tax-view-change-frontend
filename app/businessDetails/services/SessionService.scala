@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package common.services
+package businessDetails.services
 
 import common.config.FrontendAppConfig
-import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, JourneyType, Manage, Operation}
+import common.enums.JourneyType.*
 import common.models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
 import repositories.{SensitiveUIJourneySessionDataRepository, UIJourneySessionDataRepository}

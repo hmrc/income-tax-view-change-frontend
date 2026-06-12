@@ -25,9 +25,9 @@ import common.models.UIJourneySessionData
 import common.services.DateService
 import enums.AfterSubmissionPage
 import mocks.services.MockCalculationListService
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, NoStatus}
 import common.models.itsaStatus.{StatusDetail, StatusReason}
+import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.SEE_OTHER

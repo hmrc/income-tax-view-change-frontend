@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.services.SessionService
 import businessDetails.utils.IncomeSourcesUtils
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -24,14 +25,14 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.UIJourneySessionData
-import common.services.{DateService, DateServiceInterface, SessionService}
+import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.mocks.services.MockNextUpdatesService
 import obligations.models.*
 import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, reset, when}
+import org.mockito.Mockito.{mock, when}
 import org.mockito.stubbing.OngoingStubbing
 import play.api
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
@@ -195,7 +196,6 @@ class IncomeSourceCeasedObligationsControllerSpec extends MockAuthActions
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockIncomeSourceDetailsService)
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
   }

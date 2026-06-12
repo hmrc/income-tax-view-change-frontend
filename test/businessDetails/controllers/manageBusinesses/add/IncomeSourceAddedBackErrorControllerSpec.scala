@@ -26,6 +26,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import common.testConstants.BaseTestConstants.testSessionId
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
@@ -33,7 +34,7 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 
 class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 

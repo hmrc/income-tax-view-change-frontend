@@ -16,9 +16,8 @@
 
 package common.controllers
 
-import common.auth.HeaderExtractor
 import common.config.FrontendAppConfig
-import common.helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
+import common.helpers.{SessionCookieBaker, TestDateService, WiremockHelper}
 import common.implicits.ImplicitDateFormatterImpl
 import common.services.{DateService, DateServiceInterface}
 import obligations.repositories.OptOutSessionDataRepository
@@ -89,7 +88,6 @@ trait ControllerISpecBase
   override implicit lazy val app: Application =
     new GuiceApplicationBuilder()
       .in(Environment.simple(mode = Mode.Dev))
-      .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
       .overrides(bind[DateServiceInterface].to[TestDateService])
       .configure(config)
       .build()

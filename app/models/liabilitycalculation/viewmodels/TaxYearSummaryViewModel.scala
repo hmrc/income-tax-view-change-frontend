@@ -18,12 +18,12 @@ package models.liabilitycalculation.viewmodels
 
 import common.auth.MtdItUser
 import models.financialDetails.SecondLatePaymentPenalty
-import models.incomeSourceDetails.TaxYear
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.ObligationsModel
 
 import java.time.LocalDate
 import financials.controllers.routes as financialsRoutes
+import models.incomeSourceDetails.TaxYear
 
 case class TaxYearSummaryViewModel(
                                     calculationSummary: Option[CalculationSummary],
