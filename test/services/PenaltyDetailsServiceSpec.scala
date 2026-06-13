@@ -17,12 +17,12 @@
 package services
 
 import common.models.itsaStatus.ITSAStatus
+import common.testConstants.BaseTestConstants
 import mocks.connectors.MockPenaltyDetailsConnector
 import models.penalties.{GetPenaltyDetails, Totalisations}
 import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsSuccessResponse}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import testConstants.BaseTestConstants
-import testConstants.PenaltiesTestConstants.getPenaltyDetails
+import financials.testConstants.PenaltiesTestConstants.getPenaltyDetails
 import testUtils.TestSupport
 
 class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConnector {

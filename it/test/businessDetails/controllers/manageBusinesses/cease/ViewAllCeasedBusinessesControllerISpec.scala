@@ -21,8 +21,8 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.DisplayBusinessStartDate
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
 
 class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
 

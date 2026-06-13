@@ -35,9 +35,9 @@ import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
-import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
+import common.testConstants.CalculationListIntegrationTestConstants
+import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
 
 import scala.concurrent.Future
 

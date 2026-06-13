@@ -21,6 +21,9 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.models.core.{CheckMode, NormalMode}
 import common.services.DateServiceInterface
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.services.PaymentOnAccountSessionService
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.*
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
@@ -30,12 +33,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import services.PaymentOnAccountSessionService
-import services.claimToAdjustPoa.ClaimToAdjustService
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.testPoa1Maybe
+import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
 import scala.concurrent.Future
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class SelectYourReasonControllerSpec extends MockAuthActions with MockClaimToAdjustService with MockPaymentOnAccountSessionService with MockCalculationListService {
 

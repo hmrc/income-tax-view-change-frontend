@@ -18,7 +18,7 @@ package businessDetails.models.updateIncomeSource
 
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import obligations.testConstants.UpdateIncomeSourceTestConstants.{errorBadResponse, successResponse, successResponseJson}
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.{errorBadResponse, successResponse, successResponseJson}
 import testUtils.TestSupport
 
 class UpdateIncomeSourceResponseModelSpec extends TestSupport with Matchers {

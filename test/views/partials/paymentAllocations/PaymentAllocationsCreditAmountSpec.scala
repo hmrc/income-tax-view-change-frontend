@@ -21,7 +21,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModelWithCredit
+import financials.testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModelWithCredit
 import testUtils.TestSupport
 import views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
 

@@ -23,7 +23,7 @@ import org.jsoup.Jsoup
 import play.api.http.{HttpEntity, Status}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
-import testConstants.BaseTestConstants.expectedJourneyId
+import common.testConstants.BaseTestConstants.expectedJourneyId
 import testUtils.TestSupport
 import common.views.html.errorPages.UpliftFailedView
 

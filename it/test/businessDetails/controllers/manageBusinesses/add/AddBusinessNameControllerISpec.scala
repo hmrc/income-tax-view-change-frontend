@@ -21,18 +21,18 @@ import models.incomeSourceDetails.AddIncomeSourceData.businessNameField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
 
 import scala.concurrent.ExecutionContext
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.SessionService
 
 class AddBusinessNameControllerISpec extends ControllerISpecHelper {
 

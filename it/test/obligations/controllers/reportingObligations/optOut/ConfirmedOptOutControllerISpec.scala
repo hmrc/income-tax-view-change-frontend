@@ -29,9 +29,9 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
-import testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023}
-import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
+import common.testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023}
+import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 import java.time.LocalDate
 

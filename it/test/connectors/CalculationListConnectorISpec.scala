@@ -22,7 +22,7 @@ import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting
-import testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
 
 class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase with Injecting {
 

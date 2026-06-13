@@ -31,9 +31,9 @@ import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import org.mongodb.scala.SingleObservableFuture
 import org.mongodb.scala.bson.BsonDocument
 import play.api.http.Status.*
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.CalculationListIntegrationTestConstants
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {

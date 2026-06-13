@@ -16,9 +16,8 @@
 
 package common.controllers
 
-import common.auth.HeaderExtractor
 import common.config.FrontendAppConfig
-import common.helpers.{SessionCookieBaker, TestDateService, TestHeaderExtractor, WiremockHelper}
+import common.helpers.{SessionCookieBaker, TestDateService, WiremockHelper}
 import common.implicits.ImplicitDateFormatterImpl
 import common.services.{DateService, DateServiceInterface}
 import obligations.repositories.OptOutSessionDataRepository
@@ -34,7 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.testSessionId
+import common.testConstants.BaseIntegrationTestConstants.testSessionId
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.language.LanguageUtils
 
@@ -89,7 +88,6 @@ trait ControllerISpecBase
   override implicit lazy val app: Application =
     new GuiceApplicationBuilder()
       .in(Environment.simple(mode = Mode.Dev))
-      .overrides(bind[HeaderExtractor].to[TestHeaderExtractor])
       .overrides(bind[DateServiceInterface].to[TestDateService])
       .configure(config)
       .build()
@@ -112,10 +110,6 @@ trait ControllerISpecBase
     "microservice.services.pay-api.port" -> mockPort,
     "microservice.services.income-tax-calculation.host" -> mockHost,
     "microservice.services.income-tax-calculation.port" -> mockPort,
-    "calculation-polling.interval" -> "500",
-    "calculation-polling.timeout" -> "3000",
-    "calculation-polling.attempts" -> "10",
-    "calculation-polling.delayBetweenAttemptInMilliseconds" -> "500",
     "microservice.services.address-lookup-frontend.port" -> mockPort,
     "encryption.key" -> "QmFyMTIzNDVCYXIxMjM0NQ==",
     "encryption.isEnabled" -> "false",

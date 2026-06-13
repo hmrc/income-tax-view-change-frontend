@@ -32,7 +32,7 @@ import org.mockito.Mockito.mock
 import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
-import testConstants.BaseTestConstants.testNino
+import common.testConstants.BaseTestConstants.testNino
 import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig

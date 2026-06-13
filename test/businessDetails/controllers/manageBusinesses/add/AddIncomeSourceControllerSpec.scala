@@ -16,13 +16,14 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.services.IncomeSourceDetailsService
+import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -32,12 +33,14 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
-import testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
+import businessDetails.testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
+import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
 
 import scala.util.{Failure, Success}
 
-class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService {
+class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFormatter
+  with MockSessionService
+  with MockIncomeSourceDetailsService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(

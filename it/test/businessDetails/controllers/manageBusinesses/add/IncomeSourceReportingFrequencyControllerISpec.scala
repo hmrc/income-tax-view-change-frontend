@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -23,16 +24,16 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.UIJourneySessionData
-import common.services.{DateService, SessionService}
+import common.services.DateService
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails._
+import models.incomeSourceDetails.*
 import common.models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
-import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants._
+import common.testConstants.BaseIntegrationTestConstants._
+import common.testConstants.CalculationListIntegrationTestConstants
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
+import common.testConstants.IncomeSourceIntegrationTestConstants._
 
 import java.time.LocalDate
 import java.time.Month.APRIL

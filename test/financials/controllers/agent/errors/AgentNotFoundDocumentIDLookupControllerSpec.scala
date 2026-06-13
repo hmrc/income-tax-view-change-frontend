@@ -19,7 +19,7 @@ package financials.controllers.agent.errors
 import common.mocks.auth.MockAuthActions
 import org.jsoup.Jsoup
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants.agentAuthRetrievalSuccess
+import common.testConstants.BaseTestConstants.agentAuthRetrievalSuccess
 
 class AgentNotFoundDocumentIDLookupControllerSpec extends MockAuthActions {
 

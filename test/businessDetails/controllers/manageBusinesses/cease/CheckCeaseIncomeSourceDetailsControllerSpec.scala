@@ -18,7 +18,7 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess, SessionService}
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
@@ -27,8 +27,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.core.IncomeSourceId
-import common.services.{DateServiceInterface, SessionService}
-import obligations.testConstants.UpdateIncomeSourceTestConstants
+import common.services.{DateServiceInterface}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -37,8 +36,9 @@ import play.api
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.testMtditid
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.testMtditid
+import common.testConstants.IncomeSourceDetailsTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants
 
 import java.time.LocalDate
 import scala.concurrent.Future

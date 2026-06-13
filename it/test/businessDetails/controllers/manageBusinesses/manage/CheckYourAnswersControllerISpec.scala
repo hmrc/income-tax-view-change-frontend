@@ -18,20 +18,20 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.models.UIJourneySessionData
-import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants._
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 import java.time.LocalDate
 import java.time.Month.APRIL

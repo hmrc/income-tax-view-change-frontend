@@ -31,7 +31,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeUnconfirmed
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeUnconfirmed
 
 import scala.concurrent.Future
 

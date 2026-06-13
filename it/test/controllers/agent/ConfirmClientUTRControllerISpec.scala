@@ -25,8 +25,8 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status._
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants._
+import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 

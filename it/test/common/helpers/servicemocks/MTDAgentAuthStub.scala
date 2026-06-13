@@ -20,7 +20,7 @@ import common.helpers.WiremockHelper.{stubPostWithRequest, stubPostWithRequestAn
 import common.utils.AuthUtils.*
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
-import testConstants.BaseIntegrationTestConstants.{credId, testArn, testMtditid}
+import common.testConstants.BaseIntegrationTestConstants.{credId, testArn, testMtditid}
 import uk.gov.hmrc.auth.core.{AffinityGroup, Enrolment}
 
 object MTDAgentAuthStub extends MTDAuthStub {

@@ -23,16 +23,17 @@ import play.api
 import play.api.Application
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderNoLatency
+import common.testConstants.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderNoLatency
 
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 
 class IncomeSourceReportingMethodNotSavedControllerSpec extends MockAuthActions with MockSessionService {
 

@@ -26,9 +26,9 @@ import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.PaymentAllocationIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import financials.testConstants.PaymentAllocationIntegrationTestConstants.*
 
 class PaymentAllocationControllerISpec extends ControllerISpecHelper {
 

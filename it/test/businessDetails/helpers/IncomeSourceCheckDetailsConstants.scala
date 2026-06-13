@@ -19,7 +19,7 @@ package businessDetails.helpers
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
-import testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
+import common.testConstants.BaseIntegrationTestConstants.testSelfEmploymentId
 
 import java.time.LocalDate
 

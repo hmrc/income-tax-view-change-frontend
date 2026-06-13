@@ -19,7 +19,7 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
-import businessDetails.services.UpdateIncomeSourceService
+import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.BeforeSubmissionPage
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
@@ -36,7 +36,7 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkPro
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.exceptions.MissingSessionKey
 import common.models.core.IncomeSourceId
-import common.services.{AuditingService, SessionService}
+import common.services.AuditingService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

@@ -19,8 +19,8 @@ package models
 import common.models.core.{NinoResponseError, NinoResponseSuccess}
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
-import testConstants.BaseTestConstants._
-import testConstants.NinoLookupTestConstants._
+import common.testConstants.BaseTestConstants._
+import common.testConstants.NinoLookupTestConstants._
 import testUtils.UnitSpec
 
 class NinoResponseModelSpec extends UnitSpec with Matchers {

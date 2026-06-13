@@ -25,8 +25,8 @@ import common.models.admin.OverseasBusinessAddress
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class AddInternationalBusinessAddressControllerISpec extends ControllerISpecHelper {
 

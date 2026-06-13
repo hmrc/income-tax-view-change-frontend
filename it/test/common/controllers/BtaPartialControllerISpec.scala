@@ -19,8 +19,8 @@ package common.controllers
 import common.enums.MTDIndividual
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.*
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
 
 class BtaPartialControllerISpec extends ControllerISpecHelper {
 

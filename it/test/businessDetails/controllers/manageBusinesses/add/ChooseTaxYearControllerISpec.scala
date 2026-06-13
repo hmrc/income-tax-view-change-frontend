@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.{testBusinessName, testBusinessStartDate, testBusinessTrade}
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -24,15 +25,15 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.UIJourneySessionData
-import common.services.{DateService, SessionService}
+import common.services.DateService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData, LatencyDetails}
 import common.models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, singleUKForeignPropertyResponseInLatencyPeriod}
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import common.testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, singleUKForeignPropertyResponseInLatencyPeriod}
 
 import java.time.LocalDate
 

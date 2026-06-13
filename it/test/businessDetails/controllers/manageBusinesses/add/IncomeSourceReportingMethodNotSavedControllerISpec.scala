@@ -21,8 +21,8 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
 class IncomeSourceReportingMethodNotSavedControllerISpec extends ControllerISpecHelper {
 

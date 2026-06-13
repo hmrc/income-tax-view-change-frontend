@@ -25,9 +25,9 @@ import helpers.servicemocks.*
 import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.*
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
+import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 object ForecastIncomeSummaryControllerTestConstants {
   val taxableIncome = 12500

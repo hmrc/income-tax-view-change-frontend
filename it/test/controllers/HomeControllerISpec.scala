@@ -35,10 +35,10 @@ import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
-import testConstants.messages.HomeMessages.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
+import financials.testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
+import common.testConstants.messages.HomeMessages.*
 
 import java.time.LocalDate
 

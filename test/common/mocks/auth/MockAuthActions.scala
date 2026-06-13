@@ -52,8 +52,8 @@ import businessDetails.services.IncomeSourceDetailsService
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, SessionDataService}
 import common.services.agent.ClientDetailsService
 import scala.concurrent.Future
-import testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}

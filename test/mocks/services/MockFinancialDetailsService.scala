@@ -16,14 +16,14 @@
 
 package mocks.services
 
+import financials.services.FinancialDetailsService
 import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import services.FinancialDetailsService
-import testConstants.BaseTestConstants.testTaxYear
-import testConstants.FinancialDetailsTestConstants._
+import common.testConstants.BaseTestConstants.testTaxYear
+import financials.testConstants.FinancialDetailsTestConstants._
 import testUtils.UnitSpec
 
 import scala.concurrent.Future

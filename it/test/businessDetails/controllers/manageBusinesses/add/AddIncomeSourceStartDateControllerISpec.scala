@@ -16,20 +16,20 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
 import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
 
 import java.time.LocalDate
 

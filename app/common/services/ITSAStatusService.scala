@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
 import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
-import models.incomeSourceDetails.*
+import models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

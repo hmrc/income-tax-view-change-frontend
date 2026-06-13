@@ -26,7 +26,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 
 import java.time.LocalDate
 

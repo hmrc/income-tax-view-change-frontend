@@ -16,19 +16,19 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
 import common.models.core.NormalMode
-import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentIdHashed, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentIdHashed, testSessionId}
+import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]

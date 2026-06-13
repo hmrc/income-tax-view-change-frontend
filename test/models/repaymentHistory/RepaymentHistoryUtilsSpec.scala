@@ -18,10 +18,10 @@ package models.repaymentHistory
 
 
 import cats.implicits.catsSyntaxOptionId
+import financials.testConstants.ChargeConstants
 import models.financialDetails._
 import models.repaymentHistory.RepaymentHistoryUtils._
 import org.scalatest.matchers.should.Matchers
-import testConstants.ChargeConstants
 import testUtils.TestSupport
 
 import java.time.LocalDate

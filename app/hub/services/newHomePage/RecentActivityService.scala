@@ -21,7 +21,6 @@ import common.auth.MtdItUser
 import common.services.DateServiceInterface
 import obligations.connectors.ObligationsConnector
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import hub.models.newHomePage.{RecentActivityCard, RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
 import obligations.models.{ObligationsModel, SingleObligationModel}
@@ -31,6 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import java.time.LocalDate
 import javax.inject.Singleton
 import financials.controllers.routes as financialsRoutes
+import models.incomeSourceDetails.TaxYear
 
 @Singleton
 class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector,

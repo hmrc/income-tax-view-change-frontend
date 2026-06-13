@@ -25,15 +25,15 @@ import common.models.UIJourneySessionData
 import common.services.DateService
 import enums.AfterSubmissionPage
 import mocks.services.MockCalculationListService
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, NoStatus}
 import common.models.itsaStatus.{StatusDetail, StatusReason}
+import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier

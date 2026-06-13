@@ -26,8 +26,8 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.Payment
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 import java.time.LocalDate
 

@@ -21,8 +21,8 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
 
 class AddBusinessAddressControllerISpec extends ControllerISpecHelper {
 

@@ -20,7 +20,7 @@ import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureRespons
 import play.api.http.Status
 import play.api.http.Status.{IM_A_TEAPOT, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.{JsValue, Json}
-import testConstants.PenaltiesTestConstants.getPenaltyDetails
+import financials.testConstants.PenaltiesTestConstants.getPenaltyDetails
 import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 

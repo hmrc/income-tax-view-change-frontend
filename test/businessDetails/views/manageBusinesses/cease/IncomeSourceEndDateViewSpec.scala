@@ -23,7 +23,7 @@ import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.Html
-import testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceEndDateView
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}

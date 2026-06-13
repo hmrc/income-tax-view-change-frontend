@@ -18,7 +18,7 @@ package models.financialDetails
 
 import financials.models.ChargeType.*
 import models.financialDetails.FinancialDetail.{getMessageKeyByTypes, getMessageKeyForChargeType, getMessageKeyForMainType}
-import testConstants.FinancialDetailsTestConstants.financialDetail
+import financials.testConstants.FinancialDetailsTestConstants.financialDetail
 import testUtils.UnitSpec
 
 class FinancialDetailSpec extends UnitSpec {

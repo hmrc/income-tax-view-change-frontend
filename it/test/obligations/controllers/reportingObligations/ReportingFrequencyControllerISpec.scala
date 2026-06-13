@@ -23,13 +23,13 @@ import common.helpers.WiremockHelper
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{OptOutFs, SignUpFs}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
+import models.incomeSourceDetails.TaxYear
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
 import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 

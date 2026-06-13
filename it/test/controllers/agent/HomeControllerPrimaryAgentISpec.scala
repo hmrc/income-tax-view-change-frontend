@@ -34,10 +34,10 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import testConstants.OutstandingChargesIntegrationTestConstants.*
-import testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
+import common.testConstants.BaseIntegrationTestConstants.*
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
+import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
+import common.testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
 
 import java.time.LocalDate
 

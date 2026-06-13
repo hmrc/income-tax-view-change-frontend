@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import testConstants.claimToAdjustPoa.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
+import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 

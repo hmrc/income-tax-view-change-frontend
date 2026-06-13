@@ -31,7 +31,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants.testMtditid
+import common.testConstants.BaseTestConstants.testMtditid
 import uk.gov.hmrc.auth.core.retrieve.EmptyRetrieval
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments, MissingBearerToken}
 

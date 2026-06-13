@@ -27,8 +27,8 @@ import models.incomeSourceDetails.viewmodels.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
-import testConstants.BaseTestConstants.testMtditid
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import common.testConstants.BaseTestConstants.testMtditid
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

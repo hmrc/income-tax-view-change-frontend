@@ -16,21 +16,21 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
-import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.BusinessDetailsIntegrationTestConstants.business1
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
-import testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
+import common.testConstants.BaseIntegrationTestConstants._
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.business1
+import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 
 import java.time.LocalDate
 

@@ -16,16 +16,16 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.services.SessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 class CannotGoBackErrorControllerISpec extends ControllerISpecHelper {
   val title: String = messagesAPI("cannotGoBack.heading")

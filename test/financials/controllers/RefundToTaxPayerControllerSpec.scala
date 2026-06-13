@@ -33,7 +33,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants.testMtditid
+import common.testConstants.BaseTestConstants.testMtditid
 import views.html.RefundToTaxPayerView
 
 import java.time.LocalDate

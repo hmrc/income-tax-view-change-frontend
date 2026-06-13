@@ -29,7 +29,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
-import testConstants.BaseTestConstants.{testNino, testRetrievedUserName, testSaUtr}
+import common.testConstants.BaseTestConstants.{testNino, testRetrievedUserName, testSaUtr}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments, MissingBearerToken}
 

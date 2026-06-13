@@ -20,12 +20,12 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import businessDetails.connectors.UpdateIncomeSourceConnector
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import obligations.testConstants.UpdateIncomeSourceTestConstants
-import obligations.testConstants.UpdateIncomeSourceTestConstants.{failureResponse, successResponse, taxYearSpecific}
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.{failureResponse, successResponse, taxYearSpecific}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import testConstants.BaseTestConstants.{testMtditid, testNino}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import common.testConstants.BaseTestConstants.{testMtditid, testNino}
+import common.testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

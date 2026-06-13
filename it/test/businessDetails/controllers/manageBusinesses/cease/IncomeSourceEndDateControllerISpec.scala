@@ -21,17 +21,17 @@ import models.incomeSourceDetails.CeaseIncomeSourceData.{dateCeasedField, income
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants._
-import testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import common.testConstants.BaseIntegrationTestConstants._
+import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
-import common.services.SessionService
 
 class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
 

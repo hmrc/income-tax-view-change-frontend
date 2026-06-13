@@ -32,13 +32,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
+import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
-import common.services.{DateService, SessionService}
+import common.services.DateService
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,

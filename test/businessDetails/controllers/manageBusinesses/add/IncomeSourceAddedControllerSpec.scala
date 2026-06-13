@@ -16,7 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.services.IncomeSourceDetailsService
+import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import models.incomeSourceDetails.*
 import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
@@ -26,10 +27,10 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
-import testConstants.BusinessDetailsTestConstants.{year2018, year2019}
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
-import testConstants.incomeSources.IncomeSourcesObligationsTestConstants.*
+import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
+import businessDetails.testConstants.BusinessDetailsTestConstants.{year2018, year2019}
+import common.testConstants.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
+import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.*
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -40,14 +41,16 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockITSAStatusService, MockSessionService}
 import common.models.UIJourneySessionData
-import common.services.{DateService, DateServiceInterface, SessionService}
+import common.services.{DateService, DateServiceInterface}
 import obligations.mocks.services.MockNextUpdatesService
 
 import java.time.LocalDate
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
-class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdatesService with MockSessionService with MockITSAStatusService {
+class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdatesService
+  with MockSessionService with MockITSAStatusService
+  with MockIncomeSourceDetailsService{
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings

@@ -18,7 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
-import businessDetails.services.CreateBusinessDetailsService
+import businessDetails.services.{CreateBusinessDetailsService, SessionService}
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -26,7 +26,7 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.admin.OverseasBusinessAddress
-import common.services.{DateServiceInterface, SessionService}
+import common.services.DateServiceInterface
 import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -38,8 +38,8 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testConstants.BaseTestConstants.testSelfEmploymentId
-import testConstants.incomeSources.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData}
+import common.testConstants.BaseTestConstants.testSelfEmploymentId
+import common.testConstants.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData}
 
 import scala.concurrent.Future
 
