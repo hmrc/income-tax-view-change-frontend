@@ -23,6 +23,7 @@ import financials.controllers.routes as financialsRoutes
 
 case class WhatYouOweViewModel(currentDate: LocalDate,
                                hasOverdueOrAccruingInterestCharges: Boolean,
+                               hasCrystallisedInterest: Boolean,
                                whatYouOweChargesList: WhatYouOweChargesList,
                                hasLpiWithDunningLock: Boolean,
                                currentTaxYear: Int,

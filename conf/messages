@@ -1215,7 +1215,7 @@ whatYouOwe.sa-adjust-link-body                                     = Adjust paym
 whatYouOwe.sa-note-2-heading                                       = You may still have payments due for your earlier Self Assessment tax years
 whatYouOwe.sa-note-2-body                                          = To check if you have outstanding payments you need to visit your previous
 whatYouOwe.sa-note-2-body-agent-1                                  = To view your client’s payment history from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
-whatYouOwe.sa-note-2-heading-agent                                 = Your client may still have payments due for earlier Self Assessment tax years
+whatYouOwe.sa-note-2-heading-agent                                 = Spread the cost of your Self Assessment
 whatYouOwe.sa-note-2-agent-2                                       = To view your client’s tax years from before they signed up to Making Tax Digital for Income Tax, you need to sign in to your
 whatYouOwe.sa-note-2-body-agent-2                                  = This will be a different Government Gateway ID and password to your agent services account.
 whatYouOwe.sa-link-2                                               = Self Assessment online account
@@ -1299,6 +1299,8 @@ whatYouOwe.adjust-poa.paid-3                                       = at any poin
 whatYouOwe.adjust-poa.paid-4                                       = 31 January {0}.
 whatYouOwe.adjust-poa.paid-5                                       =
 whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
+whatYouOwe.interestChargesWarning.crystallised                     = Interest to date is estimated. To stop it increasing every day, pay the related tax in full. It can then take up to 3 working days for the total interest to be calculated and shown here.
+
 whatYouOwe.pre-mtd.heading                                         = You may still have payments due for your earlier Self Assessment tax years
 whatYouOwe.pre-mtd.body                                            = To check if you have outstanding payments you need to
 whatYouOwe.pre-mtd-link                                            = visit your previous Self Assessment online account

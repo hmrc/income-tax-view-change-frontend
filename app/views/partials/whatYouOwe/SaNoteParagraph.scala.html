@@ -30,7 +30,8 @@
 @(
         utr: Option[String],
         selfServeTimeToPayStartUrl: String,
-        budgetPaymentPlanUrl: String
+        budgetPaymentPlanUrl: String,
+        isOverdueCharge: Boolean
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
@@ -40,8 +41,9 @@
 
 
 
-@saNoteParagraphContent(utr: String) = {
+@saNoteParagraphContent(utr: String, isOverdueCharge: Boolean) = {
 
+   @if(isOverdueCharge){
     @h2(msg = getMessage("sa-note-1-heading"))
     @p(id = Some("sa-note-1-migrated-1"))(Html(getMessage("sa-note-1-body-1") +
             link(link = budgetPaymentPlanUrl,
@@ -88,6 +90,6 @@
 
 @utr.map { utr =>
     <div id="payments-due-note">
-        @saNoteParagraphContent(utr)
+        @saNoteParagraphContent(utr, isOverdueCharge)
     </div>
 }

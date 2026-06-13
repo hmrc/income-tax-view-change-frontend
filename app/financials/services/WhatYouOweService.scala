@@ -166,6 +166,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       lpp2Url = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent)
       hasOverdueCharges = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
       hasAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
+      crystallisedInterestPresent = whatYouOweChargesList.chargesList.exists(_.hasCrystallisedInterest)
       startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney
     } yield (startUrl, lpp2Url) match {
       case (Left(ex), _) =>
@@ -181,6 +182,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
         Some(WhatYouOweViewModel(
           currentDate = dateService.getCurrentDate,
           hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestRARCharges,
+          hasCrystallisedInterest = crystallisedInterestPresent,
           whatYouOweChargesList = whatYouOweChargesList,
           hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
           currentTaxYear = dateService.getCurrentTaxYearEnd,
