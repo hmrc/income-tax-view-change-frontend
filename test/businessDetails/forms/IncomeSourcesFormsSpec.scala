@@ -16,8 +16,8 @@
 
 package businessDetails.forms
 
-import _root_.models.incomeSourceDetails.TaxYear
 import businessDetails.forms.manageBusinesses.add.{BusinessNameForm, BusinessTradeForm}
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import org.scalacheck.Properties
 import testUtils.TestSupport

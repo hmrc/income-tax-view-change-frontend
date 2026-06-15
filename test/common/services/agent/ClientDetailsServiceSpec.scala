@@ -18,9 +18,9 @@ package common.services.agent
 
 import businessDetails.mocks.connectors.MockBusinessDetailsConnector
 import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import mocks.connectors.*
 import common.services.agent.ClientDetailsService.{APIError, BusinessDetailsNotFound, CitizenDetailsNotFound}
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 

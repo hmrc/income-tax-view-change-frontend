@@ -18,7 +18,7 @@ package common.services
 
 import com.google.inject.ImplementedBy
 import common.config.{FrontendAppConfig, TimeMachine}
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 import java.time.Month.{APRIL, JANUARY}

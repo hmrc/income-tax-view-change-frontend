@@ -19,10 +19,10 @@ package returns.controllers
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import mocks.services.MockCalculationService
-import models.incomeSourceDetails.TaxYear
 import play.api
 import play.api.Application
 import play.api.http.Status

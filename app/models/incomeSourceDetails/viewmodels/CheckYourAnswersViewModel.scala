@@ -18,7 +18,7 @@ package models.incomeSourceDetails.viewmodels
 
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.models.core.IncomeSourceId
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 case class CheckYourAnswersViewModel(incomeSourceId: IncomeSourceId,
                                      reportingMethod: String,

@@ -18,12 +18,12 @@ package obligations.models
 
 import common.implicits.ImplicitDateFormatter
 import common.testConstants.BaseTestConstants
-import models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import obligations.testConstants.NextUpdatesTestConstants
 import obligations.testConstants.NextUpdatesTestConstants.*
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import BaseTestConstants.*
+import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
 import obligations.testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType
 import testUtils.TestSupport
 

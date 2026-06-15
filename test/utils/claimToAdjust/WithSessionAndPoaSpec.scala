@@ -20,6 +20,7 @@ import cats.data.EitherT
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
@@ -27,7 +28,6 @@ import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import models.claimToAdjustPoa.PoaAmendmentData
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers

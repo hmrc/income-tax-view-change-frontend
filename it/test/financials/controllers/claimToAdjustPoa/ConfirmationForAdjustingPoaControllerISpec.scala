@@ -19,11 +19,11 @@ package financials.controllers.claimToAdjustPoa
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.core.AccountingPeriodModel
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import financials.controllers.claimToAdjustPoa.routes.*
 import financials.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.*
 import play.api.libs.json.JsValue
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

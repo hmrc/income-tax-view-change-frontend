@@ -36,8 +36,8 @@ import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.services.AuditingService
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 import javax.inject.Inject
 import scala.annotation.unused

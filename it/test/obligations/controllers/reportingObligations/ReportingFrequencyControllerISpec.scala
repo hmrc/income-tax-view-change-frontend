@@ -22,9 +22,9 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{OptOutFs, SignUpFs}
+import common.models.incomeSourceDetails.TaxYear
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
-import models.incomeSourceDetails.TaxYear
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
 import play.api.http.Status.OK
 import repositories.UIJourneySessionDataRepository

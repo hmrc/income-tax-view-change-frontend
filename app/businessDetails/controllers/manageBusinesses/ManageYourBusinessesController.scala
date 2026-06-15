@@ -27,7 +27,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.DisplayBusinessStartDate
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

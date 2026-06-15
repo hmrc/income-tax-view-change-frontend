@@ -23,10 +23,10 @@ import common.models.core.AccountingPeriodModel
 import financials.models.CodingOutType.*
 import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.*
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status
 import common.testConstants.BaseTestConstants._
 import businessDetails.testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import financials.testConstants.FinancialDetailsTestConstants.*
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

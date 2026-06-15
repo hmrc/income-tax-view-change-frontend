@@ -23,8 +23,8 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.auth.AuthorisedAndEnrolledRequest
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import obligations.repositories.OptOutSessionDataRepository
 import org.scalatest.*
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}

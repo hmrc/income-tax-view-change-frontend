@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import common.connectors.IncomeSourceConnector
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

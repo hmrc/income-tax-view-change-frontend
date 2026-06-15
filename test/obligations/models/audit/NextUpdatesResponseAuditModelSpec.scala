@@ -19,7 +19,7 @@ package obligations.models.audit
 import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
 import common.enums.AuditType.ViewObligationsResponse
 import common.enums.TransactionName
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import obligations.testConstants.NextUpdatesTestConstants.*
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.*

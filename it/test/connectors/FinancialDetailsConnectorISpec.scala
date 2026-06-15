@@ -19,9 +19,9 @@ package connectors
 import common.helpers.{ComponentSpecBase, WiremockHelper}
 import common.models.core.{ErrorModel, Nino}
 import common.models.core.ResponseModel.ResponseModel
+import common.models.incomeSourceDetails.TaxYear
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.{Payment, Payments, PaymentsError}
-import models.incomeSourceDetails.TaxYear
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.scalatest.wordspec.AnyWordSpec

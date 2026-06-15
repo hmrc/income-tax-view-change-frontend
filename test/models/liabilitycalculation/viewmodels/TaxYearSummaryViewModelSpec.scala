@@ -17,9 +17,9 @@
 package models.liabilitycalculation.viewmodels
 
 import common.mocks.services.MockDateService
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import financials.testConstants.ChargeConstants
-import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.ObligationsModel

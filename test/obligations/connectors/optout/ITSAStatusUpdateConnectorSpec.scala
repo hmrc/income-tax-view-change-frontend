@@ -17,7 +17,7 @@
 package obligations.connectors.optout
 
 import common.connectors.BaseConnectorSpec
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.*
 import org.mockito.ArgumentMatchers.any

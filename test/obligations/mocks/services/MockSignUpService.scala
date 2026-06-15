@@ -16,7 +16,7 @@
 
 package obligations.mocks.services
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.services.reportingObligations.signUp.core.SignUpProposition

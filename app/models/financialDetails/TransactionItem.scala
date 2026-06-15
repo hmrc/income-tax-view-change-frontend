@@ -16,8 +16,8 @@
 
 package models.financialDetails
 
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 
 trait TransactionItem {

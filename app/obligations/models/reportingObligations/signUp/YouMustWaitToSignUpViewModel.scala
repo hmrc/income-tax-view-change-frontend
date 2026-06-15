@@ -16,7 +16,7 @@
 
 package obligations.models.reportingObligations.signUp
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 case class YouMustWaitToSignUpViewModel(taxYear: TaxYear) {
   //TODO - update with correct back url - MISUV-10514

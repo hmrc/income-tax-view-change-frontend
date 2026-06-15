@@ -16,7 +16,7 @@
 
 package obligations.models.reportingObligations.signUp
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.controllers.{routes => obligationsRoutes}
 import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
 

@@ -23,7 +23,7 @@ import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import enums.BeforeSubmissionPage
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
-import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
+import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -36,6 +36,7 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkPro
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.exceptions.MissingSessionKey
 import common.models.core.IncomeSourceId
+import common.models.incomeSourceDetails.TaxYear
 import common.services.AuditingService
 
 import javax.inject.{Inject, Singleton}

@@ -21,7 +21,7 @@ import common.auth.MtdItUser
 import common.enums.AuditType.ObligationsPageView
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
-import models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, PropertyDetailsModel}
 import play.api.libs.json.{JsValue, Json}
 
 object NextUpdatesAuditing {

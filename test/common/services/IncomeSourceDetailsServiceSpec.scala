@@ -26,13 +26,13 @@ import common.mocks.services.config.MockAppConfig
 import common.models.admin.{DisplayBusinessStartDate, FeatureSwitch}
 import common.models.auth.AuthorisedAndEnrolledRequest
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.incomeSourceDetails.viewmodels.*
 import obligations.mocks.services.MockNextUpdatesService
 import play.api.cache.AsyncCacheApi
 import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.BusinessDetailsTestConstants.*
 import businessDetails.testConstants.PropertyDetailsTestConstants.{testStartDate as _, *}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import testUtils.TestSupport
 

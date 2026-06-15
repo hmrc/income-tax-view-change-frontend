@@ -22,7 +22,7 @@ import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails, ClientDetailsFailure}
 import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

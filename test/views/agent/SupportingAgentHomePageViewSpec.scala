@@ -37,8 +37,8 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 
 class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 
