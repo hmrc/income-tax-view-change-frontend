@@ -55,6 +55,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saLink1_1: String = s"${messages("whatYouOwe.sa-link-1-body-1")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote1_1: String = s"${messages("whatYouOwe.sa-note-1-body-1")} ${messages("whatYouOwe.sa-link-1-body-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("whatYouOwe.sa-note-1-body-3")}"
   val saLink1_2: String = s"${messages("whatYouOwe.sa-link-1-body-2")} ${messages("pagehelp.opensInNewTabText")}"
+  val saLink_2: String = s"${messages("whatYouOwe.sa-link-2")} (opens in new tab)"
+
   val saAdjustLink: String = s"${messages("whatYouOwe.sa-adjust-link-body", "2024", "2025")}"
   val saNote1_2: String = s"${messages("whatYouOwe.sa-note-1-body-2")} $saLink1_1 ${messages("whatYouOwe.sa-note-1-body-4")}"
   val saNote2Heading: String = messages("whatYouOwe.sa-note-2-heading")
@@ -182,8 +184,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     def verifySelfAssessmentLink(): Unit = {
       val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
-      anchor.text shouldBe saLink1_2
-      anchor.attr("href") shouldBe "https://www.gov.uk/difficulties-paying-hmrc"
+      anchor.text shouldBe saLink_2
+      anchor.attr("href") should include("self-assessment/ind/1234567890/account")
       anchor.attr("target") shouldBe "_blank"
     }
   }
@@ -512,14 +514,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poaExtra1Table.select("td").get(1).text() shouldBe poa1ReconcileInterest + " 1"
           poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
+          pageDocument.getElementById("due-charge-na-0").text shouldBe "£150.00"
+
           poaExtra1Table.select("td").last().text() shouldBe "£100.00"
 
-          val poa2ExtraTable: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
-          poa2ExtraTable.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
-          poa2ExtraTable.select("td").get(1).text() shouldBe poa2ReconcileInterest + " 2"
-          poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
-
-          poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
         "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties, LPP2Url = appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRefLPP2")) {
           val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
@@ -550,13 +548,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           lspRow.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lspRow.select("td").last().text() shouldBe "£100.00"
 
-          val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
+          val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Interest + " 3"
           lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp1Row.select("td").last().text() shouldBe "£99.00"
 
-          val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(6)
+          val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
           lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp2Row.select("td").get(1).text() shouldBe lpp2Interest + " 4"
           lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
@@ -684,7 +682,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
         }
         "should have payment made paragraph when there is dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut)), dunningLock = true) {
+          charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut)), dunningLock = true) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -701,7 +699,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById("payment-under-review-info") shouldBe None
         }
         "should have payment made paragraph when there is no dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
+          charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -725,7 +723,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "should have payment made paragraph when there is a single charge" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = oneDunningLock, codedOutDetails = Some(balancingCodedOut))) {
+          charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = oneDunningLock, codedOutDetails = Some(balancingCodedOut))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -748,7 +746,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "should have payment made paragraph when there is multiple charge" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
+          charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -952,14 +950,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("due-1-overdue").text shouldBe overdueTag
         }
 
-        "have accruing interest displayed below each overdue POA" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(Some(45.5), Some(45.5)))) {
-
-          pageDocument.getElementById("accrued-interest-charge-type-0").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
-          pageDocument.getElementById("accrued-interest-amount-due-0").text() shouldBe "£42.50"
-
-          pageDocument.getElementById("accrued-interest-charge-type-1").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
-          pageDocument.getElementById("accrued-interest-amount-due-1").text() shouldBe "£24.05"
-        }
         "should have payment made paragraph when there is accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
@@ -975,10 +965,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "only show interest for POA when there is no late Payment Interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
 
-          Option(pageDocument.getElementById("accrued-interest-charge-type-0")).isDefined shouldBe true
+          Option(pageDocument.getElementById("due-charge-na-0")).isDefined shouldBe true
 
-          pageDocument.getElementById("accrued-interest-charge-type-0").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
-          pageDocument.getElementById("accrued-interest-amount-due-0").text() shouldBe "£42.50"
+          pageDocument.getElementById("due-charge-na-0").text() shouldBe "£34.56"
         }
 
         "not have a paragraph explaining interest rates when there is no accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueDataIt()) {
@@ -1199,11 +1188,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
-        pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
-        pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-        pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-        pageDocument.getElementsByTag("h2").text should include(saNote2Heading)
-        pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
       }
     }
 
@@ -1334,7 +1318,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "should have payment made paragraph when there is multiple charge" in new AgentTestSetup(
-      charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
+      charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
       pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
       val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString

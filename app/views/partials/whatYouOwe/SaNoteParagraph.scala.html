@@ -45,13 +45,7 @@
 
    @if(isOverdueCharge){
     @h2(msg = getMessage("sa-note-1-heading"))
-    @p(id = Some("sa-note-1-migrated-1"))(Html(getMessage("sa-note-1-body-1") +
-            link(link = budgetPaymentPlanUrl,
-                messageKey = getMessage("sa-link-1-body-2"),
-                rel = Some("noreferrer noopener"),
-                target = Some("_blank")).toString() +
-            " " +
-            getMessage("sa-note-1-body-3")))
+
     @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
             link(link = selfServeTimeToPayStartUrl,
                 messageKey = getMessage("sa-link-1-body-1"),
@@ -60,6 +54,14 @@
             " " +
             getMessage("sa-note-1-body-4")))
 
+    @p(id = Some("sa-note-1-migrated-1"))(Html(getMessage("sa-note-1-body-1") +
+            link(link = budgetPaymentPlanUrl,
+                messageKey = getMessage("sa-link-1-body-2"),
+                rel = Some("noreferrer noopener"),
+                target = Some("_blank")).toString() +
+            " " +
+            getMessage("sa-note-1-body-3")))
+}
     @if(!user.isAgent) {
             @h2(msg = getMessage("sa-note-2-heading"))
             @p(id = Some("sa-note-2-migrated")){

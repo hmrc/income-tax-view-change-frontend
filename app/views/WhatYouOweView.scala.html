@@ -81,9 +81,6 @@
 
 
     @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero) {
-
-        @h2(msg = getMessage("tax-owed-due-order-heading"))
-
         @govukTable(Table(
             head = Some(Seq(
                 Some(HeadCell(content = Text(getMessage("tableHead.due-date")))),
@@ -163,10 +160,10 @@
                                 attributes = Map("id" -> s"due-charge-tax-year-$index"),
                                 content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
                             )),
-                            Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
+                            Option.when(charge.hasAccruingInterest)(
                                 TableRow(
                                     attributes = Map("id" -> s"due-charge-na-$index"),
-                                    content = HtmlContent(getMessage("tableRow.na"))
+                                    content = HtmlContent(charge.accruingInterestAmount.get.toCurrency)
                                 )
                             ),
                             Some(TableRow(
@@ -174,34 +171,7 @@
                                 content = HtmlContent(charge.remainingToPayOnCharge.toCurrency),
                                 format = Some("numeric")
                             ))
-                        ).flatten),
-                        Option.when(charge.hasAccruingInterest)(
-                            Seq[IterableOnce[TableRow]](
-                                Some(TableRow(
-                                    content = Empty
-                                )),
-                                Some(TableRow(
-                                    attributes = Map("id" -> s"accrued-interest-charge-type-$index"),
-                                    content = HtmlContent(accruingInterestCharge(charge))
-                                )),
-                                Some(TableRow(
-                                    attributes = Map("id" -> s"accrued-interest-tax-year-$index"),
-                                    content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
-                                )),
-                                Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
-                                    TableRow(
-                                        attributes = Map("id" -> s"accrued-interest-amount-$index"),
-                                        content = HtmlContent(charge.accruingInterestAmount.get.toCurrency),
-                                        format = Some("numeric")
-                                    )
-                                ),
-                                Some(TableRow(
-                                    attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
-                                    content = HtmlContent(charge.getInterestOutstandingAmount.toCurrency),
-                                    format = Some("numeric")
-                                ))
-                            ).flatten
-                        )
+                        ).flatten)
                     ).flatten
                 }
             ).flatten,
@@ -256,6 +226,6 @@
         @saNoteParagraph(utr = viewModel.utr,
             selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl,
             budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL,
-            isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0))
+            isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0)
     }
 }

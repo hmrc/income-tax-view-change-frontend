@@ -752,6 +752,13 @@ trait ChargeConstants {
     codedOutDetails = codedOutDetails
   )
 
+  def whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks: List[Option[String]] = noDunningLocks, codedOutDetails: Option[CodingOutDetails] = None)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(50.00, 50.00, 0.00, 50.00, None, None, None, None, None, None, None),
+    chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
+    outstandingChargesModel = Some(outstandingChargesDueIn30Days),
+    codedOutDetails = codedOutDetails
+  )
+
   def whatYouOweDataWithDataDueIn30DaysAvailableCreditZero(dunningLocks: List[Option[String]] = noDunningLocks)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(1.00, 0.00, 0.00, 1.00, Some(0.00), None, None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
