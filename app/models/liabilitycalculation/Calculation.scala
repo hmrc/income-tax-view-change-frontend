@@ -42,7 +42,8 @@ case class Calculation(
                         endOfYearEstimate: Option[EndOfYearEstimate] = None,
                         pensionSavingsTaxCharges: Option[PensionSavingsTaxCharges] = None,
                         transitionProfit: Option[TransitionProfit] = None,
-                        highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitCharge] = None
+                        highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitCharge] = None,
+                        pensionContributionReliefs: Option[PensionContributionReliefs] = None
                       )
 
 object Calculation {
@@ -193,4 +194,18 @@ case class HighIncomeChildBenefitCharge(adjustedNetIncome: BigDecimal,
 
 object HighIncomeChildBenefitCharge {
   implicit val format: OFormat[HighIncomeChildBenefitCharge] = Json.format[HighIncomeChildBenefitCharge]
+}
+
+case class PensionContributionReliefs(totalPensionContributionReliefs: BigDecimal,
+                                      pensionContributionDetail: PensionContributionDetail)
+
+object PensionContributionReliefs {
+  implicit val format: OFormat[PensionContributionReliefs] = Json.format[PensionContributionReliefs]
+}
+
+case class PensionContributionDetail(regularPensionContributions: Option[BigDecimal],
+                                     oneOffPensionContributionsPaid: Option[BigDecimal])
+
+object PensionContributionDetail {
+  implicit val format: OFormat[PensionContributionDetail] = Json.format[PensionContributionDetail]
 }
