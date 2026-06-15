@@ -16,16 +16,21 @@
 
 package common.enums.TaxYearSummary
 
+import common.enums.TaxYearSummary.CalculationType.*
 import common.testUtils.TestSupport
 
-class CalcTypeSpec extends TestSupport {
+class CalculationTypeSpec extends TestSupport {
 
-
-  "CalcType" should {
+  "CalculationType" should {
 
     "have a set of crystallised types" in {
       CalculationType.crystallisedTypes shouldBe
-        Set(DeclareCrystallisation, IntentToAmend, ConfirmAmendment, DeclareFinalisation, Correction, Crystallisation)
+        Set(ConfirmAmendment, DeclareCrystallisation, Crystallisation, IntentToAmend, Amendment, Correction, DeclareFinalisation)
+    }
+
+    "have a set of not crystallised types" in {
+      CalculationType.notCrystallisedTypes shouldBe
+        Set(InYear, IntentToFinalise)
     }
 
     "have a set of amendment types" in {
