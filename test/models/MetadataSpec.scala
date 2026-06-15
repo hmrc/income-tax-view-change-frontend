@@ -214,6 +214,29 @@ class MetadataSpec extends UnitSpec with Matchers with MockDateService {
           actual shouldBe expected
         }
       }
+
+      notCrystallisedTypes.foreach { notCrystallisedCalculationType =>
+
+        s"the calculationType is ${notCrystallisedCalculationType.toString}" should {
+
+          "return false" in {
+
+            val data =
+              Metadata(
+                calculationTimestamp = Some("2019-02-15T09:35:15.094Z"),
+                calculationType = notCrystallisedCalculationType.value,
+                calculationReason = None,
+                periodFrom = None,
+                periodTo = None
+              )
+
+            val actual = data.isCalculationCrystallised
+            val expected = false
+
+            actual shouldBe expected
+          }
+        }
+      }
     }
   }
 }
