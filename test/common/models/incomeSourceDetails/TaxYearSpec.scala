@@ -16,7 +16,6 @@
 
 package common.models.incomeSourceDetails
 
-import common.models.incomeSourceDetails.TaxYear
 import common.models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import common.testUtils.{TestSupport, UnitSpec}
 import play.api.libs.json.*
