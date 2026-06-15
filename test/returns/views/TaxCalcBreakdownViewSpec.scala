@@ -27,7 +27,6 @@ import org.scalatest.prop.TableDrivenPropertyChecks.*
 import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
-import testUtils.ViewSpec
 import returns.views.html.TaxCalcBreakdownView
 
 class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {
