@@ -21,10 +21,10 @@ import common.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.services.AuditingService
+import financials.models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import financials.services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}
 import financials.services.{NrsService, PaymentOnAccountSessionService}
 import financials.utils.claimToAdjust.WithSessionAndPoa
-import financials.models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

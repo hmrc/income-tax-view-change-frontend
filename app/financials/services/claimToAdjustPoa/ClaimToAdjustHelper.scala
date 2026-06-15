@@ -22,9 +22,9 @@ import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import connectors.{CalculationListConnector, ChargeHistoryConnector}
 import financials.models.DocumentType.{Poa1Charge, Poa2Charge}
-import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.financialDetails.*
 import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}

@@ -20,9 +20,9 @@ import cats.data.EitherT
 import common.auth.MtdItUser
 import common.models.core.Nino
 import enums.{BeforeSubmissionPage, InitialPage, JourneyState}
-import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import play.api.Logger
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier

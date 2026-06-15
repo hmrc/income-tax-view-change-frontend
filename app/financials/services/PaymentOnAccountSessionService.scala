@@ -16,8 +16,8 @@
 
 package financials.services
 
-import financials.repositories.PoaAmendmentDataRepository
 import financials.models.claimToAdjustPoa.{PoaAmendmentData, PoaSessionData, SelectYourReason}
+import financials.repositories.PoaAmendmentDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

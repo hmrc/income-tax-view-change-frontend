@@ -17,8 +17,8 @@
 package financials.services
 
 import common.testUtils.TestSupport
-import financials.repositories.PoaAmendmentDataRepository
 import financials.models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
+import financials.repositories.PoaAmendmentDataRepository
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail

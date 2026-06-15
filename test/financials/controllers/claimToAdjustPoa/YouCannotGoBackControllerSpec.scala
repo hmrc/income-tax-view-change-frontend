@@ -20,15 +20,15 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
+import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
+import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import financials.models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
 import scala.concurrent.Future
 

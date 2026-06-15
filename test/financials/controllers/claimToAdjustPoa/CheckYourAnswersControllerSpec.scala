@@ -22,11 +22,11 @@ import common.mocks.auth.MockAuthActions
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService}
 import mocks.services.{MockClaimToAdjustPoaCalculationService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}

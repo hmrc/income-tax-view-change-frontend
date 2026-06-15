@@ -19,12 +19,13 @@ package connectors
 import common.config.FrontendAppConfig
 import common.models.core.CorrelationId
 import financials.models.claimToAdjustPoa.ClaimToAdjustPoaRequest
-import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
+import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.*
 import play.api.Logger
 import play.api.libs.json.Json
+import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
-import play.api.libs.ws.writeableOf_JsValue
+
 import javax.inject.Inject
 import scala.concurrent.duration.{Duration, SECONDS}
 import scala.concurrent.{ExecutionContext, Future}

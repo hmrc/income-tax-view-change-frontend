@@ -19,9 +19,9 @@ package financials.services
 import common.testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
 import common.testUtils.TestSupport
 import financials.models.chargeHistory.*
+import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower}
 import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason}
 import mocks.connectors.MockChargeHistoryConnector
-import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower}
 import models.financialDetails.DocumentDetail
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 

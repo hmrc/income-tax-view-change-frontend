@@ -26,12 +26,12 @@ import common.testConstants.BaseTestConstants
 import common.utils.sessionUtils
 import common.utils.sessionUtils.SessionKeys
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import generators.PoaGenerator
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

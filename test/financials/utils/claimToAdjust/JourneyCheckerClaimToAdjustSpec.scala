@@ -24,10 +24,10 @@ import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, test
 import common.testUtils.TestSupport
 import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import mocks.services.MockPaymentOnAccountSessionService
-import financials.models.claimToAdjustPoa.PoaAmendmentData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers

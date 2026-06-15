@@ -21,10 +21,10 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.services.{DateService, DateServiceInterface}
+import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import financials.models.claimToAdjustPoa.PoaAmendmentData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api

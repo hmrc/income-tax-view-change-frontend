@@ -26,12 +26,12 @@ import common.testConstants.IncomeSourceDetailsTestConstants.businessAndProperty
 import common.testUtils.TestSupport
 import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.models.claimToAdjustPoa.PoaAmendmentData
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import financials.models.claimToAdjustPoa.PoaAmendmentData
-import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers

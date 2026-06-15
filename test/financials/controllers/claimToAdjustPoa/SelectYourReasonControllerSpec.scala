@@ -23,17 +23,17 @@ import common.models.core.{CheckMode, NormalMode}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
-import financials.services.PaymentOnAccountSessionService
-import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import financials.models.claimToAdjustPoa.*
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.services.PaymentOnAccountSessionService
+import financials.services.claimToAdjustPoa.ClaimToAdjustService
+import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
+import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
 
 import scala.concurrent.Future
 

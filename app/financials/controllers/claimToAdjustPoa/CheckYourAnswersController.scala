@@ -22,11 +22,11 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.models.core.CheckMode
 import common.services.AuditingService
 import financials.controllers.claimToAdjustPoa.routes.*
+import financials.models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import financials.services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}
 import financials.services.{NrsService, PaymentOnAccountSessionService}
 import financials.utils.ErrorRecovery
 import financials.utils.claimToAdjust.WithSessionAndPoa
-import financials.models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
