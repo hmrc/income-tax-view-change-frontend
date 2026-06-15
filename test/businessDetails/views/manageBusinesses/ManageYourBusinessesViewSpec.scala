@@ -20,10 +20,10 @@ import models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, Vi
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.ManageYourBusinessesView
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.models.core.IncomeSourceId
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

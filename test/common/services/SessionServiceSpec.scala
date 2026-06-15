@@ -20,10 +20,10 @@ import businessDetails.services.SessionService
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import common.models.UIJourneySessionData
+import common.testUtils.TestSupport
 import mocks.repositories.MockUIJourneySessionDataRepository
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.mockito.Mockito.when
-import testUtils.TestSupport
 
 import java.time.LocalDate
 import scala.concurrent.Future

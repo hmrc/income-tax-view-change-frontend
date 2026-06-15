@@ -17,9 +17,9 @@
 package common.testConstants
 
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.models.liabilitycalculation.{AllowancesAndDeductions, Calculation, ChargeableEventGainsIncome, DividendsIncome, EmploymentAndPensionsIncome, EmploymentExpenses, EndOfYearEstimate, ForeignIncome, ForeignTaxCreditRelief, GiftAid, GiftAidTaxReductionWhereBasicRateDiffers, IncomeSource, IncomeSummaryTotals, Inputs, LiabilityCalculationError, LiabilityCalculationResponse, MarriageAllowanceTransferOut, MarriageAllowanceTransferredIn, Message, Messages, Metadata, OtherIncome, OverseasIncomeAndGains, PersonalInformation, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, SavingsAndGainsIncome, ShareSchemesIncome, StateBenefitsIncome, StudentLoan, TaxDeductedAtSource, TopSlicingRelief, TransitionProfit}
+import common.models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, OtherGains, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
 import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
-import models.liabilitycalculation.*
-import models.liabilitycalculation.taxcalculation.*
 
 object NewCalcBreakdownItTestConstants {
 

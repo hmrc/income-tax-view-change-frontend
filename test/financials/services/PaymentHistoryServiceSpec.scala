@@ -28,7 +28,7 @@ import models.financialDetails.{Payment, Payments, PaymentsError}
 import org.mockito.Mockito.mock
 import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
 import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate

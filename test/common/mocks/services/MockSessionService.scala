@@ -19,11 +19,11 @@ package common.mocks.services
 import businessDetails.services.SessionService
 import common.enums.JourneyType.IncomeSourceJourneyType
 import common.models.UIJourneySessionData
+import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.*
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

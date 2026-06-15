@@ -21,11 +21,11 @@ import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, Financ
 import models.paymentAllocations.AllocationDetail
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.auth.actions.AuthActionsTestData.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

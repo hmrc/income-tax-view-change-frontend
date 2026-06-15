@@ -30,7 +30,7 @@ import org.mockito.Mockito.*
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import play.mvc.Http.Status.NO_CONTENT
 import common.testConstants.BaseTestConstants.testSessionId
-import testUtils.{TestSupport, UnitSpec}
+import common.testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.Future

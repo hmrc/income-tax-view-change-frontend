@@ -16,9 +16,9 @@
 
 package audit.models
 
+import common.testUtils.UnitSpec
 import models.liabilitycalculation.viewmodels.CalculationSummary
 import play.api.libs.json.{JsObject, Json}
-import testUtils.UnitSpec
 
 class ViewInYearTaxEstimateAuditModelSpec extends UnitSpec {
 

@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands}
+import common.models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands}
 
 case class CapitalGainsTaxViewModel(
                                      totalTaxableGains: Option[BigDecimal] = None,

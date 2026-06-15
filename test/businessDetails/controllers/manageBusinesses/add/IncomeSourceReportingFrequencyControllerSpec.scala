@@ -25,7 +25,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import services.*
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import common.testConstants.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
 
@@ -45,6 +44,7 @@ import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
 import common.models.itsaStatus.StatusDetail
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
+import returns.services.CalculationListService
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 

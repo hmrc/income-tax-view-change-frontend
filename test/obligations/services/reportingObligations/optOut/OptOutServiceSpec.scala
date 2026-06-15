@@ -34,7 +34,7 @@ import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import common.testConstants.ITSAStatusTestConstants.yearToStatus
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 import scala.annotation.unused
 import scala.concurrent.Future

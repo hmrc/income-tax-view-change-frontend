@@ -18,9 +18,9 @@ package models.repaymentHistory
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
+import common.testUtils.TestSupport
 import models.financialDetails.PaymentType
 import org.scalatest.matchers.should.Matchers
-import testUtils.TestSupport
 
 import java.time.LocalDate
 

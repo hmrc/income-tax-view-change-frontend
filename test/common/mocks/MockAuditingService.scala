@@ -18,12 +18,12 @@ package common.mocks
 
 import common.models.audit.{AuditModel, ExtendedAuditModel}
 import common.services.AuditingService
+import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Request
-import testUtils.TestSupport
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext

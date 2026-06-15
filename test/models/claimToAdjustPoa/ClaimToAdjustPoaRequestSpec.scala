@@ -16,8 +16,8 @@
 
 package models.claimToAdjustPoa
 
+import common.testUtils.UnitSpec
 import play.api.libs.json.{JsNumber, JsString, Json, __}
-import testUtils.UnitSpec
 
 class ClaimToAdjustPoaRequestSpec extends UnitSpec {
 

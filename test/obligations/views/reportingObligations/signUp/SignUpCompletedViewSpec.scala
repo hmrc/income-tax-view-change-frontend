@@ -17,12 +17,12 @@
 package obligations.views.reportingObligations.signUp
 
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import obligations.models.reportingObligations.signUp.SignUpCompletedViewModel
 import obligations.views.html.reportingObligations.signUp.SignUpCompletedView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 
 class SignUpCompletedViewSpec extends TestSupport {
 

@@ -16,13 +16,13 @@
 
 package views
 
-import models.liabilitycalculation.EndOfYearEstimate
+import common.models.liabilitycalculation.EndOfYearEstimate
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import org.scalatest.prop.TableDrivenPropertyChecks.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.{testServiceNavigation, testTaxYear}
-import testUtils.ViewSpec
+import common.testUtils.ViewSpec
 import returns.views.html.ForecastTaxCalcSummaryView
 
 class ForecastTaxCalcSummaryViewSpec extends ViewSpec {

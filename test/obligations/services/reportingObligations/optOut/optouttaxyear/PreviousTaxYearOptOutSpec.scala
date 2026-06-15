@@ -18,8 +18,8 @@ package obligations.services.reportingObligations.optOut.optouttaxyear
 
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
+import common.testUtils.UnitSpec
 import obligations.services.reportingObligations.optOut.PreviousOptOutTaxYear
-import testUtils.UnitSpec
 
 class PreviousTaxYearOptOutSpec extends UnitSpec {
 

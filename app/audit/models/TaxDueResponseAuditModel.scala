@@ -20,12 +20,12 @@ import common.auth.MtdItUser
 import common.enums.AuditType.TaxCalculationDetailsResponse
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
+import common.models.liabilitycalculation.ReliefsClaimed
+import common.models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
 import common.utils.audit.Utilities.userAuditDetails
-import models.liabilitycalculation.ReliefsClaimed
-import models.liabilitycalculation.taxcalculation.*
 import models.liabilitycalculation.viewmodels.*
 import play.api.libs.json.*
-import utils.Utilities.*
+import shared.utils.Utilities.*
 
 
 case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],

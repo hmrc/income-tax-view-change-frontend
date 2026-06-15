@@ -20,9 +20,9 @@ import businessDetails.connectors.helpers.IncomeSourcesDataHelper
 import businessDetails.models.createIncomeSource.CreateIncomeSourceErrorResponse.format
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import common.mocks.MockHttpV2
+import common.testUtils.TestSupport
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.annotation.unused

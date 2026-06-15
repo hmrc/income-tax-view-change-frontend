@@ -22,13 +22,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
-import testUtils.ViewSpec
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.{finalDeclaration2024_2025taxYear, taxYear2024_2025quarterlyDates}
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import businessDetails.views.messages.IncomeSourceAddedMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.views.constants.IncomeSourceAddedObligationsConstants.*
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.testUtils.ViewSpec
 
 import java.time.LocalDate
 

@@ -18,11 +18,11 @@ package businessDetails.views.triggeredMigration
 
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 
 class CheckCompleteViewSpec extends TestSupport {
 

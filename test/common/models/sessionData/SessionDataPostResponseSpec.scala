@@ -16,10 +16,10 @@
 
 package common.models.sessionData
 
-import common.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponseReads, SessionDataPostSuccess}
+import common.testUtils.UnitSpec
+import hub.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponseReads, SessionDataPostSuccess}
 import play.api.http.Status.{CONFLICT, INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json
-import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 
 class SessionDataPostResponseSpec extends UnitSpec {

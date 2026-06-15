@@ -17,13 +17,13 @@
 package mocks.connectors
 
 import common.models.core.Nino
+import common.testUtils.UnitSpec
 import connectors.RepaymentHistoryConnector
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

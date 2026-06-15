@@ -22,7 +22,7 @@ import common.enums.{MTDSupportingAgent, TransactionName}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import common.testConstants.BaseTestConstants.{testArn, testClientNameString, testCredId, testMtditid, testNino, testSaUtr}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class AccessDeniedForSupportingAgentsModelSpec extends TestSupport {
 

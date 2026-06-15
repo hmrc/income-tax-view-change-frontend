@@ -16,11 +16,11 @@
 
 package models.incomeSourceDetails.httpparser
 
+import common.testUtils.UnitSpec
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.*
 import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.Helpers.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
-import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 
 class GetAddressLookupDetailsHttpParserSpec extends UnitSpec{

@@ -25,7 +25,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import businessDetails.testConstants.BusinessDetailsTestConstants.business1
 import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

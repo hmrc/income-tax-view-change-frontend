@@ -30,7 +30,7 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate

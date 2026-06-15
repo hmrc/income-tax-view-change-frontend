@@ -27,9 +27,9 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
 import play.api.http.Status.OK
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import shared.repositories.UIJourneySessionDataRepository
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 

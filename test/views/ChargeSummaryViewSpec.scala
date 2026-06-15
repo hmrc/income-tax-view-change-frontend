@@ -19,6 +19,7 @@ package views
 import common.config.featureswitch.FeatureSwitching
 import common.exceptions.MissingFieldException
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.ViewSpec
 import financials.models.ChargeType.*
 import financials.models.*
 import financials.controllers.routes as financialsRoutes
@@ -32,7 +33,6 @@ import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import play.twirl.api.Html
 import financials.testConstants.FinancialDetailsTestConstants.*
-import testUtils.ViewSpec
 import views.html.ChargeSummaryView
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

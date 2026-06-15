@@ -25,9 +25,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{charset, contentType, defaultAwaitTimeout, status}
-import services.CalculationService
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import returns.services.CalculationService
 
 class ForecastTaxCalcSummaryControllerSpec extends MockAuthActions with MockCalculationService {
 

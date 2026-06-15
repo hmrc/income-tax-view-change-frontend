@@ -16,13 +16,13 @@
 
 package mocks.connectors
 
+import common.testUtils.UnitSpec
 import connectors.GetPenaltyDetailsConnector
 import models.penalties.GetPenaltyDetailsParser.GetPenaltyDetailsResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

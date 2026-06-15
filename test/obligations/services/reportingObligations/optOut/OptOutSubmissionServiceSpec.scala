@@ -28,9 +28,9 @@ import obligations.repositories.OptOutContextData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseTestConstants.testSessionId
-import testUtils.{TestSupport, UnitSpec}
+import common.testUtils.{TestSupport, UnitSpec}
+import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.Future

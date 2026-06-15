@@ -23,7 +23,7 @@ import common.models.core.IncomeSourceId.mkIncomeSourceId
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class CeaseIncomeSourceAuditModelSpec extends TestSupport {

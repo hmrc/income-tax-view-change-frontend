@@ -19,12 +19,12 @@ package views.claimToAdjustPoa
 import common.auth.MtdItUser
 import common.models.core.CheckMode
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
-import testUtils.TestSupport
 import views.html.claimToAdjustPoa.CheckYourAnswersView
 
 class CheckYourAnswersControllerViewSpec extends TestSupport {

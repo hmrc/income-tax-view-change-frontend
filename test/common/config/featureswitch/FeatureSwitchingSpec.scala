@@ -22,9 +22,9 @@ import common.config.FrontendAppConfig
 import common.models.admin.{ChargeHistory, CreditsRefundsRepay, DisplayBusinessStartDate, FeatureSwitch, FeatureSwitchName, FilterCodedOutPoas, ITSASubmissionIntegration, MortgageEvidence, NavBarFs, NewHomePage, OptOutFs, OverseasBusinessAddress, PaymentHistoryRefunds, PenaltiesAndAppeals, PenaltiesBackendEnabled, PostFinalisationAmendmentsR18, RecentActivity, SelfServeTimeToPayR17, SignUpFs, SubmitClaimToAdjustToNrs, TriggeredMigration, `CY+1YouMustWaitToSignUpPageEnabled`}
 import common.models.admin.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testUtils.TestSupport
 import org.mockito.Mockito.*
 import org.scalatestplus.mockito.MockitoSugar
-import testUtils.TestSupport
 
 class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
 

@@ -20,12 +20,12 @@ import audit.models.ForecastIncomeAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.implicits.ImplicitDateFormatter
+import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.AuditingService
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
-import services.CalculationService
+import returns.services.CalculationService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import returns.views.html.ForecastIncomeSummaryView

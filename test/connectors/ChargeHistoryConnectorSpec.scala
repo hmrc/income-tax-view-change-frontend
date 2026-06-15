@@ -23,8 +23,8 @@ import models.chargeHistory.{ChargeHistoryModel, ChargeHistoryResponseModel, Cha
 import play.api.Configuration
 import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants.{chargeReference, testMtditid}
+import common.testUtils.TestSupport
 import financials.testConstants.ChargeHistoryTestConstants.{testChargeHistoryErrorModelParsing, testValidChargeHistoryModel}
-import testUtils.TestSupport
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

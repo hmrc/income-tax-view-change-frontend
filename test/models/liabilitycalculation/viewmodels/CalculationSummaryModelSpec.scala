@@ -17,9 +17,9 @@
 package models.liabilitycalculation.viewmodels
 
 import common.implicits.ImplicitDateParser
-import models.liabilitycalculation.{Message, Messages}
+import common.models.liabilitycalculation.{Message, Messages}
+import common.testUtils.UnitSpec
 import returns.testConstants.NewCalcBreakdownUnitTestConstants._
-import testUtils.UnitSpec
 
 import java.time.LocalDate
 

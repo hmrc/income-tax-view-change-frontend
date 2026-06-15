@@ -22,9 +22,9 @@ import common.services.{DateService, DateServiceInterface}
 import financials.models.CodingOutType.CODING_OUT_CLASS2_NICS
 import models.financialDetails.ChargeItem.filterAllowedCharges
 import common.testConstants.BaseTestConstants.app
+import common.testUtils.UnitSpec
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}
-import testUtils.UnitSpec
 
 import java.time.LocalDate
 

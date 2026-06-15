@@ -23,8 +23,8 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.repositories.OptOutContextData
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseIntegrationTestConstants.testSessionId
+import shared.repositories.UIJourneySessionDataRepository
 
 class OptOutSessionRepositoryHelper(repository: UIJourneySessionDataRepository) extends CustomMatchers {
 

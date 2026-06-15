@@ -28,7 +28,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.MtdConstants
 import common.views.html.errorPages.templates.ErrorTemplate
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 import common.auth.{AuthActions, MtdItUser}
@@ -38,6 +37,7 @@ import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.UIJourneySessionData
 import common.services.DateService
+import shared.utils.MtdConstants
 
 import javax.inject.Inject
 import scala.annotation.unused

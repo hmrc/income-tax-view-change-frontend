@@ -20,7 +20,7 @@ import common.enums.AuditType.EnterClientUTR
 import common.enums.TransactionName
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class EnterClientUTRAuditModelSpec extends TestSupport {
 

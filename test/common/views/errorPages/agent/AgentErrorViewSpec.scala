@@ -16,9 +16,9 @@
 
 package common.views.errorPages.agent
 
+import common.testUtils.ViewSpec
 import common.viewUtils.InternalUrlHelper
 import play.twirl.api.Html
-import testUtils.ViewSpec
 import common.views.html.errorPages.agent.AgentError
 
 class AgentErrorViewSpec extends ViewSpec {

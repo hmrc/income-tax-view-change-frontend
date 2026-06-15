@@ -16,9 +16,9 @@
 
 package businessDetails.forms.manageBusinesses.add
 
+import common.testUtils.TestSupport
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import testUtils.TestSupport
 
 class ChooseSoleTraderAddressFormSpec extends AnyWordSpec with Matchers with TestSupport {
 

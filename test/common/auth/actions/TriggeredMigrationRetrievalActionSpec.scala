@@ -30,7 +30,8 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import common.models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
 import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}
-import models.liabilitycalculation.*
+import common.models.liabilitycalculation.*
+import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
 import org.scalatest.Assertion
@@ -40,7 +41,6 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate

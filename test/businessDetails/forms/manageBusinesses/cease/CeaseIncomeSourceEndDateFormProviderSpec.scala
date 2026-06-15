@@ -25,7 +25,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import common.testConstants.IncomeSourceDetailsTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate

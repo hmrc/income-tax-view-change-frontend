@@ -16,10 +16,10 @@
 
 package models.financialDetails
 
+import common.testUtils.UnitSpec
 import financials.models.CodingOutType.*
 import financials.models.DocumentType.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
 import financials.testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
-import testUtils.UnitSpec
 
 import java.time.LocalDate
 

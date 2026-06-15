@@ -31,7 +31,7 @@ import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import play.api.Logger
-import services.CalculationListService
+import returns.services.CalculationListService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

@@ -27,7 +27,7 @@ import play.api.http.{HeaderNames, Status}
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import utils.Headers.checkAndAddTestHeader
+import common.utils.Headers.checkAndAddTestHeader
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

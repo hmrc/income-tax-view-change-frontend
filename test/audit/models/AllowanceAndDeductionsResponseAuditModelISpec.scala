@@ -19,7 +19,7 @@ package audit.models
 import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants._
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 class AllowanceAndDeductionsResponseAuditModelISpec extends TestSupport {

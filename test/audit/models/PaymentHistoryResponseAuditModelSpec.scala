@@ -21,7 +21,7 @@ import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.financialDetails.Payment
 import play.api.libs.json._
 import common.testConstants.BaseTestConstants._
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup._
 

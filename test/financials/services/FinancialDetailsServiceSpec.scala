@@ -27,8 +27,8 @@ import play.api.http.Status
 import common.testConstants.BaseTestConstants._
 import businessDetails.testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import common.testUtils.TestSupport
 import financials.testConstants.FinancialDetailsTestConstants.*
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate

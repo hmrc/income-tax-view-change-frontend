@@ -18,8 +18,8 @@ package obligations.models.reportingObligations.signUp
 
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
+import common.testUtils.UnitSpec
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
-import testUtils.UnitSpec
 
 class SignUpTaxYearQuestionViewModelSpec extends UnitSpec {
 

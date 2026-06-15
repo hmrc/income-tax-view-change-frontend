@@ -28,7 +28,7 @@ import org.mockito.Mockito.{mock, reset, when}
 import play.api
 import play.api.Application
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

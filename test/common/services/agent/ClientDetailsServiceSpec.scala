@@ -17,11 +17,12 @@
 package common.services.agent
 
 import businessDetails.mocks.connectors.MockBusinessDetailsConnector
+import common.mocks.connectors.MockCitizenDetailsConnector
 import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import mocks.connectors.*
 import common.services.agent.ClientDetailsService.{APIError, BusinessDetailsNotFound, CitizenDetailsNotFound}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 
 import scala.concurrent.Future

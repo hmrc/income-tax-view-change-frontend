@@ -21,8 +21,8 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
+import common.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import helpers.servicemocks.*
-import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.*
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.*

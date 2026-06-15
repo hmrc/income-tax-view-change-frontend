@@ -16,13 +16,13 @@
 
 package common.services
 
+import common.mocks.connectors.MockGetSessionDataConnector
 import common.utils.sessionUtils
 import common.utils.sessionUtils.SessionKeys
-import mocks.connectors.MockSessionDataConnector
 import common.models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
-class SessionDataServiceSpec extends TestSupport with MockSessionDataConnector {
+class SessionDataServiceSpec extends TestSupport with MockGetSessionDataConnector {
 
   object TestSessionDataService extends SessionDataService(mockSessionDataConnector)
 

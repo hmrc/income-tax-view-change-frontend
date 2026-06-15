@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.Annual
+import common.testUtils.TestSupport
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
@@ -33,7 +34,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
 import obligations.testConstants.BusinessDetailsTestConstants.business1
-import testUtils.TestSupport
 import common.views.html.components.link
 
 import java.time.LocalDate

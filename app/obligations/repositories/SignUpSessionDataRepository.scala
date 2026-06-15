@@ -22,7 +22,7 @@ import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.Logger
-import repositories.UIJourneySessionDataRepository
+import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

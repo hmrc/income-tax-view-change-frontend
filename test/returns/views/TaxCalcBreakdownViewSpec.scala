@@ -17,16 +17,16 @@
 package views
 
 import common.exceptions.MissingFieldException
-import models.liabilitycalculation.taxcalculation.TaxBands
+import common.models.liabilitycalculation.{Message, Messages}
+import common.models.liabilitycalculation.taxcalculation.TaxBands
+import common.testUtils.ViewSpec
 import models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, TransitionProfitRow}
-import models.liabilitycalculation.{Message, Messages}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.prop.TableDrivenPropertyChecks._
 import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
 import returns.testConstants.NewCalcBreakdownUnitTestConstants._
-import testUtils.ViewSpec
 import returns.views.html.TaxCalcBreakdownView
 
 class TaxCalcBreakdownViewSpec extends TaxCalcBreakdownViewBehaviour {

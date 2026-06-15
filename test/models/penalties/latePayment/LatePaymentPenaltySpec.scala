@@ -16,9 +16,9 @@
 
 package models.penalties.latePayment
 
+import common.testUtils.TestSupport
 import play.api.libs.json.{JsValue, Json}
 import financials.testConstants.PenaltiesTestConstants.lppDetailsFull
-import testUtils.TestSupport
 
 class LatePaymentPenaltySpec extends TestSupport {
 

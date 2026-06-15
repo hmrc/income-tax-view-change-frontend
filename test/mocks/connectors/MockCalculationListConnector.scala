@@ -17,6 +17,7 @@
 package mocks.connectors
 
 import common.models.core.Nino
+import common.testUtils.UnitSpec
 import connectors.CalculationListConnector
 import models.calculationList.CalculationListResponseModel
 import org.mockito.ArgumentMatchers
@@ -24,7 +25,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

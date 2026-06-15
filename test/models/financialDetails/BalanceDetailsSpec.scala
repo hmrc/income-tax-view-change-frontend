@@ -16,8 +16,8 @@
 
 package models.financialDetails
 
+import common.testUtils.UnitSpec
 import play.api.libs.json.{JsValue, Json}
-import testUtils.UnitSpec
 
 class BalanceDetailsSpec extends UnitSpec {
 

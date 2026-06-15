@@ -17,8 +17,8 @@
 package businessDetails.models.createIncomeSource
 
 import businessDetails.connectors.helpers.IncomeSourcesDataHelper
+import common.testUtils.TestSupport
 import play.api.libs.json.{JsSuccess, Json}
-import testUtils.TestSupport
 
 import scala.util.Try
 

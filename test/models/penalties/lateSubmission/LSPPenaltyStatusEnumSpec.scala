@@ -16,8 +16,8 @@
 
 package models.penalties.lateSubmission
 
+import common.testUtils.TestSupport
 import play.api.libs.json.{JsString, Json}
-import testUtils.TestSupport
 
 class LSPPenaltyStatusEnumSpec extends TestSupport {
   "be writable to JSON for 'ACTIVE'" in {

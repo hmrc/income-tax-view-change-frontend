@@ -27,26 +27,38 @@ import common.services.DateServiceInterface
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
 import mocks.views.agent.MockConfirmClient
-import common.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
+import hub.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify}
+import org.mockito.Mockito.{mock, times, verify, when}
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
+import hub.connectors.PostSessionDataConnector
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import hub.views.html.agent.ConfirmClientUTRView
 
+import scala.concurrent.Future
+
 class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmClient with MockITSAStatusService {
+  
+  lazy val mockPostSessionDataConnector = mock(classOf[PostSessionDataConnector])
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[ConfirmClientUTRView].toInstance(mockConfirmClient),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+      api.inject.bind[PostSessionDataConnector].toInstance(mockPostSessionDataConnector)
     ).build()
+
+
+
+  def setupMockPostSessionData(response: SessionDataPostResponse): Unit = {
+    when(mockPostSessionDataConnector.postSessionData(any())(any())).thenReturn(Future.successful(response))
+  }
 
   lazy val testConfirmClientUTRController = app.injector.instanceOf[ConfirmClientUTRController]
 
@@ -224,7 +236,7 @@ class ConfirmClientUTRControllerSpec extends MockAuthActions with MockConfirmCli
             }
             else {
               val sessionDataModel: SessionDataModel = SessionDataModel(testMtditid, testNino, testSaUtr, isSupportingAgent)
-              verify(mockSessionDataService, times(1)).postSessionData(ArgumentMatchers.eq(sessionDataModel))(any())
+              verify(mockPostSessionDataConnector, times(1)).postSessionData(ArgumentMatchers.eq(sessionDataModel))(any())
             }
             verifyExtendedAuditSent(expectedAudit)
           }
