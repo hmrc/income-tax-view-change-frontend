@@ -263,7 +263,7 @@ class TaxYearSummaryController @Inject()(
 
     lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
     
-    val isNotCrystallisedShowInset: Boolean = latestCalc.metadata.isNotCalculationCrystallised
+    val isNotCrystallisedShowInset: Boolean = latestCalc.metadata.isCalculationNotCrystallised
 
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
@@ -342,7 +342,7 @@ class TaxYearSummaryController @Inject()(
 
       val isNotCrystallisedShowInset: Boolean =
         validLatestCalculation
-          .exists(liabilityCalculationResponse => liabilityCalculationResponse.metadata.isNotCalculationCrystallised)
+          .exists(liabilityCalculationResponse => liabilityCalculationResponse.metadata.isCalculationNotCrystallised)
 
       Future(
         Ok(taxYearSummaryView(
