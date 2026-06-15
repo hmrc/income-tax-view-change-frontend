@@ -27,6 +27,7 @@ enum CalculationType(val value: String) {
   case InYear                 extends CalculationType("IY")
   case IntentToFinalise       extends CalculationType("IF")
   case Crystallisation        extends CalculationType("crystallisation")
+  case inYear                 extends CalculationType("inYear")
   case UnknownCalculationType extends CalculationType("UnknownCalculationType")
 }
 
@@ -40,9 +41,11 @@ object CalculationType {
       case "CA"              => CalculationType.ConfirmAmendment
       case "CO"              => CalculationType.Correction
       case "IA"              => CalculationType.IntentToAmend
+      case "IC"              => CalculationType.IntentToCrystallise
       case "IY"              => CalculationType.InYear
       case "IF"              => CalculationType.IntentToFinalise
       case "crystallisation" => CalculationType.Crystallisation
+      case "inYear"          => CalculationType.inYear
       case _                 => CalculationType.UnknownCalculationType
     }
 
