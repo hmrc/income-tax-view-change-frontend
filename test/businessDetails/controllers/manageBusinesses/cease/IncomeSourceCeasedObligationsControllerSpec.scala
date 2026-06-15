@@ -24,6 +24,7 @@ import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, BusinessDetailsModel, PropertyDetailsModel}
 import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.*
@@ -41,7 +42,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import common.testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSource
 import common.testConstants.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
-import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
+import obligations.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 
 import java.time.LocalDate
 import scala.concurrent.Future

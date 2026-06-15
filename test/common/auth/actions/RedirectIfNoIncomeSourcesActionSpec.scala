@@ -19,6 +19,7 @@ package common.auth.actions
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
 import common.controllers.routes as appRoutes
+import common.models.admin.{FeatureSwitchName, NoIncomeSourcesRedirect}
 import org.scalatest.Assertion
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
@@ -29,7 +30,14 @@ import scala.concurrent.Future
 
 class RedirectIfNoIncomeSourcesActionSpec extends AuthActionsSpecHelper {
 
-  private val action = new RedirectIfNoIncomeSourcesAction()
+  def actionWithSwitch(enabledSwitches: Set[FeatureSwitchName]) =
+    new RedirectIfNoIncomeSourcesAction(mockAppConfig) {
+      override def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean =
+        enabledSwitches.contains(featureSwitch)
+    }
+
+  val actionEnabled  = actionWithSwitch(Set(NoIncomeSourcesRedirect))
+  val actionDisabled = actionWithSwitch(Set.empty)
 
   def defaultAsyncBody(
                         requestTestCase: MtdItUser[_] => Assertion
@@ -42,75 +50,89 @@ class RedirectIfNoIncomeSourcesActionSpec extends AuthActionsSpecHelper {
 
   "refine" when {
 
-    "the user has income sources" should {
+    "the NoIncomeSourcesRedirect feature switch is enabled" when {
 
-      "allow an individual user through" in {
-        val request = defaultMTDITUser(
-          af = Some(Individual),
-          incomeSources = businessesAndPropertyIncome,
-          request = fakeRequestWithActiveSession
-        )
+      "the user has income sources" should {
 
-        val result = action.invokeBlock(
-          request,
-          defaultAsyncBody(_.incomeSources shouldBe businessesAndPropertyIncome)
-        )
+        "allow an individual user through" in {
+          val request = defaultMTDITUser(
+            af = Some(Individual),
+            incomeSources = businessesAndPropertyIncome,
+            request = fakeRequestWithActiveSession
+          )
 
-        status(result) shouldBe OK
+          val result = actionEnabled.invokeBlock(request, defaultAsyncBody(_.incomeSources shouldBe businessesAndPropertyIncome))
+
+          status(result) shouldBe OK
+        }
+
+        "allow an agent user through" in {
+          val request = defaultMTDITUser(
+            af = Some(Agent),
+            incomeSources = businessesAndPropertyIncome,
+            request = fakeRequestWithActiveSession
+          )
+
+          val result = actionEnabled.invokeBlock(request, defaultAsyncBody(_.incomeSources shouldBe businessesAndPropertyIncome))
+
+          status(result) shouldBe OK
+        }
       }
 
-      "allow an agent user through" in {
-        val request = defaultMTDITUser(
-          af = Some(Agent),
-          incomeSources = businessesAndPropertyIncome,
-          request = fakeRequestWithActiveSession
-        )
+      "the user has no income sources" should {
 
-        val result = action.invokeBlock(
-          request,
-          defaultAsyncBody(_.incomeSources shouldBe businessesAndPropertyIncome)
-        )
+        "redirect an individual user to the no income sources page" in {
+          val request = defaultMTDITUser(
+            af = Some(Individual),
+            incomeSources = noIncomeDetails,
+            request = fakeRequestWithActiveSession
+          )
 
-        status(result) shouldBe OK
+          val result = actionEnabled.invokeBlock(request, defaultAsync)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(appRoutes.NoIncomeSourcesController.show(isAgent = false).url)
+        }
+
+        "redirect an agent user to the no income sources page" in {
+          val request = defaultMTDITUser(
+            af = Some(Agent),
+            incomeSources = noIncomeDetails,
+            request = fakeRequestWithActiveSession
+          )
+
+          val result = actionEnabled.invokeBlock(request, defaultAsync)
+
+          status(result) shouldBe SEE_OTHER
+          redirectLocation(result) shouldBe Some(appRoutes.NoIncomeSourcesController.show(isAgent = true).url)
+        }
       }
     }
 
-    "the user has no income sources" should {
+    "the NoIncomeSourcesRedirect feature switch is disabled" should {
 
-      "redirect an individual user to the no income sources page" in {
+      "allow an individual user with no income sources through" in {
         val request = defaultMTDITUser(
           af = Some(Individual),
           incomeSources = noIncomeDetails,
           request = fakeRequestWithActiveSession
         )
 
-        val result = action.invokeBlock(
-          request,
-          defaultAsync
-        )
+        val result = actionDisabled.invokeBlock(request, defaultAsync)
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(
-          appRoutes.NoIncomeSourcesController.show(isAgent = false).url
-        )
+        status(result) shouldBe OK
       }
 
-      "redirect an agent user to the no income sources page" in {
+      "allow an agent user with no income sources through" in {
         val request = defaultMTDITUser(
           af = Some(Agent),
           incomeSources = noIncomeDetails,
           request = fakeRequestWithActiveSession
         )
 
-        val result = action.invokeBlock(
-          request,
-          defaultAsync
-        )
+        val result = actionDisabled.invokeBlock(request, defaultAsync)
 
-        status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(
-          appRoutes.NoIncomeSourcesController.show(isAgent = true).url
-        )
+        status(result) shouldBe OK
       }
     }
   }

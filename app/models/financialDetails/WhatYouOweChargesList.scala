@@ -17,8 +17,8 @@
 package models.financialDetails
 
 import common.exceptions.MissingFieldException
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.OutstandingChargesModel
 
 import java.time.LocalDate

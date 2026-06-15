@@ -21,9 +21,9 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.admin.{ChargeHistory, FeatureSwitch}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import mocks.services.{MockCreditHistoryService, MockFinancialDetailsService}
 import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset, when}
 import play.api
 import play.api.Application

@@ -36,8 +36,8 @@ import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.services.AuditingService
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 import javax.inject.Inject
 import scala.annotation.unused
@@ -132,7 +132,8 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
         Some(
           CheckPropertyViewModel(
             tradingStartDate = dateStarted,
-            incomeSourceType = incomeSourceType
+            incomeSourceType = incomeSourceType,
+            idempotencyKey = sessionData.addIncomeSourceData.flatMap(_.idempotencyKey)
           )
         )
       case _ => None
@@ -163,6 +164,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
           businessCountryCode = addIncomeSourceData.address.flatMap(_.country.flatMap(_.code)),
           businessCountryName = address.country.flatMap(_.name),
           addressId = addIncomeSourceData.addressLookupId.orElse(addIncomeSourceData.addressId),
+          idempotencyKey = addIncomeSourceData.idempotencyKey,
           isAddingNewAddress = isAddingNewAddress,
           isNoAddressOnFile = isNoAddressOnFile
         )

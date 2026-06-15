@@ -17,9 +17,9 @@
 package mocks.connectors
 
 import common.models.core.Nino
+import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import connectors.FinancialDetailsConnector
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
-import models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import models.paymentAllocations.PaymentAllocationsResponse
 import org.mockito.ArgumentMatchers

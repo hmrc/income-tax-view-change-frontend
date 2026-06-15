@@ -34,7 +34,7 @@ package common.connectors
 
 import common.config.FrontendAppConfig
 import common.models.auth.AuthorisedAndEnrolledRequest
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Configuration

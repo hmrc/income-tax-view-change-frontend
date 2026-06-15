@@ -18,6 +18,7 @@ package hub.services.newHomePage
 
 import com.google.inject.Inject
 import common.auth.MtdItUser
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import obligations.connectors.ObligationsConnector
 import models.financialDetails.*
@@ -30,7 +31,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 import java.time.LocalDate
 import javax.inject.Singleton
 import financials.controllers.routes as financialsRoutes
-import models.incomeSourceDetails.TaxYear
 
 @Singleton
 class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector,

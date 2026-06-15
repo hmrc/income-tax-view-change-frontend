@@ -23,6 +23,7 @@ import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import businessDetails.testConstants.BusinessDetailsTestConstants.*
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.expectedAddress
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.models.incomeSourceDetails.{LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 import common.models.itsaStatus.ITSAStatus
 
 object ManageIncomeSourceDetailsViewConstants {

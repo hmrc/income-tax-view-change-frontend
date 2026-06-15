@@ -28,7 +28,6 @@ import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.connectors.MockIncomeTaxCalculationConnector
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
@@ -47,6 +46,7 @@ import returns.views.html.TaxYearSummaryView
 import services.*
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import businessDetails.testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import common.models.incomeSourceDetails.TaxYear
 import financials.testConstants.FinancialDetailsTestConstants.*
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome

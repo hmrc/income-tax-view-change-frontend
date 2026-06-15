@@ -20,7 +20,7 @@ import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import jakarta.inject.Singleton
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, ChooseSoleTraderAddressUserAnswer, Country}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -33,6 +33,7 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
+import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

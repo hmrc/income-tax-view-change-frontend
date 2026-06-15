@@ -22,15 +22,15 @@ import common.enums.MTDIndividual
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.UIJourneySessionData
 import common.models.admin.SignUpFs
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
+import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
 
 class SignUpStartControllerISpec extends ControllerISpecHelper {
 

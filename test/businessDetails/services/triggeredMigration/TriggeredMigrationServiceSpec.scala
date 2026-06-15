@@ -21,10 +21,10 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import common.mocks.services.MockSessionService
 import common.models.core.{CessationModel, IncomeSourceId}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import businessDetails.testConstants.BusinessDetailsTestConstants.business1
 import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import testUtils.TestSupport
 
 import java.time.LocalDate

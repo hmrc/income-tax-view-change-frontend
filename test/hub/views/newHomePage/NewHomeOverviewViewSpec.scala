@@ -35,7 +35,7 @@ import hub.views.html.newHomePage.NewHomeOverviewView
 import java.time.{LocalDate, Month}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.auth.actions.AuthActionsTestData.getMtdItUser
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 
 class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {

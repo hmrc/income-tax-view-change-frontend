@@ -19,11 +19,11 @@ package financials.services.claimToAdjustPoa
 import cats.data.EitherT
 import common.auth.MtdItUser
 import common.models.core.Nino
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 

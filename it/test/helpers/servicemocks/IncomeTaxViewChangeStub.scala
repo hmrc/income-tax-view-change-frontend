@@ -20,8 +20,8 @@ import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorRespons
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.helpers.WiremockHelper
 import common.models.core.{Nino, NinoResponseError, NinoResponseSuccess}
+import common.models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.financialDetails.Payment
-import models.incomeSourceDetails.IncomeSourceDetailsResponse
 import models.repaymentHistory.RepaymentHistoryModel
 import obligations.models.ObligationsModel
 import play.api.http.Status

@@ -16,7 +16,7 @@
 
 package models.financialDetails
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Json, Reads, Writes}
 
 case class CodingDetails(totalLiabilityAmount: Option[BigDecimal],

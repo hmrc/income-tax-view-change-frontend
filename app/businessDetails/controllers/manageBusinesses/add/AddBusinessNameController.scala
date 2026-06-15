@@ -20,20 +20,20 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRo
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import enums.InitialPage
+import businessDetails.views.html.manageBusinesses.add.AddBusinessNameView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.models.core.{Mode, NormalMode}
+import enums.{FreshInitialPage, InitialPage}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import businessDetails.views.html.manageBusinesses.add.AddBusinessNameView
-import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.core.{Mode, NormalMode}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -96,7 +96,10 @@ class AddBusinessNameController @Inject()(val authActions: AuthActions,
   }
 
   def handleRequest(isAgent: Boolean, backUrl: String, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), journeyState = InitialPage, isTriggeredMigration = isTriggeredMigration) { sessionData =>
+    withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), journeyState = mode match {
+      case NormalMode => FreshInitialPage
+      case _ => InitialPage
+    }, isTriggeredMigration = isTriggeredMigration) { sessionData =>
       val businessNameOpt: Option[String] = sessionData.addIncomeSourceData.flatMap(_.businessName)
       val filledForm: Form[BusinessNameForm] = businessNameOpt.fold(BusinessNameForm.form)(name =>
         BusinessNameForm.form.fill(BusinessNameForm(name)))

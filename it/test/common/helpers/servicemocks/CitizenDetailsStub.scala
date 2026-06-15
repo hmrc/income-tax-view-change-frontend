@@ -19,7 +19,7 @@ package common.helpers.servicemocks
 import common.helpers.WiremockHelper
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.{testClientFirstName, testClientSurname, testNino}
+import common.testConstants.BaseIntegrationTestConstants.{testClientFirstName, testClientSurname, testNino}
 import common.testConstants.BaseTestConstants.testSaUtr
 
 object CitizenDetailsStub {

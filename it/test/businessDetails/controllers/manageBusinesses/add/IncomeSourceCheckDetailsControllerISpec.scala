@@ -24,8 +24,8 @@ import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorRespons
 import businessDetails.services.SessionService
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSessionId}
-import testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySessionData, multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSessionId}
+import common.testConstants.IncomeSourceIntegrationTestConstants.{emptyUIJourneySessionData, multipleBusinessesAndPropertyResponse, noPropertyOrBusinessResponse}
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -34,7 +34,7 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUser
 import common.helpers.servicemocks.AuditStub
 import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
-import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 

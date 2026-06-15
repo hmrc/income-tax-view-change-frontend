@@ -16,9 +16,9 @@
 
 package models.creditsandrefunds
 
+import common.models.incomeSourceDetails.TaxYear
 import financials.controllers.routes
 import models.financialDetails._
-import models.incomeSourceDetails.TaxYear
 
 import java.time.LocalDate
 

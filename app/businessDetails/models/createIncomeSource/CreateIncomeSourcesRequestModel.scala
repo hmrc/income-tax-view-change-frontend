@@ -18,11 +18,9 @@ package businessDetails.models.createIncomeSource
 
 import play.api.libs.json.{Format, Json}
 
-// *********************************************************************************************************************
-// *                                                   Self-employment                                                 *
-// *********************************************************************************************************************
-
-final case class CreateBusinessIncomeSourceRequest(mtdbsa: String, businessDetails: List[BusinessDetails]) {
+// Sole Trader
+//TODO: Make idempotencyKey and addIncomeSource mandatory once we enabled FS in prod
+final case class CreateBusinessIncomeSourceRequest(mtdbsa: String, businessDetails: List[BusinessDetails], idempotencyKey: Option[String], addIncomeSource: Option[Boolean]) {
   require(businessDetails.length == 1, "Only single business can be created at a time")
   require(mtdbsa.matches("^[A-Z]{4}[0-9]{11}$"), "MTDBSA ID should be of 11 characters and a specific format")
 }
@@ -58,21 +56,19 @@ object AddressDetails {
 }
 
 
-
-// *********************************************************************************************************************
-// *                                                   Property                                                        *
-// *********************************************************************************************************************
-
+// Property
 final case class PropertyDetails(tradingStartDate: String, startDate: String) {
   require(tradingStartDate.nonEmpty, "Trading start date must be provided")
   require(tradingStartDate == startDate, "Trading start date and start date must be the same")
 }
 
-final case class CreateForeignPropertyIncomeSourceRequest(mtdbsa: String, foreignPropertyDetails: PropertyDetails) {
+//TODO: Make idempotencyKey and addIncomeSource mandatory once we enabled FS in prod
+final case class CreateForeignPropertyIncomeSourceRequest(mtdbsa: String, foreignPropertyDetails: PropertyDetails, idempotencyKey: Option[String], addIncomeSource: Option[Boolean]) {
   require(mtdbsa.matches("^[A-Z]{4}[0-9]{11}$"), "MTDBSA ID should be of 11 characters and a specific format")
 }
 
-final case class CreateUKPropertyIncomeSourceRequest(mtdbsa: String, ukPropertyDetails: PropertyDetails) {
+//TODO: Make idempotencyKey and addIncomeSource mandatory once we enabled FS in prod
+final case class CreateUKPropertyIncomeSourceRequest(mtdbsa: String, ukPropertyDetails: PropertyDetails, idempotencyKey: Option[String], addIncomeSource: Option[Boolean]) {
   require(mtdbsa.matches("^[A-Z]{4}[0-9]{11}$"), "MTDBSA ID should be of 11 characters and a specific format")
 }
 
@@ -87,4 +83,3 @@ object CreateForeignPropertyIncomeSourceRequest {
 object CreateUKPropertyIncomeSourceRequest {
   implicit val format: Format[CreateUKPropertyIncomeSourceRequest] = Json.format[CreateUKPropertyIncomeSourceRequest]
 }
-

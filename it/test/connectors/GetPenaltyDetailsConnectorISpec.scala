@@ -20,7 +20,7 @@ import common.helpers.{ComponentSpecBase, WiremockHelper}
 import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsResponse}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status._
-import testConstants.PenaltiesIntegrationTestConstants._
+import common.testConstants.PenaltiesIntegrationTestConstants._
 class GetPenaltyDetailsConnectorISpec extends AnyWordSpec with ComponentSpecBase {
 
   val connector: GetPenaltyDetailsConnector = app.injector.instanceOf[GetPenaltyDetailsConnector]

@@ -20,7 +20,7 @@ import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import enums.BeforeSubmissionPage
-import models.incomeSourceDetails.{Address, BusinessDetailsModel}
+import models.incomeSourceDetails.Address
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -33,6 +33,7 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{Mode, NormalMode}
+import common.models.incomeSourceDetails.BusinessDetailsModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

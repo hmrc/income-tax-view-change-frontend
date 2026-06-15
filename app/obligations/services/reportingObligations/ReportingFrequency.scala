@@ -16,7 +16,7 @@
 
 package obligations.services.reportingObligations
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 
 object ReportingFrequency {

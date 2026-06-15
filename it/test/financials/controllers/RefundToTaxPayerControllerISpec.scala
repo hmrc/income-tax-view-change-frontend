@@ -26,8 +26,8 @@ import common.models.core.Nino
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.repaymentHistory.*
 import play.api.http.Status.*
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
 
 import java.time.LocalDate
 

@@ -16,7 +16,7 @@
 
 package models.claimToAdjustPoa.viewModels
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 case class PaymentOnAccountViewModel(
                                       poaOneTransactionId: String,

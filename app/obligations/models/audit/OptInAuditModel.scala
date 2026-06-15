@@ -20,8 +20,8 @@ import common.auth.MtdItUser
 import common.enums.AuditType.OptInQuarterlyReportingRequest
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
+import common.models.incomeSourceDetails.TaxYear
 import common.utils.audit.Utilities
-import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.services.reportingObligations.signUp.core.SignUpProposition
 import play.api.libs.json.{JsObject, JsValue, Json}

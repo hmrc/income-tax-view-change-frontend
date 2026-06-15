@@ -16,7 +16,7 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.testConstants.IncomeSourcesObligationsTestConstants._
 import testUtils.UnitSpec
 

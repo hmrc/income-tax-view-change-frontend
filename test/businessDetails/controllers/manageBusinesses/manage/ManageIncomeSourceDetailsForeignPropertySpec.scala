@@ -20,8 +20,8 @@ import common.enums.IncomeSourceJourney.ForeignProperty
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.models.admin.DisplayBusinessStartDate
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status

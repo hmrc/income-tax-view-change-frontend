@@ -17,8 +17,8 @@
 package obligations.models.audit
 
 import common.auth.MtdItUser
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, NoStatus, Voluntary}
-import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutTestSupport}
 import play.api.http.Status.OK

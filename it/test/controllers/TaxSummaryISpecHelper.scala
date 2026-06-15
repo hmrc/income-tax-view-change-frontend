@@ -19,13 +19,13 @@ package controllers
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDUserRole
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import financials.models.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import models.financialDetails.*
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.*
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 
 import java.time.LocalDate
 

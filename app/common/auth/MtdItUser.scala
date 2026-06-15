@@ -19,7 +19,7 @@ package common.auth
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.admin.FeatureSwitch
 import common.models.auth.{AgentClientDetails, AuthUserDetails}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.retrieve.Name
