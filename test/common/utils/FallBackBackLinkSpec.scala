@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
+<<<<<<<< HEAD:test/common/utils/FallBackBackLinkSpec.scala
 package common.utils
+========
+package financials.utils
+>>>>>>>> 976d29741 (MIPR-2620: moved utils):test/financials/utils/FallBackBackLinkSpec.scala
 
 import common.enums.GatewayPage.{NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import common.testUtils.TestSupport

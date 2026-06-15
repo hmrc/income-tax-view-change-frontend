@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package utils.claimToAdjust
+package financials.utils.claimToAdjust
 
 import common.auth.MtdItUser
 import enums.*
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
+import financials.utils.ErrorRecovery
 import models.claimToAdjustPoa.PoaAmendmentData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.ErrorRecovery
 
 import scala.concurrent.{ExecutionContext, Future}
 

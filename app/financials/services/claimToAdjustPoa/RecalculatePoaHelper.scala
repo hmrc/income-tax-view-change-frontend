@@ -24,6 +24,7 @@ import common.models.core.Nino
 import common.services.AuditingService
 import financials.controllers.claimToAdjustPoa.routes.*
 import financials.services.{NrsService, PaymentOnAccountSessionService}
+import financials.utils.ErrorRecovery
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PoaAmendmentData, SelectYourReason}
 import models.nrs.*
@@ -37,7 +38,6 @@ import uk.gov.hmrc.auth.core.ConfidenceLevel.L50
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
-import utils.ErrorRecovery
 
 import java.security.MessageDigest
 import java.time.Instant

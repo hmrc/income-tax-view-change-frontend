@@ -23,13 +23,13 @@ import common.models.core.{CheckMode, Mode, Nino, NormalMode}
 import financials.forms.adjustPoa.EnterPoaAmountForm
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
+import financials.utils.ErrorRecovery
+import financials.utils.claimToAdjust.JourneyCheckerClaimToAdjust
 import models.claimToAdjustPoa.Increase
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ErrorRecovery
-import utils.claimToAdjust.JourneyCheckerClaimToAdjust
 import views.html.claimToAdjustPoa.EnterPoaAmountView
 
 import javax.inject.{Inject, Singleton}

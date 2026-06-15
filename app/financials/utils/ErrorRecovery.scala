@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package financials.utils
 
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
