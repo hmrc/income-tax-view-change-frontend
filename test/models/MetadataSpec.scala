@@ -18,9 +18,9 @@ package models
 
 import common.enums.TaxYearSummary.CalculationType.*
 import common.mocks.services.MockDateService
-import models.liabilitycalculation.Metadata
+import common.models.liabilitycalculation.Metadata
+import common.testUtils.UnitSpec
 import org.scalatest.matchers.should.Matchers
-import testUtils.UnitSpec
 
 class MetadataSpec extends UnitSpec with Matchers with MockDateService {
 
