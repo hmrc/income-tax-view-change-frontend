@@ -33,7 +33,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import play.twirl.api.Html
-import financials.testConstants.FinancialDetailsTestConstants.*
 import views.html.ChargeSummaryView
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

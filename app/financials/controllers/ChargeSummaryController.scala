@@ -32,7 +32,7 @@ import financials.controllers.routes as financialsRoutes
 import financials.models.chargeHistory.*
 import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
-import financials.utils.FallBackBackLinks
+import common.utils.FallBackBackLinks
 import forms.utils.SessionKeys.gatewayPage
 import models.financialDetails.*
 import models.paymentAllocationCharges.PaymentAllocationViewModel

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.utils
+package common.utils
 
 import common.enums.GatewayPage.{GatewayPage, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
 import financials.controllers.routes as financialsRoutes

@@ -28,7 +28,7 @@ import common.services.AuditingService
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.services.PaymentAllocationsService
-import financials.utils.FallBackBackLinks
+import common.utils.FallBackBackLinks
 import forms.utils.SessionKeys.gatewayPage
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.i18n.{I18nSupport, Messages}
