@@ -19,6 +19,7 @@
 @import views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
 @import views.html.partials.paymentAllocations.PaymentAllocationsForLpi
 @import views.html.partials.paymentAllocations.PaymentAllocationsForNonLpi
+@import common.auth.MtdItUser
 
 @this(
     h2: h2,
@@ -28,7 +29,7 @@
 )
 
 @(paymentAllocations: PaymentAllocationViewModel, creditsRefundRepayEnabled: Boolean)(
-        implicit messages: Messages, user: common.auth.MtdItUser[_]
+        implicit messages: Messages, user: MtdItUser[_]
 )
 
 @getMessage(key: String, args: String*) = @{

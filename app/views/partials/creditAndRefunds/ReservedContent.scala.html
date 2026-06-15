@@ -19,6 +19,7 @@
 @import models.creditsandrefunds.MoneyInYourAccountViewModel
 @import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import financials.controllers.routes as financialsRoutes
+@import common.auth.MtdItUser
 
 @this(
         h2: h2,
@@ -26,7 +27,7 @@
         link: link,
         govukInsetText: GovukInsetText
 )
-@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages, user: MtdItUser[_])
 
 @getWhatYouOwe(isAgent: Boolean) = @{
     if(isAgent) {

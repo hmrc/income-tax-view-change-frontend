@@ -20,6 +20,7 @@
 @import common.views.html.components._
 @import _root_.financials.implicits.ImplicitCurrencyFormatter._
 @import financials.controllers.routes as financialsRoutes
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -29,7 +30,7 @@
         link: link,
 )
 
-@(poaTaxYear: TaxYear, poaTotalAmount: BigDecimal, showOverdueCharges: Boolean)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
+@(poaTaxYear: TaxYear, poaTotalAmount: BigDecimal, showOverdueCharges: Boolean)(implicit messages: Messages, request: RequestHeader, user: MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"claimToAdjustPoa.success.$key", args: _*)

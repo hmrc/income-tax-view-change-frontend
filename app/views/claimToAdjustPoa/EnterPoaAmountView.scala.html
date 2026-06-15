@@ -24,6 +24,7 @@
 @import common.views.html.layouts.unifiedLayout
 @import common.viewUtils.ExternalUrlHelper
 @import common.config.FrontendAppConfig
+@import common.auth.MtdItUser
 
 
 @this(
@@ -44,7 +45,7 @@
         errorSummary: ErrorSummary
 )
 
-@(enterPoaForm: Form[EnterPoaAmountForm], viewModel: PaymentOnAccountViewModel, postAction: Call)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
+@(enterPoaForm: Form[EnterPoaAmountForm], viewModel: PaymentOnAccountViewModel, postAction: Call)(implicit messages: Messages, request: RequestHeader, user: MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"claimToAdjustPoa.enterPoaAmount.$key", args: _*)

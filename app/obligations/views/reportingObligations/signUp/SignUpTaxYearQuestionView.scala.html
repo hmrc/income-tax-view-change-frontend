@@ -19,6 +19,7 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -32,7 +33,7 @@
         continueButton: ContinueButton
 )
 
-@(viewModel: SignUpTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: SignUpTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: MtdItUser[_])
 
 @startYear = @{ viewModel.signUpTaxYear.taxYear.startYear.toString }
 @endYear = @{ viewModel.signUpTaxYear.taxYear.endYear.toString }

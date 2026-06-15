@@ -27,6 +27,7 @@
 @import common.models.core._
 @import common.views.html.components._
 @import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -43,7 +44,7 @@
         viewModel: CheckCeaseIncomeSourceDetailsViewModel,
         messagesPrefix: String,
         isTriggeredMigration: Boolean
-)(implicit request: common.auth.MtdItUser[_], messages: Messages)
+)(implicit request: MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"$messagesPrefix.$key", args: _*)

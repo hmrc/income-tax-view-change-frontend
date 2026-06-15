@@ -21,6 +21,9 @@
 @import obligations.models.reportingObligations.optOut.*
 @import common.viewUtils.ExternalUrlHelper
 @import obligations.controllers.{routes => obligationsRoutes}
+@import obligations.controllers.reportingObligations.{routes => reportingObligationRoutes}
+
+@import common.auth.MtdItUser
 @this(
     mainTemplate: unifiedLayout,
     h1: h1,
@@ -38,7 +41,7 @@
     confirmedOptOutViewScenarios: ConfirmedOptOutViewScenarios,
     selfAssessmentTaxReturnLink: String,
     compatibleSoftwareLink: String
-)(implicit messages: Messages, user: common.auth.MtdItUser[_], appConfig: FrontendAppConfig)
+)(implicit messages: Messages, user: MtdItUser[_], appConfig: FrontendAppConfig)
 
 @greenPanelScenario1And4() = @{
     govukPanel(
@@ -285,7 +288,7 @@
 
 
 @yourReportingFrequencyBlock = @{
-    val reportingFrequencyUrl = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(user.isAgent).url
+    val reportingFrequencyUrl = reportingObligationRoutes.ReportingFrequencyPageController.show(user.isAgent).url
     val reportingFrequencyLink = link(
         id = Some("your-reporting-frequency-link"),
         link = reportingFrequencyUrl,

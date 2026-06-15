@@ -24,6 +24,7 @@
 @import common.enums.TriggeredMigration.TriggeredMigrationState
 @import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 @import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+@import common.auth.MtdItUser
 
 
 @this(
@@ -41,7 +42,7 @@
 )
 
 
-@(viewModel: CheckHmrcRecordsViewModel, isAgent: Boolean)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: CheckHmrcRecordsViewModel, isAgent: Boolean)(implicit messages: Messages, user: MtdItUser[_])
 
 @addSoleTraderBusinessURL() = @{
     if(user.isAgent) {

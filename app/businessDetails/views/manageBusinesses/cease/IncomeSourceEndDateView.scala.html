@@ -24,6 +24,7 @@
 @import common.viewmodels.govuk.all.ErrorSummaryViewModel
 @import common.viewmodels.govuk.all.DateViewModel
 @import common.viewmodels.govuk.all.FluentDate
+@import common.auth.MtdItUser
 
 @this(mainTemplate: unifiedLayout,
         dateInput: dateInput,
@@ -38,7 +39,7 @@
         form: Form[LocalDate],
         postAction: Call,
         isAgent: Boolean = false,
-        backUrl: String)(implicit user: common.auth.MtdItUser[_], messages: Messages)
+        backUrl: String)(implicit user: MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"${incomeSourceType.endDateMessagePrefix}.$key", args: _*)

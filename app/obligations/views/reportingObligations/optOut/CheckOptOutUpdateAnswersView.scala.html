@@ -17,7 +17,9 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
+@import common.auth.MtdItUser
 @import obligations.models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
+@import obligations.controllers.reportingObligations.optOut.{routes => optOutRoutes}
 
 @this(
 mainTemplate: unifiedLayout,
@@ -32,10 +34,10 @@ govukButton: GovukButton,
 formWithCSRF: FormWithCSRF
 )
 
-@(viewModel: CheckOptOutUpdateAnswersViewModel, reportingObligationsURL: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: CheckOptOutUpdateAnswersViewModel, reportingObligationsURL: String)(implicit messages: Messages, user: MtdItUser[_])
 
 @getPostAction = @{
-    obligations.controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController.submit(user.isAgent, viewModel.startYear)
+    optOutRoutes.ConfirmOptOutUpdateController.submit(user.isAgent, viewModel.startYear)
 }
 
 @mainTemplate(

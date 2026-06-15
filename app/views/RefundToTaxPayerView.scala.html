@@ -21,6 +21,7 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import common.config.FrontendAppConfig
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -35,7 +36,7 @@
 )
 
 @(viewModel: RefundToTaxPayerViewModel, paymentHistoryRefundsEnabled: Boolean, backUrl: String, saUtr: Option[String],
-        origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages, user: common.auth.MtdItUser[_])
+        origin: Option[String] = None, serviceNavigationPartial: Option[ServiceNavigation] = None)(implicit request: Request[_], messages: Messages, user: MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @getRepaymentSupplementItemSize(repaymentHistoryItem: RefundToTaxPayerViewModel) = @{

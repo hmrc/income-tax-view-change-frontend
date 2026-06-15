@@ -24,6 +24,7 @@
 @import common.enums.IncomeSourceJourney.UkProperty
 @import common.enums.IncomeSourceJourney.ForeignProperty
 @import common.enums.IncomeSourceJourney.SelfEmployment
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -42,7 +43,7 @@
         sources: CeaseIncomeSourcesViewModel,
         isAgent: Boolean,
         backUrl: String
-)( implicit messages: Messages, user: common.auth.MtdItUser[_])
+)( implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

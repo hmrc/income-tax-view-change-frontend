@@ -18,6 +18,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import businessDetails.forms.triggeredMigration.CheckActiveBusinessesConfirmForm
+@import common.auth.MtdItUser
 
 @this(
     mainTemplate: unifiedLayout,
@@ -31,7 +32,7 @@
   postAction: Call,
   backUrl: String,
   isAgent: Boolean
-)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+)(implicit messages: Messages, user: MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("triggered-migration.check-active-businesses-confirm.heading"),

@@ -23,6 +23,7 @@
 @import models.incomeSourceDetails.viewmodels.DatesModel
 @import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 @import obligations.controllers.{routes => obligationsRoutes}
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -47,7 +48,7 @@
         isAgent: Boolean,
         postAction: Call,
         isCurrentTaxYear: Boolean
-)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

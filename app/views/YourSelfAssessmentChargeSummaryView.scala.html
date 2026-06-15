@@ -39,6 +39,7 @@
 @import common.viewUtils.ExternalUrlHelper
 @import common.exceptions.MissingFieldException
 @import common.config.FrontendAppConfig
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -73,7 +74,7 @@
     messages: Messages,
     appConfig: FrontendAppConfig,
     dateService: DateServiceInterface,
-    user: common.auth.MtdItUser[_]
+    user: MtdItUser[_]
 )
 
 @import implicitDateFormatter.longDate

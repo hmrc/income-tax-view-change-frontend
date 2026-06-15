@@ -26,6 +26,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.TableRow
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 @import common.models.incomeSourceDetails.QuarterReportingType
+@import common.auth.MtdItUser
 
 @this(
         h2: h2,
@@ -37,7 +38,7 @@
         govukTable: GovukTable
 )
 
-@(viewModel: TaxYearSummaryViewModel)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: TaxYearSummaryViewModel)(implicit messages: Messages, user: MtdItUser[_])
 @import implicitDateFormatter._
 
 @tableHead = @{

@@ -21,6 +21,7 @@
 @import common.views.html.components._
 @import common.views.html.helpers.injected.ErrorSummary
 @import common.views.html.layouts.unifiedLayout
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -37,7 +38,7 @@
         govukPanel: GovukPanel
 )
 
-@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String, reportingObligationsLink: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(source: IncomeSourceCeasedObligationsViewModel, viewAllBusinessLink: String, viewUpcomingUpdatesLink: String, reportingObligationsLink: String)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

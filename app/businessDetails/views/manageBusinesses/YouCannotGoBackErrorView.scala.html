@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+@import common.auth.MtdItUser
 
 @this(mainTemplate: unifiedLayout,
     h1: h1,
@@ -27,7 +28,7 @@
     p: p,
     continueButton: ContinueButton)
 
-@(isAgent: Boolean, subheadingContent: String, noSession: Boolean = false)(implicit user: common.auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, subheadingContent: String, noSession: Boolean = false)(implicit user: MtdItUser[_], messages: Messages)
 
 @getManageUrl = @{
     if(isAgent) {

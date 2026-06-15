@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 @import common.config.FrontendAppConfig
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -35,7 +36,7 @@
         formWithCSRF: FormWithCSRF
 )
 
-@(viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: common.auth.MtdItUser[_])
+@(viewModel: ConfirmationForAdjustingPoaViewModel)(implicit messages: Messages, request: RequestHeader, user: MtdItUser[_])
 
 @getCorrectBody = @{
     if (viewModel.isAmountZero)   getMessage("p2")

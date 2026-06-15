@@ -21,6 +21,7 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import financials.controllers.routes as financialsRoutes
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -35,7 +36,7 @@
 @(
         poaTaxYear: TaxYear
 )(
-        implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_]
+        implicit messages: Messages,  request: RequestHeader, user: MtdItUser[_]
 )
 
 @getMessage(key: String, args: String*) = @{
