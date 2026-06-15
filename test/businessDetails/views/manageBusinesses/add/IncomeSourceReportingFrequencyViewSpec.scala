@@ -22,10 +22,10 @@ import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.mocks.services.MockDateService
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

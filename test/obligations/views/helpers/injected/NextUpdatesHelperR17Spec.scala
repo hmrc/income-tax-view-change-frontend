@@ -19,6 +19,7 @@ package obligations.views.helpers.injected
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
+import common.testUtils.TestSupport
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
 import obligations.testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}
@@ -29,7 +30,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import obligations.testConstants.BusinessDetailsTestConstants.business1
-import testUtils.TestSupport
 
 import java.time.LocalDate
 

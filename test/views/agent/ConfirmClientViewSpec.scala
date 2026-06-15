@@ -16,8 +16,8 @@
 
 package views.agent
 
+import common.testUtils.ViewSpec
 import play.api.mvc.Call
-import testUtils.ViewSpec
 import hub.views.html.agent.ConfirmClientUTRView
 
 

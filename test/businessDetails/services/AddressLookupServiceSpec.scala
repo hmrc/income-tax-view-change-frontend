@@ -19,13 +19,13 @@ package businessDetails.services
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.{CheckMode, NormalMode}
+import common.testUtils.TestSupport
 import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
-import testUtils.TestSupport
 
 import scala.concurrent.Future
 import scala.util.Success

@@ -16,8 +16,8 @@
 
 package models.financialDetails
 
+import common.testUtils.UnitSpec
 import play.api.libs.json.{JsString, JsSuccess, Json}
-import testUtils.UnitSpec
 
 class TransactionTypeSpec extends UnitSpec{
 

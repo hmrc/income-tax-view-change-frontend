@@ -16,12 +16,12 @@
 
 package common.views.feedback
 
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import testUtils.TestSupport
 import common.views.html.feedback.FeedbackThankYouView
 
 class FeedbackThankYouViewSpec extends TestSupport {

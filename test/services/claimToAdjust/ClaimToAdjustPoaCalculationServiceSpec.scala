@@ -22,7 +22,7 @@ import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, 
 import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
 import financials.services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
 import common.testConstants.BaseTestConstants.{testNino, testNinoNino, testTaxYear}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimToAdjustPoaConnector{
 

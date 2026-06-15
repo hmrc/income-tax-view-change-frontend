@@ -32,9 +32,9 @@ import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFre
 import common.models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, singleUKForeignPropertyResponseInLatencyPeriod}
+import shared.repositories.UIJourneySessionDataRepository
 
 import java.time.LocalDate
 

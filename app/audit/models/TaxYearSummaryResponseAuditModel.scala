@@ -22,7 +22,7 @@ import common.enums.AuditType.TaxYearOverviewResponse
 import common.enums.TransactionName
 import common.implicits.ImplicitDateParser
 import common.models.audit.ExtendedAuditModel
-import models.liabilitycalculation.Messages
+import common.models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.ObligationWithIncomeType

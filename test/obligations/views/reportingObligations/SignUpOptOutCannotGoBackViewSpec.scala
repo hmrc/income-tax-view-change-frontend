@@ -16,11 +16,11 @@
 
 package obligations.views.reportingObligations
 
+import common.testUtils.TestSupport
 import obligations.views.html.errorPages.SignUpOptOutCannotGoBackView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 
 class SignUpOptOutCannotGoBackViewSpec extends TestSupport {
 

@@ -34,8 +34,8 @@ import play.api.mvc.Result
 import play.api.mvc.Results.{Ok, Redirect}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import common.testUtils.TestSupport
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
-import testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}

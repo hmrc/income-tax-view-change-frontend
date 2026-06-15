@@ -22,9 +22,9 @@ import common.enums.AuditType.ForecastIncome
 import common.enums.TransactionName
 import common.implicits.ImplicitDateParser
 import common.models.audit.ExtendedAuditModel
-import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
+import common.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.{JsNumber, JsObject, JsValue, Json}
-import utils.Utilities.*
+import shared.utils.Utilities.*
 
 
 case class ForecastIncomeAuditModel(user: MtdItUser[_], endOfYearEstimate: EndOfYearEstimate)

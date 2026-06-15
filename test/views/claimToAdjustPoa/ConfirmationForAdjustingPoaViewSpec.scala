@@ -18,13 +18,13 @@ package views.claimToAdjustPoa
 
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import testUtils.TestSupport
 import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
 
 class ConfirmationForAdjustingPoaViewSpec extends TestSupport{

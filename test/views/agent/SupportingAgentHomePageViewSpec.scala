@@ -26,7 +26,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.*
-import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import hub.views.html.agent.SupportingAgentHomeView
 
@@ -39,6 +38,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus
+import common.testUtils.{TestSupport, ViewSpec}
 
 class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching with ViewSpec {
 

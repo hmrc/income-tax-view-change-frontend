@@ -16,9 +16,9 @@
 
 package models.claimToAdjustPoa
 
+import common.testUtils.UnitSpec
 import models.claimToAdjustPoa.SelectYourReason._
 import play.api.libs.json.{JsError, JsString, Json}
-import testUtils.UnitSpec
 
 
 class SelectYourReasonSpec extends UnitSpec {

@@ -17,10 +17,10 @@
 package common.controllers
 
 import common.config.FrontendAppConfig
+import common.testUtils.TestSupport
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*
-import testUtils.TestSupport
 
 class SignInControllerSpec extends TestSupport {
 

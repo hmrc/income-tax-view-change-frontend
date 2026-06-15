@@ -20,12 +20,12 @@ import businessDetails.services.AddressLookupConnector
 import common.config.featureswitch.FeatureSwitching
 import common.mocks.MockHttpV2
 import common.models.core.{CheckMode, NormalMode}
+import common.testUtils.TestSupport
 import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import org.scalactic.Fail
 import play.api.http.Status.{ACCEPTED, OK}
 import play.api.libs.json.*
-import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
 class AddressLookupConnectorSpec extends TestSupport with FeatureSwitching with MockHttpV2 {

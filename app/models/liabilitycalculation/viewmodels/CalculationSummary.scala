@@ -17,7 +17,7 @@
 package models.liabilitycalculation.viewmodels
 
 import common.implicits.ImplicitDateParser
-import models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
+import common.models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
 
 import java.time.LocalDate
 

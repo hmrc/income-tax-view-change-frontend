@@ -19,11 +19,11 @@ package obligations.models.audit
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.Annual
+import common.testUtils.TestSupport
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import testUtils.TestSupport
 
 class OptInAuditModelSpec extends TestSupport {
 

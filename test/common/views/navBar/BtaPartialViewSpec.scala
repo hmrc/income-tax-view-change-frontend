@@ -16,9 +16,9 @@
 
 package common.views.navBar
 
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
 import views.html.navBar.BtaPartial
 
 class BtaPartialViewSpec extends TestSupport {

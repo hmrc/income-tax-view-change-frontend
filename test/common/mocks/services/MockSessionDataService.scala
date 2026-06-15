@@ -19,11 +19,10 @@ package common.mocks.services
 import common.auth.actions.AuthActionsTestData.sessionGetSuccessResponse
 import common.services.SessionDataService
 import common.models.sessionData.SessionDataGetResponse.SessionDataNotFound
-import common.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
+import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 
@@ -34,10 +33,6 @@ trait MockSessionDataService extends UnitSpec with BeforeAndAfterEach {
   override def beforeEach(): Unit = {
     super.beforeEach()
     reset(mockSessionDataService)
-  }
-
-  def setupMockPostSessionData(response: SessionDataPostResponse): Unit = {
-    when(mockSessionDataService.postSessionData(any())(any())).thenReturn(Future.successful(response))
   }
 
   def setupMockGetSessionDataSuccess(): Unit = {

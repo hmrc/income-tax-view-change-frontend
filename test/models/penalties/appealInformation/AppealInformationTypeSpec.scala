@@ -16,9 +16,9 @@
 
 package models.penalties.appealInformation
 
+import common.testUtils.TestSupport
 import models.penalties.appealInformation.AppealLevelEnum.HmrcAppealLevel
 import play.api.libs.json.{JsValue, Json}
-import testUtils.TestSupport
 
 class AppealInformationTypeSpec extends TestSupport {
 

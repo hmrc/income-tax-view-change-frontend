@@ -24,7 +24,7 @@ import mocks.connectors.MockFinancialDetailsConnector
 import models.financialDetails.FinancialDetailsErrorModel
 import services.helpers.CreditHistoryDataHelper
 import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConnector

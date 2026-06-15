@@ -17,11 +17,11 @@
 package common.controllers
 
 import common.controllers.errors.NotEnrolledController
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*
-import testUtils.TestSupport
 import common.views.html.notEnrolled.NotEnrolledView
 
 class NotEnrolledControllerSpec extends TestSupport {

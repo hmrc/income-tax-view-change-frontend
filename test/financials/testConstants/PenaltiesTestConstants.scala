@@ -16,6 +16,7 @@
 
 package financials.testConstants
 
+import common.testUtils.TestSupport
 import models.penalties.appealInformation.*
 import models.penalties.appealInformation.AppealLevelEnum.HmrcAppealLevel
 import models.penalties.breathingSpace.BreathingSpace
@@ -23,7 +24,6 @@ import models.penalties.latePayment.*
 import models.penalties.lateSubmission.*
 import models.penalties.{GetPenaltyDetails, Totalisations}
 import play.api.libs.json.{JsObject, Json}
-import testUtils.TestSupport
 
 import java.time.LocalDate
 

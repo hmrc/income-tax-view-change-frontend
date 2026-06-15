@@ -21,9 +21,10 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
 import common.models.sessionData.SessionCookieData
-import common.services.{AuditingService, SessionDataService}
+import common.services.AuditingService
 import common.utils.sessionUtils.SessionKeys
-import common.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
+import hub.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
+import hub.connectors.PostSessionDataConnector
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -38,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUTRView,
                                            val authActions: AuthActions,
                                            val auditingService: AuditingService,
-                                           val sessionDataService: SessionDataService)
+                                           val postSessionDataConnector: PostSessionDataConnector)
                                           (implicit mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: AgentItvcErrorHandler,
@@ -98,7 +99,7 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
   def handleSessionCookies(sessionCookieData: SessionCookieData)(codeBlock: Seq[(String, String)] => Future[Result])
                           (implicit hc: HeaderCarrier, request: Request[_], ec: ExecutionContext): Future[Result] = {
     if (getSessionDataStorageFS) {
-      sessionDataService.postSessionData(sessionCookieData.toSessionDataModel).flatMap {
+      postSessionDataConnector.postSessionData(sessionCookieData.toSessionDataModel).flatMap {
         case Left(value: SessionDataPostFailure) =>
           Logger("application").error(s"[Agent] Posting user session data was unsuccessful. Status: ${value.status}, error message: ${value.errorMessage}")
           Future(itvcErrorHandler.showInternalServerError())

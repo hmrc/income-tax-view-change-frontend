@@ -21,8 +21,8 @@ import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import common.testConstants.BaseTestConstants.app
+import common.testUtils.UnitSpec
 import financials.testConstants.PaymentAllocationsTestConstants._
-import testUtils.UnitSpec
 
 class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
 

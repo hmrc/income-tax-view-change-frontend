@@ -19,7 +19,7 @@ package common.connectors
 import com.github.tomakehurst.wiremock.client.WireMock
 import common.helpers.servicemocks.AuditStub
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import models.liabilitycalculation.*
+import common.models.liabilitycalculation.{Inputs, LiabilityCalculationError, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting

@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
+import common.testUtils.UnitSpec
 import mocks.services.MockCalculationListService
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
@@ -31,7 +32,6 @@ import obligations.services.reportingObligations.optOut
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
-import testUtils.UnitSpec
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext.Implicits.global

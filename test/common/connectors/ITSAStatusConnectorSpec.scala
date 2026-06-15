@@ -42,7 +42,7 @@ import play.api.Configuration
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.ITSAStatusTestConstants.{badJsonErrorITSAStatusError, notFoundHttpResponse}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.http.client.RequestBuilder
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

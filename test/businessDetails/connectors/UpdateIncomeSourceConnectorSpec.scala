@@ -41,7 +41,7 @@ import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

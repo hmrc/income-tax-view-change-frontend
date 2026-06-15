@@ -16,10 +16,10 @@
 
 package businessDetails.forms.manageBusinesses.add
 
+import common.testUtils.TestSupport
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.FormError
-import testUtils.TestSupport
 
 class ChooseTaxYearFormSpec extends AnyWordSpec with Matchers with TestSupport {
 

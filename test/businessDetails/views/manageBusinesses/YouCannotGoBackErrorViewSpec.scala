@@ -21,10 +21,10 @@ import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.YouCannotGoBackErrorView
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType, Manage}
+import common.testUtils.TestSupport
 
 class YouCannotGoBackErrorViewSpec extends TestSupport {
   

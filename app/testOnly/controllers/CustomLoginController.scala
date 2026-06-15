@@ -24,15 +24,14 @@ import common.services.{DateServiceInterface, ITSAStatusService}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.CalculationListService
+import returns.services.CalculationListService
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{ClearITSAStatusCacheConnector, CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.*
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
-import testOnly.utils.UserRepository
+import testOnly.utils.{AuthExchange, SessionBuilder, UserRepository}
 import testOnly.views.html.LoginPage
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.{AuthExchange, SessionBuilder}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

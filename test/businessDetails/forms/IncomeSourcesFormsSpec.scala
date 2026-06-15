@@ -19,8 +19,8 @@ package businessDetails.forms
 import businessDetails.forms.manageBusinesses.add.{BusinessNameForm, BusinessTradeForm}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
+import common.testUtils.TestSupport
 import org.scalacheck.Properties
-import testUtils.TestSupport
 
 import java.time.LocalDate
 import java.time.Month.APRIL

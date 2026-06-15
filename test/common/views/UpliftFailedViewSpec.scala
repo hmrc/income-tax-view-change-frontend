@@ -16,10 +16,10 @@
 
 package common.views
 
+import common.testUtils.ViewSpec
 import common.views.html.errorPages.UpliftFailedView
 import play.twirl.api.Html
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
-import testUtils.ViewSpec
 
 
 class UpliftFailedViewSpec extends ViewSpec {

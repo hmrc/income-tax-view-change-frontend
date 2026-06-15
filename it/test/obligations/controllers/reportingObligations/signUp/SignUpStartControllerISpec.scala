@@ -28,9 +28,9 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import shared.repositories.UIJourneySessionDataRepository
 
 class SignUpStartControllerISpec extends ControllerISpecHelper {
 

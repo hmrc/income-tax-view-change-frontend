@@ -21,7 +21,7 @@ import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants._
 import common.testConstants.NinoLookupTestConstants._
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 
 class NinoResponseModelSpec extends UnitSpec with Matchers {
 

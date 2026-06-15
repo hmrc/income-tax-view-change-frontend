@@ -22,7 +22,7 @@ import models.nrs.NrsSuccessResponse
 import org.mockito.Mockito.*
 import play.api.http.Status.NOT_FOUND
 import common.testConstants.NrsUtils.nrsSubmission
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 import scala.concurrent.Future
 

@@ -17,9 +17,9 @@
 package models.liabilitycalculation.viewmodels
 
 import common.exceptions.MissingFieldException
+import common.models.liabilitycalculation.*
+import common.models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
-import models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
-import models.liabilitycalculation.{Message, Messages, PensionContributionDetail, PensionContributionReliefs, ReliefsClaimed, StudentLoan}
 import org.scalatest.OptionValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.should.Matchers

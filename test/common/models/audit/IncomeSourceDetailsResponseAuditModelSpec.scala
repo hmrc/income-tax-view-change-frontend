@@ -21,7 +21,7 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import play.api.libs.json.{JsArray, Json}
 import play.api.test.FakeRequest
 import common.testConstants.BaseTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class IncomeSourceDetailsResponseAuditModelSpec extends TestSupport {

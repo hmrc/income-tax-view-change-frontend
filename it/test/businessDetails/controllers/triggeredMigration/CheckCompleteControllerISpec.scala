@@ -28,10 +28,10 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import shared.repositories.UIJourneySessionDataRepository
 
 class CheckCompleteControllerISpec extends ControllerISpecHelper {
 

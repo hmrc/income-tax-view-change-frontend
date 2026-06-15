@@ -16,10 +16,10 @@
 
 package models
 
+import common.testUtils.UnitSpec
 import models.financialDetails._
 import hub.models.homePage.NextPaymentsTileViewModel
 import org.scalatest.matchers.should.Matchers
-import testUtils.UnitSpec
 
 import java.time.LocalDate
 

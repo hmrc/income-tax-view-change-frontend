@@ -18,12 +18,12 @@ package views.claimToAdjustPoa
 
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.test.Helpers.contentAsString
-import testUtils.TestSupport
 import views.html.claimToAdjustPoa.AmendablePoaView
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes

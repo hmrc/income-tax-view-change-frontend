@@ -23,7 +23,7 @@ import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import obligations.testConstants.NextUpdatesTestConstants.*
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class NextUpdatesResponseAuditModelSpec extends TestSupport {
 

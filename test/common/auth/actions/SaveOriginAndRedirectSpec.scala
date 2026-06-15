@@ -28,7 +28,7 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.GET
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import scala.concurrent.Future

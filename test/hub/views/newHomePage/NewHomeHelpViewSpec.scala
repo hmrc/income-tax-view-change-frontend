@@ -19,6 +19,7 @@ package hub.views.newHomePage
 import common.auth.actions.AuthActionsTestData.getMtdItUser
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
+import common.testUtils.{TestSupport, ViewSpec}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -28,7 +29,6 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.http.HeaderCarrier
 import hub.views.html.newHomePage.NewHomeHelpView

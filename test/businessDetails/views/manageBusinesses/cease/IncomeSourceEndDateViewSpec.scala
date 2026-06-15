@@ -24,9 +24,9 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.Html
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceEndDateView
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

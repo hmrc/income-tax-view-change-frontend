@@ -18,9 +18,9 @@ package common.mocks.services
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
+import common.testUtils.UnitSpec
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 trait MockDateService extends UnitSpec with BeforeAndAfterEach {
 

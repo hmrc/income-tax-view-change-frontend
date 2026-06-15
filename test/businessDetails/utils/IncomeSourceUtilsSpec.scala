@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
 import common.testConstants.IncomeSourceDetailsTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class IncomeSourceUtilsSpec extends TestSupport {
 

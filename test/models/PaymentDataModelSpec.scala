@@ -20,8 +20,8 @@ import common.models.core.PaymentDataModel
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants._
+import common.testUtils.UnitSpec
 import financials.testConstants.PaymentDataTestConstants._
-import testUtils.UnitSpec
 
 class PaymentDataModelSpec extends UnitSpec with Matchers {
 

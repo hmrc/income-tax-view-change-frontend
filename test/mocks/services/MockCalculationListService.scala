@@ -17,12 +17,12 @@
 package mocks.services
 
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.CalculationListService
-import testUtils.UnitSpec
+import returns.services.CalculationListService
 
 import scala.concurrent.Future
 

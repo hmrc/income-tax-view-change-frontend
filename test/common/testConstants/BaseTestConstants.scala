@@ -29,7 +29,7 @@ import businessDetails.testConstants.BusinessDetailsTestConstants.business1
 import businessDetails.testConstants.PropertyDetailsTestConstants.propertyDetails
 import IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ServiceNavigationItem, Text}

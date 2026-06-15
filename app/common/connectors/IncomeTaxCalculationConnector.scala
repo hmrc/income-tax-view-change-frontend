@@ -18,7 +18,7 @@ package common.connectors
 
 import common.config.FrontendAppConfig
 import common.enums.TaxYearSummary.CalculationRecord
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
+import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel}
 import play.api.Logger
 import play.api.http.Status.*
 import uk.gov.hmrc.http.client.HttpClientV2

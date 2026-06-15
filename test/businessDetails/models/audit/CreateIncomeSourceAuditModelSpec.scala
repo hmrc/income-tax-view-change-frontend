@@ -24,7 +24,7 @@ import enums.FailureCategory.ApiFailure
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, Json}
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate

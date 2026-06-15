@@ -16,12 +16,12 @@
 
 package common.mocks
 
+import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 import uk.gov.hmrc.http.StringContextOps
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 

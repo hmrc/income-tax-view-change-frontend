@@ -30,7 +30,7 @@ import businessDetails.testConstants.BusinessDetailsTestConstants.{testLatencyDe
 import businessDetails.testConstants.PropertyDetailsTestConstants.*
 import common.models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import common.testConstants.IncomeSourceDetailsTestConstants.*
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 
 import java.time.LocalDate
 

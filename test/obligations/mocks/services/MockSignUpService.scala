@@ -17,6 +17,7 @@
 package obligations.mocks.services
 
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.UnitSpec
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.services.reportingObligations.signUp.core.SignUpProposition
@@ -24,7 +25,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

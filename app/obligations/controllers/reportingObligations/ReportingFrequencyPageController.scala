@@ -30,9 +30,9 @@ import obligations.viewUtils.ReportingFrequencyViewUtils
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.MtdConstants
 import common.views.html.errorPages.templates.ErrorTemplate
 import obligations.views.html.reportingObligations.ReportingFrequencyView
+import shared.utils.MtdConstants
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

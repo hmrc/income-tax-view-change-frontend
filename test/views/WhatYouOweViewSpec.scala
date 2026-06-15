@@ -34,9 +34,9 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import common.testUtils.{TestSupport, ViewSpec}
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import testUtils.{TestSupport, ViewSpec}
 import views.html.WhatYouOweView
 
 import java.time.LocalDate

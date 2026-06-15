@@ -16,6 +16,7 @@
 
 package mocks.services
 
+import common.testUtils.UnitSpec
 import financials.services.CreditHistoryService
 import financials.services.CreditHistoryService.CreditHistoryError
 import models.creditDetailModel.CreditDetailModel
@@ -23,7 +24,6 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

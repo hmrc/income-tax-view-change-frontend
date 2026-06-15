@@ -27,7 +27,7 @@ import common.enums.JourneyType.TriggeredMigrationJourney
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import common.enums.TaxYearSummary.CalculationRecord.LATEST
 import common.models.admin.TriggeredMigration
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent

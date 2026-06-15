@@ -22,11 +22,11 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.models.core.NormalMode
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

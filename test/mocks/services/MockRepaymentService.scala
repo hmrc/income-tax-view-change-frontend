@@ -16,10 +16,10 @@
 
 package mocks.services
 
+import common.testUtils.UnitSpec
 import financials.services.RepaymentService
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 trait MockRepaymentService extends UnitSpec with BeforeAndAfterEach {
 

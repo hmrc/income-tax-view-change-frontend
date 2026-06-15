@@ -21,7 +21,6 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.{Html, HtmlFormat}
 import businessDetails.testConstants.BusinessDetailsTestConstants.*
-import testUtils.{TestSupport, ViewSpec}
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
@@ -30,6 +29,7 @@ import businessDetails.views.constants.ManageIncomeSourceDetailsViewConstants.*
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 import common.models.itsaStatus.ITSAStatus
+import common.testUtils.{TestSupport, ViewSpec}
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 

@@ -29,8 +29,8 @@ import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import services.helpers.CreditHistoryDataHelper
 import common.testConstants.BaseTestConstants.testMtditid
+import common.testUtils.{TestSupport, ViewSpec}
 import financials.testConstants.FinancialDetailsTestConstants.*
-import testUtils.{TestSupport, ViewSpec}
 import views.html.CreditsSummaryView
 
 import java.net.URL

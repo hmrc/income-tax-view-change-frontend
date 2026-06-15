@@ -17,13 +17,13 @@
 package views.components
 
 import common.config.featureswitch.FeatureSwitching
+import common.testUtils.ViewSpec
 import financials.testConstants.ChargeConstants
 import models.liabilitycalculation.viewmodels.CalculationSummary
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import models.taxyearsummary._
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
-import testUtils.ViewSpec
 import returns.views.html.partials.taxYearSummary.TaxCalculationOverview
 
 import java.time.LocalDate

@@ -17,8 +17,8 @@
 package forms.constraints
 
 import common.forms.validation.CustomConstraints
+import common.testUtils.TestSupport
 import play.api.data.validation.{Invalid, Valid}
-import testUtils.TestSupport
 
 class ConstraintsSpec extends CustomConstraints with TestSupport {
 

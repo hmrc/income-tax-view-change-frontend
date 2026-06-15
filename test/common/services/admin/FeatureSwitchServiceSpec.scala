@@ -17,13 +17,13 @@
 package common.services.admin
 
 import common.config.FrontendAppConfig
+import common.mocks.connectors.MockFeatureSwitchConnector
 import common.models.admin.{FeatureSwitch, FeatureSwitchName}
-import mocks.connectors.MockFeatureSwitchConnector
+import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import testUtils.TestSupport
 
 import scala.concurrent.{ExecutionContext, Future}
 

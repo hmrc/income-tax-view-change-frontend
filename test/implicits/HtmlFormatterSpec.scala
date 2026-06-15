@@ -16,9 +16,9 @@
 
 package implicits
 
+import common.testUtils.UnitSpec
 import org.scalatest.matchers.should.Matchers
 import play.twirl.api.Html
-import testUtils.UnitSpec
 
 class HtmlFormatterSpec extends UnitSpec with Matchers {
 

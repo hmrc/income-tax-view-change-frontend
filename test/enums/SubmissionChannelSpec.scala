@@ -16,10 +16,10 @@
 
 package enums
 
-import models.liabilitycalculation.SubmissionChannel
+import common.models.liabilitycalculation.SubmissionChannel
+import common.testUtils.TestSupport
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.*
-import testUtils.TestSupport
 
 class SubmissionChannelSpec extends TestSupport with Matchers {
 

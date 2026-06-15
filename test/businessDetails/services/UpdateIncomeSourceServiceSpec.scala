@@ -26,7 +26,7 @@ import org.mockito.Mockito.{mock, when}
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import common.testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
