@@ -261,7 +261,13 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       isNotCrystallisedShowInset = false
     )
 
-  def explanationView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel, isCrystallised: Boolean = false): Html =
+  def explanationView(
+                       chargeItems: List[TaxYearSummaryChargeItem] = testChargesList,
+                       isAgent: Boolean = false,
+                       obligations: ObligationsModel = testObligationsModel,
+                       isCrystallised: Boolean = false,
+                       isNotCrystallisedShowInset: Boolean = true
+                     ): Html =
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(calculationSummary = Some(modelComplete(crystallised = isCrystallised, testPeriod = 2017)), previousCalculationSummary = None, charges = chargeItems, obligations = obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
@@ -273,7 +279,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       viewTaxCalcLink = None,
       selfAssessmentLink = "",
       contactHmrcLink = "",
-      isNotCrystallisedShowInset = true
+      isNotCrystallisedShowInset = isNotCrystallisedShowInset
     )
 
   def class2NicsView(isAgent: Boolean = false): Html =
@@ -852,6 +858,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
       "show the indented explanation text when the isNotCrystallisedShowInset flag == true" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true)) {
         document.getOptionalSelector("#calc-explanation-inset").get.text() shouldBe "This is not your final tax bill. This calculation is based on the information we currently have and may change when you finalise your tax year."
+      }
+
+      "show the indented explanation text when the isNotCrystallisedShowInset flag == false" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true, isNotCrystallisedShowInset = false)) {
+        document.getOptionalSelector("#calc-explanation-inset") shouldBe None
       }
 
       "when in an ongoing year should display the correct heading in the Tax Calculation tab" in new Setup(estimateView()) {
