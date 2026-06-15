@@ -25,8 +25,8 @@ import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.Utilities.*
-import utils.Converters.OptionExtension
+import shared.utils.Utilities.*
+import businessDetails.utils.OptionExtension
 
 case class CreateIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,
                                         viewModel: CheckDetailsViewModel,

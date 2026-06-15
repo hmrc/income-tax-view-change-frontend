@@ -34,7 +34,7 @@ import businessDetails.testConstants.BusinessDetailsTestConstants.*
 import businessDetails.testConstants.PropertyDetailsTestConstants.{testStartDate as _, *}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.IncomeSourceDetailsTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 import scala.util.Success
 

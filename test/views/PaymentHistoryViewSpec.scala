@@ -21,13 +21,13 @@ import common.config.FrontendAppConfig
 import common.implicits.ImplicitDateFormatter
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
+import common.testUtils.ViewSpec
 import financials.implicits.ImplicitCurrencyFormatter.*
 import models.financialDetails.*
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
-import testUtils.ViewSpec
 import views.html.PaymentHistoryView
 
 import java.time.LocalDate

@@ -40,8 +40,8 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants._
+import common.testUtils.TestSupport
 import financials.testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, validMultipleRepaymentHistoryJson, validRepaymentHistoryOneRSIJson}
-import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

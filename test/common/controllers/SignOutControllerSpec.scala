@@ -18,12 +18,12 @@ package common.controllers
 
 import common.auth.FrontendAuthorisedFunctions
 import common.config.{FrontendAppConfig, FrontendAuthConnector}
+import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.auth.core.{AffinityGroup, MissingBearerToken}
 

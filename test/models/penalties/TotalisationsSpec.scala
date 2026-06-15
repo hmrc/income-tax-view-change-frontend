@@ -16,9 +16,9 @@
 
 package models.penalties
 
+import common.testUtils.TestSupport
 import play.api.libs.json.{JsObject, Json}
 import financials.testConstants.PenaltiesTestConstants.totalisationsModel
-import testUtils.TestSupport
 
 class TotalisationsSpec extends TestSupport {
 

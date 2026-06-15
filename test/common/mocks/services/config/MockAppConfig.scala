@@ -17,9 +17,9 @@
 package common.mocks.services.config
 
 import common.config.FrontendAppConfig
+import common.testUtils.UnitSpec
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 trait MockAppConfig extends UnitSpec with BeforeAndAfterEach {
 

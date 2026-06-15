@@ -20,7 +20,7 @@ import common.enums.AuditType.ClientDetailsConfirmed
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, TransactionName}
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class ConfirmClientDetailsAuditModelSpec extends TestSupport {
 

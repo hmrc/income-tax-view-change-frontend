@@ -21,7 +21,7 @@ import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsMod
 import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants.testSaUtr
 import common.testConstants.CitizenDetailsTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future

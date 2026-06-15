@@ -18,10 +18,10 @@ package businessDetails.views.manageBusinesses.manage
 
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import play.twirl.api.Html
-import testUtils.ViewSpec
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
 import businessDetails.views.html.manageBusinesses.manage.ManageObligationsView
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.ViewSpec
 
 import java.time.LocalDate
 

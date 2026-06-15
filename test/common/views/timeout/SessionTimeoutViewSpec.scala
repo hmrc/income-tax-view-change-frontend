@@ -17,13 +17,13 @@
 package common.views.timeout
 
 import common.config.FrontendAppConfig
+import common.testUtils.TestSupport
 import common.viewUtils.InternalUrlHelper
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
 import common.views.html.timeout.TimeoutView
 
 class SessionTimeoutViewSpec extends TestSupport {

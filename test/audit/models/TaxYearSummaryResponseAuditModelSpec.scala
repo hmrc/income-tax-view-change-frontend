@@ -21,15 +21,15 @@ import common.implicits.ImplicitDateParser
 import common.models.core.AccountingPeriodModel
 import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.liabilitycalculation.{Message, Messages}
 import models.taxyearsummary.TaxYearSummaryChargeItem
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import org.scalatest.wordspec.AnyWordSpecLike
 import common.testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import common.models.liabilitycalculation.{Message, Messages}
+import common.testUtils.TestSupport
 import financials.testConstants.ChargeConstants
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import play.api.libs.json._

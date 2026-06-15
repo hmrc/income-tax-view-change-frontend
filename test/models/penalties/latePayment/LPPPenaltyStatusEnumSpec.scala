@@ -16,8 +16,8 @@
 
 package models.penalties.latePayment
 
+import common.testUtils.TestSupport
 import play.api.libs.json.{JsError, JsString, JsSuccess, Json}
-import testUtils.TestSupport
 
 class LPPPenaltyStatusEnumSpec extends TestSupport {
 

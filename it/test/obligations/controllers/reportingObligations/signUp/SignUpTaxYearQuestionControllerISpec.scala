@@ -34,10 +34,10 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import shared.repositories.UIJourneySessionDataRepository
 
 import scala.concurrent.Future
 

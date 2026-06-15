@@ -19,6 +19,8 @@ package views
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.incomeSourceDetails.TaxYear
+import common.models.liabilitycalculation.{Message, Messages}
+import common.testUtils.ViewSpec
 import common.viewUtils
 import common.viewUtils.ExternalUrlHelper
 import financials.controllers.routes as financialsRoutes
@@ -26,7 +28,6 @@ import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, Curren
 import financials.testConstants.ChargeConstants
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.liabilitycalculation.{Message, Messages}
 import models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import obligations.models.*
 import obligations.testConstants.NextUpdatesTestConstants.*
@@ -34,7 +35,6 @@ import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
 import returns.views.html.TaxYearSummaryView
 import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
-import testUtils.ViewSpec
 
 import java.time.LocalDate
 

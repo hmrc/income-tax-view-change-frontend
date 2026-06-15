@@ -19,12 +19,12 @@ package obligations.views.reportingObligations.signUp
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
+import common.testUtils.TestSupport
 import obligations.forms.reportingObligations.signUp.SignUpTaxYearQuestionForm
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
 import obligations.views.html.reportingObligations.signUp.SignUpTaxYearQuestionView
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 
 class SignUpTaxYearQuestionViewSpec extends TestSupport {
 

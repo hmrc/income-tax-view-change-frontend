@@ -29,7 +29,7 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import financials.testConstants.PaymentAllocationsTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import testUtils.ViewSpec
+import common.testUtils.ViewSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import views.html.PaymentAllocationView
 

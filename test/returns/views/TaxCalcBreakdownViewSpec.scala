@@ -17,9 +17,10 @@
 package views
 
 import common.exceptions.MissingFieldException
-import models.liabilitycalculation.taxcalculation.TaxBands
+import common.models.liabilitycalculation.taxcalculation.TaxBands
+import common.testUtils.ViewSpec
 import models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, TransitionProfitRow}
-import models.liabilitycalculation.{Message, Messages, PensionContributionDetail, PensionContributionReliefs}
+import common.models.liabilitycalculation.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.prop.TableDrivenPropertyChecks.*

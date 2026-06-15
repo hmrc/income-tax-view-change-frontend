@@ -29,13 +29,13 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testUtils.{TestSupport, ViewSpec}
 import hub.views.html.newHomePage.NewHomeOverviewView
 
 import java.time.{LocalDate, Month}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.auth.actions.AuthActionsTestData.getMtdItUser
 import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.{TestSupport, ViewSpec}
 
 
 class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {

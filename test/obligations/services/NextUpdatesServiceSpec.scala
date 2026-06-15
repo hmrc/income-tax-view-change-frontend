@@ -17,6 +17,7 @@
 package obligations.services
 
 import common.config.featureswitch.FeatureSwitching
+import common.testUtils.TestSupport
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.mocks.connectors.MockObligationsConnector
 import obligations.models.*
@@ -27,7 +28,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import obligations.testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
-import testUtils.TestSupport
 
 import java.time.LocalDate
 import scala.concurrent.Future

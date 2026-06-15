@@ -18,10 +18,10 @@ package common.services
 
 import common.config.FrontendAppConfig
 import common.models.audit.ExtendedAuditModel
+import common.testUtils.TestSupport
 import org.mockito.Mockito.mock
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsValue, Json}
-import testUtils.TestSupport
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 
 

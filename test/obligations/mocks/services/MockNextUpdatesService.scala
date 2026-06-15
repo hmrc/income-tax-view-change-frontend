@@ -24,7 +24,7 @@ import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
 import businessDetails.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 
 import java.time.LocalDate
 import scala.concurrent.Future

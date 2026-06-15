@@ -16,9 +16,9 @@
 
 package common.views.errorPages.agent
 
+import common.testUtils.ViewSpec
 import org.jsoup.select.Elements
 import play.twirl.api.Html
-import testUtils.ViewSpec
 import common.views.html.errorPages.agent.UnauthorisedAgentView
 
 class UnauthorisedAgentViewSpec extends ViewSpec {

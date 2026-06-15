@@ -16,8 +16,8 @@
 
 package businessDetails.models.createIncomeSource
 
+import common.testUtils.TestSupport
 import play.api.libs.json.{JsObject, JsSuccess, Json}
-import testUtils.TestSupport
 
 class CreateIncomeSourceResponseSpec extends TestSupport {
   val createIncomeSourcesResponse = CreateIncomeSourceResponse("1234567")

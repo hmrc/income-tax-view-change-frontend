@@ -29,7 +29,7 @@ import obligations.models.audit.OptOutNewAuditModel
 import obligations.models.reportingObligations.optOut.{OptOutSessionData, OptOutYearToUpdate}
 import obligations.repositories.OptOutContextData
 import play.api.Logging
-import repositories.UIJourneySessionDataRepository
+import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

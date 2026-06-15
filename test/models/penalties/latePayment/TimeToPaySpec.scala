@@ -16,8 +16,8 @@
 
 package models.penalties.latePayment
 
+import common.testUtils.TestSupport
 import play.api.libs.json.{JsObject, Json}
-import testUtils.TestSupport
 
 import java.time.LocalDate
 

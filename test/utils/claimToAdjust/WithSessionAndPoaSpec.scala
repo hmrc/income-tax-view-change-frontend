@@ -40,7 +40,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}

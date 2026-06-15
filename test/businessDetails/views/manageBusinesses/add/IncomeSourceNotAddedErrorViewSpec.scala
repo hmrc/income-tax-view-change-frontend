@@ -21,10 +21,10 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceNotAddedErrorView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.testUtils.TestSupport
 
 class IncomeSourceNotAddedErrorViewSpec extends TestSupport {
 

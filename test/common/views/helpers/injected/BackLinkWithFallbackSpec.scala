@@ -17,7 +17,7 @@
 package common.views.helpers.injected
 
 import common.enums.GatewayPage.{GatewayPage, NoMatch, PaymentHistoryPage, TaxYearSummaryPage, WhatYouOwePage}
-import testUtils.ViewSpec
+import common.testUtils.ViewSpec
 import common.views.html.helpers.injected.BackLinkWithFallback
 
 class BackLinkWithFallbackSpec extends ViewSpec {

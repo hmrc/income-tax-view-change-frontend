@@ -16,11 +16,11 @@
 
 package common.mocks.services
 
+import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
 import play.api.cache.AsyncCacheApi
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

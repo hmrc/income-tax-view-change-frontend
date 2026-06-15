@@ -22,6 +22,7 @@ import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
+import common.testUtils.UnitSpec
 import mocks.services.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.mocks.connectors.MockITSAStatusUpdateConnector
@@ -33,8 +34,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest, Succeeded}
-import repositories.UIJourneySessionDataRepository
-import testUtils.UnitSpec
+import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext.Implicits.global

@@ -21,12 +21,12 @@ import org.jsoup.nodes.Document
 import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.models.core.NormalMode
+import common.testUtils.TestSupport
 
 class ChooseSoleTraderAddressViewSpec extends TestSupport {
 

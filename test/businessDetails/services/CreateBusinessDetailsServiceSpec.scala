@@ -29,7 +29,7 @@ import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import common.testConstants.BaseTestConstants.testMtditid
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate

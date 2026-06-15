@@ -18,11 +18,11 @@ package businessDetails.mocks.connectors
 
 import businessDetails.connectors.UpdateIncomeSourceConnector
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse}
+import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

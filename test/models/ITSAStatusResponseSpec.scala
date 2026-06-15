@@ -21,7 +21,7 @@ import org.scalatest.matchers.should.Matchers
 import play.api.http.Status
 import play.api.libs.json.{JsSuccess, Json}
 import common.testConstants.ITSAStatusTestConstants._
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class ITSAStatusResponseSpec extends TestSupport with Matchers {
   "The ITSAStatusResponseModel" should {

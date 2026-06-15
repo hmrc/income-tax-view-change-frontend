@@ -22,9 +22,9 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.admin.{MortgageEvidence, NewHomePage}
 import common.models.itsaStatus.ITSAStatusResponseModel
+import common.models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import mocks.services.*
-import models.liabilitycalculation.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -33,8 +33,8 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import services.*
 import hub.views.html.partials.newHome.overview.ProofOfYourIncomeView
+import returns.services.CalculationService
 
 import java.time.LocalDate
 import scala.concurrent.Future

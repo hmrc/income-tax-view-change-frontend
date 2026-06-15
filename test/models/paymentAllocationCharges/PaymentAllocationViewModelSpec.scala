@@ -17,9 +17,9 @@
 package models.paymentAllocationCharges
 
 import common.exceptions.MissingFieldException
+import common.testUtils.TestSupport
 import models.paymentAllocations.AllocationDetail
 import org.scalatest.matchers.should.Matchers
-import testUtils.TestSupport
 
 import java.time.LocalDate
 

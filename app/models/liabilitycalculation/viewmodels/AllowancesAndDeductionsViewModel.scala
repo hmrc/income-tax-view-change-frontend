@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.liabilitycalculation.Calculation
+import common.models.liabilitycalculation.Calculation
 
 case class AllowancesAndDeductionsViewModel(
                                              personalAllowance: Option[BigDecimal] = None,

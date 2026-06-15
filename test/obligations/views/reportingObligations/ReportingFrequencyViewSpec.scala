@@ -18,13 +18,13 @@ package obligations.views.reportingObligations
 
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
+import common.testUtils.TestSupport
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutTestSupport}
 import obligations.views.html.reportingObligations.ReportingFrequencyView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
-import testUtils.TestSupport
 import obligations.views.messages.ReportingFrequencyViewMessages.*
 
 class ReportingFrequencyViewSpec extends TestSupport {

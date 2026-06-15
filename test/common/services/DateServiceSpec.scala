@@ -22,7 +22,7 @@ import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.mockito.Mockito.{mock, reset}
 import common.testConstants.BaseTestConstants.testNino
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.*

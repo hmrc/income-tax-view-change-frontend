@@ -23,7 +23,7 @@ import common.enums.IncomeSourceJourney.UkProperty
 import models.incomeSourceDetails.viewmodels.*
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.Converters.OptionExtension
+import businessDetails.utils.OptionExtension
 
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject

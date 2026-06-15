@@ -16,18 +16,16 @@
 
 package common.services
 
-import common.connectors.SessionDataConnector
+import common.connectors.GetSessionDataConnector
 import common.utils.sessionUtils.SessionKeys
 import common.models.sessionData.SessionDataGetResponse.{SessionDataGetSuccess, SessionDataNotFound, SessionGetResponse}
-import common.models.sessionData.SessionDataModel
-import common.models.sessionData.SessionDataPostResponse.SessionDataPostResponse
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector)
+class SessionDataService @Inject()(sessionDataConnector: GetSessionDataConnector)
                                   (implicit ec: ExecutionContext){
 
   def getSessionData(useCookie: Boolean = false)
@@ -38,10 +36,6 @@ class SessionDataService @Inject()(sessionDataConnector: SessionDataConnector)
     } else {
       sessionDataConnector.getSessionData()
     }
-  }
-
-  def postSessionData(sessionDataModel: SessionDataModel)(implicit hc: HeaderCarrier): Future[SessionDataPostResponse] = {
-    sessionDataConnector.postSessionData(sessionDataModel)
   }
 
   private def getSessionResponseFromCookie(implicit request: Request[_]): Future[SessionGetResponse] = {

@@ -16,11 +16,11 @@
 
 package implicits
 
+import common.testUtils.UnitSpec
 import implicits.ImplicitJsonValidationFormatter._
 import org.scalatest.matchers.should.Matchers
 import play.api.data.validation.ValidationError
 import play.api.libs.json.JsPath
-import testUtils.UnitSpec
 
 
 class ImplicitJsonValidationFormatterSpec extends UnitSpec with Matchers {

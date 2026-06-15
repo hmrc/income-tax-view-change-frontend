@@ -16,18 +16,18 @@
 
 package common.connectors
 
+import common.config.FrontendAppConfig
 import common.models.admin.{FeatureSwitch, FeatureSwitchName}
 import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
-import testOnly.TestOnlyAppConfig
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FeatureSwitchConnector @Inject()(val appConfig: TestOnlyAppConfig,
+class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
                                        http: HttpClientV2)(implicit ec: ExecutionContext) extends RawResponseReads{
 
   def setSwitchStubUrl(featureFlagName: FeatureSwitchName, isEnabled: Boolean): String = {

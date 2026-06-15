@@ -23,7 +23,7 @@ import models.repaymentHistory._
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import common.auth.MtdItUser
-import testUtils.ViewSpec
+import common.testUtils.ViewSpec
 import views.html.RefundToTaxPayerView
 
 import java.time.LocalDate

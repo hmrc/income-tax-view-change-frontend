@@ -32,7 +32,7 @@ import org.mockito.Mockito.{mock, when}
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 

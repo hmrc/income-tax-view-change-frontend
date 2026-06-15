@@ -17,11 +17,11 @@
 package common.controllers.timeout
 
 import common.config.FrontendAppConfig
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*
-import testUtils.TestSupport
 
 class SessionTimeoutControllerSpec extends TestSupport {
 
@@ -65,7 +65,7 @@ class SessionTimeoutControllerSpec extends TestSupport {
 
     s"has the correct session" in {
       whenReady(result) { response =>
-        response.session.get("Gov-Test-Scenario") shouldBe Some("data")
+        response.session.get("Gov-Test-Scenario") shouldBe Some("obligations/resources/data")
       }
     }
   }

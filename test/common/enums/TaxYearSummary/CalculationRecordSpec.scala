@@ -16,7 +16,7 @@
 
 package common.enums.TaxYearSummary
 
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class CalculationRecordSpec extends TestSupport {
 

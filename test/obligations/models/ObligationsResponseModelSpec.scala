@@ -24,8 +24,8 @@ import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import BaseTestConstants.*
 import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard}
+import common.testUtils.TestSupport
 import obligations.testConstants.BusinessDetailsTestConstants.obligationsAllDeadlinesSuccessNotValidObligationType
-import testUtils.TestSupport
 
 class ObligationsResponseModelSpec extends TestSupport with Matchers with ImplicitDateFormatter {
 

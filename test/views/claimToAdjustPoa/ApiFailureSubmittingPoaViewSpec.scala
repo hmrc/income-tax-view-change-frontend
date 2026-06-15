@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import common.auth.MtdItUser
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 

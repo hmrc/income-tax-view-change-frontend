@@ -16,7 +16,7 @@
 
 package models.liabilitycalculation.viewmodels
 
-import models.liabilitycalculation.TaxDeductedAtSource
+import common.models.liabilitycalculation.TaxDeductedAtSource
 
 case class TaxDeductedAtSourceViewModel(
                                          payeEmployments: Option[BigDecimal] = None,

@@ -21,9 +21,9 @@ import common.auth.MtdItUser
 import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.*
+import common.testUtils.TestSupport
 import financials.testConstants.ANewCreditAndRefundModel
 import financials.testConstants.CreditAndRefundConstants.documentDetailWithDueDateFinancialDetailListModel
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate

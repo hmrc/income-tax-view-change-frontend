@@ -16,8 +16,8 @@
 
 package common.views.errorPages
 
+import common.testUtils.ViewSpec
 import play.twirl.api.HtmlFormat
-import testUtils.ViewSpec
 import common.views.html.errorPages.templates.ErrorTemplateWithLink
 
 class ErrorPageWithLinkViewSpec extends ViewSpec {

@@ -18,6 +18,7 @@ package hub.views.newHomePage
 
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
+import common.testUtils.{TestSupport, ViewSpec}
 import hub.models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import hub.models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
 import hub.models.newHomePage.{HandleYourTasksViewModel, MaturityLevel}
@@ -25,7 +26,6 @@ import org.jsoup.Jsoup
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.{TestSupport, ViewSpec}
 import hub.views.html.newHomePage.NewHomeYourTasksView
 
 class NewHomeYourTasksViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {

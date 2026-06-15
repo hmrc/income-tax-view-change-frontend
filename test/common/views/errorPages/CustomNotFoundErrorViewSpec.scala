@@ -16,8 +16,8 @@
 
 package common.views.errorPages
 
+import common.testUtils.ViewSpec
 import play.twirl.api.Html
-import testUtils.ViewSpec
 import common.views.html.errorPages.CustomNotFoundErrorView
 
 class CustomNotFoundErrorViewSpec extends ViewSpec {

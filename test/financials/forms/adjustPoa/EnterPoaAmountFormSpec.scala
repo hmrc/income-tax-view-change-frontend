@@ -16,8 +16,8 @@
 
 package financials.forms.adjustPoa
 
+import common.testUtils.TestSupport
 import play.api.data.Form
-import testUtils.TestSupport
 
 
 class EnterPoaAmountFormSpec extends TestSupport {

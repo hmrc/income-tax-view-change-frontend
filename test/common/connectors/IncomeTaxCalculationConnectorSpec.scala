@@ -19,10 +19,10 @@ package common.connectors
 import common.enums.TaxYearSummary.CalculationRecord
 import common.mocks.MockHttpV2
 import CalculationRecord.PREVIOUS
-import models.liabilitycalculation.*
+import common.models.liabilitycalculation.*
+import common.testUtils.TestSupport
 import play.api.http.Status.*
 import play.api.libs.json.{JsObject, Json}
-import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 
 import scala.concurrent.Future

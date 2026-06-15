@@ -26,10 +26,10 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testIncomeSource, testTradeName}
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.testUtils.TestSupport
 
 class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
 

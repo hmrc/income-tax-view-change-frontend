@@ -23,8 +23,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import common.testConstants.BaseTestConstants.testTaxYear
+import common.testUtils.UnitSpec
 import financials.testConstants.FinancialDetailsTestConstants._
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

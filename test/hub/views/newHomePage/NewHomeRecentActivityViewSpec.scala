@@ -17,12 +17,12 @@
 package hub.views.newHomePage
 
 import common.config.featureswitch.FeatureSwitching
+import common.testUtils.{TestSupport, ViewSpec}
 import hub.models.newHomePage.{RecentActivityCard, RecentActivityViewModel}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.contentAsString
-import testUtils.{TestSupport, ViewSpec}
 import hub.views.html.newHomePage.NewHomeRecentActivityView
 import play.api.test.Helpers.defaultAwaitTimeout
 

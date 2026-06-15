@@ -20,8 +20,8 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import common.models.liabilitycalculation.LiabilityCalculationError
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYearEndDate
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.i18n.{Lang, Messages}

@@ -21,11 +21,11 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testUtils.ViewSpec
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSavedView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.testUtils.ViewSpec
 
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {
   val incomeSourceReportingMethodNotSaved: IncomeSourceReportingMethodNotSavedView = app.injector.instanceOf[IncomeSourceReportingMethodNotSavedView]
