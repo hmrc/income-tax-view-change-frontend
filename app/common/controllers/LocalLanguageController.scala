@@ -20,11 +20,13 @@ import com.google.inject.Inject
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.mvc.ControllerComponents
 import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
+import common.config.FrontendAppConfig
 
 class LocalLanguageController @Inject()(
                                          languageUtils: LanguageUtils,
                                          controllerComponent: ControllerComponents,
-                                         override val messagesApi: MessagesApi
+                                         override val messagesApi: MessagesApi,
+                                         appConfig: FrontendAppConfig
                                        ) extends LanguageController(languageUtils, controllerComponent) {
 
   override def languageMap: Map[String, Lang] =
@@ -33,5 +35,5 @@ class LocalLanguageController @Inject()(
       "cymraeg" -> Lang("cy")
     )
 
-  override def fallbackURL: String = hub.controllers.routes.HomeController.show().url
+  override def fallbackURL: String = appConfig.individualHomeUrl
 }

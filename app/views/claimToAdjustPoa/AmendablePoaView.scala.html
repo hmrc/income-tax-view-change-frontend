@@ -24,6 +24,7 @@
 @import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 @import common.viewUtils.ExternalUrlHelper
 @import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+@import common.config.FrontendAppConfig
 
 
 @this(
@@ -36,7 +37,8 @@
         govukInsetText: GovukInsetText,
         govukTable: GovukTable,
         hmrcPageHeading: HmrcPageHeading,
-        govukSummaryList: GovukSummaryList
+        govukSummaryList: GovukSummaryList,
+        appConfig: FrontendAppConfig
 )
 
 @(
@@ -52,8 +54,7 @@
 }
 
 @getHomePageUrl = @{
-    if(user.isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(user.isAgent)
 }
 
 @getWhatYouNeedToKnowUrl = @{

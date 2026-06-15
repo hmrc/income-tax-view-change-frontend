@@ -20,13 +20,15 @@
 @import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 @import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 @import common.auth.MtdItUser
+@import common.config.FrontendAppConfig
 
 @this(mainTemplate: unifiedLayout,
     h1: h1,
     h2: h2,
     link: link,
     p: p,
-    continueButton: ContinueButton)
+    continueButton: ContinueButton,
+    appConfig: FrontendAppConfig)
 
 @(isAgent: Boolean, subheadingContent: String, noSession: Boolean = false)(implicit user: MtdItUser[_], messages: Messages)
 
@@ -39,8 +41,7 @@
 }
 
 @getHomeUrl = @{
-    if(isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(isAgent)
 }
 
 @mainTemplate(

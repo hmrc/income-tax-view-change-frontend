@@ -56,8 +56,7 @@ class ChooseSoleTraderAddressController @Inject()(
     else itvcErrorHandler
 
   private def backUrl(isAgent: Boolean): String =
-    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(isAgent)
 
   private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty
 

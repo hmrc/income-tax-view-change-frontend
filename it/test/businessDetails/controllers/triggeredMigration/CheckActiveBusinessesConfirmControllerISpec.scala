@@ -18,7 +18,7 @@ package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
 import common.controllers.ControllerISpecHelper
-import common.enums.{MTDIndividual, MTDUserRole}
+import common.enums.{MTDIndividual, MTDUserRole, MTDPrimaryAgent, MTDSupportingAgent}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
@@ -65,11 +65,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
   mtdAllRoles.foreach { mtdRole =>
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
-    val expectedRedirect: String = if (mtdRole == MTDIndividual) {
-      hub.controllers.routes.HomeController.show().url
-    } else {
-      hub.controllers.routes.HomeController.showAgent().url
-    }
+    val expectedRedirect: String = appConfig.homePageUrl(mtdRole.isAgent)
 
     s"GET $path" when {
       s"user is $mtdRole" should {

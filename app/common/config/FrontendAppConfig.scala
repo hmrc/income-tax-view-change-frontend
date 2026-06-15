@@ -254,4 +254,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")
 
   lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
+
+  // needed for refactor (can be deleted once refactoring is complete)
+  lazy val individualHomeUrl: String = hub.controllers.routes.HomeController.show().url
+  lazy val agentHomeUrl: String = hub.controllers.routes.HomeController.showAgent().url
+  def homePageUrl(isAgent: Boolean): String = if isAgent then agentHomeUrl else individualHomeUrl
 }

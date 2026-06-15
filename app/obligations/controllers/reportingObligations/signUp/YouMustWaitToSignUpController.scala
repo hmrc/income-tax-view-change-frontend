@@ -19,10 +19,10 @@ package obligations.controllers.reportingObligations.signUp
 import com.google.inject.Inject
 import common.auth.AuthActions
 import common.services.DateService
-import obligations.models.reportingObligations.signUp.YouMustWaitToSignUpViewModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import common.config.FrontendAppConfig
 import obligations.views.html.reportingObligations.signUp.YouMustWaitToSignUpView
 
 import scala.concurrent.Future
@@ -30,7 +30,8 @@ import scala.concurrent.Future
 class YouMustWaitToSignUpController @Inject()(
                                                authActions: AuthActions,
                                                dateService: DateService,
-                                               view: YouMustWaitToSignUpView
+                                               view: YouMustWaitToSignUpView,
+                                               appConfig: FrontendAppConfig
                                              )(implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
@@ -53,8 +54,10 @@ class YouMustWaitToSignUpController @Inject()(
 
     }
     auth.async { implicit user =>
-      val model = YouMustWaitToSignUpViewModel(taxYear = dateService.getCurrentTaxYear)
-      Future.successful(Ok(view(model)))
+      val taxYear = dateService.getCurrentTaxYear
+      val nextTaxYear = taxYear.endYear.toString
+      val backUrl = appConfig.homePageUrl(isAgent)
+      Future.successful(Ok(view(taxYear, nextTaxYear, backUrl)))
     }
   }
 }

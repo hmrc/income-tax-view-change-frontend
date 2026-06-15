@@ -84,8 +84,7 @@
         }
     }
 
-    val serviceUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url
-        else hub.controllers.routes.HomeController.show().url
+    val serviceUrl = appConfig.homePageUrl(isAgent)
 
     val navBar = btaAndPtaServiceNavigation match {
         case Some(nav) => nav.copy(serviceName = serviceName, serviceUrl = Some(serviceUrl)).withLanguageToggle()

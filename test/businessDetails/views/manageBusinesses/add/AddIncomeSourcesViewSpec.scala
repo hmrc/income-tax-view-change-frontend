@@ -28,8 +28,8 @@ import common.testUtils.TestSupport
 
 class AddIncomeSourcesViewSpec extends TestSupport {
   val addIncomeSources: AddIncomeSourcesView = app.injector.instanceOf[AddIncomeSourcesView]
-  val backUrl: String = hub.controllers.routes.HomeController.show().url
-  val backUrlAgent: String = hub.controllers.routes.HomeController.showAgent().url
+  val backUrl: String = appConfig.homePageUrl(isAgent = false)
+  val backUrlAgent: String = appConfig.homePageUrl(isAgent = true)
 
 
   val viewModelMax: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(

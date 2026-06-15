@@ -21,6 +21,7 @@
 @import common.auth.MtdItUser
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.PageHeading
 @import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+@import common.config.FrontendAppConfig
 
 @this(
         p: p,
@@ -30,7 +31,8 @@
         continueButton: ContinueButton,
         govukInsetText : GovukInsetText,
         hmrcPageHeading: HmrcPageHeading,
-        govukSummaryList : GovukSummaryList
+        govukSummaryList : GovukSummaryList,
+        appConfig: FrontendAppConfig
 )
 
 @()(
@@ -48,8 +50,7 @@
 }
 
 @getHomeUrl = @{
-    if(user.isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(user.isAgent)
 }
 
 @mainTemplate(

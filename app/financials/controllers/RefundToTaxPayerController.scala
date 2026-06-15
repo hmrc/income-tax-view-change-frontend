@@ -85,7 +85,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           itvcErrorHandler.showInternalServerError()
       }
     } else {
-      Future.successful(Redirect(homeUrl(user.isAgent)))
+      Future.successful(Redirect(appConfig.homePageUrl(user.isAgent)))
     }
   }
 
@@ -107,11 +107,5 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
         itvcErrorHandler = itvcErrorHandlerAgent,
         repaymentRequestNumber = repaymentRequestNumber
       )
-  }
-
-  lazy val homeUrl: Boolean => String = isAgent => if (isAgent) {
-    hub.controllers.routes.HomeController.showAgent().url
-  } else {
-    hub.controllers.routes.HomeController.show().url
   }
 }

@@ -44,8 +44,7 @@
 }
 
 @getHomePageUrl = @{
-    if (user.isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else              hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(user.isAgent)
 }
 
 @getMessage(key: String, args: String*) = @{

@@ -54,7 +54,7 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
         isAgent = false,
         homePageCall = homePageCall,
         sources = user.incomeSources,
-        backUrl = hub.controllers.routes.HomeController.show().url
+        backUrl = appConfig.individualHomeUrl
       )(implicitly, itvcErrorHandler)
   }
 

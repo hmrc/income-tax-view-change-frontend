@@ -60,7 +60,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
   def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandler,
-        backUrl = hub.controllers.routes.HomeController.show().url)
+        backUrl = appConfig.individualHomeUrl)
   }
 
   def redirect(): Action[AnyContent] = Action {
