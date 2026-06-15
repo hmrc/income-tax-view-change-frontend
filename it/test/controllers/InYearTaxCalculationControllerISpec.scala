@@ -25,9 +25,9 @@ import models.liabilitycalculation.LiabilityCalculationError
 import models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYearEndDate
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.i18n.{Lang, Messages}
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndPropertyResponseWoMigration}
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndPropertyResponseWoMigration}
+import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 import java.time.LocalDate
 import java.util.Locale

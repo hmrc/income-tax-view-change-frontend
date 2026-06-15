@@ -25,9 +25,9 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponseWoMigration
-import testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
+import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponseWoMigration
+import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 
 import java.util.Locale
 

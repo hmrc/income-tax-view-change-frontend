@@ -23,10 +23,11 @@ import financials.models.CodingOutType.*
 import models.creditDetailModel.CreditDetailModel
 import models.creditsandrefunds.{CreditsModel, Transaction}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 import FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
+import common.models.core.AddressModel
 
 import java.time.LocalDate
 
@@ -39,6 +40,8 @@ object FinancialDetailsTestConstants {
 
   val futureFixedDate: LocalDate = LocalDate.of(2030, 3, 12)
 
+  val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
+  
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   val id1040000123 = "1040000123"

@@ -19,8 +19,8 @@ package common.connectors
 import common.config.FrontendAppConfig
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
 import common.models.auth.AuthorisedAndEnrolledRequest
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import common.services.AuditingService
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.http.{HeaderNames, Status}

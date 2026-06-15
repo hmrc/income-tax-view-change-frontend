@@ -21,8 +21,8 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.admin.PostFinalisationAmendmentsR18
 import helpers.servicemocks.*
 import play.api.http.Status.*
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 class TaxYearsControllerISpec extends ControllerISpecHelper {
 

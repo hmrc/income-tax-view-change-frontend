@@ -19,22 +19,21 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.{BeforeSubmissionPage, InitialPage}
+import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateView
+import common.auth.{AuthActions, MtdItUser}
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import common.implicits.ImplicitDateFormatterImpl
+import common.models.core.{CheckMode, Mode, NormalMode}
+import common.services.DateService
+import common.views.html.errorPages.CustomNotFoundErrorView
+import enums.{BeforeSubmissionPage, FreshInitialPage, InitialPage}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import common.views.html.errorPages.CustomNotFoundErrorView
-import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateView
-import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.implicits.ImplicitDateFormatterImpl
-import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.DateService
-
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -88,16 +87,12 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
     val messagesPrefix = incomeSourceType.startDateMessagesPrefix
 
     withSessionData(IncomeSourceJourneyType(Add, incomeSourceType), journeyState = {
-      incomeSourceType match {
-        case SelfEmployment => BeforeSubmissionPage
-        case _ => InitialPage
+      (incomeSourceType, mode) match {
+        case (SelfEmployment, _) => BeforeSubmissionPage
+        case (_, CheckMode) => InitialPage
+        case (_, NormalMode) => FreshInitialPage
       }
     }, isTriggeredMigration) { sessionData =>
-      if (mode == NormalMode && incomeSourceType.equals(UkProperty) || mode == NormalMode && incomeSourceType.equals(ForeignProperty)) {
-        lazy val journeyType = IncomeSourceJourneyType(Add, incomeSourceType)
-        sessionService.createSession(journeyType)
-      }
-
       val dateStartedOpt = sessionData.addIncomeSourceData.flatMap(_.dateStarted)
       val filledForm = dateStartedOpt match {
         case Some(date) =>

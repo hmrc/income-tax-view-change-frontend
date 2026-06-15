@@ -24,16 +24,17 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, LatencyDetails}
 import common.services.DateService
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import models.incomeSourceDetails.*
 import common.models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
-import testConstants.CalculationListIntegrationTestConstants
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants._
+import common.testConstants.CalculationListIntegrationTestConstants
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
+import common.testConstants.IncomeSourceIntegrationTestConstants._
 
 import java.time.LocalDate
 import java.time.Month.APRIL

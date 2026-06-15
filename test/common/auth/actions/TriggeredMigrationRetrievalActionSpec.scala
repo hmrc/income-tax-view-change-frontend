@@ -26,10 +26,10 @@ import common.enums.JourneyType.TriggeredMigrationJourney
 import common.mocks.services.MockSessionService
 import common.models.UIJourneySessionData
 import common.models.admin.{FeatureSwitchName, TriggeredMigration}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import common.models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
 import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}
-import models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import models.liabilitycalculation.*
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}

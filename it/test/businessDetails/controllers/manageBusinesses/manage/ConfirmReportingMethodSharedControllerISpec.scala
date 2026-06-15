@@ -24,13 +24,14 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.LatencyDetails
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{LatencyDetails, ManageIncomeSourceData}
+import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testConstants.BaseIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
 
 import java.time.LocalDate
 import java.time.Month.APRIL

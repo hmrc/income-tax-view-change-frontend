@@ -19,8 +19,8 @@ package testOnly.services
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatusResponseModel
-import models.incomeSourceDetails.TaxYear
 import play.api.Logger
 import testOnly.connectors.DynamicStubConnector
 import testOnly.models.{DataModel, IncomeSourcesUser, LatentBusinessUser, Nino}

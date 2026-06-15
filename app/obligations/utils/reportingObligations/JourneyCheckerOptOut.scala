@@ -18,7 +18,7 @@ package obligations.utils.reportingObligations
 
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.optOut.OptOutService
 import play.api.Logger

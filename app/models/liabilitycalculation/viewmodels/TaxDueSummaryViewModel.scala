@@ -62,7 +62,8 @@ case class TaxDueSummaryViewModel(
                                    finalDeclarationOrTaxReturnIsSubmitted: Boolean = false,
                                    transitionProfitRow: Option[TransitionProfitRow] = None,
                                    highIncomeChildBenefitCharge: Option[HighIncomeChildBenefitChargeViewModel] = None,
-                                   winterFuelPaymentCharge: Option[BigDecimal] = None
+                                   winterFuelPaymentCharge: Option[BigDecimal] = None,
+                                   pensionContributionReliefs: Option[PensionContributionReliefs] = None
                                  ) {
 
   def getRateHeaderKey: String = {
@@ -93,7 +94,9 @@ case class TaxDueSummaryViewModel(
   def grossGiftAidPaymentsActual: BigDecimal = grossGiftAidPayments.getOrElse(throw MissingFieldException("Gross Gift Aid Payments"))
   def getModifiedBaseTaxBandActual: TaxBands = getModifiedBaseTaxBand.getOrElse(throw MissingFieldException("Modified Base Tax Band"))
   def lossesAppliedToGeneralIncomeActual: Int = lossesAppliedToGeneralIncome.getOrElse(throw MissingFieldException("Losses Applied To General Income"))
-  def giftAidTaxActual: BigDecimal = giftAidTax.getOrElse(throw MissingFieldException("Gift Aid Tax"))
+  def totalPensionContributionReliefsActual: BigDecimal =
+    pensionContributionReliefs.map(_.totalPensionContributionReliefs).getOrElse(throw MissingFieldException("Total Pension Contribution Reliefs"))
+
 }
 
 object TaxDueSummaryViewModel {
@@ -150,7 +153,8 @@ object TaxDueSummaryViewModel {
             hicbc.highIncomeChildBenefitCharge
           )}
         ),
-        winterFuelPaymentCharge = calc.taxCalculation.flatMap(tc => tc.incomeTax.winterFuelPaymentCharge)
+        winterFuelPaymentCharge = calc.taxCalculation.flatMap(tc => tc.incomeTax.winterFuelPaymentCharge),
+        pensionContributionReliefs = calc.pensionContributionReliefs
       )
       case None => TaxDueSummaryViewModel()
     }

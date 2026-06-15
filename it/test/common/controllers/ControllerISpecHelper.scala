@@ -32,7 +32,7 @@ import common.viewUtils.InternalUrlHelper
 import models.extensions.FinancialDetailsModelExtension
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
+import common.testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
 
 trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModelExtension {
 

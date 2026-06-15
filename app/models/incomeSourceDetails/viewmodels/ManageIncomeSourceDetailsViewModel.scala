@@ -21,6 +21,7 @@ import common.models.itsaStatus.ITSAStatus
 import models.incomeSourceDetails.*
 import ITSAStatus.ITSAStatus
 import common.models.core.{AddressModel, IncomeSourceId}
+import common.models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
 
 import java.time.LocalDate
 

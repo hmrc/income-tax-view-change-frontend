@@ -16,7 +16,7 @@
 
 package obligations.mocks.repositories
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.repositories.OptOutSessionDataRepository
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any

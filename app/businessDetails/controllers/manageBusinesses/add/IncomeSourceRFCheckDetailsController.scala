@@ -33,8 +33,8 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.core.{IncomeSourceId, NormalMode}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.services.{AuditingService, DateServiceInterface}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 import javax.inject.Inject
 import scala.annotation.unused

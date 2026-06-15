@@ -19,10 +19,10 @@ package views
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.implicits.ImplicitDateFormatter
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import financials.implicits.ImplicitCurrencyFormatter.*
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element

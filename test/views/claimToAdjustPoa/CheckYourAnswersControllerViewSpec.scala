@@ -18,9 +18,9 @@ package views.claimToAdjustPoa
 
 import common.auth.MtdItUser
 import common.models.core.CheckMode
+import common.models.incomeSourceDetails.TaxYear
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString

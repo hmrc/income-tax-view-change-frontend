@@ -33,7 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.{Application, Environment, Mode}
 import repositories.UIJourneySessionDataRepository
-import testConstants.BaseIntegrationTestConstants.testSessionId
+import common.testConstants.BaseIntegrationTestConstants.testSessionId
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.language.LanguageUtils
 

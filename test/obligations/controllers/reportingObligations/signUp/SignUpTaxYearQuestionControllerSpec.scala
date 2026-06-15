@@ -23,7 +23,7 @@ import common.models.admin.SignUpFs
 import common.models.itsaStatus.ITSAStatus
 import common.services.DateServiceInterface
 import ITSAStatus.{Mandated, Voluntary}
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockSignUpService
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel

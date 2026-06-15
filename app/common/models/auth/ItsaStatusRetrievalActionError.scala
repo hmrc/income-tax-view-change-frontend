@@ -16,8 +16,8 @@
 
 package common.models.auth
 
+import common.models.incomeSourceDetails.IncomeSourceDetailsError
 import common.models.itsaStatus.ITSAStatusResponse
-import models.incomeSourceDetails.IncomeSourceDetailsError
 
 sealed trait ItsaStatusRetrievalActionError {
   def logMessage: String

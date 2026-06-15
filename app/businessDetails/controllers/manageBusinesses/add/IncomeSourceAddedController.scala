@@ -34,6 +34,7 @@ import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.UIJourneySessionData
 import common.models.core.IncomeSourceId
+import common.models.incomeSourceDetails.LatencyDetails
 import common.services.DateServiceInterface
 
 import java.time.LocalDate

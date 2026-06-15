@@ -16,8 +16,8 @@
 
 package common.testConstants
 
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.*
-import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import play.mvc.Http.Status

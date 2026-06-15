@@ -21,6 +21,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
+import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
@@ -28,7 +29,6 @@ import financials.services.WhatYouOweService
 import financials.testConstants.ChargeConstants
 import forms.utils.SessionKeys.gatewayPage
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
-import models.incomeSourceDetails.TaxYear
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.jsoup.Jsoup

@@ -25,7 +25,9 @@ import businessDetails.services.SessionService
 import common.auth.MtdItUser
 import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import common.models.UIJourneySessionData
+import common.models.admin.IdempotencyKeyForCreateIncomeSource
 import enums.*
+import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -92,7 +94,7 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
 
   private def useDefaultRedirect(data: UIJourneySessionData, incomeSources: IncomeSourceJourneyType, journeyState: JourneyState): Boolean = {
     incomeSources.operation match {
-      case Add => !((journeyState == BeforeSubmissionPage || journeyState == InitialPage) &&
+      case Add => !((journeyState == BeforeSubmissionPage || journeyState == InitialPage || journeyState == FreshInitialPage) &&
         data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false))
       case _ => true
     }
@@ -110,16 +112,21 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       case Right(Some(data: UIJourneySessionData)) =>
         codeBlock(data)
       case Right(None) =>
-        if (journeyState == InitialPage) {
-          sessionService.createSession(incomeSources).flatMap { _ =>
-            val data = UIJourneySessionData(
-              hc.sessionId.get.value,
-              incomeSources.toString
-            )
-            codeBlock(data)
-          }
-        } else {
-          journeyRestartUrl(isTriggeredMigration)(user)
+        journeyState match {
+          case InitialPage =>
+            sessionService.createSession(incomeSources).flatMap { _ =>
+              val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString)
+              codeBlock(data)
+            }
+          case FreshInitialPage =>
+            sessionService.createSession(incomeSources).flatMap { _ =>
+              val shouldSetIdempotencyKey = isEnabled(IdempotencyKeyForCreateIncomeSource) && incomeSources.operation == Add
+              val idempotencyKey = Option.when(shouldSetIdempotencyKey)(generateIdempotencyKey)
+              val data = UIJourneySessionData(hc.sessionId.get.value, incomeSources.toString, addIncomeSourceData = idempotencyKey.map(key => AddIncomeSourceData(idempotencyKey = Some(key))))
+              
+              if (shouldSetIdempotencyKey) sessionService.setMongoData(data).flatMap(_ => codeBlock(data)) else codeBlock(data)
+            }
+          case _ => journeyRestartUrl(isTriggeredMigration)(user)
         }
       case Left(ex) =>
         val agentPrefix = if (isAgent(user)) "[Agent]" else ""
@@ -133,7 +140,7 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
     val incomeSourceAdded = data.addIncomeSourceData.flatMap(_.incomeSourceAdded).getOrElse(false)
     (incomeSources.operation, journeyState) match {
       case (_, CannotGoBackPage) => false
-      case (Add, BeforeSubmissionPage) | (Add, InitialPage) => incomeSourceCreatedJourneyComplete || incomeSourceAdded
+      case (Add, BeforeSubmissionPage) | (Add, InitialPage) | (Add, FreshInitialPage) => incomeSourceCreatedJourneyComplete || incomeSourceAdded
       case (Add, ReportingFrequencyPages) => (incomeSourceCreatedJourneyComplete || incomeSourceAdded) && data.addIncomeSourceData.flatMap(_.incomeSourceRFJourneyComplete).getOrElse(false)
       case (Add, _) => incomeSourceCreatedJourneyComplete
       case (Manage, _) => data.manageIncomeSourceData.flatMap(_.journeyIsComplete).getOrElse(false)

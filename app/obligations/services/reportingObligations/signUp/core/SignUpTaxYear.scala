@@ -16,8 +16,8 @@
 
 package obligations.services.reportingObligations.signUp.core
 
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, NoStatus, Voluntary}
-import models.incomeSourceDetails.TaxYear
 
 trait SignUpTaxYear {
   val taxYear: TaxYear

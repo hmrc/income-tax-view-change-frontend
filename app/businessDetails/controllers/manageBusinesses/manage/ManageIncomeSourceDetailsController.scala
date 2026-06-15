@@ -39,6 +39,7 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkPro
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.admin.DisplayBusinessStartDate
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, PropertyDetailsModel, QuarterReportingType, QuarterTypeElection, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateService, ITSAStatusService}
 

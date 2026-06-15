@@ -22,8 +22,8 @@ import common.models.core.PaymentJourneyModel
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
-import testConstants.BaseIntegrationTestConstants.testMtditid
-import testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
 
 class PaymentControllerISpec extends ControllerISpecHelper {
 

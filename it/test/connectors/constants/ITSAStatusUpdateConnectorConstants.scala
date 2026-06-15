@@ -16,7 +16,7 @@
 
 package connectors.constants
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 object ITSAStatusUpdateConnectorConstants {
 

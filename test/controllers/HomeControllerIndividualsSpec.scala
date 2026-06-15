@@ -21,6 +21,7 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes
 import common.models.admin.*
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
 import common.utils.sessionUtils.SessionKeys
@@ -32,7 +33,6 @@ import hub.views.html.helpers.injected.home.YourReportingObligationsTile
 import hub.views.html.newHomePage.*
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
@@ -977,6 +977,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
   "redirect to the no income sources page when the user has no income sources" in new Setup {
     setupMockUserAuth
+    setupMockFeatureSwitches(NoIncomeSourcesRedirect)
     mockNoIncomeSources()
 
     val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)

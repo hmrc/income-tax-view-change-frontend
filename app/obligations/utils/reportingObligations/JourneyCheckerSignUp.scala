@@ -18,8 +18,8 @@ package obligations.utils.reportingObligations
 
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
+import common.models.incomeSourceDetails.TaxYear
 import enums.{JourneyCompleted, JourneyState}
-import models.incomeSourceDetails.TaxYear
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger

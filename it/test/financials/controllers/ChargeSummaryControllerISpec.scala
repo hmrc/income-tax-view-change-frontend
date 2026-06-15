@@ -28,10 +28,10 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.*
 import play.api.http.Status.*
 import play.api.libs.json.Json
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear, testTaxYearTyped}
-import testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
-import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.messages.ChargeSummaryMessages.*
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear, testTaxYearTyped}
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.messages.ChargeSummaryMessages.*
 
 import java.time.LocalDate
 

@@ -17,9 +17,9 @@
 package views.claimToAdjustPoa
 
 import common.auth.MtdItUser
+import common.models.incomeSourceDetails.TaxYear
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.*

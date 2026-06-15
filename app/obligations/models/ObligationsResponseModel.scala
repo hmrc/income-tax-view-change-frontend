@@ -17,8 +17,8 @@
 package obligations.models
 
 import common.auth.MtdItUser
-import models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
-import models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
+import common.models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
+import common.models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
 import play.api.libs.json._
 
 import java.time.LocalDate

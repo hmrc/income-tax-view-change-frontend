@@ -16,6 +16,7 @@
 
 package models.incomeSourceDetails
 
+import common.models.incomeSourceDetails.{ChooseSoleTraderAddressUserAnswer, SensitiveChooseSoleTraderAddressRadioAnswer}
 import play.api.libs.json.*
 import uk.gov.hmrc.crypto.Sensitive.{SensitiveBoolean, SensitiveInstant, SensitiveString}
 import uk.gov.hmrc.crypto.json.JsonEncryption
@@ -25,6 +26,7 @@ import java.time.{LocalDate, ZoneOffset}
 
 //TODO: Few of these fields needs to be cleaned up when we remove old Income source journey.
 case class AddIncomeSourceData(
+                                idempotencyKey: Option[String] = None,
                                 businessName: Option[String] = None,
                                 businessTrade: Option[String] = None,
                                 dateStarted: Option[LocalDate] = None,
@@ -97,6 +99,7 @@ case class AddIncomeSourceData(
 
 
 object AddIncomeSourceData {
+  val idempotencyKeyField: String = "idempotencyKey"
   val businessNameField: String = "businessName"
   val businessTradeField: String = "businessTrade"
   val dateStartedField: String = "dateStarted"

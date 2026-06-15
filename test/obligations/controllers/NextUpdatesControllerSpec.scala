@@ -20,8 +20,8 @@ import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.admin.OptOutFs
+import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
-import models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import common.testConstants.BaseTestConstants
 import obligations.mocks.services.{MockNextUpdatesService, MockOptOutService}

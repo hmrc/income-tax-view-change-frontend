@@ -26,17 +26,17 @@ import common.services.DateServiceInterface
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.admin.*
 import common.models.core.SelfServeTimeToPayJourneyResponseModel
+import common.models.incomeSourceDetails.TaxYear
 import financials.testConstants.ChargeConstants
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
-import testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
-import testConstants.FinancialDetailsIntegrationTestConstants.*
-import testConstants.IncomeSourceIntegrationTestConstants.*
-import testConstants.OutstandingChargesIntegrationTestConstants.*
-import testConstants.messages.WhatYouOweMessages.hmrcAdjustment
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
+import common.testConstants.messages.WhatYouOweMessages.hmrcAdjustment
 
 import java.time.LocalDate
 import java.time.Month.APRIL

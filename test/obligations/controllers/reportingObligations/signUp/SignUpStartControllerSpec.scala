@@ -20,9 +20,9 @@ import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.SignUpFs
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.models.itsaStatus.ITSAStatus.Voluntary
-import models.incomeSourceDetails.TaxYear
 import obligations.mocks.services.MockSignUpService
 import obligations.models.reportingObligations.signUp.{SignUpSessionData, SignUpTaxYearQuestionViewModel}
 import obligations.services.reportingObligations.signUp.SignUpService

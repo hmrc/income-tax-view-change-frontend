@@ -19,9 +19,9 @@ package businessDetails.testConstants
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.*
+import common.models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import common.testConstants.BaseTestConstants.*
 import models.incomeSourceDetails.viewmodels.*
-import models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import obligations.testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 
@@ -616,4 +616,25 @@ object BusinessDetailsTestConstants {
   val obligationsAllDeadlinesSuccessNotValidObligationType: ObligationsModel = ObligationsModel(
     Seq(GroupedObligationsModel(testSelfEmploymentId, List(businessNotValidObligationType))))
 
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
+    GroupedObligationsModel("123", List(SingleObligationModel(
+      LocalDate.of(taxYear, 1, 6),
+      LocalDate.of(taxYear, 4, 5),
+      LocalDate.of(taxYear, 5, 5),
+      "Quarterly",
+      None,
+      "#001",
+      StatusFulfilled),
+      SingleObligationModel(
+        LocalDate.of(taxYear, 1, 6),
+        LocalDate.of(taxYear, 4, 5),
+        LocalDate.of(taxYear, 5, 5),
+        "Quarterly",
+        None,
+        "#002",
+        StatusFulfilled
+      )
+    ))
+  ))
+  
 }

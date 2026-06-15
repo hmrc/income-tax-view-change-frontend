@@ -39,6 +39,7 @@ import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockClientDetailsService, MockDateService, MockSessionService}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
 import obligations.mocks.services.MockNextUpdatesService
 
