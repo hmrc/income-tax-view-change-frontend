@@ -860,7 +860,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         document.getOptionalSelector("#calc-explanation-inset").get.text() shouldBe "This is not your final tax bill. This calculation is based on the information we currently have and may change when you finalise your tax year."
       }
 
-      "show the indented explanation text when the isNotCrystallisedShowInset flag == false" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true, isNotCrystallisedShowInset = false)) {
+      "do not show the indented explanation text when the isNotCrystallisedShowInset flag == false" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true, isNotCrystallisedShowInset = false)) {
         document.getOptionalSelector("#calc-explanation-inset") shouldBe None
       }
 
