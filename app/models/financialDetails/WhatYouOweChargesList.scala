@@ -77,6 +77,7 @@ case class WhatYouOweChargesList(
   }
 
   def hasInterestAccruing = chargesList.exists(_.hasAccruingInterest)
+  def hasInterestAccruingAndNotApplicableFields = chargesList.count(_.hasAccruingInterest) < chargesList.size
 }
 
 case class CodingOutDetails(amountCodedOut: BigDecimal, codingTaxYear: TaxYear)
