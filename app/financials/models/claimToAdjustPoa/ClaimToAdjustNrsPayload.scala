@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.claimToAdjustPoa
+package financials.models.claimToAdjustPoa
 
 import play.api.libs.json.{Json, OWrites}
 

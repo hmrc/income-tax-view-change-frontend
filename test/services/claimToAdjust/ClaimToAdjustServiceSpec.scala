@@ -28,7 +28,7 @@ import financials.testConstants.ClaimToAdjustPoaTestConstants.*
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
 import models.calculationList.{CalculationListModel, CalculationListResponseModel}
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

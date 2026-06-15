@@ -18,8 +18,8 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.models.core.CorrelationId
-import models.claimToAdjustPoa.ClaimToAdjustPoaRequest
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
+import financials.models.claimToAdjustPoa.ClaimToAdjustPoaRequest
+import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
 import play.api.Logger
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.client.HttpClientV2

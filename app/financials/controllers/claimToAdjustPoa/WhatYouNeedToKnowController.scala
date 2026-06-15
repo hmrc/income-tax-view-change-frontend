@@ -25,7 +25,7 @@ import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.utils.ErrorRecovery
 import financials.utils.claimToAdjust.WithSessionAndPoa
-import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import financials.models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

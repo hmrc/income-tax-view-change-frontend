@@ -22,7 +22,7 @@ import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.TestSupport
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.forms.adjustPoa.EnterPoaAmountForm
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements

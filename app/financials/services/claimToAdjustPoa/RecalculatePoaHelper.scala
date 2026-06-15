@@ -25,8 +25,8 @@ import common.services.AuditingService
 import financials.controllers.claimToAdjustPoa.routes.*
 import financials.services.{NrsService, PaymentOnAccountSessionService}
 import financials.utils.ErrorRecovery
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PoaAmendmentData, SelectYourReason}
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PoaAmendmentData, SelectYourReason}
 import models.nrs.*
 import play.api.Logger
 import play.api.i18n.{Lang, LangImplicits, Messages}

@@ -26,7 +26,7 @@ import financials.services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService,
 import financials.services.{NrsService, PaymentOnAccountSessionService}
 import financials.utils.ErrorRecovery
 import financials.utils.claimToAdjust.WithSessionAndPoa
-import models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
+import financials.models.claimToAdjustPoa.{PoaAmendmentData, SelectYourReason}
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

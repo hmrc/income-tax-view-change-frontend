@@ -18,8 +18,8 @@ package mocks.connectors
 
 import common.testUtils.UnitSpec
 import connectors.ClaimToAdjustPoaConnector
-import models.claimToAdjustPoa.ClaimToAdjustPoaRequest
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponse
+import financials.models.claimToAdjustPoa.ClaimToAdjustPoaRequest
+import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaResponse
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}

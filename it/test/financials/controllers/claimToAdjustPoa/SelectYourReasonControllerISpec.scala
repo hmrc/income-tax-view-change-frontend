@@ -22,7 +22,7 @@ import common.models.core.NormalMode
 import financials.forms.adjustPoa.SelectYourReasonFormProvider
 import financials.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData, SelectYourReason}
+import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower, PoaAmendmentData, SelectYourReason}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testDate, testMtditid, testNino}

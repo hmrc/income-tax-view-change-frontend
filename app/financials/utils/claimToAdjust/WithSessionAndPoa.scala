@@ -21,8 +21,8 @@ import common.auth.MtdItUser
 import common.models.core.Nino
 import enums.{BeforeSubmissionPage, InitialPage, JourneyState}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import models.claimToAdjustPoa.PoaAmendmentData
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.PoaAmendmentData
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import play.api.Logger
 import play.api.mvc.Result
 import uk.gov.hmrc.http.HeaderCarrier

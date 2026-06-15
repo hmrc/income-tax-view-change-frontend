@@ -24,7 +24,7 @@ import common.services.{DateService, DateServiceInterface}
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.PoaAmendmentData
+import financials.models.claimToAdjustPoa.PoaAmendmentData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api

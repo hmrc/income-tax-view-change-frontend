@@ -17,7 +17,7 @@
 package models.claimToAdjustPoa
 
 import common.testUtils.UnitSpec
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
+import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse._
 import play.api.http.Status.{BAD_REQUEST, CREATED}
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse

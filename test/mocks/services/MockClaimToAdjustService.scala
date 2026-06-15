@@ -20,7 +20,7 @@ import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

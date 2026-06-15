@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package models.claimToAdjustPoa
+package financials.models.claimToAdjustPoa
 
 import play.api.libs.json.{Json, OFormat}
+
 import java.time.Instant
 
 case class PoaSessionData(

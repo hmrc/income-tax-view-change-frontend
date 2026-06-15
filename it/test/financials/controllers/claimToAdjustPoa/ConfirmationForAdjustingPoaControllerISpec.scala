@@ -23,7 +23,7 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDeta
 import financials.controllers.claimToAdjustPoa.routes.*
 import financials.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
+import financials.models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import play.api.http.Status.*
 import play.api.libs.json.JsValue
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

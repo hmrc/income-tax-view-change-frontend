@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.claimToAdjustPoa
+package financials.models.claimToAdjustPoa
 
 import common.testUtils.UnitSpec
 import play.api.libs.json.{JsNumber, JsString, Json, __}

@@ -30,8 +30,8 @@ import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.PoaAmendmentData
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.PoaAmendmentData
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers

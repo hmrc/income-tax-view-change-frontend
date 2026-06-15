@@ -23,7 +23,7 @@ import common.services.DateServiceInterface
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.PoaAmendmentData
+import financials.models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*

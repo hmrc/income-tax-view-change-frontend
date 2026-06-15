@@ -26,8 +26,8 @@ import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.*
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.*
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application

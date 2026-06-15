@@ -23,7 +23,7 @@ import common.services.DateServiceInterface
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
-import models.claimToAdjustPoa.PoaAmendmentData
+import financials.models.claimToAdjustPoa.PoaAmendmentData
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

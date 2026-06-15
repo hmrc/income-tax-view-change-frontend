@@ -21,7 +21,7 @@ import enums.*
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
 import financials.utils.ErrorRecovery
-import models.claimToAdjustPoa.PoaAmendmentData
+import financials.models.claimToAdjustPoa.PoaAmendmentData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect

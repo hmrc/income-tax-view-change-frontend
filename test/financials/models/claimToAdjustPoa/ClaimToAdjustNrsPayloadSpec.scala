@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.claimToAdjustPoa
+package financials.models.claimToAdjustPoa
 
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

@@ -27,8 +27,8 @@ import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.utils.ErrorRecovery
 import financials.utils.claimToAdjust.WithSessionAndPoa
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.claimToAdjustPoa.{Increase, PoaAmendmentData, SelectYourReason}
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.{Increase, PoaAmendmentData, SelectYourReason}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

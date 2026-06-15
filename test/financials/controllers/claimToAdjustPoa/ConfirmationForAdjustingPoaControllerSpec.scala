@@ -24,7 +24,7 @@ import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService}
 import mocks.services.*
-import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
+import financials.models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models.claimToAdjustPoa
+package financials.models.claimToAdjustPoa
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import scala.math.BigDecimal.RoundingMode
 

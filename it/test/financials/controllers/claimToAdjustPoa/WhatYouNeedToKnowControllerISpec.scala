@@ -21,7 +21,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.core.NormalMode
 import financials.services.PaymentOnAccountSessionService
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.PoaAmendmentData
+import financials.models.claimToAdjustPoa.PoaAmendmentData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}

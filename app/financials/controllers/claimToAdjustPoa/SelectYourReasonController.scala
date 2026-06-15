@@ -26,8 +26,8 @@ import financials.forms.adjustPoa.SelectYourReasonFormProvider
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.utils.claimToAdjust.WithSessionAndPoa
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.claimToAdjustPoa.{Increase, SelectYourReason}
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.{Increase, SelectYourReason}
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController

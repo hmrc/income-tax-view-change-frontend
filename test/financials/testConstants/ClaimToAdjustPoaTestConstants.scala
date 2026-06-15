@@ -20,7 +20,7 @@ import common.models.core.NormalMode
 import common.models.incomeSourceDetails.TaxYear
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.models.chargeHistory.ChargeHistoryModel
-import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import financials.models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import models.financialDetails.*
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
