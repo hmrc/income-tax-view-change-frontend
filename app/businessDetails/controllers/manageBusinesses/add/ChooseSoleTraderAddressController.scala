@@ -170,8 +170,7 @@ class ChooseSoleTraderAddressController @Inject()(
         )
       )
     } else {
-      val homeCall = if (isAgent) hub.controllers.routes.HomeController.showAgent() else hub.controllers.routes.HomeController.show()
-      Future(Redirect(homeCall))
+      Future(Redirect(appConfig.homePageUrl(isAgent)))
     }
   }
 

@@ -68,10 +68,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
           isAgent,
           incomeSourceType,
           incomeSourceIdOpt,
-          backUrl = {
-            if (isAgent) hub.controllers.routes.HomeController.showAgent()
-            else hub.controllers.routes.HomeController.show()
-          }.url
+          backUrl = appConfig.homePageUrl(isAgent)
         )
       }
   }

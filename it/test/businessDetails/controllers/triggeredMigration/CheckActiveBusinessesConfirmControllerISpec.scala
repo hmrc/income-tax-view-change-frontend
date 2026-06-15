@@ -18,7 +18,7 @@ package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
 import common.controllers.ControllerISpecHelper
-import common.enums.{MTDIndividual, MTDUserRole, MTDPrimaryAgent, MTDSupportingAgent}
+import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear

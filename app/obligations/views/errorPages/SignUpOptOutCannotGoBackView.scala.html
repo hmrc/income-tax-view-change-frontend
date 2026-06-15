@@ -30,13 +30,13 @@
     h2: h2,
     p: p,
     link: link,
-    bulletList: bulletPointList
+    bulletList: bulletPointList,
+    appConfig: FrontendAppConfig
 )
 @(isSignUp: Boolean)(
     implicit request: Request[_],
     messages: Messages,
-    user: MtdItUser[_],
-    appConfig: FrontendAppConfig
+    user: MtdItUser[_]
 )
 
 @getMessages(messageKey: String) = @{
@@ -75,10 +75,7 @@
         <li id="links-section-home-page-link">
             @link(
                 id=Some("links-section-home-page-link"),
-                link =
-                    if(user.isAgent) s"${hub.controllers.routes.HomeController.showAgent()}"
-                    else s"${hub.controllers.routes.HomeController.show()}"
-                ,
+                link = appConfig.homePageUrl(user.isAgent),
                 messageKey = getMessages("linkText2")
             )
         </li>
