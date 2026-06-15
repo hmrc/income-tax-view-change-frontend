@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,86 +16,56 @@
 
 package common.enums.TaxYearSummary
 
-sealed trait CalculationType {
-  val value: String
+enum CalculationType(val value: String) {
+  case DeclareCrystallisation extends CalculationType("CR")
+  case Amendment              extends CalculationType("AM")
+  case DeclareFinalisation    extends CalculationType("DF")
+  case ConfirmAmendment       extends CalculationType("CA")
+  case Correction             extends CalculationType("CO")
+  case IntentToAmend          extends CalculationType("IA")
+  case IntentToCrystallise    extends CalculationType("IC")
+  case InYear                 extends CalculationType("IY")
+  case IntentToFinalise       extends CalculationType("IF")
+  case Crystallisation        extends CalculationType("crystallisation")
+  case UnknownCalculationType extends CalculationType("UnknownCalculationType")
 }
-
-case object DeclareCrystallisation extends CalculationType {
-  override val value: String = "CR"
-}
-
-case object Amendment extends CalculationType {
-  override val value: String = "AM"
-}
-
-case object DeclareFinalisation extends CalculationType {
-  override val value: String = "DF"
-}
-
-case object ConfirmAmendment extends CalculationType {
-  override val value: String = "CA"
-}
-
-case object Correction extends CalculationType {
-  override val value: String = "CO"
-}
-
-case object IntentToAmend extends CalculationType {
-  override val value: String = "IA"
-}
-
-case object InYear extends CalculationType {
-  override val value: String = "IY"
-}
-
-case object IntentToFinalise extends CalculationType {
-  override val value: String = "IF"
-}
-
-case object Crystallisation extends CalculationType {
-  override val value: String = "crystallisation"
-}
-
-case object UnknownCalculationType extends CalculationType {
-  override val value: String = "UnknownCalculationType"
-}
-
 
 object CalculationType {
 
-  def fromCalculationTypeValueToString(string: String): CalculationType = {
+  def fromStringToCalculationTypeValue(string: String): CalculationType =
     string match {
-      case "CR" => DeclareCrystallisation
-      case "AM" => Amendment
-      case "DF" => DeclareFinalisation
-      case "CA" => ConfirmAmendment
-      case "IA" => IntentToAmend
-      case "IY" => InYear
-      case "IF" => IntentToFinalise
-      case "crystallisation" => Crystallisation
-      case _ => UnknownCalculationType
+      case "CR"              => CalculationType.DeclareCrystallisation
+      case "AM"              => CalculationType.Amendment
+      case "DF"              => CalculationType.DeclareFinalisation
+      case "CA"              => CalculationType.ConfirmAmendment
+      case "CO"              => CalculationType.Correction
+      case "IA"              => CalculationType.IntentToAmend
+      case "IY"              => CalculationType.InYear
+      case "IF"              => CalculationType.IntentToFinalise
+      case "crystallisation" => CalculationType.Crystallisation
+      case _                 => CalculationType.UnknownCalculationType
     }
-  }
 
   val notCrystallisedTypes: Set[CalculationType] =
     Set(
-      InYear,
-      IntentToFinalise
+      CalculationType.InYear,
+      CalculationType.IntentToFinalise
     )
 
   val crystallisedTypes: Set[CalculationType] =
     Set(
-      Crystallisation,
-      ConfirmAmendment,
-      Correction,
-      DeclareFinalisation,
-      DeclareCrystallisation,
-      IntentToAmend,
+      CalculationType.Crystallisation,
+      CalculationType.ConfirmAmendment,
+      CalculationType.Correction,
+      CalculationType.DeclareFinalisation,
+      CalculationType.DeclareCrystallisation,
+      CalculationType.IntentToAmend,
+      CalculationType.Amendment,
     )
 
   val amendmentTypes: Set[CalculationType] =
     Set(
-      Amendment,
-      ConfirmAmendment
+      CalculationType.Amendment,
+      CalculationType.ConfirmAmendment
     )
 }
