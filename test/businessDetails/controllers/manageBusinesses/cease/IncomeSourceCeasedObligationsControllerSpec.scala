@@ -24,14 +24,12 @@ import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
-import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, BusinessDetailsModel, PropertyDetailsModel}
-import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import obligations.mocks.services.MockNextUpdatesService
-import obligations.models.*
-import obligations.services.NextUpdatesService
+import businessDetails.mocks.services.MockNextUpdatesService
+import businessDetails.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -43,6 +41,7 @@ import common.testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, t
 import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSource
 import common.testConstants.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import obligations.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
+import shared.models.{GroupedObligationsModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled, UIJourneySessionData}
 
 import java.time.LocalDate
 import scala.concurrent.Future

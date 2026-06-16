@@ -22,8 +22,8 @@ import common.models.core.*
 import common.models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import common.testConstants.BaseTestConstants.*
 import models.incomeSourceDetails.viewmodels.*
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import obligations.testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.{LocalDate, Month}
 

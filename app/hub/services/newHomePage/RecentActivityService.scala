@@ -20,17 +20,17 @@ import com.google.inject.Inject
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import obligations.connectors.ObligationsConnector
 import models.financialDetails.*
 import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import hub.models.newHomePage.{RecentActivityCard, RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
-import obligations.models.{ObligationsModel, SingleObligationModel}
 import models.repaymentHistory.RepaymentHistoryModel
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.Singleton
 import financials.controllers.routes as financialsRoutes
+import shared.connectors.ObligationsConnector
+import shared.models.{ObligationsModel, SingleObligationModel}
 
 @Singleton
 class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector,

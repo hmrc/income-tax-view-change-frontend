@@ -17,7 +17,6 @@
 package financials.utils.claimToAdjust
 
 import common.auth.MtdItUser
-import enums.*
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService
@@ -25,6 +24,7 @@ import financials.utils.ErrorRecovery
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import shared.enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

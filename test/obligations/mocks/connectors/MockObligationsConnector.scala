@@ -17,11 +17,11 @@
 package obligations.mocks.connectors
 
 import common.testUtils.UnitSpec
-import obligations.connectors.ObligationsConnector
-import obligations.models.ObligationsResponseModel
 import org.mockito.ArgumentMatchers.{any, eq as matches}
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
+import shared.connectors.ObligationsConnector
+import shared.models.ObligationsResponseModel
 
 import java.time.LocalDate
 import scala.concurrent.Future

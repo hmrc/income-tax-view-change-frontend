@@ -24,7 +24,6 @@ import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import common.testUtils.TestSupport
-import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
@@ -41,6 +40,7 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import shared.enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}

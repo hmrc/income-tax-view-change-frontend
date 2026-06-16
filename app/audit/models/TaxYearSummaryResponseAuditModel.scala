@@ -25,9 +25,9 @@ import common.models.audit.ExtendedAuditModel
 import common.models.liabilitycalculation.Messages
 import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
-import obligations.models.ObligationWithIncomeType
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
+import shared.models.ObligationWithIncomeType
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],

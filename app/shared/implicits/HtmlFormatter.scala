@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package obligations.models
+package shared.implicits
 
-import play.api.libs.json.{Format, Json}
+import play.twirl.api.Html
 
-case class GroupedObligationsModel(identification: String, obligations: List[SingleObligationModel]) {
+object HtmlFormatter {
+  implicit class NbspString(val str: String) extends AnyVal {
+    def toNonBreaking: Html =
+      Html(str.replace(" ", "&nbsp;"))
+  }
 
-  val currentCrystDeadlines: List[SingleObligationModel] = obligations.filter(_.obligationType == "Crystallisation")
-    .sortBy(_.start.toEpochDay)
-}
-
-object GroupedObligationsModel {
-  implicit val format: Format[GroupedObligationsModel] = Json.format[GroupedObligationsModel]
+  implicit class EmspString(val str: String) extends AnyVal {
+    def toEmsp: Html =
+      Html(str.replace("\t", "&emsp;"))
+  }
 }

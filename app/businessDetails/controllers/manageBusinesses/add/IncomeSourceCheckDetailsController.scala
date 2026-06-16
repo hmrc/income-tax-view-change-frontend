@@ -17,11 +17,11 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import businessDetails.enums.FailureCategory.ApiFailure
 import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.services.{CreateBusinessDetailsService, SessionService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.BeforeSubmissionPage
 import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -33,11 +33,12 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.TriggeredMigrationAdded
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.services.AuditingService
+import shared.enums.BeforeSubmissionPage
+import shared.models.UIJourneySessionData
 
 import javax.inject.Inject
 import scala.annotation.unused
@@ -222,7 +223,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
               }
             case Left(ex) =>
               auditingService.extendedAudit(
-                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(enums.FailureCategory.ApiFailure), Some(ex.getMessage), None, isTrigMig = isTriggeredMigration)
+                CreateIncomeSourceAuditModel(incomeSourceType, viewModel, Some(ApiFailure), Some(ex.getMessage), None, isTrigMig = isTriggeredMigration)
               )
               Future.failed(ex)
           }

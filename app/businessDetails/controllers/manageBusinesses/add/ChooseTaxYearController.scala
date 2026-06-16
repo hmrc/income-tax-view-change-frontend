@@ -21,7 +21,6 @@ import businessDetails.forms.models.ChooseTaxYearFormModel
 import businessDetails.services.SessionService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.ReportingFrequencyPages
 import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
 import play.api.data.Form
@@ -33,9 +32,10 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.FrontendAppConfig
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.UIJourneySessionData
 import common.services.DateService
-import returns.services.CalculationListService
+import shared.enums.ReportingFrequencyPages
+import shared.models.UIJourneySessionData
+import shared.services.CalculationListService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

@@ -26,8 +26,6 @@ import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityC
 import common.services.AuditingService
 import forms.utils.SessionKeys.calcPagesBackPage
 import models.liabilitycalculation.viewmodels.*
-import obligations.connectors.ObligationsConnector
-import obligations.models.{ObligationsErrorModel, ObligationsModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -37,6 +35,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import returns.views.html.TaxCalcBreakdownView
+import shared.connectors.ObligationsConnector
+import shared.models.{ObligationsErrorModel, ObligationsModel}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

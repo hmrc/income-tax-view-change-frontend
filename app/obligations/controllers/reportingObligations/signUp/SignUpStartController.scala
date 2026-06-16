@@ -57,7 +57,7 @@ class SignUpStartController @Inject()(authActions: AuthActions,
           case Some(viewModel) =>
             retrieveIsJourneyComplete.flatMap { journeyIsComplete =>
               if (!journeyIsComplete) {
-                withSessionData(isStart = true, viewModel.signUpTaxYear.taxYear, None) {
+                withSessionData(isStart = true, viewModel.signUpTaxYear.taxYear) {
                   Future.successful(
                     Ok(signUpStart(
                       dateService.getCurrentTaxYearEnd.equals(viewModel.signUpTaxYear.taxYear.endYear),

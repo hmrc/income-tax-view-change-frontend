@@ -57,7 +57,7 @@ class SignUpTaxYearQuestionController @Inject()(
           case Some(viewModel) =>
             retrieveIsJourneyComplete.flatMap { journeyIsComplete =>
               if (!journeyIsComplete) {
-                withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear, None) {
+                withSessionData(isStart = false, viewModel.signUpTaxYear.taxYear) {
                   Future(Ok(
                     view(
                       viewModel,

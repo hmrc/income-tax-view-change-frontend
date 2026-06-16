@@ -33,8 +33,8 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
-import common.models.UIJourneySessionData
 import common.services.DateServiceInterface
+import shared.models.UIJourneySessionData
 
 class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 

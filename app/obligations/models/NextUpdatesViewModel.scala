@@ -16,6 +16,8 @@
 
 package obligations.models
 
+import shared.models.ObligationWithIncomeType
+
 import java.time.LocalDate
 
 case class NextUpdatesViewModel(allDeadlines: Seq[DeadlineViewModel], missedDeadlines: Seq[DeadlineViewModel] = Seq.empty)

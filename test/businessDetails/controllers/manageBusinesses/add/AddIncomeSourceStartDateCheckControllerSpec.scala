@@ -25,7 +25,6 @@ import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
-import common.models.UIJourneySessionData
 import common.models.core.{CheckMode, NormalMode}
 import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.AddIncomeSourceData
@@ -43,6 +42,7 @@ import play.api.http.Status.OK
 import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.testSessionId
 import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 

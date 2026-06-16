@@ -21,8 +21,8 @@ import common.models.liabilitycalculation.*
 import common.models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import models.liabilitycalculation.viewmodels.CalculationSummary.getTaxDue
 import models.liabilitycalculation.*
-import obligations.models.ObligationsModel
 import play.api.Logger
+import shared.models.ObligationsModel
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: String = "",

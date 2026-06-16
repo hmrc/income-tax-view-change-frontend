@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.InitialPage
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.incomeSourceDetails.*
@@ -41,7 +40,8 @@ import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, PropertyDetailsModel, QuarterReportingType, QuarterTypeElection, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateService, ITSAStatusService}
-import returns.services.CalculationListService
+import shared.enums.InitialPage
+import shared.services.CalculationListService
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused

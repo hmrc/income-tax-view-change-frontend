@@ -16,7 +16,7 @@
 
 package hub.models.newHomePage
 
-import obligations.models.SingleObligationModel
+import shared.models.SingleObligationModel
 import java.time.LocalDate
 
 final case class SubmissionDeadlinesViewModel(

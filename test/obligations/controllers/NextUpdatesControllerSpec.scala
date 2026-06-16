@@ -40,6 +40,7 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
 import common.testConstants.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
+import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 import scala.concurrent.Future

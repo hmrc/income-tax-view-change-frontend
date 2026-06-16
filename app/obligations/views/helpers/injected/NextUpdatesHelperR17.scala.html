@@ -16,17 +16,18 @@
 
 @import common.implicits.ImplicitDateFormatterImpl
 @import common.views.html.components._
-@import views.html.components.detailsDropdown
+@import obligations.views.html.components.detailsDropdown
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import obligations.models.NextUpdatesViewModel
 @import java.time.LocalDate
+@import shared.models._
 @import obligations.models._
 @import play.twirl.api.HtmlFormat
 @import common.config.FrontendAppConfig
 @import common.models.itsaStatus.ITSAStatus.ITSAStatus
 @import common.models.itsaStatus.ITSAStatus
 @import obligations.services.reportingObligations.optOut.OptOutProposition
-@import _root_.implicits.HtmlFormatter.NbspString
+@import _root_.shared.implicits.HtmlFormatter.NbspString
 @import common.auth.MtdItUser
 
 @this(

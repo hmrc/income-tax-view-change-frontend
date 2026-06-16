@@ -27,8 +27,6 @@ import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.financialDetails.*
-import obligations.models.audit.NextUpdatesResponseAuditModel
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
@@ -38,6 +36,8 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
 import common.testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.models.audit.NextUpdatesResponseAuditModel
 
 import java.time.LocalDate
 

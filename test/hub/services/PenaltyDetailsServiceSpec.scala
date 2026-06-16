@@ -24,7 +24,6 @@ import mocks.connectors.MockPenaltyDetailsConnector
 import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsSuccessResponse}
 import models.penalties.{GetPenaltyDetails, Totalisations}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import services.PenaltyDetailsService
 
 class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConnector {
 

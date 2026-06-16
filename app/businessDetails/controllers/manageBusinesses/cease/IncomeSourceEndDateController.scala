@@ -16,8 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import enums.BeforeSubmissionPage
-
 import common.models.core.IncomeSourceIdHash.mkFromQueryString
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
@@ -40,6 +38,7 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
 import common.services.DateService
+import shared.enums.BeforeSubmissionPage
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,

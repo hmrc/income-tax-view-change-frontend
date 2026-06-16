@@ -20,12 +20,12 @@ import cats.data.EitherT
 import common.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import enums.CannotGoBackPage
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.{ClaimToAdjustService, RecalculatePoaHelper}
 import financials.utils.claimToAdjust.WithSessionAndPoa
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import shared.enums.CannotGoBackPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import views.html.claimToAdjustPoa.YouCannotGoBackView
 

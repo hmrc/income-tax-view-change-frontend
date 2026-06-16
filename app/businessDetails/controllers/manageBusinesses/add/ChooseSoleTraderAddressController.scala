@@ -31,9 +31,9 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import shared.models.UIJourneySessionData
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -20,10 +20,10 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkPr
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
 import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
-import obligations.models.{SingleObligationModel, StatusFulfilled}
 import obligations.testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
 import businessDetails.testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5}
 import common.models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
+import shared.models.{SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

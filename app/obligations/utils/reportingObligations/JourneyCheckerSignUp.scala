@@ -17,9 +17,7 @@
 package obligations.utils.reportingObligations
 
 import common.auth.MtdItUser
-import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.models.incomeSourceDetails.TaxYear
-import enums.{JourneyCompleted, JourneyState}
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger
@@ -32,39 +30,30 @@ import scala.concurrent.{ExecutionContext, Future}
 trait JourneyCheckerSignUp extends ReportingObligationsUtils {
   self =>
 
-  val itvcErrorHandler: ItvcErrorHandler
-  val itvcErrorHandlerAgent: AgentItvcErrorHandler
-
   val signUpService: SignUpService
 
-  def withSessionData(isStart: Boolean, taxYear: TaxYear, journeyState: Option[JourneyState])
+  def withSessionData(isStart: Boolean, taxYear: TaxYear)
                      (codeBlock: => Future[Result])
                      (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-    (isStart, journeyState) match {
-      case (true, None) =>
-        signUpService.initialiseOptInContextData().flatMap {
-          case true =>
-            signUpService.saveIntent(taxYear).flatMap {
-              case true => codeBlock
-              case false =>
-                Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
-                Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent)))
-            }
-          case false =>
-            Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not initialise opt-in context data in session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
-            Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent)))
-        }
-      case (false, None) =>
-        signUpService.fetchSavedChosenTaxYear().flatMap {
-          case Some(savedTaxYear) if savedTaxYear == taxYear => codeBlock
-          case _ => redirectReportingFrequency(user.userType)
-        }
-
-      case (false, Some(JourneyCompleted)) => codeBlock
-
-      case _ =>
-        redirectReportingFrequency(user.userType)
+    if(isStart) {
+      signUpService.initialiseOptInContextData().flatMap {
+        case true =>
+          signUpService.saveIntent(taxYear).flatMap {
+            case true => codeBlock
+            case false =>
+              Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+              Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent)))
+          }
+        case false =>
+          Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not initialise opt-in context data in session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+          Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent)))
+      }
+    } else {
+      signUpService.fetchSavedChosenTaxYear().flatMap {
+        case Some(savedTaxYear) if savedTaxYear == taxYear => codeBlock
+        case _ => redirectReportingFrequency(user.userType)
+      }
     }
   }
 

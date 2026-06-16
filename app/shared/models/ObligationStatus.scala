@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package obligations.models
+package shared.models
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 sealed trait ObligationStatus
 

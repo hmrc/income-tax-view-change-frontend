@@ -21,7 +21,6 @@ import businessDetails.controllers.triggeredMigration.routes as triggeredMigrati
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import enums.BeforeSubmissionPage
 import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -36,6 +35,7 @@ import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.TriggeredMigrationCeased
 import common.models.core.IncomeSourceId
 import common.services.AuditingService
+import shared.enums.BeforeSubmissionPage
 
 import java.time.LocalDate
 import javax.inject.Inject

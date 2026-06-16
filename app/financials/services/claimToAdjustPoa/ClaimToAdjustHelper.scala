@@ -24,9 +24,9 @@ import connectors.{CalculationListConnector, ChargeHistoryConnector}
 import financials.models.DocumentType.{Poa1Charge, Poa2Charge}
 import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import models.financialDetails.*
 import play.api.Logger
+import shared.models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import java.time.{LocalDate, Month}

@@ -25,10 +25,11 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import financials.services.*
+import hub.services.PenaltyDetailsService
 import mocks.services.*
 import models.financialDetails.*
-import obligations.mocks.services.MockNextUpdatesService
-import obligations.services.NextUpdatesService
+import hub.mocks.services.MockNextUpdatesService
+import hub.services.NextUpdatesService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -40,7 +41,6 @@ import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
-import services.*
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future

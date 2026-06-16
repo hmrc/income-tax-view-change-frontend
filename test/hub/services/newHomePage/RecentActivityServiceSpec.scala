@@ -24,10 +24,10 @@ import models.financialDetails.Payment
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import common.testUtils.TestSupport
 import hub.models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
-import obligations.models.*
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, RepaymentSupplementItem}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

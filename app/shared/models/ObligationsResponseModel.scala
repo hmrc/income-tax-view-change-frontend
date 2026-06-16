@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package obligations.models
+package shared.models
 
 import common.auth.MtdItUser
-import common.models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
 import common.models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName
-import play.api.libs.json._
+import common.models.incomeSourceDetails.{PropertyDetailsModel, QuarterReportingType, QuarterTypeCalendar, QuarterTypeStandard}
+import play.api.libs.json.*
 
 import java.time.LocalDate
 
