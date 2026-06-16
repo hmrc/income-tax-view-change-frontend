@@ -29,9 +29,6 @@
     implicit messages: Messages
 )
 
-@if(whatYouOweChargesList.getRelevantDueDate.isBefore(currentDate)) {
-    <span id="balancing-charge-type-overdue" class="govuk-tag govuk-tag--red">@getMessage("over-due")</span>
-}
 @p(id = Some("balancing-charge"))(Html(getMessage("balancingCharge.text")))
 @p(id = Some("pre-mtd-digital"))(Html(getMessage("pre-mtd-digital")))
 

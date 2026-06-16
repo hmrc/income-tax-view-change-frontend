@@ -154,7 +154,7 @@
                             )),
                             Some(TableRow(
                                 attributes = Map("id" -> s"due-$index"),
-                                content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin)))
+                                content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false))
                             )),
                             Some(TableRow(
                                 attributes = Map("id" -> s"due-charge-tax-year-$index"),
