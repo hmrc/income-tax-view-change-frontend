@@ -22,7 +22,6 @@ import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.TriggeredMigrationJourney
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import common.models.UIJourneySessionData
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
@@ -31,6 +30,7 @@ import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
 class CheckCompleteControllerISpec extends ControllerISpecHelper {

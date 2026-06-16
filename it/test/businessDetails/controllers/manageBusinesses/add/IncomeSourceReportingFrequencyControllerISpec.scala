@@ -23,7 +23,6 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, LatencyDetails}
 import common.services.DateService
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
@@ -35,6 +34,7 @@ import common.testConstants.BaseIntegrationTestConstants._
 import common.testConstants.CalculationListIntegrationTestConstants
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import common.testConstants.IncomeSourceIntegrationTestConstants._
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import java.time.Month.APRIL

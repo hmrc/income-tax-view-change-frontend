@@ -37,9 +37,9 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.services.DateServiceInterface
+import shared.models.UIJourneySessionData
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 

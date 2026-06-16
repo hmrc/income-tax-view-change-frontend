@@ -24,7 +24,6 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
-import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.LatencyDetails
 import common.services.DateService
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -34,6 +33,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.IncomeSourceIntegrationTestConstants.{noPropertyOrBusinessResponse, singleUKForeignPropertyResponseInLatencyPeriod}
+import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
 import java.time.LocalDate

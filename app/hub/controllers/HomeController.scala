@@ -29,6 +29,7 @@ import common.utils.sessionUtils.SessionKeys
 import financials.services.*
 import hub.audit.models.HomeAudit
 import hub.models.homePage.*
+import hub.services.PenaltyDetailsService
 import hub.utils.HomePageUtils
 import models.financialDetails.*
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
@@ -38,7 +39,6 @@ import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

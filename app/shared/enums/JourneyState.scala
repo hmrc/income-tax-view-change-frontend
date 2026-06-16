@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package enums
+package shared.enums
 
 trait JourneyState {
   val key: String
@@ -48,10 +48,6 @@ case object AfterSubmissionPage extends JourneyState {
 case object ReportingFrequencyPages extends JourneyState {
   //for any page after the first (or only) submission of data to an API
   override val key: String = "ReportingFrequencyPages"
-}
-
-case object ChooseSoleTraderAddressPage extends JourneyState {
-  override val key: String = "ChooseSoleTraderAddressPage"
 }
 
 

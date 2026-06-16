@@ -20,7 +20,6 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRo
 import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.InitialPage
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
@@ -35,6 +34,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.models.core.{Mode, NormalMode}
+import shared.enums.InitialPage
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

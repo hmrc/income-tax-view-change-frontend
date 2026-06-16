@@ -19,12 +19,12 @@ package financials.utils.claimToAdjust
 import cats.data.EitherT
 import common.auth.MtdItUser
 import common.models.core.Nino
-import enums.{BeforeSubmissionPage, InitialPage, JourneyState}
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import play.api.Logger
 import play.api.mvc.Result
+import shared.enums.{BeforeSubmissionPage, InitialPage, JourneyState}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

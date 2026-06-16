@@ -25,7 +25,6 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{AddressModel, CheckMode, Mode, NormalMode}
 import common.services.DateServiceInterface
@@ -37,6 +36,7 @@ import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.*
 import businessDetails.testConstants.BusinessDetailsTestConstants.business1
 import common.testConstants.IncomeSourceDetailsTestConstants.*
+import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future
 

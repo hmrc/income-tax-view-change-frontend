@@ -39,10 +39,10 @@ import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.DateServiceInterface
+import shared.models.UIJourneySessionData
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
 

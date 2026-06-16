@@ -19,12 +19,11 @@ package testOnly.controllers
 import businessDetails.services.SessionService
 import common.config.FrontendAppConfig
 import common.enums.JourneyType.{Opt, OptOutJourney}
-import common.models.UIJourneySessionData
+import shared.models.UIJourneySessionData
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 class OptOutMongoTestJourneyController @Inject()(

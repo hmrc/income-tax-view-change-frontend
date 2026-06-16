@@ -22,7 +22,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import common.testUtils.TestSupport
-import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
+import shared.enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService

@@ -20,10 +20,10 @@ import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import common.models.UIJourneySessionData
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.incomeSourceDetails.LatencyDetails
 import common.testConstants.BaseIntegrationTestConstants._
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import java.time.Month.APRIL

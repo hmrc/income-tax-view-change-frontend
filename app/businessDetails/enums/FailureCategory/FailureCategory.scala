@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package enums.FailureCategory
+package businessDetails.enums.FailureCategory
 
 import scala.language.implicitConversions
 

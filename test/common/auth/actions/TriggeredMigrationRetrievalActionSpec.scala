@@ -24,7 +24,6 @@ import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.IncomeTaxCalculationConnector
 import common.enums.JourneyType.TriggeredMigrationJourney
 import common.mocks.services.MockSessionService
-import common.models.UIJourneySessionData
 import common.models.admin.{FeatureSwitchName, TriggeredMigration}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
@@ -41,6 +40,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Request, Result, Results}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import shared.models.UIJourneySessionData
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate

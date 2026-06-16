@@ -21,7 +21,6 @@ import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.BeforeSubmissionPage
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
@@ -38,6 +37,7 @@ import common.exceptions.MissingSessionKey
 import common.models.core.IncomeSourceId
 import common.models.incomeSourceDetails.TaxYear
 import common.services.AuditingService
+import shared.enums.BeforeSubmissionPage
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

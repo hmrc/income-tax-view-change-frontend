@@ -21,10 +21,8 @@ import common.auth.actions.AuthActionsSpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.mocks.services.{MockITSAStatusService, MockSessionService}
-import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
-import enums.AfterSubmissionPage
 import mocks.services.MockCalculationListService
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, NoStatus}
 import common.models.itsaStatus.{StatusDetail, StatusReason}
@@ -35,6 +33,8 @@ import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import common.testUtils.TestSupport
+import shared.enums.AfterSubmissionPage
+import shared.models.UIJourneySessionData
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 

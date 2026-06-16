@@ -23,7 +23,6 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
 import helpers.servicemocks.IncomeTaxViewChangeStub
@@ -32,6 +31,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import shared.models.UIJourneySessionData
 
 class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
 

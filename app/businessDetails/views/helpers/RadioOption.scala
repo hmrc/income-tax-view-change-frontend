@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.helpers
+package businessDetails.views.helpers
 
 class RadioOption(val optionName: String, val message: String, val classes: Option[String])
 

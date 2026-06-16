@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package services
+package hub.services
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.itsaStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import connectors.GetPenaltyDetailsConnector
-import ITSAStatus.ITSAStatus
-import models.penalties.GetPenaltyDetailsParser._
+import models.penalties.GetPenaltyDetailsParser.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
