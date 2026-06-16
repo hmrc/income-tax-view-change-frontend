@@ -182,11 +182,7 @@ class AddInternationalBusinessAddressControllerSpec extends MockAuthActions
 
               val result: Future[Result] = action(fakeRequest)
 
-              val homePageUrl = if (mtdRole == MTDIndividual) {
-                hub.controllers.routes.HomeController.show().url
-              } else {
-                hub.controllers.routes.HomeController.showAgent().url
-              }
+              val homePageUrl = appConfig.homePageUrl(mtdRole.isAgent)
 
               status(result) shouldBe SEE_OTHER
               redirectLocation(result) shouldBe Some(homePageUrl)

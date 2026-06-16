@@ -18,13 +18,17 @@ package common.enums
 
 import play.api.libs.json.*
 
-sealed trait MTDUserRole
+sealed trait MTDUserRole:
+  def isAgent: Boolean
 
-case object MTDPrimaryAgent extends MTDUserRole
+case object MTDPrimaryAgent extends MTDUserRole: 
+  override def isAgent: Boolean = true
 
-case object MTDSupportingAgent extends MTDUserRole
+case object MTDSupportingAgent extends MTDUserRole:
+  override def isAgent: Boolean = true
 
-case object MTDIndividual extends MTDUserRole
+case object MTDIndividual extends MTDUserRole:
+  override def isAgent: Boolean = false
 
 object MTDUserRole {
 

@@ -23,6 +23,7 @@
 @import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Button
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -34,7 +35,7 @@
         govukInsetText: GovukInsetText
 )
 
-@(isSigningUpForCY: Boolean, buttonUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(isSigningUpForCY: Boolean, buttonUrl: String)(implicit messages: Messages, user: MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("signUp.start.heading"),

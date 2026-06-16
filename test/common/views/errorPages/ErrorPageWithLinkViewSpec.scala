@@ -25,7 +25,7 @@ class ErrorPageWithLinkViewSpec extends ViewSpec {
     heading = "heading",
     message = "message",
     linkText = "linkText",
-    linkUrl = hub.controllers.routes.HomeController.show().url,
+    linkUrl = appConfig.individualHomeUrl,
     linkPrefix = Some("linkPrefix"), isAgent = false)
 
   "The error page with link view" should {
@@ -42,7 +42,7 @@ class ErrorPageWithLinkViewSpec extends ViewSpec {
       layoutContent.selectNth("p", 2).text() shouldBe "linkPrefix linkText"
     }
     "display the link url" in new Setup(view) {
-      layoutContent.selectNth("p", 2) hasCorrectHref hub.controllers.routes.HomeController.show().url
+      layoutContent.selectNth("p", 2) hasCorrectHref appConfig.individualHomeUrl
     }
   }
 }

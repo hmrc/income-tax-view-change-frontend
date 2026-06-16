@@ -21,6 +21,8 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import financials.controllers.routes as financialsRoutes
+@import common.auth.MtdItUser
+@import common.config.FrontendAppConfig
 
 @this(
         mainTemplate: unifiedLayout,
@@ -29,13 +31,14 @@
         govukBackLink : GovukBackLink,
         hmrcPageHeading: HmrcPageHeading,
         govukButton : GovukButton,
-        govukWarningText : GovukWarningText
+        govukWarningText : GovukWarningText, 
+        appConfig: FrontendAppConfig
 )
 
 @(
         poaTaxYear: TaxYear
 )(
-        implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_]
+        implicit messages: Messages,  request: RequestHeader, user: MtdItUser[_]
 )
 
 @getMessage(key: String, args: String*) = @{
@@ -53,8 +56,7 @@
 }
 
 @getHomeUrl = @{
-    if(user.isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(user.isAgent)
 }
 
 @mainTemplate(
@@ -84,20 +86,21 @@
                 @getMessage("bullet1Text")
                 @link(link = tysLinkUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet1Link", id = Some("link-1"))
             }
-            </li>
+        </li>
 
-            <li>@p(classes = "govuk-!-margin-bottom-4") {
-                @getMessage("bullet2Text")
-                @link(link = wyoLinkUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet2Link", id = Some("link-2"))
-                }
-            </li>
-
-            <li>@p(classes = "govuk-!-margin-bottom-4") {
-                @getMessage("bullet3Text")
-                @link(link = getHomeUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet3Link", id = Some("link-3"))
+        <li>
+            @p(classes = "govuk-!-margin-bottom-4") { @getMessage("bullet2Text")
+            @link(link = wyoLinkUrl, messageKey =
+            "claimToAdjustPoa.youCannotGoBack.bullet2Link", id = Some("link-2"))
             }
-            </li>
-        </ul>
-    </div>
+        </li>
 
+        <li>
+            @p(classes = "govuk-!-margin-bottom-4") { @getMessage("bullet3Text")
+            @link(link = getHomeUrl, messageKey =
+            "claimToAdjustPoa.youCannotGoBack.bullet3Link", id = Some("link-3"))
+            }
+        </li>
+    </ul>
+</div>
 }

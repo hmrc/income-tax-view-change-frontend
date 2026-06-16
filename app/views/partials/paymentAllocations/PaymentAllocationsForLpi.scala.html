@@ -17,10 +17,11 @@
 @import common.implicits.ImplicitDateFormatterImpl
 @import financials.implicits.ImplicitCurrencyFormatter._
 @import financials.controllers.routes as financialsRoutes
+@import common.auth.MtdItUser
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, origin: Option[String] = None)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, origin: Option[String] = None)(implicit messages: Messages, user: MtdItUser[_])
 
 
 @paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiAllocationDetails =>

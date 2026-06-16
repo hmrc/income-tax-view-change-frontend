@@ -25,6 +25,7 @@
 @import models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
 @import common.services.DateServiceInterface
 @import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -47,7 +48,7 @@
         isAgent: Boolean,
         backUrl: String,
         origin: Option[String] = None
-)(implicit messages: Messages, user: common.auth.MtdItUser[_], dateService: DateServiceInterface)
+)(implicit messages: Messages, user: MtdItUser[_], dateService: DateServiceInterface)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"income-sources.check-details-reporting-frequency.r17.$key", args: _*)

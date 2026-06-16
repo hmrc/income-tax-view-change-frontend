@@ -22,6 +22,7 @@
 @import models.claimToAdjustPoa.viewModels.WhatYouNeedToKnowViewModel
 @import common.viewUtils.ExternalUrlHelper
 @import common.config.FrontendAppConfig
+@import common.auth.MtdItUser
 
 
 @this(
@@ -39,11 +40,10 @@
         inputHelper: InputHelper,
 )
 
-@(viewModel: WhatYouNeedToKnowViewModel)(implicit messages: Messages,  request: RequestHeader, user: common.auth.MtdItUser[_])
+@(viewModel: WhatYouNeedToKnowViewModel)(implicit messages: Messages,  request: RequestHeader, user: MtdItUser[_])
 
 @getHomePageUrl = @{
-    if (user.isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else              hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(user.isAgent)
 }
 
 @getMessage(key: String, args: String*) = @{

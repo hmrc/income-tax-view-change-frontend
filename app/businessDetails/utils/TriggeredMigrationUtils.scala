@@ -28,10 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait TriggeredMigrationUtils extends FeatureSwitching {
   def withTriggeredMigrationFS(comeBlock: => Future[Result])(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
     if (!isEnabled(TriggeredMigration)) {
-      user.userType match {
-        case Some(Agent) => Future(Redirect(hub.controllers.routes.HomeController.showAgent()))
-        case _ => Future(Redirect(hub.controllers.routes.HomeController.show()))
-      }
+      Future(Redirect(appConfig.homePageUrl(user.userType.contains(Agent))))
     } else {
       comeBlock
     }

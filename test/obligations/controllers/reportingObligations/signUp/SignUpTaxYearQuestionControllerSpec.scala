@@ -69,11 +69,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
   }
 
   private def homeLink(isAgent: Boolean): Option[String] = {
-    if (isAgent) {
-      Some(hub.controllers.routes.HomeController.showAgent().url)
-    } else {
-      Some(hub.controllers.routes.HomeController.show().url)
-    }
+    Some(appConfig.homePageUrl(isAgent))
   }
 
   private def confirmPageLink(isAgent: Boolean): Option[String] = {

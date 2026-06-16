@@ -28,6 +28,7 @@
 @import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 @import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 @import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -47,7 +48,7 @@
         sources: ViewIncomeSourcesViewModel,
         isAgent: Boolean,
         backUrl: String
-)( implicit messages: Messages, user: common.auth.MtdItUser[_])
+)( implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

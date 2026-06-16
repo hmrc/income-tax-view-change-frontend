@@ -23,6 +23,7 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -38,7 +39,7 @@
         backUrl: String,
         viewModel: CheckYourAnswersViewModel,
         incomeSourceType: IncomeSourceType
-)(implicit request: common.auth.MtdItUser[_], messages: Messages)
+)(implicit request: MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"manageBusinesses.check-answers.$key", args: _*)

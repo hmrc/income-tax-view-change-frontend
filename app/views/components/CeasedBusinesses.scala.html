@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukTable
 @import common.views.html.components.h2
 @import java.time.LocalDate
+@import common.auth.MtdItUser
 
 @this(
         implicitDateFormatter: ImplicitDateFormatterImpl,
@@ -32,7 +33,7 @@
         ceasedBusinesses: List[CeasedBusinessDetailsViewModel],
         displayStartDate: Boolean
 )(implicit messages: Messages,
-        user: common.auth.MtdItUser[_])
+        user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

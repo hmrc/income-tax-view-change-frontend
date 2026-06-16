@@ -40,10 +40,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
   override val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-  def homeUrl(mtdUserRole: MTDUserRole): String = mtdUserRole match {
-    case MTDIndividual => hub.controllers.routes.HomeController.show().url
-    case _ => hub.controllers.routes.HomeController.showAgent().url
-  }
+  def homeUrl(mtdUserRole: MTDUserRole): String = appConfig.homePageUrl(mtdUserRole.isAgent)
 
   def stubAuthorised(mtdRole: MTDUserRole, featureSwitches: List[FeatureSwitchName] = List()): Unit = {
     if(mtdRole != MTDIndividual) {
@@ -219,7 +216,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(hub.controllers.routes.HomeController.show().url)
+            redirectURI(appConfig.individualHomeUrl)
           )
         }
       }

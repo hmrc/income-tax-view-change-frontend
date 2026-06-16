@@ -69,12 +69,7 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
       @unused
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
       withTriggeredMigrationFS {
-
-        if (isAgent) {
-          Future.successful(Redirect(hub.controllers.routes.HomeController.showAgent()))
-        } else {
-          Future.successful(Redirect(hub.controllers.routes.HomeController.show()))
-        }
+        Future.successful(Redirect(appConfig.homePageUrl(isAgent)))
       }
     }
 }

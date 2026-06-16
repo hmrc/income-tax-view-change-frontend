@@ -27,6 +27,7 @@
 @import common.views.html.components.p
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+@import common.config.FrontendAppConfig
 
 @this(
         govukButton : GovukButton,
@@ -35,7 +36,8 @@
         link: link,
         p: p,
         govukSummaryList : GovukSummaryList,
-        formWithCSRF: FormWithCSRF
+        formWithCSRF: FormWithCSRF,
+        appConfig: FrontendAppConfig
 )
 
 @(
@@ -57,8 +59,7 @@
 }
 
 @getHomePageUrl = @{
-    if (user.isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else              hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(user.isAgent)
 }
 
 @getConfirmButton = @{

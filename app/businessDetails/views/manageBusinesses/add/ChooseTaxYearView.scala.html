@@ -21,6 +21,7 @@
 @import common.enums.IncomeSourceJourney.IncomeSourceType
 @import common.services.DateServiceInterface
 @import businessDetails.forms.models.ChooseTaxYearFormModel
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -39,7 +40,7 @@
     nextTaxYear: Option[TaxYear],
     incomeSourceType: IncomeSourceType,
     isChange: Boolean = false
-)(implicit user: common.auth.MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
+)(implicit user: MtdItUser[_], messages: Messages, dateService: DateServiceInterface)
 
 @header = @{
     h1WithCaption(

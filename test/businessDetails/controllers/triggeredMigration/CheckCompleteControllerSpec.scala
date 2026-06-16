@@ -57,10 +57,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
     val isAgent = mtdRole != MTDIndividual
 
-    @unused val homeUrl = mtdRole match {
-      case MTDIndividual => hub.controllers.routes.HomeController.show().url
-      case _             => hub.controllers.routes.HomeController.showAgent().url
-    }
+    @unused val homeUrl = appConfig.homePageUrl(isAgent)
 
     s"show(isAgent = $isAgent)" when {
       val action = controller.show(isAgent)

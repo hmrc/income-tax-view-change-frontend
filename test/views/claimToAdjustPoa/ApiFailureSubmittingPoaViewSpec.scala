@@ -39,10 +39,7 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
       )
   }
 
-  def getHomeControllerLink(isAgent: Boolean): String = {
-    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
-  }
+  def getHomeControllerLink(isAgent: Boolean): String = appConfig.homePageUrl(isAgent)
 
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {

@@ -20,7 +20,7 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import common.viewUtils.ExternalUrlHelper
-@import obligations.models.reportingObligations.signUp.YouMustWaitToSignUpViewModel
+@import common.models.incomeSourceDetails.TaxYear
 
 @this(
     mainTemplate: unifiedLayout,
@@ -31,13 +31,15 @@
 )
 
 @(
-    viewModel: YouMustWaitToSignUpViewModel,
+    taxYear: TaxYear, 
+    nextTaxYear: String,
+    backUrl: String,
     origin: Option[String] = None
 )(implicit user: MtdItUser[_], messages: Messages)
 
 @individualContent = {
-    @h1(messages("youMustWait.heading", viewModel.nextTaxYear), id = Some("you-must-wait-heading"))
-    @p(id = Some("you-must-wait-text"))(Html(messages("youMustWait.text", viewModel.nextTaxYear)))
+    @h1(messages("youMustWait.heading", nextTaxYear), id = Some("you-must-wait-heading"))
+    @p(id = Some("you-must-wait-text"))(Html(messages("youMustWait.text", nextTaxYear)))
     @p(id = Some("you-must-wait-text-2")) {
         @messages("youMustWait.text2")
         @link(
@@ -51,15 +53,15 @@
 }
 
 @agentContent = {
-    @h1(messages("youMustWait.agent.heading", viewModel.nextTaxYear), id = Some("you-must-wait-agent-heading"))
-    @p(id = Some("you-must-wait-agent-text"))(Html(messages("youMustWait.agent.text", viewModel.nextTaxYear)))
+    @h1(messages("youMustWait.agent.heading", nextTaxYear), id = Some("you-must-wait-agent-heading"))
+    @p(id = Some("you-must-wait-agent-text"))(Html(messages("youMustWait.agent.text", nextTaxYear)))
     @*TODO - implement button in MISUV-10514*@
     @button(alternativeText = Some(messages("youMustWait.agent.button.text")), href = Some(""), id = Some("you-must-wait-agent-button"))
 }
 
 @mainTemplate(
-    pageTitle = if(user.isAgent) messages("youMustWait.agent.title", viewModel.nextTaxYear) else messages("youMustWait.title", viewModel.nextTaxYear),
-    backUrl = if(user.isAgent) None else Some(viewModel.backUrl),
+    pageTitle = if(user.isAgent) messages("youMustWait.agent.title", nextTaxYear) else messages("youMustWait.title", nextTaxYear),
+    backUrl = if(user.isAgent) None else Some(backUrl),
     btaAndPtaServiceNavigation = user.serviceNavigationPartial
 ) {
 

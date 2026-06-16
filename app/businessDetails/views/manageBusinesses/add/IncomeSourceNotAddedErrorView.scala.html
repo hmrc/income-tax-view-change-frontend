@@ -18,6 +18,7 @@
 @import common.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components.FormWithCSRF
 @import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+@import common.auth.MtdItUser
 
 @this(
 mainTemplate: unifiedLayout,
@@ -26,7 +27,7 @@ p: p,
 formWithCSRF: FormWithCSRF,
 continueButton: ContinueButton)
 
-@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: common.auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: MtdItUser[_], messages: Messages)
 
 @incomeSourceTypeText = @{
  incomeSourceType match {

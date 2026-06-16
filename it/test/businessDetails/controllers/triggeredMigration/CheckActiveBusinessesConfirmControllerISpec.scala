@@ -65,11 +65,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
   mtdAllRoles.foreach { mtdRole =>
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
-    val expectedRedirect: String = if (mtdRole == MTDIndividual) {
-      hub.controllers.routes.HomeController.show().url
-    } else {
-      hub.controllers.routes.HomeController.showAgent().url
-    }
+    val expectedRedirect: String = appConfig.homePageUrl(mtdRole.isAgent)
 
     s"GET $path" when {
       s"user is $mtdRole" should {

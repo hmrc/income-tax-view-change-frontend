@@ -23,6 +23,7 @@
 @import common.views.html.layouts.unifiedLayout
 @import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 @import common.config.FrontendAppConfig
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -43,7 +44,7 @@
 @(  selectYourReasonForm: Form[SelectYourReason],
     taxYear: TaxYear,
     mode: Mode,
-    useFallbackLink: Boolean)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+    useFallbackLink: Boolean)(implicit messages: Messages, user: MtdItUser[_])
 
 @formContent = {
     @p(){
@@ -58,8 +59,7 @@
 }
 
 @getHomePageUrl = @{
-    if (user.isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else              hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(user.isAgent)
 }
 
 @mainTemplate( pageTitle = messages("claimToAdjustPoa.selectYourReason.title"),

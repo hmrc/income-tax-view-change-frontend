@@ -21,7 +21,6 @@ import businessDetails.views.html.triggeredMigration.CheckCompleteView
 import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 
 class CheckCompleteViewSpec extends TestSupport {
@@ -33,7 +32,6 @@ class CheckCompleteViewSpec extends TestSupport {
   val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   class Setup(isAgent: Boolean) {
-    val homeCall: Call = if(isAgent) hub.controllers.routes.HomeController.showAgent() else hub.controllers.routes.HomeController.show()
     val postAction = triggeredMigrationRoutes.CheckCompleteController.submit(isAgent)
     val pageDocument: Document = Jsoup.parse(contentAsString(view(isAgent, compatibleSoftwareLink, nextUpdatesLink(isAgent), postAction)))
   }

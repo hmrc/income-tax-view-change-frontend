@@ -26,6 +26,7 @@
 @import common.services.DateServiceInterface
 @import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 @import models.incomeSourceDetails.*
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -43,7 +44,7 @@
         form: Form[ChooseSoleTraderAddressForm],
         chooseSoleTraderAddressRadioOptionsWithIndex: Seq[(String, Int)],
         backUrl: String,
-)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+)(implicit messages: Messages, user: MtdItUser[_])
 
 @getMessage(key: String) = @{
     messages(s"manageBusinesses.add.chooseSoleTraderAddress.$key")

@@ -28,6 +28,7 @@
 @import common.viewUtils.ExternalUrlHelper
 @import play.twirl.api.HtmlFormat
 @import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -50,7 +51,7 @@
         isAgent: Boolean,
         showStartDate: Boolean,
         backUrl: String
-)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

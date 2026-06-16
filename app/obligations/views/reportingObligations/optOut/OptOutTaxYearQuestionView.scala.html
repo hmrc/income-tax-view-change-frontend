@@ -19,6 +19,7 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import obligations.models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -31,7 +32,7 @@
         continueButton: ContinueButton
 )
 
-@(viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(viewModel: OptOutTaxYearQuestionViewModel, form: Form[_], postAction: Call)(implicit messages: Messages, user: MtdItUser[_])
 
 @getMessage(key: String, args: String*) = @{
     messages(s"optout.taxYearQuestion.$key.${viewModel.messageSuffix}", args: _*)
