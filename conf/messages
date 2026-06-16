@@ -1304,6 +1304,29 @@ whatYouOwe.pre-mtd.body                                            = To check if
 whatYouOwe.pre-mtd-link                                            = visit your previous Self Assessment online account
 whatYouOwe.pre-mtd-outstanding-charges                             = Any payment made will be used for outstanding tax for earlier Self Assessment tax years first, and will not be displayed here.
 
+making-payment.heading                                             = Making a payment
+making-payment.what-payment-goes-towards.heading                   = What your payment will go towards
+making-payment.what-payment-goes-towards.p1                        = When you make a payment it will go towards:
+making-payment.what-payment-goes-towards.bullet1                   = any overdue tax or tax with interest first, starting with the oldest
+making-payment.what-payment-goes-towards.bullet2                   = then any remaining tax in the order it is due
+making-payment.what-payment-goes-towards.p2                        = If you have nothing overdue or with interest, you can choose to pay your remaining tax early.
+making-payment.what-payment-goes-towards.p3                        = You can choose your payment amount.
+making-payment.accruing-interest.heading                           = Paying tax that is accruing interest
+making-payment.accruing-interest.p1                                = Interest is estimated, and increases every day until the tax it is related to is paid in full.
+making-payment.accruing-interest.p2.before                         = It may then take up to 3 working days for the interest to be calculated and shown on the
+making-payment.accruing-interest.p2.link                           = what you owe
+making-payment.accruing-interest.p2.after                          = page.
+making-payment.penalty.heading                                     = If you have a penalty to pay
+making-payment.penalty.p1                                          = You must first pay any overdue tax or tax that is accruing interest before you can use this service to pay your penalty.
+making-payment.penalty.p2.before                                   = Alternatively, you can
+making-payment.penalty.p2.link                                     = pay your penalty online now (opens in new tab)
+making-payment.penalty.p2.after                                    = using the payment reference number in the letter or digital secure message you received from HMRC.
+making-payment.money-in-account.heading                            = Money in your account
+making-payment.money-in-account.p1.before                          = You have
+making-payment.money-in-account.p1.link                            = money in your account
+making-payment.money-in-account.p1.after                           = ; your current balance is {0}. You can leave the money there to pay your next bill or claim a refund.
+making-payment.continue                                            = Continue to make a payment
+
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text							   = First payment on account
 chargeSummary.paymentOnAccount2.text							   = Second payment on account
