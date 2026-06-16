@@ -18,6 +18,7 @@ package businessDetails.auth
 
 import common.auth.*
 import businessDetails.auth.actions.TriggeredMigrationRetrievalAction
+import common.auth.actions.RedirectIfNoIncomeSourcesAction
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import play.api.mvc.*
@@ -28,7 +29,8 @@ import javax.inject.{Inject, Singleton}
 class AuthActionsWithTriggeredMigrationCheck @Inject()(
                              frontendAppConfig: FrontendAppConfig,
                              val authActions: AuthActions,
-                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction
+                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction,
+                             val redirectIfNoIncomeSourcesAction: RedirectIfNoIncomeSourcesAction
                            ) extends FeatureSwitching {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
@@ -50,5 +52,11 @@ class AuthActionsWithTriggeredMigrationCheck @Inject()(
       asMTDIndividual(triggeredMigrationPage)
     }
   }
+
+  def asMTDIndividualWithIncomeSources(): ActionBuilder[MtdItUser, AnyContent] =
+    asMTDIndividual() andThen redirectIfNoIncomeSourcesAction
+
+  def asMTDAgentWithConfirmedClientWithIncomeSources(): ActionBuilder[MtdItUser, AnyContent] =
+    asMTDAgentWithConfirmedClient() andThen redirectIfNoIncomeSourcesAction
 }
 

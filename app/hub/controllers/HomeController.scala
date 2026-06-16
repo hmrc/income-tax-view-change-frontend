@@ -16,7 +16,8 @@
 
 package hub.controllers
 
-import common.auth.{AuthActions, MtdItUser}
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import common.auth.MtdItUser
 import common.config.*
 import common.config.featureswitch.*
 import common.enums.MTDSupportingAgent
@@ -54,7 +55,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
                                val newHomeHelpView: hub.views.html.newHomePage.NewHomeHelpView,
                                val primaryAgentHomeView: hub.views.html.agent.PrimaryAgentHomeView,
                                val supportingAgentHomeView: hub.views.html.agent.SupportingAgentHomeView,
-                               val authActions: AuthActions,
+                               val authActions: AuthActionsWithTriggeredMigrationCheck,
                                val nextUpdatesService: NextUpdatesService,
                                val financialDetailsService: FinancialDetailsService,
                                val dateService: DateServiceInterface,

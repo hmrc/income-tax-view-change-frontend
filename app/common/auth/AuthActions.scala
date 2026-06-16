@@ -120,16 +120,6 @@ class AuthActions @Inject()(
   def asMTDPrimaryAgentWithIncomeSources(): ActionBuilder[MtdItUser, AnyContent] =
     asMTDPrimaryAgent() andThen redirectIfNoIncomeSourcesAction
 
-  def asMTDIndividualOrAgentWithClientWithIncomeSources(
-                                                         isAgent: Boolean
-                                                       ): ActionBuilder[MtdItUser, AnyContent] = {
-    if (isAgent) {
-      asMTDAgentWithConfirmedClientWithIncomeSources()
-    } else {
-      asMTDIndividualWithIncomeSources()
-    }
-  }
-
   def asMTDIndividualForNoIncomeSourcesPage: ActionBuilder[MtdItUser, AnyContent] = {
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen

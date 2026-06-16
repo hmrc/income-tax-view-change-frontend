@@ -16,8 +16,8 @@
 
 package controllers
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes
 import common.models.admin.*
@@ -68,7 +68,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
   val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
   val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
-  val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
+  val authActions: AuthActionsWithTriggeredMigrationCheck = application.injector.instanceOf(classOf[AuthActionsWithTriggeredMigrationCheck])
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
 
