@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.PaymentAllocationsResponseAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -28,6 +27,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import financials.models.audit.PaymentAllocationsResponseAuditModel
 import financials.testConstants.PaymentAllocationIntegrationTestConstants.*
 
 class PaymentAllocationControllerISpec extends ControllerISpecHelper {

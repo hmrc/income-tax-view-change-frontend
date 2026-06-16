@@ -27,7 +27,7 @@ import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import financials.services.WhatYouOweService
 import financials.testConstants.ChargeConstants
-import forms.utils.SessionKeys.gatewayPage
+import financials.forms.utils.SessionKeys.gatewayPage
 import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}

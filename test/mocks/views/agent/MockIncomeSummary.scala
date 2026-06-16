@@ -16,11 +16,11 @@
 
 package mocks.views.agent
 
-import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import org.mockito.ArgumentMatchers.{any, eq => matches}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
+import returns.models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import returns.views.html.IncomeBreakdownView
 
 trait MockIncomeSummary extends BeforeAndAfterEach {

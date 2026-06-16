@@ -30,7 +30,7 @@ import financials.utils.claimToAdjust.JourneyCheckerClaimToAdjust
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.claimToAdjustPoa.EnterPoaAmountView
+import financials.views.html.claimToAdjustPoa.EnterPoaAmountView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

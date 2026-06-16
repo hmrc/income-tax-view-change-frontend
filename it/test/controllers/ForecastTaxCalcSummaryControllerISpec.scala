@@ -16,7 +16,6 @@
 
 package controllers
 
-import audit.models.ForecastTaxCalculationAuditModel
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
@@ -26,6 +25,7 @@ import play.api.http.Status.OK
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
 import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.models.audit.ForecastTaxCalculationAuditModel
 
 object ForecastTaxSummaryControllerTestConstants {
 

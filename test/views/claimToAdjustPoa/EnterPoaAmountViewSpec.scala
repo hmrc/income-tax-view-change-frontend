@@ -29,7 +29,7 @@ import org.jsoup.select.Elements
 import play.api.data.Form
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import views.html.claimToAdjustPoa.EnterPoaAmountView
+import financials.views.html.claimToAdjustPoa.EnterPoaAmountView
 
 class EnterPoaAmountViewSpec extends TestSupport{
 

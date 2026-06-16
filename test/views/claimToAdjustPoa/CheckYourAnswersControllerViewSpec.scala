@@ -25,7 +25,7 @@ import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYour
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
-import views.html.claimToAdjustPoa.CheckYourAnswersView
+import financials.views.html.claimToAdjustPoa.CheckYourAnswersView
 
 class CheckYourAnswersControllerViewSpec extends TestSupport {
 

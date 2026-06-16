@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.RefundToTaxPayerResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
@@ -31,11 +30,12 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.RefundToTaxPayerView
+import financials.views.html.RefundToTaxPayerView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import financials.controllers.routes as financialsRoutes
+import financials.models.audit.RefundToTaxPayerResponseAuditModel
 
 @Singleton
 class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayerView,

@@ -22,6 +22,7 @@ import common.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import common.testUtils.TestSupport
+import returns.models.audit.ForecastIncomeAuditModel
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class ForecastIncomeAuditModelSpec extends TestSupport {

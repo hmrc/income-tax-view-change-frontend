@@ -18,7 +18,6 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.BeforeSubmissionPage
 import AddIncomeSourceStartDateCheckForm.*
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.services.SessionService

@@ -26,9 +26,9 @@ import common.models.liabilitycalculation.*
 import common.testConstants.BaseTestConstants.{saEnrolment, testMtditid, testNino}
 import common.testUtils.TestSupport
 import connectors.CalculationListConnector
-import models.taxyearsummary.*
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.test.FakeRequest
+import returns.models.taxyearsummary.{AgentCannotViewTaxCalc, IrsaEnrolementHandedOff, LegacyAndCesa, MtdSoftwareShowCalc, NoIrsaAEnrolement}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.Enrolments
 

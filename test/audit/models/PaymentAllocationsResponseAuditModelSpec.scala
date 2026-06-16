@@ -26,6 +26,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.auth.actions.AuthActionsTestData.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testUtils.TestSupport
+import financials.models.audit.PaymentAllocationsResponseAuditModel
 
 import java.time.LocalDate
 

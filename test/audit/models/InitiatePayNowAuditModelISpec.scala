@@ -19,6 +19,7 @@ package audit.models
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserType}
 import common.testUtils.TestSupport
+import financials.models.audit.InitiatePayNowAuditModel
 
 class InitiatePayNowAuditModelISpec extends TestSupport {
 

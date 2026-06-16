@@ -24,12 +24,9 @@ import connectors.CalculationListConnector
 import financials.controllers.routes as financialsRoutes
 import financials.services.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
+import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService}
 import models.financialDetails.*
-import models.liabilitycalculation.*
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import returns.mocks.services.MockNextUpdatesService
 import returns.services.NextUpdatesService
 import org.jsoup.Jsoup
@@ -54,6 +51,8 @@ import java.time.LocalDate
 import scala.annotation.unused
 import scala.concurrent.Future
 import financials.testConstants.ChargeConstants
+import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import returns.models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import returns.services.{CalculationService, TaxYearSummaryService}
 import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 

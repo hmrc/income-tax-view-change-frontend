@@ -18,6 +18,7 @@ package models.liabilitycalculation.viewmodels
 
 import common.models.liabilitycalculation.Calculation
 import common.testUtils.UnitSpec
+import returns.models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.liabilityCalculationModelSuccessful
 
 class IncomeBreakdownViewModelSpec extends UnitSpec {

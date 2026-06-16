@@ -16,7 +16,6 @@
 
 package controllers
 
-import audit.models.TaxYearSummaryResponseAuditModel
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import helpers.servicemocks.*
@@ -24,8 +23,6 @@ import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyA
 import common.models.admin.PostFinalisationAmendmentsR18
 import common.models.admin.*
 import models.financialDetails.*
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
-import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.jsoup.Jsoup
 import play.api.http.Status.*
 import play.api.libs.json.Json
@@ -37,6 +34,9 @@ import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import common.testConstants.NewCalcBreakdownItTestConstants.*
 import common.testConstants.messages.TaxYearSummaryMessages.*
 import financials.controllers.routes as financialsRoutes
+import returns.models.audit.TaxYearSummaryResponseAuditModel
+import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
+import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 
 import java.time.LocalDate
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}

@@ -16,7 +16,6 @@
 
 package testOnly.controllers
 
-import forms.utils.SessionKeys.calculationId
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -25,6 +24,8 @@ import javax.inject.Inject
 class SessionAlterationController @Inject()
     (implicit mcc: MessagesControllerComponents)
   extends FrontendController(mcc) {
+
+  lazy val calculationId: String = "calculationId"
 
   def addCalcId(value: String): Action[AnyContent] = Action { implicit request =>
     Ok(value)

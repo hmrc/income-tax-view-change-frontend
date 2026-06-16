@@ -61,7 +61,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
           } else {
             "render the credit summary page" when {
               "a valid response is received" in {
-                import audit.models.CreditSummaryAuditing.*
+                import financials.models.audit.CreditSummaryAuditing.*
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
                 IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
@@ -112,7 +112,7 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
 
             "correctly audit a list of credits" when {
               "the list contains Balancing Charge Credits" in {
-                import audit.models.CreditSummaryAuditing.*
+                import financials.models.audit.CreditSummaryAuditing.*
                 stubAuthorised(mtdUserRole)
                 IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
 

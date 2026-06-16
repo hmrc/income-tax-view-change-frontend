@@ -324,7 +324,7 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     fakePostRequestWithActiveSession.withSession("nino" -> testNino, "origin" -> origin)
 
   lazy val fakeRequestWithNinoAndCalc: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
-    forms.utils.SessionKeys.calculationId -> "1234567890",
+    "calculationId" -> "1234567890",
     "nino" -> testNino
   )
 

@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import common.auth.MtdItUser
 import common.testUtils.TestSupport
-import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
+import financials.views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class ApiFailureSubmittingPoaViewSpec extends TestSupport {

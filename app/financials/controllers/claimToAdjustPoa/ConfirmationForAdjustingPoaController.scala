@@ -28,7 +28,7 @@ import financials.utils.claimToAdjust.WithSessionAndPoa
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
+import financials.views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext

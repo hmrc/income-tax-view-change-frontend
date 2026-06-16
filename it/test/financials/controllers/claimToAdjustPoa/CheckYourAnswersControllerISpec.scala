@@ -16,7 +16,6 @@
 
 package financials.controllers.claimToAdjustPoa
 
-import audit.models.AdjustPaymentsOnAccountAuditModel
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -26,6 +25,7 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDeta
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 import financials.controllers.claimToAdjustPoa.routes.{ApiFailureSubmittingPoaController, PoaAdjustedController}
+import financials.models.audit.AdjustPaymentsOnAccountAuditModel
 import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.ClaimToAdjustPoaSuccess
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService

@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.PaymentAllocationsResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
@@ -29,14 +28,15 @@ import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.services.PaymentAllocationsService
 import common.utils.FallBackBackLinks
-import forms.utils.SessionKeys.gatewayPage
+import financials.forms.utils.SessionKeys.gatewayPage
+import financials.models.audit.PaymentAllocationsResponseAuditModel
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.PaymentAllocationView
+import financials.views.html.PaymentAllocationView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

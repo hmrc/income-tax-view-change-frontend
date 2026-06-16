@@ -19,13 +19,13 @@ package views
 import common.exceptions.MissingFieldException
 import common.models.liabilitycalculation.taxcalculation.TaxBands
 import common.testUtils.ViewSpec
-import models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, TransitionProfitRow}
 import common.models.liabilitycalculation.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalatest.prop.TableDrivenPropertyChecks.*
 import org.scalatest.prop.TableFor3
 import play.twirl.api.Html
+import returns.models.liabilitycalculation.viewmodels.{TaxDueSummaryViewModel, TransitionProfitRow}
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
 import returns.views.html.TaxCalcBreakdownView
 

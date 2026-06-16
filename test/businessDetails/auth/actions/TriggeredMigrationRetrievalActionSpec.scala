@@ -23,7 +23,6 @@ import common.auth.actions.AuthActionsTestData.{defaultIncomeSourcesData, getMtd
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.IncomeTaxCalculationConnector
 import common.enums.JourneyType.TriggeredMigrationJourney
-import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import common.mocks.services.MockSessionService
 import common.models.admin.{FeatureSwitchName, TriggeredMigration}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}

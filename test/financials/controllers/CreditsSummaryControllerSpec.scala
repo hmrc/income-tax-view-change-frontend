@@ -32,7 +32,7 @@ import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.{calendarYear2018, testMtdItAgentUser, testMtdItUser, testSaUtr}
 import financials.testConstants.FinancialDetailsTestConstants.*
 import returns.services.CalculationService
-import views.html.CreditsSummaryView
+import financials.views.html.CreditsSummaryView
 
 
 class CreditsSummaryControllerSpec extends MockAuthActions with MockCalculationService

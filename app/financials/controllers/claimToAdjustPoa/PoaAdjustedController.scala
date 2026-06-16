@@ -33,7 +33,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import shared.enums.AfterSubmissionPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.claimToAdjustPoa.PoaAdjustedView
+import financials.views.html.claimToAdjustPoa.PoaAdjustedView
 
 import java.time.LocalDate
 import javax.inject.Inject

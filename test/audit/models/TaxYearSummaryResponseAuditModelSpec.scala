@@ -20,8 +20,6 @@ import common.auth.actions.AuthActionsTestData.*
 import common.implicits.ImplicitDateParser
 import common.models.core.AccountingPeriodModel
 import models.financialDetails.{Accepted, ChargeItem, CodedOutStatusType, DocumentDetail, DocumentDetailWithDueDate}
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.taxyearsummary.TaxYearSummaryChargeItem
 import org.scalatest.wordspec.AnyWordSpecLike
 import common.testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
@@ -31,9 +29,13 @@ import common.testUtils.TestSupport
 import financials.testConstants.ChargeConstants
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import play.api.libs.json._
-import org.scalatest.matchers.should.Matchers._
+import play.api.libs.json.*
+import org.scalatest.matchers.should.Matchers.*
+import returns.models.audit.TaxYearSummaryResponseAuditModel
+import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+
 import java.time.LocalDate
 
 class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupport with ImplicitDateParser with ChargeConstants {

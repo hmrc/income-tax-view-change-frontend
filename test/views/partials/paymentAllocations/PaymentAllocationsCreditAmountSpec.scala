@@ -23,7 +23,7 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import financials.testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModelWithCredit
-import views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
+import financials.views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
 
 import java.time.LocalDate
 

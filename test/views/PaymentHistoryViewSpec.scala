@@ -28,7 +28,7 @@ import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewMod
 import models.repaymentHistory.PaymentHistoryEntry
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
-import views.html.PaymentHistoryView
+import financials.views.html.PaymentHistoryView
 
 import java.time.LocalDate
 import java.time.Month.APRIL
