@@ -18,11 +18,11 @@ package mocks.services
 
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import common.testUtils.UnitSpec
+import hub.services.PenaltyDetailsService
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import services.PenaltyDetailsService
 
 import scala.concurrent.Future
 

@@ -25,7 +25,6 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, BusinessDetailsModel, PropertyDetailsModel}
-import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
@@ -43,6 +42,7 @@ import common.testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, t
 import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSource
 import common.testConstants.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import obligations.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import scala.concurrent.Future

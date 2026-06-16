@@ -19,12 +19,12 @@ package obligations.utils.reportingObligations
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.models.incomeSourceDetails.TaxYear
-import enums.{JourneyCompleted, JourneyState}
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import shared.enums.{JourneyCompleted, JourneyState}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}

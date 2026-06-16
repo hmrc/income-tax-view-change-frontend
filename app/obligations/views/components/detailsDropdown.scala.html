@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package implicits
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-import play.twirl.api.Html
+@this(govukDetails : GovukDetails)
 
-object HtmlFormatter {
-  implicit class NbspString(val str: String) extends AnyVal {
-    def toNonBreaking: Html =
-      Html(str.replace(" ", "&nbsp;"))
-  }
-  implicit class EmspString(val str: String) extends AnyVal {
-    def toEmsp: Html =
-      Html(str.replace("\t", "&emsp;"))
-  }
-}
+@(summary: String, content: Html, id: Option[String] = None)(implicit messages: Messages)
+
+@govukDetails(Details(
+    id = id,
+    summary = Text(messages(summary)),
+    content = HtmlContent(content)
+))

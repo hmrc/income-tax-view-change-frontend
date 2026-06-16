@@ -19,7 +19,6 @@ package obligations.controllers.reportingObligations.optOut
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.OptOutJourney
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.models.UIJourneySessionData
 import common.models.admin.OptOutFs
 import common.models.itsaStatus.ITSAStatus.*
 import obligations.controllers.constants.ConfirmOptOutUpdateControllerConstants.*
@@ -32,6 +31,7 @@ import play.api.http.Status.OK
 import play.mvc.Http.Status.SEE_OTHER
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
 class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {

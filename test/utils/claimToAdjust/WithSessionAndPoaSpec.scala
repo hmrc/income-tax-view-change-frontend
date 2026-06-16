@@ -21,7 +21,6 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
@@ -41,6 +40,7 @@ import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, test
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import common.testUtils.TestSupport
+import shared.enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}

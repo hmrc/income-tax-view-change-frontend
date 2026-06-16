@@ -31,8 +31,8 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.Manage
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import shared.models.UIJourneySessionData
 
 
 class ManageObligationsControllerISpec extends ControllerISpecHelper {

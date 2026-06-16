@@ -19,8 +19,8 @@ package businessDetails.services
 import businessDetails.repositories.SensitiveUIJourneySessionDataRepository
 import common.config.FrontendAppConfig
 import common.enums.JourneyType.*
-import common.models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
+import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 

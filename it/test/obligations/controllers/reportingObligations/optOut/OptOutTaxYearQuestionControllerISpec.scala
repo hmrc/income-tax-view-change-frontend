@@ -21,7 +21,6 @@ import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
-import common.models.UIJourneySessionData
 import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
@@ -39,6 +38,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
 class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {

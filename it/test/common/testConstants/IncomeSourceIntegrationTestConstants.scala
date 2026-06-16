@@ -18,7 +18,6 @@ package common.testConstants
 
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.IncomeSourceJourneyType
-import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import financials.models.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import financials.models.CodingOutType.*
@@ -28,6 +27,7 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.*
 import financials.testConstants.PaymentHistoryTestConstraints.oldBusiness1
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

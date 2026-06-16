@@ -18,7 +18,6 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.BeforeSubmissionPage
 import AddIncomeSourceStartDateCheckForm._
 import businessDetails.services.SessionService
 import play.api.Logger
@@ -32,9 +31,10 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.implicits.ImplicitDateFormatter
-import common.models.UIJourneySessionData
 import common.models.core.{Mode, NormalMode}
 import common.services.DateService
+import shared.enums.BeforeSubmissionPage
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}

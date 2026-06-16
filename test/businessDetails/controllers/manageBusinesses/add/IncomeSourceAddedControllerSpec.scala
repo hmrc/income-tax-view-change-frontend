@@ -40,10 +40,10 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockITSAStatusService, MockSessionService}
-import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.LatencyDetails
 import common.services.{DateService, DateServiceInterface}
 import obligations.mocks.services.MockNextUpdatesService
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import scala.annotation.unused

@@ -20,7 +20,6 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.PaymentOnAccountSessionService
 import mocks.services.MockPaymentOnAccountSessionService
@@ -36,6 +35,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import common.testUtils.TestSupport
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
+import shared.enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage}
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}

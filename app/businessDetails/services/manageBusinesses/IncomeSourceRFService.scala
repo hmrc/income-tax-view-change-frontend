@@ -23,15 +23,15 @@ import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.IncomeSourceJourneyType
-import common.models.UIJourneySessionData
 import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import common.models.itsaStatus.StatusDetail
 import common.services.{DateService, ITSAStatusService}
-import enums.JourneyState
 import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import shared.enums.JourneyState
+import shared.models.UIJourneySessionData
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

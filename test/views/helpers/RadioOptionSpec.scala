@@ -16,6 +16,7 @@
 
 package views.helpers
 
+import businessDetails.views.helpers.RadioOption
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 

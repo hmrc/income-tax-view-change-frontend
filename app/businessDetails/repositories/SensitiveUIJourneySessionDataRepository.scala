@@ -16,15 +16,16 @@
 
 package businessDetails.repositories
 
+import businessDetails.models.SensitiveUIJourneySessionData
 import common.config.FrontendAppConfig
 import common.enums.JourneyType.{JourneyType, Operation}
-import common.models.{SensitiveUIJourneySessionData, UIJourneySessionData}
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.Configuration
 import play.api.libs.json.Format
+import shared.models.UIJourneySessionData
 import uk.gov.hmrc.crypto.SymmetricCryptoFactory
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -61,7 +62,7 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
-  private def dataFilter(data: SensitiveUIJourneySessionData): Bson = {
+  private def dataFilter(data: UIJourneySessionData): Bson = {
     import Filters._
     and(equal("sessionId", data.sessionId), equal("journeyType", data.journeyType))
   }
@@ -71,7 +72,7 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
     and(equal("sessionId", sessionId), regex("journeyType", operation.operationType))
   }
 
-  def keepAlive(data: SensitiveUIJourneySessionData): Future[Boolean] =
+  def keepAlive(data: UIJourneySessionData): Future[Boolean] =
     collection
       .updateOne(
         filter = dataFilter(data),
@@ -81,7 +82,7 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
       .map(_.wasAcknowledged())
 
   def get(sessionId: String, journeyType: JourneyType): Future[Option[UIJourneySessionData]] = {
-    val data = SensitiveUIJourneySessionData(sessionId, journeyType.toString)
+    val data = UIJourneySessionData(sessionId, journeyType.toString)
     keepAlive(data).flatMap {
       _ =>
         collection
@@ -97,8 +98,8 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
 
     collection
       .replaceOne(
-        filter = dataFilter(data.encrypted),
-        replacement = updatedAnswers.encrypted,
+        filter = dataFilter(data),
+        replacement = new SensitiveUIJourneySessionData(updatedAnswers),
         options = ReplaceOptions().upsert(true)
       )
       .toFuture()
@@ -107,14 +108,14 @@ class SensitiveUIJourneySessionDataRepository @Inject()(
 
   def updateData(data: UIJourneySessionData, key: String, value: String): Future[UpdateResult] = {
     collection.updateOne(
-      filter = dataFilter(data.encrypted),
+      filter = dataFilter(data),
       update = Document("$set" -> Document(key -> value))
     ).toFuture()
   }
 
   def deleteOne(data: UIJourneySessionData): Future[Boolean] =
     collection
-      .deleteOne(dataFilter(data.encrypted))
+      .deleteOne(dataFilter(data))
       .toFuture()
       .map(_.wasAcknowledged())
 

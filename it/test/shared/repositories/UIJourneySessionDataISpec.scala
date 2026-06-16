@@ -19,11 +19,11 @@ package shared.repositories
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.helpers.ComponentSpecBase
-import common.models.UIJourneySessionData
 import models.incomeSourceDetails.AddIncomeSourceData
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.SingleObservableFuture
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import shared.models.UIJourneySessionData
 
 class UIJourneySessionDataISpec extends ComponentSpecBase {
   private val repository = app.injector.instanceOf[UIJourneySessionDataRepository]

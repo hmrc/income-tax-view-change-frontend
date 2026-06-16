@@ -18,9 +18,9 @@ package businessDetails.testConstants
 
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.UIJourneySessionData
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 

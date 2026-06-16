@@ -20,7 +20,7 @@
 @import common.services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
-@import views.html.components.numberList
+@import financials.views.html.components.numberList
 @import common.views.html.layouts.unifiedLayout
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
@@ -33,7 +33,7 @@
 @import views.html.partials.chargeSummary.ChargeSummaryHasDunningLocksOrLpiWithDunningLock
 @import views.html.partials.yourSelfAssessmentCharges.PaymentAllocationTable
 @import models.paymentAllocationCharges.PaymentAllocationViewModel
-@import _root_.implicits.HtmlFormatter.EmspString
+@import _root_.shared.implicits.HtmlFormatter.EmspString
 @import java.time.LocalDate
 @import models.financialDetails.{PoaOneReconciliationDebit, PoaTwoReconciliationDebit}
 @import common.viewUtils.ExternalUrlHelper

@@ -25,6 +25,7 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import financials.services.*
+import hub.services.PenaltyDetailsService
 import mocks.services.*
 import models.financialDetails.*
 import obligations.mocks.services.MockNextUpdatesService
@@ -40,7 +41,6 @@ import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.Html
-import services.*
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future

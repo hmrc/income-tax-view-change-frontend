@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors
+package businessDetails.connectors
 
 import businessDetails.services.AddressLookupConnector
 import common.config.featureswitch.FeatureSwitching
