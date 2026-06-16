@@ -22,10 +22,12 @@ import common.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, Pay
 import common.services.AuditingService
 import connectors.PayApiConnector
 import financials.models.audit.InitiatePayNowAuditModel
+import financials.services.MakingPaymentService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import views.html.MakingPaymentView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,9 +35,11 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PaymentController @Inject()(val authActions: AuthActions,
                                   payApiConnector: PayApiConnector,
+                                  makingPaymentService: MakingPaymentService,
                                   val auditingService: AuditingService,
                                   val itvcErrorHandler: ItvcErrorHandler,
-                                  val itvcAgentErrorHandler: AgentItvcErrorHandler
+                                  val itvcAgentErrorHandler: AgentItvcErrorHandler,
+                                  makingPaymentView: MakingPaymentView
                                  )(implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
                                    val ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
@@ -68,6 +72,51 @@ class PaymentController @Inject()(val authActions: AuthActions,
   val agentPaymentHandoff: Long => Action[AnyContent] = paymentAmountInPence => authActions.asMTDPrimaryAgent().async {
     implicit user =>
       handleHandoff(paymentAmountInPence)
+  }
+
+  def makingPayment(amountInPence: Long, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
+    implicit user =>
+      handleMakingPayment(
+        backUrl = routes.WhatYouOweController.show(origin).url,
+        paymentHandoffUrl = routes.PaymentController.paymentHandoff(amountInPence, origin).url,
+        whatYouOweUrl = routes.WhatYouOweController.show(origin).url,
+        moneyInYourAccountUrl = routes.MoneyInYourAccountController.show(origin).url,
+        payPenaltyUrl = appConfig.incomeTaxPenaltiesFrontend,
+        isAgent = false
+      )
+  }
+
+  val agentMakingPayment: Long => Action[AnyContent] = paymentAmountInPence => authActions.asMTDPrimaryAgent().async {
+    implicit user =>
+      handleMakingPayment(
+        backUrl = routes.WhatYouOweController.showAgent().url,
+        paymentHandoffUrl = routes.PaymentController.agentPaymentHandoff(paymentAmountInPence).url,
+        whatYouOweUrl = routes.WhatYouOweController.showAgent().url,
+        moneyInYourAccountUrl = routes.MoneyInYourAccountController.showAgent().url,
+        payPenaltyUrl = s"${appConfig.incomeTaxPenaltiesFrontend}/agent",
+        isAgent = true
+      )
+  }
+
+  private def handleMakingPayment(backUrl: String,
+                                  paymentHandoffUrl: String,
+                                  whatYouOweUrl: String,
+                                  moneyInYourAccountUrl: String,
+                                  payPenaltyUrl: String,
+                                  isAgent: Boolean)
+                                 (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
+    makingPaymentService.createViewModel(backUrl, paymentHandoffUrl, whatYouOweUrl, moneyInYourAccountUrl, payPenaltyUrl).map {
+      case Some(viewModel) => Ok(makingPaymentView(viewModel))
+      case None =>
+        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}Failed to create MakingPaymentViewModel")
+        val errorHandler = if(isAgent) itvcAgentErrorHandler else itvcErrorHandler
+        errorHandler.showInternalServerError()
+    }.recover {
+      case ex =>
+        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}Error received while getting Making payment page details: ${ex.getMessage} - ${ex.getCause}")
+        val errorHandler = if(isAgent) itvcAgentErrorHandler else itvcErrorHandler
+        errorHandler.showInternalServerError()
+    }
   }
 
   def logAndHandleError(message: String)
