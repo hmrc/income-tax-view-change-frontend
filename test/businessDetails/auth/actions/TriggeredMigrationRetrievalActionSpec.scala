@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.auth.actions
+package businessDetails.auth.actions
 
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
@@ -23,13 +23,14 @@ import common.auth.actions.AuthActionsTestData.{defaultIncomeSourcesData, getMtd
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.IncomeTaxCalculationConnector
 import common.enums.JourneyType.TriggeredMigrationJourney
+import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import common.mocks.services.MockSessionService
 import common.models.admin.{FeatureSwitchName, TriggeredMigration}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
-import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import common.models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
 import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}
 import common.models.liabilitycalculation.*
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}

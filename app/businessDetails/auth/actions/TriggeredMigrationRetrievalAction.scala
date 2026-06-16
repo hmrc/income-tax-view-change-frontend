@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package common.auth.actions
+package businessDetails.auth.actions
 
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.services.SessionService
 import common.auth.MtdItUser
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.connectors.IncomeTaxCalculationConnector
 import common.controllers.BaseController
 import common.enums.JourneyType.TriggeredMigrationJourney
-import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import common.enums.TaxYearSummary.CalculationRecord.LATEST
 import common.models.admin.TriggeredMigration
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent

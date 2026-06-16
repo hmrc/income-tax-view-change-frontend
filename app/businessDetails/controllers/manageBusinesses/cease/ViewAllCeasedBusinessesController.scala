@@ -16,9 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.cease.ViewAllCeasedBusinessesView
 
@@ -27,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.JourneyType.Manage
 import common.models.admin.DisplayBusinessStartDate
@@ -35,7 +36,7 @@ import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 
 @Singleton
 class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: ViewAllCeasedBusinessesView,
-                                                  val authActions: AuthActions,
+                                                  val authActions: AuthActionsWithTriggeredMigrationCheck,
                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                   val sessionService: SessionService,
                                                   val itvcErrorHandler: ItvcErrorHandler,

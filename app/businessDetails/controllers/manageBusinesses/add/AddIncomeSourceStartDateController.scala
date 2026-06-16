@@ -16,11 +16,12 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -34,12 +35,13 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import shared.enums.{BeforeSubmissionPage, FreshInitialPage, InitialPage}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
+class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDateView,
                                                    val customNotFoundErrorView: CustomNotFoundErrorView,
                                                    val sessionService: SessionService,

@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
 import businessDetails.forms.triggeredMigration.CheckActiveBusinessesConfirmForm
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
@@ -25,7 +26,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckActiveBusinessesConfirmView
-import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.services.{AuditingService, CustomerFactsUpdateService}
 
@@ -37,7 +37,7 @@ class CheckActiveBusinessesConfirmController @Inject()(
                                                         triggeredMigrationService: TriggeredMigrationService,
                                                         customerFactsUpdateService: CustomerFactsUpdateService,
                                                         auditingService: AuditingService,
-                                                        val auth: AuthActions
+                                                        val auth: AuthActionsWithTriggeredMigrationCheck
                                                       )(
                                                         mcc: MessagesControllerComponents,
                                                         implicit val appConfig: FrontendAppConfig,

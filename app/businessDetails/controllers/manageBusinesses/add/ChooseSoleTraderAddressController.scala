@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
@@ -26,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
@@ -41,7 +42,7 @@ import scala.util.Try
 
 @Singleton
 class ChooseSoleTraderAddressController @Inject()(
-                                                   authActions: AuthActions,
+                                                   authActions: AuthActionsWithTriggeredMigrationCheck,
                                                    itvcErrorHandler: ItvcErrorHandler,
                                                    itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                    val sessionService: SessionService,

@@ -16,12 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import businessDetails.views.html.manageBusinesses.add.AddBusinessNameView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.SelfEmployment
@@ -39,7 +40,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddBusinessNameController @Inject()(val authActions: AuthActions,
+class AddBusinessNameController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
                                           val addBusinessView: AddBusinessNameView,
                                           val sessionService: SessionService)
                                          (implicit val appConfig: FrontendAppConfig,
