@@ -19,7 +19,7 @@ package financials.services
 import common.auth.MtdItUser
 import connectors.ChargeHistoryConnector
 import financials.models.CreateReversalReason
-import models.chargeHistory.*
+import financials.models.chargeHistory.*
 import models.financialDetails.*
 import uk.gov.hmrc.http.HeaderCarrier
 

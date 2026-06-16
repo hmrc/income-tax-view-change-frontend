@@ -21,14 +21,14 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.NormalMode
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import models.claimToAdjustPoa.viewModels.{PaymentOnAccountViewModel, WhatYouNeedToKnowViewModel}
+import financials.utils.ErrorRecovery
+import financials.utils.claimToAdjust.WithSessionAndPoa
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ErrorRecovery
-import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import javax.inject.{Inject, Singleton}

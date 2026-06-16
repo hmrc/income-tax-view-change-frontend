@@ -18,8 +18,8 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
-import models.chargeHistory.ChargesHistoryResponse.{ChargesHistoryResponse, ChargesHistoryResponseReads}
-import models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import financials.models.chargeHistory.ChargesHistoryResponse.{ChargesHistoryResponse, ChargesHistoryResponseReads}
+import financials.models.chargeHistory.{ChargeHistoryResponseModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import play.api.Logger
 import play.api.http.Status
 import uk.gov.hmrc.http.client.HttpClientV2

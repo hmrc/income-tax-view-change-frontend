@@ -21,15 +21,15 @@ import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.{CheckMode, Mode, Nino, NormalMode}
 import financials.forms.adjustPoa.EnterPoaAmountForm
+import financials.models.claimToAdjustPoa.Increase
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import models.claimToAdjustPoa.Increase
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.utils.ErrorRecovery
+import financials.utils.claimToAdjust.JourneyCheckerClaimToAdjust
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.ErrorRecovery
-import utils.claimToAdjust.JourneyCheckerClaimToAdjust
 import views.html.claimToAdjustPoa.EnterPoaAmountView
 
 import javax.inject.{Inject, Singleton}

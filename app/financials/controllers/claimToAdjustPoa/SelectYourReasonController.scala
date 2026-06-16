@@ -23,14 +23,14 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.models.core.{Mode, NormalMode}
 import financials.controllers.claimToAdjustPoa.routes.*
 import financials.forms.adjustPoa.SelectYourReasonFormProvider
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.claimToAdjustPoa.{Increase, SelectYourReason}
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.claimToAdjustPoa.{Increase, SelectYourReason}
+import financials.utils.claimToAdjust.WithSessionAndPoa
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.claimToAdjust.WithSessionAndPoa
 import views.html.claimToAdjustPoa.SelectYourReasonView
 
 import javax.inject.Inject

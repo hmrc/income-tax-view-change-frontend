@@ -17,7 +17,7 @@
 package financials.forms.adjustPoa
 
 import common.testUtils.TestSupport
-import models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
+import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower, SelectYourReason}
 import play.api.data.{Form, FormError}
 
 

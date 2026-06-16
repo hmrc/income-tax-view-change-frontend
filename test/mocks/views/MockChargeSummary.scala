@@ -16,7 +16,7 @@
 
 package mocks.views
 
-import models.chargeSummary.ChargeSummaryViewModel
+import financials.models.chargeSummary.ChargeSummaryViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}

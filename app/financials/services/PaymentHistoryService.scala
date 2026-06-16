@@ -24,8 +24,8 @@ import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
+import financials.models.chargeHistory.ChargesHistoryErrorModel
 import financials.services.PaymentHistoryService.PaymentHistoryError
-import models.chargeHistory.ChargesHistoryErrorModel
 import models.financialDetails.*
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger

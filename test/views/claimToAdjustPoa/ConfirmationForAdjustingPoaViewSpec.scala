@@ -19,7 +19,7 @@ package views.claimToAdjustPoa
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.TestSupport
-import models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
+import financials.models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements

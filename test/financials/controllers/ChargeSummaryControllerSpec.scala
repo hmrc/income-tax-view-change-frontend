@@ -20,11 +20,14 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.testTaxYear
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
+import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason}
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
-import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
+import financials.testConstants.FinancialDetailsTestConstants.*
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel, PoaTwoReconciliationCredit}
 import models.repaymentHistory.RepaymentHistoryUtils
 import org.mockito.Mockito.when
@@ -33,9 +36,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import common.testConstants.BaseTestConstants.testTaxYear
-import financials.testConstants.FinancialDetailsTestConstants.*
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import java.time.LocalDate
 import scala.concurrent.Future
