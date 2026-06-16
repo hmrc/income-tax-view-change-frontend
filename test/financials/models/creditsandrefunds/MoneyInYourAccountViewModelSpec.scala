@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package models.creditsandrefunds
+package financials.models.creditsandrefunds
 
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec
-import models.financialDetails.*
-import java.time.LocalDate
 import financials.controllers.routes as financialsRoutes
 import financials.testConstants.ANewCreditAndRefundModel
+import models.financialDetails.*
+
+import java.time.LocalDate
 
 class MoneyInYourAccountViewModelSpec extends UnitSpec {
 

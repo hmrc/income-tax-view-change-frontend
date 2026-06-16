@@ -23,8 +23,8 @@ import common.testConstants.BaseTestConstants.{app, chargeReference, testErrorMe
 import financials.models.ChargeType.NIC4_WALES
 import financials.models.CodingOutType.*
 import financials.models.creditDetailModel.CreditDetailModel
+import financials.models.creditsandrefunds.{CreditsModel, Transaction}
 import financials.testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
-import models.creditsandrefunds.{CreditsModel, Transaction}
 import models.financialDetails.*
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}

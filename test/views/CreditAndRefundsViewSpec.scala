@@ -21,8 +21,8 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import common.testUtils.{TestSupport, ViewSpec}
+import financials.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import financials.testConstants.ANewCreditAndRefundModel
-import models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditsModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames

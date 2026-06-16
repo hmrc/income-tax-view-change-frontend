@@ -16,7 +16,7 @@
 
 package hub.models.homePage
 
-import models.creditsandrefunds.CreditsModel
+import financials.models.creditsandrefunds.CreditsModel
 import play.api.i18n.Messages
 
 case class PaymentCreditAndRefundHistoryTileViewModel(credits: CreditsModel,

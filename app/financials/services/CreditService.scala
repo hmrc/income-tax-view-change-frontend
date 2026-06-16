@@ -22,7 +22,7 @@ import common.models.core.ErrorModel
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import connectors.FinancialDetailsConnector
-import models.creditsandrefunds.CreditsModel
+import financials.models.creditsandrefunds.CreditsModel
 import models.financialDetails.Repayment
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
