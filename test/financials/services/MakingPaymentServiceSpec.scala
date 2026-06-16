@@ -19,13 +19,14 @@ package financials.services
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
-import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
+import models.financialDetails.{BalanceDetails, DocumentDetail, FinancialDetail, FinancialDetailsErrorModel, FinancialDetailsModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class MakingPaymentServiceSpec extends TestSupport {
@@ -39,7 +40,9 @@ class MakingPaymentServiceSpec extends TestSupport {
 
   private def financialDetailsModel(overDueAmount: BigDecimal = 0,
                                     unallocatedCredit: Option[BigDecimal] = None,
-                                    totalCreditAvailableForRepayment: Option[BigDecimal] = None): FinancialDetailsModel =
+                                    totalCreditAvailableForRepayment: Option[BigDecimal] = None,
+                                    documentDetails: List[DocumentDetail] = List.empty,
+                                    financialDetails: List[FinancialDetail] = List.empty): FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(
         balanceDueWithin30Days = 0,
@@ -54,8 +57,8 @@ class MakingPaymentServiceSpec extends TestSupport {
         secondPendingAmountRequested = None,
         unallocatedCredit = unallocatedCredit
       ),
-      documentDetails = List.empty,
-      financialDetails = List.empty
+      documentDetails = documentDetails,
+      financialDetails = financialDetails
     )
 
   "MakingPaymentService.createViewModel" should {
@@ -100,6 +103,42 @@ class MakingPaymentServiceSpec extends TestSupport {
 
       result.flatMap(_.unallocatedCredit) shouldBe Some(BigDecimal(2300))
       result.map(_.hasMoneyInAccount) shouldBe Some(true)
+      result.map(_.hasAdditionalSections) shouldBe Some(true)
+    }
+
+    "set hasPenalty when there is an outstanding penalty charge" in {
+      val penaltyTransactionId = "penalty-transaction"
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              DocumentDetail(
+                taxYear = 2025,
+                transactionId = penaltyTransactionId,
+                documentDescription = None,
+                documentText = None,
+                outstandingAmount = 200,
+                originalAmount = 200,
+                documentDate = LocalDate.of(2025, 4, 6)
+              )
+            ),
+            financialDetails = List(
+              FinancialDetail(
+                taxYear = "2025",
+                mainTransaction = Some("4027"),
+                transactionId = Some(penaltyTransactionId),
+                outstandingAmount = Some(200),
+                items = None
+              )
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasPenalty) shouldBe Some(true)
       result.map(_.hasAdditionalSections) shouldBe Some(true)
     }
 

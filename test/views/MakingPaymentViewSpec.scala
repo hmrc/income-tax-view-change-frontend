@@ -70,6 +70,7 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       val document = render(viewModel(hasPenalty = true, unallocatedCredit = Some(BigDecimal(400))))
       val headings = document.select("#main-content h2")
 
+      headings.get(0).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
       headings.get(1).text shouldBe messages("making-payment.penalty.heading")
       headings.get(2).text shouldBe messages("making-payment.money-in-account.heading")
       document.getElementById("pay-penalty-link").attr("href") shouldBe "/pay-penalty"
