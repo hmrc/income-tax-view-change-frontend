@@ -265,7 +265,7 @@ class TaxYearSummaryController @Inject()(
     val isNotCrystallisedShowInset: Boolean =
       fromStringToCalculationTypeValue(latestCalc.metadata.calculationType) match {
         case CalculationType.UnknownCalculationType =>
-          Logger("application").error(s"[TaxYearSummaryController][handleCalcSuccess] Found: UnknownCalculationType")
+          Logger("application").error(s"[TaxYearSummaryController][handleCalcSuccess] Found:${latestCalc.metadata.calculationType}, Returned: UnknownCalculationType")
           latestCalc.metadata.isCalculationNotCrystallised
         case _ =>
           latestCalc.metadata.isCalculationNotCrystallised
@@ -352,7 +352,7 @@ class TaxYearSummaryController @Inject()(
           .exists { liabilityCalculationResponse =>
             fromStringToCalculationTypeValue(liabilityCalculationResponse.metadata.calculationType) match {
               case CalculationType.UnknownCalculationType =>
-                Logger("application").error(s"[TaxYearSummaryController][handleCalcError] Found: UnknownCalculationType")
+                Logger("application").error(s"[TaxYearSummaryController][handleCalcError] Found: ${liabilityCalculationResponse.metadata.calculationType}, Returned: UnknownCalculationType")
                 liabilityCalculationResponse.metadata.isCalculationNotCrystallised
               case _ =>
                 liabilityCalculationResponse.metadata.isCalculationNotCrystallised
