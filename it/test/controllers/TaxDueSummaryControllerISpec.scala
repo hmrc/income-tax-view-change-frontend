@@ -23,13 +23,13 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import helpers.servicemocks.*
 import common.helpers.servicemocks.AuditStub.verifyAuditEvent
 import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import common.testConstants.NewCalcDataIntegrationTestConstants.*
 import common.testConstants.messages.TaxDueSummaryMessages.*
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

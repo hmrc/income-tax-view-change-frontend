@@ -16,15 +16,15 @@
 
 package returns.services
 
-import common.models.core.Nino
 import common.services.DateService
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import common.testUtils.TestSupport
 import mocks.connectors.MockCalculationListConnector
-import models.calculationList.CalculationListErrorModel
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
 import returns.testConstants.CalculationListTestConstants
+import shared.models.calculationList.CalculationListErrorModel
+import shared.services.CalculationListService
 
 
 class CalculationListServiceSpec extends TestSupport with MockCalculationListConnector {
@@ -37,27 +37,6 @@ class CalculationListServiceSpec extends TestSupport with MockCalculationListCon
   when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd)
   when(mockDateService.getCurrentTaxYearEnd).thenReturn(taxYearEnd + 1)
   val notFoundText = "The remote endpoint has indicated that the requested resource could not be found."
-
-  "getCalculationList (API 1896)" should {
-
-     "a success response is received from the connector (including optional field `crystallised`)" in {
-       setupGetCalculationList(testNino, taxYearEnd.toString, testMtditid)(CalculationListTestConstants.calculationListFull)
-       TestCalculationListService.getCalculationList(Nino(testNino), taxYearEnd.toString).futureValue shouldBe
-         CalculationListTestConstants.calculationListFull
-     }
-     "a success response is received from the connector (excluding optional field `crystallised`)" in {
-       setupGetCalculationList(testNino, taxYearEnd.toString, testMtditid)(CalculationListTestConstants.calculationListMin)
-       TestCalculationListService.getCalculationList(Nino(testNino), taxYearEnd.toString).futureValue shouldBe
-         CalculationListTestConstants.calculationListMin
-     }
-     "return a CalculationListErrorModel" when {
-       "an error response is received from the connector" in {
-         setupGetCalculationList(testNino, taxYearEnd.toString, testMtditid)(CalculationListErrorModel(NOT_FOUND, notFoundText))
-         TestCalculationListService.getCalculationList(Nino(testNino), taxYearEnd.toString).futureValue shouldBe
-           CalculationListErrorModel(NOT_FOUND, notFoundText)
-       }
-     }
-   }
 
   "isTaxYearCrystallised" when {
     "for year 2022-23" should {

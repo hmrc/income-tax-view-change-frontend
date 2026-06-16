@@ -29,12 +29,12 @@ import financials.testConstants.ChargeConstants
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
-import obligations.models.*
 import obligations.testConstants.NextUpdatesTestConstants.*
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
 import returns.views.html.TaxYearSummaryView
 import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
+import shared.models.{ObligationWithIncomeType, ObligationsModel}
 
 import java.time.LocalDate
 

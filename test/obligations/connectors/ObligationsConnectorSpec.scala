@@ -34,8 +34,6 @@ package obligations.connectors
 
 import common.config.FrontendAppConfig
 import common.mocks.{MockAuditingService, MockHttpV2}
-import obligations.models.*
-import obligations.models.audit.NextUpdatesResponseAuditModel
 import obligations.testConstants.NextUpdatesTestConstants.*
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
@@ -43,6 +41,9 @@ import play.api.libs.json.Json
 import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
+import shared.connectors.ObligationsConnector
+import shared.models.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
+import shared.models.audit.NextUpdatesResponseAuditModel
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

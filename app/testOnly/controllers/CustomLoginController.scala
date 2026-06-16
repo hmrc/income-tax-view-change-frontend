@@ -24,7 +24,6 @@ import common.services.{DateServiceInterface, ITSAStatusService}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import returns.services.CalculationListService
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{ClearITSAStatusCacheConnector, CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.*
@@ -47,7 +46,6 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val optOutCustomDataService: OptOutCustomDataService,
                                       val customAuthConnector: CustomAuthConnector,
                                       val clearITSAStatusCacheConnector: ClearITSAStatusCacheConnector,
-                                      val calculationListService: CalculationListService,
                                       val dynamicStubService: DynamicStubService,
                                       val ITSAStatusService: ITSAStatusService,
                                       val itvcErrorHandler: ItvcErrorHandler,

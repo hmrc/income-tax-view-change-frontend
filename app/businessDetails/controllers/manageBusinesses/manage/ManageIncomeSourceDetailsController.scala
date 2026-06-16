@@ -40,8 +40,8 @@ import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, PropertyDetailsModel, QuarterReportingType, QuarterTypeElection, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateService, ITSAStatusService}
-import returns.services.CalculationListService
 import shared.enums.InitialPage
+import shared.services.CalculationListService
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused

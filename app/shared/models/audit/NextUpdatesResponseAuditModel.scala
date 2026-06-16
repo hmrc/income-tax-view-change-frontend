@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package obligations.models.audit
+package shared.models.audit
 
 import common.auth.MtdItUser
 import common.enums.AuditType.ViewObligationsResponse
 import common.models.audit.ExtendedAuditModel
-import obligations.models.SingleObligationModel
 import play.api.libs.json.*
+import shared.models.SingleObligationModel
 
 case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
                                          incomeSourceId: String,

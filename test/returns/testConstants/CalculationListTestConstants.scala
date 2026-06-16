@@ -16,8 +16,8 @@
 
 package returns.testConstants
 
-import models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import play.api.libs.json.{JsValue, Json}
+import shared.models.calculationList.{CalculationListModel, CalculationListResponseModel}
 
 object CalculationListTestConstants {
   val jsonResponseFull: JsValue = Json.parse(

@@ -25,11 +25,11 @@ import helpers.servicemocks.IncomeTaxViewChangeStub
 import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
-import obligations.models.*
 import play.api.http.Status.{OK, SEE_OTHER}
 import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

@@ -16,9 +16,9 @@
 
 package obligations.testConstants
 
-import obligations.models.*
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId}
+import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

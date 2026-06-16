@@ -28,8 +28,6 @@ import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import helpers.servicemocks.{IncomeTaxViewChangeStub, PenaltyDetailsStub}
 import models.financialDetails.*
-import obligations.models.*
-import obligations.models.audit.NextUpdatesResponseAuditModel
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
@@ -39,6 +37,8 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import financials.testConstants.OutstandingChargesIntegrationTestConstants.{validOutStandingChargeResponseJsonWithAciAndBcdCharges, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges}
 import common.testConstants.messages.HomeMessages.*
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.models.audit.NextUpdatesResponseAuditModel
 
 import java.time.LocalDate
 

@@ -17,7 +17,7 @@
 package obligations.testConstants
 
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
-import obligations.models.{GroupedObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.models.{GroupedObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

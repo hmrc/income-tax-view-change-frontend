@@ -24,7 +24,6 @@ import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import financials.services.PaymentHistoryService
 import hub.models.newHomePage.RecentActivityViewModel
 import hub.services.newHomePage.RecentActivityService
-import obligations.models.ObligationsModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{when, mock as mMock}
 import play.api
@@ -34,6 +33,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsTestConstants.business1
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import shared.models.ObligationsModel
 
 import java.time.LocalDate
 import scala.concurrent.Future

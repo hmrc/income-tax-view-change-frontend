@@ -28,7 +28,7 @@ import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.core.IncomeSourceId
 import common.services.DateService
 import common.models.incomeSourceDetails.TaxYear.getTaxYearModel
-import obligations.services.NextUpdatesService
+import businessDetails.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

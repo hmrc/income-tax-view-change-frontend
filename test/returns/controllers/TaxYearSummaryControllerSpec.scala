@@ -30,9 +30,8 @@ import models.financialDetails.*
 import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
-import obligations.mocks.services.MockNextUpdatesService
-import obligations.models.*
-import obligations.services.NextUpdatesService
+import returns.mocks.services.MockNextUpdatesService
+import returns.services.NextUpdatesService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -56,6 +55,7 @@ import scala.annotation.unused
 import scala.concurrent.Future
 import financials.testConstants.ChargeConstants
 import returns.services.{CalculationService, TaxYearSummaryService}
+import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 class TaxYearSummaryControllerSpec
   extends MockAuthActions

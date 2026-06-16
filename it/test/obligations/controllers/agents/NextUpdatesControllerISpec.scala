@@ -25,14 +25,14 @@ import common.models.admin.OptOutFs
 import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import obligations.models.audit.NextUpdatesResponseAuditModel
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.address
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.models.audit.NextUpdatesResponseAuditModel
 
 import java.time.LocalDate
 

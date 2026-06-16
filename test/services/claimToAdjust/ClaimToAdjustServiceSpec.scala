@@ -23,13 +23,13 @@ import common.services.DateService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
-import models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import common.testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
 import common.testUtils.TestSupport
 import financials.testConstants.ClaimToAdjustPoaTestConstants.*
+import shared.models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

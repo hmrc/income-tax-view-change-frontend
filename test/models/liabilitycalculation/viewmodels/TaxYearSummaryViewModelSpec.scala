@@ -23,8 +23,8 @@ import common.testUtils.UnitSpec
 import financials.testConstants.ChargeConstants
 import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import models.taxyearsummary.TaxYearSummaryChargeItem
-import obligations.models.ObligationsModel
 import obligations.testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
+import shared.models.ObligationsModel
 
 import java.time.LocalDate
 

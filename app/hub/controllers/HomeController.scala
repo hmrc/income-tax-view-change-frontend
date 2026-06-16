@@ -33,7 +33,7 @@ import hub.services.PenaltyDetailsService
 import hub.utils.HomePageUtils
 import models.financialDetails.*
 import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
-import obligations.services.NextUpdatesService
+import hub.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger

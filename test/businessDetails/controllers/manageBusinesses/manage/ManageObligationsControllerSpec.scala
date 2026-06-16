@@ -18,8 +18,7 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import obligations.services.NextUpdatesService
+import businessDetails.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
@@ -41,7 +40,8 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockClientDetailsService, MockDateService, MockSessionService}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
-import obligations.mocks.services.MockNextUpdatesService
+import businessDetails.mocks.services.MockNextUpdatesService
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 import scala.concurrent.Future

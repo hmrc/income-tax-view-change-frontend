@@ -32,13 +32,13 @@ import hub.utils.HomePageUtils
 import hub.views.html.newHomePage.NewHomeYourTasksView
 import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
-import obligations.models.{ObligationsModel, ObligationsResponseModel, SingleObligationModel}
-import obligations.services.NextUpdatesService
+import hub.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import shared.models.{ObligationsModel, ObligationsResponseModel, SingleObligationModel}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
