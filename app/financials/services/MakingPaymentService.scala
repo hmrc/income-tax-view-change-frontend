@@ -41,19 +41,25 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
         None
       } else {
         val financialDetailsModels = financialDetails.collect { case (_, model: FinancialDetailsModel) => model }
+        val balanceDetails = financialDetailsModels.map(_.balanceDetails)
         Some(MakingPaymentViewModel(
           backUrl = backUrl,
           paymentHandoffUrl = paymentHandoffUrl,
           whatYouOweUrl = whatYouOweUrl,
           moneyInYourAccountUrl = moneyInYourAccountUrl,
           payPenaltyUrl = payPenaltyUrl,
-          hasInterest = financialDetailsModels.flatMap(_.documentDetails).exists(hasInterest),
+          hasInterest = financialDetailsModels.flatMap(_.documentDetails).exists(hasInterest) ||
+            balanceDetails.exists(_.overDueAmount > 0),
           hasPenalty = financialDetailsModels.flatMap(_.toChargeItem).exists(charge => charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0),
-          unallocatedCredit = financialDetailsModels.flatMap(_.balanceDetails.unallocatedCredit).find(_ > 0)
+          unallocatedCredit = positiveCredit(balanceDetails.flatMap(_.unallocatedCredit))
+            .orElse(positiveCredit(balanceDetails.flatMap(_.totalCreditAvailableForRepayment)))
         ))
       }
     }
   }
+
+  private def positiveCredit(credits: List[BigDecimal]): Option[BigDecimal] =
+    credits.filter(_ > 0).sortWith(_ > _).headOption
 
   private def hasInterest(documentDetail: DocumentDetail): Boolean =
     documentDetail.accruingInterestAmount.exists(_ > 0) ||
