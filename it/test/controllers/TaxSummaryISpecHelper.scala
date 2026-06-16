@@ -24,8 +24,8 @@ import financials.models.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 import models.taxyearsummary.TaxYearSummaryChargeItem
-import obligations.models.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

@@ -28,8 +28,8 @@ import financials.services.*
 import hub.services.PenaltyDetailsService
 import mocks.services.*
 import models.financialDetails.*
-import obligations.mocks.services.MockNextUpdatesService
-import obligations.services.NextUpdatesService
+import hub.mocks.services.MockNextUpdatesService
+import hub.services.NextUpdatesService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

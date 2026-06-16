@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package obligations.models
+package shared.models
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
+case class GroupedObligationsModel(identification: String, obligations: List[SingleObligationModel]) {
 
-case class SingleObligationModel(
-                                  start: LocalDate,
-                                  end: LocalDate,
-                                  due: LocalDate,
-                                  obligationType: String,
-                                  dateReceived: Option[LocalDate],
-                                  periodKey: String,
-                                  status: ObligationStatus
-                                )
+  val currentCrystDeadlines: List[SingleObligationModel] = obligations.filter(_.obligationType == "Crystallisation")
+    .sortBy(_.start.toEpochDay)
+}
 
-object SingleObligationModel {
-  implicit val formatNextUpdateModel: Format[SingleObligationModel] = Json.format[SingleObligationModel]
+object GroupedObligationsModel {
+  implicit val format: Format[GroupedObligationsModel] = Json.format[GroupedObligationsModel]
 }

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package returns.services
+package shared.services
 
 import common.auth.MtdItUser
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import connectors.CalculationListConnector
-import models.calculationList.{CalculationListErrorModel, CalculationListModel, CalculationListResponseModel}
-import play.api.Logger
+import shared.models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 
 import javax.inject.{Inject, Singleton}
@@ -31,13 +30,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CalculationListService @Inject()(calculationListConnector: CalculationListConnector, dateService: DateService)
                                       (implicit ec: ExecutionContext) {
-
-  def getCalculationList(nino: Nino, taxYearRange: String)
-                        (implicit headerCarrier: HeaderCarrier, user: MtdItUser[_]): Future[CalculationListResponseModel] = {
-    Logger("application").debug("" +
-      s"Requesting calculation list (1896) data from the backend with nino / taxYearRange: ${nino.value} - $taxYearRange")
-    calculationListConnector.getCalculationList(nino, taxYearRange, user.mtditid)
-  }
 
   private def getLegacyCrystallisationResult(user: MtdItUser[_], taxYear: Int)(implicit hc: HeaderCarrier): Future[Option[Boolean]] = {
     calculationListConnector.getCalculationList(Nino(user.nino), taxYear.toString,user.mtditid).flatMap {

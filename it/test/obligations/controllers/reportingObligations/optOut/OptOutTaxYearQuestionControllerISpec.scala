@@ -29,7 +29,6 @@ import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.audit.OptOutNewAuditModel
 import obligations.models.reportingObligations.optOut.OptOutSessionData
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import obligations.repositories.OptOutContextData
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
@@ -38,7 +37,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
-import shared.models.UIJourneySessionData
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen, UIJourneySessionData}
 import shared.repositories.UIJourneySessionDataRepository
 
 class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {

@@ -17,16 +17,14 @@
 package obligations.mocks.services
 
 import common.implicits.ImplicitDateFormatter
-import obligations.models.{ObligationsErrorModel, ObligationsResponseModel}
 import obligations.services.NextUpdatesService
-import org.mockito.ArgumentMatchers.{any, eq as matches}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.Status
 import businessDetails.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
 import common.testUtils.UnitSpec
+import shared.models.ObligationsResponseModel
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 
@@ -44,37 +42,12 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
       .thenReturn(Future.successful(response))
   }
 
-  def mockBusinessError(): Unit = setupMockNextUpdatesResult()(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
-  )
-
-  def mockPropertyError(): Unit = setupMockNextUpdatesResult()(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
-  )
-
   def mockSingleBusinessIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(singleBusinessIncomeWithDeadlines)
 
   def mockPropertyIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(propertyIncomeOnlyWithDeadlines)
-
-  def mockBothIncomeSourcesWithDeadlines(): Unit = setupMockNextUpdatesResult()(businessAndPropertyIncomeWithDeadlines)
 
   def mockNoIncomeSourcesWithDeadlines(): Unit = setupMockNextUpdatesResult()(noIncomeDetailsWithNoDeadlines)
 
   def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit = setupMockNextUpdatesResult()(businessAndPropertyAlignedWithDeadlines)
 
-  def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(ObligationsErrorModel(500, "error"))
-
-  def mockGetNextUpdates(fromDate: LocalDate, toDate: LocalDate)(response: ObligationsResponseModel): Unit = {
-    when(mockNextUpdatesService.getAllObligationsWithinDateRange(matches(fromDate), matches(toDate))(any(), any()))
-      .thenReturn(Future.successful(response))
-  }
-
-  def mockGetDueDates(response: Either[Exception, Seq[LocalDate]])(using mockNextUpdateServ: NextUpdatesService): Unit = {
-    when(mockNextUpdateServ.getDueDates(any())(any(), any())) thenReturn Future.successful(response)
-  }
-
-  def mockGetNextDueDates(response: (Option[LocalDate], Option[LocalDate]))(using mockNextUpdateServ: NextUpdatesService): Unit = {
-    when(mockNextUpdateServ.getNextDueDates(any())(any(), any()))
-      .thenReturn(Future.successful(response))
-  }
 }

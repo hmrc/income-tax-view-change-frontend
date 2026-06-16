@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.calculationList
+package shared.models.calculationList
 
 import play.api.libs.json.{Format, Json}
 

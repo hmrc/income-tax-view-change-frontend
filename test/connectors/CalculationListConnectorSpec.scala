@@ -19,13 +19,13 @@ package connectors
 import common.config.FrontendAppConfig
 import common.mocks.{MockAuditingService, MockHttpV2}
 import common.models.core.Nino
-import models.calculationList.{CalculationListErrorModel, CalculationListResponseModel}
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants._
 import common.testUtils.TestSupport
 import returns.testConstants.CalculationListTestConstants
+import shared.models.calculationList.{CalculationListErrorModel, CalculationListResponseModel}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

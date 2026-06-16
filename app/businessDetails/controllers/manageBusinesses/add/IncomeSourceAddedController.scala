@@ -42,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import obligations.controllers.routes as obligationRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
-import obligations.services.NextUpdatesService
+import businessDetails.services.NextUpdatesService
 import shared.models.UIJourneySessionData
 
 

@@ -37,13 +37,13 @@ import models.financialDetails.*
 import models.liabilitycalculation.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import models.taxyearsummary.TaxYearSummaryChargeItem
-import obligations.models.ObligationsModel
-import obligations.services.NextUpdatesService
+import returns.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
 import returns.services.{CalculationService, TaxYearSummaryService}
 import returns.views.html.TaxYearSummaryView
+import shared.models.ObligationsModel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils

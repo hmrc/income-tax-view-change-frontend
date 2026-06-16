@@ -43,8 +43,8 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.itsaStatus.StatusDetail
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
-import returns.services.CalculationListService
 import shared.models.UIJourneySessionData
+import shared.services.CalculationListService
 
 class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceRFService {
 

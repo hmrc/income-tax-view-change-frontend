@@ -29,10 +29,10 @@ import play.api.http.Status
 import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import obligations.models.*
-import obligations.connectors.ObligationsConnector
 import obligations.mocks.connectors.MockObligationsConnector
 import returns.services.CalculationService
+import shared.connectors.ObligationsConnector
+import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 
 import java.time.LocalDate
 

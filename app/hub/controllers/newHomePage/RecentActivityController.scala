@@ -28,9 +28,9 @@ import financials.services.{PaymentHistoryService, WhatYouOweService}
 import hub.services.newHomePage.RecentActivityService
 import hub.utils.HomePageUtils
 import models.financialDetails.Payment
-import obligations.models.ObligationsModel
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import shared.models.ObligationsModel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

@@ -16,8 +16,8 @@
 
 package common.auth.actions
 
-import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
+import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.{defaultIncomeSourcesData, getMtdItUser}
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}

@@ -33,9 +33,9 @@ import common.config.FrontendAppConfig
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.services.DateService
-import returns.services.CalculationListService
 import shared.enums.ReportingFrequencyPages
 import shared.models.UIJourneySessionData
+import shared.services.CalculationListService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

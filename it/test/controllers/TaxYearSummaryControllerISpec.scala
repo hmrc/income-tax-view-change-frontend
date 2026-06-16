@@ -26,7 +26,6 @@ import common.models.admin.*
 import models.financialDetails.*
 import models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import models.taxyearsummary.TaxYearSummaryChargeItem
-import obligations.models.audit.NextUpdatesResponseAuditModel
 import org.jsoup.Jsoup
 import play.api.http.Status.*
 import play.api.libs.json.Json
@@ -40,7 +39,8 @@ import common.testConstants.messages.TaxYearSummaryMessages.*
 import financials.controllers.routes as financialsRoutes
 
 import java.time.LocalDate
-import obligations.models.*
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.models.audit.NextUpdatesResponseAuditModel
 
 class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 

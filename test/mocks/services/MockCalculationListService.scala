@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import returns.services.CalculationListService
+import shared.services.CalculationListService
 
 import scala.concurrent.Future
 

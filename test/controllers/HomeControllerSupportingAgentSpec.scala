@@ -30,7 +30,7 @@ import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import hub.views.html.helpers.injected.home.YourReportingObligationsTile
 import hub.views.html.newHomePage.*
-import obligations.services.NextUpdatesService
+import hub.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
