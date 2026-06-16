@@ -69,7 +69,8 @@
 @mainTemplate(
     pageTitle = if (user.isAgent) messages("home.agent.heading") else messages("home.heading.new"),
     backUrl = None,
-    btaAndPtaServiceNavigation = user.serviceNavigationPartial
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial,
+    mainClass = Some("govuk-width-container")
 ) {
 
     @h1WithCaption(
