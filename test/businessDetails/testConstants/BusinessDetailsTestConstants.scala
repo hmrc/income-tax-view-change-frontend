@@ -22,7 +22,6 @@ import common.models.core.*
 import common.models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import common.testConstants.BaseTestConstants.*
 import models.incomeSourceDetails.viewmodels.*
-import obligations.testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.{LocalDate, Month}
@@ -552,6 +551,39 @@ object BusinessDetailsTestConstants {
     address = Some(address),
   )
 
+  val mockedCurrentTime20171031: LocalDate = LocalDate.of(2017, 10, 31)
+
+  def fakeNextUpdatesModel(m: SingleObligationModel): SingleObligationModel =
+    SingleObligationModel(m.start, m.end, m.due, m.obligationType, m.dateReceived, m.periodKey, StatusFulfilled)
+
+  val overdueObligation: SingleObligationModel = fakeNextUpdatesModel(SingleObligationModel(
+    start = LocalDate.of(2017, 7, 1),
+    end = LocalDate.of(2017, 9, 30),
+    due = LocalDate.of(2017, 10, 30),
+    obligationType = "Quarterly",
+    dateReceived = None,
+    periodKey = "#002",
+    StatusFulfilled
+  ))
+
+  val openObligation: SingleObligationModel = fakeNextUpdatesModel(SingleObligationModel(
+    start = LocalDate.of(2017, 7, 1),
+    end = LocalDate.of(2017, 9, 30),
+    due = mockedCurrentTime20171031,
+    obligationType = "Quarterly",
+    dateReceived = None,
+    periodKey = "#003",
+    StatusFulfilled
+  ))
+  
+  val nextUpdatesDataPropertySuccessModel: GroupedObligationsModel = GroupedObligationsModel(
+    testPropertyIncomeId,
+    List(
+      openObligation.copy(periodKey = "#004"),
+      overdueObligation.copy(periodKey = "#005")
+    )
+  )
+  
   val businessNotValidObligationType = fakeNextUpdatesModel(SingleObligationModel(
     start = LocalDate.of(2017, 7, 1),
     end = LocalDate.of(2017, 9, 30),
