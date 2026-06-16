@@ -23,6 +23,7 @@ import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import shared.enums.{JourneyCompleted, JourneyState}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
