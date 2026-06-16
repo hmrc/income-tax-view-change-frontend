@@ -21,28 +21,27 @@ import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.TaxYearSummaryPage
 import common.enums.TaxYearSummary.*
-import common.enums.TaxYearSummary.CalculationType.{UnknownCalculationType, notCrystallisedTypes}
+import common.enums.TaxYearSummary.CalculationType.{UnknownCalculationType, fromStringToCalculationTypeValue, notCrystallisedTypes}
 import common.implicits.ImplicitDateFormatter
 import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation
-import common.models.liabilitycalculation.{IsMTD, LiabilityCalculationError, LiabilityCalculationResponse, LiabilityCalculationResponseModel, SubmissionChannel}
+import common.models.liabilitycalculation.*
 import common.services.{AuditingService, DateServiceInterface}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
 import financials.services.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import models.financialDetails.*
-import returns.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
+import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import returns.models.audit.TaxYearSummaryResponseAuditModel
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
-import returns.services.{CalculationService, TaxYearSummaryService}
+import returns.services.{CalculationService, NextUpdatesService, TaxYearSummaryService}
 import returns.views.html.TaxYearSummaryView
 import shared.models.ObligationsModel
 import uk.gov.hmrc.http.HeaderCarrier
@@ -262,8 +261,16 @@ class TaxYearSummaryController @Inject()(
       )
 
     lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
-    
-    val isNotCrystallisedShowInset: Boolean = latestCalc.metadata.isCalculationNotCrystallised
+
+    val isNotCrystallisedShowInset: Boolean =
+      fromStringToCalculationTypeValue(latestCalc.metadata.calculationType) match {
+        case CalculationType.UnknownCalculationType =>
+          Logger("application").error(s"[TaxYearSummaryController][handleCalcSuccess] Found: UnknownCalculationType")
+          latestCalc.metadata.isCalculationNotCrystallised
+        case _ =>
+          latestCalc.metadata.isCalculationNotCrystallised
+      }
+
 
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
@@ -340,9 +347,18 @@ class TaxYearSummaryController @Inject()(
       val taxYearViewScenarios =
         taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
 
-      val isNotCrystallisedShowInset: Boolean =
+      val isNotCrystallisedShowInset: Boolean = {
         validLatestCalculation
-          .exists(liabilityCalculationResponse => liabilityCalculationResponse.metadata.isCalculationNotCrystallised)
+          .exists { liabilityCalculationResponse =>
+            fromStringToCalculationTypeValue(liabilityCalculationResponse.metadata.calculationType) match {
+              case CalculationType.UnknownCalculationType =>
+                Logger("application").error(s"[TaxYearSummaryController][handleCalcError] Found: UnknownCalculationType")
+                liabilityCalculationResponse.metadata.isCalculationNotCrystallised
+              case _ =>
+                liabilityCalculationResponse.metadata.isCalculationNotCrystallised
+            }
+          }
+      }
 
       Future(
         Ok(taxYearSummaryView(
