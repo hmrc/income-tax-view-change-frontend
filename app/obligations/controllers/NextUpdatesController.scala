@@ -60,11 +60,11 @@ class NextUpdatesController @Inject()(
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       action
     } else {
-      Future.successful(Ok(noNextUpdatesView(backUrl = hub.controllers.routes.HomeController.show(origin).url)))
+      Future.successful(Ok(noNextUpdatesView(backUrl = appConfig.individualHomeUrl(origin))))
     }
   }
 
-  private def getNextUpdates(backUrl: Call, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
+  private def getNextUpdates(backUrl: String, isAgent: Boolean, errorHandler: ShowInternalServerError, origin: Option[String] = None)
                             (implicit user: MtdItUser[_]): Future[Result] = {
 
     hasAnyIncomeSource {
@@ -94,7 +94,7 @@ class NextUpdatesController @Inject()(
                     viewModel = viewModel,
                     checks = checks,
                     optOutProposition = optOutProposition,
-                    backUrl = backUrl.url,
+                    backUrl = backUrl,
                     isSupportingAgent = user.isSupportingAgent,
                     origin = origin,
                     whatTheUserCanDo = whatTheUserCanDoContent,
@@ -115,7 +115,7 @@ class NextUpdatesController @Inject()(
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     getNextUpdates(
-      backUrl = hub.controllers.routes.HomeController.show(origin),
+      backUrl = appConfig.individualHomeUrl(origin),
       isAgent = false,
       errorHandler = itvcErrorHandler,
       origin = origin
@@ -125,7 +125,7 @@ class NextUpdatesController @Inject()(
   def showAgent: Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async  {
     implicit mtdItUser =>
       getNextUpdates(
-        backUrl = hub.controllers.routes.HomeController.showAgent(),
+        backUrl = appConfig.agentHomeUrl,
         isAgent = true,
         errorHandler = agentItvcErrorHandler,
         origin = None
@@ -133,9 +133,5 @@ class NextUpdatesController @Inject()(
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
-    if (isAgent) {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(routes.NextUpdatesController.showAgent().url))
-    } else {
-      auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(routes.NextUpdatesController.show(origin).url))
-    }
+    auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(if isAgent then appConfig.nextUpdatesAgentUrl else appConfig.nextUpdatesIndividualUrl(origin)))
 }

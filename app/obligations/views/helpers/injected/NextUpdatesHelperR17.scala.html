@@ -308,13 +308,7 @@
     Html(obligations.map(obl => messages(obl.incomeType)).map(msg => s"<div>$msg</div>").mkString)
 }
 
-@taxYearSummaryLink = @{
-    if (user.isAgent) {
-        returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
-    } else {
-        returns.controllers.routes.TaxYearsController.showTaxYears().url
-    }
-}
+@taxYearSummaryLink = @{appConfig.taxYearsUrl(user.isAgent)}
 
 @missedDeadlinesText = @{
     if(optOutProposition.currentTaxYear.canOptOut) {
