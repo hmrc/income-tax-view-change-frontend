@@ -16,8 +16,8 @@
 
 package helpers
 
-import models.creditDetailModel.CreditDetailModel
-import models.financialDetails._
+import financials.models.creditDetailModel.CreditDetailModel
+import models.financialDetails.*
 
 import java.time.LocalDate
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.creditDetailModel
+package financials.models.creditDetailModel
 
 import models.financialDetails.{ChargeItem, CreditType}
 

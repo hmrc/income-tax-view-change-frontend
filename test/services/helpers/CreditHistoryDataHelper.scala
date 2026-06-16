@@ -17,11 +17,11 @@
 package services.helpers
 
 
-import financials.models.ChargeType.NIC4_WALES
-import models.creditDetailModel._
-import models.financialDetails._
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import businessDetails.testConstants.BusinessDetailsTestConstants.fixedDate
+import financials.models.ChargeType.NIC4_WALES
+import financials.models.creditDetailModel.CreditDetailModel
+import models.financialDetails.*
+import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
 import java.time.LocalDate
 

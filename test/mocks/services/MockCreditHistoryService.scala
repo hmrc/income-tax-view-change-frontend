@@ -17,9 +17,9 @@
 package mocks.services
 
 import common.testUtils.UnitSpec
+import financials.models.creditDetailModel.CreditDetailModel
 import financials.services.CreditHistoryService
 import financials.services.CreditHistoryService.CreditHistoryError
-import models.creditDetailModel.CreditDetailModel
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
