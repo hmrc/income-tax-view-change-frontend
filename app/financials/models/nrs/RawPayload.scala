@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package models.creditDetailModel
+package financials.models.nrs
 
-import models.financialDetails.{ChargeItem, CreditType}
+import org.apache.pekko.util.ByteString
 
-import java.time.LocalDate
+case class RawPayload(byteString: ByteString, encoding: Option[String]) {
+  lazy val byteArray: Array[Byte] = byteString.toArray
+}
 
-// Story created => https://jira.tools.tax.service.gov.uk/browse/MISUV-9399
-case class CreditDetailModel(date: LocalDate,
-                             charge: ChargeItem,
-                             creditType: CreditType,
-                             availableCredit: Option[BigDecimal] = None)
+object RawPayload {
+  // For testing
+  def apply(bytes: Array[Byte], encoding: Option[String] = None): RawPayload = RawPayload(ByteString(bytes), encoding)
+}

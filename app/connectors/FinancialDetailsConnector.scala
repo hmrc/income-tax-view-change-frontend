@@ -19,10 +19,11 @@ package connectors
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
-import common.models.core.{CorrelationId, Nino}
 import common.models.core.ResponseModel.{ResponseModel, UnexpectedError}
+import common.models.core.{CorrelationId, Nino}
 import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
-import models.creditsandrefunds.CreditsModel
+import common.utils.Headers.checkAndAddTestHeader
+import financials.models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
@@ -31,7 +32,6 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import common.utils.Headers.checkAndAddTestHeader
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

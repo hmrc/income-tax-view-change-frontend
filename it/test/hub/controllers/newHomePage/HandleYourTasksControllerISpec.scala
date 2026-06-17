@@ -16,25 +16,25 @@
 
 package hub.controllers.newHomePage
 
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.WiremockHelper
-import financials.models.ChargeType.ITSA_NI
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
-import common.models.itsaStatus.ITSAStatus
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.creditsandrefunds.CreditsModel
-import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import common.models.itsaStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
+import financials.models.ChargeType.ITSA_NI
+import financials.models.creditsandrefunds.CreditsModel
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.OK
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
-import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
+import shared.models.*
 
 import java.time.LocalDate
 

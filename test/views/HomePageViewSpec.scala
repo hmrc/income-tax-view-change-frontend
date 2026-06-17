@@ -16,26 +16,26 @@
 
 package views
 
-import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.FeatureSwitch
-import common.models.itsaStatus.ITSAStatus
-import models.creditsandrefunds.CreditsModel
-import hub.models.homePage.*
-import ITSAStatus.ITSAStatus
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import common.models.itsaStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import common.testConstants.BaseTestConstants.*
+import common.testUtils.TestSupport
+import financials.models.creditsandrefunds.CreditsModel
+import financials.testConstants.ANewCreditAndRefundModel
+import hub.models.homePage.*
+import hub.views.html.HomeView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import common.testConstants.BaseTestConstants.*
-import common.testUtils.TestSupport
-import financials.testConstants.ANewCreditAndRefundModel
-import hub.views.html.HomeView
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

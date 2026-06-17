@@ -16,18 +16,18 @@
 
 package audit.models
 
-import models.creditDetailModel.CreditDetailModel
-import models.financialDetails._
-import play.api.i18n.MessagesApi
-import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr, testUserTypeIndividual}
 import common.testUtils.TestSupport
+import financials.models.creditDetailModel.CreditDetailModel
+import models.financialDetails.*
+import play.api.i18n.MessagesApi
+import play.api.libs.json.Json
 
 import java.time.LocalDate
 
 class CreditSummaryAuditingSpec extends TestSupport {
 
-  import financials.models.audit.CreditSummaryAuditing._
+  import financials.models.audit.CreditSummaryAuditing.*
 
   implicit val msgApi: MessagesApi = messagesApi
 

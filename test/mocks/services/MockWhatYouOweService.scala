@@ -19,9 +19,9 @@ package mocks.services
 import common.mocks.services.MockDateService
 import common.services.DateService
 import common.testUtils.UnitSpec
+import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import financials.services.WhatYouOweService
 import models.financialDetails.{BalanceDetails, ChargeItem, WhatYouOweChargesList}
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

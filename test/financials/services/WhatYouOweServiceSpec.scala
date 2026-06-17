@@ -21,18 +21,18 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
 import common.services.{AuditingService, DateService}
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
+import common.testUtils.TestSupport
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import financials.models.ChargeType.NIC4_WALES
 import financials.models.CodingOutType.*
+import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import models.financialDetails.*
-import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
-import common.testUtils.TestSupport
+import models.financialDetails.*
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 

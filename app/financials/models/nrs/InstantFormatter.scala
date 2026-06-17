@@ -14,12 +14,20 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{Format, Reads, Writes}
 
-case class SearchKeys(credId: Option[String], utr: Option[String], nino: String)
+import java.time.format.DateTimeFormatter
+import java.time.{Instant, ZoneOffset}
 
-object SearchKeys {
-  implicit val writes: Writes[SearchKeys] = Json.writes[SearchKeys]
+trait InstantFormatter {
+  val dateTimeWithMillis: DateTimeFormatter =
+    DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneOffset.UTC)
+
+  implicit val instantWrites: Format[Instant] = {
+    Format(Reads.DefaultInstantReads, Writes.temporalWrites[Instant, DateTimeFormatter](dateTimeWithMillis))
+  }
 }
+
+object InstantFormatter extends InstantFormatter

@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.creditDetailModel
 
-import play.api.libs.json.{Format, Reads, Writes}
+import models.financialDetails.{ChargeItem, CreditType}
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, ZoneOffset}
+import java.time.LocalDate
 
-trait InstantFormatter {
-  val dateTimeWithMillis: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneOffset.UTC)
-
-  implicit val instantWrites: Format[Instant] = {
-    Format(Reads.DefaultInstantReads, Writes.temporalWrites[Instant, DateTimeFormatter](dateTimeWithMillis))
-  }
-}
-
-object InstantFormatter extends InstantFormatter
+// Story created => https://jira.tools.tax.service.gov.uk/browse/MISUV-9399
+case class CreditDetailModel(date: LocalDate,
+                             charge: ChargeItem,
+                             creditType: CreditType,
+                             availableCredit: Option[BigDecimal] = None)

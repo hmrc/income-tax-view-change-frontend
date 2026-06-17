@@ -17,7 +17,7 @@
 package financials.services
 
 import connectors.NrsConnector
-import models.nrs.{NrsSubmission, NrsSuccessResponse}
+import financials.models.nrs.{NrsSubmission, NrsSuccessResponse}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 

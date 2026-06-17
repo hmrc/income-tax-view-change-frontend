@@ -14,24 +14,12 @@
  * limitations under the License.
  */
 
-package models.outstandingCharges
+package financials.models.nrs
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
+case class NrsSuccessResponse(nrSubmissionId: String)
 
-case class OutstandingChargeModel(chargeName: String,
-                                  relevantDueDate: Option[LocalDate],
-                                  chargeAmount: BigDecimal,
-                                  tieBreaker: Int
-                                 ) {
-
-  def isBalancingChargeDebit: Boolean = chargeName == "BCD"
-  def isAccruingInterest    : Boolean = chargeName == "ACI"
-
-}
-
-object OutstandingChargeModel {
-
-  implicit val format: Format[OutstandingChargeModel] = Json.format[OutstandingChargeModel]
+object NrsSuccessResponse {
+  implicit val format: Format[NrsSuccessResponse] = Json.format[NrsSuccessResponse]
 }

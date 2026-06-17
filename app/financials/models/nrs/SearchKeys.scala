@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
-object NrsSubmissionResponse {
+import play.api.libs.json.{Json, Writes}
 
-  type NrsSubmissionResponse = Either[NrsSubmissionFailure, NrsSuccessResponse]
+case class SearchKeys(credId: Option[String], utr: Option[String], nino: String)
 
+object SearchKeys {
+  implicit val writes: Writes[SearchKeys] = Json.writes[SearchKeys]
 }

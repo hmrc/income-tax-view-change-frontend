@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.creditsandrefunds
+package financials.models.creditsandrefunds
 
 import common.exceptions.MissingFieldException
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, TotalInterest}

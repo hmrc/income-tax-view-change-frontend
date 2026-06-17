@@ -17,7 +17,7 @@
 package financials.testConstants
 
 import common.testConstants.BaseTestConstants.*
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
+import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate

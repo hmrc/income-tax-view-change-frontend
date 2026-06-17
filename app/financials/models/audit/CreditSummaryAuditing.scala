@@ -19,7 +19,7 @@ package financials.models.audit
 import common.enums.AuditType.CreditsSummaryResponse
 import common.enums.TransactionName.CreditsSummary
 import common.models.audit.ExtendedAuditModel
-import models.creditDetailModel.CreditDetailModel
+import financials.models.creditDetailModel.CreditDetailModel
 import models.financialDetails.CreditType
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}

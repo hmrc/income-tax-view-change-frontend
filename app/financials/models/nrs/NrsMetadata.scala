@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
 import play.api.http.MimeTypes
 import play.api.libs.json.*
 import play.api.mvc.Request
-import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments, MissingBearerToken}
 import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, LoginTimes}
+import uk.gov.hmrc.auth.core.{ConfidenceLevel, Enrolments, MissingBearerToken}
 import uk.gov.hmrc.http.SessionKeys
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 

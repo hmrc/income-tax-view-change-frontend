@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models.creditsandrefunds
+package financials.models.creditsandrefunds
 
 import common.models.core.ResponseModel.{AResponseReads, SuccessModel}
 import common.models.incomeSourceDetails.TaxYear
-import models.financialDetails._
-import play.api.libs.json._
+import models.financialDetails.*
+import play.api.libs.json.*
 
 import java.time.LocalDate
 

@@ -23,15 +23,15 @@ import common.models.admin.CreditsRefundsRepay
 import common.services.AuditingService
 import common.views.html.errorPages.CustomNotFoundErrorView
 import financials.models.audit.ClaimARefundAuditModel
+import financials.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import financials.services.{CreditService, RepaymentService}
 import financials.utils.ErrorRecovery
-import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
+import financials.views.html.{CreditAndRefundsView, MoneyInYourAccountView}
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import financials.views.html.{CreditAndRefundsView, MoneyInYourAccountView}
 
 import javax.inject.Inject
 import scala.annotation.unused

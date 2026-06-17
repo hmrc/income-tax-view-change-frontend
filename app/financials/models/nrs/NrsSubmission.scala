@@ -14,14 +14,25 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
-sealed trait NrsSubmissionFailure
+import play.api.libs.json.{Json, OWrites}
 
-object NrsSubmissionFailure {
+import java.util.Base64
 
-  case class NrsErrorResponse(status: Int) extends NrsSubmissionFailure
+case class NrsSubmission(rawPayload: RawPayload, metadata: NrsMetadata)
 
-  case object NrsExceptionThrown extends NrsSubmissionFailure
+object NrsSubmission {
+
+  private val encoder = Base64.getEncoder
+
+  private def encodeBase64(rawPayload: RawPayload) = encoder.encodeToString(rawPayload.byteArray)
+
+  implicit val writes: OWrites[NrsSubmission] = OWrites { submission =>
+    Json.obj(
+      "payload" -> encodeBase64(submission.rawPayload),
+      "metadata" -> submission.metadata
+    )
+  }
 
 }

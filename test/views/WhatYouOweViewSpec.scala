@@ -21,23 +21,23 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import common.testUtils.{TestSupport, ViewSpec}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.CodingOutType.*
+import financials.models.outstandingCharges.*
+import financials.testConstants.ChargeConstants
+import financials.testConstants.FinancialDetailsTestConstants.*
+import financials.views.html.WhatYouOweView
 import models.financialDetails.*
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
-import models.outstandingCharges.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
-import common.testUtils.{TestSupport, ViewSpec}
-import financials.testConstants.ChargeConstants
-import financials.testConstants.FinancialDetailsTestConstants.*
-import financials.views.html.WhatYouOweView
 
 import java.time.LocalDate
 import scala.annotation.unused
