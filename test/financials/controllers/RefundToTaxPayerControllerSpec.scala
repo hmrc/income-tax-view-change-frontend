@@ -16,25 +16,25 @@
 
 package financials.controllers
 
-import audit.models.RefundToTaxPayerResponseAuditModel
-import common.connectors.ITSAStatusConnector
 import common.auth.actions.AuthActionsTestData.getMtdItUser
+import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.mocks.auth.MockAuthActions
 import common.models.admin.PaymentHistoryRefunds
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.testMtditid
 import connectors.RepaymentHistoryConnector
+import financials.models.audit.RefundToTaxPayerResponseAuditModel
+import financials.models.creditsandrefunds.RefundToTaxPayerViewModel
+import financials.views.html.RefundToTaxPayerView
 import hub.controllers.routes
 import mocks.connectors.MockRepaymentHistoryConnector
-import models.creditsandrefunds.RefundToTaxPayerViewModel
 import models.repaymentHistory.*
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import common.testConstants.BaseTestConstants.testMtditid
-import views.html.RefundToTaxPayerView
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 

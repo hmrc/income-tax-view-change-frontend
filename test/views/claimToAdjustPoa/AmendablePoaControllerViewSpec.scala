@@ -17,16 +17,16 @@
 package views.claimToAdjustPoa
 
 import common.auth.MtdItUser
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.controllers.routes as financialsRoutes
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.test.Helpers.contentAsString
-import testUtils.TestSupport
-import views.html.claimToAdjustPoa.AmendablePoaView
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
-import financials.controllers.routes as financialsRoutes
-import models.incomeSourceDetails.TaxYear
+import financials.views.html.claimToAdjustPoa.AmendablePoaView
 
 class AmendablePoaControllerViewSpec extends TestSupport {
 
@@ -116,10 +116,7 @@ class AmendablePoaControllerViewSpec extends TestSupport {
   def getWhatYouNeedToKnowUrl(isAgent: Boolean): String =
     claimToAdjustPoaRoutes.WhatYouNeedToKnowController.show(isAgent).url
 
-  def getCancelLinkUrl(isAgent: Boolean): String = {
-    if (isAgent) hub.controllers.routes.HomeController.showAgent()
-    else         hub.controllers.routes.HomeController.show()
-  }.url
+  def getCancelLinkUrl(isAgent: Boolean): String = appConfig.homePageUrl(isAgent)
 
   executeTest(isAgent = true)
   executeTest(isAgent = false)

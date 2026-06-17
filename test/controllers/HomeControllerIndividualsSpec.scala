@@ -16,24 +16,26 @@
 
 package controllers
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes
 import common.models.admin.*
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
+import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import common.utils.sessionUtils.SessionKeys
+import financials.models.creditsandrefunds.CreditsModel
 import financials.services.CreditService
+import financials.testConstants.ANewCreditAndRefundModel
 import hub.controllers.HomeController
+import hub.services.NextUpdatesService
 import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import hub.views.html.helpers.injected.home.YourReportingObligationsTile
 import hub.views.html.newHomePage.*
-import models.creditsandrefunds.CreditsModel
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
-import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
@@ -49,8 +51,6 @@ import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.*
 import play.api.test.Injecting
 import play.twirl.api.Html
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import financials.testConstants.ANewCreditAndRefundModel
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -68,7 +68,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
   val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
   val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
   val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
-  val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
+  val authActions: AuthActionsWithTriggeredMigrationCheck = application.injector.instanceOf(classOf[AuthActionsWithTriggeredMigrationCheck])
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
   val homeView: HomeView = application.injector.instanceOf(classOf[HomeView])
 

@@ -25,7 +25,6 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProp
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
-import common.models.UIJourneySessionData
 import common.services.{DateService, DateServiceInterface}
 import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import org.mockito.ArgumentMatchers.any
@@ -35,6 +34,7 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future
 

@@ -19,17 +19,16 @@ package financials.controllers.claimToAdjustPoa
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.models.core.AccountingPeriodModel
-import financials.controllers.claimToAdjustPoa.routes.*
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import financials.models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import financials.services.PaymentOnAccountSessionService
+import financials.testConstants.FinancialDetailsTestConstants.{address, testFinancialDetailsErrorModelJson}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.*
 import play.api.libs.json.JsValue
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import common.testConstants.BaseIntegrationTestConstants._
-import financials.testConstants.FinancialDetailsTestConstants.{testFinancialDetailsErrorModelJson, address}
-import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
 
 import java.time.LocalDate
 

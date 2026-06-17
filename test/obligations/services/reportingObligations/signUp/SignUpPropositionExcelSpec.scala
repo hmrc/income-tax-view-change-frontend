@@ -16,12 +16,12 @@
 
 package obligations.services.reportingObligations.signUp
 
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
-import models.incomeSourceDetails.TaxYear
+import common.testUtils.UnitSpec
 import obligations.services.reportingObligations.signUp.core.SignUpProposition
 import obligations.services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
 import org.scalatest.prop.TableDrivenPropertyChecks.*
-import testUtils.UnitSpec
 
 import scala.annotation.unused
 import scala.io.Source

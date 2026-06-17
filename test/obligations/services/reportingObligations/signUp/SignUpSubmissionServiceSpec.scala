@@ -16,9 +16,9 @@
 
 package obligations.services.reportingObligations.signUp
 
+import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateService}
 import common.models.itsaStatus.ITSAStatus.{Annual, Voluntary}
-import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
@@ -30,7 +30,7 @@ import org.mockito.Mockito.*
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
 import play.mvc.Http.Status.NO_CONTENT
 import common.testConstants.BaseTestConstants.testSessionId
-import testUtils.{TestSupport, UnitSpec}
+import common.testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.Future

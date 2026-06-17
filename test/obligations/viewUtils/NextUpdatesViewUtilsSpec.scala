@@ -21,15 +21,15 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.implicits.ImplicitDateFormatter
 import common.models.admin.FeatureSwitchName
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.twirl.api.{Html, HtmlFormat}
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeIndividual}
-import testUtils.{TestSupport, UnitSpec}
+import common.testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.language.LanguageUtils
 import common.views.html.components.link
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 
 class NextUpdatesViewUtilsSpec extends UnitSpec with TestSupport with ImplicitDateFormatter with GuiceOneAppPerSuite {
 

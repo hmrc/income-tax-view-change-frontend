@@ -22,11 +22,11 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.models.core.NormalMode
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 
@@ -47,7 +47,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessAddressLine4 = None,
       businessCountryCode = Some("GB"),
       businessCountryName = Some("United Kingdom"),
-      addressId = Some("testAddressId")
+      addressId = Some("testAddressId"),
+      idempotencyKey = None
     )
 
   def addressOnFileSelectedExistingViewModel: CheckBusinessDetailsViewModel =
@@ -65,7 +66,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessCountryName = Some("United Kingdom"),
       addressId = Some("selected-address-id"),
       isAddingNewAddress = false,
-      isNoAddressOnFile = false
+      isNoAddressOnFile = false,
+      idempotencyKey = None
     )
 
   def addressOnFileNewUkAddressManualViewModel: CheckBusinessDetailsViewModel =
@@ -83,7 +85,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessCountryName = Some("United Kingdom"),
       addressId = None,
       isAddingNewAddress = true,
-      isNoAddressOnFile = false
+      isNoAddressOnFile = false,
+      idempotencyKey = None
     )
 
   def addressOnFileNewUkAddressFromLookupViewModel: CheckBusinessDetailsViewModel =
@@ -101,7 +104,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessCountryName = Some("United Kingdom"),
       addressId = Some("lookup-result-id"),
       isAddingNewAddress = true,
-      isNoAddressOnFile = false
+      isNoAddressOnFile = false,
+      idempotencyKey = None
     )
 
   def addressOnFileNewInternationalAddressViewModel: CheckBusinessDetailsViewModel =
@@ -119,7 +123,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessCountryName = Some("France"),
       addressId = None,
       isAddingNewAddress = true,
-      isNoAddressOnFile = false
+      isNoAddressOnFile = false,
+      idempotencyKey = None
     )
 
   def noAddressOnFileLookupUkViewModel: CheckBusinessDetailsViewModel =
@@ -137,7 +142,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessCountryName = Some("United Kingdom"),
       addressId = Some("lookup-address-id"),
       isAddingNewAddress = false,
-      isNoAddressOnFile = true
+      isNoAddressOnFile = true,
+      idempotencyKey = None
     )
 
   def noAddressOnFileManualUkViewModel: CheckBusinessDetailsViewModel =
@@ -155,7 +161,8 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessCountryName = Some("United Kingdom"),
       addressId = None,
       isAddingNewAddress = false,
-      isNoAddressOnFile = true
+      isNoAddressOnFile = true,
+      idempotencyKey = None
     )
 
   def noAddressOnFileManualInternationalViewModel: CheckBusinessDetailsViewModel =
@@ -173,13 +180,15 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
       businessCountryName = Some("France"),
       addressId = None,
       isAddingNewAddress = false,
-      isNoAddressOnFile = true
+      isNoAddressOnFile = true,
+      idempotencyKey = None
     )
 
   def propertyViewModelMax(incomeSourceType: IncomeSourceType): CheckDetailsViewModel =
     CheckPropertyViewModel(
       tradingStartDate = LocalDate.of(2022, 1, 1),
-      incomeSourceType = incomeSourceType
+      incomeSourceType = incomeSourceType,
+      idempotencyKey = None
     )
 
   def postAction(incomeSourceType: IncomeSourceType): Call = {
@@ -196,8 +205,7 @@ class IncomeSourceCheckDetailsViewSpec extends TestSupport {
     val businessTrade = "Test Trade"
     val businessAddressAsString = "64 Zoo Lane Cbeebies ZO0 1AN United Kingdom"
 
-    val backUrl: String = if (isAgent) hub.controllers.routes.HomeController.showAgent().url else
-      hub.controllers.routes.HomeController.show().url
+    val backUrl: String = appConfig.homePageUrl(isAgent)
     val postAction: Call = addBusinessRoutes.AddIncomeSourceStartDateCheckController.submit(incomeSourceType = incomeSourceType, isAgent = isAgent, mode = NormalMode)
 
 

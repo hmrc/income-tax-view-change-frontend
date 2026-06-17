@@ -21,8 +21,8 @@ import mocks.services.MockFinancialDetailsService
 import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationError}
 import models.paymentAllocations.PaymentAllocationsError
 import common.testConstants.BaseTestConstants._
+import common.testUtils.TestSupport
 import financials.testConstants.PaymentAllocationsTestConstants._
-import testUtils.TestSupport
 
 class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService {
 

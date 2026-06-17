@@ -21,9 +21,8 @@ import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.BeforeSubmissionPage
 import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
-import models.incomeSourceDetails.{ManageIncomeSourceData, TaxYear}
+import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -36,7 +35,9 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkPro
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.exceptions.MissingSessionKey
 import common.models.core.IncomeSourceId
+import common.models.incomeSourceDetails.TaxYear
 import common.services.AuditingService
+import shared.enums.BeforeSubmissionPage
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -67,10 +68,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
           isAgent,
           incomeSourceType,
           incomeSourceIdOpt,
-          backUrl = {
-            if (isAgent) hub.controllers.routes.HomeController.showAgent()
-            else hub.controllers.routes.HomeController.show()
-          }.url
+          backUrl = appConfig.homePageUrl(isAgent)
         )
       }
   }

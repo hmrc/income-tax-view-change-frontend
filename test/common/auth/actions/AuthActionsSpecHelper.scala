@@ -20,10 +20,10 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, FrontendAuthConn
 import common.connectors.IncomeSourceConnector
 import common.services.{AuditingService, SessionDataService}
 import common.services.admin.FeatureSwitchService
+import common.testUtils.TestSupport
 import org.mockito.Mockito
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
-import testUtils.TestSupport
 
 trait AuthActionsSpecHelper extends TestSupport with ScalaFutures {
 

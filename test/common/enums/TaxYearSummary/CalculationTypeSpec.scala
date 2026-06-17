@@ -1,0 +1,41 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package common.enums.TaxYearSummary
+
+import common.enums.TaxYearSummary.CalculationType.*
+import common.testUtils.TestSupport
+
+class CalculationTypeSpec extends TestSupport {
+
+  "CalculationType" should {
+
+    "have a set of crystallised types" in {
+      CalculationType.crystallisedTypes shouldBe
+        Set(ConfirmAmendment, DeclareCrystallisation, Crystallisation, IntentToAmend, Amendment, Correction, DeclareFinalisation)
+    }
+
+    "have a set of not crystallised types" in {
+      CalculationType.notCrystallisedTypes shouldBe
+        Set(InYear, LegacyInYear, IntentToFinalise, IntentToCrystallise)
+    }
+
+    "have a set of amendment types" in {
+      CalculationType.amendmentTypes shouldBe
+        Set(Amendment, ConfirmAmendment)
+    }
+  }
+}

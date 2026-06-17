@@ -20,9 +20,9 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
+import common.models.liabilitycalculation.LiabilityCalculationError
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import models.liabilitycalculation.LiabilityCalculationError
-import models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYearEndDate
+import returns.models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYearEndDate
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.i18n.{Lang, Messages}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
@@ -77,9 +77,9 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
   object Selectors {
     val caption = "#main-content > div > div > div > header > p"
     val insetText = "#main-content > div > div > div > p"
-    val incomeRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(1) > th:nth-child(1) > div > a"
+    val incomeRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(1) > th:nth-child(1) > a"
     val incomeRowAmount = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(1) > td.govuk-table__cell.govuk-table__cell--numeric"
-    val allowanceRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(2) > th:nth-child(1) > div > a"
+    val allowanceRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(2) > th:nth-child(1) > a"
     val allowanceRowAmount = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(2) > td.govuk-table__cell.govuk-table__cell--numeric"
     val taxIsDueRowText = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(3) > th:nth-child(1)"
     val taxIsDueRowAmount = "#calculation-income-deductions-contributions-table > tbody > tr:nth-child(3) > td.govuk-table__cell.govuk-table__cell--numeric"

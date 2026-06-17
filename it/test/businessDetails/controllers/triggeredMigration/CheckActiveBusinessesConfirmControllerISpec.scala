@@ -21,9 +21,9 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
 import common.models.admin.TriggeredMigration
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
@@ -65,11 +65,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
   mtdAllRoles.foreach { mtdRole =>
     val path = getPath(mtdRole)
     val additionalCookies = getAdditionalCookies(mtdRole)
-    val expectedRedirect: String = if (mtdRole == MTDIndividual) {
-      hub.controllers.routes.HomeController.show().url
-    } else {
-      hub.controllers.routes.HomeController.showAgent().url
-    }
+    val expectedRedirect: String = appConfig.homePageUrl(mtdRole.isAgent)
 
     s"GET $path" when {
       s"user is $mtdRole" should {

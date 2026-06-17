@@ -18,7 +18,7 @@ package common.testConstants
 
 import cats.implicits.catsSyntaxOptionId
 import common.testConstants.ChecksumUtils.*
-import models.nrs.*
+import financials.models.nrs.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Headers
 import play.api.test.FakeRequest

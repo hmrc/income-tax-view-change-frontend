@@ -16,11 +16,11 @@
 
 package views
 
-import models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import org.jsoup.nodes.Element
 import org.scalatest.prop.TableDrivenPropertyChecks.*
 import common.testConstants.BaseTestConstants.testServiceNavigation
-import testUtils.ViewSpec
+import common.testUtils.ViewSpec
+import returns.models.liabilitycalculation.viewmodels.AllowancesAndDeductionsViewModel
 import returns.views.html.DeductionBreakdownView
 
 class DeductionBreakdownViewSpec extends ViewSpec {

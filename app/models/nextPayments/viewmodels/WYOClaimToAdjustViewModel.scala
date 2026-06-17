@@ -16,7 +16,7 @@
 
 package models.nextPayments.viewmodels
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 
 case class WYOClaimToAdjustViewModel(poaTaxYear: Option[TaxYear]) {
 

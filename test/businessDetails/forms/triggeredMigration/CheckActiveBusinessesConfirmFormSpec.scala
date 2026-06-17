@@ -16,8 +16,8 @@
 
 package businessDetails.forms.triggeredMigration
 
+import common.testUtils.TestSupport
 import play.api.data.Form
-import testUtils.TestSupport
 
 class CheckActiveBusinessesConfirmFormSpec extends TestSupport {
 

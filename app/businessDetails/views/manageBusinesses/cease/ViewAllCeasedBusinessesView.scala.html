@@ -17,13 +17,14 @@
 @import _root_.common.implicits.ImplicitDateFormatterImpl
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
-@import views.html.components.CeasedBusinesses
+@import businessDetails.views.html.components.CeasedBusinesses
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 @import common.enums.IncomeSourceJourney.IncomeSourceType
 @import common.enums.IncomeSourceJourney.UkProperty
 @import common.enums.IncomeSourceJourney.ForeignProperty
 @import common.enums.IncomeSourceJourney.SelfEmployment
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -42,7 +43,7 @@
         sources: CeaseIncomeSourcesViewModel,
         isAgent: Boolean,
         backUrl: String
-)( implicit messages: Messages, user: common.auth.MtdItUser[_])
+)( implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

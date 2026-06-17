@@ -16,12 +16,12 @@
 
 package models
 
+import common.testUtils.UnitSpec
 import models.extensions.FinancialDetailsModelExtension
 import models.financialDetails._
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 import financials.testConstants.FinancialDetailsTestConstants._
-import testUtils.UnitSpec
 
 import java.time.LocalDate
 

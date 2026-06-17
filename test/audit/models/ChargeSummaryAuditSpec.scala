@@ -16,24 +16,25 @@
 
 package audit.models
 
+import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
+import common.services.DateService
+import common.testConstants.BaseTestConstants.*
 import financials.models.ChargeType.*
 import financials.models.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
-import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
-import common.services.DateService
-import models.chargeHistory.ChargeHistoryModel
-import models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import financials.models.audit.{ChargeSummaryAudit, PaymentSharedFunctions}
+import financials.models.chargeHistory.ChargeHistoryModel
+import financials.models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import financials.testConstants.ChargeConstants
+import financials.testConstants.FinancialDetailsTestConstants.financialDetail
 import models.financialDetails.*
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.test.FakeRequest
-import common.testConstants.BaseTestConstants.*
-import financials.testConstants.ChargeConstants
-import financials.testConstants.FinancialDetailsTestConstants.financialDetail
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 

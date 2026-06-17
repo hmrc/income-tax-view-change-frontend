@@ -16,13 +16,13 @@
 
 package obligations.mocks.repositories
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.UnitSpec
 import obligations.repositories.OptOutSessionDataRepository
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

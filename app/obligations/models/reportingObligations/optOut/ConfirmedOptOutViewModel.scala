@@ -16,7 +16,7 @@
 
 package obligations.models.reportingObligations.optOut
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.services.reportingObligations.optOut.{OneYearOptOutFollowedByMandated, OptOutState}
 
 case class ConfirmedOptOutViewModel(optOutTaxYear: TaxYear, state: Option[OptOutState]) {

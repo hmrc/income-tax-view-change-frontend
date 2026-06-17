@@ -17,10 +17,9 @@
 package obligations.services.reportingObligations.optOut
 
 import common.enums.JourneyType.{Opt, OptOutJourney}
-import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.services.AuditingService
-import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.models.reportingObligations.optOut.{OptOutSessionData, OptOutYearToUpdate}
@@ -28,9 +27,10 @@ import obligations.repositories.OptOutContextData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, OneInstancePerTest}
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseTestConstants.testSessionId
-import testUtils.{TestSupport, UnitSpec}
+import common.testUtils.{TestSupport, UnitSpec}
+import shared.models.UIJourneySessionData
+import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.Future

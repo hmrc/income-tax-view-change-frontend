@@ -17,15 +17,15 @@
 package views.claimToAdjustPoa
 
 import common.models.core.NormalMode
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import financials.forms.adjustPoa.SelectYourReasonFormProvider
-import models.claimToAdjustPoa.SelectYourReason
-import models.incomeSourceDetails.TaxYear
+import financials.models.claimToAdjustPoa.SelectYourReason
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.twirl.api.Html
-import testUtils.TestSupport
-import views.html.claimToAdjustPoa.SelectYourReasonView
+import financials.views.html.claimToAdjustPoa.SelectYourReasonView
 
 class SelectYourReasonViewSpec extends TestSupport {
 

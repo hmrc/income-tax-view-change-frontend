@@ -23,7 +23,7 @@ import common.models.admin.SignUpFs
 import common.models.itsaStatus.ITSAStatus
 import common.services.DateServiceInterface
 import ITSAStatus.{Mandated, Voluntary}
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockSignUpService
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
@@ -69,11 +69,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
   }
 
   private def homeLink(isAgent: Boolean): Option[String] = {
-    if (isAgent) {
-      Some(hub.controllers.routes.HomeController.showAgent().url)
-    } else {
-      Some(hub.controllers.routes.HomeController.show().url)
-    }
+    Some(appConfig.homePageUrl(isAgent))
   }
 
   private def confirmPageLink(isAgent: Boolean): Option[String] = {

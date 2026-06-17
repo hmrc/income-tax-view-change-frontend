@@ -17,14 +17,14 @@
 package views
 
 import common.config.FrontendAppConfig
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.*
-import testUtils.ViewSpec
+import common.testUtils.ViewSpec
 import returns.views.html.TaxYearsView
 
 class TaxYearsViewSpec extends ViewSpec {

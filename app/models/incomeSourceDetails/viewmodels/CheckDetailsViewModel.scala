@@ -38,6 +38,7 @@ case class CheckBusinessDetailsViewModel(
                                           businessCountryCode: Option[String],
                                           businessCountryName: Option[String],
                                           addressId: Option[String],
+                                          idempotencyKey: Option[String],
                                           isAddingNewAddress: Boolean = false,
                                           isNoAddressOnFile: Boolean = false
                                         ) extends CheckDetailsViewModel {
@@ -51,6 +52,6 @@ case class CheckBusinessDetailsViewModel(
 
 }
 
-case class CheckPropertyViewModel(tradingStartDate: LocalDate, incomeSourceType: IncomeSourceType) extends CheckDetailsViewModel {
+case class CheckPropertyViewModel(tradingStartDate: LocalDate, incomeSourceType: IncomeSourceType, idempotencyKey: Option[String]) extends CheckDetailsViewModel {
 
 }

@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.InitialPage
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import models.incomeSourceDetails.*
@@ -28,7 +27,6 @@ import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
@@ -39,8 +37,11 @@ import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkPro
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.admin.DisplayBusinessStartDate
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, PropertyDetailsModel, QuarterReportingType, QuarterTypeElection, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateService, ITSAStatusService}
+import shared.enums.InitialPage
+import shared.services.CalculationListService
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused

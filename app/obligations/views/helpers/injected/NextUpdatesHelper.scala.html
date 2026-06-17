@@ -15,14 +15,16 @@
  *@
 
 @import common.implicits.ImplicitDateFormatterImpl
-@import obligations.models.ObligationWithIncomeType
+@import shared.models.ObligationWithIncomeType
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import shared.models._
 @import obligations.models._
 @import java.time.LocalDate
 @import play.twirl.api.HtmlFormat
+@import common.auth.MtdItUser
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl, govukAccordion: GovukAccordion, govukTable: GovukTable)
-@(obligations: NextUpdatesViewModel)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(obligations: NextUpdatesViewModel)(implicit messages: Messages, user: MtdItUser[_])
 @import implicitDateFormatter.longDate
 
 @deadlineRow(deadline: ObligationWithIncomeType) = @{

@@ -22,14 +22,14 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import businessDetails.testConstants.BusinessDetailsTestConstants._
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.testUtils.TestSupport
 
 class AddIncomeSourcesViewSpec extends TestSupport {
   val addIncomeSources: AddIncomeSourcesView = app.injector.instanceOf[AddIncomeSourcesView]
-  val backUrl: String = hub.controllers.routes.HomeController.show().url
-  val backUrlAgent: String = hub.controllers.routes.HomeController.showAgent().url
+  val backUrl: String = appConfig.homePageUrl(isAgent = false)
+  val backUrlAgent: String = appConfig.homePageUrl(isAgent = true)
 
 
   val viewModelMax: AddIncomeSourcesViewModel = AddIncomeSourcesViewModel(

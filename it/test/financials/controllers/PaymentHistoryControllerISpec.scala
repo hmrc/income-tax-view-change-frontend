@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.PaymentHistoryResponseAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -28,6 +27,7 @@ import play.api.http.Status.*
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import financials.models.audit.PaymentHistoryResponseAuditModel
 
 import java.time.LocalDate
 

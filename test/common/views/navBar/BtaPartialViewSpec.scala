@@ -16,10 +16,10 @@
 
 package common.views.navBar
 
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
-import views.html.navBar.BtaPartial
+import common.views.html.navBar.BtaPartial
 
 class BtaPartialViewSpec extends TestSupport {
 
@@ -45,7 +45,7 @@ class BtaPartialViewSpec extends TestSupport {
 
       lazy val homeButton = document.getElementById("it-quarterly-reporting-home-button")
 
-      s"has the correct link to '${hub.controllers.routes.HomeController.show().url}'" in {
+      s"has the correct link to '${appConfig.individualHomeUrl}'" in {
         homeButton.attr("href") shouldBe appConfig.homePageUrl
       }
 

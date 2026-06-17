@@ -19,15 +19,14 @@ package returns.controllers
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import forms.utils.SessionKeys
-import forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
-import models.finalTaxCalculation.TaxReturnRequestModel
-import models.liabilitycalculation.viewmodels.CalculationSummary
-import models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import returns.forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import services.CalculationService
+import returns.models.finalTaxCalculation.TaxReturnRequestModel
+import returns.models.liabilitycalculation.viewmodels.CalculationSummary
+import returns.services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import returns.views.html.FinalTaxCalculationView
@@ -146,7 +145,7 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
             )
 
             Redirect(appConfig.submissionFrontendFinalDeclarationUrl(taxYear)).addingToSession(
-              SessionKeys.summaryData -> submissionOverview.asJsonString
+              summaryData -> submissionOverview.asJsonString
             )
           case _ =>
             Logger("application").error("Name or UTR missing.")

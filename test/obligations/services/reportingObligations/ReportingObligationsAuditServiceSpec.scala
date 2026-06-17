@@ -18,9 +18,10 @@ package obligations.services.reportingObligations
 
 import common.config.featureswitch.FeatureSwitching
 import common.enums.MTDIndividual
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.services.DateService
-import models.incomeSourceDetails.TaxYear
+import common.testUtils.{TestSupport, UnitSpec}
 import obligations.models.audit.reporting_obligations.*
 import obligations.services.reportingObligations.optOut.{CurrentOptOutTaxYear, NextOptOutTaxYear, OptOutProposition, PreviousOptOutTaxYear}
 import obligations.viewUtils.ReportingFrequencyViewUtils
@@ -29,7 +30,6 @@ import org.mockito.Mockito.{mock, when}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.test.Injecting
-import testUtils.{TestSupport, UnitSpec}
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Failure, Success}
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 

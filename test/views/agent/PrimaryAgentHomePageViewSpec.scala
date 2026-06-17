@@ -18,7 +18,6 @@ package views.agent
 
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import hub.models.homePage.*
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -27,14 +26,15 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.*
-import testUtils.{TestSupport, ViewSpec}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import hub.views.html.agent.PrimaryAgentHomeView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus
+import common.testUtils.{TestSupport, ViewSpec}
 
 import java.time.{LocalDate, Month}
 import scala.annotation.unused

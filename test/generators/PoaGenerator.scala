@@ -16,8 +16,8 @@
 
 package generators
 
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.scalacheck.Gen
 
 trait PoaGenerator {

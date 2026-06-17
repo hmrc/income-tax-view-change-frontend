@@ -17,10 +17,10 @@
 package financials.services.claimToAdjustPoa
 
 import common.models.core.Nino
+import common.models.incomeSourceDetails.TaxYear
 import connectors.ClaimToAdjustPoaConnector
-import models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaSuccess, UnexpectedError}
-import models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, SelectYourReason}
-import models.incomeSourceDetails.TaxYear
+import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaSuccess, UnexpectedError}
+import financials.models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, SelectYourReason}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

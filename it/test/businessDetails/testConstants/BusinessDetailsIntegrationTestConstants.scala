@@ -18,9 +18,9 @@ package businessDetails.testConstants
 
 import common.models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import common.testConstants.BaseIntegrationTestConstants.*
-import models.incomeSourceDetails.BusinessDetailsModel
+import common.models.incomeSourceDetails.BusinessDetailsModel
 import models.incomeSourceDetails.viewmodels.DatesModel
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

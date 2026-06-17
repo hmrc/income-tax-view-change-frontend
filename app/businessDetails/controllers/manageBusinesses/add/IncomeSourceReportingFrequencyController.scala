@@ -20,7 +20,6 @@ import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequency
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.AfterSubmissionPage
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
@@ -28,7 +27,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.MtdConstants
 import common.views.html.errorPages.templates.ErrorTemplate
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingFrequencyView
 import common.auth.{AuthActions, MtdItUser}
@@ -36,8 +34,10 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.UIJourneySessionData
 import common.services.DateService
+import shared.enums.AfterSubmissionPage
+import shared.models.UIJourneySessionData
+import shared.utils.MtdConstants
 
 import javax.inject.Inject
 import scala.annotation.unused

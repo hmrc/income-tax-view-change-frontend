@@ -32,7 +32,7 @@ import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 

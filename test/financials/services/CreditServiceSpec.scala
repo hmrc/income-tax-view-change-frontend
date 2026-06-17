@@ -19,14 +19,14 @@ package financials.services
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.models.core.ErrorModel
+import common.models.incomeSourceDetails.TaxYear
 import connectors.FinancialDetailsConnector
-import models.incomeSourceDetails.TaxYear
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testUtils.TestSupport
 import financials.testConstants.ANewCreditAndRefundModel
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate

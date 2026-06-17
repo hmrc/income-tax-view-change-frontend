@@ -17,9 +17,9 @@
 package models.financialDetails
 
 import common.exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import models.financialDetails.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
-import models.incomeSourceDetails.TaxYear
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate

@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukButton
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import uk.gov.hmrc.govukfrontend.views.Aliases.Button
+@import common.auth.MtdItUser
 
 @this(
     mainTemplate: unifiedLayout,
@@ -30,7 +31,7 @@
     orderedNumberList: orderedNumberList
 )
 
-@(buttonUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+@(buttonUrl: String)(implicit messages: Messages, user: MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("noIncomeSources.error.title"),

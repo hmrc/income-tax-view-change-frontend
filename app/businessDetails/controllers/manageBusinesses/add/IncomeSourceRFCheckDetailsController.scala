@@ -21,7 +21,6 @@ import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeS
 import businessDetails.services.{CreateBusinessDetailsService, SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.{AfterSubmissionPage, ReportingFrequencyPages}
 import models.incomeSourceDetails.viewmodels.*
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -33,8 +32,9 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.core.{IncomeSourceId, NormalMode}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.services.{AuditingService, DateServiceInterface}
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import shared.enums.{AfterSubmissionPage, ReportingFrequencyPages}
 
 import javax.inject.Inject
 import scala.annotation.unused

@@ -24,17 +24,20 @@ import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import play.api.test.{FakeRequest, Helpers}
 import uk.gov.hmrc.play.language.LanguageUtils
+import common.config.FrontendAppConfig
 
 class LocalLanguageControllerSpec extends PlaySpec with GuiceOneAppPerSuite   {
 
   implicit val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   private val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]
   lazy val mcc: MessagesControllerComponents = app.injector.instanceOf[MessagesControllerComponents]
+  private val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
   private val controller = new LocalLanguageController(
     languageUtils,
-    mcc,
-    messagesAPI
+    mcc,  
+    messagesAPI, 
+    appConfig
   )
 
   "LocalLanguageController.languageMap" should {
@@ -48,7 +51,7 @@ class LocalLanguageControllerSpec extends PlaySpec with GuiceOneAppPerSuite   {
 
   "LocalLanguageController.fallbackURL" should {
     "return the home controller URL" in {
-      controller.fallbackURL mustBe hub.controllers.routes.HomeController.show().url
+      controller.fallbackURL mustBe appConfig.individualHomeUrl
     }
   }
 

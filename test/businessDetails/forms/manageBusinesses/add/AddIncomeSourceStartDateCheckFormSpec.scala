@@ -23,7 +23,7 @@ import common.implicits.ImplicitDateFormatter
 import common.services.DateService
 import play.api.data.Form
 import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class AddIncomeSourceStartDateCheckFormSpec extends TestSupport with ImplicitDateFormatter {

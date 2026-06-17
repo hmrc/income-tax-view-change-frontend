@@ -21,15 +21,15 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.{Html, HtmlFormat}
 import businessDetails.testConstants.BusinessDetailsTestConstants.*
-import testUtils.{TestSupport, ViewSpec}
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.views.constants.ManageIncomeSourceDetailsViewConstants.*
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import common.models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
 import common.models.itsaStatus.ITSAStatus
-import models.incomeSourceDetails.{LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterTypeCalendar, QuarterTypeStandard}
+import common.testUtils.{TestSupport, ViewSpec}
 
 class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
@@ -481,8 +481,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
 
-        document.getElementById("expandable-standard-update-period").text() shouldBe "This business is currently reporting from 1 April using calendar update periods."
-        document.getElementById("software-support").text() shouldBe "You can change to use standard update periods, in line with the tax year, so you report from 6 April. This change can only be made in your compatible software."
+        document.getElementById("expandable-standard-update-period").text() shouldBe "Calendar update periods run from 1 April to 31 March each year. They do not align with the standard tax year (6 April to 5 April)."
+        document.getElementById("software-support").text() shouldBe "If your accounting period ends on 31 March, calendar update periods will make your record keeping simpler."
+        document.getElementById("software-support-p3").text() shouldBe "You can choose to report using standard update periods (which run from 6 April to 5 April) instead. You can only make the change:"
+        document.getElementById("bullet-1").text() shouldBe "in compatible software that supports this option"
+        document.getElementById("bullet-2").text() shouldBe "before you send your first quarterly update of the tax year"
         document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
         document.getElementById("standard-update-period-dropdown").text().contains("What is a calendar update period?") shouldBe true
       }
@@ -500,8 +503,11 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
 
-        document.getElementById("expandable-standard-update-period").text() shouldBe "This business is reporting from 6 April in line with the tax year, also known as using standard update periods."
-        document.getElementById("software-support").text() shouldBe "If your software supports it, you can choose to report using calendar update periods which end on the last day of the month."
+        document.getElementById("expandable-standard-update-period").text() shouldBe "Standard update periods align to the tax year (6 April to 5 April)."
+        document.getElementById("software-support").text() shouldBe "If your accounting period doesn’t end on 31 March, standard update periods will make your record keeping simpler."
+        document.getElementById("software-support-p3").text() shouldBe "You can choose to report using calendar update periods (which run from 1 April to 31 March) instead. You can only make the change:"
+        document.getElementById("bullet-1").text() shouldBe "in compatible software that supports this option"
+        document.getElementById("bullet-2").text() shouldBe "before you send your first quarterly update of the tax year"
         document.getElementById("learn-about-quarters-link").text() shouldBe "Learn more about standard and calendar quarters (opens in new tab)"
         document.getElementById("standard-update-period-dropdown").text().contains("What is a standard update period?") shouldBe true
       }
@@ -522,6 +528,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
         Option(document.getElementById("expandable-standard-update-period")) shouldBe None
         Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("software-support-p3")) shouldBe None
+        Option(document.getElementById("bullet-1")) shouldBe None
+        Option(document.getElementById("bullet-2")) shouldBe None
         Option(document.getElementById("learn-about-quarters-link")) shouldBe None
         Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
       }
@@ -540,6 +549,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
         Option(document.getElementById("expandable-standard-update-period")) shouldBe None
         Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("software-support-p3")) shouldBe None
+        Option(document.getElementById("bullet-1")) shouldBe None
+        Option(document.getElementById("bullet-2")) shouldBe None
         Option(document.getElementById("learn-about-quarters-link")) shouldBe None
         Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
       }
@@ -559,6 +571,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
         Option(document.getElementById("expandable-standard-update-period")) shouldBe None
         Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("software-support-p3")) shouldBe None
+        Option(document.getElementById("bullet-1")) shouldBe None
+        Option(document.getElementById("bullet-2")) shouldBe None
         Option(document.getElementById("learn-about-quarters-link")) shouldBe None
         Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
       }
@@ -578,6 +593,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
         Option(document.getElementById("expandable-standard-update-period")) shouldBe None
         Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("software-support-p3")) shouldBe None
+        Option(document.getElementById("bullet-1")) shouldBe None
+        Option(document.getElementById("bullet-2")) shouldBe None
         Option(document.getElementById("learn-about-quarters-link")) shouldBe None
         Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
       }
@@ -597,6 +615,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
         Option(document.getElementById("expandable-standard-update-period")) shouldBe None
         Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("software-support-p3")) shouldBe None
+        Option(document.getElementById("bullet-1")) shouldBe None
+        Option(document.getElementById("bullet-2")) shouldBe None
         Option(document.getElementById("learn-about-quarters-link")) shouldBe None
         Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
       }
@@ -616,6 +637,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
         Option(document.getElementById("expandable-standard-update-period")) shouldBe None
         Option(document.getElementById("software-support")) shouldBe None
+        Option(document.getElementById("software-support-p3")) shouldBe None
+        Option(document.getElementById("bullet-1")) shouldBe None
+        Option(document.getElementById("bullet-2")) shouldBe None
         Option(document.getElementById("learn-about-quarters-link")) shouldBe None
         Option(document.getElementById("standard-update-period-dropdown")) shouldBe None
       }

@@ -24,9 +24,9 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
-import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
-import models.incomeSourceDetails.{IncomeSourceReportingFrequencySourceData, TaxYear}
+import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
@@ -34,6 +34,7 @@ import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import common.testConstants.IncomeSourceDetailsTestConstants.errorResponse
+import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future
 

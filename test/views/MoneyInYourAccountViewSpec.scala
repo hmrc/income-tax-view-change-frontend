@@ -20,9 +20,9 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
+import common.testUtils.{TestSupport, ViewSpec}
+import financials.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import financials.testConstants.ANewCreditAndRefundModel
-import java.time.LocalDate
-import models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames
@@ -30,8 +30,9 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import testUtils.{TestSupport, ViewSpec}
-import views.html.MoneyInYourAccountView
+import financials.views.html.MoneyInYourAccountView
+
+import java.time.LocalDate
 
 
 class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {

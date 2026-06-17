@@ -16,8 +16,8 @@
 
 package common.views.errorPages
 
+import common.testUtils.ViewSpec
 import play.twirl.api.Html
-import testUtils.ViewSpec
 import common.views.html.errorPages.CustomNotFoundErrorView
 
 class CustomNotFoundErrorViewSpec extends ViewSpec {
@@ -40,7 +40,7 @@ class CustomNotFoundErrorViewSpec extends ViewSpec {
 
     s"have a link in to the homepage" in new Setup(customNotFoundErrorView) {
       layoutContent.select(Selectors.link).first().text shouldBe messages("error.custom.link")
-      layoutContent.select(Selectors.link).first().attr("href") shouldBe hub.controllers.routes.HomeController.show().url
+      layoutContent.select(Selectors.link).first().attr("href") shouldBe appConfig.individualHomeUrl
     }
   }
 }

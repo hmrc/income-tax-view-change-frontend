@@ -16,11 +16,11 @@
 
 package models
 
+import common.testUtils.UnitSpec
 import models.repaymentHistory.{HipRepaymentHistoryResponse, RepaymentHistoryModel}
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 import financials.testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, repaymentHistoryTwoRSI, validRepaymentHistoryOneRSIJson, validRepaymentHistoryTwoRSIJson}
-import testUtils.UnitSpec
 
 class RepaymentHistoryResponseModelSpec extends UnitSpec with Matchers {
 

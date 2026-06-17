@@ -27,7 +27,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.JourneyType.Add
 import common.models.admin.DisplayBusinessStartDate
-import models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,16 +45,12 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
                                           val mcc: MessagesControllerComponents) extends FrontendController(mcc)
   with I18nSupport with IncomeSourcesUtils {
 
-  private lazy val homePageCall: Call = hub.controllers.routes.HomeController.show()
-  private lazy val homePageCallAgent: Call = hub.controllers.routes.HomeController.showAgent()
-
   def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
         isAgent = false,
-        homePageCall = homePageCall,
         sources = user.incomeSources,
-        backUrl = hub.controllers.routes.HomeController.show().url
+        backUrl = appConfig.individualHomeUrl
       )(implicitly, itvcErrorHandler)
   }
 
@@ -62,7 +58,6 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
-        homePageCall = homePageCallAgent,
         sources = mtdItUser.incomeSources,
         backUrl = hub.controllers.routes.HomeController.showAgent().url
       )(implicitly, itvcErrorHandlerAgent)
@@ -70,7 +65,6 @@ class AddIncomeSourceController @Inject()(val authActions: AuthActions,
   }
 
   def handleRequest(sources: IncomeSourceDetailsModel,
-                    homePageCall: Call,
                     isAgent: Boolean,
                     backUrl: String)
                    (implicit user: MtdItUser[_], errorHandler: ShowInternalServerError): Future[Result] = {

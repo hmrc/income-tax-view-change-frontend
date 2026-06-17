@@ -16,14 +16,14 @@
 
 package obligations.mocks.connectors
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.UnitSpec
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, optOutUpdateReason}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

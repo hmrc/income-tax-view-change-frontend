@@ -23,10 +23,8 @@ import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
-import obligations.models.audit.NextUpdatesResponseAuditModel
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
@@ -34,6 +32,8 @@ import common.testConstants.BaseIntegrationTestConstants._
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import common.testConstants.messages.HomeMessages.{nextUpdateDue, overdue, overdueUpdates}
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.models.audit.NextUpdatesResponseAuditModel
 import uk.gov.hmrc.auth.core.retrieve.Name
 
 class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {

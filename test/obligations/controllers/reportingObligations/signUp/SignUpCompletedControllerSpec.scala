@@ -20,9 +20,9 @@ import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.SignUpFs
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.DateServiceInterface
-import models.incomeSourceDetails.TaxYear
 import obligations.mocks.services.MockSignUpService
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
@@ -121,11 +121,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
 
             val result = action(fakeRequest)
 
-            val redirectUrl = if (isAgent) {
-              hub.controllers.routes.HomeController.showAgent().url
-            } else {
-              hub.controllers.routes.HomeController.show().url
-            }
+            val redirectUrl = appConfig.homePageUrl(isAgent)
 
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)
@@ -140,11 +136,7 @@ class SignUpCompletedControllerSpec extends MockAuthActions with MockSignUpServi
 
             val result = action(fakeRequest)
 
-            val redirectUrl = if (isAgent) {
-              hub.controllers.routes.HomeController.showAgent().url
-            } else {
-              hub.controllers.routes.HomeController.show().url
-            }
+            val redirectUrl = appConfig.homePageUrl(isAgent)
 
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(redirectUrl)

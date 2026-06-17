@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm as form
 import businessDetails.utils.IncomeSourcesUtils
@@ -24,7 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddPropertyView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.models.core.NormalMode
@@ -33,7 +34,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class AddPropertyController @Inject()(authActions: AuthActions,
+class AddPropertyController @Inject()(authActions: AuthActionsWithTriggeredMigrationCheck,
                                       val addProperty: AddPropertyView,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler)

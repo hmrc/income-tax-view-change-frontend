@@ -17,11 +17,11 @@
 package businessDetails.mocks.connectors
 
 import common.connectors.BusinessDetailsConnector
-import models.incomeSourceDetails.IncomeSourceDetailsResponse
+import common.models.incomeSourceDetails.IncomeSourceDetailsResponse
+import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

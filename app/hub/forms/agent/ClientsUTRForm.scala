@@ -16,7 +16,7 @@
 
 package hub.forms.agent
 
-import forms.utils.ConstraintUtil.ConstraintUtil
+import hub.forms.utils.ConstraintUtil.ConstraintUtil
 import play.api.data.Form
 import play.api.data.Forms.{default, single, text}
 import play.api.data.validation.Constraints.nonEmpty

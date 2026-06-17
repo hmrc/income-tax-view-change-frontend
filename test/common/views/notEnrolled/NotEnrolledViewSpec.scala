@@ -17,10 +17,10 @@
 package common.views.notEnrolled
 
 import common.config.FrontendAppConfig
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers._
-import testUtils.TestSupport
 import common.views.html.notEnrolled.NotEnrolledView
 
 class NotEnrolledViewSpec extends TestSupport {

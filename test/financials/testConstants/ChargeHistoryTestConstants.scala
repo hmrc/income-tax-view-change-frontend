@@ -17,7 +17,7 @@
 package financials.testConstants
 
 import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testNino}
-import models.chargeHistory.*
+import financials.models.chargeHistory.*
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

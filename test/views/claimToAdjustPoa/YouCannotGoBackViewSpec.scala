@@ -21,9 +21,9 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import common.auth.MtdItUser
-import models.incomeSourceDetails.TaxYear
-import testUtils.TestSupport
-import views.html.claimToAdjustPoa.YouCannotGoBackView
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
+import financials.views.html.claimToAdjustPoa.YouCannotGoBackView
 class YouCannotGoBackViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean) {
@@ -39,10 +39,7 @@ class YouCannotGoBackViewSpec extends TestSupport {
       )
   }
 
-  def getHomeControllerLink(isAgent: Boolean): String = {
-    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
-  }
+  def getHomeControllerLink(isAgent: Boolean): String = appConfig.homePageUrl(isAgent)
 
   def getWhatYouOweControllerLink(isAgent: Boolean): String = {
     if (isAgent) financialsRoutes.WhatYouOweController.showAgent().url

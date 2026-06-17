@@ -16,8 +16,8 @@
 
 package models.incomeSourceDetails.viewmodels
 
+import common.testUtils.UnitSpec
 import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country, SensitiveAddIncomeSourceData}
-import testUtils.UnitSpec
 
 import java.time.LocalDate
 

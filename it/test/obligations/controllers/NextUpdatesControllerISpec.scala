@@ -24,15 +24,15 @@ import helpers.servicemocks.*
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.admin.OptOutFs
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
-import models.incomeSourceDetails.TaxYear
-import obligations.models.ObligationsModel
 import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
 import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import shared.models.ObligationsModel
 
 class NextUpdatesControllerISpec extends ControllerISpecHelper {
 

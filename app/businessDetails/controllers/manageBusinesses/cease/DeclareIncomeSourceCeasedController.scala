@@ -16,30 +16,31 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.InitialPage
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.models.core.{Mode, NormalMode}
+import shared.enums.InitialPage
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActions,
+class DeclareIncomeSourceCeasedController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
                                                     val view: DeclareIncomeSourceCeasedView,
                                                     val sessionService: SessionService,
                                                     val itvcErrorHandler: ItvcErrorHandler,

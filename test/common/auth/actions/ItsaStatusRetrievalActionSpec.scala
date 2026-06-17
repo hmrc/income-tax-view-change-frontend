@@ -21,11 +21,12 @@ import common.auth.actions.AuthActionsTestData.*
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.ITSAStatusConnector
 import common.models.admin.{FeatureSwitchName, `CY+1YouMustWaitToSignUpPageEnabled`}
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.models.itsaStatus.ITSAStatus.Voluntary
 import common.models.itsaStatus.{ITSAStatusResponseError, ITSAStatusResponseModel, StatusDetail}
 import common.models.itsaStatus.StatusReason.MtdItsaOptOut
-import models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyBoolean}
 import org.mockito.Mockito.{never, reset, verify, when}
@@ -37,7 +38,6 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 
 import scala.concurrent.Future

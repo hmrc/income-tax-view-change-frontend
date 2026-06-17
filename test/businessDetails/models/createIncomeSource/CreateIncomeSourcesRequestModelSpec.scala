@@ -17,8 +17,8 @@
 package businessDetails.models.createIncomeSource
 
 import businessDetails.connectors.helpers.IncomeSourcesDataHelper
+import common.testUtils.TestSupport
 import play.api.libs.json.{JsSuccess, Json}
-import testUtils.TestSupport
 
 import scala.util.Try
 
@@ -33,7 +33,7 @@ class CreateIncomeSourcesRequestModelSpec extends TestSupport with IncomeSources
       Json.toJson(createBusinessDetailsRequestObject) shouldBe createBusinessDetailsRequestObjectJson
     }
     "check require field" in {
-      Try(CreateBusinessIncomeSourceRequest(mtdbsa = "XIAT00000000000", businessDetails = List())).failed.get.getMessage shouldBe "requirement failed: Only single business can be created at a time"
+      Try(CreateBusinessIncomeSourceRequest(mtdbsa = "XIAT00000000000", businessDetails = List(), idempotencyKey = None, addIncomeSource = None)).failed.get.getMessage shouldBe "requirement failed: Only single business can be created at a time"
     }
   }
 

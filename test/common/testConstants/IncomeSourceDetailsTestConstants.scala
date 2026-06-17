@@ -19,13 +19,14 @@ package common.testConstants
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
-import common.models.UIJourneySessionData
 import common.models.core.{AddressModel, IncomeSourceId}
 import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.BusinessDetailsTestConstants.*
 import businessDetails.testConstants.PropertyDetailsTestConstants.*
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import models.incomeSourceDetails.*
 import models.incomeSourceDetails.viewmodels.{CeaseIncomeSourcesViewModel, CheckCeaseIncomeSourceDetailsViewModel}
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 

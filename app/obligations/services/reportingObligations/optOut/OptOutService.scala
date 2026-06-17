@@ -21,7 +21,7 @@ import common.auth.MtdItUser
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateServiceInterface, ITSAStatusService}
 import ITSAStatus.{ITSAStatus, Mandated, Voluntary}
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.enums.ChosenTaxYear
 import obligations.enums.ChosenTaxYear.*
 import obligations.models.reportingObligations.optOut.*
@@ -31,7 +31,7 @@ import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.ReportingFrequency.{QuarterlyUpdatesCountForTaxYearModel, noQuarterlyUpdates}
 import obligations.services.reportingObligations.optOut.OptOutProposition.createOptOutProposition
 import play.api.Logger
-import services.CalculationListService
+import shared.services.CalculationListService
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

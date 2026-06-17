@@ -19,6 +19,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.pageheading.PageHeading
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcPageHeading
 @import common.views.html.components.p
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -34,7 +35,7 @@
         isAgent: Boolean
 )(
         implicit messages: Messages,
-        user: common.auth.MtdItUser[_]
+        user: MtdItUser[_]
 )
 
 @getMessage(key: String, args: String*) = @{

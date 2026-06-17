@@ -20,8 +20,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.test.Helpers.contentAsString
 import common.auth.MtdItUser
-import testUtils.TestSupport
-import views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
+import common.testUtils.TestSupport
+import financials.views.html.claimToAdjustPoa.ApiFailureSubmittingPoaView
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 
 class ApiFailureSubmittingPoaViewSpec extends TestSupport {
@@ -39,10 +39,7 @@ class ApiFailureSubmittingPoaViewSpec extends TestSupport {
       )
   }
 
-  def getHomeControllerLink(isAgent: Boolean): String = {
-    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
-  }
+  def getHomeControllerLink(isAgent: Boolean): String = appConfig.homePageUrl(isAgent)
 
   def executeTest(isAgent: Boolean): Unit = {
     s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {

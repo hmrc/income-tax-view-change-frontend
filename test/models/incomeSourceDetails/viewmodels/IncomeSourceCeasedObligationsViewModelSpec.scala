@@ -17,10 +17,10 @@
 package models.incomeSourceDetails.viewmodels
 
 import common.enums.IncomeSourceJourney.SelfEmployment
-import models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{business1, business1NoLatency, business2, ceasedBusiness}
-import testUtils.UnitSpec
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testUtils.UnitSpec
 
 class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {
 

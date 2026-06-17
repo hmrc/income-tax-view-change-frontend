@@ -21,12 +21,12 @@ import org.jsoup.nodes.Document
 import play.api.data.FormError
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.models.core.{CheckMode, Mode, NormalMode}
+import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

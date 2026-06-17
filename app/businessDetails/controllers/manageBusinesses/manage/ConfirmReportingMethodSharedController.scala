@@ -20,9 +20,8 @@ import businessDetails.enums.ReportingMethod
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import enums.{AfterSubmissionPage, BeforeSubmissionPage}
-import models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData, TaxYear}
+import common.models.incomeSourceDetails.TaxYear.getTaxYearModel
+import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.i18n.I18nSupport
@@ -34,9 +33,11 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import common.models.UIJourneySessionData
 import common.models.core.IncomeSourceId
+import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateService}
+import shared.enums.{AfterSubmissionPage, BeforeSubmissionPage}
+import shared.models.UIJourneySessionData
 
 import javax.inject.Inject
 import scala.annotation.unused

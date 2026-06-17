@@ -20,13 +20,15 @@ import common.controllers.ItvcLanguageController
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.MessageCheckView
 import uk.gov.hmrc.play.language.LanguageUtils
+import common.config.FrontendAppConfig
 
 import javax.inject.Inject
 
 
 class MessageCheckController @Inject()(messageCheckView: MessageCheckView,
                                        mcc: MessagesControllerComponents,
-                                       languageUtils: LanguageUtils) extends ItvcLanguageController(mcc, languageUtils) {
+                                       languageUtils: LanguageUtils,
+                                       appConfig: FrontendAppConfig) extends ItvcLanguageController(mcc, languageUtils, appConfig) {
 
 
   def show(): Action[AnyContent] = Action { implicit req =>

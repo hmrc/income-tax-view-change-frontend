@@ -16,10 +16,10 @@
 
 package models.financialDetails
 
+import common.testUtils.UnitSpec
 import financials.models.ChargeType.*
 import models.financialDetails.FinancialDetail.{getMessageKeyByTypes, getMessageKeyForChargeType, getMessageKeyForMainType}
 import financials.testConstants.FinancialDetailsTestConstants.financialDetail
-import testUtils.UnitSpec
 
 class FinancialDetailSpec extends UnitSpec {
 

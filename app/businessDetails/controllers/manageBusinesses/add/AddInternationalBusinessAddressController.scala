@@ -16,10 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.services.{AddressLookupService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
 import com.google.inject.Inject
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
@@ -32,7 +33,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddInternationalBusinessAddressController @Inject()(val authActions: AuthActions,
+class AddInternationalBusinessAddressController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
                                                           addressLookupService: AddressLookupService)
                                                          (implicit
                                                           val appConfig: FrontendAppConfig,
@@ -44,7 +45,7 @@ class AddInternationalBusinessAddressController @Inject()(val authActions: AuthA
                                                          )
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with IncomeSourcesUtils {
   
-  def show(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
+  def show(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
       handleRequest(isAgent, mode, isTriggeredMigration)(implicitly, itvcErrorHandler)
   }
 

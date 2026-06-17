@@ -19,9 +19,9 @@ package businessDetails.connectors
 import common.config.FrontendAppConfig
 import common.connectors.CustomerFactsUpdateConnector
 import common.mocks.{MockAuditingService, MockHttpV2}
+import common.testUtils.TestSupport
 import play.api.Configuration
 import play.api.http.Status
-import testUtils.TestSupport
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

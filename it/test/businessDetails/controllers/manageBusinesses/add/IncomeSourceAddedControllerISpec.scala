@@ -21,16 +21,15 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.models.UIJourneySessionData
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.AddIncomeSourceData
-import obligations.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants._
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.business1
 import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, UIJourneySessionData}
 
 import java.time.LocalDate
 

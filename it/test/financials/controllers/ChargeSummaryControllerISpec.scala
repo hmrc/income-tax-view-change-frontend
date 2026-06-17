@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.ChargeSummaryAudit
 import common.auth.MtdItUser
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
@@ -32,6 +31,7 @@ import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino,
 import financials.testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import common.testConstants.messages.ChargeSummaryMessages.*
+import financials.models.audit.ChargeSummaryAudit
 
 import java.time.LocalDate
 

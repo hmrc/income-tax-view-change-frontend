@@ -16,6 +16,6 @@
 
 package hub.models.newHomePage
 
-import obligations.models.SingleObligationModel
+import shared.models.SingleObligationModel
 
 case class RecentActivitySubmissionsModel(mostRecentAnnualSubmission: Option[SingleObligationModel], mostRecentQuarterlySubmission: Option[SingleObligationModel])

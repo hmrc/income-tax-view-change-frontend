@@ -21,14 +21,14 @@ import common.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.services.AuditingService
+import financials.models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import financials.services.claimToAdjustPoa.{ClaimToAdjustPoaCalculationService, ClaimToAdjustService, RecalculatePoaHelper}
 import financials.services.{NrsService, PaymentOnAccountSessionService}
-import models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
+import financials.utils.claimToAdjust.WithSessionAndPoa
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.claimToAdjust.WithSessionAndPoa
-import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
+import financials.views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext

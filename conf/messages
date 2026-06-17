@@ -414,10 +414,10 @@ taxYears.error.agentPostLinkText                               = This will be a 
 ## Tax Year Summary Page New ##
 tax-year-summary.heading                                           = Tax year summary
 tax-year-summary.heading-secondary                                 = 6 April {0} to 5 April {1}
-tax-year-summary.explanatory-text                                  = This calculation is only based on figures we’ve already received to {0}. It’s not your final tax bill.
+
+tax-year-summary.explanatory-text                                  = This is not your final tax bill. This calculation is based on the information we currently have and may change when you finalise your tax year.
+
 tax-year-summary.calculation-date                                  = Calculation date
-tax-year-summary.calc-from-last-time                               = This is not your final tax bill, it’s only based on figures we’ve already received.
-tax-year-summary.agent.calc-from-last-time                         = This is not your client’s final tax bill, it’s only based on figures we’ve already received.
 tax-year-summary.calc-estimate-info                                = This is a year to date estimate based on figures we’ve already received.
 
 tax.year.summary.calc.cannot.be.displayed.heading                  = Your tax calculation cannot be displayed
@@ -916,7 +916,7 @@ taxCal_breakdown.message.C22205                                 = Total loss fro
 taxCal_breakdown.message.C22206                                 = One or more of your annual adjustments have not been applied because you have submitted additional income or expenses.
 taxCal_breakdown.message.C22207                                 = Your Payroll Giving amount has been included in your adjusted taxable income.
 taxCal_breakdown.message.C22208                                 = Your basic rate limit has been increased by {0} to {1} for pension contribution.
-taxCal_breakdown.message.C22209                                 = Your basic rate limit has been increased by {0} to {1} for pension contribution and Gift Aid payments.
+taxCal_breakdown.message.C22209                                 = Your basic rate limit has been increased to {0} for pension contribution and Gift Aid payments.
 taxCal_breakdown.message.C22210                                 = Employment related expenses are capped at the total amount of employment income.
 taxCal_breakdown.message.C22211                                 = This is a forecast of your annual Income Tax liability based on the information you have provided to date. Any overpayments of Income Tax will not be refundable until after you have submitted your final declaration.
 taxCal_breakdown.message.C22212                                 = Employment and deduction related expenses have been limited to employment income.
@@ -942,7 +942,7 @@ taxCal_breakdown.message.agent.C22205                           = Total loss fro
 taxCal_breakdown.message.agent.C22206                           = One or more of your client’s annual adjustments have not been applied because your client has submitted additional income or expenses.
 taxCal_breakdown.message.agent.C22207                           = Your client’s Payroll Giving amount has been included in your client’s adjusted taxable income.
 taxCal_breakdown.message.agent.C22208                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Pension Contribution.
-taxCal_breakdown.message.agent.C22209                           = Your client’s Basic Rate limit has been increased by {0} to {1} for Pension Contribution and Gift Aid payments.
+taxCal_breakdown.message.agent.C22209                           = Your client’s basic rate limit has been increased to {0} for pension contribution and Gift Aid payments.
 taxCal_breakdown.message.agent.C22210                           = Employment related expenses are capped at the total amount of employment income.
 taxCal_breakdown.message.agent.C22211                           = This is a forecast of your client’s annual Income Tax liability based on the information your client has provided to date. Any overpayments of Income Tax will not be refundable until after your client has submitted their final declaration.
 taxCal_breakdown.message.agent.C22212                           = Employment and deduction related expenses have been limited to employment income.
@@ -2431,11 +2431,17 @@ incomeSources.manage.quarterly-period.standard                        =   Standa
 incomeSources.manage.quarterly-period.calendar                        =   Calendar
 incomeSources.manage.quarterly-period.standard.summary                =   What is a standard update period?
 incomeSources.manage.quarterly-period.calendar.summary                =   What is a calendar update period?
-incomeSources.manage.quarterly-period.standard.content.p1             =   This business is reporting from 6 April in line with the tax year, also known as using standard update periods.
-incomeSources.manage.quarterly-period.standard.content.p2             =   If your software supports it, you can choose to report using calendar update periods which end on the last day of the month.
-incomeSources.manage.quarterly-period.calendar.content.p1             =   This business is currently reporting from 1 April using calendar update periods.
-incomeSources.manage.quarterly-period.calendar.content.p2             =   You can change to use standard update periods, in line with the tax year, so you report from 6 April. This change can only be made in your compatible software.
-incomeSources.manage.quarterly-period.content.p3                      =   Learn more about standard and calendar quarters
+incomeSources.manage.quarterly-period.standard.content.p1             =   Standard update periods align to the tax year (6 April to 5 April).
+incomeSources.manage.quarterly-period.standard.content.p2             =   If your accounting period doesn’t end on 31 March, standard update periods will make your record keeping simpler.
+incomeSources.manage.quarterly-period.standard.content.p3             =   You can choose to report using calendar update periods (which run from 1 April to 31 March) instead. You can only make the change:
+incomeSources.manage.quarterly-period.standard.content.bullet1        =   in compatible software that supports this option
+incomeSources.manage.quarterly-period.standard.content.bullet2        =   before you send your first quarterly update of the tax year
+incomeSources.manage.quarterly-period.calendar.content.p1             =   Calendar update periods run from 1 April to 31 March each year. They do not align with the standard tax year (6 April to 5 April).
+incomeSources.manage.quarterly-period.calendar.content.p2             =   If your accounting period ends on 31 March, calendar update periods will make your record keeping simpler.
+incomeSources.manage.quarterly-period.calendar.content.p3             =   You can choose to report using standard update periods (which run from 6 April to 5 April) instead. You can only make the change:
+incomeSources.manage.quarterly-period.calendar.content.bullet1        =   in compatible software that supports this option
+incomeSources.manage.quarterly-period.calendar.content.bullet2        =   before you send your first quarterly update of the tax year
+incomeSources.manage.quarterly-period.content.p4                      =   Learn more about standard and calendar quarters
 
 incomeSources.manage.business-manage-details.heading                  =   Manage your details
 incomeSources.manage.business-manage-details.sole-trader-section      =   Sole trader

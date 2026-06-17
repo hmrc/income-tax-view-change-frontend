@@ -19,20 +19,20 @@ package returns.controllers
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import mocks.services.MockCalculationService
-import models.incomeSourceDetails.TaxYear
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import services.CalculationService
 import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import obligations.models.*
-import obligations.connectors.ObligationsConnector
 import obligations.mocks.connectors.MockObligationsConnector
+import returns.services.CalculationService
+import shared.connectors.ObligationsConnector
+import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 
 import java.time.LocalDate
 

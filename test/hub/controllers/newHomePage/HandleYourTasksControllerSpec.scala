@@ -20,6 +20,7 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
 import common.services.{AuditingService, DateService, DateServiceInterface, ITSAStatusService}
 import common.testConstants.BaseTestConstants
@@ -34,10 +35,8 @@ import hub.services.newHomePage.HandleYourTasksService
 import hub.views.html.newHomePage.NewHomeYourTasksView
 import mocks.services.*
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
-import obligations.mocks.services.MockNextUpdatesService
-import obligations.models.*
-import obligations.services.NextUpdatesService
+import hub.mocks.services.MockNextUpdatesService
+import hub.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
@@ -49,6 +48,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusOpen}
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future

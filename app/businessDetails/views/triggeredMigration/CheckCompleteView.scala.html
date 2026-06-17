@@ -15,10 +15,11 @@
  *@
 
 @import _root_.common.implicits.ImplicitDateFormatterImpl
-@import models.chargeSummary.ChargeSummaryViewModel
+@import financials.models.chargeSummary.ChargeSummaryViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
+@import common.auth.MtdItUser
 
 
 @this(
@@ -37,7 +38,7 @@
         bulletList: bulletPointList,
 )
 
-@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, postAction: Call)(implicit user: common.auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean, compatSoftwareLink: String, nextUpdatesLink: String, postAction: Call)(implicit user: MtdItUser[_], messages: Messages)
 
 
 @getMessage(key: String) = @{

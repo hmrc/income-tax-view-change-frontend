@@ -16,18 +16,20 @@
 
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
+@import common.config.FrontendAppConfig
 
 @this(
     mainTemplate: unifiedLayout,
     h1: h1,
     p: p,
-    link: link
+    link: link,
+    appConfig: FrontendAppConfig
 )
 
 @(isAgent: Boolean = false)(implicit request : Request[_], messages: Messages)
 
 @homeUrl = @{
-    if(isAgent) hub.controllers.routes.HomeController.showAgent().url else hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(isAgent)
 }
 
 @mainTemplate(pageTitle = messages("error.custom.heading"), isAgent = isAgent) {

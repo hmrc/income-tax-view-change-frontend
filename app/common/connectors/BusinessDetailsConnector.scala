@@ -17,7 +17,7 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.OK

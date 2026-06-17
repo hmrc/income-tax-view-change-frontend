@@ -17,13 +17,14 @@
 @import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
 @import common.views.html.components.p
-@import views.html.components.dateInput
+@import businessDetails.views.html.components.dateInput
 @import common.views.html.helpers.injected.{ContinueButton, ErrorSummary}
 @import common.views.html.layouts.unifiedLayout
 @import java.time.LocalDate
 @import common.viewmodels.govuk.all.ErrorSummaryViewModel
 @import common.viewmodels.govuk.all.DateViewModel
 @import common.viewmodels.govuk.all.FluentDate
+@import common.auth.MtdItUser
 
 @this(mainTemplate: unifiedLayout,
         dateInput: dateInput,
@@ -38,7 +39,7 @@
         form: Form[LocalDate],
         postAction: Call,
         isAgent: Boolean = false,
-        backUrl: String)(implicit user: common.auth.MtdItUser[_], messages: Messages)
+        backUrl: String)(implicit user: MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"${incomeSourceType.endDateMessagePrefix}.$key", args: _*)

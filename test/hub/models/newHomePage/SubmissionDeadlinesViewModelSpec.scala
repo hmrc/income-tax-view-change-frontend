@@ -16,8 +16,8 @@
 
 package hub.models.newHomePage
 
-import obligations.models.{SingleObligationModel, StatusOpen}
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
+import shared.models.{SingleObligationModel, StatusOpen}
 
 import java.time.LocalDate
 

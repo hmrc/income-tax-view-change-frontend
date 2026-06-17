@@ -20,6 +20,7 @@
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+@import common.auth.MtdItUser
 
 @this(
     mainTemplate: unifiedLayout,
@@ -30,7 +31,7 @@
     link: link,
     continueButton: ContinueButton)
 
-@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: common.auth.MtdItUser[_], messages: Messages)
+@(isAgent: Boolean = false, incomeSourceType: IncomeSourceType, continueAction: Call)(implicit user: MtdItUser[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     incomeSourceType match {

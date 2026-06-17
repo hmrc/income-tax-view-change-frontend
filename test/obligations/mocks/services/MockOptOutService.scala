@@ -16,14 +16,14 @@
 
 package obligations.mocks.services
 
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.UnitSpec
 import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import obligations.services.reportingObligations.ReportingFrequency.QuarterlyUpdatesCountForTaxYearModel
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutService}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 import scala.concurrent.Future
 

@@ -18,14 +18,14 @@ package obligations.views.reportingObligations.optOut
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import obligations.models.reportingObligations.optOut.CheckOptOutUpdateAnswersViewModel
 import obligations.views.html.reportingObligations.optOut.CheckOptOutUpdateAnswersView
 import obligations.views.messages.CheckOptOutUpdateAnswersMessages as viewMessages
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
-import testUtils.TestSupport
 
 class CheckOptOutUpdateAnswersViewSpec extends TestSupport {
 

@@ -1,0 +1,68 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.implicits.ImplicitDateFormatterImpl
+@import financials.implicits.ImplicitCurrencyFormatter._
+@import common.exceptions.MissingFieldException
+@import models.paymentAllocationCharges._
+@import common.views.html.components.link
+@import java.time.LocalDate
+@import _root_.shared.implicits.HtmlFormatter.NbspString
+@import financials.controllers.routes as financialsRoutes
+
+@this(implicitDateFormatter: ImplicitDateFormatterImpl,
+    link: link)
+
+@(outstandingAmount: Option[BigDecimal], dueDate: Option[LocalDate], creditsRefundsRepayEnabled: Boolean,
+    isAgent: Boolean = false)(implicit messages: Messages)
+@import implicitDateFormatter._
+
+@moneyInYourAccountUrl = @{
+    if(isAgent) financialsRoutes.MoneyInYourAccountController.showAgent().url
+    else financialsRoutes.MoneyInYourAccountController.show().url
+}
+
+@getLink = @{
+    if (creditsRefundsRepayEnabled) {
+        link(id = Some("money-on-account-link"), link = moneyInYourAccountUrl, messageKey = "paymentAllocation.moneyOnAccount")
+    } else {
+        messages("paymentAllocation.moneyOnAccount")
+    }
+}
+
+
+
+
+@outstandingAmount.map { amount =>
+    @if(amount != 0) {
+            <tbody class="govuk-table__body">
+                <tr id="money-on-account">
+                    <td class="govuk-table__cell">
+                    @{
+                        dueDate.getOrElse(throw MissingFieldException("Due Date")).toLongDateShort.toNonBreaking
+                    }
+                    </td>
+                    <td class="govuk-table__cell">
+                    @getLink
+                    </td>
+                    <td class="govuk-table__cell no-wrap">@messages("paymentAllocation.not-applicable")</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">@{
+                        amount.abs.toCurrencyString
+                    }</td>
+                </tr>
+            </tbody>
+    }
+}

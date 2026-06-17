@@ -21,12 +21,11 @@ import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
-import common.models.UIJourneySessionData
 import common.models.admin.SignUpFs
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import obligations.controllers.constants.ConfirmOptOutControllerConstants.emptyBodyString
 import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
-import models.incomeSourceDetails.TaxYear
 import obligations.helpers.ITSAStatusUpdateConnectorStub
 import obligations.models.audit.SignUpAuditModel
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
@@ -34,10 +33,11 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import shared.models.UIJourneySessionData
+import shared.repositories.UIJourneySessionDataRepository
 
 import scala.concurrent.Future
 

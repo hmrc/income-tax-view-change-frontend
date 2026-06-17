@@ -16,7 +16,7 @@
 
 package hub.models.newHomePage
 
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class ProofOfYourIncomeCardViewModelSpec extends TestSupport{
 

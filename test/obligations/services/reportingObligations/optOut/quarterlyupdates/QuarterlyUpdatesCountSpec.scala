@@ -21,7 +21,6 @@ import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.mocks.{MockAuditingService, MockHttpV2}
 import common.services.DateService
 import mocks.services.MockCalculationListService
-import obligations.connectors.ObligationsConnector
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService
 import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
@@ -33,7 +32,8 @@ import org.scalatest.BeforeAndAfter
 import play.api.Configuration
 import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants.testNino
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
+import shared.connectors.ObligationsConnector
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

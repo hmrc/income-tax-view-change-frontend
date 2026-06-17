@@ -17,11 +17,11 @@
 package obligations.services.reportingObligations.optOut
 
 import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.services.DateService
 import mocks.services.*
 import common.models.itsaStatus.{StatusDetail, StatusReason}
-import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.optOut.{ConfirmedOptOutViewModel, NextUpdatesQuarterlyReportingContentChecks, OptOutTaxYearQuestionViewModel}
 import obligations.repositories.OptOutSessionDataRepository
 import obligations.services.NextUpdatesService
@@ -34,7 +34,7 @@ import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
 import common.testConstants.ITSAStatusTestConstants.yearToStatus
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 import scala.annotation.unused
 import scala.concurrent.Future

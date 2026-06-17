@@ -69,6 +69,6 @@ trait AuthoriseHelper extends FeatureSwitching {
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(ag@(Organisation | Individual)) ~ _ =>
       logger.error(s"$ag on endpoint for agents")
-      Future.successful(Left(Redirect(hub.controllers.routes.HomeController.show())))
+      Future.successful(Left(Redirect(appConfig.individualHomeUrl)))
   }
 }

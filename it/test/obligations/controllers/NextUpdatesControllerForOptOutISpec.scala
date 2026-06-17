@@ -24,9 +24,8 @@ import helpers.servicemocks.*
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.admin.OptOutFs
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
-import models.incomeSourceDetails.TaxYear
-import obligations.models.ObligationsModel
 import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import org.mongodb.scala.SingleObservableFuture
 import org.mongodb.scala.bson.BsonDocument
@@ -35,6 +34,7 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
+import shared.models.ObligationsModel
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 

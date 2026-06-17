@@ -18,7 +18,7 @@ package common.models.sessionData
 
 import common.utils.sessionUtils.SessionKeys
 import common.testConstants.BaseTestConstants.{testFirstName, testMtditid, testNino, testSaUtr, testSecondName}
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 
 class SessionCookieDataSpec extends UnitSpec {
 

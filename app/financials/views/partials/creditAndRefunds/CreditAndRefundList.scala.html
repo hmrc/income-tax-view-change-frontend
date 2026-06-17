@@ -1,0 +1,71 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.views.html.components.{h2, p}
+@import financials.models.creditsandrefunds.{MoneyInYourAccountViewModel, CreditRow, CreditViewRow, PaymentCreditRow, RefundRow}
+@import financials.views.html.components.creditandrefund.{paymentViewRow, creditViewRow, refundViewRow}
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.details.Details
+@import uk.gov.hmrc.govukfrontend.views.Aliases.{Text, HtmlContent}
+
+
+@this(
+        h2: h2,
+        p: p,
+        govukInsetText: GovukInsetText,
+        paymentViewRow: paymentViewRow,
+        creditViewRow: creditViewRow,
+        refundViewRow: refundViewRow,
+        govukDetails: GovukDetails
+)
+@(viewModel: MoneyInYourAccountViewModel)(implicit request: Request[_], messages: Messages)
+
+@renderCreditRow(creditRow: CreditRow) = {
+    @creditRow match {
+        case PaymentCreditRow(_, amount, date, _) => {
+            @paymentViewRow(amount, date)
+        }
+        case CreditViewRow(_, amount, creditType, taxYear, _) => {
+            @creditViewRow(amount, creditType, taxYear)
+        }
+        case RefundRow(amount, _) => {
+            @refundViewRow(amount)
+        }
+    }
+}
+
+@detailsContent = {
+@if(viewModel.creditRows.size == 1) {
+    <div id="credits-list">
+    @renderCreditRow(viewModel.creditRows.head)
+    </div>
+} else {
+    <ul class="govuk-list govuk-list--bullet" id="credits-list">
+    @for(credit <- viewModel.creditRows) {
+        <li>
+        @renderCreditRow(credit)
+        </li>
+    }
+    </ul>
+}
+}
+
+@govukDetails(Details(
+    summary = Text(messages("credit-and-refund.subHeading-source")),
+    content = HtmlContent(detailsContent),
+    classes = "govuk-details"
+))

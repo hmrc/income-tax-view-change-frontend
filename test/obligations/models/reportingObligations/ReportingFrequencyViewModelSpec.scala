@@ -17,13 +17,13 @@
 package obligations.models.reportingObligations
 
 import common.mocks.services.MockDateService
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.services.DateService
-import models.incomeSourceDetails.TaxYear
+import common.testUtils.{TestSupport, UnitSpec}
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutTestSupport}
 import org.mockito.Mockito.mock
 import org.scalatest.Assertion
-import testUtils.{TestSupport, UnitSpec}
 
 class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with TestSupport {
 

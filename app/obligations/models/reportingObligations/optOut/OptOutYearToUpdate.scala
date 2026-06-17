@@ -16,7 +16,7 @@
 
 package obligations.models.reportingObligations.optOut
 
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
-import models.incomeSourceDetails.TaxYear
 
 case class OptOutYearToUpdate(taxYear: TaxYear, itsaStatus: ITSAStatus)

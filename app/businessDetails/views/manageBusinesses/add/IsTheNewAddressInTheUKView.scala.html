@@ -17,6 +17,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -34,7 +35,7 @@
         isAgent: Boolean,
         hasUKAddress: Boolean,
         postAction: Call,
-        backUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+        backUrl: String)(implicit messages: Messages, user: MtdItUser[_])
 
 @hasUKAddressMessage = @{
     if(hasUKAddress){

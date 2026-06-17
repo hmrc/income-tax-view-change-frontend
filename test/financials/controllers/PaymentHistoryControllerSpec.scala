@@ -24,7 +24,7 @@ import common.models.admin.PaymentHistoryRefunds
 import common.services.DateServiceInterface
 import financials.services.PaymentHistoryService.PaymentHistoryError
 import financials.services.{PaymentHistoryService, RepaymentService}
-import forms.utils.SessionKeys.gatewayPage
+import financials.forms.utils.SessionKeys.gatewayPage
 import models.financialDetails.{ChargeItem, Payment}
 import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel}
 import org.jsoup.Jsoup

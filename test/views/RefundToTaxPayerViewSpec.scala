@@ -16,15 +16,15 @@
 
 package views
 
+import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.implicits.ImplicitDateFormatter
-import models.creditsandrefunds.RefundToTaxPayerViewModel
-import models.repaymentHistory._
+import common.testUtils.ViewSpec
+import financials.models.creditsandrefunds.RefundToTaxPayerViewModel
+import financials.views.html.RefundToTaxPayerView
+import models.repaymentHistory.*
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
-import common.auth.MtdItUser
-import testUtils.ViewSpec
-import views.html.RefundToTaxPayerView
 
 import java.time.LocalDate
 

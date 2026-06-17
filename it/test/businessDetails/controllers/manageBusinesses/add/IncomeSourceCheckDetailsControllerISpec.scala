@@ -32,9 +32,9 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
-import models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import shared.models.UIJourneySessionData
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 

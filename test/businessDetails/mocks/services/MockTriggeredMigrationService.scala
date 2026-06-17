@@ -18,10 +18,10 @@ package businessDetails.mocks.services
 
 import businessDetails.models.triggeredMigration.viewModels.CheckHmrcRecordsViewModel
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
+import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfterEach
-import testUtils.UnitSpec
 
 trait MockTriggeredMigrationService extends UnitSpec with BeforeAndAfterEach {
 

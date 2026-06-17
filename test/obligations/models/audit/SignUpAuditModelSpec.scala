@@ -19,10 +19,10 @@ package obligations.models.audit
 import common.auth.MtdItUser
 import common.models.itsaStatus.ITSAStatus
 import ITSAStatus.Annual
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear, SignUpProposition}
 import play.api.libs.json.Json
-import testUtils.TestSupport
 
 class SignUpAuditModelSpec extends TestSupport {
 

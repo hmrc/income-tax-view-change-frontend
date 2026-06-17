@@ -20,20 +20,20 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.enums.{AuditType, TransactionName}
 import common.enums.AuditType.{ReportingObligationsPage, IncomeSourceDetailsResponse as _}
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.models.itsaStatus.ITSAStatus.{Annual, ITSAStatus, Mandated, UnknownStatus, Voluntary}
-import models.incomeSourceDetails.TaxYear
 import obligations.models.audit.reporting_obligations.*
 import obligations.services.reportingObligations.optOut.*
 import obligations.viewUtils.ReportingFrequencyViewUtils
 import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
+import shared.utils.MtdConstants
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
-import utils.MtdConstants
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

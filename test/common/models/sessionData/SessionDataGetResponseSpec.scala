@@ -17,9 +17,9 @@
 package common.models.sessionData
 
 import common.models.sessionData.SessionDataGetResponse._
+import common.testUtils.UnitSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsObject, Json, JsonValidationError}
-import testUtils.UnitSpec
 import uk.gov.hmrc.http.HttpResponse
 
 class SessionDataGetResponseSpec extends UnitSpec {

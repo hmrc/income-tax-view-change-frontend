@@ -24,17 +24,11 @@ import connectors.CalculationListConnector
 import financials.controllers.routes as financialsRoutes
 import financials.services.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
-import mocks.connectors.MockIncomeTaxCalculationConnector
+import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
-import models.liabilitycalculation.*
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
-import obligations.mocks.services.MockNextUpdatesService
-import obligations.models.*
-import obligations.services.NextUpdatesService
+import returns.mocks.services.MockNextUpdatesService
+import returns.services.NextUpdatesService
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -44,9 +38,11 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, *}
 import returns.views.html.TaxYearSummaryView
-import services.*
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import businessDetails.testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
+import common.mocks.connectors.MockIncomeTaxCalculationConnector
+import common.models.incomeSourceDetails.TaxYear
+import common.models.liabilitycalculation.{IsMTD, LiabilityCalculationError, Message, Messages}
 import financials.testConstants.FinancialDetailsTestConstants.*
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
@@ -55,6 +51,10 @@ import java.time.LocalDate
 import scala.annotation.unused
 import scala.concurrent.Future
 import financials.testConstants.ChargeConstants
+import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import returns.models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
+import returns.services.{CalculationService, TaxYearSummaryService}
+import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 class TaxYearSummaryControllerSpec
   extends MockAuthActions
@@ -273,6 +273,7 @@ class TaxYearSummaryControllerSpec
                     viewTaxCalcLink = Some("some fake url"),
                     selfAssessmentLink = "some fake url",
                     contactHmrcLink = "some fake url",
+                    isNotCrystallisedShowInset = true
                   ).toString
 
                 val result = action(fakeRequest)
@@ -322,7 +323,8 @@ class TaxYearSummaryControllerSpec
                   showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
-                  contactHmrcLink = ""
+                  contactHmrcLink = "",
+                  isNotCrystallisedShowInset = false
                 ).toString
 
                 val result = action(fakeRequest)
@@ -372,6 +374,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -669,6 +673,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
 
 
                 ).toString
@@ -724,6 +730,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
 
 
                 ).toString
@@ -778,7 +786,8 @@ class TaxYearSummaryControllerSpec
                   showNoTaxCalc = false,
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
-                  contactHmrcLink = ""
+                  contactHmrcLink = "",
+                  isNotCrystallisedShowInset = false
                 ).toString
 
                 val result = action(fakeRequest)
@@ -834,6 +843,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
                 ).toString
 
                 val result = action(fakeRequest)
@@ -880,6 +891,8 @@ class TaxYearSummaryControllerSpec
                     viewTaxCalcLink = Some("some fake url"),
                     selfAssessmentLink = "some fake url",
                     contactHmrcLink = "some fake url",
+                    isNotCrystallisedShowInset = false
+
 
 
                   ).toString
@@ -929,6 +942,8 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
+                  isNotCrystallisedShowInset = false
+
                 ).toString()).text()
 
                 val result = action(fakeRequest)
@@ -976,8 +991,7 @@ class TaxYearSummaryControllerSpec
                   viewTaxCalcLink = Some("some fake url"),
                   selfAssessmentLink = "some fake url",
                   contactHmrcLink = "some fake url",
-
-
+                  isNotCrystallisedShowInset = false
                 ).toString
 
                 val result = action(fakeRequest)

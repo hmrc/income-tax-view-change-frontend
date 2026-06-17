@@ -16,10 +16,10 @@
 
 package views.agent
 
+import common.testUtils.ViewSpec
 import org.jsoup.nodes.Element
 import play.api.mvc.Call
 import play.twirl.api.Html
-import testUtils.ViewSpec
 import common.views.html.errorPages.agent.ClientRelationshipFailure
 
 

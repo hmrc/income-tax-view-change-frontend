@@ -24,8 +24,9 @@ import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.testMtdItUser
+import common.testUtils.TestSupport
 import obligations.testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
-import testUtils.TestSupport
+import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
 
 import java.time.LocalDate
 

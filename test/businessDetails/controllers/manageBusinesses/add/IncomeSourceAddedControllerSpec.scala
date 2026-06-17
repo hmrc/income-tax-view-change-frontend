@@ -19,7 +19,7 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.mocks.services.MockIncomeSourceDetailsService
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import models.incomeSourceDetails.*
-import obligations.services.NextUpdatesService
+import businessDetails.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
@@ -40,9 +40,10 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockITSAStatusService, MockSessionService}
-import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.LatencyDetails
 import common.services.{DateService, DateServiceInterface}
-import obligations.mocks.services.MockNextUpdatesService
+import businessDetails.mocks.services.MockNextUpdatesService
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import scala.annotation.unused

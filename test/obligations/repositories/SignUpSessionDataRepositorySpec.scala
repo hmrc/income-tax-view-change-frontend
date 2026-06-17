@@ -19,16 +19,16 @@ package obligations.repositories
 import common.auth.MtdItUser
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.mocks.services.MockDateService
-import common.models.UIJourneySessionData
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.UnitSpec
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
-import repositories.UIJourneySessionDataRepository
-import testUtils.UnitSpec
+import shared.models.UIJourneySessionData
+import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext.Implicits.global

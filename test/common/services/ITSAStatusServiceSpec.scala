@@ -16,13 +16,13 @@
 
 package common.services
 
-import mocks.connectors.MockITSAStatusConnector
-import models.incomeSourceDetails.{LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
 import org.mockito.Mockito.{mock, when}
 import common.testConstants.BaseTestConstants.{testMtdItUser, testNino}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetails5}
+import common.mocks.connectors.MockITSAStatusConnector
+import common.models.incomeSourceDetails.{LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
 import common.testConstants.ITSAStatusTestConstants.*
-import testUtils.TestSupport
+import common.testUtils.TestSupport
 
 class ITSAStatusServiceSpec extends TestSupport with MockITSAStatusConnector {
   val mockDateService: DateService = mock(classOf[DateService])

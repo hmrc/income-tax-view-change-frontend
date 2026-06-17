@@ -19,10 +19,10 @@ package obligations.repositories
 import common.auth.MtdItUser
 import common.enums.JourneyType.OptOutJourney
 import common.mocks.services.{MockDateService, MockITSAStatusService}
-import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
+import common.testUtils.UnitSpec
 import mocks.services.*
-import models.incomeSourceDetails.TaxYear
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.mocks.connectors.MockITSAStatusUpdateConnector
 import obligations.models.reportingObligations.optOut.OptOutSessionData
@@ -33,8 +33,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest, Succeeded}
-import repositories.UIJourneySessionDataRepository
-import testUtils.UnitSpec
+import shared.models.UIJourneySessionData
+import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext.Implicits.global

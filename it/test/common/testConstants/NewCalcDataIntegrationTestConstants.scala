@@ -16,7 +16,7 @@
 
 package common.testConstants
 
-import models.liabilitycalculation.LiabilityCalculationResponse
+import common.models.liabilitycalculation.LiabilityCalculationResponse
 import play.api.libs.json.*
 
 object NewCalcDataIntegrationTestConstants {

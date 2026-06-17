@@ -1,0 +1,72 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.implicits.ImplicitDateFormatterImpl
+@import financials.models.chargeSummary._
+@import models.financialDetails.MfaDebitCharge
+@import models.financialDetails.CreditType
+@import common.views.html.components._
+@import financials.controllers.routes as financialsRoutes
+
+
+@this(
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        p: p
+)
+
+@(viewModel: ChargeSummaryViewModel, allocation: PaymentHistoryAllocations, payment: PaymentHistoryAllocation)(implicit messages: Messages)
+
+@allocationLinkHTML(link: String, linkText: String) = {
+    <a class="govuk-link" href="@link">
+        @linkText
+        <span class="govuk-visually-hidden"> @viewModel.taxYearToCodingOut</span>
+    </a>
+}
+
+@{
+    val matchingPayment = payment.clearingId
+
+    if (payment.isCutoverCredit) {
+        messages("paymentHistory.cutOver")
+    } else if (matchingPayment.isDefined) {
+        val matchingDocumentDetail = viewModel.payments.documentDetails.find(_.transactionId.contains(matchingPayment.get))
+        val matchingFinancialDetail = viewModel.payments.financialDetails.find(_.transactionId.contains(matchingPayment.get))
+        val doesCreditHaveBreakdownPage = matchingFinancialDetail.exists(fd => fd.mainTransaction.exists(CreditType.creditsWithSummaryPages.contains))
+        val originalAmount = matchingDocumentDetail.map(_.originalAmount)
+        val isItACredit = originalAmount.exists(_ < 0) && matchingDocumentDetail.exists(_.taxYear != 9999)
+        val findTaxYear = matchingDocumentDetail.map(_.findTaxYear).getOrElse(0)
+
+        val link = {
+            (isItACredit, doesCreditHaveBreakdownPage, viewModel.isAgent, payment.taxYear.isDefined) match {
+                case (false, _, true, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent(matchingPayment.get).url
+                case (false, _, false, _) => financialsRoutes.PaymentAllocationsController.viewPaymentAllocation(matchingPayment.get, viewModel.origin).url
+                case (true, true, true, true) => financialsRoutes.ChargeSummaryController.showAgent(payment.taxYear.get.toInt, matchingPayment.get).url
+                case (true, true, false, true) => financialsRoutes.ChargeSummaryController.show(payment.taxYear.get.toInt, matchingPayment.get, viewModel.origin).url
+                case (true, false, true, true) => financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(findTaxYear).url
+                case (true, false, false, true) => financialsRoutes.CreditsSummaryController.showCreditsSummary(findTaxYear).url
+            }
+        }
+
+        val linkText =
+            if (viewModel.chargeItem.transactionType == MfaDebitCharge) messages("chargeSummary.paymentAllocations.mfaDebit")
+            else messages(allocation.getPaymentAllocationTextInChargeSummary, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
+
+        allocationLinkHTML(link, linkText)
+    } else {
+        messages(allocation.getPaymentAllocationTextInChargeSummary, viewModel.taxYearFromCodingOut, viewModel.taxYearToCodingOut)
+    }
+}
+

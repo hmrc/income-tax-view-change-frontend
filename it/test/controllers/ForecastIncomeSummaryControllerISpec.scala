@@ -16,18 +16,18 @@
 
 package controllers
 
-import audit.models.ForecastIncomeAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
+import common.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import helpers.servicemocks.*
-import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.http.Status.*
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
 import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.models.audit.ForecastIncomeAuditModel
 
 object ForecastIncomeSummaryControllerTestConstants {
   val taxableIncome = 12500

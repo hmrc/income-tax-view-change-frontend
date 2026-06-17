@@ -24,13 +24,9 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class TestOnlyAppConfig @Inject()(servicesConfig: ServicesConfig, config: Configuration) extends FrontendAppConfig(servicesConfig, config) {
-
-  lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
-
+  
   lazy val penaltiesStubUrl: String = servicesConfig.baseUrl("penalties-stub")
 
   lazy val matchingStubUrl: String = servicesConfig.baseUrl("matching-stub")
-
-  lazy val optOutUserPrefixes: Seq[String] = config.get[Seq[String]]("optOutNinoPrefix")
-
+  
 }

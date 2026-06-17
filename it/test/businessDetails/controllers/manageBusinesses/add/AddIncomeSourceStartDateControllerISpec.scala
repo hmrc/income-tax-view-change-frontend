@@ -21,15 +21,16 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.models.UIJourneySessionData
+import common.models.admin.IdempotencyKeyForCreateIncomeSource
 import common.models.core.{CheckMode, Mode, NormalMode}
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
+import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, idempotencyKeyField}
 import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 
@@ -114,7 +115,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
         s"GET $path" when {
           s"a user is a $mtdUserRole" that {
             "is authenticated, with a valid enrolment" should {
-              "render the Business Start Date Check Page" when {
+              "render the Business Start Date Page" when {
                 "using the manage businesses journey" in {
                   stubAuthorised(mtdUserRole)
                   IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
@@ -141,6 +142,37 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                     elementTextByID("business-start-date-description-2")(descriptionEnd),
                     elementTextByID("continue-button")(continueButtonText)
                   )
+                }
+              }
+              if(incomeSourceType != SelfEmployment && mode == NormalMode) {
+                "render the Business Start Date Page with an idempotency key generated" when {
+                  "using the manage businesses journey with idempotency FS enabled" in {
+                    stubAuthorised(mtdUserRole, List(IdempotencyKeyForCreateIncomeSource))
+                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                    val result = buildGETMTDClient(path, additionalCookies).futureValue
+                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+
+                    val expectedHintText: String = "For example, 27 3 2020"
+
+                    val descriptionStart = "The date your business started trading can be today, in the past or up to 7 days in the future."
+                    val descriptionEnd = incomeSourceType match {
+                      case SelfEmployment => "This is the date we’ll use to calculate your Class 2 National Insurance charge, if appropriate."
+                      case UkProperty => "This is the date you first received rental income from this UK property business, such as letting or renting out a property or land."
+                      case ForeignProperty => "This is the date you first received rental income from this foreign property business, such as letting or renting out a property or land."
+                    }
+
+                    sessionService.getMongoKeyTyped[String](idempotencyKeyField, IncomeSourceJourneyType(Add, incomeSourceType)).futureValue should matchPattern { case Right(Some(_)) => }
+
+                    result should have(
+                      httpStatus(OK),
+                      pageTitle(mtdUserRole, s"${getPrefix(incomeSourceType)}.heading"),
+                      elementTextByID("value-hint")(expectedHintText),
+                      elementTextByID("business-start-date-description-1")(descriptionStart),
+                      elementTextByID("business-start-date-description-2")(descriptionEnd),
+                      elementTextByID("continue-button")(continueButtonText)
+                    )
+                  }
                 }
               }
             }

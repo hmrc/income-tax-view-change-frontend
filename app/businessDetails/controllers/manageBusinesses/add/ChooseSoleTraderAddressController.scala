@@ -16,23 +16,25 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import jakarta.inject.Singleton
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, ChooseSoleTraderAddressUserAnswer, Country}
+import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
+import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import shared.models.UIJourneySessionData
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +42,7 @@ import scala.util.Try
 
 @Singleton
 class ChooseSoleTraderAddressController @Inject()(
-                                                   authActions: AuthActions,
+                                                   authActions: AuthActionsWithTriggeredMigrationCheck,
                                                    itvcErrorHandler: ItvcErrorHandler,
                                                    itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                    val sessionService: SessionService,
@@ -55,8 +57,7 @@ class ChooseSoleTraderAddressController @Inject()(
     else itvcErrorHandler
 
   private def backUrl(isAgent: Boolean): String =
-    if (isAgent) hub.controllers.routes.HomeController.showAgent().url
-    else hub.controllers.routes.HomeController.show().url
+    appConfig.homePageUrl(isAgent)
 
   private def isInstanceOfInt(indexValue: String): Boolean = Try(indexValue.toInt).toOption.nonEmpty
 
@@ -170,8 +171,7 @@ class ChooseSoleTraderAddressController @Inject()(
         )
       )
     } else {
-      val homeCall = if (isAgent) hub.controllers.routes.HomeController.showAgent() else hub.controllers.routes.HomeController.show()
-      Future(Redirect(homeCall))
+      Future(Redirect(appConfig.homePageUrl(isAgent)))
     }
   }
 

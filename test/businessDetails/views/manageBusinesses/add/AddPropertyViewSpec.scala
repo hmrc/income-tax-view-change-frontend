@@ -21,11 +21,11 @@ import org.jsoup.nodes.Document
 import play.api.data.FormError
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.add.AddPropertyView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm
+import common.testUtils.TestSupport
 
 class AddPropertyViewSpec extends TestSupport{
 

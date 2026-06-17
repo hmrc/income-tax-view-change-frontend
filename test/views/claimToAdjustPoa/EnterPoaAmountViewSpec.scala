@@ -18,18 +18,18 @@ package views.claimToAdjustPoa
 
 import _root_.financials.implicits.ImplicitCurrencyFormatter.*
 import common.models.core.NormalMode
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.forms.adjustPoa.EnterPoaAmountForm
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.incomeSourceDetails.TaxYear
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.data.Form
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import testUtils.TestSupport
-import views.html.claimToAdjustPoa.EnterPoaAmountView
+import financials.views.html.claimToAdjustPoa.EnterPoaAmountView
 
 class EnterPoaAmountViewSpec extends TestSupport{
 
@@ -38,7 +38,7 @@ class EnterPoaAmountViewSpec extends TestSupport{
   def msg(key: String) = msgs(s"claimToAdjustPoa.enterPoaAmount.$key")
   implicit val lang: Lang = Lang("GB")
 
-  val cancelUrl: String = hub.controllers.routes.HomeController.show().url
+  val cancelUrl: String = appConfig.individualHomeUrl
 
   def poAAmountViewModel(poaPreviouslyAdjusted: Option[Boolean] = Some(false), poaPartiallyPaid: Boolean = false) = PaymentOnAccountViewModel(
     poaOneTransactionId = "poaOne-Id",

@@ -16,7 +16,7 @@
 
 @import obligations.models.NextUpdatesViewModel
 @import common.views.html.components._
-@import views.html.components.detailsDropdown
+@import obligations.views.html.components.detailsDropdown
 @import obligations.views.html.helpers.injected._
 @import common.views.html.layouts.unifiedLayout
 @import common.config.FrontendAppConfig
@@ -24,6 +24,7 @@
 @import common.models.itsaStatus.ITSAStatus.ITSAStatus
 @import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 @import obligations.services.reportingObligations.optOut.OptOutProposition
+@import common.auth.MtdItUser
 
 @this(
     mainTemplate: unifiedLayout,
@@ -47,7 +48,7 @@
     origin: Option[String] = None,
     whatTheUserCanDo: Html,
     taxYearStatusesCyNy: (ITSAStatus, ITSAStatus)
-)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+)(implicit messages: Messages, user: MtdItUser[_])
 
 @mainTemplate(
     pageTitle = messages("nextUpdates.heading"),

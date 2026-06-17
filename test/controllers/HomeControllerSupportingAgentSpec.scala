@@ -16,11 +16,12 @@
 
 package controllers
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.enums.MTDSupportingAgent
 import common.mocks.services.admin.MockFeatureSwitchService
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
 import financials.services.CreditService
@@ -29,8 +30,7 @@ import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import hub.views.html.helpers.injected.home.YourReportingObligationsTile
 import hub.views.html.newHomePage.*
-import models.incomeSourceDetails.TaxYear
-import obligations.services.NextUpdatesService
+import hub.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup
@@ -64,7 +64,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
   val recentActivityView: NewHomeRecentActivityView = application.injector.instanceOf(classOf[NewHomeRecentActivityView])
   val overviewView: NewHomeOverviewView = application.injector.instanceOf(classOf[NewHomeOverviewView])
   val helpView: NewHomeHelpView = application.injector.instanceOf(classOf[NewHomeHelpView])
-  val authActions: AuthActions = application.injector.instanceOf(classOf[AuthActions])
+  val authActions: AuthActionsWithTriggeredMigrationCheck = application.injector.instanceOf(classOf[AuthActionsWithTriggeredMigrationCheck])
   val auditingService: AuditingService = application.injector.instanceOf(classOf[AuditingService])
 
   given mockedCreditService: CreditService = mock(classOf[CreditService])

@@ -16,18 +16,18 @@
 
 package financials.testConstants
 
+import common.models.core.AddressModel
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import common.testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
 import financials.models.ChargeType.NIC4_WALES
 import financials.models.CodingOutType.*
-import models.creditDetailModel.CreditDetailModel
-import models.creditsandrefunds.{CreditsModel, Transaction}
+import financials.models.creditDetailModel.CreditDetailModel
+import financials.models.creditsandrefunds.{CreditsModel, Transaction}
+import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financials.testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import play.api.libs.json.{JsValue, Json}
-import FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
-import common.models.core.AddressModel
 
 import java.time.LocalDate
 

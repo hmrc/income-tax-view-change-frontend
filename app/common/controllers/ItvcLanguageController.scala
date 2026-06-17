@@ -22,13 +22,15 @@ import uk.gov.hmrc.play.language.{LanguageController, LanguageUtils}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
+import common.config.FrontendAppConfig
 
 @Singleton
 class ItvcLanguageController @Inject()(mcc: MessagesControllerComponents,
-                                       languageUtils: LanguageUtils) extends LanguageController(languageUtils, mcc) {
+                                       languageUtils: LanguageUtils,
+                                       appConfig: FrontendAppConfig) extends LanguageController(languageUtils, mcc) {
 
 
-  override def fallbackURL: String = hub.controllers.routes.HomeController.show().url
+  override def fallbackURL: String = appConfig.individualHomeUrl
 
   val english: Lang = Lang("en")
   val welsh: Lang = Lang("cy")

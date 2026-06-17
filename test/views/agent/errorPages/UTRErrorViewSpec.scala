@@ -16,10 +16,10 @@
 
 package views.agent.errorPages
 
+import common.testUtils.ViewSpec
 import org.jsoup.select.Elements
 import play.api.mvc.Call
 import play.twirl.api.Html
-import testUtils.ViewSpec
 import hub.views.html.agent.errorPages.UTRErrorView
 
 class UTRErrorViewSpec extends ViewSpec {

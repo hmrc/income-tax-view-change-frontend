@@ -16,30 +16,32 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import enums.BeforeSubmissionPage
-import models.incomeSourceDetails.{Address, BusinessDetailsModel}
+import models.incomeSourceDetails.Address
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddBusinessTradeView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{Mode, NormalMode}
+import common.models.incomeSourceDetails.BusinessDetailsModel
+import shared.enums.BeforeSubmissionPage
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class AddBusinessTradeController @Inject()(val authActions: AuthActions,
+class AddBusinessTradeController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
                                            val addBusinessTradeView: AddBusinessTradeView,
                                            val sessionService: SessionService)
                                           (implicit val appConfig: FrontendAppConfig,

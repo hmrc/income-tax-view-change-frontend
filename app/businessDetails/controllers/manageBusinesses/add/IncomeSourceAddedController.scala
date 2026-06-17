@@ -32,8 +32,8 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.UIJourneySessionData
 import common.models.core.IncomeSourceId
+import common.models.incomeSourceDetails.LatencyDetails
 import common.services.DateServiceInterface
 
 import java.time.LocalDate
@@ -42,7 +42,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import obligations.controllers.routes as obligationRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
-import obligations.services.NextUpdatesService
+import businessDetails.services.NextUpdatesService
+import shared.models.UIJourneySessionData
 
 
 class IncomeSourceAddedController @Inject()(

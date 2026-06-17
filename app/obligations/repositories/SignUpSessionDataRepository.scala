@@ -18,11 +18,11 @@ package obligations.repositories
 
 import cats.data.OptionT
 import common.enums.JourneyType.{Opt, SignUpJourney}
-import common.models.UIJourneySessionData
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.Logger
-import repositories.UIJourneySessionDataRepository
+import shared.models.UIJourneySessionData
+import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

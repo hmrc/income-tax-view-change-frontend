@@ -20,17 +20,17 @@ import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.MTDIndividual
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import common.models.UIJourneySessionData
 import common.models.admin.SignUpFs
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import repositories.UIJourneySessionDataRepository
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+import shared.models.UIJourneySessionData
+import shared.repositories.UIJourneySessionDataRepository
 
 class SignUpStartControllerISpec extends ControllerISpecHelper {
 

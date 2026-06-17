@@ -18,8 +18,8 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckForm
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import enums.BeforeSubmissionPage
-import AddIncomeSourceStartDateCheckForm._
+import AddIncomeSourceStartDateCheckForm.*
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.services.SessionService
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -27,21 +27,22 @@ import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.implicits.ImplicitDateFormatter
-import common.models.UIJourneySessionData
 import common.models.core.{Mode, NormalMode}
 import common.services.DateService
+import shared.enums.BeforeSubmissionPage
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthActions,
+class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
                                                         val addIncomeSourceStartDateCheckView: AddIncomeSourceStartDateCheckView,
                                                         val languageUtils: LanguageUtils,
                                                         val sessionService: SessionService,

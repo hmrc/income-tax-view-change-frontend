@@ -24,7 +24,6 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.Cease
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
-import common.models.UIJourneySessionData
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import models.incomeSourceDetails.CeaseIncomeSourceData
@@ -33,6 +32,7 @@ import play.api.libs.json.Json
 import play.api.test.Helpers._
 import common.testConstants.BaseIntegrationTestConstants._
 import common.testConstants.IncomeSourceIntegrationTestConstants._
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper {

@@ -28,13 +28,13 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import common.testConstants.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyWithSoleTraderIncomeSource
-import testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethodView
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import common.auth.MtdItUser
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.testUtils.TestSupport
 
 class ConfirmReportingMethodSharedControllerViewSpec extends TestSupport {
 

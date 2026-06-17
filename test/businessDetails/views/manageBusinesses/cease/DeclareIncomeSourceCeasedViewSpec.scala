@@ -22,11 +22,11 @@ import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import testUtils.TestSupport
 import businessDetails.views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import common.testUtils.TestSupport
 
 class DeclareIncomeSourceCeasedViewSpec extends TestSupport {
 

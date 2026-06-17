@@ -17,8 +17,9 @@
 package obligations.views.reportingObligations.optOut
 
 import common.auth.MtdItUser
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
-import models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
 import obligations.forms.reportingObligations.optOut.OptOutTaxYearQuestionForm
 import obligations.models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
 import obligations.services.reportingObligations.optOut.*
@@ -26,7 +27,6 @@ import obligations.views.html.reportingObligations.optOut.OptOutTaxYearQuestionV
 import obligations.views.messages.OptOutTaxYearQuestionMessages
 import org.jsoup.Jsoup
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 
 class OptOutTaxYearQuestionViewSpec extends TestSupport {
 

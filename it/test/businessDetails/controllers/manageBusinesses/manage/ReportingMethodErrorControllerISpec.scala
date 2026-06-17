@@ -20,13 +20,13 @@ import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.models.UIJourneySessionData
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants._
 import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import shared.models.UIJourneySessionData
 
 class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
 

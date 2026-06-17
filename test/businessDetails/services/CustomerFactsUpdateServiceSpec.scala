@@ -18,9 +18,9 @@ package businessDetails.services
 
 import common.connectors.CustomerFactsUpdateConnector
 import common.services.CustomerFactsUpdateService
+import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, verify, when}
-import testUtils.TestSupport
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future

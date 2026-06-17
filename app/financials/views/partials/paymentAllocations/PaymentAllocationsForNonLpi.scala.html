@@ -1,0 +1,71 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.implicits.ImplicitDateFormatterImpl
+@import financials.implicits.ImplicitCurrencyFormatter._
+@import models.paymentAllocationCharges._
+@import _root_.shared.implicits.HtmlFormatter.NbspString
+@import financials.controllers.routes as financialsRoutes
+@import common.auth.MtdItUser
+
+@this(implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel)(implicit messages: Messages, user: MtdItUser[_])
+@import implicitDateFormatter._
+
+@paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate) = @{
+    if(user.isAgent){
+        financialsRoutes.ChargeSummaryController.showAgent(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
+    } else {
+        financialsRoutes.ChargeSummaryController.show(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
+    }
+}
+
+@for((paymentAllocation, index) <- paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex) {
+    <tbody class="govuk-table__body">
+
+        <tr>
+            <td class="govuk-table__cell">@paymentAllocation.clearingDateActual.toLongDateShort.toNonBreaking</td>
+            <td class="govuk-table__cell" id="payment-allocation-@index">
+                @if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined && paymentAllocation.allocationDetailActual.mainType != Some("On Account")) {
+                    <a class="govuk-link" style="display:block" href="@paymentAllocationHref(paymentAllocation)">
+                        @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
+                    </a>
+                } else if(paymentAllocation.allocationDetailActual.mainType == Some("On Account")) {
+                    <p class="govuk-body" style="display:block" href="@paymentAllocationHref(paymentAllocation)">
+                        @messages("paymentAllocation.paymentAllocations.onAccount.table.description.poa")
+                    </p>
+                } else{
+                    <a class="govuk-body no-wrap">
+                        @messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
+                    </a>
+                }
+
+            </td>
+            <td class="govuk-table__cell">
+                @if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined) {
+                <span class="govuk-visually-hidden">@messages("paymentAllocation.taxYearHidden", (paymentAllocation.allocationDetailActual.getTaxYear - 1).toString, paymentAllocation.allocationDetailActual.getTaxYear.toString)</span>
+                <span class="govuk-body no-wrap" aria-hidden="true">@messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetailActual.getTaxYear - 1).toString, paymentAllocation.allocationDetailActual.getTaxYear.toString)</span>
+                } else {
+                <span class="govuk-body no-wrap" aria-hidden="true">@messages("paymentAllocation.noData")</span>
+                }
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--numeric">@paymentAllocation.allocationDetailActual.amountActual.toCurrencyString</td>
+        </tr>
+    </tbody>
+
+}
+

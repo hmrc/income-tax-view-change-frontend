@@ -21,9 +21,9 @@ import businessDetails.views.html.triggeredMigration.CheckHmrcRecordsView
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased, TriggeredMigrationState}
 import common.models.core.IncomeSourceId
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 
 class CheckHmrcRecordsViewSpec extends TestSupport{
 

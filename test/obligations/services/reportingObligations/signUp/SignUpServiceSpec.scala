@@ -18,10 +18,10 @@ package obligations.services.reportingObligations.signUp
 
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.mocks.services.{MockDateService, MockITSAStatusService}
-import common.models.UIJourneySessionData
+import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.models.itsaStatus.{StatusDetail, StatusReason}
-import models.incomeSourceDetails.TaxYear
+import common.testUtils.{TestSupport, UnitSpec}
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData, SignUpTaxYearQuestionViewModel}
 import obligations.repositories.SignUpSessionDataRepository
 import obligations.services.reportingObligations.signUp.core.{CurrentSignUpTaxYear, NextSignUpTaxYear}
@@ -30,7 +30,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.concurrent.Eventually
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
-import testUtils.{TestSupport, UnitSpec}
+import shared.models.UIJourneySessionData
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.{ExecutionContext, Future}

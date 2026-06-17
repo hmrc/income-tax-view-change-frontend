@@ -17,15 +17,15 @@
 package views.claimToAdjustPoa
 
 import common.auth.MtdItUser
-import models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
-import models.incomeSourceDetails.TaxYear
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.TestSupport
+import financials.models.claimToAdjustPoa.viewModels.ConfirmationForAdjustingPoaViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import testUtils.TestSupport
-import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
+import financials.views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
 
 class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 

@@ -16,32 +16,34 @@
 
 package returns.controllers
 
-import audit.models.TaxYearSummaryResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.TaxYearSummaryPage
+import common.enums.TaxYearSummary.*
+import common.enums.TaxYearSummary.CalculationType.fromStringToCalculationTypeValue
 import common.implicits.ImplicitDateFormatter
 import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
+import common.models.incomeSourceDetails.TaxYear
+import common.models.liabilitycalculation
+import common.models.liabilitycalculation.*
 import common.services.{AuditingService, DateServiceInterface}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
 import financials.services.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
-import models.liabilitycalculation.*
-import models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
-import models.taxyearsummary.TaxYearSummaryChargeItem
-import obligations.models.ObligationsModel
-import obligations.services.NextUpdatesService
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
+import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
+import returns.models.audit.TaxYearSummaryResponseAuditModel
+import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import returns.models.taxyearsummary.TaxYearSummaryChargeItem
+import returns.services.{CalculationService, NextUpdatesService, TaxYearSummaryService}
 import returns.views.html.TaxYearSummaryView
-import services.*
+import shared.models.ObligationsModel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -97,7 +99,7 @@ class TaxYearSummaryController @Inject()(
         val errorMessages =
           liabilityCalc.messages.get.getErrorMessageVariables(messagesProperty, isAgent)
         val translatedDateMessages =
-          models.liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
+          liabilitycalculation.Messages.translateMessageDateVariables(errorMessages)(messages, this)
         liabilityCalc.copy(messages = Some(liabilityCalc.messages.get.copy(errors = Some(translatedDateMessages))))
       case None =>
         liabilityCalc
@@ -260,6 +262,16 @@ class TaxYearSummaryController @Inject()(
 
     lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
 
+    val isNotCrystallisedShowInset: Boolean =
+      fromStringToCalculationTypeValue(latestCalc.metadata.calculationType) match {
+        case CalculationType.UnknownCalculationType =>
+          Logger("application").error(s"[TaxYearSummaryController][handleCalcSuccess] Found:${latestCalc.metadata.calculationType}, Returned: UnknownCalculationType")
+          latestCalc.metadata.isCalculationNotCrystallised
+        case _ =>
+          latestCalc.metadata.isCalculationNotCrystallised
+      }
+
+
     auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, taxYearSummaryViewModel, latestCalc.messages))
 
     Logger("application").info(s"[$taxYear]] Rendered Tax year summary page with Calc data")
@@ -279,7 +291,8 @@ class TaxYearSummaryController @Inject()(
         showNoTaxCalc = latestCalc.calculation.isEmpty,
         viewTaxCalcLink = selfAssessmentLink,
         selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
-        contactHmrcLink = appConfig.findHmrcContactsSALink()
+        contactHmrcLink = appConfig.findHmrcContactsSALink(),
+        isNotCrystallisedShowInset = isNotCrystallisedShowInset
       ))
     )
   }
@@ -334,6 +347,19 @@ class TaxYearSummaryController @Inject()(
       val taxYearViewScenarios =
         taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
 
+      val isNotCrystallisedShowInset: Boolean = {
+        validLatestCalculation
+          .exists { liabilityCalculationResponse =>
+            fromStringToCalculationTypeValue(liabilityCalculationResponse.metadata.calculationType) match {
+              case CalculationType.UnknownCalculationType =>
+                Logger("application").error(s"[TaxYearSummaryController][handleCalcError] Found: ${liabilityCalculationResponse.metadata.calculationType}, Returned: UnknownCalculationType")
+                liabilityCalculationResponse.metadata.isCalculationNotCrystallised
+              case _ =>
+                liabilityCalculationResponse.metadata.isCalculationNotCrystallised
+            }
+          }
+      }
+
       Future(
         Ok(taxYearSummaryView(
           taxYear = taxYear,
@@ -346,7 +372,8 @@ class TaxYearSummaryController @Inject()(
           showNoTaxCalc = true,
           viewTaxCalcLink = selfAssessmentLink,
           selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
-          contactHmrcLink = appConfig.findHmrcContactsSALink()
+          contactHmrcLink = appConfig.findHmrcContactsSALink(),
+          isNotCrystallisedShowInset = isNotCrystallisedShowInset
         ))
       )
     } else {
@@ -383,6 +410,18 @@ class TaxYearSummaryController @Inject()(
       val taxYearViewScenarios =
         taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
 
+      val isNotCrystallisedShowInset: Boolean =
+        validLatestCalculation
+          .exists(liabilityCalculationResponse =>
+            fromStringToCalculationTypeValue(liabilityCalculationResponse.metadata.calculationType) match {
+              case CalculationType.UnknownCalculationType =>
+                Logger("application").error(s"[TaxYearSummaryController][handleCalcError] Found: ${liabilityCalculationResponse.metadata.calculationType}, Returned: UnknownCalculationType")
+                liabilityCalculationResponse.metadata.isCalculationNotCrystallised
+              case _ =>
+                liabilityCalculationResponse.metadata.isCalculationNotCrystallised
+            }
+          )
+
       Future(
         Ok(taxYearSummaryView(
           taxYear = taxYear,
@@ -395,7 +434,8 @@ class TaxYearSummaryController @Inject()(
           showNoTaxCalc = false,
           viewTaxCalcLink = selfAssessmentLink,
           selfAssessmentLink = appConfig.selfAssessmentTaxReturnLink(isAgent),
-          contactHmrcLink = appConfig.findHmrcContactsSALink()
+          contactHmrcLink = appConfig.findHmrcContactsSALink(),
+          isNotCrystallisedShowInset = isNotCrystallisedShowInset
         ))
       )
     }

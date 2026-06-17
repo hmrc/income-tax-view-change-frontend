@@ -24,13 +24,13 @@ import common.mocks.services.MockDateService
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.core.IncomeSourceIdHash.mkFromQueryString
-import models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import org.scalatest.matchers.should.Matchers
 import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.BusinessDetailsTestConstants.{testLatencyDetails, *}
 import businessDetails.testConstants.PropertyDetailsTestConstants.*
+import common.models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import common.testConstants.IncomeSourceDetailsTestConstants.*
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 
 import java.time.LocalDate
 

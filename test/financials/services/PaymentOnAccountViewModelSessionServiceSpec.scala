@@ -16,12 +16,12 @@
 
 package financials.services
 
+import common.testUtils.TestSupport
+import financials.models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
 import financials.repositories.PoaAmendmentDataRepository
-import models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData, PoaSessionData}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail
-import testUtils.TestSupport
 
 import scala.concurrent.Future
 

@@ -19,10 +19,11 @@
 @import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
-@import views.html.components.CeasedBusinesses
+@import businessDetails.views.html.components.CeasedBusinesses
 @import common.views.html.layouts.unifiedLayout
 @import common.models.core._
 @import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+@import common.auth.MtdItUser
 
 
 @this(
@@ -39,7 +40,7 @@
 
 @(sources: AddIncomeSourcesViewModel,
         isAgent: Boolean,
-        backUrl: String)(implicit messages: Messages, user: common.auth.MtdItUser[_])
+        backUrl: String)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
 

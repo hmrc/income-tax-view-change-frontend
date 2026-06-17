@@ -37,6 +37,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -58,7 +59,7 @@
         isAgent: Boolean,
         backUrl: String,
         origin: Option[String] = None
-)(implicit user: common.auth.MtdItUser[_], messages: Messages)
+)(implicit user: MtdItUser[_], messages: Messages)
 
 @messagesPrefix = @{ s"incomeSources.cease.${incomeSourceType.key}" }
 

@@ -17,14 +17,15 @@
 package models.liabilitycalculation.viewmodels
 
 import common.mocks.services.MockDateService
+import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
+import common.testUtils.UnitSpec
 import financials.testConstants.ChargeConstants
-import models.incomeSourceDetails.TaxYear
-import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
-import models.taxyearsummary.TaxYearSummaryChargeItem
-import obligations.models.ObligationsModel
+import returns.models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import obligations.testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
-import testUtils.UnitSpec
+import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import returns.models.taxyearsummary.TaxYearSummaryChargeItem
+import shared.models.ObligationsModel
 
 import java.time.LocalDate
 

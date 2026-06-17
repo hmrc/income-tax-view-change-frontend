@@ -19,15 +19,15 @@ package common.connectors
 import common.config.FrontendAppConfig
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
 import common.models.auth.AuthorisedAndEnrolledRequest
+import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import common.services.AuditingService
-import models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import play.api.Logger
 import play.api.http.Status.OK
 import play.api.http.{HeaderNames, Status}
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import utils.Headers.checkAndAddTestHeader
+import common.utils.Headers.checkAndAddTestHeader
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

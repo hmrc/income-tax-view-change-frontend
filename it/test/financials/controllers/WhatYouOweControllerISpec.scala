@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.WhatYouOweResponseAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -26,9 +25,9 @@ import common.services.DateServiceInterface
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.admin.*
 import common.models.core.SelfServeTimeToPayJourneyResponseModel
+import common.models.incomeSourceDetails.TaxYear
 import financials.testConstants.ChargeConstants
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
@@ -37,6 +36,7 @@ import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
 import common.testConstants.messages.WhatYouOweMessages.hmrcAdjustment
+import financials.models.audit.WhatYouOweResponseAuditModel
 
 import java.time.LocalDate
 import java.time.Month.APRIL

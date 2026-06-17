@@ -19,11 +19,11 @@ package businessDetails.views.triggeredMigration
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.forms.triggeredMigration.CheckActiveBusinessesConfirmForm
 import businessDetails.views.html.triggeredMigration.CheckActiveBusinessesConfirmView
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import testUtils.TestSupport
 
 class CheckActiveBusinessesConfirmViewSpec extends TestSupport{
 

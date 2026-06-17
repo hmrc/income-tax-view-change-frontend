@@ -1,0 +1,237 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.common.implicits.ImplicitDateFormatterImpl
+@import _root_.financials.implicits.ImplicitCurrencyFormatter._
+@import common.auth.MtdItUser
+@import models.financialDetails.WhatYouOweViewModel
+@import common.services.DateServiceInterface
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
+@import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import common.views.html.components._
+@import common.views.html.layouts.unifiedLayout
+@import financials.views.html.partials.whatYouOwe._
+@import _root_.shared.implicits.HtmlFormatter.NbspString
+@import common.viewUtils.ExternalUrlHelper
+@import common.config.FrontendAppConfig
+
+@this(
+        h1: h1,
+        appConfig: FrontendAppConfig,
+        h2: h2,
+        link: link,
+        govukInsetText: GovukInsetText,
+        p: p,
+        govukTable: GovukTable,
+        chargeInfo: ChargeInfo,
+        govukButton: GovukButton,
+        mainTemplate: unifiedLayout,
+        saNoteParagraph: SaNoteParagraph,
+        saPaymentsPreMTDParagraph: SaPaymentsPreMTDParagraph,
+        govukWarningText: GovukWarningText,
+        taxYearSummaryLink: TaxYearSummaryLink,
+        paymentsMadeContent: PaymentsMadeContent,
+        dunningLockParagraph: DunningLockParagraph,
+        accruingInterestCharge: AccruingInterestCharge,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        availableCreditInAccount: AvailableCreditInAccount,
+        interestOnBalancingCharge: InterestOnBalancingCharge,
+        balancingChargePreMtdDigital: BalancingChargePreMtdDigital
+)
+@(
+        viewModel: WhatYouOweViewModel,
+        origin: Option[String] = None
+)(
+        implicit request: Request[_],
+        user: MtdItUser[_],
+        messages: Messages,
+        dateService: DateServiceInterface
+)
+
+@import implicitDateFormatter.longDate
+
+@mainTemplate(
+    isAgent = user.isAgent,
+    pageTitle = getHeading,
+    backUrl = Some(viewModel.backUrl),
+    btaAndPtaServiceNavigation = user.serviceNavigationPartial
+) {
+    @h1(msg = getHeading, id = Some("page-heading"))
+
+    @if(viewModel.hasOverdueOrAccruingInterestCharges || viewModel.hasCrystallisedInterest) {
+        @govukWarningText(WarningText(
+        attributes = Map("id" -> "interest-charges-warning"),
+        content = Text(getMessage("interestChargesWarning.crystallised"))
+        ))
+    }
+
+
+    @if(viewModel.chargesListIsNonEmptyOrBcdChargeTypeDefinedAndGreaterThanZero) {
+        @govukTable(Table(
+            head = Some(Seq(
+                Some(HeadCell(content = Text(getMessage("tableHead.due-date")))),
+                Some(HeadCell(content = Text(getMessage("tableHead.charge-type")))),
+                Some(HeadCell(content = Text(getMessage("tableHead.tax-year")))),
+                Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
+                    HeadCell(content = Text(getMessage("tableHead.interest")))
+                ),
+                Some(HeadCell(content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking)))
+            ).flatten),
+            rows = Seq(
+                Option.when(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero)(
+                    Seq[IterableOnce[TableRow]](
+                        Some(TableRow(
+                            attributes = Map("id" -> "balancing-charge-due-date-0"),
+                            content = Text(viewModel.whatYouOweChargesList.getRelevantDueDate.toLongDateShort)
+                        )),
+                        Some(TableRow(
+                            attributes = Map("id" -> "balancing-charge-type-0"),
+                            content = HtmlContent(balancingChargePreMtdDigital(viewModel.whatYouOweChargesList, viewModel.currentDate))
+                        )),
+                        Some(TableRow(
+                            attributes = Map("id" -> "balancing-charge-tax-year-0"),
+                            content = Text(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
+                        )),
+                        Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
+                            TableRow(
+                                attributes = Map("id" -> "balancing-charge-na"),
+                                content = Text(getMessage("tableRow.na"))
+                            )
+                        ),
+                        Some(TableRow(
+                            attributes = Map("id" -> "balancing-charge-amount-due-0"),
+                            content = HtmlContent(viewModel.whatYouOweChargesList.outstandingChargesModel.get.bcdChargeType.get.chargeAmount.toCurrency),
+                            format = Some("numeric")
+                        ))
+                    ).flatten
+                ),
+                Option.when(viewModel.chargeIsNotDueAndChargesDefinedAndGreaterThanZero)(
+                    Seq[IterableOnce[TableRow]](
+                        Some(TableRow(
+                            content = Empty
+                        )),
+                        Some(TableRow(
+                            attributes = Map("id" -> "balancing-charge-due-date-1"),
+                            content = HtmlContent(interestOnBalancingCharge(viewModel.whatYouOweChargesList, viewModel.currentDate))
+                        )),
+                        Some(TableRow(
+                            attributes = Map("id" -> "balancing-charge-type-1"),
+                            content = HtmlContent(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
+                        )),
+                        Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
+                            TableRow(
+                                attributes = Map("id" -> "balancing-charge-na"),
+                                content = HtmlContent(getMessage("tableRow.na"))
+                            )
+                        ),
+                        Some(TableRow(
+                            attributes = Map("id" -> "balancing-charge-amount-due-1"),
+                            content = HtmlContent(viewModel.whatYouOweChargesList.getAciChargeWithTieBreakerChargeAmount.toCurrency),
+                            format = Some("numeric")
+                        ))
+                    ).flatten
+                ),
+                viewModel.whatYouOweChargesList.sortedChargesList.zipWithIndex.flatMap { case (charge, index) =>
+                    Seq(
+                        Some(Seq[IterableOnce[TableRow]](
+                            Some(TableRow(
+                                attributes = Map("id" -> s"due-charge-due-date-$index"),
+                                content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNonBreaking)
+                            )),
+                            Some(TableRow(
+                                attributes = Map("id" -> s"due-$index"),
+                                content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false))
+                            )),
+                            Some(TableRow(
+                                attributes = Map("id" -> s"due-charge-tax-year-$index"),
+                                content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
+                            )),
+                            Option.when(charge.hasAccruingInterest)(
+                                TableRow(
+                                    attributes = Map("id" -> s"due-charge-na-$index"),
+                                    content = HtmlContent(charge.accruingInterestAmount.get.toCurrency),
+                                    format = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) Some("numeric") else None
+                                )
+                            ).orElse(
+                                    Some(TableRow(
+                                        attributes = Map("id" -> s"fallback-$index"),
+                                        content = HtmlContent(getMessage("tableRow.na"))
+                                    ))
+                                ),
+                            Some(TableRow(
+                                attributes = Map("id" -> s"due-charge-amount-due-$index"),
+                                content = HtmlContent(charge.remainingToPayOnCharge.toCurrency),
+                                format = Some("numeric")
+                            ))
+                        ).flatten)
+                    ).flatten
+                }
+            ).flatten,
+            caption = Some(getMessage("payments-due")),
+            attributes = Map("id" -> "payments-due-table"),
+            captionClasses = "govuk-table__caption govuk-table__caption--m"
+        ))
+
+        @govukInsetText(InsetText(
+            attributes = Map("id" -> "payments-processing-note"),
+            content = Text(getMessage("payments-processing-note"))
+        ))
+    }
+
+    @if(viewModel.chargesListIsNotEmptyAndDunningLock) {
+        @dunningLockParagraph()
+    }
+
+    @paymentsMadeContent(
+        origin = origin,
+        viewModel = viewModel)
+
+    @if(viewModel.chargesListAndCodedOutDetailsAreEmpty) {
+        @saPaymentsPreMTDParagraph(utr = viewModel.utr,
+            claimToAdjustTaxYear = viewModel.claimToAdjustViewModel.claimToAdjustTaxYear,
+            adjustPoaUrl = viewModel.adjustPoaUrl,
+            isAgent = user.isAgent)
+
+        @if(viewModel.creditAndRefundEnabled) {
+            @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
+                @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
+            }
+        }
+    } else {
+        @viewModel.claimToAdjustViewModel.claimToAdjustTaxYear.map { taxYear =>
+            @p(id = Some("adjust-poa-content")) {
+                @link(
+                    link = viewModel.adjustPoaUrl,
+                    messageKey = getMessage("sa-link-1-body-3", taxYear.startYear.toString, taxYear.endYear.toString),
+                    id = Some("adjust-poa-link"),
+                    rel = Some("noreferrer noopener")
+                )
+            }
+        }
+
+        @if(viewModel.creditAndRefundEnabled) {
+            @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
+                @availableCreditInAccount(ac.toCurrencyString, viewModel.moneyInYourAccountUrl)
+            }
+        }
+
+        @saNoteParagraph(utr = viewModel.utr,
+            selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl,
+            budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL,
+            isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0)
+    }
+}

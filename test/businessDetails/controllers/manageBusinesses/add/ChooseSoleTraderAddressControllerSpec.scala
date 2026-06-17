@@ -37,9 +37,9 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.services.DateServiceInterface
+import shared.models.UIJourneySessionData
 
 class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -88,7 +88,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
-            val backUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url else hub.controllers.routes.HomeController.show().url
+            val backUrl = appConfig.homePageUrl(isAgent)
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
@@ -100,7 +100,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
 
             val document: Document = Jsoup.parse(contentAsString(result))
             document.title should include(messages("manageBusinesses.add.chooseSoleTraderAddress.heading"))
-            val backUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url else hub.controllers.routes.HomeController.show().url
+            val backUrl = appConfig.homePageUrl(isAgent)
             document.getElementById("back-fallback").attr("href") shouldBe backUrl
             status(result) shouldBe OK
           }
@@ -115,7 +115,7 @@ class ChooseSoleTraderAddressControllerSpec extends MockAuthActions with MockSes
             val result = action(fakeRequest)
 
             status(result) shouldBe SEE_OTHER
-            val redirectUrl = if (isAgent) hub.controllers.routes.HomeController.showAgent().url else hub.controllers.routes.HomeController.show().url
+            val redirectUrl = appConfig.homePageUrl(isAgent)
             redirectLocation(result) shouldBe Some(redirectUrl)
           }
         }

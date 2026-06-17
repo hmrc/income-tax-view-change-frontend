@@ -16,16 +16,17 @@
 
 @import _root_.financials.implicits.ImplicitCurrencyFormatter._
 @import _root_.common.implicits.ImplicitDateFormatterImpl
-@import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
-@import models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+@import returns.models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+@import returns.models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 @import common.services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import returns.views.html.partials.taxYearSummary._
 @import returns.views.html.partials.taxYearSummaryTabsPartial
-@import models.liabilitycalculation.viewmodels.CalculationSummary
-@import models.taxyearsummary._
+@import returns.models.liabilitycalculation.viewmodels.CalculationSummary
+@import returns.models.taxyearsummary._
+@import common.auth.MtdItUser
 
 @this(
         mainTemplate: unifiedLayout,
@@ -55,8 +56,9 @@
     showNoTaxCalc: Boolean,
     viewTaxCalcLink: Option[String],
     selfAssessmentLink: String,
-    contactHmrcLink: String
-)(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: common.auth.MtdItUser[_])
+    contactHmrcLink: String,
+    isNotCrystallisedShowInset: Boolean
+)(implicit request: Request[_], dateService: DateServiceInterface, messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter._
 
@@ -190,28 +192,20 @@
               },
               headingId = Some("heading")
             )
-            @viewModel.calculationSummary.map { model =>
-                @if(!model.crystallised && viewModel.getLastUpdatedObligationEndDate.isDefined) {
-                    @govukInsetText(InsetText(content = HtmlContent(
-                        p(id = Some("calc-explanation-inset"))(content = Html(
-                            messages("tax-year-summary.explanatory-text", viewModel.getLastUpdatedObligationEndDate.map(_.toLongDate).get)))
+
+            @if(isNotCrystallisedShowInset) {
+                @govukInsetText(
+                    InsetText(
+                        content = HtmlContent(
+                            p(id = Some("calc-explanation-inset"))(
+                                content = Html(messages("tax-year-summary.explanatory-text"))
+                            )
                         )
-                    ))
-                }
+                    )
+                )
             }
 
             @viewModel.calculationSummary.map { model =>
-                @if(!model.crystallised && model.messages.isEmpty) {
-                    @govukInsetText(InsetText(content = HtmlContent(
-                        p(id = Some("calc-date-info"))(
-                            content = Html(messages(
-                                if(isAgent) "tax-year-summary.agent.calc-from-last-time"
-                                else "tax-year-summary.calc-from-last-time",
-                                model.timestamp.map(_.toLongDate).get
-                            ))
-                        )
-                    )))
-                }
                 @if(!model.errorPresent()) {
                     @govukSummaryList(SummaryList(
                         classes = "govuk-summary-list",

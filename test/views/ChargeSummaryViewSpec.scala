@@ -18,22 +18,22 @@ package views
 
 import common.config.featureswitch.FeatureSwitching
 import common.exceptions.MissingFieldException
-import financials.models.ChargeType.*
-import financials.models.*
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.ViewSpec
 import financials.controllers.routes as financialsRoutes
+import financials.models.*
+import financials.models.ChargeType.*
+import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
+import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import financials.testConstants.ChargeConstants
-import models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
-import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
+import financials.testConstants.FinancialDetailsTestConstants.*
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import play.twirl.api.Html
-import financials.testConstants.FinancialDetailsTestConstants.*
-import testUtils.ViewSpec
-import views.html.ChargeSummaryView
+import financials.views.html.ChargeSummaryView
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 

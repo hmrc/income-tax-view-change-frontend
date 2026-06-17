@@ -17,7 +17,7 @@
 package businessDetails.forms.manageBusinesses.add
 
 import common.forms.validation.CustomConstraints
-import forms.utils.ConstraintUtil.ConstraintUtil
+import businessDetails.forms.utils.ConstraintUtil.ConstraintUtil
 import play.api.data.Forms._
 import play.api.data._
 import play.api.data.validation._

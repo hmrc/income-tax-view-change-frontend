@@ -17,11 +17,12 @@
 package audit.models
 
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
-import models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import testUtils.TestSupport
+import common.testUtils.TestSupport
+import returns.models.audit.ForecastIncomeAuditModel
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class ForecastIncomeAuditModelSpec extends TestSupport {

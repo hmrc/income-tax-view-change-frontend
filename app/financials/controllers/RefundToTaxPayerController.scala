@@ -16,26 +16,26 @@
 
 package financials.controllers
 
-import audit.models.RefundToTaxPayerResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
-import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.models.admin.PaymentHistoryRefunds
 import common.models.core.Nino
 import common.services.AuditingService
 import connectors.RepaymentHistoryConnector
-import models.creditsandrefunds.RefundToTaxPayerViewModel
+import financials.controllers.routes as financialsRoutes
+import financials.models.audit.RefundToTaxPayerResponseAuditModel
+import financials.models.creditsandrefunds.RefundToTaxPayerViewModel
+import financials.views.html.RefundToTaxPayerView
 import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.RefundToTaxPayerView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
-import financials.controllers.routes as financialsRoutes
 
 @Singleton
 class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTaxPayerView,
@@ -85,7 +85,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
           itvcErrorHandler.showInternalServerError()
       }
     } else {
-      Future.successful(Redirect(homeUrl(user.isAgent)))
+      Future.successful(Redirect(appConfig.homePageUrl(user.isAgent)))
     }
   }
 
@@ -107,11 +107,5 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
         itvcErrorHandler = itvcErrorHandlerAgent,
         repaymentRequestNumber = repaymentRequestNumber
       )
-  }
-
-  lazy val homeUrl: Boolean => String = isAgent => if (isAgent) {
-    hub.controllers.routes.HomeController.showAgent().url
-  } else {
-    hub.controllers.routes.HomeController.show().url
   }
 }

@@ -16,31 +16,32 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import enums.BeforeSubmissionPage
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import common.views.html.errorPages.CustomNotFoundErrorView
 import businessDetails.views.html.manageBusinesses.add.IsTheNewAddressInTheUKView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.UIJourneySessionData
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{Mode, NormalMode}
+import shared.enums.BeforeSubmissionPage
+import shared.models.UIJourneySessionData
 
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
+class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
                                                  val isTheNewAddressInTheUKView: IsTheNewAddressInTheUKView,
                                                  val sessionService: SessionService,
                                                  val customNotFoundErrorView: CustomNotFoundErrorView)
@@ -56,7 +57,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       if isEnabled(OverseasBusinessAddress) then
         handleRequest(isAgent, mode, isTriggeredMigration)
       else
-        Future.successful(Redirect(hub.controllers.routes.HomeController.show().url))
+        Future.successful(Redirect(appConfig.individualHomeUrl))
   }
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {

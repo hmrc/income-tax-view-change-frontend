@@ -16,24 +16,25 @@
 
 package financials.controllers
 
-import audit.models.ChargeSummaryAudit
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.*
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.GatewayPage
 import common.models.admin.{ChargeHistory, CreditsRefundsRepay, PenaltiesAndAppeals}
 import common.models.core.Nino
+import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateServiceInterface}
 import financials.controllers.ChargeSummaryController.ErrorCode
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.controllers.routes as financialsRoutes
+import financials.models.chargeHistory.*
+import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
-import forms.utils.SessionKeys.gatewayPage
-import models.chargeHistory.*
-import models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
+import common.utils.FallBackBackLinks
+import financials.forms.utils.SessionKeys.gatewayPage
+import financials.models.audit.ChargeSummaryAudit
 import models.financialDetails.*
-import models.incomeSourceDetails.TaxYear
 import models.paymentAllocationCharges.PaymentAllocationViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -41,8 +42,7 @@ import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import utils.FallBackBackLinks
-import views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
+import financials.views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

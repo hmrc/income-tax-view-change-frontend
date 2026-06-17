@@ -16,7 +16,8 @@
 
 package models.incomeSourceDetails.viewmodels
 
-import models.incomeSourceDetails.{ChosenReportingMethod, TaxYear}
+import common.models.incomeSourceDetails.TaxYear
+import models.incomeSourceDetails.ChosenReportingMethod
 
 import java.time.LocalDate
 

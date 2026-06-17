@@ -17,13 +17,14 @@
 package audit.models
 
 import common.auth.actions.AuthActionsTestData.*
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.financialDetails.Payment
-import models.incomeSourceDetails.IncomeSourceDetailsModel
-import play.api.libs.json._
-import common.testConstants.BaseTestConstants._
-import testUtils.TestSupport
+import play.api.libs.json.*
+import common.testConstants.BaseTestConstants.*
+import common.testUtils.TestSupport
+import financials.models.audit.PaymentHistoryResponseAuditModel
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.auth.core.AffinityGroup._
+import uk.gov.hmrc.auth.core.AffinityGroup.*
 
 import java.time.LocalDate
 

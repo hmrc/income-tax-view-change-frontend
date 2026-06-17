@@ -16,8 +16,8 @@
 
 package businessDetails.forms.manageBusinesses.add
 
+import common.testUtils.TestSupport
 import play.api.data.Form
-import testUtils.TestSupport
 
 class AddPropertyFormSpec extends TestSupport{
 

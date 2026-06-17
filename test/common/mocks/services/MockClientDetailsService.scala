@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import testUtils.UnitSpec
+import common.testUtils.UnitSpec
 
 import scala.concurrent.Future
 

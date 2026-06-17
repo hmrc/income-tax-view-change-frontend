@@ -1,0 +1,104 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.common.implicits.ImplicitDateFormatterImpl
+@import _root_.financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import common.views.html.components._
+@import models.financialDetails.{DocumentDetailWithDueDate, DocumentDetail}
+@import _root_.shared.implicits.HtmlFormatter.NbspString
+@import java.time.LocalDate
+@import common.exceptions.MissingFieldException
+@import _root_.shared.implicits.HtmlFormatter.NbspString
+@import common.services.DateServiceInterface
+@import common.config.FrontendAppConfig
+
+@this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
+
+@(
+    chargeItem: models.financialDetails.ChargeItem,
+    interestCharge: Boolean,
+    taxYearFromCodingOut: String,
+    taxYearToCodingOut: String,
+    appConfig: FrontendAppConfig
+)(implicit messages: Messages, dateService: DateServiceInterface)
+
+@import implicitDateFormatter.longDate
+
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+        @if(chargeItem.isCredit){
+            @messages("chargeSummary.date")
+        }else{@messages("chargeSummary.dueDate")}
+        </dt>
+        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+            @if(chargeItem.isOverdue() && !chargeItem.checkIsPaid(interestCharge)) {
+                <span class="govuk-tag govuk-tag--red">@messages("chargeSummary.overdue")</span>
+            }
+            @{
+                (if(interestCharge) {
+                    chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
+                } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.codedOutStatus == None) {
+                    chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDate).getOrElse(messages("tax-year-summary.noData"))
+                } else if (chargeItem.isCredit) {
+                    chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.noData"))
+                } else {
+                    chargeItem.dueDate.map(_.toLongDate).getOrElse(messages("chargeSummary.noData"))
+                }).toNonBreaking
+            }
+        </dd>
+    </div>
+
+    @if(interestCharge) {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("chargeSummary.lpi.interestPeriod")</dt>
+            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+            @messages("chargeSummary.lpi.interestPeriod.dates",
+                chargeItem.interestFromDate.getOrElse(throw MissingFieldException("Interest From Date")).toLongDateShort,
+                chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDateShort).toNonBreaking</dd>
+        </div>
+    }
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+        @{
+            if (chargeItem.codedOutStatus != None) {
+                messages("chargeSummary.paymentAmountCodingOut")
+            } else messages("chargeSummary.paymentAmount")
+        }
+        </dt>
+        <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+            <span>
+            @{
+                if (interestCharge) chargeItem.accruingInterestAmount.getOrElse(throw MissingFieldException("Late Payment Interest Amount")).toCurrency
+                else chargeItem.originalAmount.abs.toCurrency
+            }
+            </span>
+        </dd>
+    </div>
+    @if(!chargeItem.isCredit) {
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
+            <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
+            @{
+                if(chargeItem.codedOutStatus == Some(models.financialDetails.Accepted)) {
+                    messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
+                } else if(interestCharge) chargeItem.interestRemainingToPay.toCurrency
+                else chargeItem.remainingToPay.toCurrency
+            }
+            </dd>
+        </div>
+    }
+</dl>

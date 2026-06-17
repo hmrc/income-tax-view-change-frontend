@@ -18,18 +18,18 @@ package services.claimToAdjust
 
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.DateService
+import common.testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
+import common.testUtils.TestSupport
+import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
+import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
+import financials.testConstants.ClaimToAdjustPoaTestConstants.*
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
-import models.calculationList.{CalculationListModel, CalculationListResponseModel}
-import models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
-import models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
-import models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
-import common.testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
-import financials.testConstants.ClaimToAdjustPoaTestConstants.*
-import testUtils.TestSupport
+import shared.models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
