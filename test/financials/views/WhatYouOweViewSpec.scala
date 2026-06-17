@@ -984,6 +984,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         ) {
           pageDocument.getElementById("payment-button").text shouldBe payNow
           pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(25000).url
+          findElementById("overdue-inset-migrated-1") shouldBe None
+          findElementById("overdue-inset-migrated-2") shouldBe None
         }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(

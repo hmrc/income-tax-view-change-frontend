@@ -16,7 +16,6 @@
 
 @import common.views.html.components._
 @import common.auth.MtdItUser
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 @import financials.models.WhatYouOweViewModel
@@ -26,7 +25,6 @@
         h2: h2,
         p: p,
         link: link,
-        govukInsetText: GovukInsetText,
         govukButton: GovukButton
 )
 
@@ -37,11 +35,6 @@
     implicit messages: Messages,
     user: MtdItUser[_]
 )
-
-@overdueInsetText = {
-    @p(id = Some("overdue-inset-migrated-1"))(content = Html(messages("yourSelfAssessmentChargeSummary.overdue-inset-text-1")))
-    @p(id = Some("overdue-inset-migrated-2"))(content = Html(messages("yourSelfAssessmentChargeSummary.overdue-inset-text-2")))
-}
 
 @getNoPaymentsDueText = {
     @p(id = Some("no-payments-due"))(Html(getMessage(if(user.isAgent) "no-payments-due-agent" else "no-payments-due")))
@@ -67,17 +60,10 @@
     ))
 }
 
-@insetTextAndButton(amount: BigDecimal) = {
-    @govukInsetText(InsetText(
-        content = HtmlContent(overdueInsetText)
-    ))
-    @paymentButton(amount)
-}
-
 @if(viewModel.utr.isDefined && !user.isAgent) {
     @{
         viewModel.whatYouOweChargesList.getDefaultPaymentAmount match {
-            case Some(value) => insetTextAndButton(value)
+            case Some(value) => paymentButton(value)
             case None =>
         }
     }
