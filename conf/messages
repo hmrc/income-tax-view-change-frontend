@@ -1167,7 +1167,6 @@ credits.drop-down-list.sa-link-agent                                    = Self A
 credits.money-in-your-account-section.name                              = Money in your account
 credits.money-in-your-account-section.agent.name                        = Money in your client’s account
 credits.money-in-your-account-section.content                           = There is a total of {0} in your account. You can leave the money there to pay your next bill or
-credits.money-in-your-account-section.agent.name                        = Money in your client’s account
 credits.money-in-your-account-section.agent.content                     = There is a total of {0} in your client’s account. You can leave the money there to pay their next bill or
 credits.money-in-your-account-section.claim-a-refund-link               = claim a refund
 
@@ -1289,9 +1288,6 @@ whatYouOwe.moneyOnAccount                                          = Money in yo
 whatYouOwe.moneyOnAccount-1                                        = You have
 whatYouOwe.moneyOnAccount-2                                        = ; your current balance is {0}. You can leave the money there to pay your next bill or claim a refund.
 whatYouOwe.moneyOnAccount-link                                     = money in your account
-whatYouOwe.moneyOnAccount-agent                                    = Money in your client’s account
-whatYouOwe.moneyOnAccount-agent-1                                  = Your client has
-whatYouOwe.moneyOnAccount-agent-2                                  = ; their current balance is {0}. They can leave the money there to pay their next bill or claim a refund.
 whatYouOwe.adjust-poa                                              = Adjust payments on account for the {0} to {1} tax year
 whatYouOwe.adjust-poa.paid-1                                       = You can
 whatYouOwe.adjust-poa.paid-2                                       = adjust your payments on account for the {0} to {1} tax year

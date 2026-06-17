@@ -1165,7 +1165,6 @@ credits.drop-down-list.sa-link-agent                                    = cyfrif
 credits.money-in-your-account-section.name                              = Arian yn eich cyfrif
 credits.money-in-your-account-section.agent.name                        = Arian yng nghyfrif eich cleient
 credits.money-in-your-account-section.content                           = Mae cyfanswm o {0} yn eich cyfrif. Gallwch adael yr arian yno i dalu’ch bil nesaf neu gallwch
-credits.money-in-your-account-section.agent.name                        = Arian yng nghyfrif eich cleient
 credits.money-in-your-account-section.agent.content                     = Mae cyfanswm o {0} yng nghyfrif eich cleient. Gallwch adael yr arian yno i dalu bil nesaf eich cleient neu gallwch
 credits.money-in-your-account-section.claim-a-refund-link               = hawlio ad-daliad
 
@@ -1276,9 +1275,6 @@ whatYouOwe.moneyOnAccount                                       = Arian yn eich 
 whatYouOwe.moneyOnAccount-1                                     = Mae gennych
 whatYouOwe.moneyOnAccount-2                                     = ; eich balans presennol yw {0}. Gallwch adael yr arian yno i dalu’ch bil nesaf neu hawlio ad-daliad.
 whatYouOwe.moneyOnAccount-link                                  = arian yn eich cyfrif
-whatYouOwe.moneyOnAccount-agent                                 = Arian yng nghyfrif eich cleient
-whatYouOwe.moneyOnAccount-agent-1                               = Mae gan eich cleient
-whatYouOwe.moneyOnAccount-agent-2                               = ; balans presennol eich cleient yw {0}. Gall adael yr arian yno i dalu ei fil nesaf neu hawlio ad-daliad.
 whatYouOwe.codingOut-1a                                         = Mae gan eich cleient
 whatYouOwe.codingOut-1b                                         = o dreth ar gyfer
 whatYouOwe.codingOut-2                                          = blwyddyn dreth {0} i {1}

@@ -233,9 +233,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("money-in-your-account")).isDefined shouldBe true
-                doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {
-                  if (isAgent) "-agent" else ""
-                })
+                doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount")
               }
             }
 
