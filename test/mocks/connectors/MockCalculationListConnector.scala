@@ -18,7 +18,7 @@ package mocks.connectors
 
 import common.models.core.Nino
 import common.testUtils.UnitSpec
-import connectors.CalculationListConnector
+import shared.connectors.CalculationListConnector
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._

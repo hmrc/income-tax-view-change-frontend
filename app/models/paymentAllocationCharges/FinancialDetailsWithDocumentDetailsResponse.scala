@@ -17,9 +17,9 @@
 package models.paymentAllocationCharges
 
 import models.financialDetails.{DocumentDetail, FinancialDetail}
-import common.models.readNullableList
 import play.api.libs.functional.syntax._
 import play.api.libs.json.{Json, OWrites, Reads, __}
+import play.api.libs.json.JsPath
 
 sealed trait FinancialDetailsWithDocumentDetailsResponse
 
@@ -38,10 +38,14 @@ case class FinancialDetailsWithDocumentDetailsModel(
 object FinancialDetailsWithDocumentDetailsModel {
   implicit val writes: OWrites[FinancialDetailsWithDocumentDetailsModel] = Json.writes[FinancialDetailsWithDocumentDetailsModel]
 
+  
   implicit val reads: Reads[FinancialDetailsWithDocumentDetailsModel] = (
     readNullableList[DocumentDetail](__ \ "documentDetails") and
       readNullableList[FinancialDetail](__ \ "financialDetails")
     )(FinancialDetailsWithDocumentDetailsModel.apply _)
+
+  private def readNullableList[T](path: JsPath)(implicit reads: Reads[List[T]]): Reads[List[T]] = 
+    path.read[List[T]] orElse Reads.pure[List[T]](Nil)
 }
 
 case class FinancialDetailsWithDocumentDetailsErrorModel(code: Int, message: String) extends FinancialDetailsWithDocumentDetailsResponse

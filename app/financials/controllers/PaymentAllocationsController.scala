@@ -27,7 +27,7 @@ import common.services.AuditingService
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.services.PaymentAllocationsService
-import common.utils.FallBackBackLinks
+import financials.utils.FallBackBackLinks
 import financials.forms.utils.SessionKeys.gatewayPage
 import financials.models.audit.PaymentAllocationsResponseAuditModel
 import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}

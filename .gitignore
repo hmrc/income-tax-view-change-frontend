@@ -35,3 +35,7 @@ tmp
 bin
 
 *.log
+income_tax_tools.egg-info/
+tools/
+copy_obligations.py
+pyproject.toml
