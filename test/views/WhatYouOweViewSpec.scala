@@ -27,7 +27,7 @@ import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.CodingOutType.*
 import models.financialDetails.*
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
-import models.outstandingCharges.*
+import financials.models.outstandingCharges.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest

@@ -19,10 +19,10 @@ package financials.testConstants
 import common.helpers.ComponentSpecBase
 import common.services.DateServiceInterface
 import common.testConstants.BaseIntegrationTestConstants.{testErrorMessage, testErrorNotFoundStatus, testErrorStatus}
-import financials.models.ChargeType.NIC4_WALES
-import models.financialDetails.*
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import common.testConstants.IncomeSourceIntegrationTestConstants.{id1040000123, noDunningLock, noInterestLock}
+import financials.models.ChargeType.NIC4_WALES
+import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import models.financialDetails.*
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate

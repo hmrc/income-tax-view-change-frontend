@@ -17,7 +17,7 @@
 package connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
+import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

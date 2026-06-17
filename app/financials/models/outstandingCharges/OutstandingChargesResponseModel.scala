@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.outstandingCharges
+package financials.models.outstandingCharges
 
 import play.api.libs.json.{Format, Json}
 

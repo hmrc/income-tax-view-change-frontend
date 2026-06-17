@@ -17,10 +17,10 @@
 package models
 
 import common.testUtils.UnitSpec
-import models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
+import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
+import financials.testConstants.OutstandingChargesTestConstants.*
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
-import financials.testConstants.OutstandingChargesTestConstants._
 
 class OutstandingChargesResponseModelSpec extends UnitSpec with Matchers {
 
