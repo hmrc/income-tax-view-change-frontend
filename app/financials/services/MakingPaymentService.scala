@@ -32,7 +32,8 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
                       paymentHandoffUrl: String,
                       whatYouOweUrl: String,
                       moneyInYourAccountUrl: String,
-                      payPenaltyUrl: String)
+                      payPenaltyUrl: String,
+                      showInterestSection: Boolean = true)
                      (implicit user: MtdItUser[_],
                       hc: HeaderCarrier,
                       ec: ExecutionContext): Future[Option[MakingPaymentViewModel]] = {
@@ -48,8 +49,10 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
           whatYouOweUrl = whatYouOweUrl,
           moneyInYourAccountUrl = moneyInYourAccountUrl,
           payPenaltyUrl = payPenaltyUrl,
-          hasInterest = financialDetailsModels.flatMap(_.documentDetails).exists(hasInterest) ||
-            balanceDetails.exists(_.overDueAmount > 0),
+          hasInterest = showInterestSection && (
+            financialDetailsModels.flatMap(_.documentDetails).exists(hasInterest) ||
+              balanceDetails.exists(_.overDueAmount > 0)
+            ),
           hasPenalty = financialDetailsModels.flatMap(_.toChargeItem).exists(charge => charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0),
           unallocatedCredit = positiveCredit(balanceDetails.flatMap(_.unallocatedCredit))
             .orElse(positiveCredit(balanceDetails.flatMap(_.totalCreditAvailableForRepayment)))

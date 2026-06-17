@@ -75,6 +75,18 @@ class MakingPaymentServiceSpec extends TestSupport {
       result.map(_.hasAdditionalSections) shouldBe Some(true)
     }
 
+    "not set hasInterest when the interest section is suppressed" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(2025 -> financialDetailsModel(overDueAmount = 1.67))))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties", showInterestSection = false)
+        .futureValue
+
+      result.map(_.hasInterest) shouldBe Some(false)
+      result.map(_.hasAdditionalSections) shouldBe Some(false)
+    }
+
     "set unallocatedCredit to the highest positive credit found across financial details responses" in {
       when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
         .thenReturn(Future.successful(List(

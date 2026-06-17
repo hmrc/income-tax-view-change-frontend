@@ -976,6 +976,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("payment-button").text shouldBe payNow
           pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(400).url
         }
+        "have payments data with button for penalties when balance details have no amount due" in new TestSetup(
+          charges = whatYouOweAllPenalties.copy(
+            balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None)
+          ),
+          LPP2Url = appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRefLPP2")
+        ) {
+          pageDocument.getElementById("payment-button").text shouldBe payNow
+          pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(25000).url
+        }
 
         "display the paragraph about payments under review when there is a dunningLock" in new TestSetup(
           charges = whatYouOweDataWithOverdueDataIt(twoDunningLocks), dunningLock = true) {
@@ -1196,8 +1205,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         anchor.attr("target") shouldBe "_blank"
       }
 
-      "not have button Pay now" in new TestSetup(charges = noChargesModel) {
-        findElementById("payment-button") shouldBe None
+      "have payment data with button when there are no charges" in new TestSetup(charges = noChargesModel) {
+        pageDocument.getElementById("payment-button").text shouldBe payNow
+        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(0).url
+        findElementById("overdue-inset-migrated-1") shouldBe None
+        findElementById("overdue-inset-migrated-2") shouldBe None
       }
       "not have payment made or if need help paragraph " in new TestSetup(charges = noChargesModel) {
         findElementById("payments-made") shouldBe None

@@ -82,6 +82,7 @@ class PaymentController @Inject()(val authActions: AuthActions,
         whatYouOweUrl = routes.WhatYouOweController.show(origin).url,
         moneyInYourAccountUrl = routes.MoneyInYourAccountController.show(origin).url,
         payPenaltyUrl = appConfig.incomeTaxPenaltiesFrontend,
+        showInterestSection = amountInPence > 0,
         isAgent = false
       )
   }
@@ -94,6 +95,7 @@ class PaymentController @Inject()(val authActions: AuthActions,
         whatYouOweUrl = routes.WhatYouOweController.showAgent().url,
         moneyInYourAccountUrl = routes.MoneyInYourAccountController.showAgent().url,
         payPenaltyUrl = s"${appConfig.incomeTaxPenaltiesFrontend}/agent",
+        showInterestSection = paymentAmountInPence > 0,
         isAgent = true
       )
   }
@@ -103,9 +105,10 @@ class PaymentController @Inject()(val authActions: AuthActions,
                                   whatYouOweUrl: String,
                                   moneyInYourAccountUrl: String,
                                   payPenaltyUrl: String,
+                                  showInterestSection: Boolean,
                                   isAgent: Boolean)
                                  (implicit mtdItUser: MtdItUser[_]): Future[Result] = {
-    makingPaymentService.createViewModel(backUrl, paymentHandoffUrl, whatYouOweUrl, moneyInYourAccountUrl, payPenaltyUrl).map {
+    makingPaymentService.createViewModel(backUrl, paymentHandoffUrl, whatYouOweUrl, moneyInYourAccountUrl, payPenaltyUrl, showInterestSection).map {
       case Some(viewModel) => Ok(makingPaymentView(viewModel))
       case None =>
         Logger("application").error(s"${if (isAgent) "[Agent]" else ""}Failed to create MakingPaymentViewModel")
