@@ -30,7 +30,7 @@ class CalculationTypeSpec extends TestSupport {
 
     "have a set of not crystallised types" in {
       CalculationType.notCrystallisedTypes shouldBe
-        Set(InYear, IntentToFinalise, IntentToCrystallise)
+        Set(InYear, LegacyInYear, IntentToFinalise, IntentToCrystallise)
     }
 
     "have a set of amendment types" in {
