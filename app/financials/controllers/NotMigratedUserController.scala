@@ -23,7 +23,7 @@ import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.notMigrated.NotMigratedUserView
+import financials.views.html.notMigrated.NotMigratedUserView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

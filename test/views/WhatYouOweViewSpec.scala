@@ -37,7 +37,7 @@ import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, test
 import common.testUtils.{TestSupport, ViewSpec}
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import views.html.WhatYouOweView
+import financials.views.html.WhatYouOweView
 
 import java.time.LocalDate
 import scala.annotation.unused

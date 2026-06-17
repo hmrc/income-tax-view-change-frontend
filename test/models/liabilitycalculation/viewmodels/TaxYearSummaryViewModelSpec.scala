@@ -21,9 +21,10 @@ import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import common.testUtils.UnitSpec
 import financials.testConstants.ChargeConstants
-import models.liabilitycalculation.viewmodels.CalculationSummary.localDate
-import models.taxyearsummary.TaxYearSummaryChargeItem
+import returns.models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import obligations.testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
+import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
+import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 import shared.models.ObligationsModel
 
 import java.time.LocalDate

@@ -22,6 +22,7 @@ import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, Finan
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
+import financials.models.audit.ClaimARefundAuditModel
 import financials.testConstants.ANewCreditAndRefundModel
 import financials.testConstants.CreditAndRefundConstants.documentDetailWithDueDateFinancialDetailListModel
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

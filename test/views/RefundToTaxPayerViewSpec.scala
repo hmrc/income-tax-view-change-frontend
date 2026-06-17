@@ -24,7 +24,7 @@ import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import common.auth.MtdItUser
 import common.testUtils.ViewSpec
-import views.html.RefundToTaxPayerView
+import financials.views.html.RefundToTaxPayerView
 
 import java.time.LocalDate
 

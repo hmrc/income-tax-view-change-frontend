@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.RefundToTaxPayerResponseAuditModel
 import common.connectors.ITSAStatusConnector
 import common.auth.actions.AuthActionsTestData.getMtdItUser
 import common.enums.{MTDIndividual, MTDSupportingAgent}
@@ -34,7 +33,8 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.testMtditid
-import views.html.RefundToTaxPayerView
+import financials.models.audit.RefundToTaxPayerResponseAuditModel
+import financials.views.html.RefundToTaxPayerView
 
 import java.time.LocalDate
 

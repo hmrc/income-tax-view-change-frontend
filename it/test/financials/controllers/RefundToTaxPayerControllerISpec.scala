@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.RefundToTaxPayerResponseAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -28,6 +27,7 @@ import models.repaymentHistory.*
 import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
+import financials.models.audit.RefundToTaxPayerResponseAuditModel
 
 import java.time.LocalDate
 

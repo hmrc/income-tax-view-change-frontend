@@ -30,7 +30,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import views.html.CreditAndRefundsView
+import financials.views.html.CreditAndRefundsView
 
 import java.time.LocalDate
 

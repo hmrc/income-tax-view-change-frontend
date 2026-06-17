@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.WhatYouOweResponseAuditModel
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
@@ -37,6 +36,7 @@ import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
 import common.testConstants.messages.WhatYouOweMessages.hmrcAdjustment
+import financials.models.audit.WhatYouOweResponseAuditModel
 
 import java.time.LocalDate
 import java.time.Month.APRIL

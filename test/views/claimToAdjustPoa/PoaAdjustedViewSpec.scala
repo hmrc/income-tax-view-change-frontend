@@ -25,7 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.*
 import play.twirl.api.Html
-import views.html.claimToAdjustPoa.PoaAdjustedView
+import financials.views.html.claimToAdjustPoa.PoaAdjustedView
 
 class PoaAdjustedViewSpec extends TestSupport{
 

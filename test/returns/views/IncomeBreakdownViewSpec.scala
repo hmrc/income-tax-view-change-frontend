@@ -17,8 +17,8 @@
 package views
 
 import common.testUtils.ViewSpec
-import models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import org.jsoup.nodes.Element
+import returns.models.liabilitycalculation.viewmodels.IncomeBreakdownViewModel
 import returns.views.html.IncomeBreakdownView
 
 class IncomeBreakdownViewSpec extends ViewSpec {

@@ -20,12 +20,13 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.*
 import common.testConstants.BaseTestConstants.*
+import returns.models.audit.TaxDueResponseAuditModel
+import returns.models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelDeductionsMinimal, liabilityCalculationModelSuccessful}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

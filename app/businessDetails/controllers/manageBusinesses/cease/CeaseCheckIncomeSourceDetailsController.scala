@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
@@ -27,7 +28,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
-import common.auth.{AuthActions, MtdItUser}
+import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
@@ -42,7 +43,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CeaseCheckIncomeSourceDetailsController @Inject()(
-                                                         val authActions: AuthActions,
+                                                         val authActions: AuthActionsWithTriggeredMigrationCheck,
                                                          val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                          val view: CeaseCheckIncomeSourceDetailsView,
                                                          val updateIncomeSourceService: UpdateIncomeSourceService,

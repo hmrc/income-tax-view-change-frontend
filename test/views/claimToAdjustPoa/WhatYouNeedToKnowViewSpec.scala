@@ -23,7 +23,7 @@ import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
 import financials.testConstants.ClaimToAdjustPoaTestConstants.whatYouNeedToKnowViewModel
-import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
+import financials.views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 class WhatYouNeedToKnowViewSpec extends TestSupport {
 

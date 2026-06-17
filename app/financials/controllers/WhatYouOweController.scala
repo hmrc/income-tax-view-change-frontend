@@ -23,7 +23,7 @@ import common.enums.GatewayPage.WhatYouOwePage
 import common.services.DateServiceInterface
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.WhatYouOweService
-import forms.utils.SessionKeys.gatewayPage
+import financials.forms.utils.SessionKeys.gatewayPage
 import hub.controllers.routes as appRoutes
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import returns.controllers.routes as returnsRoutes
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.WhatYouOweView
+import financials.views.html.WhatYouOweView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.services.SessionService
 import businessDetails.utils.TriggeredMigrationUtils
 import com.google.inject.{Inject, Singleton}
@@ -23,16 +24,15 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
-import common.auth.AuthActions
 import common.config.FrontendAppConfig
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
-import obligations.controllers.{routes => obligationsRoutes}
+import obligations.controllers.routes as obligationsRoutes
 
 @Singleton
 class CheckCompleteController @Inject()(view: CheckCompleteView,
-                                        val auth: AuthActions,
+                                        val auth: AuthActionsWithTriggeredMigrationCheck,
                                         sessionService: SessionService)
                                        (mcc: MessagesControllerComponents,
                                         implicit val appConfig: FrontendAppConfig,

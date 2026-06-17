@@ -31,7 +31,7 @@ import financials.testConstants.PaymentAllocationsTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import common.testUtils.ViewSpec
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
-import views.html.PaymentAllocationView
+import financials.views.html.PaymentAllocationView
 
 import scala.jdk.CollectionConverters.*
 

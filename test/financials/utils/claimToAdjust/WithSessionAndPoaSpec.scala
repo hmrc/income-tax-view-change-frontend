@@ -41,7 +41,7 @@ import play.api.mvc.Results.Ok
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 import shared.enums.{BeforeSubmissionPage, CannotGoBackPage, InitialPage}
-import views.html.claimToAdjustPoa.WhatYouNeedToKnowView
+import financials.views.html.claimToAdjustPoa.WhatYouNeedToKnowView
 
 import scala.concurrent.{ExecutionContext, Future}
 

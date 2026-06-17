@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.InitiatePayNowAuditModel
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
@@ -29,6 +28,7 @@ import play.api
 import play.api.Application
 import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
+import financials.models.audit.InitiatePayNowAuditModel
 import financials.testConstants.PaymentDataTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.http.HeaderCarrier

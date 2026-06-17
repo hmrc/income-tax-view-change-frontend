@@ -19,8 +19,8 @@ package returns.services
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation.*
-import models.taxyearsummary.*
 import play.api.Logger
+import returns.models.taxyearsummary.{AgentCannotViewTaxCalc, IrsaEnrolementHandedOff, LegacyAndCesa, MtdSoftwareShowCalc, NoIrsaAEnrolement, TaxYearViewScenarios}
 
 import javax.inject.Inject
 

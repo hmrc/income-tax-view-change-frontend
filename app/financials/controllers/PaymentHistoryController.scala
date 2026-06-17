@@ -16,7 +16,6 @@
 
 package financials.controllers
 
-import audit.models.PaymentHistoryResponseAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
@@ -26,7 +25,8 @@ import common.models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
 import common.services.{AuditingService, DateServiceInterface}
 import common.views.html.errorPages.CustomNotFoundErrorView
 import financials.services.{PaymentHistoryService, RepaymentService}
-import forms.utils.SessionKeys.gatewayPage
+import financials.forms.utils.SessionKeys.gatewayPage
+import financials.models.audit.PaymentHistoryResponseAuditModel
 import models.financialDetails.TransactionUtils
 import models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import models.repaymentHistory.RepaymentHistoryUtils
@@ -36,7 +36,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html.PaymentHistoryView
+import financials.views.html.PaymentHistoryView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

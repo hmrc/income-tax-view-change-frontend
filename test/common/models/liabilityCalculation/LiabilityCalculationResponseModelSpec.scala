@@ -21,10 +21,10 @@ import common.models.liabilitycalculation.taxcalculation.TaxBands
 import common.models.liabilitycalculation.*
 import common.testUtils.TestSupport
 import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
-import models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import play.api.http.Status
 import play.api.i18n.Lang
 import play.api.libs.json.*
+import returns.models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
 
 import scala.io.Source

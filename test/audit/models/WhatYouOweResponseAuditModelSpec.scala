@@ -21,8 +21,9 @@ import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import play.api.libs.json.{JsValue, Json}
-import common.testConstants.BaseTestConstants._
+import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
+import financials.models.audit.WhatYouOweResponseAuditModel
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.dueDateOverdue
 import uk.gov.hmrc.auth.core.AffinityGroup

@@ -26,6 +26,7 @@ import org.scalatest.matchers.should.Matchers
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+import returns.models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel, TaxDueSummaryViewModel, TransitionProfitRow}
 
 import scala.language.implicitConversions
 

@@ -23,7 +23,7 @@ import play.test.Helpers.contentAsString
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.TestSupport
-import views.html.claimToAdjustPoa.YouCannotGoBackView
+import financials.views.html.claimToAdjustPoa.YouCannotGoBackView
 class YouCannotGoBackViewSpec extends TestSupport {
 
   class Setup(isAgent: Boolean) {

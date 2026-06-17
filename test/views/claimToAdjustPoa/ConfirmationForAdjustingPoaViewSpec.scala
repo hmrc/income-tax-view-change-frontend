@@ -25,7 +25,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
+import financials.views.html.claimToAdjustPoa.ConfirmationForAdjustingPoaView
 
 class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 

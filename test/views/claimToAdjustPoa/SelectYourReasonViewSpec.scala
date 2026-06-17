@@ -25,7 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.twirl.api.Html
-import views.html.claimToAdjustPoa.SelectYourReasonView
+import financials.views.html.claimToAdjustPoa.SelectYourReasonView
 
 class SelectYourReasonViewSpec extends TestSupport {
 

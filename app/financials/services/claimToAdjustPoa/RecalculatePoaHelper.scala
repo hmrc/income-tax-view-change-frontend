@@ -16,13 +16,13 @@
 
 package financials.services.claimToAdjustPoa
 
-import audit.models.AdjustPaymentsOnAccountAuditModel
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.SubmitClaimToAdjustToNrs
 import common.models.core.Nino
 import common.services.AuditingService
 import financials.controllers.claimToAdjustPoa.routes.*
+import financials.models.audit.AdjustPaymentsOnAccountAuditModel
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PoaAmendmentData, SelectYourReason}
 import financials.services.{NrsService, PaymentOnAccountSessionService}

@@ -23,6 +23,7 @@ import common.testConstants.BaseTestConstants.*
 import financials.models.ChargeType.*
 import financials.models.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
+import financials.models.audit.{ChargeSummaryAudit, PaymentSharedFunctions}
 import financials.models.chargeHistory.ChargeHistoryModel
 import financials.models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import financials.testConstants.ChargeConstants

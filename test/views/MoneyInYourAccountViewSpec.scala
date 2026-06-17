@@ -31,7 +31,7 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import views.html.MoneyInYourAccountView
+import financials.views.html.MoneyInYourAccountView
 
 
 class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {

@@ -31,7 +31,7 @@ import services.helpers.CreditHistoryDataHelper
 import common.testConstants.BaseTestConstants.testMtditid
 import common.testUtils.{TestSupport, ViewSpec}
 import financials.testConstants.FinancialDetailsTestConstants.*
-import views.html.CreditsSummaryView
+import financials.views.html.CreditsSummaryView
 
 import java.net.URL
 

@@ -26,7 +26,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.test.Helpers.contentAsString
-import views.html.claimToAdjustPoa.AmendablePoaView
+import financials.views.html.claimToAdjustPoa.AmendablePoaView
 
 class AmendablePoaControllerViewSpec extends TestSupport {
 
