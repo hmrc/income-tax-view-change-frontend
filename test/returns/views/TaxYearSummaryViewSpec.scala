@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package views
+package returns.views
 
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation.{Message, Messages}
 import common.testUtils.ViewSpec
-import common.viewUtils
 import common.viewUtils.ExternalUrlHelper
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import financials.testConstants.ChargeConstants
+import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
 import models.financialDetails.*
 import obligations.testConstants.NextUpdatesTestConstants.*
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
-import returns.views.html.TaxYearSummaryView
-import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
+import returns.views.html.TaxYearSummaryView
 import shared.models.{ObligationWithIncomeType, ObligationsModel}
 
 import java.time.LocalDate
@@ -258,9 +257,17 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url")
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
+    )
 
-  def explanationView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel, isCrystallised: Boolean = false): Html =
+  def explanationView(
+                       chargeItems: List[TaxYearSummaryChargeItem] = testChargesList,
+                       isAgent: Boolean = false,
+                       obligations: ObligationsModel = testObligationsModel,
+                       isCrystallised: Boolean = false,
+                       isNotCrystallisedShowInset: Boolean = true
+                     ): Html =
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(calculationSummary = Some(modelComplete(crystallised = isCrystallised, testPeriod = 2017)), previousCalculationSummary = None, charges = chargeItems, obligations = obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
@@ -271,7 +278,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = None,
       selfAssessmentLink = "",
-      contactHmrcLink = ""
+      contactHmrcLink = "",
+      isNotCrystallisedShowInset = isNotCrystallisedShowInset
     )
 
   def class2NicsView(isAgent: Boolean = false): Html =
@@ -285,7 +293,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url"
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
     )
 
   def estimateViewWithNoCalcData(isAgent: Boolean = false): Html =
@@ -299,7 +308,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = true,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url"
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
     )
 
   def unattendedCalcView(isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
@@ -312,7 +322,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -324,7 +336,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def crystallisedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -336,7 +350,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def payeView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -348,7 +364,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def testBalancingPaymentChargeWithZeroValueView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -360,7 +378,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def testPaymentOnAccountChargesCodedOutAcceptedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -372,7 +392,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def testPaymentOnAccountChargesCodedOutFullyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -384,7 +406,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
 
   def testPaymentOnAccountChargesCodedOutCancelledView(isAgent: Boolean = false): Html = taxYearSummaryView(
@@ -397,7 +421,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def immediatelyRejectedByNpsView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -409,7 +435,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    false
+  )
 
   def rejectedByNpsPartWayView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -421,7 +449,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def codingOutPartiallyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -433,7 +463,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def forecastCalcView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -445,7 +477,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def forecastCalcViewCrystallised(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -457,7 +491,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def noForecastDataView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -469,7 +505,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def forecastWithNoCalcData(isAgent: Boolean = false): Html =
     taxYearSummaryView(
@@ -482,7 +520,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url")
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
+    )
 
   def mfaDebitsView(isAgent: Boolean): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -494,7 +534,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def calculationMultipleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -506,7 +548,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
@@ -518,7 +562,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
   def poaView(isAgent: Boolean = false): Html = {
     val ctaLink = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start" else "/report-quarterly/income-and-expenses/view/adjust-poa/start"
@@ -532,7 +578,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url")
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
+    )
   }
 
   def calculationWithLatestAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
@@ -545,7 +593,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     showNoTaxCalc = false,
     viewTaxCalcLink = Some("some fake url"),
     selfAssessmentLink = "some fake url",
-    contactHmrcLink = "some fake url")
+    contactHmrcLink = "some fake url",
+    isNotCrystallisedShowInset = false
+  )
 
 
   def calculationWithLatestAndPreviousAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable =
@@ -559,7 +609,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url")
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
+    )
 
   def calculationWithLatestAmendmentButPfaDisabledView(isAgent: Boolean): HtmlFormat.Appendable =
     taxYearSummaryView(
@@ -572,7 +624,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url")
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
+    )
 
 
   def calculationWithNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable =
@@ -586,7 +640,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url")
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
+    )
 
   def crystallisedNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable =
     taxYearSummaryView(
@@ -607,7 +663,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       showNoTaxCalc = false,
       viewTaxCalcLink = Some("some fake url"),
       selfAssessmentLink = "some fake url",
-      contactHmrcLink = "some fake url"
+      contactHmrcLink = "some fake url",
+      isNotCrystallisedShowInset = false
     )
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
@@ -779,10 +836,6 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.selectHead("dl > div:nth-child(2) > dd:nth-child(2)").text shouldBe modelComplete(crystallised = true).taxDue.toCurrencyString
       }
 
-      "have a paragraph explaining the calc date for an ongoing year" in new Setup(estimateView()) {
-        layoutContent.selectHead("p#calc-date-info").text shouldBe calcDateInfo
-      }
-
       "have a paragraph explaining that the calc date is an estimate" in new Setup(estimateView()) {
         layoutContent.selectHead("p#calc-estimate-info").text shouldBe calcEstimateInfo
       }
@@ -803,14 +856,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.selectHead("""a[href$="#submissions"]""").text shouldBe submissions
       }
 
-      "show the indented explanation text when not crystallised and when there is an updated obligation with a date recieved" in new Setup(explanationView(obligations = testObligationsChronologicalModel)) {
-        val expectedDate: String = implicitDateFormatter.longDate(LocalDate.of(explanationTestYear - 1, 7, 30)).toLongDate
-        document.getElementById("calc-explanation-inset").text() shouldBe explanatoryInsetText(expectedDate)
+      "show the indented explanation text when the isNotCrystallisedShowInset flag == true" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true)) {
+        document.getOptionalSelector("#calc-explanation-inset").get.text() shouldBe "This is not your final tax bill. This calculation is based on the information we currently have and may change when you finalise your tax year."
       }
-      "do not show the indented explanation text when crystallised" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true)) {
-        document.getOptionalSelector("#calc-explanation-inset") shouldBe None
-      }
-      "do not show the indented explanation text when there is no updated obligation with a date recieved" in new Setup(explanationView()) {
+
+      "do not show the indented explanation text when the isNotCrystallisedShowInset flag == false" in new Setup(explanationView(obligations = testObligationsChronologicalModel, isCrystallised = true, isNotCrystallisedShowInset = false)) {
         document.getOptionalSelector("#calc-explanation-inset") shouldBe None
       }
 
