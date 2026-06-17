@@ -21,7 +21,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.TaxYearSummaryPage
 import common.enums.TaxYearSummary.*
-import common.enums.TaxYearSummary.CalculationType.{UnknownCalculationType, fromStringToCalculationTypeValue, notCrystallisedTypes}
+import common.enums.TaxYearSummary.CalculationType.fromStringToCalculationTypeValue
 import common.implicits.ImplicitDateFormatter
 import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
@@ -410,8 +410,17 @@ class TaxYearSummaryController @Inject()(
       val taxYearViewScenarios =
         taxYearSummaryService.determineCannotDisplayCalculationContentScenario(Some(error), TaxYear(taxYear - 1, taxYear))
 
-      val strCalcTypeValue: CalculationType = validLatestCalculation.map(liabilityCalculationResponse => CalculationType.fromStringToCalculationTypeValue(liabilityCalculationResponse.metadata.calculationType)).getOrElse(UnknownCalculationType)
-      val isNotCrystallisedShowInset: Boolean = notCrystallisedTypes.contains(strCalcTypeValue)
+      val isNotCrystallisedShowInset: Boolean =
+        validLatestCalculation
+          .exists(liabilityCalculationResponse =>
+            fromStringToCalculationTypeValue(liabilityCalculationResponse.metadata.calculationType) match {
+              case CalculationType.UnknownCalculationType =>
+                Logger("application").error(s"[TaxYearSummaryController][handleCalcError] Found: ${liabilityCalculationResponse.metadata.calculationType}, Returned: UnknownCalculationType")
+                liabilityCalculationResponse.metadata.isCalculationNotCrystallised
+              case _ =>
+                liabilityCalculationResponse.metadata.isCalculationNotCrystallised
+            }
+          )
 
       Future(
         Ok(taxYearSummaryView(

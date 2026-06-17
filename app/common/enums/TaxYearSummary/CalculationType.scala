@@ -52,6 +52,7 @@ object CalculationType {
   val notCrystallisedTypes: Set[CalculationType] =
     Set(
       CalculationType.InYear,
+      CalculationType.LegacyInYear,
       CalculationType.IntentToFinalise,
       CalculationType.IntentToCrystallise
     )
