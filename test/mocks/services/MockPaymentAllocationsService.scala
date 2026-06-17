@@ -18,8 +18,8 @@ package mocks.services
 
 import common.models.core.Nino
 import common.testUtils.UnitSpec
+import financials.models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import financials.services.PaymentAllocationsService
-import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.{any, eq as matches}
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach

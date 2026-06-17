@@ -22,11 +22,11 @@ import common.models.incomeSourceDetails.TaxYear
 import financials.models.AmendedReturnReversalReason
 import financials.models.ChargeType.{ITSA_ENGLAND_AND_NI, NIC4_WALES}
 import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargesHistoryErrorModel, ChargesHistoryModel}
+import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError, PaymentAllocationViewModel}
 import financials.testConstants.FinancialDetailsTestConstants.financialDetail
 import financials.testConstants.{ChargeConstants, PaymentAllocationsTestConstants}
 import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService, MockPaymentAllocationsService}
 import models.financialDetails.*
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError, PaymentAllocationViewModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.test.Helpers.INTERNAL_SERVER_ERROR

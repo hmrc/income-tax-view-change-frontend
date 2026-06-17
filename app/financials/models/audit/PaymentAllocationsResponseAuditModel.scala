@@ -22,7 +22,7 @@ import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import common.models.core.AccountingPeriodModel
 import common.utils.audit.Utilities.userAuditDetails
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
+import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import models.paymentAllocations.AllocationDetail
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}

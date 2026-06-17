@@ -24,8 +24,8 @@ import common.models.core.{CorrelationId, Nino}
 import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import common.utils.Headers.checkAndAddTestHeader
 import financials.models.creditsandrefunds.CreditsModel
+import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.financialDetails.*
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
 import play.api.http.Status

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.paymentAllocationCharges
+package financials.models.paymentAllocationCharges
 
 import common.exceptions.MissingFieldException
 import common.testUtils.TestSupport

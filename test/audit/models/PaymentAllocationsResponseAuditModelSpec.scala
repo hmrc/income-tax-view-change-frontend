@@ -16,17 +16,17 @@
 
 package audit.models
 
-import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
-import models.paymentAllocations.AllocationDetail
-import play.api.libs.json.Json
-import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import common.auth.actions.AuthActionsTestData.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import common.testUtils.TestSupport
 import financials.models.audit.PaymentAllocationsResponseAuditModel
+import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
+import models.paymentAllocations.AllocationDetail
+import play.api.libs.json.Json
+import uk.gov.hmrc.auth.core.AffinityGroup
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
 

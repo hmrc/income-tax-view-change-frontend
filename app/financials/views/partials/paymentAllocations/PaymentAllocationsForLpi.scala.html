@@ -21,7 +21,7 @@
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, origin: Option[String] = None)(implicit messages: Messages, user: MtdItUser[_])
+@(paymentAllocations: financials.models.paymentAllocationCharges.PaymentAllocationViewModel, origin: Option[String] = None)(implicit messages: Messages, user: MtdItUser[_])
 
 
 @paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiAllocationDetails =>

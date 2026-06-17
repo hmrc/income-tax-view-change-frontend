@@ -20,8 +20,11 @@ import common.config.FrontendAppConfig
 import common.connectors.BaseConnectorSpec
 import common.models.audit.{AuditModel, ExtendedAuditModel}
 import common.services.AuditingService
+import common.testConstants.BaseTestConstants.*
+import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
+import financials.testConstants.FinancialDetailsTestConstants.*
+import financials.testConstants.PaymentAllocationsTestConstants.*
 import models.financialDetails.*
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
 import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
@@ -31,9 +34,6 @@ import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.mvc.Http.Status
-import common.testConstants.BaseTestConstants.*
-import financials.testConstants.FinancialDetailsTestConstants.*
-import financials.testConstants.PaymentAllocationsTestConstants.*
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

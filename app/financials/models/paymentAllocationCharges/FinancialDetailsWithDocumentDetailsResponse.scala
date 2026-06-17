@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.paymentAllocationCharges
+package financials.models.paymentAllocationCharges
 
 import models.financialDetails.{DocumentDetail, FinancialDetail}
 import play.api.libs.functional.syntax._

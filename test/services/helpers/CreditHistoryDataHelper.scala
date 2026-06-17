@@ -20,8 +20,8 @@ package services.helpers
 import businessDetails.testConstants.BusinessDetailsTestConstants.fixedDate
 import financials.models.ChargeType.NIC4_WALES
 import financials.models.creditDetailModel.CreditDetailModel
+import financials.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import models.financialDetails.*
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
 import java.time.LocalDate
 

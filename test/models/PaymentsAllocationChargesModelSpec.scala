@@ -17,12 +17,12 @@
 package models
 
 import common.services.DateService
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import org.scalatest.matchers.should.Matchers
-import play.api.libs.json.{JsSuccess, Json}
 import common.testConstants.BaseTestConstants.app
 import common.testUtils.UnitSpec
-import financials.testConstants.PaymentAllocationsTestConstants._
+import financials.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import financials.testConstants.PaymentAllocationsTestConstants.*
+import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.{JsSuccess, Json}
 
 class PaymentsAllocationChargesModelSpec extends UnitSpec with Matchers {
 

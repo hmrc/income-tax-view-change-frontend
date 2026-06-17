@@ -16,13 +16,13 @@
 
 package financials.services
 
+import common.testConstants.BaseTestConstants.*
+import common.testUtils.TestSupport
+import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationError}
+import financials.testConstants.PaymentAllocationsTestConstants.*
 import mocks.connectors.MockFinancialDetailsConnector
 import mocks.services.MockFinancialDetailsService
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, PaymentAllocationError}
 import models.paymentAllocations.PaymentAllocationsError
-import common.testConstants.BaseTestConstants._
-import common.testUtils.TestSupport
-import financials.testConstants.PaymentAllocationsTestConstants._
 
 class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetailsConnector with MockFinancialDetailsService {
 
