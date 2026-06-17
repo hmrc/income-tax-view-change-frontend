@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
-import org.apache.pekko.util.ByteString
+object NrsSubmissionResponse {
 
-case class RawPayload(byteString: ByteString, encoding: Option[String]) {
-  lazy val byteArray: Array[Byte] = byteString.toArray
-}
+  type NrsSubmissionResponse = Either[NrsSubmissionFailure, NrsSuccessResponse]
 
-object RawPayload {
-  // For testing
-  def apply(bytes: Array[Byte], encoding: Option[String] = None): RawPayload = RawPayload(ByteString(bytes), encoding)
 }

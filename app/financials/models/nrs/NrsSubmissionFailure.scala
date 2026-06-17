@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
-import play.api.libs.json.{Format, Reads, Writes}
+sealed trait NrsSubmissionFailure
 
-import java.time.format.DateTimeFormatter
-import java.time.{Instant, ZoneOffset}
+object NrsSubmissionFailure {
 
-trait InstantFormatter {
-  val dateTimeWithMillis: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSS'Z'").withZone(ZoneOffset.UTC)
+  case class NrsErrorResponse(status: Int) extends NrsSubmissionFailure
 
-  implicit val instantWrites: Format[Instant] = {
-    Format(Reads.DefaultInstantReads, Writes.temporalWrites[Instant, DateTimeFormatter](dateTimeWithMillis))
-  }
+  case object NrsExceptionThrown extends NrsSubmissionFailure
+
 }
-
-object InstantFormatter extends InstantFormatter

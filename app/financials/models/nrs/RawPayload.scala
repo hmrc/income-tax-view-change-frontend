@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
-sealed trait NrsSubmissionFailure
+import org.apache.pekko.util.ByteString
 
-object NrsSubmissionFailure {
+case class RawPayload(byteString: ByteString, encoding: Option[String]) {
+  lazy val byteArray: Array[Byte] = byteString.toArray
+}
 
-  case class NrsErrorResponse(status: Int) extends NrsSubmissionFailure
-
-  case object NrsExceptionThrown extends NrsSubmissionFailure
-
+object RawPayload {
+  // For testing
+  def apply(bytes: Array[Byte], encoding: Option[String] = None): RawPayload = RawPayload(ByteString(bytes), encoding)
 }

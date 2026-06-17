@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
-object NrsSubmissionResponse {
+import play.api.libs.json.{Format, Json}
 
-  type NrsSubmissionResponse = Either[NrsSubmissionFailure, NrsSuccessResponse]
+case class NrsSuccessResponse(nrSubmissionId: String)
 
+object NrsSuccessResponse {
+  implicit val format: Format[NrsSuccessResponse] = Json.format[NrsSuccessResponse]
 }

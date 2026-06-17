@@ -18,16 +18,16 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
-import models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
-import models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
-import models.nrs.{NrsSubmission, NrsSuccessResponse}
+import financials.models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
+import financials.models.nrs.NrsSubmissionResponse.NrsSubmissionResponse
+import financials.models.nrs.{NrsSubmission, NrsSuccessResponse}
 import play.api.Logging
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status
 import play.api.http.Status.{ACCEPTED, TOO_MANY_REQUESTS}
+import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

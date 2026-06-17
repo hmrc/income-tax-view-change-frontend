@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
 import play.api.libs.json.{Json, Writes}
-import uk.gov.hmrc.auth.core.retrieve._
+import uk.gov.hmrc.auth.core.retrieve.*
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, Enrolments}
 
 import java.time.{Instant, LocalDate}

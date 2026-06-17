@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package models.nrs
+package financials.models.nrs
 
-import play.api.libs.json.{Json, OWrites}
+import play.api.libs.json.{Json, Writes}
 
-import java.util.Base64
+case class SearchKeys(credId: Option[String], utr: Option[String], nino: String)
 
-case class NrsSubmission(rawPayload: RawPayload, metadata: NrsMetadata)
-
-object NrsSubmission {
-
-  private val encoder = Base64.getEncoder
-
-  private def encodeBase64(rawPayload: RawPayload) = encoder.encodeToString(rawPayload.byteArray)
-
-  implicit val writes: OWrites[NrsSubmission] = OWrites { submission =>
-    Json.obj(
-      "payload" -> encodeBase64(submission.rawPayload),
-      "metadata" -> submission.metadata
-    )
-  }
-
+object SearchKeys {
+  implicit val writes: Writes[SearchKeys] = Json.writes[SearchKeys]
 }

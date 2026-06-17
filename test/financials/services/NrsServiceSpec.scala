@@ -16,13 +16,13 @@
 
 package financials.services
 
-import connectors.NrsConnector
-import models.nrs.NrsSubmissionFailure.NrsErrorResponse
-import models.nrs.NrsSuccessResponse
-import org.mockito.Mockito.*
-import play.api.http.Status.NOT_FOUND
 import common.testConstants.NrsUtils.nrsSubmission
 import common.testUtils.TestSupport
+import connectors.NrsConnector
+import financials.models.nrs.NrsSubmissionFailure.NrsErrorResponse
+import financials.models.nrs.NrsSuccessResponse
+import org.mockito.Mockito.*
+import play.api.http.Status.NOT_FOUND
 
 import scala.concurrent.Future
 
