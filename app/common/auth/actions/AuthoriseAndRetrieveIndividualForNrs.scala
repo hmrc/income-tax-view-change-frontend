@@ -91,7 +91,7 @@ class AuthoriseAndRetrieveIndividualForNrs @Inject()(val authorisedFunctions: Fr
     implicit @unused request: Request[A]): PartialFunction[NrsIndividualAuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ ~ _ =>
       logger.error(s"Agent on endpoint for individuals")
-      Future.successful(Left(Redirect(hub.controllers.agent.routes.EnterClientsUTRController.show())))
+      Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl)))
   }
 
   private def redirectIfInsufficientConfidenceNrs[A]()(

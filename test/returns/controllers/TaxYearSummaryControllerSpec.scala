@@ -20,7 +20,7 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.models.admin.*
-import connectors.CalculationListConnector
+import shared.connectors.CalculationListConnector
 import financials.controllers.routes as financialsRoutes
 import financials.services.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
