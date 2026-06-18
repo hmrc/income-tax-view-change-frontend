@@ -513,7 +513,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poaExtra1Table.select("td").get(1).text() shouldBe poa1ReconcileInterest + " 1"
           poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
-          pageDocument.getElementById("due-charge-na-0").text shouldBe "£150.00"
+          pageDocument.getElementById("accrued-interest-amount-due-0").text shouldBe "£150.00"
 
           poaExtra1Table.select("td").last().text() shouldBe "£100.00"
 
@@ -955,9 +955,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "only show interest for POA when there is no late Payment Interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
 
-          Option(pageDocument.getElementById("due-charge-na-0")).isDefined shouldBe true
+          Option(pageDocument.getElementById("accrued-interest-amount-due-0")).isDefined shouldBe true
 
-          pageDocument.getElementById("due-charge-na-0").text() shouldBe "£34.56"
+          pageDocument.getElementById("accrued-interest-amount-due-0").text() shouldBe "£34.56"
         }
 
         "not have a paragraph explaining interest rates when there is no accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueDataIt()) {
