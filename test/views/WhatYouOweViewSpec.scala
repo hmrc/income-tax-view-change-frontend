@@ -1316,10 +1316,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }
 
       "money in your account section with available credits with totalCredit" in new AgentTestSetup(charges = whatYouOweDataWithAvailableCredits()) {
-        pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount-agent") + " " +
-          messages("whatYouOwe.moneyOnAccount-agent-1") + " " +
+        pageDocument.getElementById("money-in-your-account").text shouldBe messages("whatYouOwe.moneyOnAccount") + " " +
+          messages("whatYouOwe.moneyOnAccount-1") + " " +
           messages("whatYouOwe.moneyOnAccount-link") +
-          messages("whatYouOwe.moneyOnAccount-agent-2", "£350.00")
+          messages("whatYouOwe.moneyOnAccount-2", "£350.00")
       }
 
       "money in your account section with no available credits" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
