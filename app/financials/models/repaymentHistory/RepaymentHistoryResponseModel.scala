@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package common
+package financials.models.repaymentHistory
 
-import play.api.libs.json.*
+import play.api.libs.json.{Format, Json}
 
-package object models {
-  def readNullable[T](path: JsPath)(implicit reads: Reads[T]): Reads[Option[T]] = path.readNullable[T] orElse Reads.pure[Option[T]](None)
+sealed trait RepaymentHistoryResponseModel
 
-  def readNullableList[T](path: JsPath)(implicit reads: Reads[List[T]]): Reads[List[T]] = path.read[List[T]] orElse Reads.pure[List[T]](Nil)
 
+case class RepaymentHistoryModel(repaymentsViewerDetails: List[RepaymentHistory]) extends RepaymentHistoryResponseModel
+
+
+object RepaymentHistoryModel {
+  implicit val format: Format[RepaymentHistoryModel] = Json.format[RepaymentHistoryModel]
 }
+
+case class RepaymentHistoryErrorModel(code: Int, message: String) extends RepaymentHistoryResponseModel

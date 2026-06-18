@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
+package financials.models.paymentAllocations
 
 import play.api.libs.json.{Format, Json}
 
-sealed trait RepaymentHistoryResponseModel
+sealed trait PaymentDetailsResponse
+
+case class PaymentDetails(paymentDetails: Seq[PaymentAllocations]) extends PaymentDetailsResponse
 
 
-case class RepaymentHistoryModel(repaymentsViewerDetails: List[RepaymentHistory]) extends RepaymentHistoryResponseModel
-
-
-object RepaymentHistoryModel {
-  implicit val format: Format[RepaymentHistoryModel] = Json.format[RepaymentHistoryModel]
+object PaymentDetails {
+  implicit val format: Format[PaymentDetails] = Json.format[PaymentDetails]
 }
-
-case class RepaymentHistoryErrorModel(code: Int, message: String) extends RepaymentHistoryResponseModel

@@ -18,22 +18,21 @@ package common.auth.actions
 
 import com.google.inject.Singleton
 import common.models.auth.AuthorisedAndEnrolledRequest
-import hub.controllers.agent.routes
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import common.config.FrontendAppConfig
 
 @Singleton
-class AgentHasConfirmedClientAction @Inject()(implicit val executionContext: ExecutionContext)
+class AgentHasConfirmedClientAction @Inject()(appConfig: FrontendAppConfig)(implicit val executionContext: ExecutionContext)
   extends ActionRefiner[AuthorisedAndEnrolledRequest, AuthorisedAndEnrolledRequest] {
 
   override protected def refine[A](request: AuthorisedAndEnrolledRequest[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
     if(request.clientDetails.exists(_.confirmed)) {
       Future.successful(Right(request))
     } else {
-      Future.successful(Left(Redirect(routes.ConfirmClientUTRController.show())))
+      Future.successful(Left(Redirect(appConfig.confirmClientUTRUrl)))
     }
   }
 }

@@ -89,7 +89,8 @@
                 Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
                     HeadCell(content = Text(getMessage("tableHead.interest")))
                 ),
-                Some(HeadCell(content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking)))
+                Some(HeadCell(content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking),
+format = Some("numeric")))
             ).flatten),
             rows = Seq(
                 Option.when(viewModel.whatYouOweChargesList.bcdChargeTypeDefinedAndGreaterThanZero)(

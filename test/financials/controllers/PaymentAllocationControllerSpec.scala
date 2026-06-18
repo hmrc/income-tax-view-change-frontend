@@ -23,16 +23,16 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.core.Nino
 import common.services.{DateService, DateServiceInterface}
+import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
 import financials.services.PaymentAllocationsService
+import financials.testConstants.PaymentAllocationsTestConstants.*
 import mocks.services.MockPaymentAllocationsService
-import models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsModel, PaymentAllocationError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import financials.testConstants.PaymentAllocationsTestConstants.*
 
 import scala.concurrent.Future
 

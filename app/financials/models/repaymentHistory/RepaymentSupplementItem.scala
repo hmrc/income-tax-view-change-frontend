@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package models.paymentAllocations
+package financials.models.repaymentHistory
 
 import play.api.libs.json.{Format, Json}
 
-sealed trait PaymentDetailsResponse
+import java.time.LocalDate
 
-case class PaymentDetails(paymentDetails: Seq[PaymentAllocations]) extends PaymentDetailsResponse
+case class RepaymentSupplementItem(parentCreditReference: Option[String],
+                                   amount: Option[BigDecimal],
+                                   fromDate: Option[LocalDate],
+                                   toDate: Option[LocalDate],
+                                   rate: Option[BigDecimal])
 
-
-object PaymentDetails {
-  implicit val format: Format[PaymentDetails] = Json.format[PaymentDetails]
+object RepaymentSupplementItem {
+  implicit val format: Format[RepaymentSupplementItem] = Json.format[RepaymentSupplementItem]
 }

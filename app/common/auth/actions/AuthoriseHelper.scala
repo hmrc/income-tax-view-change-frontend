@@ -62,7 +62,7 @@ trait AuthoriseHelper extends FeatureSwitching {
     implicit request: Request[A]): PartialFunction[AuthRetrievals, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _ ~ _ ~ _ ~ Some(Agent) ~ _ =>
       logger.error(s"Agent on endpoint for individuals")
-      Future.successful(Left(Redirect(hub.controllers.agent.routes.EnterClientsUTRController.show())))
+      Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl)))
   }
 
   def redirectIfNotAgent[A]()(

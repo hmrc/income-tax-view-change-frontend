@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
-
+package financials.models.repaymentHistory
 
 import cats.implicits.catsSyntaxOptionId
 import common.testUtils.TestSupport
+import financials.models.repaymentHistory.RepaymentHistoryUtils.*
 import financials.testConstants.ChargeConstants
-import models.financialDetails._
-import models.repaymentHistory.RepaymentHistoryUtils._
+import models.financialDetails.*
 import org.scalatest.matchers.should.Matchers
 
 import java.time.LocalDate

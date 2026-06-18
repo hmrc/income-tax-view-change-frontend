@@ -255,8 +255,37 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
 
-  // needed for refactor (can be deleted once refactoring is complete)
-  lazy val individualHomeUrl: String = hub.controllers.routes.HomeController.show().url
-  lazy val agentHomeUrl: String = hub.controllers.routes.HomeController.showAgent().url
+  
+
+  // needed for refactor (can be removed from config once refactoring is complete)
+  import hub.controllers.routes as hubRoutes
+  import hub.controllers.agent.routes as hubAgentRoutes
+  
+  lazy val individualHomeUrl: String = hubRoutes.HomeController.show().url
+  def individualHomeUrl(origin: Option[String] = None): String = hubRoutes.HomeController.show(origin).url
+  lazy val agentHomeUrl: String = hubRoutes.HomeController.showAgent().url
   def homePageUrl(isAgent: Boolean): String = if isAgent then agentHomeUrl else individualHomeUrl
+
+  lazy val enterClientsUTRUrl: String = hubAgentRoutes.EnterClientsUTRController.show().url
+  lazy val confirmClientUTRUrl: String = hubAgentRoutes.ConfirmClientUTRController.show().url
+
+  
+  import obligations.controllers.routes as obligationsRoutes
+  
+  def nextUpdatesIndividualUrl(origin: Option[String] = None): String = obligationsRoutes.NextUpdatesController.show(origin).url
+  lazy val nextUpdatesAgentUrl: String = obligationsRoutes.NextUpdatesController.showAgent().url
+
+  
+  import returns.controllers.routes as returnsRoutes
+  
+  def taxYearsUrl(isAgent: Boolean): String = if isAgent 
+    then returnsRoutes.TaxYearsController.showAgentTaxYears().url 
+    else returnsRoutes.TaxYearsController.showTaxYears().url
+
+  
+  import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+  
+  def manageYourBusinessUrl(isAgent: Boolean): String = if isAgent 
+    then manageBusinessRoutes.ManageYourBusinessesController.showAgent().url 
+    else manageBusinessRoutes.ManageYourBusinessesController.show().url
 }

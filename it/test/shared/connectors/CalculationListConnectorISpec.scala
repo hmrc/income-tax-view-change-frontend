@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors
+package shared.connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
 import common.models.core.Nino

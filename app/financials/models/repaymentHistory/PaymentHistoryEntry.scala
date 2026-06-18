@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
+package financials.models.repaymentHistory
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import models.financialDetails._
+import models.financialDetails.*
 
 import java.time.LocalDate
 

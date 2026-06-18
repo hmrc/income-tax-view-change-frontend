@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package models.paymentAllocationCharges
+package financials.models.paymentAllocationCharges
 
 import common.exceptions.MissingFieldException
 import common.testUtils.TestSupport
-import models.paymentAllocations.AllocationDetail
+import financials.models.paymentAllocations.AllocationDetail
 import org.scalatest.matchers.should.Matchers
 
 import java.time.LocalDate

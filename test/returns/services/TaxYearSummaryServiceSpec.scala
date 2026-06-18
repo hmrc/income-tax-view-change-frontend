@@ -23,9 +23,9 @@ import common.connectors.IncomeTaxCalculationConnector
 import common.enums.{MTDIndividual, MTDPrimaryAgent}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.liabilitycalculation.*
+import shared.connectors.CalculationListConnector
 import common.testConstants.BaseTestConstants.{saEnrolment, testMtditid, testNino}
 import common.testUtils.TestSupport
-import connectors.CalculationListConnector
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.test.FakeRequest
 import returns.models.taxyearsummary.{AgentCannotViewTaxCalc, IrsaEnrolementHandedOff, LegacyAndCesa, MtdSoftwareShowCalc, NoIrsaAEnrolement}

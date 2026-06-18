@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors
+package shared.connectors
 
 import common.config.FrontendAppConfig
 import common.mocks.{MockAuditingService, MockHttpV2}

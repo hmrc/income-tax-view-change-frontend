@@ -16,12 +16,12 @@
 
 package mocks.views.agent
 
-import models.paymentAllocationCharges.PaymentAllocationViewModel
-import org.mockito.ArgumentMatchers.{any, eq => matches}
+import financials.models.paymentAllocationCharges.PaymentAllocationViewModel
+import financials.views.html.PaymentAllocationView
+import org.mockito.ArgumentMatchers.{any, eq as matches}
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
-import financials.views.html.PaymentAllocationView
 
 trait MockPaymentAllocationView extends BeforeAndAfterEach {
   self: Suite =>

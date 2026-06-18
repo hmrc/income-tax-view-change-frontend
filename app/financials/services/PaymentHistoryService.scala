@@ -25,9 +25,9 @@ import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import financials.models.chargeHistory.ChargesHistoryErrorModel
+import financials.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import financials.services.PaymentHistoryService.PaymentHistoryError
 import models.financialDetails.*
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.NOT_FOUND
