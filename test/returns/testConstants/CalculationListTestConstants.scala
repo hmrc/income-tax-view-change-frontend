@@ -23,9 +23,6 @@ object CalculationListTestConstants {
   val jsonResponseFull: JsValue = Json.parse(
     """
       |{
-      |   "calculationId":"c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      |   "calculationTimestamp":"2023-10-31T12:55:51.159Z",
-      |   "calculationType":"finalDeclaration",
       |   "crystallised": true
       |}
       |""".stripMargin)
@@ -33,27 +30,18 @@ object CalculationListTestConstants {
 
   val calculationListFull: CalculationListResponseModel = {
     CalculationListModel(
-      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      calculationTimestamp = "2023-10-31T12:55:51.159Z",
-      calculationType = "finalDeclaration",
       crystallised = Some(true)
     )
   }
 
   val calculationListFalseFull: CalculationListResponseModel = {
     CalculationListModel(
-      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      calculationTimestamp = "2023-10-31T12:55:51.159Z",
-      calculationType = "finalDeclaration",
       crystallised = Some(false)
     )
   }
 
   val calculationListNone: CalculationListResponseModel = {
     CalculationListModel(
-      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      calculationTimestamp = "2023-10-31T12:55:51.159Z",
-      calculationType = "finalDeclaration",
       crystallised = None
     )
   }
@@ -69,9 +57,6 @@ object CalculationListTestConstants {
 
   val calculationListMin: CalculationListResponseModel = {
     CalculationListModel(
-      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      calculationTimestamp = "2023-10-31T12:55:51.159Z",
-      calculationType = "finalDeclaration",
       crystallised = None
     )
   }

@@ -62,24 +62,13 @@ class ClaimToAdjustServiceSpec extends TestSupport with MockFinancialDetailsConn
   val testUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(testNino, "123", Some("2023"), List.empty, List.empty))
 
   val calculationListSuccessResponseModelCrystallised: CalculationListResponseModel = CalculationListModel(
-    calculationId = "TEST_ID",
-    calculationTimestamp = "TEST_STAMP",
-    calculationType = "TEST_TYPE",
+   
     crystallised = Some(true)
   )
 
-  val calculationListSuccessResponseModelNonCrystallised: CalculationListResponseModel = CalculationListModel(
-    calculationId = "TEST_ID",
-    calculationTimestamp = "TEST_STAMP",
-    calculationType = "TEST_TYPE",
-    crystallised = Some(false)
-  )
+  val calculationListSuccessResponseModelNonCrystallised: CalculationListResponseModel = CalculationListModel(crystallised = Some(false))
 
-  val calculationListSuccessResponseModelCrystallisationMissing: CalculationListResponseModel = CalculationListModel(
-    calculationId = "TEST_ID",
-    calculationTimestamp = "TEST_STAMP",
-    calculationType = "TEST_TYPE",
-    crystallised = None
+  val calculationListSuccessResponseModelCrystallisationMissing: CalculationListResponseModel = CalculationListModel(crystallised = None
   )
 
   val financialDetailsModelBothPoas: FinancialDetailsModel = FinancialDetailsModel(

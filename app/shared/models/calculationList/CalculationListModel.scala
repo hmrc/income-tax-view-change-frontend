@@ -25,9 +25,6 @@ object CalculationListResponseModel {
 }
 
 case class CalculationListModel(
-                                 calculationId: String,
-                                 calculationTimestamp: String,
-                                 calculationType: String,
                                  crystallised: Option[Boolean]
                                ) extends CalculationListResponseModel
 
