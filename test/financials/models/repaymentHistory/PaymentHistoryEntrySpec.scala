@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
+package financials.models.repaymentHistory
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService

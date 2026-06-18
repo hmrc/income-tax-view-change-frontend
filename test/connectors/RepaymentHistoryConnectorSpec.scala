@@ -34,14 +34,14 @@ package connectors
 
 import common.config.FrontendAppConfig
 import common.mocks.{MockAuditingService, MockHttpV2}
-import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
+import common.testConstants.BaseTestConstants.*
+import common.testUtils.TestSupport
+import financials.models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}
+import financials.testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, validMultipleRepaymentHistoryJson, validRepaymentHistoryOneRSIJson}
 import play.api.Configuration
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
 import play.mvc.Http.Status
-import common.testConstants.BaseTestConstants._
-import common.testUtils.TestSupport
-import financials.testConstants.RepaymentHistoryTestConstants.{repaymentHistoryOneRSI, validMultipleRepaymentHistoryJson, validRepaymentHistoryOneRSIJson}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

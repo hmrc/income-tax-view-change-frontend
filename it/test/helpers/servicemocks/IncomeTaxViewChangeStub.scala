@@ -21,8 +21,8 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.helpers.WiremockHelper
 import common.models.core.{Nino, NinoResponseError, NinoResponseSuccess}
 import common.models.incomeSourceDetails.IncomeSourceDetailsResponse
+import financials.models.repaymentHistory.RepaymentHistoryModel
 import models.financialDetails.Payment
-import models.repaymentHistory.RepaymentHistoryModel
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsValue, Json}

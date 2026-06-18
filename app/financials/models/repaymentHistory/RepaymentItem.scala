@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
+package financials.models.repaymentHistory
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.*
 
-sealed trait RepaymentHistoryResponseModel
+case class RepaymentItem(repaymentSupplementItem: Seq[RepaymentSupplementItem])
 
+object RepaymentItem {
 
-case class RepaymentHistoryModel(repaymentsViewerDetails: List[RepaymentHistory]) extends RepaymentHistoryResponseModel
+  implicit val reads: Reads[RepaymentItem] =
+    (__ \ "repaymentSupplementItem").readNullable[Seq[RepaymentSupplementItem]]
+      .map(items => RepaymentItem(items.getOrElse(Seq.empty)))
 
-
-object RepaymentHistoryModel {
-  implicit val format: Format[RepaymentHistoryModel] = Json.format[RepaymentHistoryModel]
+  implicit val writes: OWrites[RepaymentItem] = Json.writes[RepaymentItem]
 }
-
-case class RepaymentHistoryErrorModel(code: Int, message: String) extends RepaymentHistoryResponseModel

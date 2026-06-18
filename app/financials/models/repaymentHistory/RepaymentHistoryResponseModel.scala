@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
+package financials.models.repaymentHistory
 
 import play.api.libs.json.{Format, Json}
 
-import java.time.LocalDate
+sealed trait RepaymentHistoryResponseModel
 
-case class RepaymentSupplementItem(parentCreditReference: Option[String],
-                                   amount: Option[BigDecimal],
-                                   fromDate: Option[LocalDate],
-                                   toDate: Option[LocalDate],
-                                   rate: Option[BigDecimal])
 
-object RepaymentSupplementItem {
-  implicit val format: Format[RepaymentSupplementItem] = Json.format[RepaymentSupplementItem]
+case class RepaymentHistoryModel(repaymentsViewerDetails: List[RepaymentHistory]) extends RepaymentHistoryResponseModel
+
+
+object RepaymentHistoryModel {
+  implicit val format: Format[RepaymentHistoryModel] = Json.format[RepaymentHistoryModel]
 }
+
+case class RepaymentHistoryErrorModel(code: Int, message: String) extends RepaymentHistoryResponseModel

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
+package financials.models.repaymentHistory
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import java.time.LocalDate
 

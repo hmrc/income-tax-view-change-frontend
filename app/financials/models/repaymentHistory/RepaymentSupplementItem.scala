@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
+package financials.models.repaymentHistory
 
-import play.api.libs.json._
+import play.api.libs.json.{Format, Json}
 
-case class RepaymentItem(repaymentSupplementItem: Seq[RepaymentSupplementItem])
+import java.time.LocalDate
 
-object RepaymentItem {
+case class RepaymentSupplementItem(parentCreditReference: Option[String],
+                                   amount: Option[BigDecimal],
+                                   fromDate: Option[LocalDate],
+                                   toDate: Option[LocalDate],
+                                   rate: Option[BigDecimal])
 
-  implicit val reads: Reads[RepaymentItem] =
-    (__ \ "repaymentSupplementItem").readNullable[Seq[RepaymentSupplementItem]]
-      .map(items => RepaymentItem(items.getOrElse(Seq.empty)))
-
-  implicit val writes: OWrites[RepaymentItem] = Json.writes[RepaymentItem]
+object RepaymentSupplementItem {
+  implicit val format: Format[RepaymentSupplementItem] = Json.format[RepaymentSupplementItem]
 }
