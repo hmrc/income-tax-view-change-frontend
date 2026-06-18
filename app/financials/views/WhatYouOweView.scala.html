@@ -162,7 +162,7 @@
                             )),
                             Option.when(charge.hasAccruingInterest)(
                                 TableRow(
-                                    attributes = Map("id" -> s"due-charge-na-$index"),
+                                    attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
                                     content = HtmlContent(charge.accruingInterestAmount.get.toCurrency),
                                     format = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) Some("numeric") else None
                                 )
