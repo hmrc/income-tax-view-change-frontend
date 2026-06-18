@@ -37,7 +37,7 @@ object User {
         "nino" -> ninoNonEmptyMapping,
         "isAgent" -> boolean
       )((nino, isAgent) => User(nino, isAgent))
-      (form => Some((form.nino, form.isAgent)))
+        (form => Some((form.nino, form.isAgent)))
     )
 }
 
@@ -47,6 +47,7 @@ object UserRecord {
   implicit val formats: OFormat[UserRecord] = Json.format[UserRecord]
 }
 
+//TODO: split out fields into objects
 case class PostedUser(nino: String,
                       agentType: Option[String],
                       usePTANavBar: Boolean = false,
@@ -60,6 +61,8 @@ case class PostedUser(nino: String,
                       ceasedBusiness: Boolean = false,
                       latentBusinessYear1: Option[String],
                       latentBusinessYear2: Option[String],
+                      latestCalculationType: Option[String],
+                      previousCalculationType: Option[String]
                      ) {
 
   def isAgent: Boolean = AgentTypeEnums.apply(this.agentType).isDefined
@@ -72,6 +75,7 @@ case class PostedUser(nino: String,
 }
 
 object PostedUser {
+
   import play.api.data.Form
   import play.api.data.Forms._
 
@@ -89,21 +93,25 @@ object PostedUser {
       "ForeignPropertyCheckbox" -> boolean,
       "CeasedBusinessCheckbox" -> boolean,
       "latentBusinessYear1" -> optional(text),
-      "latentBusinessYear2" -> optional(text)
+      "latentBusinessYear2" -> optional(text),
+      "latestCalculationType" -> optional(text),
+      "previousCalculationType" -> optional(text)
     )(
       (nino,
-      agentType,
-      usePTANavBar,
-      cyMinusOneCrystallisationStatus,
-      cyMinusOneItsaStatus,
-      cyItsaStatus,
-      cyPlusOneItsaStatus,
-      activeSoleTrader,
-      activeUkProperty,
-      activeForeignProperty,
-      ceasedBusinesses, 
-      latentBusinessYear1,
-      latentBusinessYear2) => PostedUser(
+       agentType,
+       usePTANavBar,
+       cyMinusOneCrystallisationStatus,
+       cyMinusOneItsaStatus,
+       cyItsaStatus,
+       cyPlusOneItsaStatus,
+       activeSoleTrader,
+       activeUkProperty,
+       activeForeignProperty,
+       ceasedBusinesses,
+       latentBusinessYear1,
+       latentBusinessYear2,
+       latestCalculationType,
+       previousCalculationType) => PostedUser(
         nino,
         agentType,
         usePTANavBar,
@@ -116,7 +124,10 @@ object PostedUser {
         activeForeignProperty,
         ceasedBusinesses,
         latentBusinessYear1,
-        latentBusinessYear2)
+        latentBusinessYear2,
+        latestCalculationType,
+        previousCalculationType
+      )
     )(form => Some(
       form.nino,
       form.agentType,
@@ -130,7 +141,9 @@ object PostedUser {
       form.activeForeignProperty,
       form.ceasedBusiness,
       form.latentBusinessYear1,
-      form.latentBusinessYear2
+      form.latentBusinessYear2,
+      form.latestCalculationType,
+      form.previousCalculationType
     ))
   )
 

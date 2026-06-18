@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package testOnly.models
+package testOnly.models.customUsers
 
 import play.api.libs.json.{Json, OFormat}
 
-case class LatentBusinessUser(latencyIndicator1: String,
-                              latencyIndicator2: String)
+case class CalculationTypeUser(previousCalculationType: String,
+                             latestCalculationType: String)
 
-object LatentBusinessUser {
-  given format: OFormat[LatentBusinessUser] = Json.format[LatentBusinessUser]
+object CalculationTypeUser {
+  given format: OFormat[CalculationTypeUser] = Json.format[CalculationTypeUser]
 }

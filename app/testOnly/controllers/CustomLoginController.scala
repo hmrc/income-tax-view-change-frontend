@@ -27,6 +27,7 @@ import play.api.mvc.*
 import testOnly.TestOnlyAppConfig
 import testOnly.connectors.{ClearITSAStatusCacheConnector, CustomAuthConnector, DynamicStubConnector}
 import testOnly.models.*
+import testOnly.models.customUsers.{CalculationTypeUser, IncomeSourcesUser, LatentBusinessUser}
 import testOnly.services.{DynamicStubService, OptOutCustomDataService}
 import testOnly.utils.{AuthExchange, SessionBuilder, UserRepository}
 import testOnly.views.html.LoginPage
@@ -57,10 +58,11 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
   private final val customReportingObligationsUsers = Seq("OP000001A", "OP000002A", "OP000003A", "NE000000A", "NE000001A", "NE000002A", "HP000000A")
   private final val latentBusinessUser              = "AS000002A"
   private final val recentActivityUser              = "HP000000A"
+  private final val calcTypeUser                    = "CA000004A"
 
   val showLogin: Action[AnyContent] = Action.async { implicit request =>
     userRepository.findAll().map(userRecords =>
-      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser))
+      Ok(loginPage(routes.CustomLoginController.postLogin(), userRecords, customReportingObligationsUsers, customIncomeSourceUsers, latentBusinessUser, calcTypeUser))
     )
   }
 
@@ -94,6 +96,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   case "Income Sources" if(customIncomeSourceUsers.contains(user.nino)) => overwriteDataForIncomeSources(user, postedUser, bearer, auth, homePage)
                   case "Income Sources" if(user.nino == latentBusinessUser) => overwriteDataforLatentBusinesses(user, postedUser, bearer, auth, homePage)
                   case "Misc" if (user.nino == recentActivityUser) => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
+                  case "Tax Calculation" if (user.nino == calcTypeUser) => overwriteDataForCalculationType(user.nino, postedUser, bearer, auth, homePage)
                   case _ if(customReportingObligationsUsers.contains(user.nino)) => overwriteDataForReportingObligations(user.nino, postedUser, bearer, auth, homePage)
                   case _ => Future.successful(successRedirect(bearer, auth, homePage))
                 }
@@ -161,6 +164,20 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     }
   }
 
+  private def overwriteDataForCalculationType(nino: String, postedUser: PostedUser, bearer: String, auth: String, homePage: String)(implicit headerCarrier: HeaderCarrier) = {
+    val calcTypeUser = CalculationTypeUser(
+      latestCalculationType = postedUser.latestCalculationType.getOrElse("In Year"),
+      previousCalculationType = postedUser.previousCalculationType.getOrElse("In Year")
+    )
+
+    updateTestDataForCalculationType(
+      nino = nino,
+      calculationTypeUser = calcTypeUser
+    ).map {
+      _ => successRedirect(bearer, auth, homePage)
+    }
+  }
+
   private def successRedirect(bearer: String, auth: String, homePage: String): Result = {
     Redirect(homePage)
       .withSession(
@@ -182,6 +199,10 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
 
   private def updateTestDataForLatentBusinessUser(mtdid: String, latentBusinessUser: LatentBusinessUser)(implicit headerCarrier: HeaderCarrier) = {
     dynamicStubService.overwriteLatentBusinessData(mtdid, latentBusinessUser)
+  }
+
+  private def updateTestDataForCalculationType(nino: String, calculationTypeUser: CalculationTypeUser)(implicit headerCarrier: HeaderCarrier) = {
+    dynamicStubService.overwriteCalculationTypeData(nino, calculationTypeUser)
   }
 
   private def updateTestDataForOptOut(nino: String, crystallisationStatus: String, cyMinusOneItsaStatus: String,

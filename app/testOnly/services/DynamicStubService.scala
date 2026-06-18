@@ -23,7 +23,8 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatusResponseModel
 import play.api.Logger
 import testOnly.connectors.DynamicStubConnector
-import testOnly.models.{DataModel, IncomeSourcesUser, LatentBusinessUser, Nino}
+import testOnly.models.customUsers.{CalculationTypeUser, IncomeSourcesUser, LatentBusinessUser}
+import testOnly.models.{DataModel, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
@@ -83,6 +84,11 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   def overwriteObligationsData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     Logger("application").debug("Overwriting obligations data (1330) via the dynamic stub")
     dynamicStubConnector.overwriteObligationsData(nino)
+  }
+  
+  def overwriteCalculationTypeData(nino: String, calculationTypeUser: CalculationTypeUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] =  {
+    Logger("application").debug("Overwriting calculation type data (2083) via the dynamic stub")
+    dynamicStubConnector.overwriteCalculationTypeData(nino, calculationTypeUser)
   }
 
   def overwriteEstimatedRepaymentDate()(implicit headerCarrier: HeaderCarrier): Future[Unit] = {

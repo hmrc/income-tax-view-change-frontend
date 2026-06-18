@@ -23,6 +23,7 @@ import play.api.libs.json.Json
 import play.api.libs.ws.{writeableOf_JsValue, writeableOf_urlEncodedForm}
 import testOnly.TestOnlyAppConfig
 import testOnly.models.*
+import testOnly.models.customUsers.{CalculationTypeUser, IncomeSourcesUser, LatentBusinessUser}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
@@ -103,7 +104,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
   }
 
   def overwriteBusinessData(mtdid: String, incomeSourcesUser: IncomeSourcesUser)
-                         (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+                           (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
 
     val url = getOverwriteBusinessDataUrl(mtdid)
@@ -151,7 +152,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
   }
 
   def overwriteObligationsData(nino: String)
-                           (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+                              (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
 
 
     val url = getOverwriteObligationsDataUrl(nino)
@@ -221,6 +222,29 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
 
     http.post(url"$url")
       .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case OK =>
+          (): Unit
+        case _ =>
+          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+      }
+    }
+  }
+
+  private def getOverwriteCalculationTypeUrl(nino: String): String = {
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/calculation-type/$nino"
+  }
+
+  def overwriteCalculationTypeData(nino: String, calculationTypeUser: CalculationTypeUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+    val url = getOverwriteCalculationTypeUrl(nino)
+
+    val requestJson = Json.toJson(calculationTypeUser)
+
+    http.post(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .withBody(requestJson)
       .execute[HttpResponse] map { response =>
       response.status match {
         case OK =>

@@ -20,6 +20,7 @@
 @import play.api.libs.json.Json
 @import common.models.itsaStatus.ITSAStatus
 @import views.html.helper.CSPNonce
+@import common.enums.TaxYearSummary.CalculationType
 
 @this(
     layout: unifiedLayout,
@@ -30,7 +31,7 @@
     form: FormWithCSRF
 )
 
-@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], incomeSourcesUsers: Seq[String], latentBusinessUser: String)(implicit request: Request[_], messages: Messages)
+@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], incomeSourcesUsers: Seq[String], latentBusinessUser: String, calculationTypeUser: String)(implicit request: Request[_], messages: Messages)
 
 @ITSAOptions = @{
     ITSAStatus.values.unsorted.map { status =>
@@ -39,6 +40,15 @@
             text = status.toString
         )
     }.toSeq
+}
+
+@CalcTypeOptions = @{
+    Seq("Amendment", "Correction", "Finalised", "Intent to Amend", "Intent to Finalise", "In Year").map { calcType =>
+        SelectItem(
+            value = Some(calcType),
+            text = calcType
+        )
+    }
 }
 
 @displayPTANavBar = @{
@@ -93,6 +103,16 @@
             }
         }
 
+        function calculationTypeCustomData(answer, customNino) {
+            const ninoValue = answer.value;
+
+            if (customNino.includes(ninoValue)) {
+                document.getElementById("calculationTypeCheckboxes").classList.remove("display-none");
+            } else {
+                document.getElementById("calculationTypeCheckboxes").classList.add("display-none");
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             const ninoSelect = document.getElementById("nino");
 
@@ -100,16 +120,19 @@
                 const reportingObligationsUsers = JSON.parse(ninoSelect.getAttribute("data-reporting-obligations-users") || "[]");
                 const incomeSourcesUsers = JSON.parse(ninoSelect.getAttribute("data-income-sources-users") || "[]");
                 const latentBusinessUsers = JSON.parse(ninoSelect.getAttribute("data-latent-business-users") || "[]");
+                const calculationTypeUsers = JSON.parse(ninoSelect.getAttribute("data-calculation-type-users") || "[]");
 
                 ninoSelect.addEventListener("change", function () {
                     optOutCustomData(this, reportingObligationsUsers);
                     IncomeSourcesCustomData(this, incomeSourcesUsers);
                     latentBusinessCustomData(this, latentBusinessUsers);
+                    calculationTypeCustomData(this, calculationTypeUsers);
                 });
 
                 optOutCustomData(ninoSelect, reportingObligationsUsers);
                 IncomeSourcesCustomData(ninoSelect, incomeSourcesUsers);
                 latentBusinessCustomData(ninoSelect, latentBusinessUsers);
+                calculationTypeCustomData(this, calculationTypeUsers);
             }
         });
     </script>
@@ -124,7 +147,8 @@
             <select class="govuk-select" id="nino" name="nino"
                     data-reporting-obligations-users='@Html(Json.toJson(optOutCustomDataUserPrefixes).toString)'
                     data-income-sources-users='@Html(Json.toJson(incomeSourcesUsers).toString)'
-                    data-latent-business-users='@Html(Json.toJson(Seq(latentBusinessUser)).toString)'>
+                    data-latent-business-users='@Html(Json.toJson(Seq(latentBusinessUser)).toString)'
+                    data-calculation-type-users='@Html(Json.toJson(Seq(calculationTypeUser)).toString)'>
 
             @for((category, groupedUsers) <- users
             .groupBy(_.category)
@@ -315,6 +339,22 @@
                     )
                 ),
                 label = Label(content = Text("Latency Indicator CY+1"))
+            ))
+        </div>
+
+        <div class="display-none" id="calculationTypeCheckboxes">
+            <h2 class="govuk-heading-m" id="calculation-type-data-heading">Calculation Type</h2>
+            @govukSelect(Select(
+                id = "latestCalculationType",
+                name = "latestCalculationType",
+                items = CalcTypeOptions,
+                label = Label(content = Text("Latest Calculation Type"))
+            ))
+            @govukSelect(Select(
+                id = "previousCalculationType",
+                name = "previousCalculationType",
+                items = CalcTypeOptions,
+                label = Label(content = Text("Previous Calculation Type"))
             ))
         </div>
 

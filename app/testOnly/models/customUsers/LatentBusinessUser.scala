@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package testOnly.models
+package testOnly.models.customUsers
 
 import play.api.libs.json.{Json, OFormat}
 
-case class IncomeSourcesUser(activeSoleTrader: Boolean,
-                             activeUkProperty: Boolean,
-                             activeForeignProperty: Boolean,
-                             ceasedBusiness: Boolean)
+case class LatentBusinessUser(latencyIndicator1: String,
+                              latencyIndicator2: String)
 
-object IncomeSourcesUser {
-  given format: OFormat[IncomeSourcesUser] = Json.format[IncomeSourcesUser]
+object LatentBusinessUser {
+  given format: OFormat[LatentBusinessUser] = Json.format[LatentBusinessUser]
 }
