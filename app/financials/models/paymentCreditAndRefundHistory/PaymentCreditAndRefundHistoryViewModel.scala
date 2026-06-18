@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.paymentCreditAndRefundHistory
+package financials.models.paymentCreditAndRefundHistory
 
 import play.api.i18n.Messages
 
