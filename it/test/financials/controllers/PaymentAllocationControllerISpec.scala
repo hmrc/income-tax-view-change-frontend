@@ -20,15 +20,15 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
-import play.api.http.Status.OK
-import play.api.libs.json.Json
-import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import financials.models.audit.PaymentAllocationsResponseAuditModel
+import financials.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 import financials.testConstants.PaymentAllocationIntegrationTestConstants.*
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import play.api.http.Status.OK
+import play.api.libs.json.Json
+import play.api.libs.ws.WSResponse
 
 class PaymentAllocationControllerISpec extends ControllerISpecHelper {
 

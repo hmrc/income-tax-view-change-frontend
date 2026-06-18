@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.repaymentHistory
+package financials.models.repaymentHistory
 
 import common.testUtils.UnitSpec
 import org.scalatest.matchers.should.Matchers

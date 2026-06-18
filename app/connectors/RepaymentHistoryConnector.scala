@@ -19,7 +19,7 @@ package connectors
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import common.models.core.Nino
-import models.repaymentHistory.*
+import financials.models.repaymentHistory.*
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.client.HttpClientV2

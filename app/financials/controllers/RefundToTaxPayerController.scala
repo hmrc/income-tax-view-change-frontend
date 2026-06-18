@@ -26,8 +26,8 @@ import connectors.RepaymentHistoryConnector
 import financials.controllers.routes as financialsRoutes
 import financials.models.audit.RefundToTaxPayerResponseAuditModel
 import financials.models.creditsandrefunds.RefundToTaxPayerViewModel
+import financials.models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import financials.views.html.RefundToTaxPayerView
-import models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

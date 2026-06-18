@@ -21,8 +21,8 @@ import common.config.FrontendAppConfig
 import common.implicits.ImplicitDateFormatter
 import common.testUtils.ViewSpec
 import financials.models.creditsandrefunds.RefundToTaxPayerViewModel
+import financials.models.repaymentHistory.*
 import financials.views.html.RefundToTaxPayerView
-import models.repaymentHistory.*
 import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 

@@ -21,7 +21,7 @@ import common.enums.AuditType.RefundToTaxPayerResponse
 import common.enums.TransactionName.RefundToTaxPayer
 import common.models.audit.ExtendedAuditModel
 import common.utils.audit.Utilities.userAuditDetails
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, TotalInterest}
+import financials.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryModel, TotalInterest}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.format.DateTimeFormatter

@@ -68,8 +68,8 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: hub.view
       }
 
       repaymentHistoryData <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds)).map {
-        case Right(repaymentHistory) => models.repaymentHistory.RepaymentHistoryModel(repaymentHistory)
-        case Left(value) => models.repaymentHistory.RepaymentHistoryModel(Nil)
+        case Right(repaymentHistory) => financials.models.repaymentHistory.RepaymentHistoryModel(repaymentHistory)
+        case Left(value) => financials.models.repaymentHistory.RepaymentHistoryModel(Nil)
       }
 
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)

@@ -25,11 +25,11 @@ import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndProper
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
+import financials.models.repaymentHistory.RepaymentHistoryUtils
 import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason}
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import financials.testConstants.FinancialDetailsTestConstants.*
 import models.financialDetails.{DocumentDetail, FinancialDetailsModel, PoaTwoReconciliationCredit}
-import models.repaymentHistory.RepaymentHistoryUtils
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application

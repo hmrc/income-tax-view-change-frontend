@@ -16,14 +16,14 @@
 
 @import common.implicits.ImplicitDateFormatterImpl
 @import financials.implicits.ImplicitCurrencyFormatter._
-@import models.paymentAllocationCharges._
+@import financials.models.paymentAllocationCharges._
 @import _root_.shared.implicits.HtmlFormatter.NbspString
 @import financials.controllers.routes as financialsRoutes
 @import common.auth.MtdItUser
 
 @this(implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel)(implicit messages: Messages, user: MtdItUser[_])
+@(paymentAllocations: PaymentAllocationViewModel)(implicit messages: Messages, user: MtdItUser[_])
 @import implicitDateFormatter._
 
 @paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate) = @{

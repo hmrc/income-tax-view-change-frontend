@@ -41,7 +41,7 @@
       numberList: orderedNumberList
 )
 
-@(paymentAllocations: models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
+@(paymentAllocations: financials.models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
     serviceNavigationPartial: Option[ServiceNavigation] = None,
     origin: Option[String] = None, gatewayPage: Option[GatewayPage] = None, creditsRefundsRepayEnabled: Boolean = true)(implicit request: Request[_], messages: Messages, user: MtdItUser[_])
 @import implicitDateFormatter._

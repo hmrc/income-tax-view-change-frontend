@@ -18,9 +18,9 @@ package financials.testConstants
 
 import common.testConstants.BaseTestConstants.*
 import financials.models.ChargeType.{ITSA_NIC4_INTEREST_GB, NIC4_WALES}
+import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
+import financials.models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
 import models.financialDetails.*
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, LatePaymentInterestPaymentAllocationDetails, PaymentAllocationViewModel}
-import models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate

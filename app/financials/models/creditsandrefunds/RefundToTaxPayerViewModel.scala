@@ -17,7 +17,7 @@
 package financials.models.creditsandrefunds
 
 import common.exceptions.MissingFieldException
-import models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, TotalInterest}
+import financials.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryStatus, RepaymentItem, TotalInterest}
 
 import java.time.LocalDate
 import scala.util.Try

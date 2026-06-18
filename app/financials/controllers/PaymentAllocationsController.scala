@@ -26,17 +26,17 @@ import common.models.core.Nino
 import common.services.AuditingService
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
-import financials.services.PaymentAllocationsService
-import financials.utils.FallBackBackLinks
 import financials.forms.utils.SessionKeys.gatewayPage
 import financials.models.audit.PaymentAllocationsResponseAuditModel
-import models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
+import financials.models.paymentAllocationCharges.{PaymentAllocationError, PaymentAllocationViewModel}
+import financials.services.PaymentAllocationsService
+import financials.utils.FallBackBackLinks
+import financials.views.html.PaymentAllocationView
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.mvc.Http
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import financials.views.html.PaymentAllocationView
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
