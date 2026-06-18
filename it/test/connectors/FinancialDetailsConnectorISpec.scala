@@ -23,9 +23,9 @@ import common.models.incomeSourceDetails.TaxYear
 import common.testConstants.BaseTestConstants.{testPaymentLot, testPaymentLotItem}
 import financials.models.creditsandrefunds.CreditsModel
 import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
+import financials.models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import financials.testConstants.PaymentAllocationsTestConstants.{paymentAllocationChargesModelMultiplePayments, testValidPaymentAllocationsModel}
 import models.financialDetails.{Payment, Payments, PaymentsError}
-import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json

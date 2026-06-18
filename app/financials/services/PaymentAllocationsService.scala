@@ -21,8 +21,8 @@ import common.config.FrontendAppConfig
 import common.models.core.Nino
 import connectors.FinancialDetailsConnector
 import financials.models.paymentAllocationCharges.*
+import financials.models.paymentAllocations.PaymentAllocations
 import models.financialDetails.FinancialDetailsModel
-import models.paymentAllocations.PaymentAllocations
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

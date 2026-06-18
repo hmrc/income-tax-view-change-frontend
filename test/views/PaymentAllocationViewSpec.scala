@@ -26,9 +26,9 @@ import common.testUtils.ViewSpec
 import financials.controllers.routes as financialsRoutes
 import financials.models.ChargeType.*
 import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import financials.models.paymentAllocations.AllocationDetail
 import financials.testConstants.PaymentAllocationsTestConstants.*
 import financials.views.html.PaymentAllocationView
-import models.paymentAllocations.AllocationDetail
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

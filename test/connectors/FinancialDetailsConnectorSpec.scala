@@ -22,10 +22,10 @@ import common.models.audit.{AuditModel, ExtendedAuditModel}
 import common.services.AuditingService
 import common.testConstants.BaseTestConstants.*
 import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsResponse}
+import financials.models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import financials.testConstants.FinancialDetailsTestConstants.*
 import financials.testConstants.PaymentAllocationsTestConstants.*
 import models.financialDetails.*
-import models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}

@@ -18,8 +18,8 @@ package financials.models.paymentAllocationCharges
 
 import common.exceptions.MissingFieldException
 import financials.implicits.ImplicitCurrencyFormatter.*
+import financials.models.paymentAllocations.AllocationDetail
 import models.financialDetails.DocumentDetail
-import models.paymentAllocations.AllocationDetail
 
 import java.time.LocalDate
 

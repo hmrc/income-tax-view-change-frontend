@@ -25,8 +25,8 @@ import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import common.utils.Headers.checkAndAddTestHeader
 import financials.models.creditsandrefunds.CreditsModel
 import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
+import financials.models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import models.financialDetails.*
-import models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}

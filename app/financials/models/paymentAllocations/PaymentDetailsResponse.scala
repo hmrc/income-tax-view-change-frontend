@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.paymentAllocations
+package financials.models.paymentAllocations
 
 import play.api.libs.json.{Format, Json}
 
