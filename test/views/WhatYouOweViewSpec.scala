@@ -55,6 +55,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val saLink1_1: String = s"${messages("whatYouOwe.sa-link-1-body-1")} ${messages("pagehelp.opensInNewTabText")}"
   val saNote1_1: String = s"${messages("whatYouOwe.sa-note-1-body-1")} ${messages("whatYouOwe.sa-link-1-body-2")} ${messages("pagehelp.opensInNewTabText")} ${messages("whatYouOwe.sa-note-1-body-3")}"
   val saLink1_2: String = s"${messages("whatYouOwe.sa-link-1-body-2")} ${messages("pagehelp.opensInNewTabText")}"
+  val saLink_2: String = s"${messages("whatYouOwe.sa-link-2")} (opens in new tab)"
+
   val saAdjustLink: String = s"${messages("whatYouOwe.sa-adjust-link-body", "2024", "2025")}"
   val saNote1_2: String = s"${messages("whatYouOwe.sa-note-1-body-2")} $saLink1_1 ${messages("whatYouOwe.sa-note-1-body-4")}"
   val saNote2Heading: String = messages("whatYouOwe.sa-note-2-heading")
@@ -96,9 +98,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val lpiHeading: String = messages("whatYouOwe.late-payment-interest.heading")
   val lpiLine1: String = messages("whatYouOwe.late-payment-interest.line1")
   val lpiLine1Agent: String = messages("whatYouOwe.late-payment-interest.line1.agent")
-  val overdueTag: String = messages("whatYouOwe.over-due")
   val poa1WithTaxYearAndUnderReview: String = s"$poa1Text 1 $paymentUnderReview"
-  val poa1WithTaxYearOverdueAndUnderReview: String = s"$overdueTag $poa1Text 1 $paymentUnderReview"
+  val poa1WithTaxYearOverdueAndUnderReview: String = s"$poa1Text 1 $paymentUnderReview"
   val dueDate: String = messages("whatYouOwe.tableHead.due-date")
   val payNow: String = messages("whatYouOwe.payNow")
   val saPaymentOnAccount1: String = "SA Payment on Account 1"
@@ -153,6 +154,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
+      hasCrystallisedInterest = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -181,8 +183,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     def verifySelfAssessmentLink(): Unit = {
       val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
-      anchor.text shouldBe saLink1_2
-      anchor.attr("href") shouldBe "https://www.gov.uk/difficulties-paying-hmrc"
+      anchor.text shouldBe saLink_2
+      anchor.attr("href") should include("self-assessment/ind/1234567890/account")
       anchor.attr("target") shouldBe "_blank"
     }
   }
@@ -211,6 +213,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val wyoViewModelAgent: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
+      hasCrystallisedInterest = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -475,14 +478,14 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val poa1Table: Element = pageDocument.select("tr").get(2)
           poa1Table.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
-          poa1Table.select("td").get(1).text() shouldBe "Overdue " + poa1Text + s" 1"
+          poa1Table.select("td").get(1).text() shouldBe poa1Text + s" 1"
           poa1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa1Table.select("td").last().text() shouldBe "£50.00"
 
           val poa2Table: Element = pageDocument.select("tr").get(3)
           poa2Table.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
-          poa2Table.select("td").get(1).text() shouldBe "Overdue " + poa2Text + s" 2"
+          poa2Table.select("td").get(1).text() shouldBe poa2Text + s" 2"
           poa2Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           poa2Table.select("td").last().text() shouldBe "£75.00"
@@ -510,14 +513,10 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           poaExtra1Table.select("td").get(1).text() shouldBe poa1ReconcileInterest + " 1"
           poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
+          pageDocument.getElementById("accrued-interest-amount-due-0").text shouldBe "£150.00"
+
           poaExtra1Table.select("td").last().text() shouldBe "£100.00"
 
-          val poa2ExtraTable: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
-          poa2ExtraTable.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
-          poa2ExtraTable.select("td").get(1).text() shouldBe poa2ReconcileInterest + " 2"
-          poa2ExtraTable.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
-
-          poa2ExtraTable.select("td").last().text() shouldBe "£40.00"
         }
         "have penalty charges in table" in new TestSetup(whatYouOweAllPenalties, LPP2Url = appConfig.incomeTaxPenaltiesFrontendLPP2Calculation("chargeRefLPP2")) {
           val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
@@ -548,13 +547,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           lspRow.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lspRow.select("td").last().text() shouldBe "£100.00"
 
-          val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
+          val lpp1Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(3)
           lpp1Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp1Row.select("td").get(1).text() shouldBe lpp1Interest + " 3"
           lpp1Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           lpp1Row.select("td").last().text() shouldBe "£99.00"
 
-          val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(6)
+          val lpp2Row: Element = pageDocument.getElementsByClass("govuk-table__row").get(4)
           lpp2Row.select("td").first().text() shouldBe fixedDate.plusDays(1).toLongDateShort
           lpp2Row.select("td").get(1).text() shouldBe lpp2Interest + " 4"
           lpp2Row.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
@@ -682,7 +681,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           paymentUnderReviewParaLink.attr("target") shouldBe "_blank"
         }
         "should have payment made paragraph when there is dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut)), dunningLock = true) {
+          charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut)), dunningLock = true) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -699,7 +698,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           findElementById("payment-under-review-info") shouldBe None
         }
         "should have payment made paragraph when there is no dunningLock" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
+          charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -723,7 +722,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "should have payment made paragraph when there is a single charge" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = oneDunningLock, codedOutDetails = Some(balancingCodedOut))) {
+          charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = oneDunningLock, codedOutDetails = Some(balancingCodedOut))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -746,7 +745,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         }
 
         "should have payment made paragraph when there is multiple charge" in new TestSetup(
-          charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
+          charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -772,7 +771,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
           remainingBalanceTable.select("td").first().text() shouldBe fixedDate.minusDays(30).toLongDateShort
-          remainingBalanceTable.select("td").get(1).text() shouldBe overdueTag + " " + preMTDRemainingBalance
+          remainingBalanceTable.select("td").get(1).text() shouldBe preMTDRemainingBalance
           remainingBalanceTable.select("td").get(2).text() shouldBe preMtdPayments(
             (fixedDate.getYear - 2).toString, (fixedDate.getYear - 1).toString)
           remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
@@ -786,7 +785,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             (fixedDate.getYear - 2).toString, (fixedDate.getYear - 1).toString)
           interestTable.select("td").last().text() shouldBe "£12.67"
 
-          pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe overdueTag
         }
         "have payment type dropdown details and payment made paragraph" in new TestSetup(charges = whatYouOweDataWithOverdueDataAndInterest()) {
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
@@ -804,13 +802,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overdueTableHeader.select("th").last().text() shouldBe amountDue
 
             val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-            overduePaymentsTableRow1.select("td").get(1).text() shouldBe s"$overdueTag $latePoa1Text 1"
+            overduePaymentsTableRow1.select("td").get(1).text() shouldBe s"$latePoa1Text 1"
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
-            pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
           }
@@ -839,14 +836,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overdueTableHeader.select("th").last().text() shouldBe amountDue
 
             val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-            overduePaymentsTableRow1.select("td").get(1).text() shouldBe overdueTag + " " +
+            overduePaymentsTableRow1.select("td").get(1).text() shouldBe
               latePoa1Text + s" 1" + " " + paymentUnderReview
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
-            pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
@@ -867,14 +863,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             overdueTableHeader.select("th").last().text() shouldBe amountDue
 
             val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
-            overduePaymentsTableRow1.select("td").get(1).text() shouldBe overdueTag + " " +
+            overduePaymentsTableRow1.select("td").get(1).text() shouldBe
               latePoa1Text + s" 1"
             overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
             overduePaymentsTableRow1.select("td").last().text() shouldBe "£34.56"
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
-            pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
               fixedDate.getYear).url
 
@@ -894,14 +889,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(3)
           overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(10).toLongDateShort
-          overduePaymentsTableRow1.select("td").get(1).text() shouldBe overdueTag + " " +
-            poa1Text + s" 1"
+          overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
-          pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             fixedDate.getYear).url
 
@@ -923,14 +916,12 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           /*
                 overduePaymentsTableRow1.select("td").first().text() shouldBe toDay.minusDays(10).toLongDateShort
         */
-          overduePaymentsTableRow1.select("td").get(1).text() shouldBe overdueTag + " " +
-            poa1Text + s" 1"
+          overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa1Text + s" 1"
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£50.00"
 
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
-          pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             fixedDate.getYear).url
 
@@ -942,22 +933,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None), List(Some(100.00), None))) {
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
           overduePaymentsTableRow2.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
-          overduePaymentsTableRow2.select("td").get(1).text() shouldBe overdueTag + " " + poa2Text + s" 2"
+          overduePaymentsTableRow2.select("td").get(1).text() shouldBe poa2Text + s" 2"
           overduePaymentsTableRow2.select("td").last().text() shouldBe "£75.00"
 
           pageDocument.getElementById("due-1-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000125").url
-          pageDocument.getElementById("due-1-overdue").text shouldBe overdueTag
         }
 
-        "have accruing interest displayed below each overdue POA" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(Some(45.5), Some(45.5)))) {
-
-          pageDocument.getElementById("accrued-interest-charge-type-0").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
-          pageDocument.getElementById("accrued-interest-amount-due-0").text() shouldBe "£42.50"
-
-          pageDocument.getElementById("accrued-interest-charge-type-1").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "6.2")
-          pageDocument.getElementById("accrued-interest-amount-due-1").text() shouldBe "£24.05"
-        }
         "should have payment made paragraph when there is accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(None, None))) {
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
@@ -973,10 +955,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         "only show interest for POA when there is no late Payment Interest" in new TestSetup(charges = whatYouOweDataWithOverdueInterestData(List(Some(34.56), None))) {
 
-          Option(pageDocument.getElementById("accrued-interest-charge-type-0")).isDefined shouldBe true
+          Option(pageDocument.getElementById("accrued-interest-amount-due-0")).isDefined shouldBe true
 
-          pageDocument.getElementById("accrued-interest-charge-type-0").text() shouldBe interestFromToDate("25 May 2019", "25 Jun 2019", "2.6")
-          pageDocument.getElementById("accrued-interest-amount-due-0").text() shouldBe "£42.50"
+          pageDocument.getElementById("accrued-interest-amount-due-0").text() shouldBe "£34.56"
         }
 
         "not have a paragraph explaining interest rates when there is no accruing interest" in new TestSetup(charges = whatYouOweDataWithOverdueDataIt()) {
@@ -1016,7 +997,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
 
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearOverdueAndUnderReview
-          overduePaymentsTableRow2.select("td").get(1).text() shouldBe s"$overdueTag $poa2Text 2"
+          overduePaymentsTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2"
         }
 
         s"display $paymentUnderReview when there is a dunningLock against multiple charges" in new TestSetup(
@@ -1025,7 +1006,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
 
           overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa1WithTaxYearOverdueAndUnderReview
-          overduePaymentsTableRow2.select("td").get(1).text() shouldBe s"$overdueTag $poa2Text 2 $paymentUnderReview"
+          overduePaymentsTableRow2.select("td").get(1).text() shouldBe s"$poa2Text 2 $paymentUnderReview"
         }
       }
 
@@ -1059,7 +1040,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(1)
           overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
-          overduePaymentsTableRow1.select("td").get(1).text() shouldBe overdueTag + " " + poa2Text + s" 1"
+          overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa2Text + s" 1"
           overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
           overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
@@ -1071,7 +1052,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000125").url
-          pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
             fixedDate.getYear).url
 
@@ -1117,12 +1097,11 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         val remainingBalanceTable: Element = pageDocument.select("tr").get(1)
         remainingBalanceTable.select("td").first().text() shouldBe fixedDate.minusDays(15).toLongDateShort
-        remainingBalanceTable.select("td").get(1).text() shouldBe overdueTag + " " + preMTDRemainingBalance
+        remainingBalanceTable.select("td").get(1).text() shouldBe preMTDRemainingBalance
         remainingBalanceTable.select("td").get(2).text() shouldBe preMtdPayments(
           (fixedDate.getYear - 2).toString, (fixedDate.getYear - 1).toString)
         remainingBalanceTable.select("td").last().text() shouldBe "£123,456.67"
 
-        pageDocument.getElementById("balancing-charge-type-overdue").text shouldBe overdueTag
       }
       s"have overdue table header and data with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataTestActiveWithMixedData2(List(None, None, None, None), List(Some(100.00), Some(75.00), Some(50.00), Some(123456.67)))) {
         val overdueTableHeader: Element = pageDocument.select("tr").get(0)
@@ -1132,7 +1111,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         overdueTableHeader.select("th").last().text() shouldBe amountDue
         val overduePaymentsTableRow1: Element = pageDocument.select("tr").get(2)
         overduePaymentsTableRow1.select("td").first().text() shouldBe fixedDate.minusDays(1).toLongDateShort
-        overduePaymentsTableRow1.select("td").get(1).text() shouldBe overdueTag + " " + poa2Text + s" 1"
+        overduePaymentsTableRow1.select("td").get(1).text() shouldBe poa2Text + s" 1"
         overduePaymentsTableRow1.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
         overduePaymentsTableRow1.select("td").last().text() shouldBe "£75.00"
 
@@ -1144,7 +1123,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           fixedDate.getYear, "1040000125").url
-        pageDocument.getElementById("due-0-overdue").text shouldBe overdueTag
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
           fixedDate.getYear).url
 
@@ -1197,11 +1175,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         findElementById("payments-made") shouldBe None
         findElementById("payments-made-bullets") shouldBe None
         findElementById("sa-tax-bill") shouldBe None
-        pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
-        pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
-        pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
-        pageDocument.getElementsByTag("h2").text should include(saNote2Heading)
-        pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2
       }
     }
 
@@ -1332,7 +1305,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     "should have payment made paragraph when there is multiple charge" in new AgentTestSetup(
-      charges = whatYouOweDataWithDataDueIn30Days(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
+      charges = whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks = twoDunningLocks, codedOutDetails = Some(balancingCodedOut))) {
 
       pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
       val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString

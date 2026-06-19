@@ -129,10 +129,12 @@ class WhatYouOweControllerSpec extends MockAuthActions
                    claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
                    LPP2Url: String = "",
                    hasOverdueOrAccruingInterestCharges: Boolean = false,
+                   hasCrystallisedInterest: Boolean = false,
                    poaTaxYear: Option[TaxYear] = None
                   ): WhatYouOweViewModel = WhatYouOweViewModel(
     currentDate = mockDateServiceInjected.getCurrentDate,
     hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
+    hasCrystallisedInterest = hasCrystallisedInterest,
     whatYouOweChargesList = charges,
     hasLpiWithDunningLock = hasLpiWithDunningLock,
     currentTaxYear = currentTaxYear,
@@ -160,7 +162,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
   val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
-  val interestChargesWarningText = "! Warning Interest charges will keep increasing every day until the charges they relate to are paid in full."
+  val interestChargesWarningText = "! Warning Interest to date is estimated. To stop it increasing every day, pay the related tax in full. It can then take up to 3 working days for the total interest to be calculated and shown here."
 
   override def beforeEach(): Unit = {
     super.beforeEach()
