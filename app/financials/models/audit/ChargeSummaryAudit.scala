@@ -23,9 +23,9 @@ import common.models.audit.ExtendedAuditModel
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.utils.audit.Utilities.userAuditDetails
+import financials.models.*
 import financials.models.chargeHistory.ChargeHistoryModel
 import financials.models.chargeSummary.PaymentHistoryAllocations
-import models.financialDetails.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 import utils.JsonUtils
 

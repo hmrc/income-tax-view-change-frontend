@@ -16,7 +16,7 @@
 
 package financials.models.chargeHistory
 
-import financials.models.*
+import financials.enums.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustHelper.isPoaDocumentDescription
 import play.api.libs.json.{Format, Json}
 import utils.JsonUtils

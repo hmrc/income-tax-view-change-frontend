@@ -21,9 +21,9 @@ import common.services.DateService
 import common.testConstants.BaseTestConstants.app
 import common.testUtils.UnitSpec
 import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financials.models.{BalanceDetails, WhatYouOweChargesList}
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.financialDetails.{BalanceDetails, WhatYouOweChargesList}
 import org.scalatest.matchers.should.Matchers
 
 import java.time.LocalDate

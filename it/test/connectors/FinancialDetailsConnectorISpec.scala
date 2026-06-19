@@ -24,8 +24,8 @@ import common.testConstants.BaseTestConstants.{testPaymentLot, testPaymentLotIte
 import financials.models.creditsandrefunds.CreditsModel
 import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
 import financials.models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}
+import financials.models.{Payment, Payments, PaymentsError}
 import financials.testConstants.PaymentAllocationsTestConstants.{paymentAllocationChargesModelMultiplePayments, testValidPaymentAllocationsModel}
-import models.financialDetails.{Payment, Payments, PaymentsError}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.libs.json.Json

@@ -20,11 +20,11 @@ import common.controllers.ControllerISpecHelper
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import common.testConstants.BaseIntegrationTestConstants.testTaxYear
-import financials.models.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
+import financials.enums.ChargeType.{ITSA_ENGLAND_AND_NI, ITSA_NI, NIC4_SCOTLAND}
 import financials.models.chargeHistory.ChargeHistoryModel
 import financials.models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
+import financials.models.{ChargeItem, FinancialDetail, MfaDebitCharge}
 import financials.testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
-import models.financialDetails.{ChargeItem, FinancialDetail, MfaDebitCharge}
 import play.api.libs.json.Json
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

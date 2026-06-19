@@ -16,9 +16,9 @@
 
 package helpers.servicemocks
 
-import models.financialDetails._
 import common.models.incomeSourceDetails.TaxYear
 import common.testConstants.BaseIntegrationTestConstants.testTaxYear
+import financials.models.*
 
 import java.time.LocalDate
 

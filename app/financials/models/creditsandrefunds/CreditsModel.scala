@@ -18,7 +18,7 @@ package financials.models.creditsandrefunds
 
 import common.models.core.ResponseModel.{AResponseReads, SuccessModel}
 import common.models.incomeSourceDetails.TaxYear
-import models.financialDetails.*
+import financials.models.*
 import play.api.libs.json.*
 
 import java.time.LocalDate

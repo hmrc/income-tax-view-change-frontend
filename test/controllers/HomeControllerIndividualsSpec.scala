@@ -26,6 +26,7 @@ import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import common.utils.sessionUtils.SessionKeys
+import financials.models.*
 import financials.models.creditsandrefunds.CreditsModel
 import financials.services.CreditService
 import financials.testConstants.ANewCreditAndRefundModel
@@ -35,7 +36,6 @@ import hub.views.html.HomeView
 import hub.views.html.agent.{PrimaryAgentHomeView, SupportingAgentHomeView}
 import hub.views.html.helpers.injected.home.YourReportingObligationsTile
 import hub.views.html.newHomePage.*
-import models.financialDetails.*
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup

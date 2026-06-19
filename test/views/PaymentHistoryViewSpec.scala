@@ -23,10 +23,10 @@ import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.testUtils.ViewSpec
 import financials.implicits.ImplicitCurrencyFormatter.*
+import financials.models.*
 import financials.models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import financials.models.repaymentHistory.PaymentHistoryEntry
 import financials.views.html.PaymentHistoryView
-import models.financialDetails.*
 import org.jsoup.nodes.Element
 import play.api.test.FakeRequest
 

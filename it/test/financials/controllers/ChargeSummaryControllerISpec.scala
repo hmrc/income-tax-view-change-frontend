@@ -20,18 +20,18 @@ import common.auth.MtdItUser
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.models.admin.ChargeHistory
-import financials.models.ChargeType.ITSA_ENGLAND_AND_NI
-import financials.models.CodingOutType.*
-import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.financialDetails.*
-import play.api.http.Status.*
-import play.api.libs.json.Json
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear, testTaxYearTyped}
-import financials.testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import common.testConstants.messages.ChargeSummaryMessages.*
+import financials.enums.ChargeType.ITSA_ENGLAND_AND_NI
+import financials.enums.CodingOutType.*
+import financials.models.*
 import financials.models.audit.ChargeSummaryAudit
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
+import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import play.api.http.Status.*
+import play.api.libs.json.Json
 
 import java.time.LocalDate
 
