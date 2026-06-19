@@ -117,7 +117,8 @@ object NewCalcBreakdownUnitTestConstants {
         topSlicingRelief = Some(TopSlicingRelief(amount = Some(5000.99))),
         giftAidTaxReductionWhereBasicRateDiffers = Some(GiftAidTaxReductionWhereBasicRateDiffers(amount = Some(127.49))))),
       savingsAndGainsIncome = Some(SavingsAndGainsIncome(
-        chargeableForeignSavingsAndGains = Some(12500)
+        chargeableForeignSavingsAndGains = Some(12500),
+        totalUkSavingsAndGains = Some(12500)
       )),
       shareSchemesIncome = Some(ShareSchemesIncome(
         totalIncome = 5000.99
