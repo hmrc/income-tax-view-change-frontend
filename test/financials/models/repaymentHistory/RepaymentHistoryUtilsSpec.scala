@@ -18,9 +18,9 @@ package financials.models.repaymentHistory
 
 import cats.implicits.catsSyntaxOptionId
 import common.testUtils.TestSupport
+import financials.models.*
 import financials.models.repaymentHistory.RepaymentHistoryUtils.*
 import financials.testConstants.ChargeConstants
-import models.financialDetails.*
 import org.scalatest.matchers.should.Matchers
 
 import java.time.LocalDate

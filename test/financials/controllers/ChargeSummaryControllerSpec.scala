@@ -24,12 +24,12 @@ import common.testConstants.BaseTestConstants.testTaxYear
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
+import financials.enums.{AdjustmentReversalReason, AmendedReturnReversalReason}
 import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel}
 import financials.models.repaymentHistory.RepaymentHistoryUtils
-import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason}
+import financials.models.{DocumentDetail, FinancialDetailsModel, PoaTwoReconciliationCredit}
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.financialDetails.{DocumentDetail, FinancialDetailsModel, PoaTwoReconciliationCredit}
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application

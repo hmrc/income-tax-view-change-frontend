@@ -22,11 +22,11 @@ import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import financials.models.*
 import financials.models.creditsandrefunds.CreditsModel
 import hub.models.newHomePage.*
 import hub.models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import hub.models.newHomePage.YourTasksCard.*
-import models.financialDetails.*
 import obligations.controllers.routes as obligationsRoutes
 
 import java.time.LocalDate

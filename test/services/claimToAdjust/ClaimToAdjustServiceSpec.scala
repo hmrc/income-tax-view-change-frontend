@@ -24,11 +24,11 @@ import common.testConstants.BaseTestConstants.{testMtditid, testNino, testUserNi
 import common.testUtils.TestSupport
 import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
+import financials.models.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.testConstants.ClaimToAdjustPoaTestConstants.*
 import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
 import mocks.services.MockFinancialDetailsService
-import models.financialDetails.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import shared.models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

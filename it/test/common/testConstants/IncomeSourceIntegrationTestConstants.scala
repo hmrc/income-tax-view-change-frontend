@@ -16,17 +16,17 @@
 
 package common.testConstants
 
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.*
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.IncomeSourceJourneyType
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
-import financials.models.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
-import financials.models.CodingOutType.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import financials.enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
+import financials.enums.CodingOutType.*
+import financials.testConstants.PaymentHistoryTestConstraints.oldBusiness1
 import models.incomeSourceDetails.*
 import play.api.libs.json.{JsObject, JsValue, Json}
-import common.testConstants.BaseIntegrationTestConstants.*
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
-import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.*
-import financials.testConstants.PaymentHistoryTestConstraints.oldBusiness1
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

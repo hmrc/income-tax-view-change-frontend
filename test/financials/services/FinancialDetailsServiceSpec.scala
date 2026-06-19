@@ -16,19 +16,19 @@
 
 package financials.services
 
+import businessDetails.testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.AccountingPeriodModel
-import financials.models.CodingOutType.*
-import mocks.connectors.MockFinancialDetailsConnector
-import models.financialDetails.*
-import play.api.http.Status
-import common.testConstants.BaseTestConstants._
-import businessDetails.testConstants.BusinessDetailsTestConstants.{address, getCurrentTaxYearEnd, testIncomeSource}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
+import financials.enums.CodingOutType.*
+import financials.models.*
 import financials.testConstants.FinancialDetailsTestConstants.*
+import mocks.connectors.MockFinancialDetailsConnector
+import play.api.http.Status
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate

@@ -21,13 +21,13 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.models.admin.PaymentHistoryRefunds
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.financialDetails.Payment
-import play.api.http.Status.*
-import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import financials.models.Payment
 import financials.models.audit.PaymentHistoryResponseAuditModel
+import helpers.servicemocks.IncomeTaxViewChangeStub
+import play.api.http.Status.*
+import play.api.libs.ws.WSResponse
 
 import java.time.LocalDate
 

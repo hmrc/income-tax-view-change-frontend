@@ -14,15 +14,15 @@
  * limitations under the License.
  *@
 
-@import models.financialDetails.FullyCollected
-@import models.financialDetails.Accepted
+@import financials.models.FullyCollected
+@import financials.models.Accepted
 @import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import common.views.html.components.p
 
 @this(p: p)
 
 @(
-    chargeItem: models.financialDetails.ChargeItem,
+    chargeItem: financials.models.ChargeItem,
     taxYearFromCodingOut: String,
     taxYearToCodingOut: String,
     latePaymentInterestCharge: Boolean

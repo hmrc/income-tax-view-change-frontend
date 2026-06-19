@@ -16,7 +16,7 @@
 
 package financials.models.creditDetailModel
 
-import models.financialDetails.{ChargeItem, CreditType}
+import financials.models.{ChargeItem, CreditType}
 
 import java.time.LocalDate
 

@@ -27,10 +27,10 @@ import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import financials.forms.utils.SessionKeys.gatewayPage
 import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financials.models.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import financials.services.WhatYouOweService
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

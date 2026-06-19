@@ -17,8 +17,8 @@
 @import _root_.financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.common.implicits.ImplicitDateFormatterImpl
 @import financials.models.chargeSummary.PaymentHistoryAllocations
-@import models.financialDetails.FinancialDetailsModel
-@import models.financialDetails.MfaDebitCharge
+@import financials.models.FinancialDetailsModel
+@import financials.models.MfaDebitCharge
 @import _root_.shared.implicits.HtmlFormatter.NbspString
 @import financials.controllers.routes as financialsRoutes
 
@@ -27,7 +27,7 @@
 
 @(  paymentAllocations: List[PaymentHistoryAllocations],
     payments: FinancialDetailsModel,
-    chargeItem: models.financialDetails.ChargeItem,
+    chargeItem: financials.models.ChargeItem,
     isAgent: Boolean = false,
     origin: Option[String] = None,
     codingOutFrom: String,

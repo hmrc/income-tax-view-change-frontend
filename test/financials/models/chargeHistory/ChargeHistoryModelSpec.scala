@@ -17,7 +17,7 @@
 package financials.models.chargeHistory
 
 import common.testUtils.UnitSpec
-import financials.models.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason}
+import financials.enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CustomerRequestReason}
 import org.scalatest.Inside.inside
 import org.scalatest.matchers.should.Matchers
 

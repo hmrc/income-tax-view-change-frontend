@@ -20,15 +20,15 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.incomeSourceDetails.TaxYear
+import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
+import common.testUtils.TestSupport
 import connectors.RepaymentHistoryConnector
+import financials.models.{Payment, Payments, PaymentsError}
 import financials.services.PaymentHistoryService.PaymentHistoryError
 import mocks.connectors.MockFinancialDetailsConnector
 import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService}
-import models.financialDetails.{Payment, Payments, PaymentsError}
 import org.mockito.Mockito.mock
 import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
-import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
-import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate

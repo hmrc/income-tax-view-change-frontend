@@ -16,10 +16,9 @@
 
 package financials.models.paymentAllocationCharges
 
-import models.financialDetails.{DocumentDetail, FinancialDetail}
-import play.api.libs.functional.syntax._
-import play.api.libs.json.{Json, OWrites, Reads, __}
-import play.api.libs.json.JsPath
+import financials.models.{DocumentDetail, FinancialDetail}
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 
 sealed trait FinancialDetailsWithDocumentDetailsResponse
 

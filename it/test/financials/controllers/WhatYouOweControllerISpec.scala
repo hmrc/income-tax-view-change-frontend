@@ -20,23 +20,22 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
-import common.models.admin.CreditsRefundsRepay
-import common.services.DateServiceInterface
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import common.models.admin.*
 import common.models.core.SelfServeTimeToPayJourneyResponseModel
 import common.models.incomeSourceDetails.TaxYear
+import common.services.DateServiceInterface
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.messages.WhatYouOweMessages.hmrcAdjustment
+import financials.models.*
+import financials.models.audit.WhatYouOweResponseAuditModel
 import financials.testConstants.ChargeConstants
-import models.financialDetails.*
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
+import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
+import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
-import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
-import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
-import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
-import common.testConstants.messages.WhatYouOweMessages.hmrcAdjustment
-import financials.models.audit.WhatYouOweResponseAuditModel
 
 import java.time.LocalDate
 import java.time.Month.APRIL

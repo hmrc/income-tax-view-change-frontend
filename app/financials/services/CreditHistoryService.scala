@@ -19,9 +19,9 @@ package financials.services
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import connectors.FinancialDetailsConnector
+import financials.models.*
 import financials.models.creditDetailModel.CreditDetailModel
 import financials.services.CreditHistoryService.CreditHistoryError
-import models.financialDetails.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject

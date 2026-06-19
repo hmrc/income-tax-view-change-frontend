@@ -22,13 +22,13 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.admin.{ChargeHistory, FeatureSwitch}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
+import common.testUtils.TestSupport
+import financials.models.{DocumentDetail, DocumentDetailWithDueDate}
 import mocks.services.{MockCreditHistoryService, MockFinancialDetailsService}
-import models.financialDetails.{DocumentDetail, DocumentDetailWithDueDate}
 import org.mockito.Mockito.{mock, reset, when}
 import play.api
 import play.api.Application
-import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
-import common.testUtils.TestSupport
 
 import java.time.LocalDate
 

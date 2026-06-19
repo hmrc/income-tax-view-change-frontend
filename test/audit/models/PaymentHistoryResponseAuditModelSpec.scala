@@ -18,11 +18,11 @@ package audit.models
 
 import common.auth.actions.AuthActionsTestData.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import models.financialDetails.Payment
-import play.api.libs.json.*
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
+import financials.models.Payment
 import financials.models.audit.PaymentHistoryResponseAuditModel
+import play.api.libs.json.*
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.*
 

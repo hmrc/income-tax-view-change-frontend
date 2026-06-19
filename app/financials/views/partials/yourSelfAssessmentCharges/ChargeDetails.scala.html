@@ -16,16 +16,16 @@
 
 @import common.views.html.components._
 @import financials.views.html.components.numberList
-@import models.financialDetails.Accepted
-@import models.financialDetails.Cancelled
-@import models.financialDetails.BalancingCharge
-@import models.financialDetails.PoaOneDebit
-@import models.financialDetails.PoaTwoDebit
-@import models.financialDetails.LateSubmissionPenalty
+@import financials.models.Accepted
+@import financials.models.Cancelled
+@import financials.models.BalancingCharge
+@import financials.models.PoaOneDebit
+@import financials.models.PoaTwoDebit
+@import financials.models.LateSubmissionPenalty
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukDetails
-@import models.financialDetails.FirstLatePaymentPenalty
-@import models.financialDetails.ITSAReturnAmendment
-@import models.financialDetails.ITSAReturnAmendmentCredit
+@import financials.models.FirstLatePaymentPenalty
+@import financials.models.ITSAReturnAmendment
+@import financials.models.ITSAReturnAmendmentCredit
 @import financials.views.html.partials.yourSelfAssessmentCharges.CodedOutExplanationContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.CancelledPAYEExplanationContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.FirstLatePaymentPenaltyContent
@@ -41,12 +41,12 @@
 @import financials.views.html.partials.yourSelfAssessmentCharges.POAReconciliationLPIExplanationContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.LateSubmissionPenaltyLPIContent
 @import financials.views.html.partials.yourSelfAssessmentCharges.FirstLatePaymentPenaltyLPIContent
-@import models.financialDetails.Nics2
+@import financials.models.Nics2
 @import financials.views.html.partials.yourSelfAssessmentCharges.ClassTwoNICSContent
-@import models.financialDetails.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit,MfaDebitCharge}
+@import financials.models.{PoaOneReconciliationDebit,PoaTwoReconciliationDebit,MfaDebitCharge}
 @import financials.views.html.partials.yourSelfAssessmentCharges.WhatIsPaymentOnAccountReconciliationPoaDebits
 @import financials.models.chargeSummary.ChargeSummaryViewModel
-@import models.financialDetails.FullyCollected
+@import financials.models.FullyCollected
 
 @this(
     p: p,

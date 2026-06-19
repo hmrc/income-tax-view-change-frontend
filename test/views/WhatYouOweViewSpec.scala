@@ -25,13 +25,13 @@ import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, test
 import common.testUtils.{TestSupport, ViewSpec}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
+import financials.enums.CodingOutType.*
 import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import financials.models.CodingOutType.*
+import financials.models.*
 import financials.models.outstandingCharges.*
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
 import financials.views.html.WhatYouOweView
-import models.financialDetails.*
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

@@ -18,7 +18,7 @@ package models
 
 import common.exceptions.MissingFieldException
 import common.testUtils.TestSupport
-import financials.models.ChargeType.{CGT, SL}
+import financials.enums.ChargeType.{CGT, SL}
 import financials.models.paymentAllocations.AllocationDetail
 import org.scalatest.matchers.should.Matchers
 

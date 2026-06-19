@@ -16,7 +16,7 @@
 
 package financials.models.audit
 
-import models.financialDetails.*
+import financials.models.*
 
 trait PaymentSharedFunctions {
 

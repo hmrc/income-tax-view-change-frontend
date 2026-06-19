@@ -17,8 +17,8 @@
 package hub.models.homePage
 
 import common.models.incomeSourceDetails.TaxYear
-import models.financialDetails.{FinancialDetailsModel, FinancialDetailsResponseModel}
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import financials.models.{FinancialDetailsModel, FinancialDetailsResponseModel}
 
 import java.time.LocalDate
 

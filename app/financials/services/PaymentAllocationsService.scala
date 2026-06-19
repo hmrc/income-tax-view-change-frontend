@@ -20,9 +20,9 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.core.Nino
 import connectors.FinancialDetailsConnector
+import financials.models.FinancialDetailsModel
 import financials.models.paymentAllocationCharges.*
 import financials.models.paymentAllocations.PaymentAllocations
-import models.financialDetails.FinancialDetailsModel
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

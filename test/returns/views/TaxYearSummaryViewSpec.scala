@@ -24,9 +24,9 @@ import common.testUtils.ViewSpec
 import common.viewUtils.ExternalUrlHelper
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
+import financials.models.*
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
-import models.financialDetails.*
 import obligations.testConstants.NextUpdatesTestConstants.*
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}

@@ -20,13 +20,13 @@ import common.models.core.AddressModel
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import common.testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
-import financials.models.ChargeType.NIC4_WALES
-import financials.models.CodingOutType.*
+import financials.enums.ChargeType.NIC4_WALES
+import financials.enums.CodingOutType.*
+import financials.models.*
 import financials.models.creditDetailModel.CreditDetailModel
 import financials.models.creditsandrefunds.{CreditsModel, Transaction}
 import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import financials.testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
-import models.financialDetails.*
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate

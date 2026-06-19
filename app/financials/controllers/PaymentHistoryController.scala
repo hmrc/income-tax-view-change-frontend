@@ -25,12 +25,12 @@ import common.models.admin.{CreditsRefundsRepay, PaymentHistoryRefunds}
 import common.services.{AuditingService, DateServiceInterface}
 import common.views.html.errorPages.CustomNotFoundErrorView
 import financials.forms.utils.SessionKeys.gatewayPage
+import financials.models.TransactionUtils
 import financials.models.audit.PaymentHistoryResponseAuditModel
 import financials.models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import financials.models.repaymentHistory.RepaymentHistoryUtils
 import financials.services.{PaymentHistoryService, RepaymentService}
 import financials.views.html.PaymentHistoryView
-import models.financialDetails.TransactionUtils
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
