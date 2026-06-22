@@ -132,7 +132,8 @@
       "totalOfAllGains": 12500
     },
     "savingsAndGainsIncome": {
-      "chargeableForeignSavingsAndGains": 12500
+      "chargeableForeignSavingsAndGains": 12500,
+      "totalUkSavingsAndGains": 12500
     },
     "dividendsIncome": {
       "totalUkDividends": 12500,
