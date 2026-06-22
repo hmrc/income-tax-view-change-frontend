@@ -18,7 +18,7 @@ package financials.models.repaymentHistory
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import models.financialDetails.*
+import financials.models.*
 
 import java.time.LocalDate
 

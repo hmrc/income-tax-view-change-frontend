@@ -21,7 +21,7 @@ import common.enums.AuditType.PaymentHistoryResponse
 import common.enums.TransactionName
 import common.models.audit.ExtendedAuditModel
 import common.utils.audit.Utilities.userAuditDetails
-import models.financialDetails.*
+import financials.models.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class PaymentHistoryResponseAuditModel(mtdItUser: MtdItUser[_],

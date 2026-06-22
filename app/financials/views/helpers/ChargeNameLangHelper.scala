@@ -16,7 +16,7 @@
 
 package financials.views.helpers
 
-import models.financialDetails.{ChargeItem, BalancingCharge, ITSAReturnAmendment, Nics2}
+import financials.models.{BalancingCharge, ChargeItem, ITSAReturnAmendment, Nics2}
 import play.api.i18n.Messages
 
 

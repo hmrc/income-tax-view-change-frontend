@@ -22,7 +22,7 @@ import common.testUtils.UnitSpec
 import connectors.FinancialDetailsConnector
 import financials.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
 import financials.models.paymentAllocations.PaymentAllocationsResponse
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
+import financials.models.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*

@@ -22,9 +22,9 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import common.services.DateServiceInterface
 import financials.controllers.routes as financialsRoutes
+import financials.models.*
 import financials.models.repaymentHistory.RepaymentHistoryModel
 import hub.models.newHomePage.*
-import models.financialDetails.*
 import shared.connectors.ObligationsConnector
 import shared.models.{ObligationsModel, SingleObligationModel}
 import uk.gov.hmrc.http.HeaderCarrier

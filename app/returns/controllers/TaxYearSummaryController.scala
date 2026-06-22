@@ -31,9 +31,9 @@ import common.models.liabilitycalculation.*
 import common.services.{AuditingService, DateServiceInterface}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
+import financials.models.*
 import financials.services.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import models.financialDetails.*
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
@@ -498,7 +498,7 @@ class TaxYearSummaryController @Inject()(
 
         val chargeItemsCodingOutPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
-            .filter(_.codedOutStatus.contains(models.financialDetails.Accepted))
+            .filter(_.codedOutStatus.contains(financials.models.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
@@ -511,7 +511,7 @@ class TaxYearSummaryController @Inject()(
 
         val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
-            .filterNot(_.codedOutStatus.contains(models.financialDetails.Accepted))
+            .filterNot(_.codedOutStatus.contains(financials.models.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 

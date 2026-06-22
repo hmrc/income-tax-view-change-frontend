@@ -23,7 +23,7 @@ import common.testUtils.TestSupport
 import financials.models.audit.PaymentAllocationsResponseAuditModel
 import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import financials.models.paymentAllocations.AllocationDetail
-import models.financialDetails.{DocumentDetail, FinancialDetail, SubItem}
+import financials.models.{DocumentDetail, FinancialDetail, SubItem}
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

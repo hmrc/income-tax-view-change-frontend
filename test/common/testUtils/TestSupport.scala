@@ -24,8 +24,10 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDUserRole}
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
 import common.services.DateService
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.*
 import common.utils.sessionUtils
-import models.financialDetails.ChargeItem
+import financials.models.ChargeItem
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -41,8 +43,6 @@ import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
-import common.testConstants.BaseTestConstants.*
-import common.testConstants.IncomeSourceDetailsTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.*
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, Enrolments}

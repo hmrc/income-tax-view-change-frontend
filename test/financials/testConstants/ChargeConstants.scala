@@ -18,10 +18,10 @@ package financials.testConstants
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
-import financials.models.ChargeType.NIC4_WALES
+import financials.enums.ChargeType.NIC4_WALES
+import financials.models.*
 import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.financialDetails.*
 
 import java.time.LocalDate
 import scala.annotation.unused

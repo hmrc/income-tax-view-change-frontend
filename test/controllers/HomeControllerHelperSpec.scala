@@ -24,12 +24,11 @@ import common.mocks.services.{MockClientDetailsService, MockDateService, MockITS
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
+import financials.models.*
 import financials.services.*
-import hub.services.PenaltyDetailsService
-import mocks.services.*
-import models.financialDetails.*
 import hub.mocks.services.MockNextUpdatesService
-import hub.services.NextUpdatesService
+import hub.services.{NextUpdatesService, PenaltyDetailsService}
+import mocks.services.*
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

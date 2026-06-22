@@ -24,10 +24,10 @@ import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
+import financials.models.*
 import financials.models.chargeHistory.ChargesHistoryErrorModel
 import financials.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import financials.services.PaymentHistoryService.PaymentHistoryError
-import models.financialDetails.*
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.NOT_FOUND
@@ -97,7 +97,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
     for {
       financialDetailsModel       <- financialDetailsService.getAllFinancialDetails.map(_.map {
         case (_, fdm: FinancialDetailsModel) => fdm
-        case (_, models.financialDetails.FinancialDetailsErrorModel(_, message)) => throw Exception(s"Failed to get Financial Details, $message")
+        case (_, FinancialDetailsErrorModel(_, message)) => throw Exception(s"Failed to get Financial Details, $message")
       })
       financialDetailsByTaxYear    = financialDetailsModel.flatMap(_.financialDetails).groupBy(_.taxYear)
       documentDetailsWithDueDate   = financialDetailsModel.flatMap(_.getAllDocumentDetailsWithDueDates())

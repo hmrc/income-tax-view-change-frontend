@@ -16,7 +16,7 @@
 
 package models
 
-import models.financialDetails._
+import financials.models.*
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.{JsObject, JsSuccess, Json}

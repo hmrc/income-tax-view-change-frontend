@@ -20,9 +20,9 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDUserRole
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import financials.models.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
-import models.financialDetails.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import financials.enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
+import financials.models.*
 import returns.models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}

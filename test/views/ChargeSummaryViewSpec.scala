@@ -21,19 +21,19 @@ import common.exceptions.MissingFieldException
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.ViewSpec
 import financials.controllers.routes as financialsRoutes
+import financials.enums.*
+import financials.enums.ChargeType.*
 import financials.models.*
-import financials.models.ChargeType.*
 import financials.models.chargeHistory.{AdjustmentHistoryModel, AdjustmentModel, ChargeHistoryModel}
 import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocation, PaymentHistoryAllocations}
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.financialDetails.*
+import financials.views.html.ChargeSummaryView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.scalatest.Assertion
 import play.twirl.api.Html
-import financials.views.html.ChargeSummaryView
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}
 

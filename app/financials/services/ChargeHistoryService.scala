@@ -18,9 +18,9 @@ package financials.services
 
 import common.auth.MtdItUser
 import connectors.ChargeHistoryConnector
-import financials.models.CreateReversalReason
+import financials.enums.CreateReversalReason
+import financials.models.*
 import financials.models.chargeHistory.*
-import models.financialDetails.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate

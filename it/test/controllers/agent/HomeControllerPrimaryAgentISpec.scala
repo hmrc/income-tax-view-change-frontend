@@ -16,7 +16,7 @@
 
 package controllers.agent
 
-import hub.audit.models.HomeAudit
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDPrimaryAgent
@@ -25,19 +25,19 @@ import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
+import financials.models.*
+import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
 import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.financialDetails.*
+import hub.audit.models.HomeAudit
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import common.testConstants.BaseIntegrationTestConstants.*
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
-import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
-import common.testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import shared.models.audit.NextUpdatesResponseAuditModel
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

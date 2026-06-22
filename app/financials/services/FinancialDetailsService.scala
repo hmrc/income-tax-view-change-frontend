@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import common.services.DateServiceInterface
 import connectors.FinancialDetailsConnector
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
+import financials.models.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier

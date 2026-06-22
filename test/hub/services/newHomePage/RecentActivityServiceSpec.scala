@@ -21,9 +21,9 @@ import common.mocks.services.MockDateService
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
 import common.testUtils.TestSupport
+import financials.models.Payment
 import financials.models.repaymentHistory.*
 import hub.models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
-import models.financialDetails.Payment
 import obligations.mocks.connectors.MockObligationsConnector
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar

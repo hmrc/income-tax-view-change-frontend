@@ -18,7 +18,7 @@ package financials.models.paymentAllocations
 
 import common.exceptions.MissingFieldException
 import common.models.core.AccountingPeriodModel
-import models.financialDetails.FinancialDetail
+import financials.models.FinancialDetail
 import play.api.Logger
 import play.api.libs.json.{Format, Json}
 

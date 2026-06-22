@@ -17,10 +17,14 @@
 package hub.views.newHomePage
 
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.getMtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
-import models.financialDetails.*
+import common.models.incomeSourceDetails.TaxYear
+import common.testUtils.{TestSupport, ViewSpec}
+import financials.models.*
+import hub.views.html.newHomePage.NewHomeOverviewView
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -29,13 +33,9 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import hub.views.html.newHomePage.NewHomeOverviewView
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.{LocalDate, Month}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
-import common.auth.actions.AuthActionsTestData.getMtdItUser
-import common.models.incomeSourceDetails.TaxYear
-import common.testUtils.{TestSupport, ViewSpec}
 
 
 class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with ImplicitDateFormatter with ViewSpec {

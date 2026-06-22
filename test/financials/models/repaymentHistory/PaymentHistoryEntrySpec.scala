@@ -19,7 +19,7 @@ package financials.models.repaymentHistory
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import common.testUtils.TestSupport
-import models.financialDetails.PaymentType
+import financials.models.PaymentType
 import org.scalatest.matchers.should.Matchers
 
 import java.time.LocalDate

@@ -24,7 +24,7 @@ import common.implicits.ImplicitDateFormatter
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import common.testUtils.ViewSpec
 import financials.controllers.routes as financialsRoutes
-import financials.models.ChargeType.*
+import financials.enums.ChargeType.*
 import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import financials.models.paymentAllocations.AllocationDetail
 import financials.testConstants.PaymentAllocationsTestConstants.*

@@ -19,8 +19,8 @@ package financials.models.creditsandrefunds
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec
 import financials.controllers.routes as financialsRoutes
+import financials.models.*
 import financials.testConstants.ANewCreditAndRefundModel
-import models.financialDetails.*
 
 import java.time.LocalDate
 

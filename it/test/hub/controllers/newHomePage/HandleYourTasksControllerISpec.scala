@@ -28,7 +28,7 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDeta
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
-import financials.models.ChargeType.ITSA_NI
+import financials.enums.ChargeType.ITSA_NI
 import financials.models.creditsandrefunds.CreditsModel
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate

@@ -22,12 +22,12 @@ import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import common.testUtils.TestSupport
+import financials.models.*
 import financials.models.creditsandrefunds.CreditsModel
 import hub.models.newHomePage.MaturityLevel.Upcoming
 import hub.models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import hub.models.newHomePage.YourTasksCard.{DatelessTaskCard, OverdueTaskCard, UpcomingTaskCard}
 import hub.models.newHomePage.{HandleYourTasksViewModel, SubmissionDeadlinesViewModel}
-import models.financialDetails.*
 import shared.models.{SingleObligationModel, StatusOpen}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

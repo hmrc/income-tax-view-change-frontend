@@ -29,6 +29,7 @@ import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.controllers.routes as financialsRoutes
 import financials.forms.utils.SessionKeys.gatewayPage
+import financials.models.*
 import financials.models.audit.ChargeSummaryAudit
 import financials.models.chargeHistory.*
 import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
@@ -36,7 +37,6 @@ import financials.models.paymentAllocationCharges.PaymentAllocationViewModel
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import financials.utils.FallBackBackLinks
 import financials.views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
-import models.financialDetails.*
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

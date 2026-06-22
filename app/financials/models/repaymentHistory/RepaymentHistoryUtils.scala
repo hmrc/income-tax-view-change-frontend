@@ -20,7 +20,7 @@ import common.exceptions.MissingFieldException
 import common.services.DateServiceInterface
 import financials.controllers.routes as financialsRoutes
 import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
-import models.financialDetails.*
+import financials.models.*
 import play.api.Logger
 import play.api.i18n.Messages
 import play.api.libs.json.Json

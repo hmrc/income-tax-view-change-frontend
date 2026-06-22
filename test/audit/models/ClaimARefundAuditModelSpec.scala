@@ -18,13 +18,13 @@ package audit.models
 
 import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
 import common.auth.MtdItUser
-import models.financialDetails.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
-import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
 import financials.models.audit.ClaimARefundAuditModel
+import financials.models.{BalanceDetails, DocumentDetailWithDueDate, FinancialDetail}
 import financials.testConstants.ANewCreditAndRefundModel
 import financials.testConstants.CreditAndRefundConstants.documentDetailWithDueDateFinancialDetailListModel
+import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import java.time.LocalDate
