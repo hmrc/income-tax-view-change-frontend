@@ -21,7 +21,6 @@ import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
 import common.models.auth.AuthorisedAndEnrolledRequest
-import helpers.CreditsSummaryDataHelper
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
@@ -29,6 +28,7 @@ import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelCreditAndRefundsJsonV2}
+import financials.helpers.CreditsSummaryDataHelper
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSummaryDataHelper {
