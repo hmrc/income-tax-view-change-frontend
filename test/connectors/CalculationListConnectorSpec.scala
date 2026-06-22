@@ -71,7 +71,7 @@ class CalculationListConnectorSpec extends TestSupport with MockHttpV2 with Mock
     "return an error" when {
       "json is invalid" in new Setup {
         val itvc1896Url: String = connector.getCalculationListUrl(testNino, taxYearEnd)
-        val successResponse: HttpResponse = HttpResponse(status = OK, json = Json.obj(), headers = Map.empty)
+        val successResponse: HttpResponse = HttpResponse(status = OK, json = Json.obj("crystallised" -> 33), headers = Map.empty)
         setupMockHttpV2Get(itvc1896Url)(successResponse)
 
          val result: Future[CalculationListResponseModel] = connector.getCalculationList(Nino(testNino), taxYearEnd, testMtditid)

@@ -23,27 +23,18 @@ object CalculationListIntegrationTestConstants {
   val successResponseCrystallised: JsValue = Json.parse(
     """
       |{
-      |   "calculationId":"c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      |   "calculationTimestamp":"2023-10-31T12:55:51.159Z",
-      |   "calculationType":"finalDeclaration",
       |   "crystallised": true
       |}""".stripMargin)
 
   val successResponseNotCrystallised: JsValue = Json.parse(
     """
       |{
-      |   "calculationId":"c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      |   "calculationTimestamp":"2023-10-31T12:55:51.159Z",
-      |   "calculationType":"finalDeclaration",
       |   "crystallised": false
       |}""".stripMargin)
 
 
   val calculationListCrystallised: CalculationListModel = {
     CalculationListModel(
-      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      calculationTimestamp = "2023-10-31T12:55:51.159Z",
-      calculationType = "finalDeclaration",
       crystallised = Some(true)
     )
   }
@@ -51,34 +42,17 @@ object CalculationListIntegrationTestConstants {
   val successResponseNonCrystallised: JsValue = Json.parse(
     """
       |{
-      |   "calculationId":"c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      |   "calculationTimestamp":"2023-10-31T12:55:51.159Z",
-      |   "calculationType":"finalDeclaration",
       |   "crystallised": false
       |}""".stripMargin)
 
   val calculationListNonCrystallised: CalculationListModel = {
     CalculationListModel(
-      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      calculationTimestamp = "2023-10-31T12:55:51.159Z",
-      calculationType = "finalDeclaration",
       crystallised = Some(true)
     )
   }
 
-  val jsonResponseMin: JsValue = Json.parse(
-    """
-      |{
-      |   "calculationId":"c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      |   "calculationTimestamp":"2023-10-31T12:55:51.159Z",
-      |   "calculationType":"finalDeclaration"
-      |}""".stripMargin)
-
   val calculationListMin: CalculationListModel = {
     CalculationListModel(
-      calculationId = "c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      calculationTimestamp = "2023-10-31T12:55:51.159Z",
-      calculationType = "finalDeclaration",
       crystallised = None
     )
   }
