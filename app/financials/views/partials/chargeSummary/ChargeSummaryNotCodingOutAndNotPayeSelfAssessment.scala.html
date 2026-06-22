@@ -17,7 +17,7 @@
 @import _root_.common.implicits.ImplicitDateFormatterImpl
 @import _root_.financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import common.views.html.components._
-@import models.financialDetails.{DocumentDetailWithDueDate, DocumentDetail}
+@import financials.models.{DocumentDetailWithDueDate, DocumentDetail}
 @import _root_.shared.implicits.HtmlFormatter.NbspString
 @import java.time.LocalDate
 @import common.exceptions.MissingFieldException
@@ -28,7 +28,7 @@
 @this(p: p, link: link, implicitDateFormatter: ImplicitDateFormatterImpl)
 
 @(
-    chargeItem: models.financialDetails.ChargeItem,
+    chargeItem: financials.models.ChargeItem,
     interestCharge: Boolean,
     taxYearFromCodingOut: String,
     taxYearToCodingOut: String,
@@ -51,7 +51,7 @@
             @{
                 (if(interestCharge) {
                     chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
-                } else if(chargeItem.transactionType == models.financialDetails.BalancingCharge && chargeItem.codedOutStatus == None) {
+                } else if(chargeItem.transactionType == financials.models.BalancingCharge && chargeItem.codedOutStatus == None) {
                     chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDate).getOrElse(messages("tax-year-summary.noData"))
                 } else if (chargeItem.isCredit) {
                     chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.noData"))
@@ -93,7 +93,7 @@
             <dt class="govuk-summary-list__key">@messages("chargeSummary.remainingDue")</dt>
             <dd class="govuk-summary-list__value--numeric govuk-!-text-align-right">
             @{
-                if(chargeItem.codedOutStatus == Some(models.financialDetails.Accepted)) {
+                if(chargeItem.codedOutStatus == Some(financials.models.Accepted)) {
                     messages("chargeSummary.codingOutRemainingToPay", taxYearFromCodingOut, taxYearToCodingOut)
                 } else if(interestCharge) chargeItem.interestRemainingToPay.toCurrency
                 else chargeItem.remainingToPay.toCurrency

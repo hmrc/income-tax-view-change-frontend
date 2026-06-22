@@ -20,12 +20,13 @@ import common.auth.MtdItUser
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import connectors.{CalculationListConnector, ChargeHistoryConnector}
-import financials.models.DocumentType.{Poa1Charge, Poa2Charge}
+import connectors.ChargeHistoryConnector
+import financials.enums.DocumentType.{Poa1Charge, Poa2Charge}
+import financials.models.*
 import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.financialDetails.*
 import play.api.Logger
+import shared.connectors.CalculationListConnector
 import shared.models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
 

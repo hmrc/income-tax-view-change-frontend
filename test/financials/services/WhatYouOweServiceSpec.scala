@@ -24,13 +24,13 @@ import common.services.{AuditingService, DateService}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import common.testUtils.TestSupport
 import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
-import financials.models.ChargeType.NIC4_WALES
-import financials.models.CodingOutType.*
+import financials.enums.ChargeType.NIC4_WALES
+import financials.enums.CodingOutType.*
+import financials.models.*
 import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.financialDetails.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

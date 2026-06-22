@@ -21,8 +21,8 @@ import common.enums.AuditType.ClaimARefundResponse
 import common.enums.TransactionName.ClaimARefund
 import common.models.audit.ExtendedAuditModel
 import common.utils.audit.Utilities.userAuditDetails
+import financials.models.*
 import financials.models.creditsandrefunds.{CreditsModel, Transaction}
-import models.financialDetails.*
 import play.api.Logger
 import play.api.libs.json.{JsObject, JsValue, Json}
 

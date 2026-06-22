@@ -21,7 +21,7 @@ import common.enums.AuditType.RefundToTaxPayerResponse
 import common.enums.TransactionName.RefundToTaxPayer
 import common.testUtils.TestSupport
 import financials.models.audit.RefundToTaxPayerResponseAuditModel
-import models.repaymentHistory.*
+import financials.models.repaymentHistory.*
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

@@ -17,13 +17,13 @@
 package views.partials.paymentAllocations
 
 import common.testUtils.TestSupport
-import models.paymentAllocationCharges.PaymentAllocationViewModel
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
+import financials.models.paymentAllocationCharges.PaymentAllocationViewModel
 import financials.testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModelWithCredit
 import financials.views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import play.api.test.Helpers.*
+import play.twirl.api.HtmlFormat
 
 import java.time.LocalDate
 

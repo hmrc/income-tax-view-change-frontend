@@ -16,7 +16,6 @@
 
 package common.auth
 
-import businessDetails.auth.actions.TriggeredMigrationRetrievalAction
 import common.auth.actions.*
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
@@ -42,7 +41,6 @@ class AuthActions @Inject()(
                              val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
                              val authoriseAndRetrieveIndividualForNrs: AuthoriseAndRetrieveIndividualForNrs,
                              val authoriseAndRetrieveAgentForNrs: AuthoriseAndRetrieveAgentForNrs,
-                             val triggeredMigrationRetrievalAction: TriggeredMigrationRetrievalAction,
                              val redirectIfNoIncomeSourcesAction: RedirectIfNoIncomeSourcesAction
                            ) extends FeatureSwitching {
 

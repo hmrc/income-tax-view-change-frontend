@@ -16,7 +16,7 @@
 
 package financials.models.chargeHistory
 
-import financials.models.ReversalReason
+import financials.enums.ReversalReason
 
 import java.time.LocalDate
 

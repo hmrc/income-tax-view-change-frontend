@@ -16,17 +16,17 @@
 
 @import _root_.financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.common.implicits.ImplicitDateFormatterImpl
-@import models.financialDetails.ChargeType
+@import financials.models.ChargeType
 @import financials.models.chargeSummary.{ChargeSummaryViewModel, PaymentHistoryAllocations}
 @import financials.models.chargeHistory.AdjustmentModel
-@import models.financialDetails.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, FirstLatePaymentPenalty, LateSubmissionPenalty}
+@import financials.models.{Accepted, BalancingCharge, FullyCollected, Cancelled, MfaDebitCharge, PoaOneDebit, PoaOneReconciliationDebit, PoaOneReconciliationCredit, PoaTwoDebit, PoaTwoReconciliationDebit, PoaTwoReconciliationCredit, FirstLatePaymentPenalty, LateSubmissionPenalty}
 @import common.services.DateServiceInterface
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.warningtext.WarningText
 @import common.views.html.components._
 @import common.views.html.layouts.unifiedLayout
 @import financials.views.html.partials.chargeSummary._
-@import models.repaymentHistory.RepaymentHistoryUtils
+@import financials.models.repaymentHistory.RepaymentHistoryUtils
 @import _root_.shared.implicits.HtmlFormatter.NbspString
 @import common.config.FrontendAppConfig
 

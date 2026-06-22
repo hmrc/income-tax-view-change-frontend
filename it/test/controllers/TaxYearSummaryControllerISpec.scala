@@ -18,29 +18,28 @@ package controllers
 
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
-import helpers.servicemocks.*
 import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
-import common.models.admin.PostFinalisationAmendmentsR18
 import common.models.admin.*
-import models.financialDetails.*
-import org.jsoup.Jsoup
-import play.api.http.Status.*
-import play.api.libs.json.Json
+import common.models.liabilitycalculation.{IsMTD, LiabilityCalculationError}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
-import CalculationListIntegrationTestConstants.successResponseNonCrystallised
-import common.models.liabilitycalculation.{IsMTD, LiabilityCalculationError}
+import common.testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import common.testConstants.NewCalcBreakdownItTestConstants.*
 import common.testConstants.messages.TaxYearSummaryMessages.*
 import financials.controllers.routes as financialsRoutes
+import financials.models.*
+import helpers.servicemocks.*
+import org.jsoup.Jsoup
+import play.api.http.Status.*
+import play.api.libs.json.Json
 import returns.models.audit.TaxYearSummaryResponseAuditModel
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
+import shared.models.audit.NextUpdatesResponseAuditModel
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import shared.models.audit.NextUpdatesResponseAuditModel
 
 class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 

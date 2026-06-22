@@ -27,10 +27,10 @@ import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import financials.forms.utils.SessionKeys.gatewayPage
 import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
+import financials.models.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import financials.services.WhatYouOweService
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.financialDetails.{BalanceDetails, FinancialDetailsModel, WhatYouOweChargesList, WhatYouOweViewModel}
 import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -129,10 +129,12 @@ class WhatYouOweControllerSpec extends MockAuthActions
                    claimToAdjustViewModel: Option[WYOClaimToAdjustViewModel] = None,
                    LPP2Url: String = "",
                    hasOverdueOrAccruingInterestCharges: Boolean = false,
+                   hasCrystallisedInterest: Boolean = false,
                    poaTaxYear: Option[TaxYear] = None
                   ): WhatYouOweViewModel = WhatYouOweViewModel(
     currentDate = mockDateServiceInjected.getCurrentDate,
     hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
+    hasCrystallisedInterest = hasCrystallisedInterest,
     whatYouOweChargesList = charges,
     hasLpiWithDunningLock = hasLpiWithDunningLock,
     currentTaxYear = currentTaxYear,
@@ -160,7 +162,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
   val hasAFinancialDetailError = List(testFinancialDetailsErrorModel)
-  val interestChargesWarningText = "! Warning Interest charges will keep increasing every day until the charges they relate to are paid in full."
+  val interestChargesWarningText = "! Warning Interest to date is estimated. To stop it increasing every day, pay the related tax in full. It can then take up to 3 working days for the total interest to be calculated and shown here."
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -233,9 +235,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("money-in-your-account")).isDefined shouldBe true
-                doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount" + {
-                  if (isAgent) "-agent" else ""
-                })
+                doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount")
               }
             }
 

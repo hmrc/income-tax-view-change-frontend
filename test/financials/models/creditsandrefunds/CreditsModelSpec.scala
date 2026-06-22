@@ -19,7 +19,7 @@ package financials.models.creditsandrefunds
 import common.models.core.ErrorModel
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec
-import models.financialDetails.*
+import financials.models.*
 import play.api.libs.json.*
 import uk.gov.hmrc.http.HttpResponse
 

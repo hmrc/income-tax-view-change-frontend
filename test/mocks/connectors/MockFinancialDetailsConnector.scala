@@ -20,12 +20,12 @@ import common.models.core.Nino
 import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import common.testUtils.UnitSpec
 import connectors.FinancialDetailsConnector
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
-import models.paymentAllocations.PaymentAllocationsResponse
+import financials.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
+import financials.models.paymentAllocations.PaymentAllocationsResponse
+import financials.models.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 
 import scala.concurrent.Future

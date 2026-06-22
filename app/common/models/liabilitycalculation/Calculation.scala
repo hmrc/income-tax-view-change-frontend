@@ -119,6 +119,7 @@ object GiftAid {
 case class IncomeSummaryTotals(
                                 totalSelfEmploymentProfit: Option[Int] = None,
                                 totalPropertyProfit: Option[Int] = None,
+                                totalUKOtherPropertyProfit: Option[Int] = None,
                                 totalFHLPropertyProfit: Option[Int] = None,
                                 totalForeignPropertyProfit: Option[Int] = None,
                                 totalEeaFhlProfit: Option[Int] = None
@@ -136,7 +137,8 @@ object MarriageAllowanceTransferredIn {
   implicit val format: OFormat[MarriageAllowanceTransferredIn] = Json.format[MarriageAllowanceTransferredIn]
 }
 
-case class SavingsAndGainsIncome(chargeableForeignSavingsAndGains: Option[Int] = None)
+case class SavingsAndGainsIncome(chargeableForeignSavingsAndGains: Option[Int] = None,
+                                 totalUkSavingsAndGains: Option[Int] = None)
 
 object SavingsAndGainsIncome {
   implicit val format: OFormat[SavingsAndGainsIncome] = Json.format[SavingsAndGainsIncome]

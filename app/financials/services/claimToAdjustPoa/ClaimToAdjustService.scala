@@ -21,10 +21,11 @@ import common.auth.MtdItUser
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import connectors.{CalculationListConnector, ChargeHistoryConnector, FinancialDetailsConnector}
+import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import models.financialDetails.{FinancialDetailsErrorModel, FinancialDetailsModel}
+import financials.models.{FinancialDetailsErrorModel, FinancialDetailsModel}
 import play.api.http.Status.NOT_FOUND
+import shared.connectors.CalculationListConnector
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

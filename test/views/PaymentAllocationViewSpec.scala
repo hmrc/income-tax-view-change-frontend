@@ -16,22 +16,22 @@
 
 package views
 
-import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.MtdItUser
+import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.FrontendAppConfig
 import common.exceptions.MissingFieldException
 import common.implicits.ImplicitDateFormatter
-import financials.models.ChargeType.*
-import financials.controllers.routes as financialsRoutes
-import models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
-import models.paymentAllocations.AllocationDetail
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
-import financials.testConstants.PaymentAllocationsTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.businessAndPropertyAligned
 import common.testUtils.ViewSpec
-import uk.gov.hmrc.auth.core.AffinityGroup.Individual
+import financials.controllers.routes as financialsRoutes
+import financials.enums.ChargeType.*
+import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
+import financials.models.paymentAllocations.AllocationDetail
+import financials.testConstants.PaymentAllocationsTestConstants.*
 import financials.views.html.PaymentAllocationView
+import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
+import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import scala.jdk.CollectionConverters.*
 

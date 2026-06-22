@@ -22,7 +22,6 @@ import common.models.auth.{AgentClientDetails, AuthorisedAgentWithClientDetailsR
 import common.services.SessionDataService
 import common.services.agent.ClientDetailsService
 import common.utils.sessionUtils.SessionKeys
-import hub.controllers.agent.routes
 import common.models.sessionData.SessionDataGetResponse.SessionDataNotFound
 import play.api.Logger
 import play.api.mvc.Results.Redirect
@@ -76,9 +75,9 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
             ))
             case Left(error) =>
               Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
-              Left(Redirect(routes.EnterClientsUTRController.show()))
+              Left(Redirect(appConfig.enterClientsUTRUrl))
           }
-        case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(routes.EnterClientsUTRController.show())))
+        case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl)))
         case Left(_) => Future.successful(Left(errorHandler.showInternalServerError()))
       }
     }

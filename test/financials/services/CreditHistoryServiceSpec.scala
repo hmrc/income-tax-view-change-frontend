@@ -19,12 +19,12 @@ package financials.services
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
-import financials.services.CreditHistoryService.CreditHistoryError
-import mocks.connectors.MockFinancialDetailsConnector
-import models.financialDetails.FinancialDetailsErrorModel
-import services.helpers.CreditHistoryDataHelper
 import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import common.testUtils.TestSupport
+import financials.models.FinancialDetailsErrorModel
+import financials.services.CreditHistoryService.CreditHistoryError
+import mocks.connectors.MockFinancialDetailsConnector
+import services.helpers.CreditHistoryDataHelper
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConnector

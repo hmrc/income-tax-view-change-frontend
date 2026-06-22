@@ -16,7 +16,7 @@
 
 @import common.views.html.components._
 @import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import models.financialDetails.ChargeItem
+@import financials.models.ChargeItem
 @import common.services.DateServiceInterface
 @import financials.views.html.partials.whatYouOwe.PaymentTypeEntry
 @import common.auth.MtdItUser
@@ -31,7 +31,8 @@
     rowId2: String,
     charge: ChargeItem,
     index: Int,
-    chargeSummaryUrl: String
+    chargeSummaryUrl: String,
+    showLabel: Boolean = true,
 )(
     implicit messages: Messages,
     user: MtdItUser[_],
@@ -45,7 +46,7 @@
     </div>
 }
 
-@if(charge.isOverdue()){
+@if(charge.isOverdue() && showLabel){
     <div>
         <span id="@rowId2-overdue" class="govuk-tag govuk-tag--red" >@getMessage("over-due")</span>
     </div>

@@ -18,10 +18,10 @@ package financials.testConstants
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
-import financials.models.ChargeType.NIC4_WALES
+import financials.enums.ChargeType.NIC4_WALES
+import financials.models.*
 import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import financials.testConstants.FinancialDetailsTestConstants.*
-import models.financialDetails.*
 
 import java.time.LocalDate
 import scala.annotation.unused
@@ -747,6 +747,13 @@ trait ChargeConstants {
 
   def whatYouOweDataWithDataDueIn30Days(dunningLocks: List[Option[String]] = noDunningLocks, codedOutDetails: Option[CodingOutDetails] = None)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
     balanceDetails = BalanceDetails(50.00, 0.00, 0.00, 50.00, None, None, None, None, None, None, None),
+    chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
+    outstandingChargesModel = Some(outstandingChargesDueIn30Days),
+    codedOutDetails = codedOutDetails
+  )
+
+  def whatYouOweDataWithDataDueIn30DaysWithOverdueAmount(dunningLocks: List[Option[String]] = noDunningLocks, codedOutDetails: Option[CodingOutDetails] = None)(implicit dateService: DateService): WhatYouOweChargesList = WhatYouOweChargesList(
+    balanceDetails = BalanceDetails(50.00, 50.00, 0.00, 50.00, None, None, None, None, None, None, None),
     chargesList = financialDetailsDueIn30DaysCi(dunningLocks),
     outstandingChargesModel = Some(outstandingChargesDueIn30Days),
     codedOutDetails = codedOutDetails

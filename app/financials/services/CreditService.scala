@@ -22,8 +22,8 @@ import common.models.core.ErrorModel
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import connectors.FinancialDetailsConnector
+import financials.models.Repayment
 import financials.models.creditsandrefunds.CreditsModel
-import models.financialDetails.Repayment
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier

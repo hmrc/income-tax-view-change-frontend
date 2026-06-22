@@ -16,18 +16,18 @@
 
 @import _root_.financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import _root_.common.implicits.ImplicitDateFormatterImpl
-@import models.financialDetails.PaymentsWithChargeType
-@import models.financialDetails.FinancialDetailsModel
-@import models.financialDetails.DocumentDetail
-@import models.financialDetails.FinancialDetail
-@import models.financialDetails.DocumentDetailWithDueDate
+@import financials.models.PaymentsWithChargeType
+@import financials.models.FinancialDetailsModel
+@import financials.models.DocumentDetail
+@import financials.models.FinancialDetail
+@import financials.models.DocumentDetailWithDueDate
 @import common.exceptions.MissingFieldException
 @import financials.views.html.partials.chargeSummary._
 @import common.views.html.components._
 
 @this(p: p, h2: h2, implicitDateFormatter: ImplicitDateFormatterImpl)
 
-@(  chargeItem: models.financialDetails.ChargeItem,
+@(  chargeItem: financials.models.ChargeItem,
     paymentBreakdown: List[FinancialDetail],
     latePaymentInterestCharge: Boolean,
     chargeSummaryAccruingInterestCharge: ChargeSummaryAccruingInterestCharge,

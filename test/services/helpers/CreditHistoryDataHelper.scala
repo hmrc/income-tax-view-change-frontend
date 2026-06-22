@@ -18,10 +18,10 @@ package services.helpers
 
 
 import businessDetails.testConstants.BusinessDetailsTestConstants.fixedDate
-import financials.models.ChargeType.NIC4_WALES
+import financials.enums.ChargeType.NIC4_WALES
+import financials.models.*
 import financials.models.creditDetailModel.CreditDetailModel
-import models.financialDetails.*
-import models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import financials.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
 
 import java.time.LocalDate
 

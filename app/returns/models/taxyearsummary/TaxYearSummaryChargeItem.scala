@@ -18,7 +18,7 @@ package returns.models.taxyearsummary
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import models.financialDetails._
+import financials.models.*
 
 import java.time.LocalDate
 

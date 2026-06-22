@@ -24,10 +24,10 @@ import common.models.admin.{PaymentHistoryRefunds, RecentActivity}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateServiceInterface, ITSAStatusService}
+import financials.models.Payment
 import financials.services.{PaymentHistoryService, WhatYouOweService}
 import hub.services.newHomePage.RecentActivityService
 import hub.utils.HomePageUtils
-import models.financialDetails.Payment
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import shared.models.ObligationsModel
@@ -68,8 +68,8 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: hub.view
       }
 
       repaymentHistoryData <- paymentHistoryService.getRepaymentHistory(isEnabled(PaymentHistoryRefunds)).map {
-        case Right(repaymentHistory) => models.repaymentHistory.RepaymentHistoryModel(repaymentHistory)
-        case Left(value) => models.repaymentHistory.RepaymentHistoryModel(Nil)
+        case Right(repaymentHistory) => financials.models.repaymentHistory.RepaymentHistoryModel(repaymentHistory)
+        case Left(value) => financials.models.repaymentHistory.RepaymentHistoryModel(Nil)
       }
 
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)

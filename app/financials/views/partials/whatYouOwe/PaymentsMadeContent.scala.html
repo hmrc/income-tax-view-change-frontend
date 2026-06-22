@@ -16,17 +16,15 @@
 
 @import common.views.html.components._
 @import common.auth.MtdItUser
-@import uk.gov.hmrc.govukfrontend.views.html.components.GovukInsetText
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
-@import models.financialDetails.WhatYouOweViewModel
+@import financials.models.WhatYouOweViewModel
 @import _root_.financials.implicits.ImplicitCurrencyFormatter._
 
 @this(
         h2: h2,
         p: p,
         link: link,
-        govukInsetText: GovukInsetText,
         govukButton: GovukButton
 )
 
@@ -37,11 +35,6 @@
     implicit messages: Messages,
     user: MtdItUser[_]
 )
-
-@overdueInsetText = {
-    @p(id = Some("overdue-inset-migrated-1"))(content = Html(messages("yourSelfAssessmentChargeSummary.overdue-inset-text-1")))
-    @p(id = Some("overdue-inset-migrated-2"))(content = Html(messages("yourSelfAssessmentChargeSummary.overdue-inset-text-2")))
-}
 
 @getNoPaymentsDueText = {
     @p(id = Some("no-payments-due"))(Html(getMessage(if(user.isAgent) "no-payments-due-agent" else "no-payments-due")))
@@ -60,9 +53,6 @@
 }
 
 @insetTextAndButton(amount: BigDecimal) = {
-    @govukInsetText(InsetText(
-        content = HtmlContent(overdueInsetText)
-    ))
     @govukButton(Button(
         id = Some("payment-button"),
         content = Text(getMessage("payNow")),
