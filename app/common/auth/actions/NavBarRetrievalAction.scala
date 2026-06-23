@@ -20,7 +20,6 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.enums.OriginEnum
 import common.enums.OriginEnum.{BTA, PTA}
-import common.models.admin.NavBarFs
 import common.utils.AuthUtils.ORIGIN
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.*
@@ -43,10 +42,8 @@ class NavBarRetrievalAction @Inject()()
     val header: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     implicit val messages: Messages = messagesApi.preferred(request)
     implicit val hc: HeaderCarrier = header.copy(extraHeaders = header.headers(Seq(play.api.http.HeaderNames.COOKIE)))
-    lazy val navigationBarDisabled = !isEnabled(NavBarFs)(request)
     request.getQueryString(ORIGIN) match {
-      case Some(_) => saveOriginAndReturnToHomeWithoutQueryParams(request, navigationBarDisabled).map(Left(_))
-      case None if navigationBarDisabled => Future.successful(Right(request))
+      case Some(_) => saveOriginAndReturnToHomeWithoutQueryParams(request).map(Left(_))
       case None => retrieveCacheAndHandleNavBar(request)
     }
   }

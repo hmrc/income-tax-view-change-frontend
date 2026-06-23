@@ -16,7 +16,7 @@
 
 package common.admin
 
-import common.models.admin.{FeatureSwitchName, ITSASubmissionIntegration, InvalidFS, NavBarFs}
+import common.models.admin.{FeatureSwitchName, ITSASubmissionIntegration, InvalidFS, ChargeHistory}
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.{JsString, Json}
 
@@ -29,8 +29,8 @@ class FeatureSwitchNameSpec extends PlaySpec{
     }
 
     "deserialize another valid FeatureSwitchName" in {
-      val json = JsString(NavBarFs.name)
-      json.as[FeatureSwitchName] mustBe NavBarFs
+      val json = JsString(ChargeHistory.name)
+      json.as[FeatureSwitchName] mustBe ChargeHistory
     }
 
     "deserialize all known FeatureSwitchNames successfully (round-trip test)" in {
