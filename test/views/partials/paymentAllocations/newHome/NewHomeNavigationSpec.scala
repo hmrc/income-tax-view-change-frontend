@@ -42,7 +42,7 @@ class NewHomeNavigationSpec extends TestSupport {
 
   "NewHomeNavigation" should {
     "display the correct tabs" when {
-      "the 'Recent Activity' feature switch is ENABLED" in new Setup(isRecentActivityEnabled = true){
+      "the 'Recent Activity' feature switch is ENABLED" in new Setup(isRecentActivityEnabled = true) {
         val navigationTabs: Elements = pageDocument.selectFirst(".govuk-service-navigation__wrapper").select("a")
         navigationTabs.size() shouldBe 4
         navigationTabs.get(0).text() shouldBe "Your tasks"
@@ -87,6 +87,12 @@ class NewHomeNavigationSpec extends TestSupport {
       "the Help tab is selected" in new Setup(activeTab = "help", isRecentActivityEnabled = true) {
         val activeTab: Elements = pageDocument.selectFirst(".govuk-service-navigation__wrapper").select(".govuk-service-navigation__item--active")
         activeTab.text() shouldBe "Help"
+      }
+    }
+    "have the correct aria label for the home page service navigation component" when {
+      "the 'Recent Activity' feature switch is ENABLED" in new Setup(isRecentActivityEnabled = true) {
+        val serviceNavigation: Elements = pageDocument.select(".govuk-service-navigation__wrapper")
+        serviceNavigation.attr("aria-label") shouldBe "Self Assessment Menu"
       }
     }
   }
