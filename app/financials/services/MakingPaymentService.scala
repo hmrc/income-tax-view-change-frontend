@@ -18,7 +18,7 @@ package financials.services
 
 import common.auth.MtdItUser
 import common.services.DateServiceInterface
-import models.financialDetails.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, MakingPaymentViewModel}
+import financials.models.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, MakingPaymentViewModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

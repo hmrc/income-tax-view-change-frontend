@@ -20,8 +20,8 @@ import financials.models.MakingPaymentViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
-import testUtils.{TestSupport, ViewSpec}
-import views.html.MakingPaymentView
+import common.testUtils.{TestSupport, ViewSpec}
+import financials.views.html.MakingPaymentView
 
 class MakingPaymentViewSpec extends TestSupport with ViewSpec {
 
