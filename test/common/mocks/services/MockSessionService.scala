@@ -108,9 +108,9 @@ trait MockSessionService extends UnitSpec with BeforeAndAfterEach {
     ).thenReturn(Future.successful(result))
   }
 
-  def setupMockClearSession(): Unit = {
+  def setupMockClearSession(result: Future[Unit] = Future.successful(())): Unit = {
     when(
-      mockSessionService.clearSession(any())(any())).thenReturn(Future.successful(()))
+      mockSessionService.clearSession(any())(any())).thenReturn(result)
   }
 
   def setupMockSetSessionKeyMongo(key: String)(result: Either[Throwable, Boolean]): Unit = {
