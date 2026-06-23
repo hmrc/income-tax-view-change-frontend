@@ -27,27 +27,27 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.core.{CheckMode, NormalMode}
 import common.services.{DateService, DateServiceInterface}
+import common.testConstants.BaseTestConstants.testSessionId
+import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 import models.incomeSourceDetails.AddIncomeSourceData
 import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.{mock, verify}
 import org.scalatest.Assertion
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.api.test.Helpers.*
-import common.testConstants.BaseTestConstants.testSessionId
-import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 import shared.models.UIJourneySessionData
-
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import java.time.LocalDate
+import scala.concurrent.Future
 
 
-class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService with MockDateService{
+class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with ImplicitDateFormatter with MockSessionService with MockDateService {
 
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
 
@@ -207,15 +207,34 @@ class AddIncomeSourceStartDateCheckControllerSpec extends MockAuthActions with I
               }
             }
 
-            s"render the error page" when {
-              s"calling Business Start Date Check Page but session does not contain key: ${AddIncomeSourceData.accountingPeriodStartDateField}" in {
+            s"redirect to the manage business page" when {
+              "there is no start date in session and the session is cleared successfully" in {
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction(noIncomeDetails)
                 mockNoIncomeSources()
 
                 setupMockGetMongo(Right(Some(sessionData(journeyType(incomeSourceType)))))
+                setupMockClearSession()
 
                 val result = action(fakeRequest)
+
+                status(result) shouldBe SEE_OTHER
+                val redirectUrl = if(isAgent) Some(manageBusinessRoutes.ManageYourBusinessesController.showAgent().url) else Some(manageBusinessRoutes.ManageYourBusinessesController.show().url)
+                redirectLocation(result) shouldBe redirectUrl
+              }
+            }
+
+            s"render the error page" when {
+              "there is no start date in session and clearing the session is not acknowledged" in {
+                setupMockSuccess(mtdRole)
+                mockItsaStatusRetrievalAction(noIncomeDetails)
+                mockNoIncomeSources()
+
+                setupMockGetMongo(Right(Some(sessionData(journeyType(incomeSourceType)))))
+                setupMockClearSession(Future.failed(new Exception("failed to clear session")))
+
+                val result = action(fakeRequest)
+
                 status(result) shouldBe INTERNAL_SERVER_ERROR
               }
             }

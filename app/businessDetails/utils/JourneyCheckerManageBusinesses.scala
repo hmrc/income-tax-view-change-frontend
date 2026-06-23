@@ -79,7 +79,7 @@ trait JourneyCheckerManageBusinesses extends IncomeSourcesUtils {
       }
     }
 
-  private def journeyRestartUrl(isTriggeredMigration: Boolean): MtdItUser[_] => Future[Result] =
+  def journeyRestartUrl(isTriggeredMigration: Boolean): MtdItUser[_] => Future[Result] =
     user => {
       Future.successful {
         lazy val manageBusinessesCall = (isAgent(user), isTriggeredMigration) match {
