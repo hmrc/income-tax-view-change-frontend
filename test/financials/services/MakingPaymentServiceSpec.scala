@@ -63,9 +63,22 @@ class MakingPaymentServiceSpec extends TestSupport {
 
   "MakingPaymentService.createViewModel" should {
 
-    "set hasInterest when any financial details response has an overdue amount" in {
+    "set hasInterest when any financial details response has accruing interest" in {
       when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
-        .thenReturn(Future.successful(List(2025 -> financialDetailsModel(overDueAmount = 1.67))))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(DocumentDetail(
+              taxYear = 2025,
+              transactionId = "charge-with-accruing-interest",
+              documentDescription = None,
+              documentText = None,
+              outstandingAmount = 100,
+              originalAmount = 100,
+              documentDate = LocalDate.of(2025, 4, 6),
+              accruingInterestAmount = Some(1.67)
+            ))
+          )
+        )))
 
       val result = TestMakingPaymentService
         .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
@@ -77,10 +90,61 @@ class MakingPaymentServiceSpec extends TestSupport {
 
     "not set hasInterest when the interest section is suppressed" in {
       when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
-        .thenReturn(Future.successful(List(2025 -> financialDetailsModel(overDueAmount = 1.67))))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(DocumentDetail(
+              taxYear = 2025,
+              transactionId = "charge-with-accruing-interest",
+              documentDescription = None,
+              documentText = None,
+              outstandingAmount = 100,
+              originalAmount = 100,
+              documentDate = LocalDate.of(2025, 4, 6),
+              accruingInterestAmount = Some(1.67)
+            ))
+          )
+        )))
 
       val result = TestMakingPaymentService
         .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties", showInterestSection = false)
+        .futureValue
+
+      result.map(_.hasInterest) shouldBe Some(false)
+      result.map(_.hasAdditionalSections) shouldBe Some(false)
+    }
+
+    "not set hasInterest for overdue amounts without accruing interest" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(2025 -> financialDetailsModel(overDueAmount = 1.67))))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasInterest) shouldBe Some(false)
+      result.map(_.hasAdditionalSections) shouldBe Some(false)
+    }
+
+    "not set hasInterest for crystallised interest without accruing interest" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(DocumentDetail(
+              taxYear = 2025,
+              transactionId = "crystallised-interest",
+              documentDescription = None,
+              documentText = None,
+              outstandingAmount = 0,
+              originalAmount = 100,
+              documentDate = LocalDate.of(2025, 4, 6),
+              interestOutstandingAmount = Some(1.67),
+              latePaymentInterestAmount = Some(1.67)
+            ))
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
         .futureValue
 
       result.map(_.hasInterest) shouldBe Some(false)

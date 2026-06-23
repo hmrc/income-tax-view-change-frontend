@@ -1207,9 +1207,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         anchor.attr("target") shouldBe "_blank"
       }
 
-      "have payment data with button when there are no charges" in new TestSetup(charges = noChargesModel) {
-        pageDocument.getElementById("payment-button").text shouldBe payNow
-        pageDocument.getElementById("payment-button").attr("href") shouldBe financialsRoutes.PaymentController.makingPayment(0).url
+      "not have payment data with button when there are no charges" in new TestSetup(charges = noChargesModel) {
+        findElementById("payment-button") shouldBe None
         findElementById("overdue-inset-migrated-1") shouldBe None
         findElementById("overdue-inset-migrated-2") shouldBe None
       }

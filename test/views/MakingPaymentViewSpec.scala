@@ -77,6 +77,7 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.getElementById("pay-penalty-link").attr("target") shouldBe "_blank"
       document.getElementById("money-in-account-link").attr("href") shouldBe "/money-in-your-account"
       document.getElementById("money-in-account-p1").text should include("£400.00")
+      document.getElementById("money-in-account-p1").text should include("account; your current balance")
     }
   }
 }

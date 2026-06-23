@@ -114,8 +114,9 @@
                 @link(
                     link = viewModel.moneyInYourAccountUrl,
                     messageKey = "making-payment.money-in-account.p1.link",
-                    id = Some("money-in-account-link")
-                )@messages("making-payment.money-in-account.p1.after", credit.toCurrencyString)
+                    id = Some("money-in-account-link"),
+                    outerMessage = messages("making-payment.money-in-account.p1.after", credit.toCurrencyString)
+                )
             }
         }
     }
