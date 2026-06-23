@@ -19,7 +19,8 @@ package returns.models.liabilitycalculation.viewmodels
 import common.implicits.ImplicitDateParser
 import common.models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZonedDateTime}
+import scala.util.Try
 
 case class CalculationSummary(
                                timestamp: Option[LocalDate],
@@ -70,7 +71,7 @@ object CalculationSummary extends ImplicitDateParser {
   def apply(calc: LiabilityCalculationResponse): CalculationSummary = {
 
     CalculationSummary(
-      timestamp = calc.metadata.calculationTimestamp.map(_.toZonedDateTime.toLocalDate),
+      timestamp = calc.metadata.calculationTimestamp.flatMap(timestamp => Try(ZonedDateTime.parse(timestamp).toLocalDate).toOption),
       crystallised = calc.metadata.isCalculationCrystallised,
       unattendedCalc = isUnattendedCalc(calc.metadata.calculationReason),
       taxDue = getTaxDue(calc),
