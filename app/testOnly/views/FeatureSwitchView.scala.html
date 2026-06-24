@@ -17,12 +17,12 @@
 @import helper._
 @import common.models.admin.FeatureSwitchName
 @import common.views.html.layouts.unifiedLayout
-@import common.views.html.components.h3
+@import common.views.html.components.h2
 @import testOnly.views.html.helpers.FeatureSwitchButton
 
 @this(
         unifiedLayout: unifiedLayout,
-        h3: h3,
+        h2: h2,
         featureSwitchButton: FeatureSwitchButton
 )
 @(switchNames: Map[FeatureSwitchName, Boolean], action: Call)(implicit request: Request[_], messages: Messages)
@@ -39,7 +39,7 @@
                 </h1>
             </legend>
 
-            @h3(
+            @h2(
                 msg = "Frontend features",
                 classes = "govuk-heading-m"
             )
