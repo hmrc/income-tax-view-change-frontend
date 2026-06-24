@@ -182,7 +182,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     }
 
     def verifySelfAssessmentLink(): Unit = {
-      val anchor: Element = pageDocument.getElementById("payments-due-note").selectFirst("a")
+      val anchor: Element = pageDocument.getElementById("payments-due-note").select("a").get(2)
       anchor.text shouldBe saLink_2
       anchor.attr("href") should include("self-assessment/ind/1234567890/account")
       anchor.attr("target") shouldBe "_blank"
