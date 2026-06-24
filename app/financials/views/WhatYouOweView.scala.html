@@ -87,7 +87,8 @@
                 Some(HeadCell(content = Text(getMessage("tableHead.charge-type")))),
                 Some(HeadCell(content = Text(getMessage("tableHead.tax-year")))),
                 Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
-                    HeadCell(content = Text(getMessage("tableHead.interest")))
+                    HeadCell(content = Text(getMessage("tableHead.interest")),
+                    classes = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) "govuk-!-text-align-right" else "govuk-!-text-align-left"),
                 ),
                 Some(HeadCell(content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking),
 format = Some("numeric")))
@@ -168,10 +169,14 @@ format = Some("numeric")))
                                     format = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) Some("numeric") else None
                                 )
                             ).orElse(
-                                    Some(TableRow(
+                                    if(viewModel.whatYouOweChargesList.hasInterestAccruing){
+                                        Some(TableRow(
                                         attributes = Map("id" -> s"fallback-$index"),
-                                        content = HtmlContent(getMessage("tableRow.na"))
-                                    ))
+                                        content = HtmlContent(getMessage("tableRow.na"))))
+                                    }else {
+                                        None
+                                    }
+
                                 ),
                             Some(TableRow(
                                 attributes = Map("id" -> s"due-charge-amount-due-$index"),
