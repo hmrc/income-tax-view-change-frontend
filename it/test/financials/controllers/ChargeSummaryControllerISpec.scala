@@ -28,7 +28,7 @@ import financials.enums.CodingOutType.*
 import financials.models.*
 import financials.models.audit.ChargeSummaryAudit
 import financials.testConstants.FinancialDetailsIntegrationTestConstants.financialDetailModelPartial
-import helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
+import financials.helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.*
 import play.api.libs.json.Json
