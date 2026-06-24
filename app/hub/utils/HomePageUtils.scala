@@ -18,7 +18,7 @@ package hub.utils
 
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals}
+import common.models.admin.PenaltiesAndAppeals
 import common.services.DateServiceInterface
 import controllers.Execution.trampoline
 import financials.models.*
@@ -37,7 +37,6 @@ trait HomePageUtils extends FeatureSwitching {
                                         (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[List[OutstandingChargeModel]] =
     whatYouOweService.getWhatYouOweChargesList(
       unpaidCharges,
-      isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
       isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
       mainChargeIsNotPaidFilter
     ) map {
@@ -54,7 +53,7 @@ trait HomePageUtils extends FeatureSwitching {
     overduePaymentsCountFromDate + overdueChargesCount
   }
 
-  def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[LocalDate] = {
+  def getDueDates(unpaidCharges: List[FinancialDetailsResponseModel], penaltiesEnabled: Boolean): List[LocalDate] = {
 
     val chargesList =
       unpaidCharges.collect {
@@ -64,7 +63,6 @@ trait HomePageUtils extends FeatureSwitching {
     val dueDatesFromChargeItems =
       whatYouOweService.getFilteredChargesList(
         financialDetailsList = chargesList,
-        isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
         isPenaltiesEnabled = penaltiesEnabled,
         remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter
       ).flatMap(_.dueDate)

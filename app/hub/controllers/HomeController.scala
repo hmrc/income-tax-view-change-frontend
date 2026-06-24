@@ -153,7 +153,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
     for {
       credits <- creditService.getAllCredits
       unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      paymentsDue = getDueDates(unpaidCharges, isEnabled(PenaltiesAndAppeals))
       dunningLockExists = hasDunningLock(unpaidCharges)
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
@@ -241,7 +241,6 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
                                         (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
     whatYouOweService.getWhatYouOweChargesList(
       unpaidCharges,
-      isFilterCodedOutPoasEnabled = isEnabled(FilterCodedOutPoas),
       isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
       mainChargeIsNotPaidFilter
     ) map {
@@ -286,7 +285,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         ctaViewModel <- whatYouOweService.claimToAdjustViewModel(Nino(user.nino))
         credits <- creditService.getAllCredits
         unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
-        chargeItem = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+        chargeItem = getChargeList(unpaidCharges, isEnabled(PenaltiesAndAppeals))
       }
       yield {
         Ok(newHomeOverviewView(origin, user.isSupportingAgent, dateService.getCurrentTaxYear,
@@ -302,7 +301,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
       Future.successful(Ok(newHomeHelpView(origin, yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent), helpUrl(origin, isAgent), isEnabled(RecentActivity))))
   }
 
-  private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {
+  private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], penaltiesEnabled: Boolean): List[ChargeItem] = {
 
     val chargesList =
       unpaidCharges.collect {
@@ -310,7 +309,6 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
       }
     whatYouOweService.getFilteredChargesList(
       financialDetailsList = chargesList,
-      isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
       isPenaltiesEnabled = penaltiesEnabled,
       remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter)
   }

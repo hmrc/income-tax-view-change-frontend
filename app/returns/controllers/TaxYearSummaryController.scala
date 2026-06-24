@@ -23,7 +23,7 @@ import common.enums.GatewayPage.TaxYearSummaryPage
 import common.enums.TaxYearSummary.*
 import common.enums.TaxYearSummary.CalculationType.fromStringToCalculationTypeValue
 import common.implicits.ImplicitDateFormatter
-import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
+import common.models.admin.{PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation

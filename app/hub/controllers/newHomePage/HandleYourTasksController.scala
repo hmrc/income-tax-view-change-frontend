@@ -19,7 +19,7 @@ package hub.controllers.newHomePage
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.models.admin.{CreditsRefundsRepay, FilterCodedOutPoas, PenaltiesAndAppeals, RecentActivity}
+import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals, RecentActivity}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.{AuditingService, DateServiceInterface, ITSAStatusService}
@@ -92,10 +92,10 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
       _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
       currentItsaStatus <- getCurrentITSAStatus(currentTaxYear)
-      chargeItemList = getChargeList(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      chargeItemList = getChargeList(unpaidCharges, isEnabled(PenaltiesAndAppeals))
       
       outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
-      paymentsDue = getDueDates(unpaidCharges, isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals))
+      paymentsDue = getDueDates(unpaidCharges, isEnabled(PenaltiesAndAppeals))
       outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
       overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
       paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
@@ -151,7 +151,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     }
   }
 
-  private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], isFilterOutCodedPoasEnabled: Boolean, penaltiesEnabled: Boolean): List[ChargeItem] = {
+  private def getChargeList(unpaidCharges: List[FinancialDetailsResponseModel], penaltiesEnabled: Boolean): List[ChargeItem] = {
 
     val chargesList =
       unpaidCharges.collect {
@@ -159,7 +159,6 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       }
     whatYouOweService.getFilteredChargesList(
       financialDetailsList = chargesList,
-      isFilterCodedOutPoasEnabled = isFilterOutCodedPoasEnabled,
       isPenaltiesEnabled = penaltiesEnabled,
       remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter)
   }
