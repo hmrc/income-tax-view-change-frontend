@@ -59,7 +59,7 @@ object NextPaymentsTileViewModel {
 
 case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrationEnabled: Boolean)
 
-case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean)
+case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean, manageBusinessesUrl: Option[String] = None)
 
 case class YourReportingObligationsTileViewModel(currentTaxYear: TaxYear, currentYearITSAStatus: ITSAStatus)
 
