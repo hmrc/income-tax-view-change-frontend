@@ -145,8 +145,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .filterNot(_.codedOutStatus.contains(Accepted))
       .filterNot(_.isPenalty && !isPenaltiesEnabled)
       .collect(remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
-//      TODO chek if we need it
-      .filter(_.notCodedOutPoa(isFilterCodedOutPoasEnabled))
+      .filter(_.notCodedOutPoa)
       .sortBy(_.dueDate.get)
   }
 

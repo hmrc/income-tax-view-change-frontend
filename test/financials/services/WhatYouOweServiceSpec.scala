@@ -281,24 +281,11 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(1000, 400),
               amountCodedOut = List(Some(30), Some(70))))))
 
-          TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = true,
+          TestWhatYouOweService.getWhatYouOweChargesList(
             isPenaltiesEnabled = true,
             mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
             balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
             chargesList = List())
-        }
-        "return PoA charges if they have an amount coded out and filtering FS disabled" in {
-          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
-            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
-          when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
-            .thenReturn(Future.successful(List(financialDetailsWithOutstandingChargesAndLpi(outstandingAmount = List(1000, 400),
-              amountCodedOut = List(Some(30), Some(70))))))
-
-          TestWhatYouOweService.getWhatYouOweChargesList(isFilterCodedOutPoasEnabled = false,
-            isPenaltiesEnabled = true,
-            mainChargeIsNotPaidFilter).futureValue shouldBe WhatYouOweChargesList(
-            balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
-            chargesList = List(poa2WithCodedOut, poa1WithCodedOut))
         }
       }
     }

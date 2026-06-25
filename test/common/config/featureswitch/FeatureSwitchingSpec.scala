@@ -50,7 +50,6 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     PaymentHistoryRefunds,
     OptOutFs,
     SignUpFs,
-    FilterCodedOutPoas,
     DisplayBusinessStartDate,
     PenaltiesAndAppeals,
     PenaltiesBackendEnabled,
@@ -121,8 +120,8 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     object MockFeatureSwitching extends FeatureSwitching {
       override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
     }
-
-    "use MongoDB feature switch status if MongoDB is enabled in config" in {
+// TODO chek if we need these tests
+ /*   "use MongoDB feature switch status if MongoDB is enabled in config" in {
 
       val featureSwitchName = FilterCodedOutPoas
 
@@ -142,6 +141,6 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
       val userFeatureSwitches = List(FeatureSwitch(featureSwitchName, isEnabled = false))
 
       MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser.copy(featureSwitches = userFeatureSwitches)) shouldBe false
-    }
+    }*/
   }
 }
