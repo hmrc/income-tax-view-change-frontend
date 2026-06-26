@@ -17,12 +17,12 @@
 @import helper._
 @import common.models.admin.FeatureSwitchName
 @import common.views.html.layouts.unifiedLayout
-@import common.views.html.components.h3
+@import common.views.html.components.h2
 @import testOnly.views.html.helpers.FeatureSwitchButton
 
 @this(
         unifiedLayout: unifiedLayout,
-        h3: h3,
+        h2: h2,
         featureSwitchButton: FeatureSwitchButton
 )
 @(switchNames: Map[FeatureSwitchName, Boolean], action: Call)(implicit request: Request[_], messages: Messages)
@@ -30,19 +30,6 @@
 @unifiedLayout(pageTitle = Messages("Feature switch")) {
     <form class="govuk-form-group" method="@action.method" action="@action.url">
         @CSRF.formField
-
-        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-            <div class="govuk-notification-banner__header">
-                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                    Important
-                </h2>
-            </div>
-            <div class="govuk-notification-banner__content">
-                <p class="govuk-notification-banner__heading">Do not change the feature switches in Staging during the accessibility re-testing period, unless supporting said testing</p>
-                <p class="govuk-notification-banner__heading">This period will last from the 28th January at 9am and will run for a few days</p>
-                <p class="govuk-notification-banner__heading">Once the testing has been completed, this message will be removed</p>
-            </div>
-        </div>
 
         <fieldset class="govuk-fieldset govuk-!-padding-bottom-8" aria-describedby="waste-hint">
 
@@ -52,7 +39,7 @@
                 </h1>
             </legend>
 
-            @h3(
+            @h2(
                 msg = "Frontend features",
                 classes = "govuk-heading-m"
             )
