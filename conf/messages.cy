@@ -1300,6 +1300,29 @@ whatYouOwe.pre-mtd.body                                         = I wirio a oes 
 whatYouOwe.pre-mtd-link                                         = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.pre-mtd-outstanding-charges                          = Bydd unrhyw daliad a wneir yn cael ei ddefnyddio ar gyfer treth sydd heb eu talu ar gyfer blynyddoedd treth Hunanasesiad blaenorol yn gyntaf, ac ni fydd yn cael ei arddangos yma.
 
+making-payment.heading                                          = Gwneud taliad
+making-payment.what-payment-goes-towards.heading                = Tuag at beth fydd eich taliad yn mynd
+making-payment.what-payment-goes-towards.p1                     = Pan fyddwch chi’n gwneud taliad, bydd yn mynd tuag at y canlynol:
+making-payment.what-payment-goes-towards.bullet1                = unrhyw dreth orddyledus neu dreth gyda llog yn gyntaf, gan ddechrau gyda’r hynaf
+making-payment.what-payment-goes-towards.bullet2                = yna unrhyw dreth sy’n weddill yn nhrefn y dyddiadau dyledus
+making-payment.what-payment-goes-towards.p2                     = Os nad oes gennych unrhyw beth sy’n orddyledus neu gyda llog, gallwch ddewis talu’ch treth sy’n weddill yn gynnar.
+making-payment.what-payment-goes-towards.p3                     = Gallwch ddewis faint hoffech dalu.
+making-payment.accruing-interest.heading                        = Talu treth sy’n cronni llog
+making-payment.accruing-interest.p1                             = Bydd llog wedi’i amcangyfrif, a bydd yn cynyddu bob dydd nes bod y dreth y mae’n gysylltiedig â hi yn cael ei thalu’n llawn.
+making-payment.accruing-interest.p2.before                      = Yna gall gymryd hyd at 3 diwrnod gwaith i’r llog gael ei gyfrifo a’i ddangos ar y dudalen
+making-payment.accruing-interest.p2.link                        = yr hyn sydd arnoch
+making-payment.accruing-interest.p2.after                       = .
+making-payment.penalty.heading                                  = Os oes gennych gosb i’w thalu
+making-payment.penalty.p1                                       = Rhaid i chi dalu unrhyw dreth sy’n orddyledus neu dreth sy’n cronni llog cyn y gallwch ddefnyddio’r gwasanaeth hwn i dalu eich cosb.
+making-payment.penalty.p2.before                                = Fel arall, gallwch
+making-payment.penalty.p2.link                                  = dalu eich cosb ar-lein nawr (yn agor tab newydd)
+making-payment.penalty.p2.after                                 = gan ddefnyddio’r cyfeirnod talu yn y llythyr neu’r neges ddiogel ddigidol a gawsoch gan CThEF.
+making-payment.money-in-account.heading                         = Arian yn eich cyfrif
+making-payment.money-in-account.p1.before                       = Mae gennych
+making-payment.money-in-account.p1.link                         = arian yn eich cyfrif
+making-payment.money-in-account.p1.after                        = ; eich balans cyfredol yw {0}. Gallwch adael yr arian yno i dalu’ch bil nesaf neu hawlio ad-daliad.
+making-payment.continue                                         = Parhau i wneud taliad
+
 ## Charge Summary ##
 chargeSummary.paymentOnAccount1.text                            = Taliad cyntaf ar gyfrif
 chargeSummary.paymentOnAccount2.text                            = Ail daliad ar gyfrif

@@ -71,9 +71,12 @@ case class WhatYouOweChargesList(
 
   def getDefaultPaymentAmount: Option[BigDecimal] = {
     if (balanceDetails.overDueAmount != 0) Some(balanceDetails.overDueAmount)
-    else if(balanceDetails.balanceDueWithin30Days != 0) Some(balanceDetails.balanceDueWithin30Days)
-    else if(balanceDetails.balanceNotDuein30Days != 0) Some(balanceDetails.balanceNotDuein30Days)
-    else None
+    else if (balanceDetails.balanceDueWithin30Days != 0) Some(balanceDetails.balanceDueWithin30Days)
+    else if (balanceDetails.balanceNotDuein30Days != 0) Some(balanceDetails.balanceNotDuein30Days)
+    else {
+      val payableChargesAmount = chargesList.map(_.remainingToPayOnCharge).filter(_ > 0).sum
+      Option.when(payableChargesAmount > 0)(payableChargesAmount)
+    }
   }
 
   def hasInterestAccruing = chargesList.exists(_.hasAccruingInterest)
