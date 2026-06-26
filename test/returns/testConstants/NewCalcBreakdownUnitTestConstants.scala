@@ -92,9 +92,7 @@ object NewCalcBreakdownUnitTestConstants {
         totalSelfEmploymentProfit = Some(12500),
         totalPropertyProfit = Some(12500),
         totalUKOtherPropertyProfit = Some(12500),
-        totalFHLPropertyProfit = Some(12500),
-        totalForeignPropertyProfit = Some(12500),
-        totalEeaFhlProfit = Some(12500)
+        totalForeignPropertyProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
       studentLoans = Some(Seq(StudentLoan(
@@ -391,9 +389,7 @@ object NewCalcBreakdownUnitTestConstants {
         totalSelfEmploymentProfit = Some(12500),
         totalPropertyProfit = Some(12500),
         totalUKOtherPropertyProfit = Some(12500),
-        totalFHLPropertyProfit = Some(12500),
-        totalForeignPropertyProfit = Some(12500),
-        totalEeaFhlProfit = Some(12500)
+        totalForeignPropertyProfit = Some(12500)
       )),
       marriageAllowanceTransferredIn = Some(MarriageAllowanceTransferredIn(amount = Some(5000.99))),
       reliefs = Some(Reliefs(reliefsClaimed = None,
