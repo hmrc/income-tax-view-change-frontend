@@ -98,7 +98,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
             )
           }
         case None =>
-          Logger("application").error("" + "Failed to get income source start date from session")
+          Logger("application").warn("" + "Failed to get income source start date from session")
           sessionService.clearSession(sessionData.sessionId).flatMap { _ =>
             journeyRestartUrl(isTriggeredMigration)(user)
           }
