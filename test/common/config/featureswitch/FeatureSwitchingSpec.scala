@@ -120,10 +120,10 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     object MockFeatureSwitching extends FeatureSwitching {
       override val appConfig: FrontendAppConfig = mock[FrontendAppConfig]
     }
-// TODO chek if we need these tests
- /*   "use MongoDB feature switch status if MongoDB is enabled in config" in {
 
-      val featureSwitchName = FilterCodedOutPoas
+    "use MongoDB feature switch status if MongoDB is enabled in config" in {
+
+      val featureSwitchName = OverseasBusinessAddress
 
       when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
 
@@ -134,13 +134,13 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
 
     "use MongoDB feature switch status when disabled for featureSwitches list" in {
 
-      val featureSwitchName = FilterCodedOutPoas
+      val featureSwitchName = OverseasBusinessAddress
 
       when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
 
       val userFeatureSwitches = List(FeatureSwitch(featureSwitchName, isEnabled = false))
 
       MockFeatureSwitching.isEnabled(featureSwitchName)(mtdItUser.copy(featureSwitches = userFeatureSwitches)) shouldBe false
-    }*/
+    }
   }
 }

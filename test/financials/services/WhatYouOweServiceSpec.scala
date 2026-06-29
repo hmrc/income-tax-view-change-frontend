@@ -274,7 +274,7 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
             codedOutDetails = Some(balancingCodedOut)
           )
         }
-        "not return PoA charges if they have an amount coded out and filtering FS enabled" in {
+        "not return PoA charges if they have an amount coded out" in {
           when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
             .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
           when(mockFinancialDetailsService.getAllUnpaidFinancialDetails()(any(), any(), any()))
