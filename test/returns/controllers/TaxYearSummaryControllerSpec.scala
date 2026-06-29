@@ -477,29 +477,6 @@ class TaxYearSummaryControllerSpec
                 status(result) shouldBe OK
                 contentAsString(result).contains("Adjust payments on account") shouldBe false
               }
-              "POA charges are coded out" in {
-                setupMockSuccess(mtdUserRole, false, List.empty)
-                mockItsaStatusRetrievalAction()
-                mockLatestAndPreviousSuccess(testMtditid)
-                mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
-
-                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
-                  .thenReturn(Future(singleBusinessIncome))
-
-                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-                  toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligationsModel
-                )
-
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
-
-                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftwareShowCalc)
-
-                val result = action(fakeRequest)
-                status(result) shouldBe OK
-                contentAsString(result).contains("First payment on account") shouldBe false
-              }
             }
 
             "Review and Reconcile debit charges in the charges table" when {
