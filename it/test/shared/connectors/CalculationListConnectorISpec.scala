@@ -49,7 +49,7 @@ class CalculationListConnectorISpec extends AnyWordSpec with ComponentSpecBase w
 
           val result = connector.getCalculationList(Nino(nino), taxYearEnd, testMtditid).futureValue
 
-          result shouldBe CalculationListModel("TEST_ID", "TEST_STAMP", "TEST_TYPE", Some(false))
+          result shouldBe CalculationListModel(Some(false))
           WiremockHelper.verifyGet(s"/income-tax-calculation/calculation-list/$nino/$taxYearEnd")
         }
         "return an error when the request fails" in {

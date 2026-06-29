@@ -59,26 +59,21 @@ class SaveOriginAndRedirectSpec extends TestSupport with MockAsyncCacheApi with 
 
     "Valid request is passed" should {
       "redirect to call with session origin changes to BTA" in {
-        val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithSessionOriginPTA, false)
+        val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithSessionOriginPTA)
         result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe Some("BTA")
       }
       "redirect to call with adding origin BTA to session" in {
-        val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithBtaOriginAndWithoutSession, false)
+        val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithBtaOriginAndWithoutSession)
         result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe Some("BTA")
       }
       "return to original call when invalid queryString is passed" in {
-        val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithInvalidQueryString, false)
+        val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithInvalidQueryString)
         result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe None
       }
       "return to original call when query string is not passed" in {
-        val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithoutOrigin, false)
-        result.futureValue.header.status shouldBe SEE_OTHER
-        result.futureValue.session.get("origin") shouldBe None
-      }
-      "return to original call when navBarFs is disabled" in {
         val result: Future[Result] = obj.saveOriginAndReturnToHomeWithoutQueryParams(successResponseWithoutOrigin)
         result.futureValue.header.status shouldBe SEE_OTHER
         result.futureValue.session.get("origin") shouldBe None

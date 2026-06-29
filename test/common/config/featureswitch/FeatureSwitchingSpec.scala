@@ -45,7 +45,6 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
   val allFeatureSwitches: Set[FeatureSwitchName] = Set(
     ITSASubmissionIntegration,
     ChargeHistory,
-    NavBarFs,
     CreditsRefundsRepay,
     PaymentHistoryRefunds,
     OptOutFs,

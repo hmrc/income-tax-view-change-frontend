@@ -1,6 +1,8 @@
 #Payment
 GET         /payment                                                      financials.controllers.PaymentController.paymentHandoff(amountInPence: Long, origin: Option[String] ?= None)
 GET         /agents/payment                                               financials.controllers.PaymentController.agentPaymentHandoff(amountInPence: Long)
+GET         /making-a-payment                                             financials.controllers.PaymentController.makingPayment(amountInPence: Long, origin: Option[String] ?= None)
+GET         /agents/making-a-payment                                      financials.controllers.PaymentController.agentMakingPayment(amountInPence: Long)
 
 #Payment Allocation
 GET         /payment-made-to-hmrc                                         financials.controllers.PaymentAllocationsController.viewPaymentAllocation(documentNumber: String, origin: Option[String] ?= None)

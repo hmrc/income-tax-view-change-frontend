@@ -107,5 +107,5 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
     else                routes.ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url
   }
 
-  private def getPaymentHandOffUrl(origin: Option[String]): Long => String = routes.PaymentController.paymentHandoff(_, origin).url
+  private def getPaymentHandOffUrl(origin: Option[String]): Long => String = routes.PaymentController.makingPayment(_, origin).url
 }
