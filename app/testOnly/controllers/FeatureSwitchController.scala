@@ -28,6 +28,7 @@ import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import scala.collection.immutable.ListMap
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,9 +61,14 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
 
   def show(): Action[AnyContent] = Action.async { implicit user =>
     featureSwitchService.getAll().flatMap { featureSwitches =>
-      val fss = featureSwitches.filter(_.name.name != InvalidFS.name).map(x => {
-        (FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
-      }).toMap
+      val fss = ListMap(
+        featureSwitches
+          .filter(_.name.name != InvalidFS.name)
+          .map(x => FeatureSwitchName.allFeatureSwitches.find(_.name == x.name.name).get -> x.isEnabled)
+          .sortBy(_._1.name)
+          :_*
+      )
+      
       Future.successful(
         Ok(
           featureSwitchView(
