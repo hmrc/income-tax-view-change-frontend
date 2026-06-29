@@ -18,7 +18,7 @@ package common.auth.actions
 
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
-import common.models.admin.{FeatureSwitch, NavBarFs}
+import common.models.admin.{FeatureSwitch, ChargeHistory}
 import common.services.admin.FeatureSwitchService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -58,7 +58,7 @@ class FeatureSwitchRetrievalActionSpec extends AuthActionsSpecHelper {
   "refine" when {
     "The feature switches are retrieved" should {
       "Return list of feature switches" in {
-        val featureSwitch = List(FeatureSwitch(NavBarFs, true))
+        val featureSwitch = List(FeatureSwitch(ChargeHistory, true))
         val mtdItUserRequest = getMtdItUser(Individual)(fakeRequestWithActiveSession)
         when(mockFeatureSwitchService.getAll()(any[HeaderCarrier]))
           .thenReturn(Future.successful(featureSwitch))

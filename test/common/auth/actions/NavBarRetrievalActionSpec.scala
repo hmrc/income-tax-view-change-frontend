@@ -18,7 +18,6 @@ package common.auth.actions
 
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
-import common.models.admin.{FeatureSwitch, NavBarFs}
 import common.utils.AuthUtils
 import org.scalatest.Assertion
 import play.api
@@ -32,8 +31,6 @@ import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import scala.concurrent.Future
 
 class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
-
-  private val featureSwitchNavBarEnabled = List(FeatureSwitch(NavBarFs, true))
 
   def buildApp(): Application =
     new GuiceApplicationBuilder()
@@ -77,7 +74,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
         "return PTA ServiceNavigation when origin = PTA" in {
             val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "PTA")
-            val mtdReq = getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
+            val mtdReq = getMtdItUser(affinityGroup)(req)
 
             val result = action.invokeBlock(
               mtdReq,
@@ -89,7 +86,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
           "return BTA ServiceNavigation when origin = BTA" in {
             val req = fakeRequestWithActiveSession.withSession(AuthUtils.ORIGIN -> "BTA")
-            val mtdReq = getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(req)
+            val mtdReq = getMtdItUser(affinityGroup)(req)
 
             val result = action.invokeBlock(
               mtdReq,
@@ -101,7 +98,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
 
         "return unchanged request when no origin found" in {
           val mtdReq =
-            getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(fakeRequestWithActiveSession)
+            getMtdItUser(affinityGroup)(fakeRequestWithActiveSession)
 
           val result = action.invokeBlock(mtdReq, defaultAsync)
 
@@ -115,7 +112,7 @@ class NavBarRetrievalActionSpec extends AuthActionsSpecHelper {
               RequestTarget("http://test/testing", "/testing", Map(AuthUtils.ORIGIN -> Seq("pta")))
             )
 
-          val mtdReq = getMtdItUser(affinityGroup, featureSwitchNavBarEnabled)(requestWithQuery)
+          val mtdReq = getMtdItUser(affinityGroup)(requestWithQuery)
 
           val result = action.invokeBlock(mtdReq, defaultAsync)
 

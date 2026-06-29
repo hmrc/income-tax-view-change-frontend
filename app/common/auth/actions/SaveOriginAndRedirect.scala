@@ -27,25 +27,22 @@ import scala.concurrent.Future
 
 trait SaveOriginAndRedirect extends I18nSupport with FeatureSwitching {
 
-  def saveOriginAndReturnToHomeWithoutQueryParams[A](request: Request[A], navBarFsDisabled: Boolean = true): Future[Result] = {
+  def saveOriginAndReturnToHomeWithoutQueryParams[A](request: Request[A]): Future[Result] = {
     val originStringOpt: Option[String] = request.getQueryString(ORIGIN)
     val redirectToOriginalCall: Result = Redirect(request.path)
 
-    if (navBarFsDisabled) {
-      Future.successful(redirectToOriginalCall)
-    } else {
-      originStringOpt.fold[Future[Result]](ifEmpty = Future.successful(redirectToOriginalCall))(originString =>
-        (OriginEnum(originString), request.session.get(ORIGIN)) match {
-          case (Some(originStringEnum), Some(sessionOrigin)) if originStringEnum.toString != sessionOrigin =>
-            Future.successful(
-              redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", originStringEnum.toString))(request)
-            )
-          case (Some(originStringEnum), None) =>
-            Future.successful(redirectToOriginalCall.addingToSession(("origin", originStringEnum.toString))(request))
-          case _ => Future.successful(redirectToOriginalCall)
-        }
-      )
-    }
+    originStringOpt.fold[Future[Result]](ifEmpty = Future.successful(redirectToOriginalCall))(originString =>
+      (OriginEnum(originString), request.session.get(ORIGIN)) match {
+        case (Some(originStringEnum), Some(sessionOrigin)) if originStringEnum.toString != sessionOrigin =>
+          Future.successful(
+            redirectToOriginalCall.removingFromSession("origin")(request).addingToSession(("origin", originStringEnum.toString))(request)
+          )
+        case (Some(originStringEnum), None) =>
+          Future.successful(redirectToOriginalCall.addingToSession(("origin", originStringEnum.toString))(request))
+        case _ => Future.successful(redirectToOriginalCall)
+      }
+    )
+    
   }
 
 }
