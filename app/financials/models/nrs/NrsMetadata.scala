@@ -42,7 +42,6 @@ case class NrsMetadata(
 object NrsMetadata extends InstantFormatter {
   implicit val writes: Writes[NrsMetadata] = Json.writes[NrsMetadata]
 
-  // TODO: Could be required to populate this in the future - but not required as part of MISUV-10030
   private val emptyIdentityData = IdentityData(
     confidenceLevel = ConfidenceLevel.L250,
     agentInformation = AgentInformation(None, None, None),

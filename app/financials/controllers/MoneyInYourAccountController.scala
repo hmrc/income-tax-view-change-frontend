@@ -89,7 +89,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
       implicit user =>
         if (isEnabled(CreditsRefundsRepay)) {
           handleRefundRequest(
-            backUrl = "", // TODO: do we need a backUrl
+            backUrl = "",
             isAgent = false
           ) recover logAndRedirect
         } else {
@@ -102,7 +102,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
       implicit user =>
         if (isEnabled(CreditsRefundsRepay)) {
           handleRefundRequest(
-            backUrl = "", // TODO: do we need a backUrl
+            backUrl = "",
             isAgent = true
           ) recover logAndRedirect
         } else {

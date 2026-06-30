@@ -55,7 +55,6 @@ class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActionsW
                                                    val ec: ExecutionContext)
   extends FrontendController(mcc) with JourneyCheckerManageBusinesses with I18nSupport {
 
-  //TODO: Redirect the user back to the triggered migration page if they access the page with triggered migration as false and they are unconfirmed
   def show(isAgent: Boolean, mode: Mode, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean = false): Action[AnyContent] =
     authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async { implicit user =>
       handleShowRequest(
