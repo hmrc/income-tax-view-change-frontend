@@ -23,7 +23,7 @@ import common.enums.GatewayPage.TaxYearSummaryPage
 import common.enums.TaxYearSummary.*
 import common.enums.TaxYearSummary.CalculationType.fromStringToCalculationTypeValue
 import common.implicits.ImplicitDateFormatter
-import common.models.admin.{FilterCodedOutPoas, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
+import common.models.admin.{PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation
@@ -478,7 +478,6 @@ class TaxYearSummaryController @Inject()(
             .flatMap(dd => getChargeItem(dd)
               .map(ci => TaxYearSummaryChargeItem.fromChargeItem(ci, financialDetails.findDueDateByDocumentDetails(dd))))
             .filterNot(_.originalAmount < 0)
-            .filter(_.notCodedOutPoa(isEnabled(FilterCodedOutPoas)))
             .filter(
               ChargeItem.filterAllowedCharges(
                 isEnabled(PenaltiesAndAppeals),

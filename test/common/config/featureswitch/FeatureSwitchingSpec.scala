@@ -19,7 +19,7 @@ package common.config.featureswitch
 import common.auth.actions.AuthActionsTestData.*
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import common.models.admin.{ChargeHistory, CreditsRefundsRepay, DisplayBusinessStartDate, FeatureSwitch, FeatureSwitchName, FilterCodedOutPoas, ITSASubmissionIntegration, MortgageEvidence, NewHomePage, OptOutFs, OverseasBusinessAddress, PaymentHistoryRefunds, PenaltiesAndAppeals, PenaltiesBackendEnabled, PostFinalisationAmendmentsR18, RecentActivity, SelfServeTimeToPayR17, SignUpFs, SubmitClaimToAdjustToNrs, TriggeredMigration, `CY+1YouMustWaitToSignUpPageEnabled`}
+import common.models.admin.{ChargeHistory, CreditsRefundsRepay, DisplayBusinessStartDate, FeatureSwitch, FeatureSwitchName, ITSASubmissionIntegration, MortgageEvidence, NewHomePage, OptOutFs, OverseasBusinessAddress, PaymentHistoryRefunds, PenaltiesAndAppeals, PenaltiesBackendEnabled, PostFinalisationAmendmentsR18, RecentActivity, SelfServeTimeToPayR17, SignUpFs, SubmitClaimToAdjustToNrs, TriggeredMigration, `CY+1YouMustWaitToSignUpPageEnabled`}
 import common.models.admin.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testUtils.TestSupport
@@ -49,7 +49,6 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     PaymentHistoryRefunds,
     OptOutFs,
     SignUpFs,
-    FilterCodedOutPoas,
     DisplayBusinessStartDate,
     PenaltiesAndAppeals,
     PenaltiesBackendEnabled,
@@ -123,7 +122,7 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
 
     "use MongoDB feature switch status if MongoDB is enabled in config" in {
 
-      val featureSwitchName = FilterCodedOutPoas
+      val featureSwitchName = OverseasBusinessAddress
 
       when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
 
@@ -134,7 +133,7 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
 
     "use MongoDB feature switch status when disabled for featureSwitches list" in {
 
-      val featureSwitchName = FilterCodedOutPoas
+      val featureSwitchName = OverseasBusinessAddress
 
       when(MockFeatureSwitching.appConfig.readFeatureSwitchesFromMongo).thenReturn(true)
 

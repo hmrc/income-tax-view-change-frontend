@@ -410,8 +410,8 @@ class TaxYearSummaryControllerSpec
                 contentAsString(result).contains("Adjust payments on account") shouldBe true
               }
 
-              "FilterCodedOutPoas FS is enabled and there are some not coded out" in {
-                setupMockSuccess(mtdUserRole, false, List(FilterCodedOutPoas))
+              "there are some not coded out" in {
+                setupMockSuccess(mtdUserRole, false, List.empty)
                 mockItsaStatusRetrievalAction()
                 mockLatestAndPreviousSuccess(testMtditid)
                 mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = None))
@@ -424,30 +424,6 @@ class TaxYearSummaryControllerSpec
                   response = testObligationsModel
                 )
                 setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
-
-                val result = action(fakeRequest)
-
-                status(result) shouldBe OK
-                contentAsString(result).contains("First payment on account") shouldBe true
-              }
-
-              "there are coded out POA charges but FilterCodedOutPoas FS disabled" in {
-                setupMockSuccess(mtdUserRole)
-                mockItsaStatusRetrievalAction()
-                mockLatestAndPreviousSuccess(testMtditid)
-                mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
-
-                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
-                  .thenReturn(Future(singleBusinessIncome))
-
-                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-                  toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligationsModel
-                )
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
-
-                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftwareShowCalc)
 
                 val result = action(fakeRequest)
 
@@ -500,30 +476,6 @@ class TaxYearSummaryControllerSpec
                 val result = action(fakeRequest)
                 status(result) shouldBe OK
                 contentAsString(result).contains("Adjust payments on account") shouldBe false
-              }
-
-              "FilterCodedOutPoas FS is enabled and POA charges are coded out" in {
-                setupMockSuccess(mtdUserRole, false, List(FilterCodedOutPoas))
-                mockItsaStatusRetrievalAction()
-                mockLatestAndPreviousSuccess(testMtditid)
-                mockFinancialDetailsSuccess(financialDetailsModel(amountCodedOut = Some(100)))
-
-                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
-                  .thenReturn(Future(singleBusinessIncome))
-
-                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
-                  toDate = LocalDate.of(testTaxYear, 4, 5))(
-                  response = testObligationsModel
-                )
-
-                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
-
-                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
-                  .thenReturn(MtdSoftwareShowCalc)
-
-                val result = action(fakeRequest)
-                status(result) shouldBe OK
-                contentAsString(result).contains("First payment on account") shouldBe false
               }
             }
 

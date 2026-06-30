@@ -19,7 +19,7 @@ package financials.services
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{CreditsRefundsRepay, FilterCodedOutPoas, PenaltiesAndAppeals, SelfServeTimeToPayR17}
+import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals, SelfServeTimeToPayR17}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateServiceInterface}
@@ -52,19 +52,17 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
-  def getWhatYouOweChargesList(isFilterCodedOutPoasEnabled: Boolean,
-                               isPenaltiesEnabled: Boolean,
+  def getWhatYouOweChargesList(isPenaltiesEnabled: Boolean,
                                remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem])
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
     {
       for {
         unpaidChanges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      } yield getWhatYouOweChargesList(unpaidChanges, isFilterCodedOutPoasEnabled, isPenaltiesEnabled, remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
+      } yield getWhatYouOweChargesList(unpaidChanges, isPenaltiesEnabled, remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
     }.flatten
   }
 
   def getWhatYouOweChargesList(unpaidCharges: List[FinancialDetailsResponseModel],
-                               isFilterCodedOutPoasEnabled: Boolean,
                                isPenaltiesEnabled: Boolean,
                                remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem])
                               (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[WhatYouOweChargesList] = {
@@ -90,7 +88,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           chargesList =
             getFilteredChargesList(
               financialDetailsModelList,
-              isFilterCodedOutPoasEnabled,
               isPenaltiesEnabled,
               remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot
             ),
@@ -135,7 +132,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
   def getFilteredChargesList(
                               financialDetailsList: List[FinancialDetailsModel],
-                              isFilterCodedOutPoasEnabled: Boolean,
                               isPenaltiesEnabled: Boolean,
                               remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot: PartialFunction[ChargeItem, ChargeItem]
                             ): List[ChargeItem] = {
@@ -149,7 +145,6 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .filterNot(_.codedOutStatus.contains(Accepted))
       .filterNot(_.isPenalty && !isPenaltiesEnabled)
       .collect(remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot)
-      .filter(_.notCodedOutPoa(isFilterCodedOutPoasEnabled))
       .sortBy(_.dueDate.get)
   }
 
@@ -161,7 +156,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                 paymentHandOffUrl: Long => String)
                                (implicit user: MtdItUser[_], headerCarrier: HeaderCarrier): Future[Option[WhatYouOweViewModel]] = {
     for {
-      whatYouOweChargesList <- getWhatYouOweChargesList(isEnabled(FilterCodedOutPoas), isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
+      whatYouOweChargesList <- getWhatYouOweChargesList(isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
       lpp2Url = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent)
       hasOverdueCharges = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
