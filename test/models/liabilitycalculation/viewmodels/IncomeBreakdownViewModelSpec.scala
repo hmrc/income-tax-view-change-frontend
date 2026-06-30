@@ -26,7 +26,7 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
   "IncomeBreakdownViewModel model" when {
     "create a minimal IncomeBreakdownViewModel when there is a minimal Calculation" in {
       IncomeBreakdownViewModel(Some(Calculation())) shouldBe Some(
-        IncomeBreakdownViewModel(None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None))
+        IncomeBreakdownViewModel(None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None))
     }
 
     "create a empty IncomeBreakdownViewModel when there is a no Calculation" in {
@@ -43,9 +43,7 @@ class IncomeBreakdownViewModelSpec extends UnitSpec {
           totalSelfEmploymentProfit = Some(12500),
           totalPropertyProfit = Some(12500),
           totalUKOtherPropertyProfit = Some(12500),
-          totalFHLPropertyProfit = Some(12500),
           totalForeignPropertyProfit = Some(12500),
-          totalEeaFhlProfit = Some(12500),
           chargeableForeignDividends = Some(12500),
           chargeableForeignSavingsAndGains = Some(12500),
           chargeableOverseasPensionsStateBenefitsRoyalties = Some(5000.99),
