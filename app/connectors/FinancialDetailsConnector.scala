@@ -140,7 +140,6 @@ class FinancialDetailsConnector @Inject()(
       }
   }
 
-  // TODO: MFA Credits
   def getFinancialDetails(taxYear: Int, nino: String)
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
 
