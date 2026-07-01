@@ -20,7 +20,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.WiremockHelper
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, YearOfMigrationStub}
 import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -148,11 +148,12 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path for $mtdUserRole" when {
-      "an authenticateduser" should {
+      "an authenticated user" should {
         "render the your tasks page" which {
           "displays the no tasks card" when {
             if(mtdUserRole != MTDSupportingAgent) {
               "the user has no current tasks" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -720,6 +721,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, "2022-04-06", "2023-04-05")(OK, chargesJson)
     ITSAStatusDetailsStub.stubGetITSAStatusDetails(currentItsaStatus.toString, "2022-23")
     NextUpdatesStub.stubGetNextUpdates(nino = testNino, deadlines = obligationsModel)
+    YearOfMigrationStub.stubGetYearOfMigration("2023")
   }
 
   private val overdueChargeJson = baseChargesModel(genericCharge, "2018-03-29")

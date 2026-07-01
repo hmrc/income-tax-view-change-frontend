@@ -18,18 +18,18 @@ package businessDetails.controllers.triggeredMigration
 
 import businessDetails.helpers.TriggeredMigrationStub
 import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
+import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub, YearOfMigrationStub}
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed, singleBusinessIncomeWithYearOfMigration}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import common.testConstants.BaseIntegrationTestConstants.testMtditid
-import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
-import common.testConstants.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed, singleBusinessIncomeWithYearOfMigration}
-import common.helpers.GetInsourceDetailsStub
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
 
@@ -78,6 +78,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
+          YearOfMigrationStub.stubGetYearOfMigration("2018")
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
           checkPageContent(result, mtdRole)
@@ -91,9 +92,13 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
+          YearOfMigrationStub.stubGetNoYearOfMigration()
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
-          checkPageContent(result, mtdRole)
+
+          result should have(
+            httpStatus(BAD_REQUEST)
+          )
         }
 
         "redirect to home page when TriggeredMigration FS is disabled" in {
@@ -124,6 +129,8 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
           TriggeredMigrationStub.stubUpdateCustomerFacts(testMtditid)(OK)
 
+          YearOfMigrationStub.stubGetYearOfMigration("2018")
+
           val result = buildPOSTMTDPostClient(
             path,
             additionalCookies,
@@ -136,7 +143,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             httpStatus(SEE_OTHER),
             redirectURI(s"$completePath")
           )
-          
+
           AuditStub.verifyAuditEvent(TriggeredMigrationCompleteAuditModel()(getTestUser(mtdRole, singleBusinessIncomeUnconfirmed)))
         }
 
@@ -148,6 +155,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
+          YearOfMigrationStub.stubGetYearOfMigration("2018")
 
           val result = buildPOSTMTDPostClient(
             path,
@@ -171,6 +179,8 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
+          YearOfMigrationStub.stubGetYearOfMigration("2018")
+
           val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map.empty).futureValue
 
           result should have(
@@ -183,6 +193,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
         "redirect to home page when TriggeredMigration FS is disabled" in {
           stubAuthorised(mtdRole)
           GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          YearOfMigrationStub.stubGetYearOfMigration("2018")
 
           val result = buildPOSTMTDPostClient(
             path,

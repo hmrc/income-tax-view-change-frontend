@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDPrimaryAgent
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, YearOfMigrationStub}
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -135,6 +135,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
+
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -208,6 +210,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -285,6 +289,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
+
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -358,6 +364,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, getCurrentTaxYearEnd.minusYears(1).getYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
+
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -455,6 +463,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
+
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -530,6 +540,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
+
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -599,6 +611,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
                 FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
+
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -672,6 +686,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               FinancialDetailsStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
+              YearOfMigrationStub.stubGetYearOfMigration("2023")
+
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -715,6 +731,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 response = Json.obj()
               )
 
+              YearOfMigrationStub.stubGetYearOfMigration("2023")
+
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -735,6 +753,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
             NextUpdatesStub.stubGetNextUpdatesError(testNino)
 
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
+
             val result = buildGETMTDClient(path, additionalCookies).futureValue
 
             result should have(
@@ -747,6 +767,8 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
             GetInsourceDetailsStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
               status = INTERNAL_SERVER_ERROR)
+
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
 

@@ -19,7 +19,7 @@ package financials.services
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.TaxYear
-import common.services.DateServiceInterface
+import common.services.{DateServiceInterface, YearOfMigrationService}
 import financials.connectors.FinancialDetailsConnector
 import financials.models.Repayment
 import financials.models.core.ErrorModel
@@ -33,6 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
+                              val yearOfMigrationService: YearOfMigrationService,
                               implicit val dateService: DateServiceInterface)
                              (implicit ec: ExecutionContext,
                               val appConfig: FrontendAppConfig) {
@@ -45,20 +46,23 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    Future.sequence(
-        user.incomeSources.orderedTaxYearsByYearOfMigration.map { taxYearInt =>
-          Logger("application").debug(s"Getting financial details for TaxYear: $taxYearInt")
-          for {
-            taxYear <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
-            response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
-          } yield response match {
-            case Right(financialDetails: CreditsModel) => Some(financialDetails)
-            case Left(error: ErrorModel) if error.code != NOT_FOUND =>
-              throw new Exception("Error response while getting Unpaid financial details")
-            case _ => None
+    yearOfMigrationService.orderedTaxYearsByYearOfMigration(user.nino)
+      .flatMap { taxYearList =>
+        Future.sequence(
+          taxYearList.map { taxYearInt =>
+            Logger("application").debug(s"Getting financial details for TaxYear: $taxYearInt")
+            for {
+              taxYear <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
+              response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
+            } yield response match {
+              case Right(financialDetails: CreditsModel) => Some(financialDetails)
+              case Left(error: ErrorModel) if error.code != NOT_FOUND =>
+                throw new Exception("Error response while getting Unpaid financial details")
+              case _ => None
+            }
           }
-        }
-      )
+        )
+      }
       .map(_.flatten)
       .map(_
         .reduceOption(mergeCreditAndRefundModels)
@@ -72,18 +76,20 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
     Logger("application").debug(
       s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
-    val (from, to) = (user.incomeSources.orderedTaxYearsByYearOfMigration.min, user.incomeSources.orderedTaxYearsByYearOfMigration.max)
-    Logger("application").debug(s"Getting financial details for TaxYears: $from - $to")
+    yearOfMigrationService.orderedTaxYearsByYearOfMigration(user.nino).flatMap { taxYears =>
+      val (from, to) = (taxYears.min, taxYears.max)
+      Logger("application").debug(s"Getting financial details for TaxYears: $from - $to")
 
-    for {
-      taxYearFrom <- Future.fromTry(Try(TaxYear.forYearEnd(from)))
-      taxYearTo <- Future.fromTry(Try(TaxYear.forYearEnd(to)))
-      response <- financialDetailsConnector.getCreditsAndRefund(taxYearFrom, taxYearTo, user.nino)
-    } yield response match {
-      case Right(financialDetails: CreditsModel) => financialDetails
-      case Left(error: ErrorModel) if error.code != NOT_FOUND =>
-        throw new Exception("Error response while getting Unpaid financial details")
-      case _ => CreditsModel(0, 0, 0, 0, None, None, Nil)
+      for {
+        taxYearFrom <- Future.fromTry(Try(TaxYear.forYearEnd(from)))
+        taxYearTo <- Future.fromTry(Try(TaxYear.forYearEnd(to)))
+        response <- financialDetailsConnector.getCreditsAndRefund(taxYearFrom, taxYearTo, user.nino)
+      } yield response match {
+        case Right(financialDetails: CreditsModel) => financialDetails
+        case Left(error: ErrorModel) if error.code != NOT_FOUND =>
+          throw new Exception("Error response while getting Unpaid financial details")
+        case _ => CreditsModel(0, 0, 0, 0, None, None, Nil)
+      }
     }
   }
 }

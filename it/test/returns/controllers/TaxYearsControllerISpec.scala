@@ -18,18 +18,20 @@ package returns.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.models.admin.PostFinalisationAmendmentsR18
-import play.api.http.Status.*
-import common.testConstants.BaseIntegrationTestConstants.*
-import returns.testConstants.ReturnIntegrationTestConstants.*
 import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.YearOfMigrationStub
+import common.models.admin.PostFinalisationAmendmentsR18
+import common.testConstants.BaseIntegrationTestConstants.*
+import play.api.http.Status.*
+import returns.testConstants.ReturnIntegrationTestConstants.*
 
 class TaxYearsControllerISpec extends ControllerISpecHelper {
 
   def getPath(mtdRole: MTDUserRole): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/tax-years"
   }
+
   mtdAllRoles.foreach { case mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
@@ -40,9 +42,10 @@ class TaxYearsControllerISpec extends ControllerISpecHelper {
             testSupportingAgentAccessDenied(path, additionalCookies)
           } else {
             "render the forecast income summary page" when {
-              "the user has firstAccountingPeriodEndDate and hence valid tax years" in {
+              "the user has a year of migration and hence valid tax years" in {
                 stubAuthorised(mtdUserRole)
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
                 GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
@@ -64,22 +67,24 @@ class TaxYearsControllerISpec extends ControllerISpecHelper {
                   OK,
                   multipleBusinessesAndPropertyResponseWoMigration
                 )
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
                 res should have(
                   httpStatus(OK),
                   elementTextByID("pfa-amendment-text")
-                  ("You can view the tax year summary pages to also see your options for amending the filed return for that year.")
+                    ("You can view the tax year summary pages to also see your options for amending the filed return for that year.")
                 )
               }
             }
 
             "return 500 Internal Server " when {
-              "no firstAccountingPeriodEndDate exists for both business and property" in {
+              "no yearof migration exists" in {
                 stubAuthorised(mtdUserRole)
 
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                YearOfMigrationStub.stubGetNoYearOfMigration()
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
                 GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)

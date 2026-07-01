@@ -19,6 +19,7 @@ package financials.controllers
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
+import common.services.YearOfMigrationService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -32,7 +33,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
                                           val authActions: AuthActions,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler,
+                                          val yearOfMigrationService: YearOfMigrationService)
                                          (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc)
@@ -40,8 +42,8 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
 
   def handleShowRequest(errorHandler: ShowInternalServerError, backUrl: String)
                        (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
-    {
-      if (user.incomeSources.yearOfMigration.isEmpty) {
+    yearOfMigrationService.getYearOfMigration(user.nino).map(_.yearOfMigrationEndYear).flatMap { yearOfMigration =>
+      if (yearOfMigration.isEmpty) {
         Future {
           Ok(notMigrated(backUrl))
         }
@@ -49,14 +51,14 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
         Logger("application").error("Migrated user not allowed to access this page")
         Future.successful(errorHandler.showInternalServerError())
       }
-    } .recover {
+    }.recover {
       case ex =>
         Logger("application")
           .error(s"error, ${ex.getMessage} - ${ex.getCause}")
         itvcErrorHandler.showInternalServerError()
     }
   }
-
+  
   def show(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandler,

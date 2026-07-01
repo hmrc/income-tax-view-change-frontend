@@ -20,23 +20,29 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
-import common.services.DateServiceInterface
+import common.services.{DateServiceInterface, YearOfMigrationService}
 import org.mockito.Mockito.when
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import common.testConstants.IncomeSourceDetailsTestConstants.*
+import org.mockito.ArgumentMatchers.any
+import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter {
+
+  lazy val mockYearOfMigrationService = sMock[YearOfMigrationService]
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface)
+        api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+        api.inject.bind[YearOfMigrationService].toInstance(mockYearOfMigrationService)
       ).build()
 
   lazy val testController = app.injector.instanceOf[TaxYearsController]
@@ -55,13 +61,14 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
         } else {
           "render the Tax years page" when {
 
-            "income source details contains a business firstAccountingPeriodEndDate" in {
+            "income source details contains a year of migration" in {
 
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
               setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
 
               when(mockDateServiceInterface.getCurrentTaxYearEnd).thenReturn(2026)
+              when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2022, 2023, 2024, 2025, 2026)))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -69,12 +76,13 @@ class TaxYearsControllerSpec extends MockAuthActions with ImplicitDateFormatter 
           }
 
           "render the error page" when {
-            "there is no firstAccountingPeriodEndDate for business or property in incomeSources (CY+1 Users)" in {
+            "the year of migration doesn't exist/list returns empty" in {
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(businessIncome2018and2019)
               setupMockGetIncomeSourceDetails(businessIncome2018and2019)
 
               when(mockDateServiceInterface.getCurrentDate).thenReturn(LocalDate.of(2026, 4, 5))
+              when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List.empty))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.BAD_REQUEST

@@ -19,14 +19,15 @@ package financials.services
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.models.incomeSourceDetails.TaxYear
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import common.services.YearOfMigrationService
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import common.testUtils.TestSupport
 import financials.connectors.FinancialDetailsConnector
 import financials.models.core.ErrorModel
 import financials.testConstants.ANewCreditAndRefundModel
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{mock, when}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
@@ -34,11 +35,12 @@ import scala.concurrent.Future
 
 class CreditServiceSpec extends TestSupport {
 
-  implicit val mtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), businessesAndPropertyIncome.copy(yearOfMigration = Some(s"${dateService.getCurrentTaxYearEnd - 1 }")))
+  implicit val mtdItUser: MtdItUser[_] = defaultMTDITUser(Some(Individual), businessesAndPropertyIncome.copy(yearOfMigration = Some(s"${dateService.getCurrentTaxYearEnd - 1}")))
 
   val mockFinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
+  val mockYearOfMigrationService = mock(classOf[YearOfMigrationService])
 
-  class TestCreditService extends CreditService(mockFinancialDetailsConnector, dateService)
+  class TestCreditService extends CreditService(mockFinancialDetailsConnector, mockYearOfMigrationService, dateService)
 
   //Remove once deprecated method removed
   "CreditService.getAllCredits method" should {
@@ -63,6 +65,9 @@ class CreditServiceSpec extends TestSupport {
               .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0, "balancing02")
               .get())))
 
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any()))
+          .thenReturn(Future.successful(List(2023, 2024)))
+
         new TestCreditService().getAllCredits(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
           .withFirstRefund(10)
           .withSecondRefund(20)
@@ -76,6 +81,9 @@ class CreditServiceSpec extends TestSupport {
       "the financial service has returned an error in all tax year calls" in {
         when(mockFinancialDetailsConnector.getCreditsAndRefund(any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(ErrorModel(500, "INTERNAL_SERVER ERROR"))))
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any()))
+          .thenReturn(Future.successful(List(2024)))
 
         val result = new TestCreditService().getAllCredits(mtdItUser, headerCarrier).failed.futureValue
 
@@ -99,6 +107,9 @@ class CreditServiceSpec extends TestSupport {
               .withBalancingChargeCredit(LocalDate.parse("2023-08-16"), 200.0)
               .get())))
 
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any()))
+          .thenReturn(Future.successful(List(2023, 2024)))
+
         new TestCreditService().getAllCreditsV2(mtdItUser, headerCarrier).futureValue shouldBe ANewCreditAndRefundModel()
           .withFirstRefund(10)
           .withSecondRefund(20)
@@ -112,6 +123,9 @@ class CreditServiceSpec extends TestSupport {
       "the financial service has returned an error in all tax year calls" in {
         when(mockFinancialDetailsConnector.getCreditsAndRefund(any(), any(), any())(any(), any()))
           .thenReturn(Future.successful(Left(ErrorModel(500, "INTERNAL_SERVER ERROR"))))
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any()))
+          .thenReturn(Future.successful(List(2024)))
 
         val result = new TestCreditService().getAllCreditsV2(mtdItUser, headerCarrier).failed.futureValue
 

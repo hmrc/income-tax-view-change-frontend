@@ -27,7 +27,7 @@ import common.enums.JourneyType.TriggeredMigrationJourney
 import common.enums.TaxYearSummary.CalculationRecord.LATEST
 import common.models.admin.TriggeredMigration
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
-import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, YearOfMigrationService}
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
@@ -41,6 +41,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                                                    frontendAppConfig: FrontendAppConfig,
                                                    ITSAStatusService: ITSAStatusService,
                                                    incomeTaxConnector: IncomeTaxCalculationConnector,
+                                                   yearOfMigrationService: YearOfMigrationService,
                                                    dateService: DateServiceInterface,
                                                    customerFactsUpdateService: CustomerFactsUpdateService,
                                                    sessionService: SessionService
@@ -73,9 +74,8 @@ class TriggeredMigrationRetrievalAction @Inject()(
                 case Right(false) => confirmIneligibleUser(req, isTriggeredMigrationPage)
                 case Left(errorResult) => Future(Left(errorResult))
                 case Right(true) =>
-                  val taxYear = req.incomeSources.yearOfMigration.orElse(req.incomeSources.startingTaxYear).map(_.toString)
-                  isCalculationCrystallised(req, taxYear)
-                    .flatMap {
+                  getYearOfMigration(req).flatMap { taxYearOpt =>
+                    isCalculationCrystallised(req, taxYearOpt).flatMap {
                       case Right(true) => confirmIneligibleUser(req, isTriggeredMigrationPage)
                       case Right(false) =>
                         if (isTriggeredMigrationPage) {
@@ -88,6 +88,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                       case Left(errorResult) =>
                         Future.successful(Left(errorResult))
                     }
+                  }
               }
           }
         }
@@ -121,7 +122,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
       case Some(taxYear) =>
         request(taxYear)
       case None =>
-        Future(Left(showErrorPageBasedOnContext(request = req, context = "startingTaxYearNone")))
+        Future(Left(showErrorPageBasedOnContext(request = req, context = "yearOfMigrationNone")))
     }
   }
 
@@ -147,8 +148,8 @@ class TriggeredMigrationRetrievalAction @Inject()(
     Logger(getClass).error(s"[TriggeredMigrationRetrievalAction][$context]")
 
     (request.authUserDetails.affinityGroup, context) match {
-      case (Some(Agent), "startingTaxYearNone") => agentErrorHandler.showBadRequestError()(request)
-      case (_, "startingTaxYearNone") => individualErrorHandler.showBadRequestError()(request)
+      case (Some(Agent), "yearOfMigrationNone") => agentErrorHandler.showBadRequestError()(request)
+      case (_, "yearOfMigrationNone") => individualErrorHandler.showBadRequestError()(request)
       case (Some(Agent), _) => agentErrorHandler.showInternalServerError()(request)
       case (_, _) => individualErrorHandler.showInternalServerError()(request)
     }
@@ -182,6 +183,12 @@ class TriggeredMigrationRetrievalAction @Inject()(
         } else {
           Right(req)
         }
+    }
+  }
+
+  private def getYearOfMigration(req: MtdItUser[_])(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    yearOfMigrationService.getYearOfMigration(req.nino).map {
+      yearOfMigration => yearOfMigration.yearOfMigrationEndYear
     }
   }
 }
