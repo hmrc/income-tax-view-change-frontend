@@ -73,6 +73,7 @@
     @ctaTaxYear.map { taxYear =>
         @p(id = Some("sa-note-1-migrated-3"))(Html(
             link(link = adjustPoaUrl,
+                id = Some("adjust-poa-link"),
                 messageKey = getMessage("sa-adjust-link-body", taxYear.startYear.toString, taxYear.endYear.toString),
                 outerMessage = "",
                 rel = Some("noreferrer noopener")).toString()))

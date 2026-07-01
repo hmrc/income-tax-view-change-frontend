@@ -54,7 +54,8 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                      ) extends BaseController with I18nSupport with FeatureSwitching {
 
   private final val customIncomeSourceUsers         = Seq("TR000001A", "AS000000A", "AS000001A")
-  private final val customReportingObligationsUsers = Seq("OP000001A", "OP000002A", "OP000003A", "NE000000A", "NE000001A", "NE000002A", "HP000000A")
+  private final val customReportingObligationsUsers =
+    Seq("OP000001A", "OP000002A", "OP000003A", "OP000005A", "OP000006A", "NE000000A", "NE000001A", "NE000002A", "HP000000A")
   private final val latentBusinessUser              = "AS000002A"
   private final val recentActivityUser              = "HP000000A"
 
