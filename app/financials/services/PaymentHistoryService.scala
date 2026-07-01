@@ -22,7 +22,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.admin.ChargeHistory
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
-import common.services.DateServiceInterface
+import common.services.{DateServiceInterface, YearOfMigrationService}
 import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import financials.models.*
 import financials.models.chargeHistory.ChargesHistoryErrorModel
@@ -41,42 +41,42 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
                                       financialDetailsConnector: FinancialDetailsConnector,
                                       financialDetailsService: FinancialDetailsService,
                                       chargeHistoryService: ChargeHistoryService,
+                                      yearOfMigrationService: YearOfMigrationService,
                                       implicit val dateService: DateServiceInterface,
                                       val appConfig: FrontendAppConfig)
                                      (implicit ec: ExecutionContext) extends TransactionUtils with FeatureSwitching {
 
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
-
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
-
-    Future.sequence(orderedTaxYears.map(year => financialDetailsConnector.getPayments(TaxYear(year-1, year)))) map { paymentResponses =>
-      val paymentsContainsFailure: Boolean = paymentResponses.exists {
-        case Payments(_) => false
-        case PaymentsError(status, _) if status == NOT_FOUND => false
-        case PaymentsError(_, _) => true
-      }
-      if (paymentsContainsFailure) {
-        Left(PaymentHistoryError)
-      } else {
-        Right(paymentResponses.collect {
-          case Payments(payments) => payments
-        }.flatten.distinct)
+    
+    yearOfMigrationService.orderedTaxYearsByYearOfMigration(user.nino).flatMap { taxYearList =>
+      val orderedTaxYears = taxYearList.reverse.take(appConfig.paymentHistoryLimit)
+      Future.sequence(orderedTaxYears.map(year => financialDetailsConnector.getPayments(TaxYear(year - 1, year)))) map { paymentResponses =>
+        val paymentsContainsFailure: Boolean = paymentResponses.exists {
+          case Payments(_) => false
+          case PaymentsError(status, _) if status == NOT_FOUND => false
+          case PaymentsError(_, _) => true
+        }
+        if (paymentsContainsFailure) {
+          Left(PaymentHistoryError)
+        } else {
+          Right(paymentResponses.collect {
+            case Payments(payments) => payments
+          }.flatten.distinct)
+        }
       }
     }
   }
 
   def getPaymentHistoryV2(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, Seq[Payment]]] = {
 
-    val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
+    yearOfMigrationService.orderedTaxYearsByYearOfMigration(user.nino).map(_.reverse.take(appConfig.paymentHistoryLimit)).flatMap { orderedTaxYears =>
+      val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
+      Logger("application").debug(s"Getting payment history for TaxYears: $from - $to")
 
-    val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
-    Logger("application").debug(s"Getting payment history for TaxYears: $from - $to")
-
-    for {
-      response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))
-    } yield response match {
-      case Payments(payments) => Right(payments.distinct)
-      case PaymentsError(_, _) => Left(PaymentHistoryError)
+      financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to)).map {
+        case Payments(payments) => Right(payments.distinct)
+        case PaymentsError(_, _) => Left(PaymentHistoryError)
+      }
     }
   }
 
