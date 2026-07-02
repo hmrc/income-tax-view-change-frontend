@@ -105,7 +105,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         true,
         isRecentActivityEnabled,
         creditsRefundsRepayEnabled,
-        mortgageEvidenceEnabled
+        mortgageEvidenceEnabled,
+        businessDetailsFrontendEnabled = false
       )(testMessages, appConfig, FakeRequest(), testUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")

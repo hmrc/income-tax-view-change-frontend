@@ -15,22 +15,17 @@
  *@
 
 @import hub.views.html.partials.newHome.overview.OverviewCard
-@import businessDetails.controllers.manageBusinesses.routes.{ManageYourBusinessesController}
+@import common.config.FrontendAppConfig
 
 
 @this(overviewCard: OverviewCard)
 
 
-@(isAgent: Boolean)(implicit messages: Messages)
+@(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @manageBusinessUrl = @{
-    if(isAgent){
-        ManageYourBusinessesController.showAgent().url
-    } else {
-        ManageYourBusinessesController.show().url
-    }
+    appConfig.manageBusinessesUrl(isAgent, businessDetailsFrontendEnabled)
 }
-
 
 <div id="income-overview-section">
     <h2 class="govuk-heading-m">@messages("new.home.overview.income.sub-heading")</h2>

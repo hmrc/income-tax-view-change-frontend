@@ -50,6 +50,24 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Income tax business details service
   lazy val incomeTaxBusinessDetailsBaseUrl: String = servicesConfig.baseUrl("income-tax-business-details")
 
+  lazy val incomeTaxBusinessDetailsFrontendBaseUrl: String =
+    servicesConfig.baseUrl("income-tax-business-details-frontend")
+
+  def businessDetailsManageBusinessesFrontendUrl(isAgent: Boolean): String = {
+    val path =
+      if (isAgent) "/manage-self-assessment/businesses/agents/manage-your-businesses"
+      else "/manage-self-assessment/businesses/manage-your-businesses"
+
+    s"$incomeTaxBusinessDetailsFrontendBaseUrl$path"
+  }
+
+  def manageBusinessesUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String =
+    if (businessDetailsFrontendEnabled) {
+      businessDetailsManageBusinessesFrontendUrl(isAgent)
+    } else {
+      manageYourBusinessUrl(isAgent)
+    }
+
   //Income tax calculation service
   lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
 

@@ -52,7 +52,8 @@
         penaltiesAndAppealsEnabled: Boolean,
         isRecentActivityEnabled: Boolean,
         creditsRefundsRepayEnabled: Boolean,
-        mortgageEvidenceEnabled: Boolean)(
+        mortgageEvidenceEnabled: Boolean,
+        businessDetailsFrontendEnabled: Boolean)(
         implicit messages: Messages, appConfig: FrontendAppConfig, request: RequestHeader, user: common.auth.MtdItUser[_]
 )
 
@@ -121,7 +122,7 @@
     @deadlinesSection(isAgent = false)
     @SectionBreak
 
-    @incomeSection(isAgent = false)
+    @incomeSection(isAgent = false, businessDetailsFrontendEnabled = businessDetailsFrontendEnabled)
     @SectionBreak
 
 @taxYearSection(isAgent = false, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled)    @SectionBreak
@@ -143,7 +144,7 @@
     @deadlinesSection(isAgent = true)
     @SectionBreak
 
-    @incomeSection(isAgent = true)
+    @incomeSection(isAgent = true, businessDetailsFrontendEnabled = businessDetailsFrontendEnabled)
     @SectionBreak
 
 @taxYearSection(isAgent = true, taxYear = currentTaxYear, mortgageEvidenceEnabled = mortgageEvidenceEnabled)    @SectionBreak
@@ -159,7 +160,7 @@
     @deadlinesSection(isAgent = true)
     @SectionBreak
 
-    @incomeSection(isAgent = true)
+    @incomeSection(isAgent = true, businessDetailsFrontendEnabled = businessDetailsFrontendEnabled)
 }
 
 

@@ -121,7 +121,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
 
-      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, businessDetailsFrontendEnabled = isEnabled(BusinessDetailsFrontend))
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
       val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
 
@@ -184,7 +184,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         PaymentCreditAndRefundHistoryTileViewModel(credits, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
       val yourBusinessesTileViewModel =
-        YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+        YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, businessDetailsFrontendEnabled = isEnabled(BusinessDetailsFrontend))
 
       val returnsTileViewModel =
         ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
@@ -291,7 +291,8 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         Ok(newHomeOverviewView(origin, user.isSupportingAgent, dateService.getCurrentTaxYear,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
-          isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence)))
+          isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence),
+          isEnabled(BusinessDetailsFrontend)))
       }
     }
   }
