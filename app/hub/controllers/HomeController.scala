@@ -16,6 +16,7 @@
 
 package hub.controllers
 
+import common.models.admin.BusinessDetailsFrontend
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import common.auth.MtdItUser
 import common.config.*
@@ -104,6 +105,26 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
     }
   }
 
+  private def manageBusinessesUrl(isAgent: Boolean)(implicit user: MtdItUser[_]): String = {
+    val enabled = isEnabled(BusinessDetailsFrontend)
+
+    if (enabled) {
+      val path = if (isAgent) {
+        "/manage-self-assessment/businesses/agents/manage-your-businesses"
+      } else {
+        "/manage-self-assessment/businesses/manage-your-businesses"
+      }
+
+      s"${appConfig.incomeTaxBusinessDetailsFrontendBaseUrl}$path"
+    } else {
+      if (isAgent) {
+        businessDetails.controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+      } else {
+        businessDetails.controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+      }
+    }
+  }
+
   private def buildHomePageForSupportingAgent(nextUpdatesDueDates: Seq[LocalDate])
                                              (implicit user: MtdItUser[_]): Future[Result] = {
 
@@ -121,7 +142,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
 
-      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, Some(manageBusinessesUrl(user.isAgent)))
       val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
       val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
 
@@ -184,7 +205,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         PaymentCreditAndRefundHistoryTileViewModel(credits, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
 
       val yourBusinessesTileViewModel =
-        YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome)
+        YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, Some(manageBusinessesUrl(user.isAgent)))
 
       val returnsTileViewModel =
         ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
@@ -291,7 +312,8 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         Ok(newHomeOverviewView(origin, user.isSupportingAgent, dateService.getCurrentTaxYear,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
-          isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence)))
+          isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence),
+          Some(manageBusinessesUrl(user.isAgent))))
       }
     }
   }

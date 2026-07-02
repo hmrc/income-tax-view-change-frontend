@@ -16,18 +16,18 @@
 
 @import hub.views.html.partials.newHome.overview.OverviewCard
 @import businessDetails.controllers.manageBusinesses.routes.{ManageYourBusinessesController}
-
-
 @this(overviewCard: OverviewCard)
 
 
-@(isAgent: Boolean)(implicit messages: Messages)
+@(isAgent: Boolean, manageBusinessesUrl: Option[String] = None)(implicit messages: Messages)
 
 @manageBusinessUrl = @{
-    if(isAgent){
-        ManageYourBusinessesController.showAgent().url
-    } else {
-        ManageYourBusinessesController.show().url
+    manageBusinessesUrl.getOrElse {
+        if(isAgent){
+            ManageYourBusinessesController.showAgent().url
+        } else {
+            ManageYourBusinessesController.show().url
+        }
     }
 }
 

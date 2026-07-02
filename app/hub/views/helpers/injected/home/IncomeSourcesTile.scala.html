@@ -29,10 +29,12 @@
 @(yourBusinessesTileViewModel: YourBusinessesTileViewModel, isAgent: Boolean)(implicit messages: Messages)
 
 @manageBusinessesControllerURL = @{
-    if(isAgent) {
-        manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
-    } else {
-        manageBusinessRoutes.ManageYourBusinessesController.show().url
+    yourBusinessesTileViewModel.manageBusinessesUrl.getOrElse {
+        if(isAgent) {
+            manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+        } else {
+            manageBusinessRoutes.ManageYourBusinessesController.show().url
+        }
     }
 }
 
