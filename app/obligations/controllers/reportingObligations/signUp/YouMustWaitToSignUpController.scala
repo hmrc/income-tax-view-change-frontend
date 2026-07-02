@@ -30,9 +30,9 @@ import scala.concurrent.Future
 class YouMustWaitToSignUpController @Inject()(
                                                authActions: AuthActions,
                                                dateService: DateService,
-                                               view: YouMustWaitToSignUpView,
-                                               appConfig: FrontendAppConfig
-                                             )(implicit mcc: MessagesControllerComponents) extends FrontendController(mcc) with I18nSupport {
+                                               view: YouMustWaitToSignUpView
+                                             )(implicit mcc: MessagesControllerComponents,
+                                                appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport {
 
   def show(isAgent: Boolean): Action[AnyContent] = {
     lazy val auth = {
