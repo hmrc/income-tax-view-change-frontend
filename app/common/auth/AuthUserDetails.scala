@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package common.models.auth
+package common.auth
 
-import common.auth.Constants
-import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddress, ItmpName, LoginTimes, MdtpInformation, Name}
-import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, Enrolment, Enrolments}
+import uk.gov.hmrc.auth.core.retrieve.*
+import uk.gov.hmrc.auth.core.*
 
 import java.time.LocalDate
 

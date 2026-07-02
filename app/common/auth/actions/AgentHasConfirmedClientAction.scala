@@ -17,7 +17,7 @@
 package common.auth.actions
 
 import com.google.inject.Singleton
-import common.models.auth.AuthorisedAndEnrolledRequest
+import common.auth.AuthorisedAndEnrolledRequest
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 import javax.inject.Inject

@@ -16,11 +16,11 @@
 
 package financials.controllers
 
+import common.auth.AuthorisedAndEnrolledRequest
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
-import common.models.auth.AuthorisedAndEnrolledRequest
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse

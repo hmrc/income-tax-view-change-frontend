@@ -17,10 +17,9 @@
 package common.auth.actions
 
 import com.google.inject.Singleton
-import common.auth.FrontendAuthorisedFunctions
+import common.auth.{AuthUserDetails, AuthorisedUserRequest, FrontendAuthorisedFunctions}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.auth.{AuthUserDetails, AuthorisedUserRequest}
 import common.viewUtils.InternalUrlHelper
 import play.api.Logger
 import play.api.mvc.Results.Redirect

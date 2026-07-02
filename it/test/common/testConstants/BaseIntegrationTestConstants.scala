@@ -17,9 +17,9 @@
 package common.testConstants
 
 import businessDetails.models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import common.auth.{AgentClientDetails, AuthUserDetails}
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.models.auth.{AgentClientDetails, AuthUserDetails}
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.{AddressModel, IncomeSourceId}
 import common.models.itsaStatus.ITSAStatus

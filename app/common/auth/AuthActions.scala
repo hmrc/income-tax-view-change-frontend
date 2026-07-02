@@ -19,7 +19,6 @@ package common.auth
 import common.auth.actions.*
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.auth.AuthorisedUserRequest
 import play.api.mvc.*
 
 import javax.inject.{Inject, Singleton}

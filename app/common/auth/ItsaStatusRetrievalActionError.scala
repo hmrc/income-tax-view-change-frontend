@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.models.auth
+package common.auth
 
 import common.models.incomeSourceDetails.IncomeSourceDetailsError
 import common.models.itsaStatus.ITSAStatusResponse

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.models.auth
+package common.auth
 
 import uk.gov.hmrc.auth.core.retrieve.Name
 

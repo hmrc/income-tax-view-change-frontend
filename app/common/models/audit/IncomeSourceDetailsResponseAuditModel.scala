@@ -16,9 +16,9 @@
 
 package common.models.audit
 
+import common.auth.AuthorisedAndEnrolledRequest
 import common.enums.AuditType.IncomeSourceDetailsResponse
 import common.enums.{MTDSupportingAgent, TransactionName}
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.utils.audit.Utilities.*
 import play.api.libs.json.{JsValue, Json}
 case class IncomeSourceDetailsResponseAuditModel(

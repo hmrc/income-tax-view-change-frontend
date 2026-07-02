@@ -16,10 +16,10 @@
 
 package common.auth.actions
 
+import common.auth.AuthorisedAndEnrolledRequest
 import common.config.featureswitch.FeatureSwitching
 import common.viewUtils.InternalUrlHelper
 import common.controllers.errors.routes as errorRoutes
-import common.models.auth.AuthorisedAndEnrolledRequest
 import play.api.Logger
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}

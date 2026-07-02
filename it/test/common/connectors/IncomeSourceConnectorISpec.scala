@@ -16,9 +16,9 @@
 
 package common.connectors
 
+import common.auth.AuthorisedAndEnrolledRequest
 import common.enums.MTDIndividual
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.models.core.{AccountingPeriodModel, AddressModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse, LatencyDetails}
 import org.scalatest.wordspec.AnyWordSpec

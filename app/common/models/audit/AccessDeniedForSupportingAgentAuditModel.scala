@@ -16,9 +16,9 @@
 
 package common.models.audit
 
+import common.auth.AuthorisedAndEnrolledRequest
 import common.enums.AuditType.AccessDeniedForSupportingAgent
 import common.enums.TransactionName
-import common.models.auth.AuthorisedAndEnrolledRequest
 import play.api.libs.json.{JsValue, Json}
 
 case class AccessDeniedForSupportingAgentAuditModel(mtdItUser: AuthorisedAndEnrolledRequest[_]) extends ExtendedAuditModel {

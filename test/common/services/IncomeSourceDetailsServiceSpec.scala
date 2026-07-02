@@ -18,14 +18,13 @@ package common.services
 
 import businessDetails.models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import businessDetails.services.IncomeSourceDetailsService
-import common.auth.MtdItUser
+import common.auth.{AuthorisedAndEnrolledRequest, MtdItUser}
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.mocks.MockAuditingService
 import common.mocks.services.MockAsyncCacheApi
 import common.mocks.services.config.MockAppConfig
 import common.models.admin.{DisplayBusinessStartDate, FeatureSwitch}
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import businessDetails.models.incomeSourceDetails.viewmodels.*
 import obligations.mocks.services.MockNextUpdatesService

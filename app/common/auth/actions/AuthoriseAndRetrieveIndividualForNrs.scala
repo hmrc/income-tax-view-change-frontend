@@ -17,13 +17,12 @@
 package common.auth.actions
 
 import com.google.inject.Singleton
-import common.auth.{Constants, FrontendAuthorisedFunctions}
+import common.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest, Constants, FrontendAuthorisedFunctions}
 import common.config.FrontendAppConfig
 import common.controllers.errors.routes as errorRoutes
 import common.controllers.routes as appRoutes
 import common.enums.MTDIndividual
 import common.models.audit.IvUpliftRequiredAuditModel
-import common.models.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest}
 import common.services.AuditingService
 import common.utils.AuthUtils.{ORIGIN, mtdEnrolmentName}
 import play.api.Logger

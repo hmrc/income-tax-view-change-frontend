@@ -32,8 +32,8 @@
 
 package common.connectors
 
+import common.auth.AuthorisedAndEnrolledRequest
 import common.config.FrontendAppConfig
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

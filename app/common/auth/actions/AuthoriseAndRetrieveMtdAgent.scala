@@ -18,11 +18,11 @@ package common.auth.actions
 
 import com.google.inject.Singleton
 import common.auth.AuthExceptions.NoAssignment
+import common.auth.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.controllers.agent.routes as agentRoutes
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import common.models.auth.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import common.utils.AuthUtils.*
 import common.viewUtils.InternalUrlHelper
 import play.api.Logger

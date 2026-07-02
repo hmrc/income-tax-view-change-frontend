@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.models.auth
+package common.auth
 
 import common.enums.MTDUserRole
 import play.api.mvc.{Request, WrappedRequest}

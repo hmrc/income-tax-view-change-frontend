@@ -17,8 +17,8 @@
 package common.auth.actions
 
 import com.google.inject.Singleton
+import common.auth.{AgentClientDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedUserRequest}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
-import common.models.auth.{AgentClientDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedUserRequest}
 import common.services.SessionDataService
 import common.services.agent.ClientDetailsService
 import common.utils.sessionUtils.SessionKeys
