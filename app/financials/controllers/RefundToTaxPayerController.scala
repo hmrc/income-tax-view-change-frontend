@@ -22,7 +22,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.models.admin.PaymentHistoryRefunds
 import common.models.core.Nino
 import common.services.AuditingService
-import connectors.RepaymentHistoryConnector
+import financials.connectors.RepaymentHistoryConnector
 import financials.controllers.routes as financialsRoutes
 import financials.models.audit.RefundToTaxPayerResponseAuditModel
 import financials.models.creditsandrefunds.RefundToTaxPayerViewModel

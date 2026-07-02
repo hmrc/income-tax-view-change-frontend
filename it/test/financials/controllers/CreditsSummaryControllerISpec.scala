@@ -18,10 +18,9 @@ package financials.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.AuditStub
+import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
 import common.models.auth.AuthorisedAndEnrolledRequest
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
@@ -63,8 +62,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
               "a valid response is received" in {
                 import financials.models.audit.CreditSummaryAuditing.*
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
                   testNino,
                   s"${testTaxYear - 1}-04-06",
                   s"$testTaxYear-04-05")(
@@ -77,8 +76,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 )
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                   AuditStub.verifyAuditContainsDetail(
                     IncomeSourceDetailsResponseAuditModel(
@@ -114,9 +113,9 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
               "the list contains Balancing Charge Credits" in {
                 import financials.models.audit.CreditSummaryAuditing.*
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
                   testNino,
                   s"${testTaxYear - 1}-04-06",
                   s"$testTaxYear-04-05")(
@@ -129,8 +128,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 )
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                   AuditStub.verifyAuditContainsDetail(
                     IncomeSourceDetailsResponseAuditModel(

@@ -22,8 +22,8 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.core.NormalMode
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
+import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentIdHashed, testSessionId}
@@ -60,10 +60,10 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the income source ceased Page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               val buttonLabel: String = messagesAPI(s"incomeSources.cease.${incomeSourceType.key}.continue")
 
@@ -85,7 +85,7 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
             "redirect to IncomeSourceEndDateControllerUrl" when {
               "continue is pressed correctly" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"CEASE-${incomeSourceType.key}")))
 
                 val result = buildPOSTMTDPostClient(path,

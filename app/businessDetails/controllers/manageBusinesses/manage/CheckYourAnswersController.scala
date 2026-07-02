@@ -18,11 +18,11 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
+import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
+import businessDetails.models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import models.incomeSourceDetails.viewmodels.CheckYourAnswersViewModel
-import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

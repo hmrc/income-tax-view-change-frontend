@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -28,7 +29,6 @@ import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.core.*
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.services.{DateService, DateServiceInterface}
-import models.incomeSourceDetails.CeaseIncomeSourceData
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any

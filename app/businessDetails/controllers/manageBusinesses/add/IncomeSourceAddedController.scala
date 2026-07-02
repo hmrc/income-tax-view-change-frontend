@@ -18,10 +18,11 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessesRoutes
+import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceFromUser, NotSigningUp, OnlyOneYearAvailableToSignUp, OptedOut, SignUpBothYears, SignUpCurrentYearOnly, SignUpNextYearOnly, SignedUpForMTD, Unknown}
+import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import models.incomeSourceDetails.*
-import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+import businessDetails.models.incomeSourceDetails.*
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}

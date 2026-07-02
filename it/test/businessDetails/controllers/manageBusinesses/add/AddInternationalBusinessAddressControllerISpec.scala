@@ -21,8 +21,8 @@ import businessDetails.testConstants.AddressLookupTestConstants
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.OverseasBusinessAddress
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
@@ -43,7 +43,7 @@ class AddInternationalBusinessAddressControllerISpec extends ControllerISpecHelp
         "is authenticated, with a valid enrolment" should {
           "redirect to address lookup" in {
             stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
             AddressLookupStub.stubPostInitialiseAddressLookup()
 

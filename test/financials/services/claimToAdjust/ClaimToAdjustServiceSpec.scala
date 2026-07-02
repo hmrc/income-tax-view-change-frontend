@@ -22,13 +22,14 @@ import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.DateService
 import common.testConstants.BaseTestConstants.{testMtditid, testNino, testUserNino}
 import common.testUtils.TestSupport
+import financials.mocks.connectors.{MockChargeHistoryConnector, MockFinancialDetailsConnector}
+import financials.mocks.services.MockFinancialDetailsService
 import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryModel}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.models.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.testConstants.ClaimToAdjustPoaTestConstants.*
-import mocks.connectors.{MockCalculationListConnector, MockChargeHistoryConnector, MockFinancialDetailsConnector}
-import mocks.services.MockFinancialDetailsService
+import returns.mocks.connectors.MockCalculationListConnector
 import shared.models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

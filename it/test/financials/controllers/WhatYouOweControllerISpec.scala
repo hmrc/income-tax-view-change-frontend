@@ -19,7 +19,7 @@ package financials.controllers
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.AuditStub
+import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.*
 import common.models.core.SelfServeTimeToPayJourneyResponseModel
 import common.models.incomeSourceDetails.TaxYear
@@ -32,7 +32,6 @@ import financials.models.audit.WhatYouOweResponseAuditModel
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
 import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.WSResponse
@@ -128,20 +127,20 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
             "render the what you owe page" which {
               "displays the payments due totals" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                   propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   testValidFinancialDetailsModelJsonCodingOut(2000, 2000, (testTaxYear - 1).toString, testDate.plusYears(1).toString))
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge)(testDateService).detail)
 
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                   result should have(
                     httpStatus(OK),
@@ -152,19 +151,19 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has a multiple charge from financial details and BCD and ACI charges from CESA" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueIn30DaysIt)(dateService).detail)
 
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                   result should have(
                     httpStatus(OK),
@@ -185,16 +184,16 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has a multiple charge, without BCD and ACI charges from CESA" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString)
                 val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   financialDetailsResponseJson)
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   val whatYouOweChargesList = {
@@ -210,9 +209,9 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   }
                   AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
 
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                   Then("the result should have a HTTP status of OK (200) and the payments due page")
                   result should have(
@@ -236,7 +235,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has multiple charges and one charge equals zero" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val mixedJson = Json.obj(
                   "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
@@ -253,17 +252,17 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   )
                 )
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, testValidOutStandingChargeResponseJsonWithAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweWithAZeroOutstandingAmount())(dateService).detail)
 
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                   Then("the result should have a HTTP status of OK (200) and the payments due page")
                   result should have(
@@ -285,16 +284,16 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has no dunningLocks" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = noDunningLock)
                 val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   financialDetailsResponseJson)
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   val whatYouOweChargesList = {
@@ -309,9 +308,9 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   }
                   AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
 
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                   result should have(
                     httpStatus(OK),
@@ -324,16 +323,16 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has a dunningLocks against a charge" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = oneDunningLock)
                 val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   financialDetailsResponseJson)
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   val whatYouOweChargesList = {
@@ -350,9 +349,9 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   }
                   AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
 
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                   result should have(
                     httpStatus(OK),
@@ -365,15 +364,15 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has multiple dunningLocks" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                 val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString, dunningLock = twoDunningLocks)
                 val financialDetailsModel = financialDetailsResponseJson.as[FinancialDetailsModel]
 
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   financialDetailsResponseJson)
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   val whatYouOweChargesList = {
@@ -387,9 +386,9 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                   }
                   AuditStub.verifyAuditEvent(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweChargesList)(dateService))
 
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                   Then("the result should have a HTTP status of OK (200) and the payments due page")
                   result should have(
@@ -404,16 +403,16 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
               "no charge" when {
                 "YearOfMigration does not exists" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, None))
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, None))
 
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06",
+                  IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06",
                     s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
-                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                  IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                     AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList)(dateService).detail)
 
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                     result should have(
                       httpStatus(OK),
@@ -432,18 +431,18 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
                 "YearOfMigration exists but not the first year" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                  IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino,
                     s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, testEmptyFinancialDetailsModelJson)
-                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                  IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                     AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList)(dateService).detail)
 
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                     result should have(
                       httpStatus(OK),
                       pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
@@ -461,7 +460,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
                 "YearOfMigration exists and No valid charges exists" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                   val mixedJson = Json.obj(
@@ -473,16 +472,16 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
                     )
                   )
-                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
-                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                  IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+                  IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
 
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                    IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                     AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweNoChargeList)(dateService).detail)
 
@@ -505,7 +504,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
                 "YearOfMigration exists with Invalid financial details charges and valid outstanding charges" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   val mixedJson = Json.obj(
                     "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
@@ -521,17 +520,17 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                       financialDetailJson(testTaxYear.toString, transactionId = "transId6")
                     ))
 
-                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
-                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                  IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+                  IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                     AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweOutstandingChargesOnly)(dateService).detail)
 
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                    IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                     result should have(
                       httpStatus(OK),
@@ -552,20 +551,20 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
               "has empty BCD charge" when {
                 "YearOfMigration exists with valid financial details charges and invalid outstanding charges" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                     testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
-                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                  IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                     AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweFinancialDetailsEmptyBCDCharge)(dateService).detail)
 
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                    IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                     result should have(
                       httpStatus(OK),
@@ -586,19 +585,19 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
               "has a Coding out banner" when {
                 "CodingOut FS is enabled" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                     testValidFinancialDetailsModelJsonCodingOut(2000, 2000, testTaxYear.toString,
                       testDate.toString, 0, (testTaxYear - 1).toString, totalLiabilityAmount = 43.21))
-                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                  IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                    IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                    IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                     result should have(
                       httpStatus(OK),
@@ -618,20 +617,20 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has a multiple charges ~ TxM extension" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, isClass2Nic = true))
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueInSomeDays)(dateService).detail)
 
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
 
                   result should have(
                     httpStatus(OK),
@@ -652,17 +651,17 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
               "has MFA Debits on the Payment Tab" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   testValidFinancialDetailsModelMFADebitsJson(2000, 2000, testTaxYear.toString, testDate.plusYears(1).toString))
-                IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
-                IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
-                  IncomeTaxViewChangeStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  IncomeTaxBusinessDetailsStub.verifyGetOutstandingChargesResponse("utr", testSaUtr.toLong, (testTaxYear - 1).toString)
                   Then("The expected result is returned")
                   result should have(
                     httpStatus(OK),
@@ -678,12 +677,12 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
               "has a POA section" when {
                   "a user has valid POAs" in {
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+                    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
                       testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+                    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
                       testValidFinancialDetailsModelJson(2000, 2000, (testTaxYearPoa - 1).toString, testDate.toString))
-                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                    IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
 
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
@@ -696,12 +695,12 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
                   "has valid POAs that have been paid in full" in {
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+                    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
                       testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+                    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
                       testValidFinancialDetailsModelJson(2000, 0, (testTaxYearPoa - 1).toString, testDate.toString))
-                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                    IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                       result should have(
@@ -714,12 +713,12 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
               "not show POA section" when {
                   "a user does not have valid POAs" in {
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
+                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYearPoa - 1, Some(testTaxYearPoa.toString)))
+                    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 1}-04-06", s"$testTaxYearPoa-04-05")(OK,
                       testEmptyFinancialDetailsModelJson)
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
+                    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYearPoa - 2}-04-06", s"${testTaxYearPoa - 1}-04-05")(OK,
                       testEmptyFinancialDetailsModelJson)
-                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                    IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                       result should have(
@@ -735,7 +734,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                     "CreditsRefundsRepay FS is enabled and a user" that {
                       "has available credits" in {
                         stubAuthorised(mtdUserRole, List(CreditsRefundsRepay))
-                        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
+                        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                         val mixedJson = Json.obj(
                           "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00, "totalCreditAvailableForRepayment" -> 300.00, "totalCredit" -> 300.00),
                           "codingDetails" -> Json.arr(),
@@ -751,10 +750,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                           )
                         )
 
-                        IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
-                        IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                        IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, mixedJson)
+                        IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                           "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-                        IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                        IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                         whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                           result should have(
@@ -777,17 +776,17 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
                 "render the internal server error page" when {
                   "both connectors return internal server error" in {
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                       propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
+                    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino,
                       s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
-                    IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                    IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                       "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
-                    IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                    IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                      IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                      IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                      IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                      IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                       Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
                       result should have(
@@ -799,17 +798,17 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
                 "financial connector return internal server error" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino,
+                  IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino,
                     s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
-                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
-                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                  IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                     Then("the result should have a HTTP status of INTERNAL_SERVER_ERROR(500)")
                     result should have(
@@ -820,18 +819,18 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper with ChargeConstan
 
                 "Outstanding charges connector return internal server error" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
-                  IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
+                  IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                     testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.toString))
-                  IncomeTaxViewChangeStub.stubGetOutstandingChargesResponse(
+                  IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
                     "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(INTERNAL_SERVER_ERROR, testOutstandingChargesErrorModelJson)
-                  IncomeTaxViewChangeStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
+                  IncomeTaxBusinessDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-                    IncomeTaxViewChangeStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                     result should have(
                       httpStatus(INTERNAL_SERVER_ERROR)

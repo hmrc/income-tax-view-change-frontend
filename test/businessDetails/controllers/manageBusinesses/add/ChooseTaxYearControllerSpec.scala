@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.mocks.services.MockIncomeSourceRFService
+import businessDetails.models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import businessDetails.services.SessionService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import common.connectors.ITSAStatusConnector
@@ -26,7 +27,6 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
-import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application

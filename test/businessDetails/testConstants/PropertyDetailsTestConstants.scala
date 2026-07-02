@@ -16,10 +16,10 @@
 
 package businessDetails.testConstants
 
+import businessDetails.models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
-import models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, fakeNextUpdatesModel}
 import common.models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import shared.models.{SingleObligationModel, StatusFulfilled}

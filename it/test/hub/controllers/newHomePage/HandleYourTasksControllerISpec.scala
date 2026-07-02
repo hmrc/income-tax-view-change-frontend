@@ -21,7 +21,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.WiremockHelper
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -30,7 +30,6 @@ import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import financials.enums.ChargeType.ITSA_NI
 import financials.models.creditsandrefunds.CreditsModel
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.OK
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
@@ -713,11 +712,11 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val url = s"/income-tax-financial-details/$testNino/financial-details/credits/from/2022-04-06/to/2023-04-05"
 
     stubAuthorised(mtdUserRole, featureSwitches)
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)
+    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)
     WiremockHelper.stubGet(url, OK, response)
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, "2022-04-06", "2023-04-05")(OK, chargesJson)
+    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, "2022-04-06", "2023-04-05")(OK, chargesJson)
     ITSAStatusDetailsStub.stubGetITSAStatusDetails(currentItsaStatus.toString, "2022-23")
-    IncomeTaxViewChangeStub.stubGetNextUpdates(nino = testNino, deadlines = obligationsModel)
+    IncomeTaxBusinessDetailsStub.stubGetNextUpdates(nino = testNino, deadlines = obligationsModel)
   }
 
   private val overdueChargeJson = baseChargesModel(genericCharge, "2018-03-29")

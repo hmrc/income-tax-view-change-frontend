@@ -17,10 +17,10 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.IncomeSourcesUtils
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._

@@ -17,12 +17,13 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
+import businessDetails.models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
-import models.incomeSourceDetails.*
-import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import businessDetails.models.incomeSourceDetails.*
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.Logger
 import play.api.i18n.I18nSupport

@@ -18,9 +18,10 @@ package businessDetails.services
 
 import businessDetails.connectors.CreateIncomeSourceConnector
 import businessDetails.models.createIncomeSource.*
+import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import common.auth.MtdItUser
 import common.enums.IncomeSourceJourney.UkProperty
-import models.incomeSourceDetails.viewmodels.*
+import businessDetails.models.incomeSourceDetails.viewmodels.*
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import businessDetails.utils.OptionExtension

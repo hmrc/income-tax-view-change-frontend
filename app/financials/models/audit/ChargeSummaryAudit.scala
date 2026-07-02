@@ -26,8 +26,8 @@ import common.utils.audit.Utilities.userAuditDetails
 import financials.models.*
 import financials.models.chargeHistory.ChargeHistoryModel
 import financials.models.chargeSummary.PaymentHistoryAllocations
+import financials.utils.JsonUtils
 import play.api.libs.json.{JsObject, JsValue, Json}
-import utils.JsonUtils
 
 case class ChargeSummaryAudit(mtdItUser: MtdItUser[_],
                               chargeItem: ChargeItem,

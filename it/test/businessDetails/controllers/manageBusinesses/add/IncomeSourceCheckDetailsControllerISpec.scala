@@ -19,7 +19,6 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.*
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import businessDetails.services.SessionService
 import play.api.http.Status.{OK, SEE_OTHER}
@@ -31,7 +30,7 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.AuditStub
+import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.OverseasBusinessAddress
 import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import shared.models.UIJourneySessionData
@@ -86,10 +85,10 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
               "the user has no existing businesses" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
+                IncomeTaxBusinessDetailsStub.stubCreateBusinessDetailsResponse()(OK, response)
 
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -141,8 +140,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               "user selects 'confirm and continue'" in {
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxBusinessDetailsStub.stubCreateBusinessDetailsResponse()(OK, response)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
@@ -173,8 +172,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceResponse(testSelfEmploymentId))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsResponse()(OK, response)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxBusinessDetailsStub.stubCreateBusinessDetailsResponse()(OK, response)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
@@ -203,8 +202,8 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
               "error in response from API" in {
                 stubAuthorised(mtdUserRole)
                 val response = List(CreateIncomeSourceErrorResponse(500, "INTERNAL_SERVER_ERROR"))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
-                IncomeTaxViewChangeStub.stubCreateBusinessDetailsErrorResponseNew()(response)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxBusinessDetailsStub.stubCreateBusinessDetailsErrorResponseNew()(response)
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                 val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
@@ -231,7 +230,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
               "user session has no details" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                 await(sessionService.setMongoData(emptyUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
 
@@ -260,7 +259,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
         "render Address row and no overseas rows when user selects an existing address from their address on file" in {
           stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
             sessionId = testSessionId,
@@ -292,7 +291,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
         "render the correct rows when user adds a new UK address via postcode lookup" in {
           stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
             sessionId = testSessionId,
@@ -324,7 +323,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
         "render the correct rows when user adds a new international address" in {
           stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
             sessionId = testSessionId,
@@ -354,7 +353,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
         "render the correct rows when user has no address on file and finds a UK address via postcode lookup" in {
           stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
             sessionId = testSessionId,
@@ -379,7 +378,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
         "render the correct rows when user has no address on file and manually enters a UK address" in {
           stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
             sessionId = testSessionId,
@@ -404,7 +403,7 @@ class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {
 
         "render only the legacy Address row and no overseas rows when OverseasBusinessAddress feature is disabled" in {
           stubAuthorised(mtdUserRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
           val sessionData = UIJourneySessionData(
             sessionId = testSessionId,

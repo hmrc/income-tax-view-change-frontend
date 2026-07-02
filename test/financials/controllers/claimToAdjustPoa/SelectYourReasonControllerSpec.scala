@@ -23,12 +23,12 @@ import common.models.core.{CheckMode, NormalMode}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import financials.models.claimToAdjustPoa.*
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.testConstants.ClaimToAdjustPoaTestConstants.testPoa1Maybe
-import mocks.services.{MockCalculationListService, MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application

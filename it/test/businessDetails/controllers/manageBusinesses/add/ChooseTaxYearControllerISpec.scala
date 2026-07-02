@@ -17,17 +17,16 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.{testBusinessName, testBusinessStartDate, testBusinessTrade}
+import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.incomeSourceDetails.LatencyDetails
 import common.services.DateService
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import common.models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -118,7 +117,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
               stubAuthorised(mtdUserRole)
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
 
               await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(
@@ -152,7 +151,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
               val isAgent = !(mtdUserRole == MTDIndividual)
 
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
 
@@ -161,7 +160,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map("current-year-checkbox" -> Seq("true"), "next-year-checkbox" -> Seq("true"))).futureValue
 
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(SEE_OTHER),
@@ -173,7 +172,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
             "return an error if the form is invalid" in {
 
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val journeyType = incomeSourceType match {
                 case SelfEmployment => "ADD-SE"
@@ -187,7 +186,7 @@ class ChooseTaxYearControllerISpec extends ControllerISpecHelper {
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, body = Map("Invalid" -> Seq("Invalid"))).futureValue
 
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(BAD_REQUEST),

@@ -20,9 +20,9 @@ import common.models.itsaStatus.ITSAStatus
 import common.testConstants.BaseTestConstants
 import common.testUtils.TestSupport
 import financials.testConstants.PenaltiesTestConstants.getPenaltyDetails
-import mocks.connectors.MockPenaltyDetailsConnector
-import models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsSuccessResponse}
-import models.penalties.{GetPenaltyDetails, Totalisations}
+import hub.mocks.connectors.MockPenaltyDetailsConnector
+import hub.models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsSuccessResponse}
+import hub.models.penalties.{GetPenaltyDetails, Totalisations}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 
 class PenaltyDetailsServiceSpec extends TestSupport with MockPenaltyDetailsConnector {

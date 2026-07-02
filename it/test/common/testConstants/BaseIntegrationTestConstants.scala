@@ -16,6 +16,7 @@
 
 package common.testConstants
 
+import businessDetails.models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.auth.{AgentClientDetails, AuthUserDetails}
@@ -24,7 +25,6 @@ import common.models.core.{AddressModel, IncomeSourceId}
 import common.models.itsaStatus.ITSAStatus
 import common.utils.sessionUtils.SessionKeys
 import common.models.incomeSourceDetails.*
-import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import play.api.http.Status
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.auth.core.retrieve.Credentials

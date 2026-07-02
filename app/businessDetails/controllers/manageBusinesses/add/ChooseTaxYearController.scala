@@ -18,10 +18,10 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.forms.manageBusinesses.add.ChooseTaxYearForm
 import businessDetails.forms.models.ChooseTaxYearFormModel
+import businessDetails.models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import businessDetails.services.SessionService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport

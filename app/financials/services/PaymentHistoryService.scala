@@ -23,7 +23,7 @@ import common.models.admin.ChargeHistory
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
+import financials.connectors.{FinancialDetailsConnector, RepaymentHistoryConnector}
 import financials.models.*
 import financials.models.chargeHistory.ChargesHistoryErrorModel
 import financials.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}

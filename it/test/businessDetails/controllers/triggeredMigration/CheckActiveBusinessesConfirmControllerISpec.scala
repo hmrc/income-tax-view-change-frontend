@@ -19,11 +19,10 @@ package businessDetails.controllers.triggeredMigration
 import businessDetails.models.audit.TriggeredMigrationCompleteAuditModel
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
-import helpers.servicemocks.{IncomeTaxCalculationStub, IncomeTaxViewChangeStub}
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
@@ -71,7 +70,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
       s"user is $mtdRole" should {
         "render the page when TriggeredMigration FS is enabled - With Year of Migration" in {
           stubAuthorised(mtdRole, List(TriggeredMigration))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeWithYearOfMigration)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeWithYearOfMigration)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
@@ -84,7 +83,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
         "render the page when TriggeredMigration FS is enabled - With no Year of Migration" in {
           stubAuthorised(mtdRole, List(TriggeredMigration))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
@@ -97,7 +96,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
         "redirect to home page when TriggeredMigration FS is disabled" in {
           stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
           result should have(
@@ -114,14 +113,14 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
       s"user is $mtdRole" should {
         "redirect to the complete page when 'Yes' is selected" in {
           stubAuthorised(mtdRole, List(TriggeredMigration))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
             body = liabilityCalculationModelSuccessfulNotCrystallised
           )
 
-          IncomeTaxViewChangeStub.stubUpdateCustomerFacts(testMtditid)(OK)
+          IncomeTaxBusinessDetailsStub.stubUpdateCustomerFacts(testMtditid)(OK)
 
           val result = buildPOSTMTDPostClient(
             path,
@@ -141,7 +140,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
         "redirect to Check HMRC Records when 'No' is selected" in {
           stubAuthorised(mtdRole, List(TriggeredMigration))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
@@ -164,7 +163,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
         "return BAD_REQUEST when no option is selected" in {
           stubAuthorised(mtdRole, List(TriggeredMigration))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncomeUnconfirmed)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2018", Some("LATEST"))(
             status = OK,
@@ -181,7 +180,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
         "redirect to home page when TriggeredMigration FS is disabled" in {
           stubAuthorised(mtdRole)
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
 
           val result = buildPOSTMTDPostClient(
             path,

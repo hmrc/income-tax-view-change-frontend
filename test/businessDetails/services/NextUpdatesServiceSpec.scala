@@ -16,9 +16,9 @@
 
 package businessDetails.services
 
+import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import common.config.featureswitch.FeatureSwitching
 import common.testUtils.TestSupport
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.mocks.connectors.MockObligationsConnector
 import obligations.testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
 import obligations.testConstants.NextUpdatesTestConstants.*

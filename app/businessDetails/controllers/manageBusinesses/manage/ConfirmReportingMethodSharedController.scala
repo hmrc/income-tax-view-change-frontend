@@ -18,10 +18,10 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.enums.ReportingMethod
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
+import businessDetails.models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import common.models.incomeSourceDetails.TaxYear.getTaxYearModel
-import models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData}
 import play.api.Logger
 import play.api.MarkerContext.NoMarker
 import play.api.i18n.I18nSupport

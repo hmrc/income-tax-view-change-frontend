@@ -16,6 +16,7 @@
 
 package common.testConstants
 
+import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.*
 import common.enums.IncomeSourceJourney.SelfEmployment
@@ -25,7 +26,6 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import financials.enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND}
 import financials.enums.CodingOutType.*
 import financials.testConstants.PaymentHistoryTestConstraints.oldBusiness1
-import models.incomeSourceDetails.*
 import play.api.libs.json.{JsObject, JsValue, Json}
 import shared.models.UIJourneySessionData
 

@@ -18,10 +18,9 @@ package hub.controllers.newHomePage
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.{FeatureSwitchName, NewHomePage, RecentActivity}
 import common.models.itsaStatus.ITSAStatus
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -235,9 +234,9 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                   featureSwitches: List[FeatureSwitchName] = List()) {
 
     stubAuthorised(mtdUserRole, featureSwitches)
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)
+    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)
     ITSAStatusDetailsStub.stubGetITSAStatusDetails(currentItsaStatus.toString, "2022-23")
-    IncomeTaxViewChangeStub.stubGetFulfilledNextUpdates(nino = testNino, deadlines = obligationsModel)
+    IncomeTaxBusinessDetailsStub.stubGetFulfilledNextUpdates(nino = testNino, deadlines = obligationsModel)
   }
 
   private val noRecentObligationsModel: ObligationsModel = ObligationsModel(Seq(

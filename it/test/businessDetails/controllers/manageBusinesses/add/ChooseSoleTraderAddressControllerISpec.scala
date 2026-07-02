@@ -20,8 +20,8 @@ import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.OverseasBusinessAddress
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
@@ -48,7 +48,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
           "render the ChooseSoleTraderAddress page" when {
             "OverseasBusinessAddress FS is enabled" in {
               stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -72,7 +72,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
             "form response is Existing Address" in {
               val isAgent: Boolean = mtdUserRole != MTDIndividual
               stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(
                 path,
@@ -88,7 +88,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
             "form response is New Address" in {
               val isAgent: Boolean = mtdUserRole != MTDIndividual
               stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(path, additionalCookies,
                 body = Map("value" -> Seq("new-address"))).futureValue
@@ -102,7 +102,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
           "return a BAD_REQUEST" when {
             "form is empty" in {
               stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(path, additionalCookies,
                 body = Map("value" -> Seq())).futureValue
@@ -113,7 +113,7 @@ class ChooseSoleTraderAddressControllerISpec extends ControllerISpecHelper {
             }
             "form is invalid" in {
               stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(
                 path,

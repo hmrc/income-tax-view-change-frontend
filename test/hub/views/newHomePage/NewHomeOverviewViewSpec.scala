@@ -25,7 +25,6 @@ import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.{TestSupport, ViewSpec}
 import financials.models.*
 import hub.views.html.newHomePage.NewHomeOverviewView
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.http.HeaderNames

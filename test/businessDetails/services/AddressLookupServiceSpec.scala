@@ -16,13 +16,13 @@
 
 package businessDetails.services
 
+import businessDetails.models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.{CheckMode, NormalMode}
 import common.testUtils.TestSupport
-import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
-import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
-import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
+import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
+import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import org.scalactic.Fail

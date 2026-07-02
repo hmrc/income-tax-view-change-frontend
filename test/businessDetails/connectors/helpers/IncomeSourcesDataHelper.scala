@@ -17,8 +17,8 @@
 package businessDetails.connectors.helpers
 
 import businessDetails.models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSourceRequest, CreateUKPropertyIncomeSourceRequest, PropertyDetails}
+import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate

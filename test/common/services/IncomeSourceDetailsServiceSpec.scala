@@ -16,6 +16,7 @@
 
 package common.services
 
+import businessDetails.models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import businessDetails.services.IncomeSourceDetailsService
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
@@ -26,7 +27,7 @@ import common.mocks.services.config.MockAppConfig
 import common.models.admin.{DisplayBusinessStartDate, FeatureSwitch}
 import common.models.auth.AuthorisedAndEnrolledRequest
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.viewmodels.*
+import businessDetails.models.incomeSourceDetails.viewmodels.*
 import obligations.mocks.services.MockNextUpdatesService
 import play.api.cache.AsyncCacheApi
 import common.testConstants.BaseTestConstants.*

@@ -19,10 +19,10 @@ package obligations.controllers.reportingObligations.optOut
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import obligations.helpers.OptOutSessionRepositoryHelper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -63,7 +63,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
             s"render confirm single year opt out page" in {
               stubAuthorised(mtdUserRole, List(OptOutFs))
 
-              IncomeTaxViewChangeStub.stubGetAllObligations(
+              IncomeTaxBusinessDetailsStub.stubGetAllObligations(
                 nino = testNino,
                 fromDate = LocalDate.of(2021, 1, 1),
                 toDate = LocalDate.of(2022, 1, 1),
@@ -83,7 +83,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
                 )))
               )
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
               val calcResponseBody =
                 """
@@ -113,7 +113,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
               )
 
               val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -133,7 +133,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
                 selectedOptOutYear = Some("2021-2022")
               )
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
               val responseBody = Json.arr(successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023)
 
@@ -142,7 +142,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
               WiremockHelper.stubGet(url, OK, responseBody.toString())
 
               val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               val isAgent = mtdUserRole != MTDIndividual
               val expectedRedirectPath = obligations.controllers.errors.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)).url

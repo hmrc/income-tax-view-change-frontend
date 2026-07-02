@@ -16,8 +16,7 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import models.incomeSourceDetails.*
-import models.incomeSourceDetails.viewmodels.ObligationsViewModel
+import businessDetails.models.incomeSourceDetails.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -26,6 +25,7 @@ import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.{fina
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import businessDetails.views.messages.IncomeSourceAddedMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import businessDetails.views.constants.IncomeSourceAddedObligationsConstants.*
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.testUtils.ViewSpec

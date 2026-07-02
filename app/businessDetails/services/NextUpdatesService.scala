@@ -16,10 +16,11 @@
 
 package businessDetails.services
 
+import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import common.auth.MtdItUser
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.services.DateServiceInterface
-import models.incomeSourceDetails.viewmodels.*
+import businessDetails.models.incomeSourceDetails.viewmodels.*
 import play.api.Logger
 import shared.connectors.ObligationsConnector
 import shared.models.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}

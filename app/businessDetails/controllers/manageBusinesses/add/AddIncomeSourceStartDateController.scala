@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateView
@@ -29,7 +30,6 @@ import common.implicits.ImplicitDateFormatterImpl
 import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.DateService
 import common.views.html.errorPages.CustomNotFoundErrorView
-import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

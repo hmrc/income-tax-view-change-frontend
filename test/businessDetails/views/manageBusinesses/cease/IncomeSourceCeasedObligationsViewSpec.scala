@@ -16,11 +16,11 @@
 
 package businessDetails.views.manageBusinesses.cease
 
-import models.incomeSourceDetails.viewmodels.{DatesModel, IncomeSourceCeasedObligationsViewModel, ObligationsViewModel}
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, IncomeSourceCeasedObligationsViewModel, ObligationsViewModel}
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.testUtils.ViewSpec
 

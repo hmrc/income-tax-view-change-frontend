@@ -21,9 +21,11 @@ import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.models.core.IncomeSourceId
 import IncomeSourceId.mkIncomeSourceId
+import businessDetails.models.incomeSourceDetails.IncomeSourceFromUser
+import businessDetails.models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, CheckCeaseIncomeSourceDetailsViewModel, PropertyDetailsViewModel, ViewBusinessDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}
-import models.incomeSourceDetails.*
-import models.incomeSourceDetails.viewmodels.*
+import businessDetails.models.incomeSourceDetails.*
+import businessDetails.models.incomeSourceDetails.viewmodels.*
 
 import java.time.LocalDate
 import javax.inject.Inject

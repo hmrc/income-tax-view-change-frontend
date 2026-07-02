@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
@@ -24,7 +25,6 @@ import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
-import models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any

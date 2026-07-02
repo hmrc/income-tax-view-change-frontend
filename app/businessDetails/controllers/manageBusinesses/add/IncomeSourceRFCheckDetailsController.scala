@@ -17,11 +17,11 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.models.audit.IncomeSourceReportingMethodAuditModel
+import businessDetails.models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{CreateBusinessDetailsService, SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import models.incomeSourceDetails.viewmodels.*
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

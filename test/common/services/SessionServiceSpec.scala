@@ -16,12 +16,12 @@
 
 package common.services
 
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import common.testUtils.TestSupport
-import mocks.repositories.MockUIJourneySessionDataRepository
-import models.incomeSourceDetails.AddIncomeSourceData
+import financials.mocks.repositories.MockUIJourneySessionDataRepository
 import org.mockito.Mockito.when
 import shared.models.UIJourneySessionData
 

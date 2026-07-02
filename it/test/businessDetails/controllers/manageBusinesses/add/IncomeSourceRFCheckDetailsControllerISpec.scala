@@ -16,13 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.AddIncomeSourceData
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
@@ -55,7 +55,7 @@ class IncomeSourceRFCheckDetailsControllerISpec extends ControllerISpecHelper {
             s"render the ${incomeSourceType.journeyType} Reporting Frequency Check Details Page" when {
               "using the manage businesses journey" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
                 await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -78,7 +78,7 @@ class IncomeSourceRFCheckDetailsControllerISpec extends ControllerISpecHelper {
               val isAgent = !(mtdUserRole == MTDIndividual)
 
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
               await(sessionService.createSession(IncomeSourceJourneyType(Add, incomeSourceType)))
 
               val journeyType = incomeSourceType match {

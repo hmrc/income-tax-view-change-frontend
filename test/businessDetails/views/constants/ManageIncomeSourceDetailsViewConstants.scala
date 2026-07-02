@@ -16,9 +16,9 @@
 
 package businessDetails.views.constants
 
+import businessDetails.models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.*
-import models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
+import businessDetails.models.incomeSourceDetails.*
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import businessDetails.testConstants.BusinessDetailsTestConstants.*
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.expectedAddress

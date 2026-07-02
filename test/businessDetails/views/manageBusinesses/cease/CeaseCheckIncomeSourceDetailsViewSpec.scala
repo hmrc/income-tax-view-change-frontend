@@ -18,7 +18,6 @@ package businessDetails.views.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -28,6 +27,7 @@ import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmp
 import businessDetails.testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testIncomeSource, testTradeName}
 import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
+import businessDetails.models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.testUtils.TestSupport
 
