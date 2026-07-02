@@ -77,8 +77,6 @@ object FeatureSwitchName {
       JsSuccess(IdempotencyKeyForCreateIncomeSource)
     case JsString(NoIncomeSourcesRedirect.name) =>
       JsSuccess(NoIncomeSourcesRedirect)
-    case JsString(BusinessDetailsFrontend.name) =>
-      JsSuccess(BusinessDetailsFrontend)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -122,8 +120,7 @@ object FeatureSwitchName {
       RecentActivity,
       MortgageEvidence,
       IdempotencyKeyForCreateIncomeSource,
-      NoIncomeSourcesRedirect,
-      BusinessDetailsFrontend
+      NoIncomeSourcesRedirect
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -237,10 +234,4 @@ case object NoIncomeSourcesRedirect extends FeatureSwitchName {
   override val name: String = "no-income-sources-redirect"
   override val toString: String = "No Income Sources Redirect"
 }
-
-case object BusinessDetailsFrontend extends FeatureSwitchName {
-  override val name: String = "business-details-frontend"
-  override val toString: String = "Business Details Frontend"
-}
-
 
