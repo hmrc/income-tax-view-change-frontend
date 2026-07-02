@@ -74,6 +74,14 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
         CalculationSummary(liabilityCalculationModelSuccessful) shouldBe expectedCalculationSummary
       }
 
+      "ignore a calculation timestamp that is not a zoned date time" in {
+        val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
+          metadata = liabilityCalculationModelSuccessful.metadata.copy(calculationTimestamp = Some("2026"))
+        )
+
+        CalculationSummary(liabilityCalculationModel).timestamp shouldBe None
+      }
+
       "create a full CalculationSummary with forecast calculation" when {
         "incomeTaxNicAndCgtAmount is not available then take incomeTaxNicAmount as forecastIncomeTaxAndNics" in {
           val expectedCalculationSummary = CalculationSummary(

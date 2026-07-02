@@ -18,8 +18,10 @@ package returns.models.liabilitycalculation.viewmodels
 
 import common.implicits.ImplicitDateParser
 import common.models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
+import play.api.Logger
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZonedDateTime}
+import scala.util.{Failure, Success, Try}
 
 case class CalculationSummary(
                                timestamp: Option[LocalDate],
@@ -46,6 +48,8 @@ case class CalculationSummary(
 }
 
 object CalculationSummary extends ImplicitDateParser {
+
+  private val logger = Logger("application")
   
   private def getEstimatedTotalTax(calc: LiabilityCalculationResponse): Option[BigDecimal] = {
     val incomeTaxNicAndCgtAmount: Option[BigDecimal] = calc.calculation.flatMap(c => c.endOfYearEstimate.flatMap(_.incomeTaxNicAndCgtAmount))
@@ -67,10 +71,19 @@ object CalculationSummary extends ImplicitDateParser {
     totalIncomeTaxAndNicsAndCgt.getOrElse(totalIncomeTaxAndNicsDue.getOrElse(BigDecimal(0)))
   }
 
+  private def parseCalculationTimestamp(timestamp: String): Option[LocalDate] = {
+    Try(ZonedDateTime.parse(timestamp).toLocalDate) match {
+      case Success(date) => Some(date)
+      case Failure(ex) =>
+        logger.warn(s"[CalculationSummary] Unable to parse calculationTimestamp from calculation response: '$timestamp'", ex)
+        None
+    }
+  }
+
   def apply(calc: LiabilityCalculationResponse): CalculationSummary = {
 
     CalculationSummary(
-      timestamp = calc.metadata.calculationTimestamp.map(_.toZonedDateTime.toLocalDate),
+      timestamp = calc.metadata.calculationTimestamp.flatMap(parseCalculationTimestamp),
       crystallised = calc.metadata.isCalculationCrystallised,
       unattendedCalc = isUnattendedCalc(calc.metadata.calculationReason),
       taxDue = getTaxDue(calc),
