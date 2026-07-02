@@ -58,6 +58,7 @@ class YouMustWaitToSignUpViewSpec extends TestSupport {
       }
       "render the agent button text" in new Setup(isAgent = true) {
         pageDocument.getElementById("you-must-wait-agent-button").text() shouldBe SignUpCompletedViewMessages.agentButtonText
+        pageDocument.getElementById("you-must-wait-agent-button").attr("href") shouldBe appConfig.enterClientsUTRUrl
       }
       "render agent heading and text with alternative year" in new Setup(isAgent = true, testDate = TaxYear(2026,2027)) {
         pageDocument.select("h1").text() shouldBe SignUpCompletedViewMessages.agentHeading("2027")

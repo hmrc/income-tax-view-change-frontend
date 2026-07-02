@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import common.config.FrontendAppConfig
 @import common.auth.MtdItUser
 @import common.services.DateServiceInterface
 @import common.views.html.components._
@@ -30,11 +31,11 @@
 )
 
 @(
-    taxYear: TaxYear, 
+    taxYear: TaxYear,
     nextTaxYear: String,
     backUrl: String,
     origin: Option[String] = None
-)(implicit user: MtdItUser[_], messages: Messages)
+)(implicit user: MtdItUser[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @individualContent = {
     @h1(messages("youMustWait.heading", nextTaxYear), id = Some("you-must-wait-heading"))
@@ -54,8 +55,11 @@
 @agentContent = {
     @h1(messages("youMustWait.agent.heading", nextTaxYear), id = Some("you-must-wait-agent-heading"))
     @p(id = Some("you-must-wait-agent-text"))(Html(messages("youMustWait.agent.text", nextTaxYear)))
-    @*TODO - implement button in MISUV-10514*@
-    @button(alternativeText = Some(messages("youMustWait.agent.button.text")), href = Some(""), id = Some("you-must-wait-agent-button"))
+    @button(
+        alternativeText = Some(messages("youMustWait.agent.button.text")),
+        href = Some(appConfig.enterClientsUTRUrl),
+        id = Some("you-must-wait-agent-button")
+    )
 }
 
 @mainTemplate(
