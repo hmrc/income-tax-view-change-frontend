@@ -264,63 +264,6 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
     }
   }
 
-  "orderedTaxYearsByAccountingPeriods" should {
-
-    "return all tax years from 2018" when {
-
-      "the date service returns a tax year of 2025-26 and the earliest first accounting period end date is in 2017-18" in {
-        val model = IncomeSourceDetailsModel(
-          nino = testNino,
-          mtdbsa = testMtditid,
-          yearOfMigration = Some("2020"),
-          businesses = List(business1, business2),
-          properties = Nil
-        )
-
-        setupMockGetCurrentTaxYearEnd(mockDateService)(2026)
-
-        model.orderedTaxYearsByAccountingPeriods(mockDateService) shouldBe List(2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026)
-      }
-    }
-  }
-
-  "orderedTaxYearsByYearOfMigration" should {
-
-    "return all tax years from 2020" when {
-
-      "a year of migration is defined as 2020" in {
-        val model = IncomeSourceDetailsModel(
-          nino = testNino,
-          mtdbsa = testMtditid,
-          yearOfMigration = Some("2020"),
-          businesses = List(business1, business2),
-          properties = Nil
-        )
-
-        setupMockGetCurrentTaxYearEnd(mockDateService)(2026)
-
-        model.orderedTaxYearsByYearOfMigration(mockDateService) shouldBe List(2020, 2021, 2022, 2023, 2024, 2025, 2026)
-      }
-    }
-
-    "return all tax years from 2018" when {
-
-      "a year of migration is not defined and it falls back to the accounting period method" in {
-        val model = IncomeSourceDetailsModel(
-          nino = testNino,
-          mtdbsa = testMtditid,
-          yearOfMigration = None,
-          businesses = List(business1, business2),
-          properties = Nil
-        )
-
-        setupMockGetCurrentTaxYearEnd(mockDateService)(2026)
-
-        model.orderedTaxYearsByAccountingPeriods(mockDateService) shouldBe List(2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026)
-      }
-    }
-  }
-
   "return all active business addresses" when {
 
     "getAllUniqueBusinessAddresses finds an international address" in {
