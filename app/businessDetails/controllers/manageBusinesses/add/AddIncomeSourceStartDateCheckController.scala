@@ -98,9 +98,10 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
             )
           }
         case None =>
-          Logger("application").error("" +
-            "Failed to get income source start date from session")
-          Future.successful(errorHandler(isAgent).showInternalServerError())
+          Logger("application").warn("" + "Failed to get income source start date from session")
+          sessionService.clearSession(sessionData.sessionId).flatMap { _ =>
+            journeyRestartUrl(isTriggeredMigration)(user)
+          }
       }
     }
   }.recover {
@@ -147,9 +148,10 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
               )
           )
         case None =>
-          Logger("application").error("" +
-            "Failed to get income source start date from session")
-          Future.successful(errorHandler(isAgent).showInternalServerError())
+          Logger("application").error("" + "Failed to get income source start date from session")
+          sessionService.clearSession(sessionData.sessionId).flatMap { _ =>
+            journeyRestartUrl(isTriggeredMigration)(mtdItUser)
+          }
       }
     }
   }.recover {
@@ -225,7 +227,7 @@ class AddIncomeSourceStartDateCheckController @Inject()(val authActions: AuthAct
           sessionData.copy(addIncomeSourceData = Some(updatedAddIncomeSourceData))
 
         sessionService.setMongoData(journeySessionData).flatMap {
-          case true  => Future.successful(Redirect(successUrl))
+          case true => Future.successful(Redirect(successUrl))
           case false => Future.failed(new Exception("Mongo update call was not acknowledged"))
         }
 
