@@ -21,7 +21,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
@@ -70,7 +70,7 @@ class IncomeSourceCeasedBackErrorControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the back error page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType))))
               val result = buildGETMTDClient(path, additionalCookies).futureValue

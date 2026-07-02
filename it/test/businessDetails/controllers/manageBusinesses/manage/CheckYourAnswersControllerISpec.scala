@@ -17,16 +17,15 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
+import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.AuditStub
+import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.incomeSourceDetails.LatencyDetails
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.ManageIncomeSourceData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -124,8 +123,8 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
             "render the Check your answers page" when {
               "all session parameters are valid" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxBusinessDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
                 if (incomeSourceType == SelfEmployment) {
                   await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
@@ -136,7 +135,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -156,8 +155,8 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
             s"redirect to manage obligations" when {
               "submitted with valid session data" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxBusinessDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
                 setupMongoSessionData(incomeSourceType)
 

@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import models.incomeSourceDetails.*
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import businessDetails.models.incomeSourceDetails.*
 import businessDetails.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -41,6 +40,7 @@ import common.mocks.services.{MockClientDetailsService, MockDateService, MockSes
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
 import businessDetails.mocks.services.MockNextUpdatesService
+import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate

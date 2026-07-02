@@ -25,6 +25,7 @@ import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDeta
 import common.services.{AuditingService, DateService, DateServiceInterface, ITSAStatusService}
 import common.testConstants.BaseTestConstants
 import common.utils.sessionUtils.SessionKeys
+import financials.mocks.services.{MockFinancialDetailsService, MockWhatYouOweService}
 import financials.models.*
 import financials.services.*
 import financials.testConstants.ANewCreditAndRefundModel
@@ -36,7 +37,6 @@ import hub.models.newHomePage.YourTasksCard.UpcomingTaskCard
 import hub.services.NextUpdatesService
 import hub.services.newHomePage.HandleYourTasksService
 import hub.views.html.newHomePage.NewHomeYourTasksView
-import mocks.services.*
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.jsoup.Jsoup

@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import connectors.ChargeHistoryConnector
+import financials.connectors.ChargeHistoryConnector
 import financials.enums.DocumentType.{Poa1Charge, Poa2Charge}
 import financials.models.*
 import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}

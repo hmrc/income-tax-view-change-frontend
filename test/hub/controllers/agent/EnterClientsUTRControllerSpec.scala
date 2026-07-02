@@ -23,7 +23,6 @@ import common.mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
 import hub.forms.agent.ClientsUTRForm
-import mocks.views.agent.MockEnterClientsUTR
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
 import play.api
@@ -32,6 +31,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.services.agent.ClientDetailsService.*
 import common.testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
+import financials.mocks.views.agent.MockEnterClientsUTR
 import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
 import hub.views.html.agent.EnterClientsUTRView
 

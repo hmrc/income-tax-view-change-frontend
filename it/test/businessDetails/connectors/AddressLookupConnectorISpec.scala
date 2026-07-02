@@ -16,15 +16,15 @@
 
 package businessDetails.connectors
 
+import businessDetails.models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
 import businessDetails.services.AddressLookupConnector
 import businessDetails.testConstants.AddressLookupTestConstants
 import com.github.tomakehurst.wiremock.client.WireMock
 import common.helpers.servicemocks.AuditStub
 import common.helpers.{ComponentSpecBase, WiremockHelper}
 import common.models.core.NormalMode
-import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
-import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
-import models.incomeSourceDetails.{Address, BusinessAddressModel, Country}
+import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.UnexpectedGetStatusFailure
+import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.{PostAddressLookupSuccessResponse, UnexpectedPostStatusFailure}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Injecting

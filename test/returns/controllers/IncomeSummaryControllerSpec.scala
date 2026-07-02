@@ -20,14 +20,14 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
-import mocks.services.MockCalculationService
-import mocks.views.agent.MockIncomeSummary
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers._
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import financials.mocks.services.MockCalculationService
+import financials.mocks.views.agent.MockIncomeSummary
 import returns.services.CalculationService
 
 class IncomeSummaryControllerSpec extends MockAuthActions

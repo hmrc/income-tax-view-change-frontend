@@ -21,7 +21,7 @@ import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import common.testUtils.UnitSpec
-import mocks.services.MockCalculationListService
+import financials.mocks.services.MockCalculationListService
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import obligations.mocks.connectors.MockITSAStatusUpdateConnector

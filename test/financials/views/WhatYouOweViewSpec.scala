@@ -32,7 +32,6 @@ import financials.models.outstandingCharges.*
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
 import financials.views.html.WhatYouOweView
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.test.FakeRequest

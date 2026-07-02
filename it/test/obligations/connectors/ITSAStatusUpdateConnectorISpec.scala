@@ -17,7 +17,7 @@
 package obligations.connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import connectors.constants.ITSAStatusUpdateConnectorConstants.*
+import common.connectors.constants.ITSAStatusUpdateConnectorConstants.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ErrorItem, ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.connectors.itsastatus.{ITSAStatusUpdateConnector, ITSAStatusUpdateRequest}
 import org.scalatest.wordspec.AnyWordSpec

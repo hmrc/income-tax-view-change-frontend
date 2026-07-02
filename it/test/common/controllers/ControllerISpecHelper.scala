@@ -29,10 +29,10 @@ import common.helpers.servicemocks.{AuditStub, MTDAgentAuthStub, MTDIndividualAu
 import common.models.admin.FeatureSwitchName
 import common.models.audit.AccessDeniedForSupportingAgentAuditModel
 import common.viewUtils.InternalUrlHelper
-import models.extensions.FinancialDetailsModelExtension
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
+import financials.models.extensions.FinancialDetailsModelExtension
 
 trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModelExtension {
 

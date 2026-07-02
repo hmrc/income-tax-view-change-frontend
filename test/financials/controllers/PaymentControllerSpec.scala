@@ -21,13 +21,13 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import common.services.DateServiceInterface
-import connectors.PayApiConnector
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
+import financials.connectors.PayApiConnector
 import financials.models.audit.InitiatePayNowAuditModel
 import financials.testConstants.PaymentDataTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

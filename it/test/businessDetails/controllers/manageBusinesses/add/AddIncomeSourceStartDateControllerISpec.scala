@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
@@ -23,9 +24,8 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.IdempotencyKeyForCreateIncomeSource
 import common.models.core.{CheckMode, Mode, NormalMode}
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, idempotencyKeyField}
-import models.incomeSourceDetails.AddIncomeSourceData
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData.{dateStartedField, idempotencyKeyField}
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
@@ -118,12 +118,12 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
               "render the Business Start Date Page" when {
                 "using the manage businesses journey" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   val expectedHintText: String = "For example, 27 3 2020"
 
@@ -148,10 +148,10 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
                 "render the Business Start Date Page with an idempotency key generated" when {
                   "using the manage businesses journey with idempotency FS enabled" in {
                     stubAuthorised(mtdUserRole, List(IdempotencyKeyForCreateIncomeSource))
-                    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                     val result = buildGETMTDClient(path, additionalCookies).futureValue
-                    IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                    IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                     val expectedHintText: String = "For example, 27 3 2020"
 
@@ -189,7 +189,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
               s"redirect to $addBusinessStartDateCheckUrl" when {
                 "a valid date is submitted" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                   val formData: Map[String, Seq[String]] = {
@@ -214,7 +214,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
               "return a BAD_REQUEST" when {
                 "form is filled incorrectly" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -236,7 +236,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
 
                 "form is empty" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 

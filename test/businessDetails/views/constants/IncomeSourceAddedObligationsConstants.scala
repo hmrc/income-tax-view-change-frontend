@@ -16,10 +16,10 @@
 
 package businessDetails.views.constants
 
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import obligations.testConstants.IncomeSourcesObligationsTestConstants._
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 
 import java.time.LocalDate
 

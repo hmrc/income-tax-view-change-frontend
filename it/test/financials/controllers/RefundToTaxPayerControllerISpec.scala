@@ -19,14 +19,13 @@ package financials.controllers
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.AuditStub
+import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.PaymentHistoryRefunds
 import common.models.core.Nino
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.paymentHistoryBusinessAndPropertyResponse
 import financials.models.audit.RefundToTaxPayerResponseAuditModel
 import financials.models.repaymentHistory.*
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.*
 
 import java.time.LocalDate
@@ -93,8 +92,8 @@ class RefundToTaxPayerControllerISpec extends ControllerISpecHelper {
             s"audit and render the refund to tax payer page" when {
               "the payment history refunds feature switch is enabled" in {
                 stubAuthorised(mtdUserRole, List(PaymentHistoryRefunds))
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-                IncomeTaxViewChangeStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+                IncomeTaxBusinessDetailsStub.stubGetRepaymentHistoryByRepaymentId(Nino(testNino), repaymentRequestNumber)(OK, testRepaymentHistoryModel)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 

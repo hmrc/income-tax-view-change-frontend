@@ -23,13 +23,12 @@ import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals, SelfServeT
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateServiceInterface}
-import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
+import financials.connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import financials.models.*
 import financials.models.ChargeItem.isAKnownTypeOfCharge
 import financials.models.audit.WhatYouOweResponseAuditModel
 import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier

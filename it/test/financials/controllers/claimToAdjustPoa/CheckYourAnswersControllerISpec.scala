@@ -20,6 +20,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.testConstants.BaseIntegrationTestConstants.*
@@ -31,7 +32,6 @@ import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService
 import financials.testConstants.ClaimToAdjustPoaTestConstants.validSession
 import financials.testConstants.FinancialDetailsTestConstants.{address, testFinancialDetailsErrorModelJson}
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -86,24 +86,24 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
 
   def setupGetIncomeSourceDetails(): Unit = {
     Given("Income Source Details with multiple business and property")
-    IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
       OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
     )
   }
 
   def setupGetFinancialDetails(): StubMapping = {
     And("Financial details for multiple years with POAs")
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
       OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
     )
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
       OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(3000))
     )
   }
 
   def stubFinancialDetailsResponse(response: JsValue = validFinancialDetailsResponseBody): Unit = {
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, response)
-    IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(OK, response)
+    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, response)
+    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(OK, response)
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -185,10 +185,10 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
               }
               "no non-crystallised financial details are found" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                   OK, testEmptyFinancialDetailsModelJson
                 )
-                IncomeTaxViewChangeStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
                   OK, testEmptyFinancialDetailsModelJson
                 )
                 await(sessionService.setMongoData(Some(validSession)))
@@ -218,7 +218,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 stubFinancialDetailsResponse()
                 await(sessionService.setMongoData(Some(validSession)))
 
-                IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
+                IncomeTaxBusinessDetailsStub.stubPostClaimToAdjustPoa(
                   CREATED,
                   Json.stringify(Json.toJson(
                     ClaimToAdjustPoaSuccess(processingDate = "2024-01-31T09:27:17Z")
@@ -238,7 +238,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 stubFinancialDetailsResponse(testEmptyFinancialDetailsModelJson)
                 await(sessionService.setMongoData(Some(validSession)))
 
-                IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
+                IncomeTaxBusinessDetailsStub.stubPostClaimToAdjustPoa(
                   CREATED,
                   Json.stringify(Json.toJson(
                     ClaimToAdjustPoaSuccess(processingDate = "2024-01-31T09:27:17Z")
@@ -259,7 +259,7 @@ class CheckYourAnswersControllerISpec extends ControllerISpecHelper {
                 stubFinancialDetailsResponse()
                 await(sessionService.setMongoData(Some(validSession)))
 
-                IncomeTaxViewChangeStub.stubPostClaimToAdjustPoa(
+                IncomeTaxBusinessDetailsStub.stubPostClaimToAdjustPoa(
                   BAD_REQUEST,
                   Json.stringify(Json.obj("message" -> "INVALID_REQUEST"))
                 )

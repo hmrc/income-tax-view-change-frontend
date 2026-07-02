@@ -16,7 +16,6 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -24,6 +23,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.models.core.NormalMode
 import common.testUtils.TestSupport

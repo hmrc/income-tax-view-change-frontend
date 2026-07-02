@@ -18,10 +18,10 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
+import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import jakarta.inject.Singleton
-import models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

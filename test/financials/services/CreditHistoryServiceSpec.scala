@@ -21,10 +21,10 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import common.testUtils.TestSupport
+import financials.mocks.connectors.MockFinancialDetailsConnector
 import financials.models.FinancialDetailsErrorModel
 import financials.services.CreditHistoryService.CreditHistoryError
-import mocks.connectors.MockFinancialDetailsConnector
-import services.helpers.CreditHistoryDataHelper
+import financials.services.helpers.CreditHistoryDataHelper
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 class CreditHistoryServiceSpec extends TestSupport with MockFinancialDetailsConnector

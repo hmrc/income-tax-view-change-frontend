@@ -22,8 +22,8 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.Mode
 import common.viewUtils.InternalUrlHelper
-import models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
-import models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
+import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
+import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.Logger
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.*

@@ -26,7 +26,6 @@ import common.models.sessionData.SessionDataModel
 import common.services.DateServiceInterface
 import common.utils.sessionUtils.SessionKeys
 import common.viewUtils.InternalUrlHelper
-import mocks.views.agent.MockConfirmClient
 import hub.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponse, SessionDataPostSuccess}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -36,6 +35,7 @@ import play.api.Application
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
+import financials.mocks.views.agent.MockConfirmClient
 import hub.connectors.PostSessionDataConnector
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import hub.views.html.agent.ConfirmClientUTRView

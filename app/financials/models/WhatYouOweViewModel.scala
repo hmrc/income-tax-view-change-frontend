@@ -18,7 +18,6 @@ package financials.models
 
 import common.services.DateServiceInterface
 import financials.controllers.routes as financialsRoutes
-import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
 
 import java.time.LocalDate
 

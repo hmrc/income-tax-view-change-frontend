@@ -24,8 +24,8 @@ import common.models.admin.{ChargeHistory, FeatureSwitch}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.{testNino, testUserTypeAgent, testUserTypeIndividual}
 import common.testUtils.TestSupport
+import financials.mocks.services.{MockCreditHistoryService, MockFinancialDetailsService}
 import financials.models.{DocumentDetail, DocumentDetailWithDueDate}
-import mocks.services.{MockCreditHistoryService, MockFinancialDetailsService}
 import org.mockito.Mockito.{mock, reset, when}
 import play.api
 import play.api.Application

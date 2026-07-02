@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.SelfEmployment
@@ -27,8 +28,7 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.DateServiceInterface
-import models.incomeSourceDetails.AddIncomeSourceData
-import models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
+import AddIncomeSourceData.{businessNameField, businessTradeField}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.*

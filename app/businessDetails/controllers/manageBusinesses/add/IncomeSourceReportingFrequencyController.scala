@@ -17,10 +17,10 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import models.incomeSourceDetails.AddIncomeSourceData
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport

@@ -19,7 +19,7 @@ package common.testConstants
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.liabilitycalculation.*
 import common.models.liabilitycalculation.taxcalculation.*
-import controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
+import returns.controllers.ForecastIncomeSummaryControllerTestConstants.taxableIncome
 
 object NewCalcBreakdownItTestConstants {
 

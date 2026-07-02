@@ -21,7 +21,6 @@ import financials.controllers.routes.*
 import financials.models.*
 import financials.models.chargeHistory.AdjustmentHistoryModel
 import financials.models.repaymentHistory.RepaymentHistoryUtils
-import models.ChargeHistoryItem
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation

@@ -1,0 +1,81 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package financials.mocks.connectors
+
+import common.models.core.Nino
+import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
+import common.testUtils.UnitSpec
+import financials.connectors.FinancialDetailsConnector
+import financials.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsResponse
+import financials.models.paymentAllocations.PaymentAllocationsResponse
+import financials.models.{FinancialDetailsErrorModel, FinancialDetailsResponseModel, PaymentsResponse}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.*
+import org.scalatest.BeforeAndAfterEach
+
+import scala.concurrent.Future
+
+trait MockFinancialDetailsConnector extends UnitSpec with BeforeAndAfterEach {
+
+  val mockFinancialDetailsConnector: FinancialDetailsConnector = mock(classOf[FinancialDetailsConnector])
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockFinancialDetailsConnector)
+  }
+
+  def setupMockGetFinancialDetails(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupMockGetFinancialDetailsByTaxYearRange(taxYearRange:TaxYearRange, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+    when(mockFinancialDetailsConnector.getFinancialDetailsByTaxYearRange(ArgumentMatchers.eq(taxYearRange),
+      ArgumentMatchers.eq(nino))(any(),any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupMockGetFinancialDetailsError(taxYear: Int, nino: String)(response: FinancialDetailsErrorModel): Unit = {
+    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupGetPayments(taxYear: TaxYear)(response: PaymentsResponse): Unit = {
+    when(mockFinancialDetailsConnector.getPayments(ArgumentMatchers.eq(taxYear))(any(), any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupGetPayments(taxYearFrom: TaxYear, taxYearTo: TaxYear)(response: PaymentsResponse): Unit = {
+    when(mockFinancialDetailsConnector.getPayments(ArgumentMatchers.eq(taxYearFrom), ArgumentMatchers.eq(taxYearTo))(any(), any()))
+      .thenReturn(Future.successful(response))
+  }
+
+  def setupGetPaymentAllocation(nino: String, paymentLot: String, paymentLotItem: String)(response: PaymentAllocationsResponse): Unit = {
+    when(
+      mockFinancialDetailsConnector.getPaymentAllocations(Nino(ArgumentMatchers.eq(nino)),
+        ArgumentMatchers.eq(paymentLot), ArgumentMatchers.eq(paymentLotItem))(any())
+    ).thenReturn(Future.successful(response))
+  }
+
+  def setupGetPaymentAllocationCharges(nino: String, documentId: String)(response: FinancialDetailsWithDocumentDetailsResponse): Unit = {
+    when(
+      mockFinancialDetailsConnector.getFinancialDetailsByDocumentId(Nino(ArgumentMatchers.eq(nino)), ArgumentMatchers.eq(documentId))(any())
+    ).thenReturn(Future.successful(response))
+  }
+
+}

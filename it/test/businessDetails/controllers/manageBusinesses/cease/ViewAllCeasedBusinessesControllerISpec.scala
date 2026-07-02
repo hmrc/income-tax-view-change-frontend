@@ -18,8 +18,8 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.DisplayBusinessStartDate
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.{foreignPropertyAndCeasedBusiness, multipleBusinessesWithBothPropertiesAndCeasedBusiness}
@@ -51,9 +51,9 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
           "render the Cease Income Source page" when {
             "the user has multipleBusinessesWithBothPropertiesAndCeasedBusiness" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -68,9 +68,9 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
 
             "DisplayBusinessStartDate FS is disabled" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -85,9 +85,9 @@ class ViewAllCeasedBusinessesControllerISpec extends ControllerISpecHelper {
 
             "the user has foreignPropertyAndCeasedBusiness " in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness)
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),

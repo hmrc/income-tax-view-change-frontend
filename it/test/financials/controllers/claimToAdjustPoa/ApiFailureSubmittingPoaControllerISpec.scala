@@ -18,7 +18,7 @@ package financials.controllers.claimToAdjustPoa
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.OK
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesResponse
@@ -41,7 +41,7 @@ class ApiFailureSubmittingPoaControllerISpec extends ControllerISpecHelper {
           } else {
             s"render the Adjusting your payments on account page" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, multipleBusinessesResponse
                 )
 

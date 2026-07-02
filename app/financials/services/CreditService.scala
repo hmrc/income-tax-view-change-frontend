@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.models.core.ErrorModel
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import connectors.FinancialDetailsConnector
+import financials.connectors.FinancialDetailsConnector
 import financials.models.Repayment
 import financials.models.creditsandrefunds.CreditsModel
 import play.api.Logger

@@ -20,12 +20,11 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import obligations.controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
-import helpers.servicemocks.{CalculationListStub, IncomeTaxViewChangeStub}
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.audit.OptOutNewAuditModel
 import obligations.models.reportingObligations.optOut.OptOutSessionData
@@ -37,6 +36,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import returns.helpers.servicemocks.CalculationListStub
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen, UIJourneySessionData}
 import shared.repositories.UIJourneySessionDataRepository
 
@@ -136,7 +136,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -151,7 +151,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -169,7 +169,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -184,7 +184,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -202,7 +202,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -217,7 +217,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -235,7 +235,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -250,7 +250,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Voluntary
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -268,7 +268,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -283,7 +283,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -301,7 +301,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -316,7 +316,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$nextYear", additionalCookies).futureValue
 
@@ -334,8 +334,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -350,7 +350,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Mandated
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.previousYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -367,7 +367,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = NoStatus,
@@ -382,7 +382,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -399,7 +399,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = NoStatus,
@@ -414,7 +414,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Mandated
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -431,8 +431,8 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
           
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -447,7 +447,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -464,7 +464,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = NoStatus,
@@ -479,7 +479,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -496,7 +496,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = NoStatus,
@@ -511,7 +511,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Annual
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, obligationWithSubmittedQuarterlyUpdates)
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
 
@@ -529,7 +529,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = NoStatus,
@@ -544,7 +544,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Voluntary
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$nextYear", additionalCookies).futureValue
 
@@ -560,7 +560,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val nextYear = "2023"
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = NoStatus,
@@ -575,7 +575,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             nextYearStatus = Voluntary
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val result = buildGETMTDClient(s"$path?taxYear=$nextYear", additionalCookies).futureValue
 
@@ -593,7 +593,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
         stubAuthorised(mtdUserRole, List(OptOutFs))
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
           `itsaStatusCY-1` = Voluntary,
@@ -660,7 +660,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
         stubAuthorised(mtdUserRole, List(OptOutFs))
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
           `itsaStatusCY-1` = Voluntary,
@@ -727,7 +727,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
         stubAuthorised(mtdUserRole, List(OptOutFs))
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
@@ -748,7 +748,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString()
         )
 
-        IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+        IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
         val expectedURI =
           obligations.controllers.reportingObligations.optOut.routes.ConfirmOptOutUpdateController
@@ -769,7 +769,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
         stubAuthorised(mtdUserRole, List(OptOutFs))
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
           `itsaStatusCY-1` = Voluntary,
@@ -792,7 +792,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val currentYear = "2021"
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(OptOutFs))
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = Voluntary,
@@ -808,7 +808,7 @@ class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
             journeyIsComplete = true
           )
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
-          IncomeTaxViewChangeStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
+          IncomeTaxBusinessDetailsStub.stubGetAllObligations(testNino, taxYear.toFinancialYearStart, taxYear.toFinancialYearEnd, allObligations)
 
           val redirectUrl: String =
             if (mtdUserRole != MTDIndividual) obligations.controllers.errors.routes.SignUpOptOutCannotGoBackController.show(isAgent = true, isSignUpJourney = Some(false)).url

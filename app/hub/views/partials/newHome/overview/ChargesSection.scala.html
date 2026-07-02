@@ -17,7 +17,7 @@
 @import hub.views.html.partials.newHome.overview.OverviewCard
 @import financials.controllers.routes.{WhatYouOweController, PaymentHistoryController, MoneyInYourAccountController}
 @import financials.controllers.claimToAdjustPoa.routes.AmendablePoaController
-@import models.nextPayments.viewmodels.WYOClaimToAdjustViewModel
+@import financials.models.WYOClaimToAdjustViewModel
 @this(overviewCard: OverviewCard)
 
 @(isAgent: Boolean, noChargesToPay: Boolean, moneyInYourAccount: Boolean, ctaViewModel: WYOClaimToAdjustViewModel, creditsRefundsRepayEnabled: Boolean)(implicit messages: Messages)

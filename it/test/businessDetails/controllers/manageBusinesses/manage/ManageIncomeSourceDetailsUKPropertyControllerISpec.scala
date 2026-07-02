@@ -18,10 +18,9 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import common.enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.DisplayBusinessStartDate
 import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
@@ -54,7 +53,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
 
             "URL contains a valid income source ID user has no latency information" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
 
               await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
@@ -74,7 +73,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetailsCty))
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetailsCty))
 
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
@@ -94,7 +93,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetailsCty))
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetailsCty))
 
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
@@ -116,7 +115,7 @@ class ManageIncomeSourceDetailsUKPropertyControllerISpec extends ManageIncomeSou
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2023-24")
 

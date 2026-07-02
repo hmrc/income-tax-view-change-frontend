@@ -20,7 +20,7 @@ import common.models.helpers.LiabilityCalculationDataHelper
 import common.models.liabilitycalculation.taxcalculation.TaxBands
 import common.models.liabilitycalculation.*
 import common.testUtils.TestSupport
-import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
+import common.testConstants.IncomeSourceAddedControllerConstants.testObligationsModel
 import play.api.http.Status
 import play.api.i18n.Lang
 import play.api.libs.json.*

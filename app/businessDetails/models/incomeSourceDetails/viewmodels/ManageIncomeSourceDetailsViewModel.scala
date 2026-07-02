@@ -1,0 +1,72 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package businessDetails.models.incomeSourceDetails.viewmodels
+
+import common.enums.IncomeSourceJourney.IncomeSourceType
+import common.models.itsaStatus.ITSAStatus
+import businessDetails.models.incomeSourceDetails.*
+import ITSAStatus.ITSAStatus
+import common.models.core.{AddressModel, IncomeSourceId}
+import common.models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
+
+import java.time.LocalDate
+
+case class ManageIncomeSourceDetailsViewModel(incomeSourceId: IncomeSourceId,
+                                              incomeSource: Option[String],
+                                              tradingName: Option[String],
+                                              tradingStartDate: Option[LocalDate],
+                                              address: Option[AddressModel],
+                                              latencyYearsQuarterly: LatencyYearsQuarterly,
+                                              latencyYearsAnnual: LatencyYearsAnnual,
+                                              latencyYearsCrystallised: LatencyYearsCrystallised,
+                                              latencyDetails: Option[LatencyDetails],
+                                              incomeSourceType: IncomeSourceType,
+                                              currentTaxYearEnd: Int,
+                                              quarterReportingType: Option[QuarterReportingType],
+                                              currentItsaStatus: ITSAStatus
+                                             ) {
+
+  def latencyValueAsKey(latencyIndicator: String): String = {
+    latencyIndicator match {
+      case "A" => "annually"
+      case "Q" => "quarterly"
+    }
+  }
+
+  def isBusinessInLatency: Boolean = {
+    latencyDetails.exists(_.isBusinessOrPropertyInLatency(currentTaxYearEnd))
+  }
+
+  def shouldShowChangeLinksForTaxYearOne: Boolean = {
+    isBusinessInLatency &&
+    (latencyYearsCrystallised.firstYear contains false) &&
+      ((latencyDetails.exists(_.latencyIndicator1 == "A") && latencyYearsAnnual.firstYear.contains(false)) ||
+        latencyDetails.exists(_.latencyIndicator1 == "Q"))
+  }
+
+  def shouldShowChangeLinksForTaxYearTwo: Boolean = {
+    isBusinessInLatency &&
+    (latencyYearsCrystallised.secondYear contains false) &&
+      ((latencyDetails.exists(_.latencyIndicator2 == "A") && latencyYearsAnnual.secondYear.contains(false)) ||
+        latencyDetails.exists(_.latencyIndicator2 == "Q"))
+  }
+  
+  def isQuarterly = currentItsaStatus == ITSAStatus.Mandated || currentItsaStatus == ITSAStatus.Voluntary
+}
+
+
+

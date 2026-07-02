@@ -21,14 +21,14 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import controllers.constants.IncomeSourceAddedControllerConstants.testObligationsModel
-import mocks.services.MockCalculationService
+import common.testConstants.IncomeSourceAddedControllerConstants.testObligationsModel
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
+import financials.mocks.services.MockCalculationService
 import obligations.mocks.connectors.MockObligationsConnector
 import returns.services.CalculationService
 import shared.connectors.ObligationsConnector

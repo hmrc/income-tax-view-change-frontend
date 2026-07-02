@@ -18,9 +18,9 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
+import businessDetails.models.incomeSourceDetails.Address
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import models.incomeSourceDetails.Address
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

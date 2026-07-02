@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
-import models.incomeSourceDetails.AddIncomeSourceData
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData.dateStartedField
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api
@@ -29,6 +28,7 @@ import common.testConstants.IncomeSourceDetailsTestConstants.{noIncomeDetails, n
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}

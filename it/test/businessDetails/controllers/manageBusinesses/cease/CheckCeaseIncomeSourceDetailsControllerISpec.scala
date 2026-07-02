@@ -17,16 +17,15 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
+import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.Cease
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.AuditStub
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.CeaseIncomeSourceData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers._
@@ -86,14 +85,14 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           "render the Cease Business Details Page" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
 
               When(s"I call GET $selfEmploymentPath")
               val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -119,14 +118,14 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           "render the Cease Business Page with unknown address and title and trade" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName)
 
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-SE", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = Some(testSelfEmploymentId), endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = None, journeyIsComplete = Some(false))))))
 
               When(s"I call GET $selfEmploymentPath")
               val result = buildGETMTDClient(selfEmploymentPath, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -158,14 +157,14 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           "render the Cease UK Property Details Page" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
               When(s"I call GET $ukPropertyPath")
               val result = buildGETMTDClient(ukPropertyPath, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -188,14 +187,14 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           "render the Cease Foreign Property Details Page" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
                 Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
 
               When(s"I call GET $foreignPropertyPath")
               val result = buildGETMTDClient(foreignPropertyPath, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -218,8 +217,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, SelfEmployment)
           s"redirect to $redirectUrl" in {
             stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
-            IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+            IncomeTaxBusinessDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
             await(sessionService.setMongoData(
               UIJourneySessionData(testSessionId, "CEASE-SE",
@@ -250,8 +249,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, UkProperty)
           s"redirect to $redirectUrl" in {
             stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
-            IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+            IncomeTaxBusinessDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
             await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-UK", ceaseIncomeSourceData =
               Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))
@@ -281,8 +280,8 @@ class CheckCeaseIncomeSourceDetailsControllerISpec extends ControllerISpecHelper
           val redirectUrl = getExpectedRedirectUri(mtdUserRole, ForeignProperty)
           s"redirect to $redirectUrl" in {
             stubAuthorised(mtdUserRole)
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
-            IncomeTaxViewChangeStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+            IncomeTaxBusinessDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
             await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "CEASE-FP", ceaseIncomeSourceData =
               Some(CeaseIncomeSourceData(incomeSourceId = None, endDate = Some(LocalDate.parse(testEndDate2022)), ceaseIncomeSourceDeclare = Some(stringTrue), journeyIsComplete = Some(false))))))

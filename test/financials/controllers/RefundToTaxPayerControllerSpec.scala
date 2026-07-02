@@ -23,13 +23,13 @@ import common.mocks.auth.MockAuthActions
 import common.models.admin.PaymentHistoryRefunds
 import common.services.DateServiceInterface
 import common.testConstants.BaseTestConstants.testMtditid
-import connectors.RepaymentHistoryConnector
+import financials.connectors.RepaymentHistoryConnector
+import financials.mocks.connectors.MockRepaymentHistoryConnector
 import financials.models.audit.RefundToTaxPayerResponseAuditModel
 import financials.models.creditsandrefunds.RefundToTaxPayerViewModel
 import financials.models.repaymentHistory.*
 import financials.views.html.RefundToTaxPayerView
 import hub.controllers.routes
-import mocks.connectors.MockRepaymentHistoryConnector
 import play.api
 import play.api.Application
 import play.api.http.Status

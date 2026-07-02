@@ -19,8 +19,7 @@ package obligations.controllers
 import common.auth.MtdItUser
 import common.enums.MTDIndividual
 import common.helpers.ComponentSpecBase
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, MTDIndividualAuthStub}
-import helpers.servicemocks.*
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub, MTDIndividualAuthStub}
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.admin.OptOutFs
@@ -34,6 +33,7 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
+import returns.helpers.servicemocks.CalculationListStub
 import shared.models.ObligationsModel
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
@@ -59,11 +59,11 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.NoStatus, ITSAStatus.NoStatus)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
@@ -81,9 +81,9 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the quarterly updates info sections")
         res should have(
@@ -101,11 +101,11 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetCalculationList(testNino,
@@ -124,9 +124,9 @@ class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the quarterly updates info sections")
         res should have(

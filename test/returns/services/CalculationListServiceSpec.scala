@@ -19,9 +19,9 @@ package returns.services
 import common.services.DateService
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import common.testUtils.TestSupport
-import mocks.connectors.MockCalculationListConnector
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
+import returns.mocks.connectors.MockCalculationListConnector
 import returns.testConstants.CalculationListTestConstants
 import shared.models.calculationList.CalculationListErrorModel
 import shared.services.CalculationListService

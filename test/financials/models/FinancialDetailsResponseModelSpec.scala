@@ -17,8 +17,8 @@
 package financials.models
 
 import common.testUtils.UnitSpec
-import financials.testConstants.FinancialDetailsTestConstants.{financialDetailsModel, *}
-import models.extensions.FinancialDetailsModelExtension
+import financials.models.extensions.FinancialDetailsModelExtension
+import financials.testConstants.FinancialDetailsTestConstants.*
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.{JsSuccess, Json}
 

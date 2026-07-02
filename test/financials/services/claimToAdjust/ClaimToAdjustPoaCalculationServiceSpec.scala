@@ -19,10 +19,10 @@ package financials.services.claimToAdjust
 import common.models.incomeSourceDetails.TaxYear
 import common.testConstants.BaseTestConstants.{testNino, testNinoNino, testTaxYear}
 import common.testUtils.TestSupport
+import financials.mocks.connectors.MockClaimToAdjustPoaConnector
 import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaSuccess, UnexpectedError}
 import financials.models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, MainIncomeLower}
 import financials.services.claimToAdjustPoa.ClaimToAdjustPoaCalculationService
-import mocks.connectors.MockClaimToAdjustPoaConnector
 
 class ClaimToAdjustPoaCalculationServiceSpec extends TestSupport with MockClaimToAdjustPoaConnector{
 
