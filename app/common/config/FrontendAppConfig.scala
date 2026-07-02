@@ -50,6 +50,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Income tax business details service
   lazy val incomeTaxBusinessDetailsBaseUrl: String = servicesConfig.baseUrl("income-tax-business-details")
 
+  lazy val incomeTaxBusinessDetailsFrontendBaseUrl: String =
+    servicesConfig.baseUrl("income-tax-business-details-frontend")
+ 
   //Income tax calculation service
   lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
 
