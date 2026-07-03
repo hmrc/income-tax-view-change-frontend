@@ -51,7 +51,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val incomeTaxBusinessDetailsBaseUrl: String = servicesConfig.baseUrl("income-tax-business-details")
 
   lazy val incomeTaxBusinessDetailsFrontendBaseUrl: String =
-    servicesConfig.baseUrl("income-tax-business-details-frontend")
+    config.get[String]("income-tax-business-details-frontend.external-host")
 
   def businessDetailsManageBusinessesFrontendUrl(isAgent: Boolean): String = {
     val path =
