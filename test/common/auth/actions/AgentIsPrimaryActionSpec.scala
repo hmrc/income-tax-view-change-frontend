@@ -16,10 +16,10 @@
 
 package common.auth.actions
 
+import common.auth.AuthorisedAndEnrolledRequest
 import common.auth.actions.AuthActionsTestData.*
 import common.config.AgentItvcErrorHandler
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import common.models.auth.AuthorisedAndEnrolledRequest
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.Assertion

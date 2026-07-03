@@ -17,7 +17,7 @@
 package financials.services
 
 import common.auth.MtdItUser
-import connectors.ChargeHistoryConnector
+import financials.connectors.ChargeHistoryConnector
 import financials.enums.CreateReversalReason
 import financials.models.*
 import financials.models.chargeHistory.*

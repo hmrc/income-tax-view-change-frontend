@@ -18,10 +18,9 @@ package common.auth.actions
 
 import common.utils.AuthUtils.*
 import businessDetails.forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
-import common.auth.MtdItUser
+import common.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest, MtdItUser}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.models.admin.FeatureSwitch
-import common.models.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import common.models.sessionData.SessionCookieData
 import common.utils.sessionUtils.SessionKeys

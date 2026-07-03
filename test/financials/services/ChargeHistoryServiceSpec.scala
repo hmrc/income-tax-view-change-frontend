@@ -19,10 +19,10 @@ package financials.services
 import common.testConstants.BaseTestConstants.{docNumber, taxYear, testNino}
 import common.testUtils.TestSupport
 import financials.enums.{AdjustmentReversalReason, AmendedReturnReversalReason, CreateReversalReason}
+import financials.mocks.connectors.MockChargeHistoryConnector
 import financials.models.DocumentDetail
 import financials.models.chargeHistory.*
 import financials.models.claimToAdjustPoa.{Increase, MainIncomeLower}
-import mocks.connectors.MockChargeHistoryConnector
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 
 import java.time.{LocalDate, LocalDateTime, LocalTime}

@@ -17,10 +17,9 @@
 package hub.controllers.agent
 
 import hub.audit.models.EnterClientUTRAuditModel
-import common.auth.{AuthActions, FrontendAuthorisedFunctions}
+import common.auth.{AuthActions, AuthorisedUserRequest, FrontendAuthorisedFunctions}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
-import common.models.auth.AuthorisedUserRequest
 import common.services.AuditingService
 import common.services.agent.ClientDetailsService
 import common.utils.AuthUtils.*

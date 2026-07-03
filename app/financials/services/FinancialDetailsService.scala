@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import common.services.DateServiceInterface
-import connectors.FinancialDetailsConnector
+import financials.connectors.FinancialDetailsConnector
 import financials.models.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND

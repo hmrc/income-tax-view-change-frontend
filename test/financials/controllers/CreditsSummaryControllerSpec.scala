@@ -22,11 +22,11 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
 import common.testConstants.BaseTestConstants.{calendarYear2018, testMtdItAgentUser, testMtdItUser, testSaUtr}
+import financials.mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService}
 import financials.models.{BalanceDetails, DocumentDetail}
 import financials.services.CreditHistoryService
 import financials.testConstants.FinancialDetailsTestConstants.*
 import financials.views.html.CreditsSummaryView
-import mocks.services.{MockCalculationService, MockCreditHistoryService, MockFinancialDetailsService}
 import org.mockito.Mockito.reset
 import play.api
 import play.api.Application

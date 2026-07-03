@@ -16,7 +16,7 @@
 
 package businessDetails.views.manageBusinesses.manage
 
-import models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import play.twirl.api.Html
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesFull
 import businessDetails.views.html.manageBusinesses.manage.ManageObligationsView

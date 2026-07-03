@@ -16,12 +16,12 @@
 
 package obligations.testConstants
 
+import businessDetails.models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel}
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.models.core.*
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import common.testConstants.BaseTestConstants.*
-import models.incomeSourceDetails.viewmodels.*
 import obligations.testConstants.NextUpdatesTestConstants.{fakeNextUpdatesModel, openObligation, overdueObligation}
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 

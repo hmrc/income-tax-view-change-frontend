@@ -19,7 +19,7 @@ package businessDetails.controllers.manageBusinesses.cease
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.OK
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.ukPropertyOnlyResponse
@@ -44,7 +44,7 @@ class IncomeSourceNotCeasedControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the not ceased page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 

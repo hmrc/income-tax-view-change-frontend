@@ -17,12 +17,11 @@
 package common.helpers
 
 import com.github.tomakehurst.wiremock.client.WireMock
-import common.auth.MtdItUser
+import common.auth.{AuthorisedAndEnrolledRequest, MtdItUser}
 import common.config.FrontendAppConfig
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.implicits.ImplicitDateFormatterImpl
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
 import obligations.repositories.OptOutSessionDataRepository

@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import models.incomeSourceDetails.AddIncomeSourceData
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application
@@ -26,6 +25,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import common.testConstants.BaseTestConstants.testSessionId
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}

@@ -16,7 +16,7 @@
 
 package businessDetails.views.manageBusinesses.add
 
-import models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
+import businessDetails.models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call

@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.SelfEmployment
@@ -27,7 +28,6 @@ import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
-import models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api

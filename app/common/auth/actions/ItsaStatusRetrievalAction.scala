@@ -16,13 +16,12 @@
 
 package common.auth.actions
 
-import common.auth.MtdItUser
+import common.auth.{ItsaStatusRetrievalActionError, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
 import common.controllers.BaseController
 import common.models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
-import common.models.auth.ItsaStatusRetrievalActionError
 import common.services.DateServiceInterface
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}

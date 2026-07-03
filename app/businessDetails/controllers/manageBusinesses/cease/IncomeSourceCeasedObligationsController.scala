@@ -17,8 +17,6 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import models.incomeSourceDetails.CeaseIncomeSourceData
-import models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.controllers.routes as obligationsRoutes
 import play.api.Logger
@@ -32,6 +30,8 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
+import businessDetails.models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.auth.{AuthActions, MtdItUser}

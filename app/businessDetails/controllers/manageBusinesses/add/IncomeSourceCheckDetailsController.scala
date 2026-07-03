@@ -21,9 +21,9 @@ import businessDetails.controllers.triggeredMigration.routes as triggeredMigrati
 import businessDetails.enums.FailureCategory.ApiFailure
 import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
+import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import businessDetails.services.{CreateBusinessDetailsService, SessionService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

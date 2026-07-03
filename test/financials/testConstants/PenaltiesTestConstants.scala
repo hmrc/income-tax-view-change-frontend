@@ -17,12 +17,15 @@
 package financials.testConstants
 
 import common.testUtils.TestSupport
-import models.penalties.appealInformation.*
-import models.penalties.appealInformation.AppealLevelEnum.HmrcAppealLevel
-import models.penalties.breathingSpace.BreathingSpace
-import models.penalties.latePayment.*
-import models.penalties.lateSubmission.*
-import models.penalties.{GetPenaltyDetails, Totalisations}
+import hub.models.penalties.appealInformation.{AppealInformationType, UnappealableStatus}
+import hub.models.penalties.{GetPenaltyDetails, Totalisations}
+import hub.models.penalties.appealInformation.*
+import hub.models.penalties.appealInformation.AppealLevelEnum.HmrcAppealLevel
+import hub.models.penalties.breathingSpace.BreathingSpace
+import hub.models.penalties.latePayment.{FirstPenaltyLPPPenaltyCategory, LPPDetails, LatePaymentPenalty, PostedLPPPenaltyStatus, TimeToPay}
+import hub.models.penalties.lateSubmission.{ActiveLSPPenaltyStatus, FulfilledTaxReturnStatus, LSPDetails, LSPSummary, LateSubmission, LateSubmissionPenalty, PointLSPPenaltyCategory}
+import hub.models.penalties.latePayment.*
+import hub.models.penalties.lateSubmission.*
 import play.api.libs.json.{JsObject, Json}
 
 import java.time.LocalDate

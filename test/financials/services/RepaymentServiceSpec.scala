@@ -20,7 +20,7 @@ import businessDetails.mocks.connectors.MockBusinessDetailsConnector
 import common.exceptions.{RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
 import common.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import common.testUtils.TestSupport
-import connectors.RepaymentConnector
+import financials.connectors.RepaymentConnector
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SERVICE_UNAVAILABLE}

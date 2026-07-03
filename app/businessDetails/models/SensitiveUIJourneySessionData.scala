@@ -16,8 +16,8 @@
 
 package businessDetails.models
 
+import businessDetails.models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceReportingFrequencySourceData, ManageIncomeSourceData, SensitiveAddIncomeSourceData}
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
-import models.incomeSourceDetails.{CeaseIncomeSourceData, IncomeSourceReportingFrequencySourceData, ManageIncomeSourceData, SensitiveAddIncomeSourceData}
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.libs.functional.syntax.toFunctionalBuilderOps

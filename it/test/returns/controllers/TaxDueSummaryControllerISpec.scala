@@ -1,0 +1,236 @@
+/*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package returns.controllers
+
+import common.auth.MtdItUser
+import common.controllers.ControllerISpecHelper
+import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.helpers.servicemocks.AuditStub.verifyAuditEvent
+import common.helpers.servicemocks.{IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
+import play.api.http.Status.*
+import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import common.testConstants.NewCalcDataIntegrationTestConstants.*
+import common.testConstants.messages.TaxDueSummaryMessages.*
+import returns.models.audit.TaxDueResponseAuditModel
+import returns.models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
+import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+
+import java.time.LocalDate
+
+class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
+
+  def testUser(mtdUserRole: MTDUserRole): MtdItUser[_] = getTestUser(mtdUserRole, multipleBusinessesAndPropertyResponse)
+
+  def getPath(mtdRole: MTDUserRole): String = {
+    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    pathStart + s"/$testYear/tax-calculation"
+  }
+
+  val taxYear: Int = 2022
+  val testObligationsModel: ObligationsModel = ObligationsModel(Seq(
+    GroupedObligationsModel("123", List(SingleObligationModel(
+      LocalDate.of(taxYear, 1, 6),
+      LocalDate.of(taxYear, 4, 5),
+      LocalDate.of(taxYear, 5, 5),
+      "Quarterly",
+      None,
+      "#001",
+      StatusFulfilled),
+      SingleObligationModel(
+        LocalDate.of(taxYear, 1, 6),
+        LocalDate.of(taxYear, 4, 5),
+        LocalDate.of(taxYear, 5, 5),
+        "Quarterly",
+        None,
+        "#002",
+        StatusFulfilled
+      )
+    ))
+  ))
+
+  mtdAllRoles.foreach { case mtdUserRole =>
+    val path = getPath(mtdUserRole)
+    val additionalCookies = getAdditionalCookies(mtdUserRole)
+    s"GET $path" when {
+      s"a user is a $mtdUserRole" that {
+        "is authenticated, with a valid enrolment" should {
+          if (mtdUserRole == MTDSupportingAgent) {
+            testSupportingAgentAccessDenied(path, additionalCookies)
+          } else {
+            "render the Tax due summary page" that {
+              "has additional charges, student and graduate payment plan" in {
+
+                stubAuthorised(mtdUserRole)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
+                  status = OK,
+                  body = liabilityCalculationModelSuccessful
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
+
+                verifyAuditEvent(TaxDueResponseAuditModel(testUser(mtdUserRole), TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel), testYearInt))
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges),
+                  elementTextByID("student-repayment-plan0X")(studentPlan),
+                  elementTextByID("graduate-repayment-plan")(postgraduatePlan),
+                )
+              }
+
+              "has just Gift Aid Additional charges" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
+                  status = OK,
+                  body = liabilityCalculationGiftAid
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges)
+                )
+              }
+
+              "has just Pension Lump Sum Additional charges" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
+                  status = OK,
+                  body = liabilityCalculationPensionLumpSums
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges)
+                )
+              }
+
+              "has just Pension Savings Additional charges" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
+                  status = OK,
+                  body = liabilityCalculationPensionSavings
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges)
+                )
+              }
+
+              "uses minimal calculation with no Additional Charges" in {
+                stubAuthorised(mtdUserRole)
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
+                  status = OK,
+                  body = liabilityCalculationMinimal
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "taxCal_breakdown.heading")
+                )
+
+                res shouldNot have(
+                  elementTextBySelector("#additional-charges-table > caption")(additionCharges)
+                )
+              }
+
+              "has class2VoluntaryContributions as false" when {
+                "the flag is missing from the calc data" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
+                    status = OK,
+                    body = liabilityCalculationNonVoluntaryClass2Nic
+                  )
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
+
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
+                    elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(nonVoluntaryClass2Nics)
+                  )
+                }
+              }
+
+              "has class2VoluntaryContributions as true" when {
+                "the flag is returned in the calc data" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                  IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
+                    status = OK,
+                    body = liabilityCalculationVoluntaryClass2Nic
+                  )
+
+                  val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
+
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "taxCal_breakdown.heading"),
+                    elementTextBySelector("#national-insurance-contributions-table tbody:nth-child(3) td:nth-child(1)")(voluntaryClass2Nics)
+                  )
+                }
+              }
+            }
+          }
+        }
+        testAuthFailures(path, mtdUserRole)
+      }
+    }
+  }
+}

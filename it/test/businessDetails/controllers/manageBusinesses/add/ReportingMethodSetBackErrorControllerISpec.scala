@@ -21,7 +21,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
@@ -59,12 +59,12 @@ class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Cannot go back page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),

@@ -18,7 +18,7 @@ package financials.services
 
 import common.testConstants.NrsUtils.nrsSubmission
 import common.testUtils.TestSupport
-import connectors.NrsConnector
+import financials.connectors.NrsConnector
 import financials.models.nrs.NrsSubmissionFailure.NrsErrorResponse
 import financials.models.nrs.NrsSuccessResponse
 import org.mockito.Mockito.*

@@ -18,7 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.mocks.services.MockIncomeSourceDetailsService
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
-import models.incomeSourceDetails.*
+import businessDetails.models.incomeSourceDetails.*
 import businessDetails.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}

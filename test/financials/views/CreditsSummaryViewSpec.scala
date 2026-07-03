@@ -23,6 +23,7 @@ import common.implicits.ImplicitDateFormatter
 import common.testConstants.BaseTestConstants.testMtditid
 import common.testUtils.{TestSupport, ViewSpec}
 import financials.models.creditDetailModel.CreditDetailModel
+import financials.services.helpers.CreditHistoryDataHelper
 import financials.testConstants.FinancialDetailsTestConstants.*
 import financials.views.html.CreditsSummaryView
 import org.jsoup.Jsoup
@@ -31,7 +32,6 @@ import org.jsoup.select.Elements
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
-import services.helpers.CreditHistoryDataHelper
 
 import java.net.URL
 

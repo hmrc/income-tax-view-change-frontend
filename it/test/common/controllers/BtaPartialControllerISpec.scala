@@ -17,7 +17,7 @@
 package common.controllers
 
 import common.enums.MTDIndividual
-import helpers.servicemocks.IncomeTaxViewChangeStub
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.businessAndPropertyResponse
@@ -30,7 +30,7 @@ class BtaPartialControllerISpec extends ControllerISpecHelper {
     "the user is an authenticated individual" should {
       "display the bta partial with the correct information" in {
         stubAuthorised(MTDIndividual)
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponse)
 
         val result = buildGETMTDClient(path).futureValue
 

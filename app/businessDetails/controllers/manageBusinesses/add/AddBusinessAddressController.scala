@@ -17,8 +17,8 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import com.google.inject.Singleton
-import models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

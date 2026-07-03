@@ -25,9 +25,9 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDeta
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
 import financials.enums.CodingOutType.*
+import financials.mocks.connectors.MockFinancialDetailsConnector
 import financials.models.*
 import financials.testConstants.FinancialDetailsTestConstants.*
-import mocks.connectors.MockFinancialDetailsConnector
 import play.api.http.Status
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

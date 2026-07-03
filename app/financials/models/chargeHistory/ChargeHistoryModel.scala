@@ -18,8 +18,8 @@ package financials.models.chargeHistory
 
 import financials.enums.*
 import financials.services.claimToAdjustPoa.ClaimToAdjustHelper.isPoaDocumentDescription
+import financials.utils.JsonUtils
 import play.api.libs.json.{Format, Json}
-import utils.JsonUtils
 
 import java.time.{LocalDate, LocalDateTime}
 

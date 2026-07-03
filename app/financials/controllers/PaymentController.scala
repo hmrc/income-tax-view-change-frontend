@@ -20,7 +20,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import common.services.AuditingService
-import connectors.PayApiConnector
+import financials.connectors.PayApiConnector
 import financials.models.audit.InitiatePayNowAuditModel
 import financials.services.MakingPaymentService
 import play.api.Logger

@@ -19,7 +19,7 @@ package financials.services
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.core.Nino
-import connectors.FinancialDetailsConnector
+import financials.connectors.FinancialDetailsConnector
 import financials.models.FinancialDetailsModel
 import financials.models.paymentAllocationCharges.*
 import financials.models.paymentAllocations.PaymentAllocations

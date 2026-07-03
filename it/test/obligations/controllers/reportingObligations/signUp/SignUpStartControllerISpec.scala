@@ -19,11 +19,10 @@ package obligations.controllers.reportingObligations.signUp
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.MTDIndividual
-import common.helpers.servicemocks.ITSAStatusDetailsStub
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.SignUpFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
-import helpers.servicemocks.IncomeTaxViewChangeStub
 import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -59,7 +58,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the sign up start page" in {
             stubAuthorised(mtdUserRole, List(SignUpFs))
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear)
 
@@ -88,7 +87,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
 
           "render the sign up start page with CY only description" in {
             stubAuthorised(mtdUserRole, List(SignUpFs))
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear)
 
@@ -111,7 +110,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
         "has already completed the sign-up journey (according to session data)" should {
           "redirect to the cannot go back page" in {
             stubAuthorised(mtdUserRole, List(SignUpFs))
-            IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear, journeyComplete = true)
 

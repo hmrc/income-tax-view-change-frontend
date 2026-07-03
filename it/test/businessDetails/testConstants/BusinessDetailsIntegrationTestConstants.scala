@@ -16,10 +16,10 @@
 
 package businessDetails.testConstants
 
+import businessDetails.models.incomeSourceDetails.viewmodels.DatesModel
 import common.models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.models.incomeSourceDetails.BusinessDetailsModel
-import models.incomeSourceDetails.viewmodels.DatesModel
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate

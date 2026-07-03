@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import models.incomeSourceDetails.ManageIncomeSourceData
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
@@ -27,6 +26,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import common.testConstants.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import common.connectors.ITSAStatusConnector

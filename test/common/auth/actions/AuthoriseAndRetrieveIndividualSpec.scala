@@ -16,10 +16,9 @@
 
 package common.auth.actions
 
-import common.auth.FrontendAuthorisedFunctions
+import common.auth.{AuthorisedAndEnrolledRequest, FrontendAuthorisedFunctions}
 import common.auth.actions.AuthActionsTestData.*
 import common.models.audit.IvUpliftRequiredAuditModel
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.services.AuditingService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}

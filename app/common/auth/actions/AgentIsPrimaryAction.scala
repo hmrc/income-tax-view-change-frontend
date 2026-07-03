@@ -17,10 +17,10 @@
 package common.auth.actions
 
 import com.google.inject.Singleton
+import common.auth.AuthorisedAndEnrolledRequest
 import common.config.AgentItvcErrorHandler
 import common.enums.MTDSupportingAgent
 import common.models.audit.AccessDeniedForSupportingAgentAuditModel
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.services.AuditingService
 import play.api.mvc.{ActionRefiner, Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier

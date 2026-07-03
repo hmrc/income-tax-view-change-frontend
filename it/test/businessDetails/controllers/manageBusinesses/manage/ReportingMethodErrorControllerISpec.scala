@@ -16,12 +16,12 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
-import helpers.servicemocks.IncomeTaxViewChangeStub
-import models.incomeSourceDetails.ManageIncomeSourceData
+import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants._
@@ -62,12 +62,12 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
             "render the reporting method error page" when {
               "using the manage businesses journey" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -82,10 +82,10 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                   stubAuthorised(mtdUserRole)
                   await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                     manageIncomeSourceData = Some(ManageIncomeSourceData(None)))))
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   result should have(
                     httpStatus(INTERNAL_SERVER_ERROR)
@@ -94,10 +94,10 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
               } else {
                 "the user does not have a property Income Source" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   result should have(
                     httpStatus(INTERNAL_SERVER_ERROR)

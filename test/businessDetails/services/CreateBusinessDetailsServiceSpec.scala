@@ -19,11 +19,11 @@ package businessDetails.services
 import businessDetails.connectors.CreateIncomeSourceConnector
 import businessDetails.connectors.helpers.IncomeSourcesDataHelper
 import businessDetails.models.createIncomeSource.*
+import businessDetails.models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 import common.auth.actions.AuthActionsTestData.*
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import models.incomeSourceDetails.viewmodels.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status

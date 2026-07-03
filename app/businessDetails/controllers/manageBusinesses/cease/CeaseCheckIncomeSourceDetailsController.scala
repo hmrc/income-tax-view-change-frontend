@@ -20,9 +20,9 @@ import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
+import businessDetails.models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*

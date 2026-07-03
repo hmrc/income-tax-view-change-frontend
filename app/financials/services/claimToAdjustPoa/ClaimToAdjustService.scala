@@ -21,7 +21,7 @@ import common.auth.MtdItUser
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
+import financials.connectors.{ChargeHistoryConnector, FinancialDetailsConnector}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.models.{FinancialDetailsErrorModel, FinancialDetailsModel}
 import play.api.http.Status.NOT_FOUND

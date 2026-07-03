@@ -22,11 +22,11 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.incomeSourceDetails.TaxYear
 import common.testConstants.IncomeSourceDetailsTestConstants.oldUserDetails
 import common.testUtils.TestSupport
-import connectors.RepaymentHistoryConnector
+import financials.connectors.RepaymentHistoryConnector
+import financials.mocks.connectors.MockFinancialDetailsConnector
+import financials.mocks.services.{MockChargeHistoryService, MockFinancialDetailsService}
 import financials.models.{Payment, Payments, PaymentsError}
 import financials.services.PaymentHistoryService.PaymentHistoryError
-import mocks.connectors.MockFinancialDetailsConnector
-import mocks.services.{MockChargeHistoryService, MockFinancialDetailsService}
 import org.mockito.Mockito.mock
 import play.api.http.Status.{NOT_FOUND, UNPROCESSABLE_ENTITY}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

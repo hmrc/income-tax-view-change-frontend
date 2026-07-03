@@ -32,9 +32,9 @@
 
 package common.connectors
 
+import common.auth.AuthorisedAndEnrolledRequest
 import common.config.FrontendAppConfig
 import common.models.audit.{ExtendedAuditModel, IncomeSourceDetailsResponseAuditModel}
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import common.services.AuditingService
 import org.mockito.ArgumentMatchers.any

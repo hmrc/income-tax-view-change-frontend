@@ -19,8 +19,7 @@ package obligations.controllers
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDIndividual
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, MTDIndividualAuthStub}
-import helpers.servicemocks.*
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub, MTDIndividualAuthStub}
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.admin.OptOutFs
@@ -32,6 +31,7 @@ import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import returns.helpers.servicemocks.CalculationListStub
 import shared.models.ObligationsModel
 
 class NextUpdatesControllerISpec extends ControllerISpecHelper {
@@ -53,11 +53,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
         val res = buildGETMTDClient(path).futureValue
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -75,19 +75,19 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -106,21 +106,21 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
 
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -139,17 +139,17 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testSelfEmploymentId),
           singleObligationQuarterlyModel(otherTestSelfEmploymentId))))
 
         val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -168,17 +168,17 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedModel)))
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(noObligationsModel(testSelfEmploymentId), crystallisedModel)))
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testBusinessOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title")
         res should have(
@@ -195,11 +195,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
         CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
@@ -208,9 +208,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -238,11 +238,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(upcomingAndMissedObligationModel(testPropertyIncomeId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(upcomingAndMissedObligationModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
         CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
@@ -251,9 +251,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -304,11 +304,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(taxYear = dateService.getCurrentTaxYear)
         CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
@@ -317,9 +317,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(ceasedBusinessUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -340,19 +340,19 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         stubGetFeatureSwitches()
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
 
         val res = buildGETMTDClient(path).futureValue
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the view displays the correct title, username and links")
         res should have(
@@ -378,11 +378,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
         val currentTaxYear = dateService.getCurrentTaxYearEnd
         val previousYear = currentTaxYear - 1
 
-        IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-        IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+        IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-        IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+        IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
         val threeYearStatus = ITSAYearStatus(ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetailsWithGivenThreeStatus(dateService.getCurrentTaxYearEnd, threeYearStatus)
         CalculationListStub.stubGetCalculationList(testNino, previousYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString())
@@ -391,9 +391,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
         AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-        IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-        IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-        IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+        IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+        IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
         Then("the quarterly updates info sections")
         res should have(
@@ -415,11 +415,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           val previousYear = currentTaxYear.addYears(-1)
 
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+          IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-          IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+          IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange, futureYears = true)
           CalculationListStub.stubGetCalculationList(testNino, previousYear.endYear.toString)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())
 
@@ -427,9 +427,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-          IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+          IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+          IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+          IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR)
@@ -444,11 +444,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           val previousYear = currentTaxYear.addYears(-1)
 
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+          IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-          IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+          IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetails(previousYear.formatAsShortYearRange)
           CalculationListStub.stubGetCalculationListError(testNino, previousYear.endYear.toString)
 
@@ -457,9 +457,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-          IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+          IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+          IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+          IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR)
@@ -474,11 +474,11 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           val previousYear = currentTaxYear.addYears(-1)
 
 
-          IncomeTaxViewChangeStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
-          IncomeTaxViewChangeStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
+          IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, ObligationsModel(Seq(singleObligationQuarterlyModel(testPropertyIncomeId))))
 
-          IncomeTaxViewChangeStub.stubGetFulfilledObligationsNotFound(testNino)
+          IncomeTaxBusinessDetailsStub.stubGetFulfilledObligationsNotFound(testNino)
           ITSAStatusDetailsStub.stubGetITSAStatusDetailsError(previousYear.formatAsShortYearRange)
           CalculationListStub.stubGetCalculationListError(testNino, previousYear.endYear.toString)
 
@@ -487,9 +487,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           AuditStub.verifyAuditEvent(NextUpdatesAuditModel(testPropertyOnlyUser))
 
-          IncomeTaxViewChangeStub.verifyGetIncomeSourceDetails(testMtditid)
-          IncomeTaxViewChangeStub.verifyGetNextUpdates(testNino)
-          IncomeTaxViewChangeStub.verifyGetObligations(testNino)
+          IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+          IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+          IncomeTaxBusinessDetailsStub.verifyGetObligations(testNino)
 
           res should have(
             httpStatus(INTERNAL_SERVER_ERROR)

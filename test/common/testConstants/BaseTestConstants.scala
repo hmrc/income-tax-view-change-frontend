@@ -16,11 +16,10 @@
 
 package common.testConstants
 
-import common.auth.MtdItUser
+import common.auth.{AuthorisedAndEnrolledRequest, MtdItUser}
 import common.auth.actions.AuthActionsTestData.*
 import common.config.FrontendAppConfig
 import common.enums.MTDIndividual
-import common.models.auth.AuthorisedAndEnrolledRequest
 import common.models.core.Nino
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status

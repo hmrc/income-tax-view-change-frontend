@@ -23,7 +23,7 @@ import common.models.admin.PenaltiesAndAppeals
 import common.services.{AuditingService, DateService}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeWithCurrentYear
 import common.testUtils.TestSupport
-import connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
+import financials.connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import financials.enums.ChargeType.NIC4_WALES
 import financials.enums.CodingOutType.*
 import financials.models.*
