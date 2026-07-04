@@ -19,7 +19,6 @@ package financials.controllers
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import common.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import common.services.DateServiceInterface
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.*
@@ -29,7 +28,7 @@ import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.{testCredId, testMtditid, testNino, testSaUtr}
 import financials.connectors.PayApiConnector
 import financials.models.audit.InitiatePayNowAuditModel
-import financials.testConstants.PaymentDataTestConstants.*
+import financials.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -49,6 +48,7 @@ class PaymentControllerSpec extends MockAuthActions {
   lazy val testController = app.injector.instanceOf[PaymentController]
 
   val paymentJourneyModel = PaymentJourneyModel("id", "redirect-url")
+  val testAmountInPence = 10000
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual

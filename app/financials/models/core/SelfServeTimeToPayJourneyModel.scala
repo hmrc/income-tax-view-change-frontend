@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package common.models.core
+package financials.models.core
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Json, OFormat}
 
-case class PaymentDataModel(taxType: String, taxReference: String, amountInPence: Long, returnUrl: String)
+trait SelfServeTimeToPayJourneyResponse
 
-object PaymentDataModel {
-  implicit val format: Format[PaymentDataModel] = Json.format[PaymentDataModel]
+case class SelfServeTimeToPayJourneyResponseModel(journeyId: String, nextUrl: String) extends SelfServeTimeToPayJourneyResponse
+
+object SelfServeTimeToPayJourneyResponseModel {
+  implicit val formats: OFormat[SelfServeTimeToPayJourneyResponseModel] = Json.format[SelfServeTimeToPayJourneyResponseModel]
 }
+
+case class SelfServeTimeToPayJourneyErrorResponse(status: Int, message: String) extends SelfServeTimeToPayJourneyResponse

@@ -89,7 +89,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
-  lazy val homePageUrl: String = servicesConfig.getString("base.fullUrl")
 
   //Exit Survey
   lazy val exitSurveyBaseUrl: String = servicesConfig.getString("feedback-frontend.host") + servicesConfig.getString("feedback-frontend.url")

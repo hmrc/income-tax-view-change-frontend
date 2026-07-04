@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.models.core
+package financials.models.core
 
 import common.testUtils.UnitSpec
 import uk.gov.hmrc.http.HeaderCarrier

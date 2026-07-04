@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,22 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package common.models.core
+@import helper._
+@import common.views.html.layouts.unifiedLayout
 
-import play.api.libs.json.{Format, Json}
+@this( unifiedLayout: unifiedLayout)
 
-sealed trait NinoResponse
+@(messageKey: List[String])(implicit request: Request[_], messages: Messages)
 
-case class NinoResponseSuccess(nino: String) extends NinoResponse
-
-case class NinoResponseError(status: Int, reason: String) extends NinoResponse
-
-object NinoResponseSuccess {
-  implicit val format: Format[NinoResponseSuccess] = Json.format[NinoResponseSuccess]
+@unifiedLayout(pageTitle = Messages("Message Check")) {
+<span id="messagesCheck">
+    @for(key <- messageKey) {
+    <div class="govuk-!-margin-bottom-4">
+      <span class="messageRow">
+       <span class="messageKey">@key</span> =
+       <span class="messageValue">@messages(key)</span>
+      </span>
+    </div>
+    }
+</span>
 }
 
-object NinoResponseError {
-  implicit val format: Format[NinoResponseError] = Json.format[NinoResponseError]
-}

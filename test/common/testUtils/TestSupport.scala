@@ -27,7 +27,6 @@ import common.services.DateService
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import common.utils.sessionUtils
-import financials.models.ChargeItem
 import org.apache.pekko.actor.ActorSystem
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -338,9 +337,5 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     def addingToSession(newSessions: (String, String)*): FakeRequest[C] = {
       fakeRequest.withSession(fakeRequest.session.data ++: newSessions: _*)
     }
-  }
-
-  def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
-    case x if x.remainingToPayByChargeOrInterest > 0 => x
   }
 }

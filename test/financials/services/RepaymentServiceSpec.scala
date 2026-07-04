@@ -18,7 +18,7 @@ package financials.services
 
 import businessDetails.mocks.connectors.MockBusinessDetailsConnector
 import common.exceptions.{RepaymentStartJourneyAmountIsNoneException, RepaymentStartJourneyException, RepaymentViewJourneyException}
-import common.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import financials.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import common.testUtils.TestSupport
 import financials.connectors.RepaymentConnector
 import org.mockito.ArgumentMatchers.any

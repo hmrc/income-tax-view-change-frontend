@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.i18n.{Lang, MessagesApi}
 import play.twirl.api.Html
-import testOnly.views.html.MessageCheckView
+import html.MessageCheckView
 
 import scala.language.reflectiveCalls
 

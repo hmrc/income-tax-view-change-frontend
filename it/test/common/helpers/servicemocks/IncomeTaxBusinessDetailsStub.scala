@@ -19,7 +19,7 @@ package common.helpers.servicemocks
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.helpers.WiremockHelper
-import common.models.core.{Nino, NinoResponseError, NinoResponseSuccess}
+import common.models.core.Nino
 import common.models.incomeSourceDetails.IncomeSourceDetailsResponse
 import financials.models.Payment
 import financials.models.repaymentHistory.RepaymentHistoryModel
@@ -35,12 +35,6 @@ object  IncomeTaxBusinessDetailsStub { // scalastyle:off number.of.methods
   // NINO Lookup Stubs
   // =================
   val ninoLookupUrl: String => String = mtditid => s"/income-tax-business-details/nino-lookup/$mtditid"
-
-  def stubGetNinoResponse(mtditid: String, nino: NinoResponseSuccess): Unit =
-    WiremockHelper.stubGet(ninoLookupUrl(mtditid), Status.OK, Json.toJson(nino).toString)
-
-  def stubGetNinoError(mtditid: String, error: NinoResponseError): Unit =
-    WiremockHelper.stubGet(ninoLookupUrl(mtditid), Status.INTERNAL_SERVER_ERROR, Json.toJson(error).toString)
 
   def verifyGetNino(mtditid: String): Unit =
     WiremockHelper.verifyGet(ninoLookupUrl(mtditid))

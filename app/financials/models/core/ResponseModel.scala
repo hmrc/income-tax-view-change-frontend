@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.models.core
+package financials.models.core
 
 import play.api.Logger
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}

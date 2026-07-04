@@ -18,10 +18,10 @@ package financials.controllers
 
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import common.services.AuditingService
 import financials.connectors.PayApiConnector
 import financials.models.audit.InitiatePayNowAuditModel
+import financials.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import financials.services.MakingPaymentService
 import play.api.Logger
 import play.api.i18n.I18nSupport

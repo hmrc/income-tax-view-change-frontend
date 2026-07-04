@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package financials.testConstants
+package financials.models.core
 
-import common.models.core.PaymentDataModel
-import common.testConstants.BaseTestConstants.*
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Json, OFormat}
 
-object PaymentDataTestConstants {
+sealed trait RepaymentJourneyResponseModel
 
-  val testTaxType = "mtdfb-itsa"
-  val testAmountInPence = 10000
+object RepaymentJourneyResponseModel {
 
-  val testPaymentDataModel: PaymentDataModel = PaymentDataModel(testTaxType, testMtditid, testAmountInPence, testPaymentRedirectUrl)
+  final case class RepaymentJourneyModel(nextUrl: String) extends RepaymentJourneyResponseModel
 
-  val testPaymentDataJson: JsValue =
-    Json.obj(
-      "taxType" -> testTaxType,
-      "taxReference" -> testMtditid,
-      "amountInPence" -> testAmountInPence,
-      "returnUrl" -> testPaymentRedirectUrl
-    )
+  object RepaymentJourneyModel {
+    implicit val formats: OFormat[RepaymentJourneyModel] = Json.format[RepaymentJourneyModel]
+  }
 
+  final case class RepaymentJourneyErrorResponse(status: Int, message: String) extends RepaymentJourneyResponseModel
 }

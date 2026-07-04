@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.testConstants
+package financials.testConstants
 
 import cats.implicits.catsSyntaxOptionId
 import common.testConstants.ChecksumUtils.*

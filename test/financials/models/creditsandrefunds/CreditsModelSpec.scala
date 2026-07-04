@@ -16,10 +16,10 @@
 
 package financials.models.creditsandrefunds
 
-import common.models.core.ErrorModel
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec
 import financials.models.*
+import financials.models.core.ErrorModel
 import play.api.libs.json.*
 import uk.gov.hmrc.http.HttpResponse
 

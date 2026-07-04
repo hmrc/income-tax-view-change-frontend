@@ -22,6 +22,7 @@ import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.*
 import common.models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import common.testConstants.BaseTestConstants.*
+import financials.models.core.ErrorModel
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.{LocalDate, Month}
@@ -86,7 +87,6 @@ object BusinessDetailsTestConstants {
     postCode = Some("ZL1 064"),
     countryCode = Some("GB")
   )
-  val testContactDetails = ContactDetailsModel(Some("123456789"), Some("0123456789"), Some("8008135"), Some("google@chuckNorris.com"))
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)))
   val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)))
   val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)))

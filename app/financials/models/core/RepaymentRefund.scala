@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package common.testConstants
+package financials.models.core
 
-import common.models.core.{NinoResponseError, NinoResponseSuccess}
-import play.api.libs.json.{JsValue, Json}
-import common.testConstants.BaseTestConstants.*
+import play.api.libs.json.{Format, Json}
 
-object NinoLookupTestConstants {
-  val testNinoModel: NinoResponseSuccess = NinoResponseSuccess(nino = testNino)
-  val testNinoModelJson: JsValue = Json.obj(
-    "nino" -> testNino
-  )
+case class RepaymentRefund(nino: String, fullAmount: BigDecimal)
 
-  val testNinoErrorModel: NinoResponseError = NinoResponseError(testErrorStatus, testErrorMessage)
-  val testNinoErrorModelJson: JsValue = Json.obj(
-    "status" -> testErrorStatus,
-    "reason" -> testErrorMessage
-  )
+object RepaymentRefund {
+  implicit val format: Format[RepaymentRefund] = Json.format[RepaymentRefund]
 }

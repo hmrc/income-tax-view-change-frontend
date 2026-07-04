@@ -19,11 +19,11 @@ package financials.controllers
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
-import common.models.core.PaymentJourneyModel
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
+import financials.models.core.PaymentJourneyModel
 
 class PaymentControllerISpec extends ControllerISpecHelper {
 

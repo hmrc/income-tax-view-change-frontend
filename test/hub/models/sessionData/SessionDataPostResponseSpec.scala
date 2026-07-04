@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.models.sessionData
+package hub.models.sessionData
 
 import common.testUtils.UnitSpec
 import hub.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostResponseReads, SessionDataPostSuccess}

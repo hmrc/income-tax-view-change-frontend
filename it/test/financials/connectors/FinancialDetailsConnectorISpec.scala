@@ -17,10 +17,11 @@
 package financials.connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import .ResponseModel
-import common.models.core.{ErrorModel, Nino}
+import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.testConstants.BaseTestConstants.{testPaymentLot, testPaymentLotItem}
+import financials.models.core.*
+import financials.models.core.ResponseModel.ResponseModel
 import financials.models.creditsandrefunds.CreditsModel
 import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel}
 import financials.models.paymentAllocations.{PaymentAllocationsError, PaymentAllocationsResponse}

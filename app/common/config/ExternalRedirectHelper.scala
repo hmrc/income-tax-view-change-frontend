@@ -44,7 +44,13 @@ trait ExternalRedirectHelper {
   lazy val individualHomeUrlWithOrigin: Option[String] => String = origin =>
       hubRoutes.HomeController.show(origin).url
   //hubBaseUrl?origin=origin
-    
+
+  lazy val homePageUrl: String = {
+    servicesConfig.getString("base.fullUrl")
+    //individualHomeUrl
+  }
+
+
   lazy val agentHomeUrl: String =
     hubRoutes.HomeController.showAgent().url
     //hubAgentBaseUrl

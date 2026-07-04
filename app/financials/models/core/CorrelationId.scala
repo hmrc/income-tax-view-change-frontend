@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package common.models.core
+package financials.models.core
 
-import CorrelationId.correlationId
+import financials.models.core.CorrelationId.correlationId
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
