@@ -22,7 +22,7 @@ import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated
 import common.testUtils.TestSupport
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
-import obligations.testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}
+import shared.testConstants.NextUpdatesTestConstants.{quarterlyBusinessObligation, twoObligationsSuccessModel}
 import obligations.views.html.helpers.injected.NextUpdatesHelperR17
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

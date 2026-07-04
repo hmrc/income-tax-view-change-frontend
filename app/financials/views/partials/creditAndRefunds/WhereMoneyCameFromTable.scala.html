@@ -88,14 +88,14 @@
 @RefundTableRow(refund: RefundRow, index: Int) = @{
     Seq(
         TableRow(
-            content = HtmlContent(messages("tax-year-summary.noData"))
+            content = HtmlContent(messages("chargeSummary.noData"))
         ),
         TableRow(
             content = TableRowDescriptionLink("money-in-your-account.where-from.refund-row.description", refund.descriptionLink, index),
             attributes = Map("id" -> s"payment-$index")
         ),
         TableRow(
-            content = HtmlContent(messages("tax-year-summary.noData")),
+            content = HtmlContent(messages("chargeSummary.noData")),
             attributes = Map("id" -> s"tax-year-cell-$index")
         ),
         TableRow(

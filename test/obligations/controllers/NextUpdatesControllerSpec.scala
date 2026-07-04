@@ -29,7 +29,6 @@ import obligations.models.*
 import obligations.models.reportingObligations.optOut.*
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutService}
-import obligations.testConstants.NextUpdatesTestConstants
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -41,6 +40,7 @@ import play.api.mvc.Result
 import play.api.test.Helpers.*
 import common.testConstants.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
 import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
+import shared.testConstants.NextUpdatesTestConstants
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -14,30 +14,28 @@
  * limitations under the License.
  */
 
-package businessDetails.mocks.services
+package hub.mocks.connectors
 
-import common.implicits.ImplicitDateFormatter
 import common.testUtils.UnitSpec
-import businessDetails.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
+import shared.connectors.ObligationsConnector
 import shared.models.ObligationsResponseModel
 
 import scala.concurrent.Future
 
+trait MockObligationsConnector extends UnitSpec with BeforeAndAfterEach {
 
-trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with ImplicitDateFormatter {
-
-  lazy val mockNextUpdatesService: NextUpdatesService = mock(classOf[NextUpdatesService])
+  lazy val mockObligationsConnector: ObligationsConnector = mock(classOf[ObligationsConnector])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockNextUpdatesService)
+    reset(mockObligationsConnector)
   }
 
-  def setupMockNextUpdatesResult()(response: ObligationsResponseModel): Unit = {
-    when(mockNextUpdatesService.getOpenObligations()(any(), any()))
+  def setupMockNextUpdates(response: ObligationsResponseModel): Unit = {
+    when(mockObligationsConnector.getOpenObligations()(any(), any()))
       .thenReturn(Future.successful(response))
   }
 }

@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Singleton
 
 @Singleton
-class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) {
+class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) extends ExternalRedirectHelper {
 
   lazy val hasEnabledTestOnlyRoutes: Boolean = config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
 
@@ -272,26 +272,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")
 
   lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
-
-  
-
-  // needed for refactor (can be removed from config once refactoring is complete)
-  import hub.controllers.routes as hubRoutes
-  import hub.controllers.agent.routes as hubAgentRoutes
-  
-  lazy val individualHomeUrl: String = hubRoutes.HomeController.show().url
-  def individualHomeUrl(origin: Option[String] = None): String = hubRoutes.HomeController.show(origin).url
-  lazy val agentHomeUrl: String = hubRoutes.HomeController.showAgent().url
-  def homePageUrl(isAgent: Boolean): String = if isAgent then agentHomeUrl else individualHomeUrl
-
-  lazy val enterClientsUTRUrl: String = hubAgentRoutes.EnterClientsUTRController.show().url
-  lazy val confirmClientUTRUrl: String = hubAgentRoutes.ConfirmClientUTRController.show().url
-
-  
-  import obligations.controllers.routes as obligationsRoutes
-  
-  def nextUpdatesIndividualUrl(origin: Option[String] = None): String = obligationsRoutes.NextUpdatesController.show(origin).url
-  lazy val nextUpdatesAgentUrl: String = obligationsRoutes.NextUpdatesController.showAgent().url
 
   
   import returns.controllers.routes as returnsRoutes

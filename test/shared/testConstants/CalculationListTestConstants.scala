@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package returns.testConstants
+package shared.testConstants
 
 import play.api.libs.json.{JsValue, Json}
 import shared.models.calculationList.{CalculationListModel, CalculationListResponseModel}

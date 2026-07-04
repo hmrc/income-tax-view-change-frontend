@@ -24,9 +24,8 @@ import common.controllers.agent.routes as agentRoutes
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.controllers.errors.routes as errorRoutes
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import common.mocks.MockAuditingService
 import common.mocks.connectors.{MockIncomeSourceConnector, MockIncomeTaxCalculationConnector}
-import common.mocks.services.{MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
+import common.mocks.services.{MockAuditingService, MockClientDetailsService, MockITSAStatusService, MockSessionDataService}
 import common.mocks.services.admin.MockFeatureSwitchService
 import common.models.admin.FeatureSwitchName
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse, TaxYear}

@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package common.services
+package businessDetails.services
 
-import businessDetails.models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
-import businessDetails.services.IncomeSourceDetailsService
-import common.auth.{AuthorisedAndEnrolledRequest, MtdItUser}
+import businessDetails.models.incomeSourceDetails.viewmodels.*
+import businessDetails.testConstants.BusinessDetailsTestConstants.*
+import businessDetails.testConstants.PropertyDetailsTestConstants.{testStartDate as _, *}
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
+import common.auth.{AuthorisedAndEnrolledRequest, MtdItUser}
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.mocks.MockAuditingService
-import common.mocks.services.MockAsyncCacheApi
+import common.mocks.services.{MockAsyncCacheApi, MockAuditingService}
 import common.mocks.services.config.MockAppConfig
 import common.models.admin.{DisplayBusinessStartDate, FeatureSwitch}
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import businessDetails.models.incomeSourceDetails.viewmodels.*
-import obligations.mocks.services.MockNextUpdatesService
-import play.api.cache.AsyncCacheApi
-import common.testConstants.BaseTestConstants.*
-import businessDetails.testConstants.BusinessDetailsTestConstants.*
-import businessDetails.testConstants.PropertyDetailsTestConstants.{testStartDate as _, *}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testConstants.BaseTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import common.testUtils.TestSupport
+import businessDetails.mocks.services.MockNextUpdatesService
+import play.api.cache.AsyncCacheApi
 
 import scala.util.Success
 

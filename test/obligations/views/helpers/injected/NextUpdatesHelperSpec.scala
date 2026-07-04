@@ -17,7 +17,7 @@
 package obligations.views.helpers.injected
 
 import obligations.models.*
-import obligations.testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
+import shared.testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
 import obligations.views.html.helpers.injected.NextUpdatesHelper
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

@@ -22,9 +22,9 @@ import common.testUtils.TestSupport
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.{IM_A_TEAPOT, NOT_FOUND}
 import returns.mocks.connectors.MockCalculationListConnector
-import returns.testConstants.CalculationListTestConstants
 import shared.models.calculationList.CalculationListErrorModel
 import shared.services.CalculationListService
+import shared.testConstants.CalculationListTestConstants
 
 
 class CalculationListServiceSpec extends TestSupport with MockCalculationListConnector {

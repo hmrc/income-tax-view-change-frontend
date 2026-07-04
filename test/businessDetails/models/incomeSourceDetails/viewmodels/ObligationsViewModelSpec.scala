@@ -18,7 +18,7 @@ package businessDetails.models.incomeSourceDetails.viewmodels
 
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec
-import obligations.testConstants.IncomeSourcesObligationsTestConstants.*
+import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.*
 
 import java.time.LocalDate
 

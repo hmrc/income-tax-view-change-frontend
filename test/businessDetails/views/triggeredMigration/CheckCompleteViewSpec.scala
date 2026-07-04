@@ -26,9 +26,11 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 class CheckCompleteViewSpec extends TestSupport {
 
   val view: CheckCompleteView = app.injector.instanceOf[CheckCompleteView]
+  
+  //Todo Update tests when feature switch of Obligations is implemented
   def nextUpdatesLink(isAgent: Boolean): String =
-    if(isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url
-    else obligations.controllers.routes.NextUpdatesController.show().url
+    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled = false)
+    
   val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   class Setup(isAgent: Boolean) {

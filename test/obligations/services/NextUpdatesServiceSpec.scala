@@ -22,9 +22,9 @@ import obligations.mocks.connectors.MockObligationsConnector
 import obligations.models.*
 import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.optOut.OptOutTestSupport
-import obligations.testConstants.NextUpdatesTestConstants.*
+import shared.testConstants.NextUpdatesTestConstants.*
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import obligations.testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
+import shared.testConstants.NextUpdatesTestConstants.obligationsDataSuccessModel as _
 import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate

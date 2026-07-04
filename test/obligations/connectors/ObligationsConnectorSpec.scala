@@ -33,8 +33,9 @@
 package obligations.connectors
 
 import common.config.FrontendAppConfig
-import common.mocks.{MockAuditingService, MockHttpV2}
-import obligations.testConstants.NextUpdatesTestConstants.*
+import common.mocks.MockHttpV2
+import common.mocks.services.MockAuditingService
+import shared.testConstants.NextUpdatesTestConstants.*
 import play.api.Configuration
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND}
 import play.api.libs.json.Json

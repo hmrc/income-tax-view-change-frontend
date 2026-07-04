@@ -70,12 +70,17 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       manageBusinessesRoutes.ManageYourBusinessesController.show().url
     }
 
-  private def errorHandler(isAgent: Boolean): FrontendErrorHandler with ShowInternalServerError =
+  private def errorHandler(isAgent: Boolean): FrontendErrorHandler with ShowInternalServerError = {
     if (isAgent) {
       itvcErrorHandlerAgent
     } else {
       itvcErrorHandler
     }
+  }
+  
+  lazy val newObligationsEnabled: Boolean =
+    //ToDo get this from feature switch for Obligations once implemented
+    false
 
 
   def show(
@@ -164,7 +169,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         viewModel = viewModel,
         isAgent = isAgent,
         showStartDate = isEnabled(DisplayBusinessStartDate),
-        backUrl = backUrl
+        backUrl = backUrl,
+        newObligationsEnabled = newObligationsEnabled
       ))
     }
 
@@ -192,7 +198,8 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             viewModel = viewModel,
             isAgent = isAgent,
             showStartDate = isEnabled(DisplayBusinessStartDate),
-            backUrl = backUrl
+            backUrl = backUrl,
+            newObligationsEnabled = newObligationsEnabled
           ))
         }.recover {
           case ex =>

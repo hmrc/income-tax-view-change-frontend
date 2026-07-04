@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package common.mocks
+package common.mocks.services
 
 import common.models.audit.{AuditModel, ExtendedAuditModel}
 import common.services.AuditingService
 import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
 import org.scalatest.BeforeAndAfterEach
 import play.api.mvc.Request

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.mocks.repositories
+package businessDetails.mocks.repositories
 
 import businessDetails.repositories.SensitiveUIJourneySessionDataRepository
 import common.config.FrontendAppConfig

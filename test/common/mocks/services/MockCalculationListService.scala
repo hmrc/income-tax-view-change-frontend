@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.mocks.services
+package common.mocks.services
 
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec

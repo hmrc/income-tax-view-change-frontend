@@ -18,8 +18,8 @@ package returns.services
 
 import common.config.featureswitch.FeatureSwitching
 import common.testUtils.TestSupport
-import obligations.mocks.connectors.MockObligationsConnector
-import obligations.testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
+import returns.mocks.connectors.MockObligationsConnector
+import shared.testConstants.NextUpdatesTestConstants.obligationsDataSuccessModel as _
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 

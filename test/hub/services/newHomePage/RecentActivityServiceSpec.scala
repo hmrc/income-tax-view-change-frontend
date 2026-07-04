@@ -24,7 +24,7 @@ import common.testUtils.TestSupport
 import financials.models.Payment
 import financials.models.repaymentHistory.*
 import hub.models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmissionsModel, RecentActivityViewModel, RecentRefundModel}
-import obligations.mocks.connectors.MockObligationsConnector
+import hub.mocks.connectors.MockObligationsConnector
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}

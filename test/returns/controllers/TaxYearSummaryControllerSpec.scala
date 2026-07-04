@@ -16,7 +16,6 @@
 
 package returns.controllers
 
-import businessDetails.testConstants.BusinessDetailsTestConstants.getCurrentTaxYearEnd
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
@@ -46,7 +45,7 @@ import returns.mocks.services.MockNextUpdatesService
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import returns.services.{CalculationService, NextUpdatesService, TaxYearSummaryService}
-import returns.testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
+import returns.testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised, getCurrentTaxYearEnd}
 import returns.views.html.TaxYearSummaryView
 import shared.connectors.CalculationListConnector
 import shared.models.*
@@ -102,9 +101,7 @@ class TaxYearSummaryControllerSpec
     }
   }
   val homeBackLink: Boolean => String = isAgent => {
-    "/report-quarterly/income-and-expenses/view" + {
-      if (isAgent) "/agents/client-income-tax" else ""
-    }
+    appConfig.homePageUrl(isAgent)
   }
   val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
   val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))

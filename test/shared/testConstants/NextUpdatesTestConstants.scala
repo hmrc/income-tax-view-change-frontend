@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package obligations.testConstants
+package shared.testConstants
 
-import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testNino, testPropertyIncomeId, testSelfEmploymentId}
-import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import play.api.libs.json.{JsValue, Json}
+import shared.models.*
 
 import java.time.LocalDate
 
@@ -234,5 +234,8 @@ object NextUpdatesTestConstants {
     "code" -> testErrorStatus,
     "message" -> testErrorMessage
   )
+
+  val obligationsDataSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(overdueObligation, openObligation))
+
 
 }

@@ -17,7 +17,7 @@
 package financials.connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import common.models.core.ResponseModel.ResponseModel
+import .ResponseModel
 import common.models.core.{ErrorModel, Nino}
 import common.models.incomeSourceDetails.TaxYear
 import common.testConstants.BaseTestConstants.{testPaymentLot, testPaymentLotItem}

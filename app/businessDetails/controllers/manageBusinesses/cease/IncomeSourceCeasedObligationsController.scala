@@ -17,8 +17,6 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
-import obligations.controllers.routes as obligationsRoutes
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -72,8 +70,11 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
     }
   }
 
-  private def viewReportingObligationsLink(isAgent: Boolean): String =
-    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
+  private def viewReportingObligationsLink(isAgent: Boolean): String = {
+    //ToDo Get this value from feature switch for Obligations once implemented
+    val newObligationsEnabled: Boolean = false
+    appConfig.obligationsReportingFrequencyUrl(isAgent, newObligationsEnabled)
+  }
 
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
@@ -104,12 +105,11 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
       manageBusinessesRoutes.ManageYourBusinessesController.show().url
     }
 
-  def viewUpcomingUpdatesLink(isAgent: Boolean): String =
-    if (isAgent) {
-      obligationsRoutes.NextUpdatesController.showAgent().url
-    } else {
-      obligationsRoutes.NextUpdatesController.show().url
-    }
+  def viewUpcomingUpdatesLink(isAgent: Boolean): String = {
+    //ToDo Get this value from feature switch for Obligations once implemented
+    val newObligationsEnabled: Boolean = false
+    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled)
+  }
 
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 

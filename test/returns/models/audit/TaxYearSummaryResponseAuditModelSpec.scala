@@ -16,7 +16,6 @@
 
 package returns.models.audit
 
-import businessDetails.testConstants.BusinessDetailsTestConstants.{address, testIncomeSource}
 import common.auth.actions.AuthActionsTestData.*
 import common.implicits.ImplicitDateParser
 import common.models.core.AccountingPeriodModel
@@ -31,6 +30,7 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.*
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
+import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

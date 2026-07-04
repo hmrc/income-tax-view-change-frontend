@@ -15,6 +15,7 @@
  *@
 
 @import _root_.common.implicits.ImplicitDateFormatterImpl
+@import common.config.FrontendAppConfig
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -22,7 +23,6 @@
 @import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewModel
 @import businessDetails.models.incomeSourceDetails.viewmodels.DatesModel
 @import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-@import obligations.controllers.{routes => obligationsRoutes}
 @import common.auth.MtdItUser
 
 @this(
@@ -47,8 +47,9 @@
         changeTo: String,
         isAgent: Boolean,
         postAction: Call,
-        isCurrentTaxYear: Boolean
-)(implicit messages: Messages, user: MtdItUser[_])
+        isCurrentTaxYear: Boolean,
+        newObligationsEnabled: Boolean
+)(implicit messages: Messages, user: MtdItUser[_], appConfig: FrontendAppConfig)
 
 @import implicitDateFormatter.longDate
 
@@ -105,11 +106,7 @@ s"${getMessage("table.heading.1")} ${quarterly.head.inboundCorrespondenceFrom.ge
 }
 
 @nextUpdatesControllerURL = @{
-    if(isAgent) {
-        obligationsRoutes.NextUpdatesController.showAgent().url
-    } else {
-        obligationsRoutes.NextUpdatesController.show().url
-    }
+    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled)
 }
 
 

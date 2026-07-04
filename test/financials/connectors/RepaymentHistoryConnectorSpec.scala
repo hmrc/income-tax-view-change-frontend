@@ -33,7 +33,8 @@
 package financials.connectors
 
 import common.config.FrontendAppConfig
-import common.mocks.{MockAuditingService, MockHttpV2}
+import common.mocks.MockHttpV2
+import common.mocks.services.MockAuditingService
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
 import financials.models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel, RepaymentHistoryResponseModel}

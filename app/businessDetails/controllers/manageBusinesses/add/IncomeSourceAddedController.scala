@@ -41,8 +41,6 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
-import obligations.controllers.routes as obligationRoutes
-import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import businessDetails.services.NextUpdatesService
 import shared.models.UIJourneySessionData
 
@@ -62,12 +60,11 @@ class IncomeSourceAddedController @Inject()(
   val logger: Logger = Logger("application")
 
 
-  private[controllers] def getNextUpdatesUrl(isAgent: Boolean) =
-    if (isAgent) {
-      obligationRoutes.NextUpdatesController.showAgent().url
-    } else {
-      obligationRoutes.NextUpdatesController.show().url
-    }
+  private[controllers] def getNextUpdatesUrl(isAgent: Boolean) = {
+    //ToDo Get this value from feature switch for Obligations once implemented
+    val newObligationsEnabled: Boolean = false
+    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled)
+  }
 
   private[controllers] def getManageBusinessUrl(isAgent: Boolean) =
     if (isAgent) {
@@ -76,9 +73,12 @@ class IncomeSourceAddedController @Inject()(
       manageBusinessesRoutes.ManageYourBusinessesController.show().url
     }
 
-  private[controllers] def getReportingFrequencyUrl(isAgent: Boolean) =
-    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
-
+  private[controllers] def getReportingFrequencyUrl(isAgent: Boolean) = {
+    //ToDo Get this value from feature switch for Obligations once implemented
+    val newObligationsEnabled: Boolean = false
+    appConfig.obligationsReportingFrequencyUrl(isAgent, newObligationsEnabled)
+  }
+  
   private[controllers] def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {

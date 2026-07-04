@@ -27,7 +27,7 @@ import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, Curren
 import financials.models.*
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
-import obligations.testConstants.NextUpdatesTestConstants.*
+import shared.testConstants.NextUpdatesTestConstants.*
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}

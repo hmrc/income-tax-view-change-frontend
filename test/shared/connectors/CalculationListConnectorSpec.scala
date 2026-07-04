@@ -17,15 +17,16 @@
 package shared.connectors
 
 import common.config.FrontendAppConfig
-import common.mocks.{MockAuditingService, MockHttpV2}
+import common.mocks.MockHttpV2
+import common.mocks.services.MockAuditingService
 import common.models.core.Nino
 import play.api.Configuration
 import play.api.http.Status._
 import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants._
 import common.testUtils.TestSupport
-import returns.testConstants.CalculationListTestConstants
 import shared.models.calculationList.{CalculationListErrorModel, CalculationListResponseModel}
+import shared.testConstants.CalculationListTestConstants
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

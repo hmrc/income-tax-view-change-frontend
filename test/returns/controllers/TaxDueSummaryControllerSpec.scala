@@ -29,7 +29,7 @@ import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
 import financials.mocks.services.MockCalculationService
-import obligations.mocks.connectors.MockObligationsConnector
+import returns.mocks.connectors.MockObligationsConnector
 import returns.services.CalculationService
 import shared.connectors.ObligationsConnector
 import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
