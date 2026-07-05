@@ -59,7 +59,9 @@ class NextUpdatesService @Inject()(
 
     val (missedDeadlines, remainingDeadlines) = allDeadlines.partition(_.deadline.isBefore(dateService.getCurrentDate))
 
-    NextUpdatesViewModel(remainingDeadlines, missedDeadlines)
+    // ToDo will be replaced with a feature switch check in the future
+    val isFinancialsEnabled = false 
+    NextUpdatesViewModel(remainingDeadlines, missedDeadlines, isFinancialsEnabled)
   }
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {

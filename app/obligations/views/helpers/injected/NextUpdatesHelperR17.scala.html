@@ -308,7 +308,7 @@
     Html(obligations.map(obl => messages(obl.incomeType)).map(msg => s"<div>$msg</div>").mkString)
 }
 
-@taxYearSummaryLink = @{appConfig.taxYearsUrl(user.isAgent)}
+@taxYearSummaryLink = @{appConfig.taxYearsUrl(user.isAgent, viewModel.isFinancialsEnabled)}
 
 @missedDeadlinesText = @{
     if(optOutProposition.currentTaxYear.canOptOut) {

@@ -25,10 +25,9 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import obligations.controllers.routes as obligationsRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationRoutes
 import obligations.controllers.reportingObligations.signUp.routes as signUpRoutes
+import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
+import financials.controllers.routes as financialsRoutes
 import returns.controllers.routes as returnsRoutes
-
-def nextUpdatesIndividualUrl(origin: Option[String] = None): String = obligationsRoutes.NextUpdatesController.show(origin).url
-lazy val nextUpdatesAgentUrl: String = obligationsRoutes.NextUpdatesController.showAgent().url
 
 trait ExternalRedirectHelper {
 
@@ -45,7 +44,7 @@ trait ExternalRedirectHelper {
 
   lazy val individualHomeUrlWithOrigin: Option[String] => String = origin =>
       hubRoutes.HomeController.show(origin).url
-  //hubBaseUrl?origin=origin
+  //s"$hubBaseUrl?origin=$origin"
 
   lazy val homePageUrl: String = {
     servicesConfig.getString("base.fullUrl")
@@ -153,22 +152,75 @@ trait ExternalRedirectHelper {
     else
       businessDetailsManageBusinessesIndividualUrl(businessDetailsFrontendEnabled)
 
-  def manageYourBusinessUrl(isAgent: Boolean): String = if isAgent
-  then manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
-  else manageBusinessRoutes.ManageYourBusinessesController.show().url
-
   //Financials routes
 
   lazy val financialsBaseUrl: String = servicesConfig.getString("income-tax-financials-frontend.baseUrl")
   lazy val financialsAgentBaseUrl: String = s"$financialsBaseUrl/agents"
 
+  lazy val financialsWhatYouOweIndividualUrl: (Boolean, Option[String]) => String = (financialsFrontendEnabled, origin) =>
+    if (financialsFrontendEnabled)
+      s"$financialsBaseUrl/what-you-owe${origin.fold("")(o => s"?origin=$o")}"
+    else
+      //s"$hubBaseUrl/what-you-owe${origin.fold("")(o => s"?origin=$o")}"
+      financialsRoutes.WhatYouOweController.show(origin).url
+
+  lazy val financialsWhatYouOweAgentUrl: Boolean => String = financialsFrontendEnabled =>
+    if (financialsFrontendEnabled)
+      s"$financialsAgentBaseUrl/what-your-client-owes"
+    else
+      //s"$hubAgentBaseUrl/what-your-client-owes"
+      financialsRoutes.WhatYouOweController.showAgent().url
+
+  def financialsWhatYouOweUrl(isAgent: Boolean, origin: Option[String] = None, financialsFrontendEnabled: Boolean): String =
+    if (isAgent)
+      financialsWhatYouOweAgentUrl(financialsFrontendEnabled)
+    else
+      financialsWhatYouOweIndividualUrl(financialsFrontendEnabled, origin)
+
+  lazy val financialsAmendablePoaIndividualUrl: (Boolean) => String = financialsFrontendEnabled =>
+    if (financialsFrontendEnabled)
+      s"$financialsBaseUrl/what-you-owe"
+    else
+      //s"$hubBaseUrl/what-you-owe"
+      claimToAdjustPoaRoutes.AmendablePoaController.show(false).url
+
+  lazy val financialsAmendablePoaAgentUrl: Boolean => String = financialsFrontendEnabled =>
+    if (financialsFrontendEnabled)
+      s"$financialsAgentBaseUrl/what-your-client-owes"
+    else
+      //s"$hubAgentBaseUrl/what-your-client-owes"
+      claimToAdjustPoaRoutes.AmendablePoaController.show(false).url
+
+  def financialsAmendablePoaUrl(isAgent: Boolean, financialsFrontendEnabled: Boolean): String =
+    if (isAgent)
+      financialsAmendablePoaAgentUrl(financialsFrontendEnabled)
+    else
+      financialsAmendablePoaIndividualUrl(financialsFrontendEnabled)
+
   //Returns routes
 
-  def taxYearsUrl(isAgent: Boolean): String = if isAgent
-  then returnsRoutes.TaxYearsController.showAgentTaxYears().url
-  else returnsRoutes.TaxYearsController.showTaxYears().url
-  
   lazy val returnsBaseUrl: String = servicesConfig.getString("income-tax-returns-frontend.baseUrl")
   lazy val returnsAgentBaseUrl: String = s"$returnsBaseUrl/agents"
+
+
+  lazy val returnsTaxYearsIndividualUrl: Boolean => String = returnsFrontendEnabled =>
+    if (returnsFrontendEnabled)
+      s"$returnsBaseUrl/tax-years"
+    else
+      //s"$hubBaseUrl/tax-years"
+      returnsRoutes.TaxYearsController.showTaxYears().url
+
+  lazy val returnsTaxYearsAgentUrl: Boolean => String = returnsFrontendEnabled =>
+    if (returnsFrontendEnabled)
+      s"$returnsAgentBaseUrl/tax-years"
+    else
+      //s"$hubAgentBaseUrl/tax-years"
+      returnsRoutes.TaxYearsController.showAgentTaxYears().url
+
+  def taxYearsUrl(isAgent: Boolean, returnsFrontendEnabled: Boolean): String =
+    if (isAgent)
+      returnsTaxYearsAgentUrl(returnsFrontendEnabled)
+    else
+      returnsTaxYearsAgentUrl(returnsFrontendEnabled)
 
 }
