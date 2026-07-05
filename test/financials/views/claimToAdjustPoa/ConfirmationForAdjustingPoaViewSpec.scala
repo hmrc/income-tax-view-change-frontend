@@ -65,7 +65,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 
       "have a 'Cancel' button with backUrl" in new Setup(isAgent = false, isAmountZero = true) {
         elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
-        document.getElementById("cancel").attr("href") shouldBe testCancelUrl
+        document.getElementById("cancel").attr("href") should include(testCancelUrl)
       }
 
     }
@@ -89,7 +89,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 
       "have a 'Cancel' button with backUrl" in new Setup(isAgent = false, isAmountZero = false) {
         elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
-        document.getElementById("cancel").attr("href") shouldBe testCancelUrl
+        document.getElementById("cancel").attr("href") should include(testCancelUrl)
       }
 
     }

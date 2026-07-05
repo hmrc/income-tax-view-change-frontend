@@ -17,7 +17,7 @@
 package common.auth.actions
 
 import common.utils.AuthUtils.*
-import businessDetails.forms.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
+import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
 import common.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest, MtdItUser}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.models.admin.FeatureSwitch

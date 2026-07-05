@@ -16,7 +16,7 @@
 
 package common.models.incomeSourceDetails
 
-import businessDetails.forms.IncomeSourcesFormsSpec.individualUser
+import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.individualUser
 import common.exceptions.NoIncomeSourceFound
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash}

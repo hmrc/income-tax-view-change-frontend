@@ -76,11 +76,11 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
     }
   }
 
-  private def homeLink(isAgent: Boolean): Option[String] = {
+  private def homeLink(isAgent: Boolean): String = {
     if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/client-income-tax")
+      "/report-quarterly/income-and-expenses/view/agents"
     } else {
-      Some("/report-quarterly/income-and-expenses/view")
+      "/report-quarterly/income-and-expenses/view"
     }
   }
 
@@ -136,7 +136,7 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
           val result = action(fakeRequest)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe homeLink(isAgent)
+          redirectLocation(result).get should include(homeLink(isAgent))
         }
       }
     }

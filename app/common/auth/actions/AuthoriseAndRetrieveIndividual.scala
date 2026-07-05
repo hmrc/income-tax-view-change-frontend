@@ -76,7 +76,7 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
 
   // this URL is incorrect in live - the completion and failure URLs must be URL encoded
   def ivUpliftRedirectUrl[A](implicit request: Request[A]):String = {
-    val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.itvcFrontendEnvironment
+    val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.baseUrl
     @unused val origin = request.getQueryString(ORIGIN)
     val completionUrl: String = s"$host${appRoutes.UpliftSuccessController.success().url}"
     val failureUrl: String = s"$host${errorRoutes.UpliftFailedController.show().url}"

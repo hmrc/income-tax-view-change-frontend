@@ -81,7 +81,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                   val origin = if (postedUser.usePTANavBar) "PTA" else "BTA"
                   s"report-quarterly/income-and-expenses/view?origin=$origin"
                 }
-                val homePage = s"${appConfig.itvcFrontendEnvironment}/$redirectURL"
+                val homePage = s"${appConfig.baseUrl}/$redirectURL"
 
                 updateEffectiveDateOfPayment().failed.foreach(ex => {
                   Logger("application").error("Failed to update effectiveDateOfPayment", ex)

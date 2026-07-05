@@ -45,7 +45,7 @@ import returns.mocks.services.MockNextUpdatesService
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import returns.services.{CalculationService, NextUpdatesService, TaxYearSummaryService}
-import returns.testConstants.NewCalcBreakdownUnitTestConstants.{liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised, getCurrentTaxYearEnd}
+import returns.testConstants.NewCalcBreakdownUnitTestConstants.{getCurrentTaxYearEnd, liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import returns.views.html.TaxYearSummaryView
 import shared.connectors.CalculationListConnector
 import shared.models.*
@@ -106,7 +106,7 @@ class TaxYearSummaryControllerSpec
   val emptyCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(None)
   val populatedCTAViewModel: TYSClaimToAdjustViewModel = TYSClaimToAdjustViewModel(Some(TaxYear(2023, 2024)))
   lazy val ctaLink: Boolean => String = isAgent => {
-    "/report-quarterly/income-and-expenses/view" + {
+    {
       if (isAgent) "/agents" else ""
     } + "/adjust-poa/start"
   }

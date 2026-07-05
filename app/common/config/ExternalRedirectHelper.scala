@@ -59,7 +59,7 @@ trait ExternalRedirectHelper {
 
   lazy val enterClientsUTRUrl: String =
     hubAgentRoutes.EnterClientsUTRController.show().url
-    //s"$hubAgentBaseUrl/enter-client-utr"
+    //s"$hubAgentBaseUrl/client-utr"
   lazy val confirmClientUTRUrl: String =
     hubAgentRoutes.ConfirmClientUTRController.show().url
     //s"$hubAgentBaseUrl/confirm-client-details"

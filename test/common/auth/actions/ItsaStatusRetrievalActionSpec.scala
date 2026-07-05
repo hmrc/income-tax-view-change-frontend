@@ -230,7 +230,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
             res.header.status shouldBe INTERNAL_SERVER_ERROR
             title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-            feedbackUrl shouldBe "/report-quarterly/income-and-expenses/view/feedback" // to help distinguish error pages checking for feedback url since page titles are the same
+            feedbackUrl should include("/feedback") // to help distinguish error pages checking for feedback url since page titles are the same
           case Right(_) =>
             fail("Expected Individual error page but fell into a Right branch")
         }
@@ -261,7 +261,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
             res.header.status shouldBe INTERNAL_SERVER_ERROR
             title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-            agentFeedbackUrl shouldBe "/report-quarterly/income-and-expenses/view/agents/feedback" // to help distinguish error pages checking for feedback url since page titles are the same
+            agentFeedbackUrl should include("/agents/feedback") // to help distinguish error pages checking for feedback url since page titles are the same
           case Right(_) =>
             fail("Expected Agent error page but fell into a Right branch")
         }

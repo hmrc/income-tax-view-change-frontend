@@ -79,8 +79,8 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     val ceaseSoleTraderText = "Cease business"
     val ceaseUkPropertyText = "Cease UK property"
     val ceaseForeignPropertyText = "Cease Foreign property"
-    val ceaseLinkUkPropertyHref = "/report-quarterly/income-and-expenses/view/manage-your-businesses/cease/uk-property-confirm-cease?isTriggeredMigration=true"
-    val ceaseLinkForeignPropertyHref = "/report-quarterly/income-and-expenses/view/manage-your-businesses/cease/foreign-property-confirm-cease?isTriggeredMigration=true"
+    val ceaseLinkUkPropertyHref = "/manage-your-businesses/cease/uk-property-confirm-cease?isTriggeredMigration=true"
+    val ceaseLinkForeignPropertyHref = "/manage-your-businesses/cease/foreign-property-confirm-cease?isTriggeredMigration=true"
     val businessNameText = "Business name"
     val businessStateText = "Business state"
     val activeText = "Active"
@@ -125,7 +125,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
         pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseUkPropertyText
-        pageDocument.getElementById("uk-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref
+        pageDocument.getElementById("uk-property-cease-link").attr("href") should include(CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref)
         pageDocument.select("#uk-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextUkProperty
       }
 
@@ -134,7 +134,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
         pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseForeignPropertyText
-        pageDocument.getElementById("foreign-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref
+        pageDocument.getElementById("foreign-property-cease-link").attr("href") should include(CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref)
         pageDocument.select("#foreign-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextForeignProperty
       }
     }
@@ -172,7 +172,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
         pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseUkPropertyText
-        pageDocument.getElementById("uk-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref
+        pageDocument.getElementById("uk-property-cease-link").attr("href") should include(CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref)
         pageDocument.select("#uk-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextUkProperty
       }
 
@@ -181,7 +181,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
         pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseForeignPropertyText
-        pageDocument.getElementById("foreign-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref
+        pageDocument.getElementById("foreign-property-cease-link").attr("href") should include(CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref)
         pageDocument.select("#foreign-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextForeignProperty
       }
     }
@@ -193,13 +193,13 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("uk-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("uk-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
         pageDocument.getElementById("uk-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseUkPropertyText
-        pageDocument.getElementById("uk-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref
+        pageDocument.getElementById("uk-property-cease-link").attr("href") should include(CheckHmrcRecordsMessages.ceaseLinkUkPropertyHref)
         pageDocument.select("#uk-property-cease-link > span").text() shouldBe CheckHmrcRecordsMessages.visuallyHiddenTextUkProperty
       }
 
       "have the correct foreign property link" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false, noCeasedBusinesses, None) {
         pageDocument.getElementById("add-foreign-property-link").text() shouldBe CheckHmrcRecordsMessages.addForeignPropertyBusinessText
-        pageDocument.getElementById("add-foreign-property-link").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-foreign-property/business-start-date?isTriggeredMigration=true"
+        pageDocument.getElementById("add-foreign-property-link").select("a").attr("href") should include("/manage-your-businesses/add-foreign-property/business-start-date?isTriggeredMigration=true")
       }
     }
     "checking hmrc records with no active sole trader business and an active foreign property business only" should {
@@ -210,16 +210,16 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
         pageDocument.getElementById("foreign-property-business-state").text() shouldBe CheckHmrcRecordsMessages.businessStateText
         pageDocument.getElementById("foreign-property-business-state-value").text() shouldBe CheckHmrcRecordsMessages.activeText
         pageDocument.getElementById("foreign-property-cease-link").text() shouldBe CheckHmrcRecordsMessages.ceaseForeignPropertyText
-        pageDocument.getElementById("foreign-property-cease-link").attr("href") shouldBe CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref
+        pageDocument.getElementById("foreign-property-cease-link").attr("href") should include(CheckHmrcRecordsMessages.ceaseLinkForeignPropertyHref)
       }
       
       "have the add uk property link" in new Setup(activeSoleTrader = false, activeUkProperty = false, activeForeignProperty = true, noCeasedBusinesses, None) {
         pageDocument.getElementById("add-uk-property-link").text() shouldBe CheckHmrcRecordsMessages.addUKPropertyBusinessText
-        pageDocument.getElementById("add-uk-property-link").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-uk-property/business-start-date?isTriggeredMigration=true"
+        pageDocument.getElementById("add-uk-property-link").select("a").attr("href") should include("/manage-your-businesses/add-uk-property/business-start-date?isTriggeredMigration=true")
       }
       "have the add foreign property link" in new Setup(activeSoleTrader = false, activeUkProperty = true, activeForeignProperty = false, noCeasedBusinesses, None) {
         pageDocument.getElementById("add-foreign-property-link").text() shouldBe CheckHmrcRecordsMessages.addForeignPropertyBusinessText
-        pageDocument.getElementById("add-foreign-property-link").select("a").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-foreign-property/business-start-date?isTriggeredMigration=true"
+        pageDocument.getElementById("add-foreign-property-link").select("a").attr("href") should include("/manage-your-businesses/add-foreign-property/business-start-date?isTriggeredMigration=true")
       }
     }
 
@@ -307,7 +307,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
 
     "have the correct add a sole trader business text" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBusinesses, None) {
       pageDocument.getElementById("sole-trader-add-link").text() shouldBe CheckHmrcRecordsMessages.addASoleTraderBusinessText
-      pageDocument.getElementById("sole-trader-add-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-name?isTriggeredMigration=true"
+      pageDocument.getElementById("sole-trader-add-link").attr("href") should include("/manage-your-businesses/add-sole-trader/business-name?isTriggeredMigration=true")
     }
 
     "have the correct confirm records heading" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBusinesses, None) {

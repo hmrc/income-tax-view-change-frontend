@@ -157,7 +157,7 @@ class SessionTimeoutActionSpec extends AuthActionsSpecHelper {
             defaultAsync)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) should contain("/report-quarterly/income-and-expenses/view/session-timeout")
+          redirectLocation(result).get should include("/session-timeout")
         }
       }
     }

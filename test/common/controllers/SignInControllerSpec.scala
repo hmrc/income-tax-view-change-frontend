@@ -22,6 +22,8 @@ import play.api.http.Status
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.*
 
+import java.net.URLEncoder
+
 class SignInControllerSpec extends TestSupport {
 
   object TestSignInController extends SignInController(
@@ -35,8 +37,9 @@ class SignInControllerSpec extends TestSupport {
     }
 
     "Redirect to GG Sign In on Company Auth Frontend" in {
+      val redirectUrl = URLEncoder.encode("http://localhost:9081/report-quarterly/income-and-expenses/view", "UTF-8")
       redirectLocation(result) shouldBe Some(
-        "http://localhost:9553/bas-gateway/sign-in?continue_url=http%3A%2F%2Flocalhost%3A9081%2Freport-quarterly%2Fincome-and-expenses%2Fview&origin=income-tax-view-change-frontend"
+        appConfig.ggSignInUrl + "?continue_url=" + redirectUrl + "&origin=" + appConfig.appName
       )
     }
 

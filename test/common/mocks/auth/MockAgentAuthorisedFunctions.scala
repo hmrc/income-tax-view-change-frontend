@@ -17,9 +17,9 @@
 package common.mocks.auth
 
 import common.auth.actions.AuthActionsTestData.delegatedEnrolmentPredicate
-import businessDetails.forms.IncomeSourcesFormsSpec.AuthRetrievals
+import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.AuthRetrievals
 import org.mockito.Mockito.*
-import businessDetails.forms.IncomeSourcesFormsSpec.NrsAgentAuthRetrievals
+import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.NrsAgentAuthRetrievals
 import common.auth.FrontendAuthorisedFunctions
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core.*

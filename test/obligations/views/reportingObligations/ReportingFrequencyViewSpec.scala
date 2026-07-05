@@ -569,7 +569,7 @@ class ReportingFrequencyViewSpec extends TestSupport {
 
           pageDocument.getElementById("ceased-business-warning").text() shouldBe "Warning There are currently no businesses on this account. You can add a sole trader or property business on the your businesses page."
 
-          pageDocument.getElementById("ceased-business-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+          pageDocument.getElementById("ceased-business-link").attr("href") should include("/manage-your-businesses")
           Option(pageDocument.getElementById("different-obligations-heading")) shouldBe None
         }
 

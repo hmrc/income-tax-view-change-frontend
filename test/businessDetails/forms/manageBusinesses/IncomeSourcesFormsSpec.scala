@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package businessDetails.forms
+package businessDetails.forms.manageBusinesses
 
 import businessDetails.forms.manageBusinesses.add.{BusinessNameForm, BusinessTradeForm}
 import common.models.incomeSourceDetails.TaxYear

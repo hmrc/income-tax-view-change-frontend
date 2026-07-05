@@ -29,9 +29,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val hasEnabledTestOnlyRoutes: Boolean = config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
 
   //App
-  lazy val baseUrl: String = "report-quarterly/income-and-expenses/view"
-  lazy val agentBaseUrl: String = s"$baseUrl/agents"
-  lazy val itvcFrontendEnvironment: String = servicesConfig.getString("base.url")
+  lazy val basePath: String = servicesConfig.getString("base.context-root")
+  lazy val agentBasePath: String = s"$basePath/agents"
+  lazy val baseUrl: String = servicesConfig.getString("base.url")
   lazy val appName: String = servicesConfig.getString("appName")
 
   //Feedback Config
@@ -40,8 +40,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val contactFormServiceIdentifier: String = "ITVC"
   lazy val contactFrontendBaseUrl: String = s"$contactFrontendService"
   lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrl = s"/$baseUrl/feedback"
-  lazy val agentBetaFeedbackUrl = s"/$agentBaseUrl/feedback"
+  lazy val betaFeedbackUrl = s"/$basePath/feedback"
+  lazy val agentBetaFeedbackUrl = s"/$agentBasePath/feedback"
   lazy val noIncomeSourcesContactUrl: String = s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier"
 
   //Income tax obligations service
@@ -82,9 +82,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
   //individual sa302
-  def sa302:String = s"$itvcFrontendEnvironment/$baseUrl/mortgage-evidence/proof-of-income"
+  def sa302:String = s"$baseUrl/$basePath/mortgage-evidence/proof-of-income"
   //agent sa302
-  def sa302Agent:String = s"$itvcFrontendEnvironment/$agentBaseUrl/mortgage-evidence/proof-of-income"
+  def sa302Agent:String = s"$baseUrl/$agentBasePath/mortgage-evidence/proof-of-income"
 
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
@@ -132,9 +132,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val hipRepaymentsUrl: String = servicesConfig.baseUrl("hip-repayment-api")
 
   //Payment Redirect route
-  lazy val paymentRedirectUrl: String = s"$itvcFrontendEnvironment/$baseUrl/what-you-owe"
+  lazy val paymentRedirectUrl: String = s"$baseUrl/$basePath/what-you-owe"
   //Payment Redirect route
-  lazy val agentPaymentRedirectUrl: String = s"$itvcFrontendEnvironment/$agentBaseUrl/payments-owed"
+  lazy val agentPaymentRedirectUrl: String = s"$baseUrl/$agentBasePath/payments-owed"
 
 
   // Submission service

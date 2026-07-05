@@ -262,14 +262,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
       sessionUtils.SessionKeys.clientUTR -> "1234567890"
     )
 
-  lazy val fakeRequestWithActiveAndRefererToHomePage: FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest().withSession(
-      SessionKeys.lastRequestTimestamp -> "1498236506662",
-      SessionKeys.authToken -> "Bearer Token"
-    ).withHeaders(
-      HeaderNames.REFERER -> "http://www.somedomain.org/report-quarterly/income-and-expenses/view"
-    )
-
   lazy val fakeRequestWithClientDetails: FakeRequest[AnyContentAsEmpty.type] = fakeRequestWithActiveSession.withSession(
     sessionUtils.SessionKeys.clientFirstName -> "Test",
     sessionUtils.SessionKeys.clientLastName -> "User",

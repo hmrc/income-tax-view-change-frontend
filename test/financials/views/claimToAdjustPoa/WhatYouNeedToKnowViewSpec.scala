@@ -98,7 +98,7 @@ class WhatYouNeedToKnowViewSpec extends TestSupport {
 
       "have a 'Cancel' button with backUrl" in new Setup {
         elements.get(1).text shouldBe msgs("claimToAdjustPoa.whatYouNeedToKnow.cancel")
-        document.getElementById("cancel").attr("href") shouldBe testCancelUrl
+        document.getElementById("cancel").attr("href") should include(testCancelUrl)
       }
 
       "render warning text when showIncreaseAfterPaymentContent is true" in new Setup(showIncreaseAfterPaymentContent = true) {

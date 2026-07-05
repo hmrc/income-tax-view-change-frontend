@@ -16,6 +16,7 @@
 
 package businessDetails.views.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
@@ -38,8 +39,8 @@ class IncomeSourceAddedBackErrorViewSpec extends TestSupport{
     lazy val document: Document = Jsoup.parse(contentAsString(view))
 
     val manageLink: String =
-      if (isAgent) "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
-      else "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+      if (isAgent) manageBusinessesRoutes.ManageYourBusinessesController.showAgent().url
+      else manageBusinessesRoutes.ManageYourBusinessesController.show().url
   }
 
   "ReportingMethodSetBackError - Individual" should {

@@ -22,7 +22,6 @@ import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.*
 import common.models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import common.testConstants.BaseTestConstants.*
-import financials.models.core.ErrorModel
 import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.{LocalDate, Month}
@@ -641,9 +640,7 @@ object BusinessDetailsTestConstants {
     cessation = None,
     address = Some(address),
   )
-
-  val businessErrorModel = ErrorModel(testErrorStatus, testErrorMessage)
-
+  
   val obligationsDataSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(overdueObligation, openObligation))
   val obligationsAllDeadlinesSuccessNotValidObligationType: ObligationsModel = ObligationsModel(
     Seq(GroupedObligationsModel(testSelfEmploymentId, List(businessNotValidObligationType))))

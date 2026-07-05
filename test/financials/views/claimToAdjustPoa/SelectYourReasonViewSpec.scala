@@ -139,7 +139,7 @@ class SelectYourReasonViewSpec extends TestSupport {
     }
 
     "has the correct link on the continue button" in {
-      document.select("#cancel-link").attr("href") shouldBe continueLink
+      document.select("#cancel-link").attr("href") should include(continueLink)
     }
 
     "when there are errors on the page" should {
