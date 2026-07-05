@@ -39,8 +39,9 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   val wiremockPort = 11111
   val wiremockHost = "localhost"
   val url = s"http://$wiremockHost:$wiremockPort"
-  //ToDo update this to be the basePath for the being tested.
+  //ToDo update this to be the basePath and baseUrl for the being tested.
   val basePath = "/report-quarterly/income-and-expenses/view"
+  val baseUrl = s"http://localhost:9081$basePath"
 
   def verifyPost(uri: String, optBody: Option[String] = None): Unit = {
     val uriMapping = postRequestedFor(urlEqualTo(uri))

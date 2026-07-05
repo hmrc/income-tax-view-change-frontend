@@ -62,6 +62,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
   lazy val individualWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("header.serviceName")
   lazy val agentWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("agent.header.serviceName")
+  lazy val accessibilityUrl = s"${appConfig.accessibilityUrl}?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"
 
   private def addressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
     JsObject(
@@ -78,7 +79,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
               )
             ),
             "signOutHref" -> JsString(appConfig.baseUrl + InternalUrlHelper.signoutUrl),
-            "accessibilityFooterUrl" -> JsString(appConfig.baseUrl + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
+            "accessibilityFooterUrl" -> JsString(appConfig.accessibilityUrl),
             "selectPageConfig" -> JsObject(
               Seq(
                 "proposalListLimit" -> JsNumber(15)
@@ -192,7 +193,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
               )
             ),
             "signOutHref" -> JsString(appConfig.baseUrl + InternalUrlHelper.signoutUrl),
-            "accessibilityFooterUrl" -> JsString(appConfig.baseUrl + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
+            "accessibilityFooterUrl" -> JsString(appConfig.accessibilityUrl),
             "selectPageConfig" -> JsObject(
               Seq(
                 "proposalListLimit" -> JsNumber(15)

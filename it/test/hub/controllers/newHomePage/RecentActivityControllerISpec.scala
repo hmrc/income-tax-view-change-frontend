@@ -219,7 +219,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI("/report-quarterly/income-and-expenses/view/agents/overview")
+                redirectURI(s"$basePath/agents/overview")
               )
             }
           }

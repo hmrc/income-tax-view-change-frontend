@@ -32,8 +32,8 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
   val requestBodyWYO = Json.parse(
     s"""
      {
-      "returnUrl": "/report-quarterly/income-and-expenses/view",
-      "backUrl": "/report-quarterly/income-and-expenses/view/what-you-owe"
+      "returnUrl": "$basePath",
+      "backUrl": "$basePath/what-you-owe"
      }
     """.stripMargin
   )

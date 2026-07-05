@@ -43,12 +43,12 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val json = Json.toJson(PaymentJourneyModel("id", "redirect-url")).toString()
 
           val requestBody = Json.parse(
-            """
+            s"""
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/what-you-owe",
-              | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/what-you-owe"
+              | "returnUrl": "http://localhost:9081$basePath/what-you-owe",
+              | "backUrl": "http://localhost:9081$basePath/what-you-owe"
               |}
               """.stripMargin
           )
@@ -76,12 +76,12 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val json = Json.toJson(PaymentJourneyModel("id", "redirect-url")).toString()
 
           val requestBody = Json.parse(
-            """
+            s"""
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl":"http://localhost:9081/report-quarterly/income-and-expenses/view/agents/payments-owed",
-              | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/payments-owed"
+              | "returnUrl":"http://localhost:9081$basePath/agents/payments-owed",
+              | "backUrl": "http://localhost:9081$basePath/agents/payments-owed"
               |}
               """.stripMargin
           )
@@ -113,12 +113,12 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val responseStatus = 201
 
           val requestBody = Json.parse(
-            """
+            s"""
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/what-you-owe",
-              | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/what-you-owe"
+              | "returnUrl": "http://localhost:9081$basePath/what-you-owe",
+              | "backUrl": "http://localhost:9081$basePath/what-you-owe"
               |}
               """.stripMargin
           )
@@ -150,12 +150,12 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
           val responseStatus = 500
 
           val requestBody = Json.parse(
-            """
+            s"""
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/what-you-owe",
-              | "backUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/what-you-owe"
+              | "returnUrl": "http://localhost:9081$basePath/what-you-owe",
+              | "backUrl": "http://localhost:9081$basePath/what-you-owe"
               |}
               """.stripMargin
           )

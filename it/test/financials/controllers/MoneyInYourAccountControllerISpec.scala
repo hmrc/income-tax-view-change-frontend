@@ -192,12 +192,12 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
                 IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
-
+                
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR),
                   pageTitle(mtdUserRole, "standardError.heading", isErrorPage = true),
                   elementAttributeBySelector(".govuk-phase-banner__text a", "href")
-                  (s"/report-quarterly/income-and-expenses/view${if(mtdUserRole == MTDIndividual) "" else "/agents"}/feedback")
+                  (s"$basePath${if(mtdUserRole == MTDIndividual) "" else "/agents"}/feedback")
                 )
               }
 

@@ -40,8 +40,8 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val contactFormServiceIdentifier: String = "ITVC"
   lazy val contactFrontendBaseUrl: String = s"$contactFrontendService"
   lazy val reportAProblemNonJSUrl: String = s"$contactHost/contact/problem_reports_nonjs?service=$contactFormServiceIdentifier"
-  lazy val betaFeedbackUrl = s"/$basePath/feedback"
-  lazy val agentBetaFeedbackUrl = s"/$agentBasePath/feedback"
+  lazy val betaFeedbackUrl = s"$basePath/feedback"
+  lazy val agentBetaFeedbackUrl = s"$agentBasePath/feedback"
   lazy val noIncomeSourcesContactUrl: String = s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier"
 
   //Income tax obligations service
@@ -49,24 +49,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   //Income tax business details service
   lazy val incomeTaxBusinessDetailsBaseUrl: String = servicesConfig.baseUrl("income-tax-business-details")
-
-  lazy val incomeTaxBusinessDetailsFrontendBaseUrl: String =
-    config.get[String]("income-tax-business-details-frontend.external-host")
-
-  def businessDetailsManageBusinessesFrontendUrl(isAgent: Boolean): String = {
-    val path =
-      if (isAgent) "/manage-self-assessment/businesses/agents/manage-your-businesses"
-      else "/manage-self-assessment/businesses/manage-your-businesses"
-
-    s"$incomeTaxBusinessDetailsFrontendBaseUrl$path"
-  }
-
-  def manageBusinessesUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String =
-    if (businessDetailsFrontendEnabled) {
-      businessDetailsManageBusinessesFrontendUrl(isAgent)
-    } else {
-      manageYourBusinessUrl(isAgent)
-    }
 
   //Income tax calculation service
   lazy val incomeTaxCalculationService: String = servicesConfig.baseUrl("income-tax-calculation")
@@ -77,14 +59,15 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   //Address lookup service
   lazy val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
   lazy val addressLookupExternalHost: String = servicesConfig.getString("address-lookup.external-host")
-
+  lazy val accessibilityHost: String = servicesConfig.getString("accessibility-statement.host")
+  lazy val accessibilityUrl: String = accessibilityHost + "/accessibility-statement" + servicesConfig.getString("accessibility-statement.service-path")
   //View L&P
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
   //individual sa302
-  def sa302:String = s"$baseUrl/$basePath/mortgage-evidence/proof-of-income"
+  def sa302:String = s"$baseUrl$basePath/mortgage-evidence/proof-of-income"
   //agent sa302
-  def sa302Agent:String = s"$baseUrl/$agentBasePath/mortgage-evidence/proof-of-income"
+  def sa302Agent:String = s"$baseUrl$agentBasePath/mortgage-evidence/proof-of-income"
 
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
@@ -132,9 +115,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val hipRepaymentsUrl: String = servicesConfig.baseUrl("hip-repayment-api")
 
   //Payment Redirect route
-  lazy val paymentRedirectUrl: String = s"$baseUrl/$basePath/what-you-owe"
+  lazy val paymentRedirectUrl: String = s"$baseUrl$basePath/what-you-owe"
   //Payment Redirect route
-  lazy val agentPaymentRedirectUrl: String = s"$baseUrl/$agentBasePath/payments-owed"
+  lazy val agentPaymentRedirectUrl: String = s"$baseUrl$agentBasePath/payments-owed"
 
 
   // Submission service
@@ -271,18 +254,4 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val threshold2028 = servicesConfig.getString("thresholds.threshold2028")
 
   lazy val dynamicStubUrl: String = servicesConfig.baseUrl("itvc-dynamic-stub")
-
-  
-  import returns.controllers.routes as returnsRoutes
-  
-  def taxYearsUrl(isAgent: Boolean): String = if isAgent 
-    then returnsRoutes.TaxYearsController.showAgentTaxYears().url 
-    else returnsRoutes.TaxYearsController.showTaxYears().url
-
-  
-  import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-  
-  def manageYourBusinessUrl(isAgent: Boolean): String = if isAgent 
-    then manageBusinessRoutes.ManageYourBusinessesController.showAgent().url 
-    else manageBusinessRoutes.ManageYourBusinessesController.show().url
 }

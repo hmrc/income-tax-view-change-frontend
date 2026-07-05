@@ -89,7 +89,7 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
     } else "your"
 
     val pathStart: Boolean => String = isAgent =>
-      "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else ""}
+      s"$basePath" + {if(isAgent) "/agents" else ""}
 
     val insetTextFull: Boolean => String = isAgent =>
       s"If you think this information is incorrect, you can check ${yourOrYourClients(isAgent)} Income Tax Return."

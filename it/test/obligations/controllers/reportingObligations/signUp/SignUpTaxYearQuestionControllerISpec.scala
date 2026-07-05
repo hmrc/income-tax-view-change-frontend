@@ -425,8 +425,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           val reportingObligationsLink = mtdUserRole match {
-            case MTDIndividual => "/report-quarterly/income-and-expenses/view/reporting-frequency"
-            case _ => "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            case MTDIndividual => s"$basePath/reporting-frequency"
+            case _ => s"$basePath/agents/reporting-frequency"
           }
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
@@ -483,7 +483,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(s"/report-quarterly/income-and-expenses/view$path/completed")
+            redirectURI(s"$basePath$path/completed")
           )
         }
         }
@@ -532,7 +532,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(SEE_OTHER),
-              redirectURI(s"/report-quarterly/income-and-expenses/view$path/completed")
+              redirectURI(s"$basePath$path/completed")
             )
           }
         }

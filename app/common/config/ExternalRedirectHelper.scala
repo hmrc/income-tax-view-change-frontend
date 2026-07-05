@@ -21,9 +21,11 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import hub.controllers.routes as hubRoutes
 import hub.controllers.agent.routes as hubAgentRoutes
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import obligations.controllers.routes as obligationsRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationRoutes
 import obligations.controllers.reportingObligations.signUp.routes as signUpRoutes
+import returns.controllers.routes as returnsRoutes
 
 def nextUpdatesIndividualUrl(origin: Option[String] = None): String = obligationsRoutes.NextUpdatesController.show(origin).url
 lazy val nextUpdatesAgentUrl: String = obligationsRoutes.NextUpdatesController.showAgent().url
@@ -125,5 +127,48 @@ trait ExternalRedirectHelper {
     else
       obligationsReportingFrequencyIndividualUrl(newObligationsEnabled)
   }
+
+  //Business Details routes
+
+  lazy val businessDetailsBaseUrl: String = servicesConfig.getString("income-tax-business-details-frontend.baseUrl")
+  lazy val businessDetailsAgentBaseUrl: String = s"$businessDetailsBaseUrl/agents"
+
+  lazy val businessDetailsManageBusinessesIndividualUrl: Boolean => String = businessDetailsFrontendEnabled =>
+    if (businessDetailsFrontendEnabled)
+      s"$businessDetailsBaseUrl/manage-your-businesses"
+    else
+      //s"$hubBaseUrl/manage-your-businesses"
+      manageBusinessRoutes.ManageYourBusinessesController.show().url
+
+  lazy val businessDetailsManageBusinessesAgentUrl: Boolean => String = businessDetailsFrontendEnabled =>
+    if (businessDetailsFrontendEnabled)
+      s"$businessDetailsAgentBaseUrl/manage-your-businesses"
+    else
+      //s"$hubAgentBaseUrl/manage-your-businesses"
+      manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+
+  def manageBusinessesUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String =
+    if (isAgent)
+      businessDetailsManageBusinessesAgentUrl(businessDetailsFrontendEnabled)
+    else
+      businessDetailsManageBusinessesIndividualUrl(businessDetailsFrontendEnabled)
+
+  def manageYourBusinessUrl(isAgent: Boolean): String = if isAgent
+  then manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+  else manageBusinessRoutes.ManageYourBusinessesController.show().url
+
+  //Financials routes
+
+  lazy val financialsBaseUrl: String = servicesConfig.getString("income-tax-financials-frontend.baseUrl")
+  lazy val financialsAgentBaseUrl: String = s"$financialsBaseUrl/agents"
+
+  //Returns routes
+
+  def taxYearsUrl(isAgent: Boolean): String = if isAgent
+  then returnsRoutes.TaxYearsController.showAgentTaxYears().url
+  else returnsRoutes.TaxYearsController.showTaxYears().url
+  
+  lazy val returnsBaseUrl: String = servicesConfig.getString("income-tax-returns-frontend.baseUrl")
+  lazy val returnsAgentBaseUrl: String = s"$returnsBaseUrl/agents"
 
 }

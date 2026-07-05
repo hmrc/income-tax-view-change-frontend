@@ -187,7 +187,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -225,7 +226,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -291,7 +293,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -325,7 +328,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -368,7 +372,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -410,7 +415,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -446,7 +452,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -479,7 +486,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -513,7 +521,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -550,7 +559,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
               mtdThreshold = "£50,000",
               proposition = optOutProposition,
               isSignUpEnabled = true,
-              isOptOutEnabled = true
+              isOptOutEnabled = true,
+              isBusinessDetailsEnabled = true
             )
 
           val pageDocument: Document =
@@ -592,7 +602,8 @@ class ReportingFrequencyViewSpec extends TestSupport {
             mtdThreshold = "£50,000",
             proposition = optOutProposition,
             isSignUpEnabled = true,
-            isOptOutEnabled = true
+            isOptOutEnabled = true,
+            isBusinessDetailsEnabled = true
           )
 
         val pageDocument: Document =
