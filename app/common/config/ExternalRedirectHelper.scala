@@ -189,7 +189,7 @@ trait ExternalRedirectHelper {
       s"$financialsAgentBaseUrl/what-your-client-owes"
     else
       //s"$hubAgentBaseUrl/what-your-client-owes"
-      claimToAdjustPoaRoutes.AmendablePoaController.show(false).url
+      claimToAdjustPoaRoutes.AmendablePoaController.show(true).url
 
   def financialsAmendablePoaUrl(isAgent: Boolean, financialsFrontendEnabled: Boolean): String =
     if (isAgent)
@@ -217,10 +217,10 @@ trait ExternalRedirectHelper {
       //s"$hubAgentBaseUrl/tax-years"
       returnsRoutes.TaxYearsController.showAgentTaxYears().url
 
-  def taxYearsUrl(isAgent: Boolean, returnsFrontendEnabled: Boolean): String =
+  def returnsTaxYearsUrl(isAgent: Boolean, returnsFrontendEnabled: Boolean): String =
     if (isAgent)
       returnsTaxYearsAgentUrl(returnsFrontendEnabled)
     else
-      returnsTaxYearsAgentUrl(returnsFrontendEnabled)
+      returnsTaxYearsIndividualUrl(returnsFrontendEnabled)
 
 }

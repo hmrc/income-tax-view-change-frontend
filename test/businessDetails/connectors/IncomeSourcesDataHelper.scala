@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package businessDetails.connectors.helpers
+package businessDetails.connectors
 
-import businessDetails.models.createIncomeSource.{AddressDetails, BusinessDetails, CreateBusinessIncomeSourceRequest, CreateForeignPropertyIncomeSourceRequest, CreateUKPropertyIncomeSourceRequest, PropertyDetails}
+import businessDetails.models.createIncomeSource.*
 import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import play.api.libs.json.{JsValue, Json}

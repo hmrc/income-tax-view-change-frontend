@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package returns.helpers.servicemocks
+package common.helpers
 
-import common.helpers.WiremockHelper
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 
 object CalculationListStub {

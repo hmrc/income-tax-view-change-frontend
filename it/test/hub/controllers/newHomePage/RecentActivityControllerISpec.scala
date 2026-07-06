@@ -27,8 +27,8 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDeta
 import play.api.http.Status.{OK, SEE_OTHER}
 import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

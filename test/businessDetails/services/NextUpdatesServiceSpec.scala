@@ -20,11 +20,11 @@ import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, Obliga
 import common.config.featureswitch.FeatureSwitching
 import common.testUtils.TestSupport
 import businessDetails.mocks.connectors.MockObligationsConnector
+import common.models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import shared.testConstants.NextUpdatesTestConstants.obligationsDataSuccessModel as _
 import shared.testConstants.NextUpdatesTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 import scala.concurrent.Future

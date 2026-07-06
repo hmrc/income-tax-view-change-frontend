@@ -20,10 +20,11 @@ import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation.{Message, Messages}
+import common.models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import common.testUtils.ViewSpec
 import common.viewUtils.ExternalUrlHelper
 import financials.controllers.routes as financialsRoutes
-import financials.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
+import shared.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
 import financials.models.*
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
@@ -33,7 +34,6 @@ import play.twirl.api.{Html, HtmlFormat}
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import returns.views.html.TaxYearSummaryView
-import shared.models.{ObligationWithIncomeType, ObligationsModel}
 
 import java.time.LocalDate
 

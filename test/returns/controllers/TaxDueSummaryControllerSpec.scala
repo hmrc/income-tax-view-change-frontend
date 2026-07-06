@@ -20,6 +20,7 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.models.incomeSourceDetails.TaxYear
+import common.models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import common.services.DateServiceInterface
 import common.testConstants.IncomeSourceAddedControllerConstants.testObligationsModel
 import play.api
@@ -32,7 +33,6 @@ import financials.mocks.services.MockCalculationService
 import returns.mocks.connectors.MockObligationsConnector
 import returns.services.CalculationService
 import shared.connectors.ObligationsConnector
-import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 
 import java.time.LocalDate
 

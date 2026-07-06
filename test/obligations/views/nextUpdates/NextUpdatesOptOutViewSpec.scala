@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.Annual
+import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
 import common.testUtils.TestSupport
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import obligations.models.*
@@ -34,7 +35,6 @@ import play.api.test.Helpers.*
 import play.twirl.api.Html
 import obligations.testConstants.BusinessDetailsTestConstants.business1
 import common.views.html.components.link
-import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
 import shared.testConstants.NextUpdatesTestConstants
 
 import java.time.LocalDate
@@ -85,7 +85,7 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
         twoObligationsSuccessModel.obligations
       ))).obligationsByDate(user).map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
         DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-      })
+      }, isFinancialsEnabled = true)
 
     def nextUpdatesDocument: Document =
       Jsoup.parse(contentAsString(

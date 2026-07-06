@@ -19,10 +19,10 @@ package businessDetails.mocks.services
 import common.implicits.ImplicitDateFormatter
 import common.testUtils.UnitSpec
 import businessDetails.services.NextUpdatesService
+import common.models.obligations.ObligationsResponseModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import shared.models.ObligationsResponseModel
 
 import scala.concurrent.Future
 

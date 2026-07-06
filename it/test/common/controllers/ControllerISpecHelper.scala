@@ -67,20 +67,20 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
   def testNoClientDataFailure(requestPath: String, optBody: Option[Map[String, Seq[String]]] = None): Unit = {
     "the user does not have client session data" should {
-      s"redirect ($SEE_OTHER) to ${hub.controllers.agent.routes.EnterClientsUTRController.show().url}" in {
+      s"redirect ($SEE_OTHER) to ${appConfig.enterClientsUTRUrl}" in {
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         SessionDataStub.stubGetSessionDataResponseNotFound()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(appConfig.enterClientsUTRUrl)
         )
       }
     }
 
     "the user has client session data but citizen details not found" should {
-      s"redirect ($SEE_OTHER) to ${hub.controllers.agent.routes.EnterClientsUTRController.show().url}" in {
+      s"redirect ($SEE_OTHER) to ${appConfig.enterClientsUTRUrl}" in {
         MTDAgentAuthStub.stubAuthorisedWithAgentEnrolment()
         SessionDataStub.stubGetSessionDataResponseSuccess()
         stubGetCitizenDetails(status = 404)
@@ -88,7 +88,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(appConfig.enterClientsUTRUrl)
         )
       }
     }
@@ -177,7 +177,7 @@ trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModel
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+          redirectURI(appConfig.enterClientsUTRUrl)
         )
       }
     }

@@ -21,6 +21,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.OptOutFs
+import common.models.obligations.ObligationsModel
 import common.services.AuditingService
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
@@ -29,7 +30,6 @@ import obligations.views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesV
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import shared.models.ObligationsModel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

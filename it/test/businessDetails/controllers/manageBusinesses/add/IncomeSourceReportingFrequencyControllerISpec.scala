@@ -32,8 +32,8 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
+import common.helpers.CalculationListStub
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
-import returns.helpers.servicemocks.CalculationListStub
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

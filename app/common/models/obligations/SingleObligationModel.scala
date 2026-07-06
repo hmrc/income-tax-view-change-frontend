@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package shared.models
+package common.models.obligations
 
 import play.api.libs.json.{Format, Json}
 

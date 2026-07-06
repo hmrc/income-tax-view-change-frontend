@@ -21,10 +21,10 @@ import common.enums.IncomeSourceJourney.SelfEmployment
 import common.models.core.*
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseTestConstants.*
 import financials.models.core.ErrorModel
 import shared.testConstants.NextUpdatesTestConstants.fakeNextUpdatesModel
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.{LocalDate, Month}
 

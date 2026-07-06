@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.implicits
+package shared.implicits
 
 import play.twirl.api.Html
 

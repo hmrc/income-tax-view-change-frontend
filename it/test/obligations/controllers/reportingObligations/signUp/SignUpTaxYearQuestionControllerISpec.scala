@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.SignUpFs
 import common.models.incomeSourceDetails.TaxYear
@@ -35,7 +36,6 @@ import play.mvc.Http.Status
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
-import returns.helpers.servicemocks.CalculationListStub
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 

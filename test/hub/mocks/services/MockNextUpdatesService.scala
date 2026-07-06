@@ -18,13 +18,13 @@ package hub.mocks.services
 
 import businessDetails.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
 import common.implicits.ImplicitDateFormatter
+import common.models.obligations.{ObligationsErrorModel, ObligationsResponseModel}
 import common.testUtils.UnitSpec
 import hub.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import play.api.http.Status
-import shared.models.{ObligationsErrorModel, ObligationsResponseModel}
 
 import java.time.LocalDate
 import scala.concurrent.Future

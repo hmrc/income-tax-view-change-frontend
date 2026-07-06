@@ -23,13 +23,12 @@ import common.mocks.connectors.MockIncomeTaxCalculationConnector
 import common.models.admin.*
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation.{IsMTD, LiabilityCalculationError, Message, Messages}
+import common.models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import financials.controllers.routes as financialsRoutes
-import financials.mocks.services.{MockCalculationService, MockClaimToAdjustService, MockFinancialDetailsService}
+import financials.mocks.services.MockCalculationService
 import financials.models.*
-import financials.services.*
-import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.*
 import org.jsoup.Jsoup
@@ -41,14 +40,13 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, *}
 import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
-import returns.mocks.services.MockNextUpdatesService
+import returns.mocks.services.{MockFinancialDetailsService, MockNextUpdatesService}
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
-import returns.services.{CalculationService, NextUpdatesService, TaxYearSummaryService}
+import returns.services.{CalculationService, FinancialDetailsService, NextUpdatesService, TaxYearSummaryService}
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.{getCurrentTaxYearEnd, liabilityCalculationModelErrorMessagesForIndividual, liabilityCalculationModelSuccessful, liabilityCalculationModelSuccessfulNotCrystallised}
 import returns.views.html.TaxYearSummaryView
 import shared.connectors.CalculationListConnector
-import shared.models.*
 
 import java.time.LocalDate
 import scala.annotation.unused
@@ -60,7 +58,6 @@ class TaxYearSummaryControllerSpec
     with MockFinancialDetailsService
     with MockNextUpdatesService
     with MockIncomeTaxCalculationConnector
-    with MockClaimToAdjustService
     with ChargeConstants {
 
   lazy val mockCalculationListConnector: CalculationListConnector = mock(classOf[CalculationListConnector])
@@ -72,7 +69,6 @@ class TaxYearSummaryControllerSpec
         api.inject.bind[CalculationService].toInstance(mockCalculationService),
         api.inject.bind[FinancialDetailsService].toInstance(mockFinancialDetailsService),
         api.inject.bind[NextUpdatesService].toInstance(mockNextUpdatesService),
-        api.inject.bind[ClaimToAdjustService].toInstance(mockClaimToAdjustService),
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[CalculationListConnector].toInstance(mockCalculationListConnector),
         api.inject.bind[TaxYearSummaryService].toInstance(mockTaxYearSummaryService),

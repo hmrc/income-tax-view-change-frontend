@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package shared.models
+package common.models.obligations
 
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.QuarterTypeElection.orderingByTypeName

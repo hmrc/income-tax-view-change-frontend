@@ -21,12 +21,12 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.helpers.WiremockHelper
 import common.models.core.Nino
 import common.models.incomeSourceDetails.IncomeSourceDetailsResponse
+import common.models.obligations.ObligationsModel
 import financials.models.Payment
 import financials.models.repaymentHistory.RepaymentHistoryModel
 import play.api.http.Status
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsValue, Json}
-import shared.models.ObligationsModel
 
 import java.time.LocalDate
 

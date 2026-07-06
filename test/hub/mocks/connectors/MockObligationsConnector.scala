@@ -16,12 +16,12 @@
 
 package hub.mocks.connectors
 
+import common.models.obligations.ObligationsResponseModel
 import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import shared.connectors.ObligationsConnector
-import shared.models.ObligationsResponseModel
 
 import scala.concurrent.Future
 

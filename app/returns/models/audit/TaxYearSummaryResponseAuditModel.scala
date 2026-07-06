@@ -22,13 +22,13 @@ import common.enums.TransactionName
 import common.implicits.ImplicitDateParser
 import common.models.audit.ExtendedAuditModel
 import common.models.liabilitycalculation.Messages
+import common.models.obligations.ObligationWithIncomeType
 import common.utils.audit.Utilities.userAuditDetails
 import financials.models.audit.PaymentSharedFunctions
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{JsObject, JsValue, Json}
 import returns.models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
-import shared.models.ObligationWithIncomeType
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 case class TaxYearSummaryResponseAuditModel(mtdItUser: MtdItUser[_],

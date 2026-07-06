@@ -20,8 +20,8 @@ import common.exceptions.MissingFieldException
 import common.models.liabilitycalculation.*
 import common.models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import CalculationSummary.getTaxDue
+import common.models.obligations.ObligationsModel
 import play.api.Logger
-import shared.models.ObligationsModel
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: String = "",

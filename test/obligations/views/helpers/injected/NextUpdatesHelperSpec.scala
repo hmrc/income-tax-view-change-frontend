@@ -16,6 +16,7 @@
 
 package obligations.views.helpers.injected
 
+import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
 import obligations.models.*
 import shared.testConstants.NextUpdatesTestConstants.{crystallisedObligation, twoObligationsSuccessModel}
 import obligations.views.html.helpers.injected.NextUpdatesHelper
@@ -26,7 +27,6 @@ import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.testMtdItUser
 import common.testUtils.TestSupport
 import obligations.testConstants.BusinessDetailsTestConstants.{business1, testTradeName}
-import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
 
 import java.time.LocalDate
 
@@ -43,13 +43,13 @@ class  NextUpdatesHelperSpec extends TestSupport {
     business1.incomeSourceId,
     twoObligationsSuccessModel.obligations
   ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)}, isFinancialsEnabled = true)
 
   lazy val crystallisedObligationsModel: NextUpdatesViewModel = NextUpdatesViewModel(ObligationsModel(Seq(GroupedObligationsModel(
     business1.incomeSourceId,
     List(crystallisedObligation)
   ))).obligationsByDate.map{case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
-    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)})
+    DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)}, isFinancialsEnabled = true)
 
   "Next updates helper" should {
 

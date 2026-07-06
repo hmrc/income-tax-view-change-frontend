@@ -16,7 +16,7 @@
 
 package financials.views.claimToAdjustPoa
 
-import _root_.financials.implicits.ImplicitCurrencyFormatter.*
+import shared.implicits.ImplicitCurrencyFormatter.*
 import common.models.core.NormalMode
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.TestSupport

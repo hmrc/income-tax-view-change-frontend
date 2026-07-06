@@ -22,7 +22,7 @@ import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, fakeNextUpdatesModel}
 import common.models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
-import shared.models.{SingleObligationModel, StatusFulfilled}
+import common.models.obligations.{SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

@@ -1,0 +1,83 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package returns.connectors
+
+import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.connectors.RawResponseReads
+import common.utils.Headers.checkAndAddTestHeader
+import financials.models.*
+import play.api.Logger
+import play.api.http.Status
+import play.api.http.Status.OK
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
+
+@Singleton
+class GetFinancialDetailsConnector @Inject()(
+                                           httpV2: HttpClientV2,
+                                           appConfig: FrontendAppConfig
+                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
+
+  private[connectors] val baseUrl = s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details"
+
+  private[connectors] def getChargesUrl(nino: String, from: String, to: String): String =
+    baseUrl + s"/$nino/financial-details/charges/from/$from/to/$to"
+
+  def getFinancialDetails(taxYear: Int, nino: String)
+                         (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
+
+    val dateFrom: String = (taxYear - 1).toString + "-04-06"
+    val dateTo: String = taxYear.toString + "-04-05"
+
+    val url = getChargesUrl(nino, dateFrom, dateTo)
+    Logger("application").debug(s"GET $url")
+
+    val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
+
+    httpV2
+      .get(url"$url")
+      .setHeader(hc.extraHeaders: _*)
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK =>
+            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            response.json.validate[FinancialDetailsModel].fold(
+              invalid => {
+                Logger("application").error(s"Json Validation Error: $invalid ")
+                FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
+              },
+              valid => valid
+            )
+          case status if status >= 500 =>
+            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+          case _ =>
+            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+            FinancialDetailsErrorModel(response.status, response.body)
+        }
+      }.recover {
+        case ex =>
+          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+          FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
+      }
+  }
+}

@@ -19,6 +19,7 @@ package obligations.views.helpers.injected
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, Voluntary}
+import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
 import common.testUtils.TestSupport
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
@@ -30,7 +31,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import obligations.testConstants.BusinessDetailsTestConstants.business1
-import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
 
 import java.time.LocalDate
 
@@ -59,7 +59,8 @@ class NextUpdatesHelperR17Spec extends TestSupport {
   ))).obligationsByDate.map{
     case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-  }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("Quarter", quarterlyBusinessObligation)), Seq.empty)))
+  }, Seq(DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, LocalDate.of(2025, 1, 31), Seq(ObligationWithIncomeType("Quarter", quarterlyBusinessObligation)), Seq.empty)),
+    isFinancialsEnabled = true)
 
 
   "Next updates helper for Release 17" when {
@@ -144,13 +145,13 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       "display the tax year summary description for the current year tab - individuals" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("active-quarterly-tax-year-summary-desc").text() shouldBe "To view previously submitted updates visit the tax year summary page."
         pageDocument.getElementById("tax-year-summary-link").text() shouldBe "tax year summary"
-        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe returns.controllers.routes.TaxYearsController.showTaxYears().url
+        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe appConfig.returnsTaxYearsIndividualUrl(true)
       }
 
       "display the tax year summary description for the current year tab - agents" in new Setup(isAgent = true, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("active-quarterly-tax-year-summary-desc").text() shouldBe "To view previously submitted updates visit the tax year summary page."
         pageDocument.getElementById("tax-year-summary-link").text() shouldBe "tax year summary"
-        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
+        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe appConfig.returnsTaxYearsAgentUrl(true)
       }
 
       "display the tax return due subheading for the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
@@ -279,13 +280,13 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       "display the tax year summary description for the next year tab - individuals" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
         pageDocument.getElementById("active-quarterly-tax-year-summary-desc").text() shouldBe "To view previously submitted updates visit the tax year summary page."
         pageDocument.getElementById("tax-year-summary-link").text() shouldBe "tax year summary"
-        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe returns.controllers.routes.TaxYearsController.showTaxYears().url
+        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe appConfig.returnsTaxYearsUrl(isAgent = false, returnsFrontendEnabled = true)
       }
 
       "display the tax year summary description for the next year tab - agents" in new Setup(isAgent = true, obligationsModel, Annual, Voluntary) {
         pageDocument.getElementById("active-quarterly-tax-year-summary-desc").text() shouldBe "To view previously submitted updates visit the tax year summary page."
         pageDocument.getElementById("tax-year-summary-link").text() shouldBe "tax year summary"
-        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
+        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe appConfig.returnsTaxYearsUrl(isAgent = true, returnsFrontendEnabled = true)
       }
 
       "display the tax return due subheading for the next year tab" in new Setup(isAgent = false, obligationsModel, Annual, Voluntary) {
@@ -376,13 +377,13 @@ class NextUpdatesHelperR17Spec extends TestSupport {
       "display the tax year summary description for the current year tab - individuals" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("active-quarterly-tax-year-summary-desc").text() shouldBe "To view previously submitted updates visit the tax year summary page."
         pageDocument.getElementById("tax-year-summary-link").text() shouldBe "tax year summary"
-        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe returns.controllers.routes.TaxYearsController.showTaxYears().url
+        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe appConfig.returnsTaxYearsUrl(isAgent = false, returnsFrontendEnabled = true)
       }
 
       "display the tax year summary description for the current year tab - agents" in new Setup(isAgent = true, obligationsModel, Voluntary, Annual) {
         pageDocument.getElementById("active-quarterly-tax-year-summary-desc").text() shouldBe "To view previously submitted updates visit the tax year summary page."
         pageDocument.getElementById("tax-year-summary-link").text() shouldBe "tax year summary"
-        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
+        pageDocument.getElementById("tax-year-summary-link").attr("href") shouldBe appConfig.returnsTaxYearsUrl(isAgent = true, returnsFrontendEnabled = true)
       }
 
       "display the tax return due subheading for the current year tab" in new Setup(isAgent = false, obligationsModel, Voluntary, Annual) {

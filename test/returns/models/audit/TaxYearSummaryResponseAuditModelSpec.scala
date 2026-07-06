@@ -21,6 +21,7 @@ import common.implicits.ImplicitDateParser
 import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.models.liabilitycalculation.{Message, Messages}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
 import common.testUtils.TestSupport
 import financials.models.*
@@ -31,7 +32,6 @@ import play.api.libs.json.*
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 

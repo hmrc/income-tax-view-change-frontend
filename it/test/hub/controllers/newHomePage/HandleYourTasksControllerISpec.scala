@@ -27,13 +27,13 @@ import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import financials.enums.ChargeType.ITSA_NI
 import financials.models.creditsandrefunds.CreditsModel
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.OK
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
-import shared.models.*
 
 import java.time.LocalDate
 

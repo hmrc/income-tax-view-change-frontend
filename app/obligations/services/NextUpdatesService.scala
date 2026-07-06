@@ -19,11 +19,11 @@ package obligations.services
 import common.auth.MtdItUser
 import common.services.DateServiceInterface
 import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
+import common.models.obligations.{ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import obligations.models.*
 import obligations.services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
 import play.api.Logger
 import shared.connectors.ObligationsConnector
-import shared.models.{ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate

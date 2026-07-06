@@ -28,10 +28,11 @@ import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation
 import common.models.liabilitycalculation.*
+import common.models.obligations.ObligationsModel
 import common.services.{AuditingService, DateServiceInterface}
+import financials.models.{ChargeItem, DocumentDetail, FirstLatePaymentPenalty, LateSubmissionPenalty, PoaOneDebit, PoaTwoDebit, SecondLatePaymentPenalty, TransactionUtils}
 import financials.models.*
-import financials.services.*
-import financials.services.claimToAdjustPoa.ClaimToAdjustService
+import returns.services.FinancialDetailsService
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
@@ -41,7 +42,6 @@ import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSCl
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 import returns.services.{CalculationService, NextUpdatesService, TaxYearSummaryService}
 import returns.views.html.TaxYearSummaryView
-import shared.models.ObligationsModel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -65,8 +65,7 @@ class TaxYearSummaryController @Inject()(
                                           nextUpdatesService: NextUpdatesService,
                                           messagesApi: MessagesApi,
                                           val languageUtils: LanguageUtils,
-                                          val auditingService: AuditingService,
-                                          claimToAdjustService: ClaimToAdjustService
+                                          val auditingService: AuditingService
                                         )(
                                           implicit val appConfig: FrontendAppConfig,
                                           dateService: DateServiceInterface,
@@ -599,7 +598,7 @@ class TaxYearSummaryController @Inject()(
   }
 
   private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[TYSClaimToAdjustViewModel] = {
-    claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
+    financialDetailsService.getPoaTaxYearForEntryPoint(nino).flatMap {
       case Right(value) => value match {
         case Some(value) if value.endYear == taxYear => Future(TYSClaimToAdjustViewModel(Option(value)))
         case _ => Future(TYSClaimToAdjustViewModel(None))

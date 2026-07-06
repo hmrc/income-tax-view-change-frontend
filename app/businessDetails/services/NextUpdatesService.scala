@@ -21,9 +21,9 @@ import common.auth.MtdItUser
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.services.DateServiceInterface
 import businessDetails.models.incomeSourceDetails.viewmodels.*
+import common.models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import play.api.Logger
 import shared.connectors.ObligationsConnector
-import shared.models.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}

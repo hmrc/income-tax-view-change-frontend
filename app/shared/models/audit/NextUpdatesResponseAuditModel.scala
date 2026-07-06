@@ -19,8 +19,8 @@ package shared.models.audit
 import common.auth.MtdItUser
 import common.enums.AuditType.ViewObligationsResponse
 import common.models.audit.ExtendedAuditModel
+import common.models.obligations.SingleObligationModel
 import play.api.libs.json.*
-import shared.models.SingleObligationModel
 
 case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
                                          incomeSourceId: String,

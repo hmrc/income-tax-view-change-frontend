@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.mocks.services.MockDateService
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testUtils.TestSupport
 import financials.models.Payment
 import financials.models.repaymentHistory.*
@@ -27,7 +28,6 @@ import hub.models.newHomePage.{RecentActivityPaymentModel, RecentActivitySubmiss
 import hub.mocks.connectors.MockObligationsConnector
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

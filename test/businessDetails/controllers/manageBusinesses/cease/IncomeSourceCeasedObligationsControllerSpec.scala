@@ -41,7 +41,8 @@ import common.testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, t
 import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSource
 import common.testConstants.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
-import shared.models.{GroupedObligationsModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled, UIJourneySessionData}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 import scala.concurrent.Future

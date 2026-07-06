@@ -41,7 +41,7 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDeta
 import common.services.{DateService, DateServiceInterface}
 import businessDetails.mocks.services.MockNextUpdatesService
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.manage
 
 import common.enums.IncomeSourceJourney.ForeignProperty
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.DisplayBusinessStartDate
 import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
@@ -26,7 +27,6 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
-import returns.helpers.servicemocks.CalculationListStub
 
 import java.time.LocalDate
 
