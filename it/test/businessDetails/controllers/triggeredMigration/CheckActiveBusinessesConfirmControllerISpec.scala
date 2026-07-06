@@ -38,12 +38,12 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
   def getCompletePath(mtdRole: MTDUserRole): String = {
     val prefix = if (mtdRole == MTDIndividual) "" else "/agents"
-    s"$prefix/check-your-active-businesses/complete"
+    s"${appConfig.basePath}$prefix/check-your-active-businesses/complete"
   }
 
   def getCheckHmrcRecordsPath(mtdRole: MTDUserRole): String = {
     val prefix = if (mtdRole == MTDIndividual) "" else "/agents"
-    s"$prefix/check-your-active-businesses/hmrc-record"
+    s"${appConfig.basePath}$prefix/check-your-active-businesses/hmrc-record"
   }
 
   object CheckActiveBusinessesConfirmMessages {
@@ -132,7 +132,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(s"/report-quarterly/income-and-expenses/view$completePath")
+            redirectURI(s"$completePath")
           )
           
           AuditStub.verifyAuditEvent(TriggeredMigrationCompleteAuditModel()(getTestUser(mtdRole, singleBusinessIncomeUnconfirmed)))
@@ -157,7 +157,7 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(s"/report-quarterly/income-and-expenses/view$checkHmrcRecordsPath")
+            redirectURI(s"$checkHmrcRecordsPath")
           )
         }
 

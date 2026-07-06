@@ -16,7 +16,7 @@
 
 package financials.models.audit
 
-import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
+import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.commonAuditDetails
 import common.auth.MtdItUser
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport

@@ -17,7 +17,7 @@
 package businessDetails.testConstants
 
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

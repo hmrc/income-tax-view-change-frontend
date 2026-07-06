@@ -18,11 +18,10 @@ package obligations.repositories
 
 import common.auth.MtdItUser
 import common.enums.JourneyType.OptOutJourney
-import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.testUtils.UnitSpec
-import financials.mocks.services.MockCalculationListService
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.mocks.connectors.MockITSAStatusUpdateConnector
 import obligations.models.reportingObligations.optOut.OptOutSessionData

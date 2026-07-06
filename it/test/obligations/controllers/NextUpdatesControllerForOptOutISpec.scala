@@ -18,13 +18,14 @@ package obligations.controllers
 
 import common.auth.MtdItUser
 import common.enums.MTDIndividual
-import common.helpers.ComponentSpecBase
+import common.helpers.{CalculationListStub, ComponentSpecBase}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub, MTDIndividualAuthStub}
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
+import common.models.obligations.ObligationsModel
 import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import org.mongodb.scala.SingleObservableFuture
 import org.mongodb.scala.bson.BsonDocument
@@ -33,8 +34,6 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.*
-import returns.helpers.servicemocks.CalculationListStub
-import shared.models.ObligationsModel
 
 class NextUpdatesControllerForOptOutISpec extends ComponentSpecBase {
 

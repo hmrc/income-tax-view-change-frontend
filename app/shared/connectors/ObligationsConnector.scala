@@ -19,11 +19,11 @@ package shared.connectors
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
+import common.models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import common.services.AuditingService
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.{FORBIDDEN, NOT_FOUND, OK}
-import shared.models.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import shared.models.audit.NextUpdatesResponseAuditModel
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}

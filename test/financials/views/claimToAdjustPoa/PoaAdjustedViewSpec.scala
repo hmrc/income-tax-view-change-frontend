@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.TestSupport
 import financials.controllers.routes as financialsRoutes
-import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.views.html.claimToAdjustPoa.PoaAdjustedView
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document

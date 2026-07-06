@@ -20,10 +20,12 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import obligations.controllers.constants.ConfirmOptOutControllerConstants.{currentTaxYear, emptyBodyString}
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.audit.OptOutNewAuditModel
@@ -36,8 +38,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
-import returns.helpers.servicemocks.CalculationListStub
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen, UIJourneySessionData}
+import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
 class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {

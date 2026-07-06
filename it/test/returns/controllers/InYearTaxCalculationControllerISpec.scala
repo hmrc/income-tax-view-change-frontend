@@ -88,7 +88,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
 
   object ExpectedValues {
     val pathStart: Boolean => String = isAgent =>
-      "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else ""}
+      s"$basePath" + {if(isAgent) "/agents" else ""}
     val title: Boolean => String = isAgent =>
       if(isAgent) {
         s"Your client’s tax overview 6 April $previousTaxYearString to 5 April $taxYearString - Manage your Self Assessment - GOV.UK"
@@ -118,7 +118,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
 
   object ExpectedValuesWelsh {
     val pathStart: Boolean => String = isAgent =>
-      "/report-quarterly/income-and-expenses/view" + {if(isAgent) "/agents" else ""}
+      s"$basePath" + {if(isAgent) "/agents" else ""}
     val title: Boolean => String = isAgent =>
       if(isAgent) {
         s"Trosolwg o dreth eich cleient 6 Ebrill $previousTaxYearString i 5 Ebrill $taxYearString - Rheoli’ch Hunanasesiad - GOV.UK"

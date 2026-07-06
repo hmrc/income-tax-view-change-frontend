@@ -16,7 +16,7 @@
 
 package common.models
 
-import businessDetails.forms.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
+import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
 import businessDetails.testConstants.BusinessDetailsTestConstants.{testLatencyDetails, *}
 import businessDetails.testConstants.PropertyDetailsTestConstants.*
 import common.auth.MtdItUser

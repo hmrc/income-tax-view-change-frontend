@@ -35,8 +35,9 @@ package businessDetails.connectors
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponse
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants
 import common.config.FrontendAppConfig
-import common.mocks.{MockAuditingService, MockHttpV2}
+import common.mocks.MockHttpV2
 import UpdateIncomeSourceTestConstants.*
+import common.mocks.services.MockAuditingService
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.mvc.Http.Status

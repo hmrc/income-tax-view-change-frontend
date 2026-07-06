@@ -18,20 +18,20 @@ package obligations.controllers.agents
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
+import common.helpers.CalculationListStub
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.admin.OptOutFs
 import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.address
-import returns.helpers.servicemocks.CalculationListStub
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import shared.models.audit.NextUpdatesResponseAuditModel
 
 import java.time.LocalDate

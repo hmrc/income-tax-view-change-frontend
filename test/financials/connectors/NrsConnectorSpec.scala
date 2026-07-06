@@ -17,7 +17,7 @@
 package financials.connectors
 
 import common.connectors.BaseConnectorSpec
-import common.testConstants.NrsUtils.*
+import financials.testConstants.NrsUtils.*
 import financials.models.nrs.NrsSubmissionFailure.{NrsErrorResponse, NrsExceptionThrown}
 import financials.models.nrs.NrsSuccessResponse
 import org.mockito.ArgumentMatchers.any

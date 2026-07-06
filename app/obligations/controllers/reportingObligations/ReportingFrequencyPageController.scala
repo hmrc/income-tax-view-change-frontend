@@ -19,7 +19,7 @@ package obligations.controllers.reportingObligations
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.{OptOutFs, SignUpFs}
+import common.models.admin.{BusinessDetailsFrontend, OptOutFs, SignUpFs}
 import common.services.DateServiceInterface
 import obligations.controllers.routes as obligationsRoutes
 import obligations.models.reportingObligations.ReportingFrequencyViewModel
@@ -73,7 +73,8 @@ class ReportingFrequencyPageController @Inject()(
             mtdThreshold = getMtdThreshold(),
             proposition = optOutProposition,
             isSignUpEnabled = isEnabled(SignUpFs),
-            isOptOutEnabled = isEnabled(OptOutFs)
+            isOptOutEnabled = isEnabled(OptOutFs),
+            isBusinessDetailsEnabled = isEnabled(BusinessDetailsFrontend)
           )
         nextUpdatesLink =
           if (isAgent) obligationsRoutes.NextUpdatesController.showAgent().url

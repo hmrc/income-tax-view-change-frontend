@@ -27,13 +27,13 @@ import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
 import financials.enums.ChargeType.ITSA_NI
 import financials.models.creditsandrefunds.CreditsModel
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.OK
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
-import shared.models.*
 
 import java.time.LocalDate
 
@@ -72,12 +72,12 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
   def taskLink(id: String) = s"#$id > a"
 
-  def submissionsLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "/report-quarterly/income-and-expenses/view/agents/submission-deadlines" else "/report-quarterly/income-and-expenses/view/submission-deadlines"
-  def whatYouOweLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes" else "/report-quarterly/income-and-expenses/view/what-you-owe"
-  def lspAndLppLink(mtdUserRole: MTDUserRole, chargeId: String = "1040000123") = if(mtdUserRole != MTDIndividual) s"/report-quarterly/income-and-expenses/view/agents/tax-years/2018/charge?id=$chargeId" else s"/report-quarterly/income-and-expenses/view/tax-years/2018/charge?id=$chargeId"
+  def submissionsLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"$basePath/agents/submission-deadlines" else s"$basePath/submission-deadlines"
+  def whatYouOweLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"$basePath/agents/what-your-client-owes" else s"$basePath/what-you-owe"
+  def lspAndLppLink(mtdUserRole: MTDUserRole, chargeId: String = "1040000123") = if(mtdUserRole != MTDIndividual) s"$basePath/agents/tax-years/2018/charge?id=$chargeId" else s"$basePath/tax-years/2018/charge?id=$chargeId"
   def lspTabLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "http://localhost:9185/view-penalty/self-assessment/agent#lspTab" else "http://localhost:9185/view-penalty/self-assessment#lspTab"
   def lppTabLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "http://localhost:9185/view-penalty/self-assessment/agent#lppTab" else "http://localhost:9185/view-penalty/self-assessment#lppTab"
-  def moneyInYourAccountLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "/report-quarterly/income-and-expenses/view/agents/money-in-your-account" else "/report-quarterly/income-and-expenses/view/money-in-your-account"
+  def moneyInYourAccountLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"$basePath/agents/money-in-your-account" else s"$basePath/money-in-your-account"
 
   object YourTasksViewMessages {
     val noTasksContent = "You have no tasks to complete at the moment."

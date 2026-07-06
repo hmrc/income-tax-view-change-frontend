@@ -26,6 +26,7 @@ import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDeta
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.messages.HomeMessages.*
 import financials.models.*
@@ -38,7 +39,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import shared.models.audit.NextUpdatesResponseAuditModel
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

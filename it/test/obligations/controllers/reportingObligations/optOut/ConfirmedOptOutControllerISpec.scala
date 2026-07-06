@@ -23,6 +23,7 @@ import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import obligations.helpers.OptOutSessionRepositoryHelper
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
@@ -30,7 +31,6 @@ import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023}
 import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import shared.repositories.UIJourneySessionDataRepository
 
 import java.time.LocalDate

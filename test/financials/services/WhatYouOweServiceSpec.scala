@@ -47,6 +47,10 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
     super.beforeEach()
   }
 
+  def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
+    case x if x.remainingToPayByChargeOrInterest > 0 => x
+  }
+
   val mockFinancialDetailsService: FinancialDetailsService = mock(classOf[FinancialDetailsService])
   val mockClaimToAdjustService: ClaimToAdjustService = mock(classOf[ClaimToAdjustService])
   val mockSelfServeTimeToPayService: SelfServeTimeToPayService = mock(classOf[SelfServeTimeToPayService])

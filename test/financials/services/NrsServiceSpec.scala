@@ -16,7 +16,7 @@
 
 package financials.services
 
-import common.testConstants.NrsUtils.nrsSubmission
+import financials.testConstants.NrsUtils.nrsSubmission
 import common.testUtils.TestSupport
 import financials.connectors.NrsConnector
 import financials.models.nrs.NrsSubmissionFailure.NrsErrorResponse

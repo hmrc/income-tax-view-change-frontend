@@ -16,7 +16,7 @@
 
 package financials.models.audit
 
-import businessDetails.forms.IncomeSourcesFormsSpec.commonAuditDetails
+import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.commonAuditDetails
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.DateService

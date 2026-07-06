@@ -158,7 +158,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
               defaultAsync)
 
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents/agent-error")
+            redirectLocation(result).get should include("/agents/agent-error")
           }
         }
       }
@@ -195,7 +195,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/session-timeout")
+        redirectLocation(result).get should include("/session-timeout")
       }
     }
 
@@ -211,7 +211,7 @@ class AuthoriseAndRetrieveAgentForNrsSpec extends AuthActionsSpecHelper {
           defaultAsync)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/sign-in")
+        redirectLocation(result).get should include("/sign-in")
       }
     }
   }

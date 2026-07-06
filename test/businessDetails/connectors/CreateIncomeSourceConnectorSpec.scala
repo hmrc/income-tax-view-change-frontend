@@ -16,7 +16,6 @@
 
 package businessDetails.connectors
 
-import businessDetails.connectors.helpers.IncomeSourcesDataHelper
 import businessDetails.models.createIncomeSource.CreateIncomeSourceErrorResponse.format
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import common.mocks.MockHttpV2

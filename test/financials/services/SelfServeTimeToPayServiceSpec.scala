@@ -17,13 +17,13 @@
 package financials.services
 
 import common.exceptions.SelfServeTimeToPayJourneyException
-import common.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import common.testConstants.BaseTestConstants.{expectedJourneyId, testSetUpPaymentPlanUrl}
 import common.testUtils.TestSupport
 import financials.connectors.SelfServeTimeToPayConnector
+import financials.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 
 import scala.concurrent.Future
 

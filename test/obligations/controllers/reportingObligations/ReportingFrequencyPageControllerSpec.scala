@@ -21,7 +21,7 @@ import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
-import common.models.admin.{OptOutFs, SignUpFs}
+import common.models.admin.{BusinessDetailsFrontend, OptOutFs, SignUpFs}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.{DateService, DateServiceInterface}
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
@@ -84,7 +84,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
 
             when(mockDateServiceInjected.getCurrentDate).thenReturn(LocalDate.of(2023, 1, 1))
             when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(TaxYear(2023, 2024))
-            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs))
+            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs, BusinessDetailsFrontend))
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
@@ -138,7 +138,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   mtdThreshold = "£50,000",
                   proposition = optOutProposition,
                   isSignUpEnabled = true,
-                  isOptOutEnabled = true
+                  isOptOutEnabled = true,
+                  isBusinessDetailsEnabled = true
                 ),
                 nextUpdatesLink =
                   if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url
@@ -149,7 +150,7 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
 
             val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
 
-            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs))
+            setupMockSuccess(mtdRole, false, List(SignUpFs, OptOutFs, BusinessDetailsFrontend))
             mockItsaStatusRetrievalAction(singleBusinessIncome, TaxYear(2023, 2024))
             mockUpdateOptOutJourneyStatusInSessionData()
             mockFetchOptOutJourneyCompleteStatus()
@@ -204,7 +205,8 @@ class ReportingFrequencyPageControllerSpec extends MockAuthActions
                   mtdThreshold = "£50,000",
                   proposition = optOutProposition,
                   isSignUpEnabled = true,
-                  isOptOutEnabled = true
+                  isOptOutEnabled = true,
+                  isBusinessDetailsEnabled = true
                 ),
                 nextUpdatesLink = if (isAgent) obligations.controllers.routes.NextUpdatesController.showAgent().url else obligations.controllers.routes.NextUpdatesController.show().url
               ).toString

@@ -17,15 +17,15 @@
 package obligations.services
 
 import common.config.featureswitch.FeatureSwitching
+import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testUtils.TestSupport
 import obligations.mocks.connectors.MockObligationsConnector
 import obligations.models.*
 import obligations.services.NextUpdatesService.QuarterlyUpdatesCountForTaxYear
 import obligations.services.reportingObligations.optOut.OptOutTestSupport
-import obligations.testConstants.NextUpdatesTestConstants.*
+import shared.testConstants.NextUpdatesTestConstants.*
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import obligations.testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
-import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.testConstants.NextUpdatesTestConstants.obligationsDataSuccessModel as _
 
 import java.time.LocalDate
 
@@ -381,7 +381,7 @@ class NextUpdatesServiceSpec extends TestSupport with MockObligationsConnector w
         NextUpdatesViewModel(
           List(DeadlineViewModel(QuarterlyObligation, true, LocalDate.parse("2023-12-15"),
             List(ObligationWithIncomeType("nextUpdates.business", SingleObligationModel(LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-15"), LocalDate.parse("2023-12-15"), "Quarterly", None, "#001", StatusFulfilled))),
-            List()))
+            List())), isFinancialsEnabled = false
         )
       }
     }

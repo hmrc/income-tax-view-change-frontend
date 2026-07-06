@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import financials.controllers.routes as financialsRoutes
-import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.*
 import financials.models.creditsandrefunds.CreditsModel
 import hub.models.newHomePage.*

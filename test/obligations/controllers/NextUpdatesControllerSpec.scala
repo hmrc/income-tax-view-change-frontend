@@ -23,13 +23,13 @@ import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseTestConstants
 import obligations.mocks.services.{MockNextUpdatesService, MockOptOutService}
 import obligations.models.*
 import obligations.models.reportingObligations.optOut.*
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutService}
-import obligations.testConstants.NextUpdatesTestConstants
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -40,7 +40,7 @@ import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
 import common.testConstants.IncomeSourceDetailsTestConstants.{errorResponse, noIncomeDetails}
-import shared.models.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
+import shared.testConstants.NextUpdatesTestConstants
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -71,7 +71,7 @@ class NextUpdatesControllerSpec extends MockAuthActions
     GroupedObligationsModel(BaseTestConstants.testPropertyIncomeId, List(SingleObligationModel(fixedDate, fixedDate, fixedDate, "Quarterly", Some(fixedDate), "#002", StatusFulfilled)))
   )).obligationsByDate.map { case (date: LocalDate, obligations: Seq[ObligationWithIncomeType]) =>
     DeadlineViewModel(QuarterlyObligation, standardAndCalendar = false, date, obligations, Seq.empty)
-  })
+  }, isFinancialsEnabled = true)
 
   val contentChecks = NextUpdatesQuarterlyReportingContentChecks(
     currentYearItsaStatus = true,

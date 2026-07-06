@@ -19,7 +19,6 @@ package common.controllers.agent
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
-import hub.controllers.agent.routes
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,9 +37,7 @@ class ClientRelationshipFailureController @Inject()(clientRelationshipFailure: C
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
 
   def show: Action[AnyContent] = authActions.asAgent() { implicit user =>
-      Ok(clientRelationshipFailure(
-        postAction = routes.EnterClientsUTRController.show()
-      ))
+      Ok(clientRelationshipFailure(appConfig.enterClientsUTRUrl))
   }
 
 }

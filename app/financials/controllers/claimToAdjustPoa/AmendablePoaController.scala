@@ -20,7 +20,6 @@ import cats.data.EitherT
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.core.Nino
-import financials.implicits.ImplicitCurrencyFormatter
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.utils.ErrorRecovery
@@ -31,6 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import shared.enums.InitialPage
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import financials.views.html.claimToAdjustPoa.AmendablePoaView
+import shared.implicits.ImplicitCurrencyFormatter
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

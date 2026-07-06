@@ -17,6 +17,7 @@
 @import _root_.common.implicits.ImplicitDateFormatterImpl
 @import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 @import common.models.core.AddressModel
+@import common.config.FrontendAppConfig
 @import businessDetails.models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 @import businessDetails.controllers.manageBusinesses.manage.routes as manageBusinessesRoutes
 @import uk.gov.hmrc.govukfrontend.views.html.components.{FormWithCSRF, _}
@@ -28,7 +29,6 @@
 @import common.config.FrontendAppConfig
 @import common.viewUtils.ExternalUrlHelper
 @import play.twirl.api.HtmlFormat
-@import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
 @import common.auth.MtdItUser
 
 @this(
@@ -51,8 +51,9 @@
         viewModel: ManageIncomeSourceDetailsViewModel,
         isAgent: Boolean,
         showStartDate: Boolean,
-        backUrl: String
-)(implicit messages: Messages, user: MtdItUser[_])
+        backUrl: String,
+        newObligationsEnabled: Boolean
+)(implicit messages: Messages, user: MtdItUser[_], appConfig: FrontendAppConfig)
 
 @import implicitDateFormatter.longDate
 
@@ -96,7 +97,7 @@ val rows = {
                     key = Key(
                         content = Text(messages("incomeSources.manage.new.business.details.business.name"))
                     ),
-                    value = Value(content = Text(messages("nextUpdates.business")))
+                    value = Value(content = Text(messages("incomeSources.manage.new.business.details.business.income")))
                 ))
             case Some(name) =>
                 Some(SummaryListRow(
@@ -277,7 +278,7 @@ val rows = {
 }
 
 @reportingFrequencyURL(isAgent: Boolean) = @{
-    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
+    appConfig.obligationsReportingFrequencyUrl(isAgent, newObligationsEnabled)
 }
 
 @getQuarterlyType = @{

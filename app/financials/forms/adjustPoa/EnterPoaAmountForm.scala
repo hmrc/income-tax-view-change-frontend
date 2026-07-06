@@ -17,7 +17,7 @@
 package financials.forms.adjustPoa
 
 import common.forms.mappings.Mappings
-import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import play.api.data.Form
 import play.api.data.Forms.mapping
 import play.api.i18n.Messages

@@ -21,13 +21,13 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.CreditsRefundsRepay
-import common.models.core.ErrorModel
 import financials.testConstants.ANewCreditAndRefundModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import financials.models.audit.ClaimARefundAuditModel
+import financials.models.core.ErrorModel
 
 import java.time.LocalDate
 
@@ -192,12 +192,12 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
                 IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
-
+                
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR),
                   pageTitle(mtdUserRole, "standardError.heading", isErrorPage = true),
                   elementAttributeBySelector(".govuk-phase-banner__text a", "href")
-                  (s"/report-quarterly/income-and-expenses/view${if(mtdUserRole == MTDIndividual) "" else "/agents"}/feedback")
+                  (s"$basePath${if(mtdUserRole == MTDIndividual) "" else "/agents"}/feedback")
                 )
               }
 

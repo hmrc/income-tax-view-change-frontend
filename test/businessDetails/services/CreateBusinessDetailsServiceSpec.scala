@@ -16,8 +16,7 @@
 
 package businessDetails.services
 
-import businessDetails.connectors.CreateIncomeSourceConnector
-import businessDetails.connectors.helpers.IncomeSourcesDataHelper
+import businessDetails.connectors.{CreateIncomeSourceConnector, IncomeSourcesDataHelper}
 import businessDetails.models.createIncomeSource.*
 import businessDetails.models.incomeSourceDetails.viewmodels.CheckPropertyViewModel
 import common.auth.actions.AuthActionsTestData.*

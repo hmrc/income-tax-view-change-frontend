@@ -19,7 +19,7 @@ package financials.models.repaymentHistory
 import common.exceptions.MissingFieldException
 import common.services.DateServiceInterface
 import financials.controllers.routes as financialsRoutes
-import financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.*
 import play.api.Logger
 import play.api.i18n.Messages

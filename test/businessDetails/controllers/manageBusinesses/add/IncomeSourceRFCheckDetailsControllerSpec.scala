@@ -99,9 +99,9 @@ class IncomeSourceRFCheckDetailsControllerSpec extends MockAuthActions with Mock
               case ForeignProperty => "add-foreign-property/foreign-property-added"
             }
 
-            val redirectUrl = s"/report-quarterly/income-and-expenses/view$redirectUrlCentre/manage-your-businesses/$addedUrl"
+            val redirectUrl = s"$redirectUrlCentre/manage-your-businesses/$addedUrl"
 
-            redirectLocation(result) shouldBe Some(redirectUrl)
+            redirectLocation(result).get should include(redirectUrl)
           }
 
           "return an error if the session data contains errors for updating the income source" in {

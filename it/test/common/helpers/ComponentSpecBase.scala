@@ -89,6 +89,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl: String = s"http://$mockHost:$mockPort"
+  val basePath: String = WiremockHelper.basePath
   val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val cache: AsyncCacheApi = app.injector.instanceOf[AsyncCacheApi]
   val languageUtils: LanguageUtils = app.injector.instanceOf[LanguageUtils]

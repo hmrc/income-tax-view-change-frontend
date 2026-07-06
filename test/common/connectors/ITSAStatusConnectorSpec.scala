@@ -33,7 +33,8 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import common.mocks.{MockAuditingService, MockHttpV2}
+import common.mocks.MockHttpV2
+import common.mocks.services.MockAuditingService
 import common.models.itsaStatus.{ITSAStatusResponse, ITSAStatusResponseError, ITSAStatusResponseModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when

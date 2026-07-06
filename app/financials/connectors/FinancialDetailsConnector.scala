@@ -19,11 +19,12 @@ package financials.connectors
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
-import common.models.core.ResponseModel.{ResponseModel, UnexpectedError}
-import common.models.core.{CorrelationId, Nino}
+import financials.models.core.ResponseModel.{ResponseModel, UnexpectedError}
+import common.models.core.Nino
 import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import common.utils.Headers.checkAndAddTestHeader
 import financials.models.*
+import financials.models.core.CorrelationId
 import financials.models.creditsandrefunds.CreditsModel
 import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import financials.models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}

@@ -19,22 +19,21 @@ package common.views.agent
 import common.testUtils.ViewSpec
 import common.views.html.errorPages.agent.ClientRelationshipFailure
 import org.jsoup.nodes.Element
-import play.api.mvc.Call
 import play.twirl.api.Html
 
 
 class ClientDetailsFailureViewSpec extends ViewSpec {
 
-  lazy val postAction: Call = hub.controllers.agent.routes.EnterClientsUTRController.show()
+  lazy val enterClientUTRUrl: String = appConfig.enterClientsUTRUrl
 
   val clientRelationshipFailure: ClientRelationshipFailure = app.injector.instanceOf[ClientRelationshipFailure]
 
   val confirmClientView: Html = clientRelationshipFailure(
-    postAction = postAction
+    enterClientUTRUrl = enterClientUTRUrl
   )
 
   class ClientRelationshipFailureSetup extends Setup(
-    clientRelationshipFailure(postAction = postAction)
+    clientRelationshipFailure(enterClientUTRUrl = enterClientUTRUrl)
   )
 
   object ClientRelationshipMessages {
@@ -68,12 +67,8 @@ class ClientDetailsFailureViewSpec extends ViewSpec {
 
     s"have a ${ClientRelationshipMessages.enterDifferentDetails} button" in new ClientRelationshipFailureSetup {
       val button: Element = layoutContent.selectById("continue-button")
-      button.attr("type") shouldBe "submit"
       button.text shouldBe ClientRelationshipMessages.enterDifferentDetails
-    }
-
-    s"have a form with ${postAction.method} and ${postAction.url}" in new ClientRelationshipFailureSetup {
-      layoutContent.hasFormWith(postAction.method, postAction.url)
+      button.attr("href") shouldBe enterClientUTRUrl
     }
   }
 

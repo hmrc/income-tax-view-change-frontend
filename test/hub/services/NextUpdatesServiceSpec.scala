@@ -17,11 +17,11 @@
 package hub.services
 
 import common.config.featureswitch.FeatureSwitching
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
 import common.testUtils.TestSupport
-import obligations.mocks.connectors.MockObligationsConnector
-import obligations.testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
-import obligations.testConstants.NextUpdatesTestConstants.*
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
+import hub.mocks.connectors.MockObligationsConnector
+import shared.testConstants.NextUpdatesTestConstants.obligationsDataSuccessModel as _
+import shared.testConstants.NextUpdatesTestConstants.*
 
 import java.time.LocalDate
 

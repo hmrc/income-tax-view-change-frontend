@@ -676,11 +676,11 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
                   if (mtdUserRole == MTDIndividual) {
                     result should have(
-                      elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/manage-your-businesses")
+                      elementAttributeBySelector(latencyDetailsLink, "href")(s"$basePath/manage-your-businesses")
                     )
                   } else {
                     result should have(
-                      elementAttributeBySelector(latencyDetailsLink, "href")("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses")
+                      elementAttributeBySelector(latencyDetailsLink, "href")(s"$basePath/agents/manage-your-businesses")
                     )
                   }
                 }

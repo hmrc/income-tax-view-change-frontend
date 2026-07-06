@@ -22,6 +22,6 @@ object FeedbackConnectorStub {
     WiremockHelper.stubPost("/contact/beta-feedback/submit?service=ITVC", status, "")
 
   def stubPostThankyou(status: Int): Unit =
-    WiremockHelper.stubPost("/report-quarterly/income-and-expenses/view/feedback", status, "")
+    WiremockHelper.stubPost(s"${WiremockHelper.basePath}/feedback", status, "")
 
 }

@@ -16,15 +16,13 @@
 
 package businessDetails.mocks.services
 
-import businessDetails.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
 import common.implicits.ImplicitDateFormatter
 import common.testUtils.UnitSpec
 import businessDetails.services.NextUpdatesService
+import common.models.obligations.ObligationsResponseModel
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import play.api.http.Status
-import shared.models.{ObligationsErrorModel, ObligationsResponseModel}
 
 import scala.concurrent.Future
 
@@ -42,25 +40,4 @@ trait MockNextUpdatesService extends UnitSpec with BeforeAndAfterEach with Impli
     when(mockNextUpdatesService.getOpenObligations()(any(), any()))
       .thenReturn(Future.successful(response))
   }
-
-  def mockBusinessError(): Unit = setupMockNextUpdatesResult()(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
-  )
-
-  def mockPropertyError(): Unit = setupMockNextUpdatesResult()(
-    ObligationsErrorModel(Status.INTERNAL_SERVER_ERROR, "Test")
-  )
-
-  def mockSingleBusinessIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(singleBusinessIncomeWithDeadlines)
-
-  def mockPropertyIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(propertyIncomeOnlyWithDeadlines)
-
-  def mockBothIncomeSourcesWithDeadlines(): Unit = setupMockNextUpdatesResult()(businessAndPropertyIncomeWithDeadlines)
-
-  def mockNoIncomeSourcesWithDeadlines(): Unit = setupMockNextUpdatesResult()(noIncomeDetailsWithNoDeadlines)
-
-  def mockBothIncomeSourcesBusinessAlignedWithDeadlines(): Unit = setupMockNextUpdatesResult()(businessAndPropertyAlignedWithDeadlines)
-
-  def mockErrorIncomeSourceWithDeadlines(): Unit = setupMockNextUpdatesResult()(ObligationsErrorModel(500, "error"))
-
 }

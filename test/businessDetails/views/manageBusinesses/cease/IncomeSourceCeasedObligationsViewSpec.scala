@@ -18,6 +18,7 @@ package businessDetails.views.manageBusinesses.cease
 
 import org.jsoup.nodes.Element
 import play.twirl.api.Html
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, IncomeSourceCeasedObligationsViewModel, ObligationsViewModel}
@@ -59,9 +60,9 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   val finalDeclarationDates: DatesModel = DatesModel(day, day.plusDays(1), day.plusDays(2), "C", isFinalDec = true, obligationType = "Crystallisation")
   val finalDeclarationDates2: DatesModel = DatesModel(day.plusYears(1), day.plusDays(1).plusYears(1), day.plusDays(2).plusYears(1), "C", isFinalDec = true, obligationType = "Crystallisation")
 
-  val viewAllBusinessLink = "/report-quarterly/income-and-expenses/view/manage-your-businesses"
-  val viewUpcomingUpdatesLink = "/report-quarterly/income-and-expenses/view/submission-deadlines"
-  val viewReportingObligationsLink = "/report-quarterly/income-and-expenses/view/reporting-frequency"
+  val viewAllBusinessLink = manageBusinessesRoutes.ManageYourBusinessesController.show().url
+  val viewUpcomingUpdatesLink = "/submission-deadlines"
+  val viewReportingObligationsLink = "/reporting-frequency"
 
   val incomeSourceCeasedObligationsViewModel: IncomeSourceCeasedObligationsViewModel = IncomeSourceCeasedObligationsViewModel(
     isAgent = false,
@@ -94,8 +95,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
   )
   
   val manageYourBusinessShowURL: String = manageBusinessRoutes.ManageYourBusinessesController.show().url
-  val viewUpcomingUpdatesURL: String = obligations.controllers.routes.NextUpdatesController.show().url
-
+ 
   "Income Source Ceased Obligations " should {
     "Display the correct banner message and heading" when {
       "Business type is UK Property Business" in new Setup(validUKPropertyBusinessCall) {
@@ -179,7 +179,7 @@ class IncomeSourceCeasedObligationsViewSpec extends ViewSpec {
       val p: Element = document.getElementById("even-if-paragraph")
       val link: Element = document.getElementById("p1-link")
       p.text shouldBe "Even if they are not displayed right away on the submission deadlines page, your account has been updated."
-      link.hasCorrectLink("submission deadlines", viewUpcomingUpdatesURL)
+      link.hasCorrectLink("submission deadlines", viewUpcomingUpdatesLink)
     }
 
     "show conditional paragraph with obligations link if remaining latent business" in new Setup(

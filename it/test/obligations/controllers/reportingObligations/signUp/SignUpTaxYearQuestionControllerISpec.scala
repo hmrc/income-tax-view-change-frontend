@@ -20,6 +20,7 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.SignUpFs
 import common.models.incomeSourceDetails.TaxYear
@@ -35,7 +36,6 @@ import play.mvc.Http.Status
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
-import returns.helpers.servicemocks.CalculationListStub
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
@@ -425,8 +425,8 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           CalculationListStub.stubGetCalculationList(testNino, taxYear.startYear.toString)(CalculationListIntegrationTestConstants.successResponseNotCrystallised.toString)
 
           val reportingObligationsLink = mtdUserRole match {
-            case MTDIndividual => "/report-quarterly/income-and-expenses/view/reporting-frequency"
-            case _ => "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+            case MTDIndividual => s"$basePath/reporting-frequency"
+            case _ => s"$basePath/agents/reporting-frequency"
           }
 
           val result = buildGETMTDClient(s"$path?taxYear=$currentYear", additionalCookies).futureValue
@@ -483,7 +483,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(s"/report-quarterly/income-and-expenses/view$path/completed")
+            redirectURI(s"$basePath$path/completed")
           )
         }
         }
@@ -532,7 +532,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
             result should have(
               httpStatus(SEE_OTHER),
-              redirectURI(s"/report-quarterly/income-and-expenses/view$path/completed")
+              redirectURI(s"$basePath$path/completed")
             )
           }
         }

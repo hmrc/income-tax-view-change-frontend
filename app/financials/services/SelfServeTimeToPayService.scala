@@ -17,8 +17,8 @@
 package financials.services
 
 import common.exceptions.SelfServeTimeToPayJourneyException
-import common.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import financials.connectors.SelfServeTimeToPayConnector
+import financials.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponseModel}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 

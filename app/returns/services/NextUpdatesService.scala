@@ -17,9 +17,9 @@
 package returns.services
 
 import common.auth.MtdItUser
+import common.models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import common.services.DateServiceInterface
 import shared.connectors.ObligationsConnector
-import shared.models.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate

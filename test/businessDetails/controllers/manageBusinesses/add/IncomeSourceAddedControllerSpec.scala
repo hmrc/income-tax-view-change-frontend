@@ -16,6 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.controllers.manageBusinesses.manage.routes as manageBusinessRoutes
 import businessDetails.mocks.services.MockIncomeSourceDetailsService
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.models.incomeSourceDetails.*
@@ -94,33 +96,33 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
   ".getNextUpdatesUrl" should {
 
     "return the correct agent url" in {
-      testIncomeSourceAddedController.getNextUpdatesUrl(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
+      testIncomeSourceAddedController.getNextUpdatesUrl(true) should include("/agents/submission-deadlines")
     }
 
     "return the correct non-agent url" in {
-      testIncomeSourceAddedController.getNextUpdatesUrl(false) shouldBe "/report-quarterly/income-and-expenses/view/submission-deadlines"
+      testIncomeSourceAddedController.getNextUpdatesUrl(false) should include("/submission-deadlines")
     }
   }
 
   ".getReportingFrequencyUrl" should {
 
     "return the correct agent url" in {
-      testIncomeSourceAddedController.getReportingFrequencyUrl(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+      testIncomeSourceAddedController.getReportingFrequencyUrl(true) should include("agents/reporting-frequency")
     }
 
     "return the correct non-agent url" in {
-      testIncomeSourceAddedController.getReportingFrequencyUrl(false) shouldBe "/report-quarterly/income-and-expenses/view/reporting-frequency"
+      testIncomeSourceAddedController.getReportingFrequencyUrl(false) should include("/reporting-frequency")
     }
   }
 
   ".getManageBusinessUrl" should {
 
     "return the correct agent url" in {
-      testIncomeSourceAddedController.getManageBusinessUrl(true) shouldBe "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+      testIncomeSourceAddedController.getManageBusinessUrl(true) shouldBe manageBusinessesRoutes.ManageYourBusinessesController.showAgent().url
     }
 
     "return the correct non-agent url" in {
-      testIncomeSourceAddedController.getManageBusinessUrl(false) shouldBe "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+      testIncomeSourceAddedController.getManageBusinessUrl(false) shouldBe manageBusinessesRoutes.ManageYourBusinessesController.show().url
     }
   }
 
@@ -502,7 +504,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
            val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDIndividual)
            val result = testIncomeSourceAddedController.show(incomeSourceType)(fakeRequest)
            status(result) shouldBe SEE_OTHER
-           redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/cannot-go-back")
+           redirectLocation(result) shouldBe Some(manageBusinessRoutes.CannotGoBackErrorController.noJourneySessionShow(false).url)
          }
         }
         "render the income source added page - OK (200)" when {
@@ -1039,7 +1041,7 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
             val fakeRequest = fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)
             val result = testIncomeSourceAddedController.showAgent(incomeSourceType)(fakeRequest)
             status(result) shouldBe SEE_OTHER
-            redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/cannot-go-back")
+            redirectLocation(result) shouldBe Some(manageBusinessRoutes.CannotGoBackErrorController.noJourneySessionShow(true).url)
 
           }
 

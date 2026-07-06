@@ -140,23 +140,23 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe",
-            linkHref = "/report-quarterly/income-and-expenses/view/what-you-owe"
+            linkHref = "/what-you-owe"
           )
 
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
             linkText = "View payment, credit and refund history",
-            linkHref = "/report-quarterly/income-and-expenses/view/payment-refund-history"
+            linkHref = "/payment-refund-history"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Check for money in your account",
-            linkHref = "/report-quarterly/income-and-expenses/view/money-in-your-account",
+            linkHref = "/money-in-your-account",
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 3,
             linkText = "Adjust payments on account",
-            linkHref = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
+            linkHref = "/adjust-poa/start",
           )
         }
         "the user has charges to pay" in new TestSetup(creditsRefundsRepayEnabled = true) {
@@ -165,23 +165,23 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe and make a payment",
-            linkHref = "/report-quarterly/income-and-expenses/view/what-you-owe"
+            linkHref = "/what-you-owe"
           )
 
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
             linkText = "View payment, credit and refund history",
-            linkHref = "/report-quarterly/income-and-expenses/view/payment-refund-history"
+            linkHref = "/payment-refund-history"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Check for money in your account",
-            linkHref = "/report-quarterly/income-and-expenses/view/money-in-your-account",
+            linkHref = "/money-in-your-account",
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 3,
             linkText = "Adjust payments on account",
-            linkHref = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
+            linkHref = "/adjust-poa/start",
           )
         }
         "the user has money in their account" in new TestSetup(moneyInYourAccount = true, creditsRefundsRepayEnabled = true) {
@@ -189,7 +189,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Check for money in your account and claim a refund",
-            linkHref = "/report-quarterly/income-and-expenses/view/money-in-your-account",
+            linkHref = "/money-in-your-account",
           )
         }
         "the user has NO money in their account" in new TestSetup(moneyInYourAccount = false, creditsRefundsRepayEnabled = true) {
@@ -197,40 +197,40 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Check for money in your account",
-            linkHref = "/report-quarterly/income-and-expenses/view/money-in-your-account",
+            linkHref = "/money-in-your-account",
           )
         }
         "user has charges to pay and no POA to adjust" in new TestSetup(ctaViewModel = WYOClaimToAdjustViewModel(None), creditsRefundsRepayEnabled = true) {
           document.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
           document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "Check what you owe and make a payment"
-          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/what-you-owe")
+          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/what-you-owe")
 
           document.select(".govuk-summary-card-no-border").get(1).text() shouldBe "View payment, credit and refund history"
-          document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/payment-refund-history")
+          document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/payment-refund-history")
 
           document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
-          document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/money-in-your-account")
+          document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/money-in-your-account")
 
           document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
           document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "View submission deadlines"
-          document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/report-quarterly/income-and-expenses/view/submission-deadlines")
+          document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/submission-deadlines")
 
           document.select(".govuk-summary-card-no-border").get(4).text() shouldBe "Check your reporting obligations"
-          document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/report-quarterly/income-and-expenses/view/reporting-frequency")
+          document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/reporting-frequency")
 
           document.select("h2.govuk-heading-m").get(2).text() shouldBe "Income sources"
           document.select(".govuk-summary-card-no-border").get(5).text() shouldBe "Add, manage or cease a business or income source"
-          document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/report-quarterly/income-and-expenses/view/manage-your-businesses")
+          document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/manage-your-businesses")
 
           document.select("h2.govuk-heading-m").get(3).text() shouldBe "Tax year summaries"
           document.select(".govuk-summary-card-no-border").get(6).text() shouldBe "View all tax years"
-          document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref("/report-quarterly/income-and-expenses/view/tax-years")
+          document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref("/tax-years")
 
           document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
-          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}")
+          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/tax-year-summary/${testTaxYear.endYear}")
 
           document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Proof of your income (SA302)"
-          document.select(".govuk-summary-card-no-border").get(8).hasCorrectHref("/report-quarterly/income-and-expenses/view/mortgage-evidence/proof-of-income")
+          document.select(".govuk-summary-card-no-border").get(8).hasCorrectHref("/mortgage-evidence/proof-of-income")
 
           document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
           document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "Check Self Assessment penalties and appeals"
@@ -244,18 +244,18 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe",
-            linkHref = "/report-quarterly/income-and-expenses/view/what-you-owe"
+            linkHref = "/what-you-owe"
           )
 
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
             linkText = "View payment, credit and refund history",
-            linkHref = "/report-quarterly/income-and-expenses/view/payment-refund-history"
+            linkHref = "/payment-refund-history"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Adjust payments on account",
-            linkHref = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
+            linkHref = "/adjust-poa/start",
           )
         }
         "the user has charges to pay" in new TestSetup(creditsRefundsRepayEnabled = false) {
@@ -264,49 +264,49 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe and make a payment",
-            linkHref = "/report-quarterly/income-and-expenses/view/what-you-owe"
+            linkHref = "/what-you-owe"
           )
 
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
             linkText = "View payment, credit and refund history",
-            linkHref = "/report-quarterly/income-and-expenses/view/payment-refund-history"
+            linkHref = "/payment-refund-history"
           )
 
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Adjust payments on account",
-            linkHref = "/report-quarterly/income-and-expenses/view/adjust-poa/start",
+            linkHref = "/adjust-poa/start",
           )
         }
         "user has charges to pay and no POA to adjust" in new TestSetup(ctaViewModel = WYOClaimToAdjustViewModel(None), creditsRefundsRepayEnabled = false) {
           document.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
           document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "Check what you owe and make a payment"
-          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/what-you-owe")
+          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/what-you-owe")
 
           document.select(".govuk-summary-card-no-border").get(1).text() shouldBe "View payment, credit and refund history"
-          document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/payment-refund-history")
+          document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/payment-refund-history")
 
           document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
           document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "View submission deadlines"
-          document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/submission-deadlines")
+          document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/submission-deadlines")
 
           document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "Check your reporting obligations"
-          document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/report-quarterly/income-and-expenses/view/reporting-frequency")
+          document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/reporting-frequency")
 
           document.select("h2.govuk-heading-m").get(2).text() shouldBe "Income sources"
           document.select(".govuk-summary-card-no-border").get(4).text() shouldBe "Add, manage or cease a business or income source"
-          document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/report-quarterly/income-and-expenses/view/manage-your-businesses")
+          document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/manage-your-businesses")
 
           document.select("h2.govuk-heading-m").get(3).text() shouldBe "Tax year summaries"
           document.select(".govuk-summary-card-no-border").get(5).text() shouldBe "View all tax years"
-          document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/report-quarterly/income-and-expenses/view/tax-years")
+          document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/tax-years")
 
           document.select(".govuk-summary-card-no-border").get(6).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
-          document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}")
+          document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref(s"/tax-year-summary/${testTaxYear.endYear}")
 
           document.select(".govuk-summary-card-no-border").get(7).text() shouldBe "Proof of your income (SA302)"
-          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref("/report-quarterly/income-and-expenses/view/mortgage-evidence/proof-of-income")
+          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref("/mortgage-evidence/proof-of-income")
 
           document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
           document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
@@ -320,12 +320,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       deadlinesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Deadlines and reporting obligations"
       deadlinesSection.hasCorrectOverviewCardLink(
         linkText = "View submission deadlines",
-        linkHref = "/report-quarterly/income-and-expenses/view/submission-deadlines"
+        linkHref = "/submission-deadlines"
       )
       deadlinesSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
         linkText = "Check your reporting obligations",
-        linkHref = "/report-quarterly/income-and-expenses/view/reporting-frequency"
+        linkHref = "/reporting-frequency"
       )
     }
 
@@ -334,7 +334,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       incomeSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Income sources"
       incomeSection.hasCorrectOverviewCardLink(
         linkText = "Add, manage or cease a business or income source",
-        linkHref = "/report-quarterly/income-and-expenses/view/manage-your-businesses"
+        linkHref = "/manage-your-businesses"
       )
     }
 
@@ -343,17 +343,17 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       taxYearSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Tax year summaries"
       taxYearSection.hasCorrectOverviewCardLink(
         linkText = "View all tax years",
-        linkHref = "/report-quarterly/income-and-expenses/view/tax-years"
+        linkHref = "/tax-years"
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
         linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
-        linkHref = s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}"
+        linkHref = s"/tax-year-summary/${testTaxYear.endYear}"
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 2,
         linkText = "Proof of your income (SA302)",
-        linkHref = "/report-quarterly/income-and-expenses/view/mortgage-evidence/proof-of-income"
+        linkHref = "/mortgage-evidence/proof-of-income"
       )
     }
 
@@ -362,12 +362,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       taxYearSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Tax year summaries"
       taxYearSection.hasCorrectOverviewCardLink(
         linkText = "View all tax years",
-        linkHref = "/report-quarterly/income-and-expenses/view/tax-years"
+        linkHref = "/tax-years"
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
         linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
-        linkHref = s"/report-quarterly/income-and-expenses/view/tax-year-summary/${testTaxYear.endYear}"
+        linkHref = s"/tax-year-summary/${testTaxYear.endYear}"
       )
       taxYearSection.text() should not include "Proof of your income (SA302)"
     }
@@ -442,22 +442,22 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe and make a payment",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
+            linkHref = "/agents/what-your-client-owes"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
             linkText = "View payment, credit and refund history",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+            linkHref = "/agents/payment-refund-history"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Check for money in your account",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/money-in-your-account",
+            linkHref = "/agents/money-in-your-account",
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 3,
             linkText = "Adjust payments on account",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start",
+            linkHref = "/agents/adjust-poa/start",
           )
         }
         "the user has NO charges to pay" in new TestSetup(isAgent = true, noChargesToPay = true, creditsRefundsRepayEnabled = true) {
@@ -466,22 +466,22 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
+            linkHref = "/agents/what-your-client-owes"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
             linkText = "View payment, credit and refund history",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+            linkHref = "/agents/payment-refund-history"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Check for money in your account",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/money-in-your-account",
+            linkHref = "/agents/money-in-your-account",
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 3,
             linkText = "Adjust payments on account",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start",
+            linkHref = "/agents/adjust-poa/start",
           )
         }
         "the user has money in their account" in new TestSetup(isAgent = true, moneyInYourAccount = true, creditsRefundsRepayEnabled = true) {
@@ -489,7 +489,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Check for money in your account and claim a refund",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/money-in-your-account",
+            linkHref = "/agents/money-in-your-account",
           )
         }
         "the user has NO money in their account" in new TestSetup(isAgent = true, moneyInYourAccount = false, creditsRefundsRepayEnabled = true) {
@@ -497,40 +497,40 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Check for money in your account",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/money-in-your-account",
+            linkHref = "/agents/money-in-your-account",
           )
         }
         "the user has charges to pay and no POA to adjust" in new TestSetup(isAgent = true, ctaViewModel = WYOClaimToAdjustViewModel(None), creditsRefundsRepayEnabled = true) {
           document.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
           document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "Check what you owe and make a payment"
-          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/what-your-client-owes")
+          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/agents/what-your-client-owes")
 
           document.select(".govuk-summary-card-no-border").get(1).text() shouldBe "View payment, credit and refund history"
-          document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/payment-refund-history")
+          document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/agents/payment-refund-history")
 
           document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "Check for money in your account"
-          document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/money-in-your-account")
+          document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/agents/money-in-your-account")
 
           document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
           document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "View submission deadlines"
-          document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
+          document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/agents/submission-deadlines")
 
           document.select(".govuk-summary-card-no-border").get(4).text() shouldBe "Check your reporting obligations"
-          document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/reporting-frequency")
+          document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/agents/reporting-frequency")
 
           document.select("h2.govuk-heading-m").get(2).text() shouldBe "Income sources"
           document.select(".govuk-summary-card-no-border").get(5).text() shouldBe "Add, manage or cease a business or income source"
-          document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses")
+          document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/agents/manage-your-businesses")
 
           document.select("h2.govuk-heading-m").get(3).text() shouldBe "Tax year summaries"
           document.select(".govuk-summary-card-no-border").get(6).text() shouldBe "View all tax years"
-          document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/tax-years")
+          document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref("/agents/tax-years")
 
           document.select(".govuk-summary-card-no-border").get(7).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
-          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}")
+          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref(s"/agents/tax-year-summary/${testTaxYear.endYear}")
 
           document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Proof of your income (SA302)"
-          document.select(".govuk-summary-card-no-border").get(8).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/mortgage-evidence/proof-of-income")
+          document.select(".govuk-summary-card-no-border").get(8).hasCorrectHref("/agents/mortgage-evidence/proof-of-income")
 
           document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
           document.select(".govuk-summary-card-no-border").get(9).text() shouldBe "Check Self Assessment penalties and appeals"
@@ -544,17 +544,17 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe and make a payment",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
+            linkHref = "/agents/what-your-client-owes"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
             linkText = "View payment, credit and refund history",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+            linkHref = "/agents/payment-refund-history"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Adjust payments on account",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start",
+            linkHref = "/agents/adjust-poa/start",
           )
         }
 
@@ -564,48 +564,48 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes"
+            linkHref = "/agents/what-your-client-owes"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
             linkText = "View payment, credit and refund history",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+            linkHref = "/agents/payment-refund-history"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 2,
             linkText = "Adjust payments on account",
-            linkHref = "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start",
+            linkHref = "/agents/adjust-poa/start",
           )
         }
 
         "the user has charges to pay and no POA to adjust" in new TestSetup(isAgent = true, ctaViewModel = WYOClaimToAdjustViewModel(None), creditsRefundsRepayEnabled = false) {
           document.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
           document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "Check what you owe and make a payment"
-          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/what-your-client-owes")
+          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/agents/what-your-client-owes")
 
           document.select(".govuk-summary-card-no-border").get(1).text() shouldBe "View payment, credit and refund history"
-          document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/payment-refund-history")
+          document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/agents/payment-refund-history")
 
           document.select("h2.govuk-heading-m").get(1).text() shouldBe "Deadlines and reporting obligations"
           document.select(".govuk-summary-card-no-border").get(2).text() shouldBe "View submission deadlines"
-          document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/submission-deadlines")
+          document.select(".govuk-summary-card-no-border").get(2).hasCorrectHref("/agents/submission-deadlines")
 
           document.select(".govuk-summary-card-no-border").get(3).text() shouldBe "Check your reporting obligations"
-          document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/reporting-frequency")
+          document.select(".govuk-summary-card-no-border").get(3).hasCorrectHref("/agents/reporting-frequency")
 
           document.select("h2.govuk-heading-m").get(2).text() shouldBe "Income sources"
           document.select(".govuk-summary-card-no-border").get(4).text() shouldBe "Add, manage or cease a business or income source"
-          document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/manage-your-businesses")
+          document.select(".govuk-summary-card-no-border").get(4).hasCorrectHref("/agents/manage-your-businesses")
 
           document.select("h2.govuk-heading-m").get(3).text() shouldBe "Tax year summaries"
           document.select(".govuk-summary-card-no-border").get(5).text() shouldBe "View all tax years"
-          document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/tax-years")
+          document.select(".govuk-summary-card-no-border").get(5).hasCorrectHref("/agents/tax-years")
 
           document.select(".govuk-summary-card-no-border").get(6).text() shouldBe s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast"
-          document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref(s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}")
+          document.select(".govuk-summary-card-no-border").get(6).hasCorrectHref(s"/agents/tax-year-summary/${testTaxYear.endYear}")
 
           document.select(".govuk-summary-card-no-border").get(7).text() shouldBe "Proof of your income (SA302)"
-          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref("/report-quarterly/income-and-expenses/view/agents/mortgage-evidence/proof-of-income")
+          document.select(".govuk-summary-card-no-border").get(7).hasCorrectHref("/agents/mortgage-evidence/proof-of-income")
 
           document.select("h2.govuk-heading-m").get(4).text() shouldBe "Penalties and appeals"
           document.select(".govuk-summary-card-no-border").get(8).text() shouldBe "Check Self Assessment penalties and appeals"
@@ -620,12 +620,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       deadlinesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Deadlines and reporting obligations"
       deadlinesSection.hasCorrectOverviewCardLink(
         linkText = "View submission deadlines",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
+        linkHref = "/agents/submission-deadlines"
       )
       deadlinesSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
         linkText = "Check your reporting obligations",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+        linkHref = "/agents/reporting-frequency"
       )
     }
 
@@ -634,7 +634,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       incomeSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Income sources"
       incomeSection.hasCorrectOverviewCardLink(
         linkText = "Add, manage or cease a business or income source",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+        linkHref = "/agents/manage-your-businesses"
       )
     }
 
@@ -643,17 +643,17 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       taxYearSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Tax year summaries"
       taxYearSection.hasCorrectOverviewCardLink(
         linkText = "View all tax years",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/tax-years"
+        linkHref = "/agents/tax-years"
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
         linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
-        linkHref = s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}"
+        linkHref = s"/agents/tax-year-summary/${testTaxYear.endYear}"
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 2,
         linkText = "Proof of your income (SA302)",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/mortgage-evidence/proof-of-income"
+        linkHref = "/agents/mortgage-evidence/proof-of-income"
       )
     }
 
@@ -662,12 +662,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       taxYearSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Tax year summaries"
       taxYearSection.hasCorrectOverviewCardLink(
         linkText = "View all tax years",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/tax-years"
+        linkHref = "/agents/tax-years"
       )
       taxYearSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
         linkText = s"View your ${testTaxYear.startYear}-${testTaxYear.endYear} tax calculation and forecast",
-        linkHref = s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/${testTaxYear.endYear}"
+        linkHref = s"/agents/tax-year-summary/${testTaxYear.endYear}"
       )
       taxYearSection.text() should not include "Proof of your income (SA302)"
     }
@@ -695,12 +695,12 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       deadlinesSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Deadlines and reporting obligations"
       deadlinesSection.hasCorrectOverviewCardLink(
         linkText = "View submission deadlines",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/submission-deadlines"
+        linkHref = "/agents/submission-deadlines"
       )
       deadlinesSection.hasCorrectOverviewCardLink(
         cardIndex = 1,
         linkText = "Check your reporting obligations",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/reporting-frequency"
+        linkHref = "/agents/reporting-frequency"
       )
     }
 
@@ -709,7 +709,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
       incomeSection.select("h2.govuk-heading-m").get(0).text() shouldBe "Income sources"
       incomeSection.hasCorrectOverviewCardLink(
         linkText = "Add, manage or cease a business or income source",
-        linkHref = "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses"
+        linkHref = "/agents/manage-your-businesses"
       )
     }
 

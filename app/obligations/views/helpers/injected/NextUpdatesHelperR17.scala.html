@@ -20,7 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import obligations.models.NextUpdatesViewModel
 @import java.time.LocalDate
-@import shared.models._
+@import common.models.obligations._
 @import obligations.models._
 @import play.twirl.api.HtmlFormat
 @import common.config.FrontendAppConfig
@@ -308,7 +308,7 @@
     Html(obligations.map(obl => messages(obl.incomeType)).map(msg => s"<div>$msg</div>").mkString)
 }
 
-@taxYearSummaryLink = @{appConfig.taxYearsUrl(user.isAgent)}
+@taxYearSummaryLink = @{appConfig.returnsTaxYearsUrl(user.isAgent, viewModel.isFinancialsEnabled)}
 
 @missedDeadlinesText = @{
     if(optOutProposition.currentTaxYear.canOptOut) {

@@ -36,6 +36,12 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
   val view: IncomeSourceAddedObligationsView = app.injector.instanceOf[IncomeSourceAddedObligationsView]
 
+  //Todo Update these tests when feature switch for Obligations is introduced
+  val nextUpdatesUrl: String = appConfig.obligationsNextUpdatesUrl(false, false)
+  val nextUpdatesAgentUrl: String = appConfig.obligationsNextUpdatesUrl(true, false)
+  val getReportingFrequencyUrl = appConfig.obligationsReportingFrequencyIndividualUrl(false)
+  
+  val getManageBusinessUrl = manageBusinessRoutes.ManageYourBusinessesController.show().url
   object IdSelectors {
     val mayHaveOverdueUpdates = "may-have-overdue-updates"
     val yourRevisedDeadlinesH2 = "your-revised-deadlines"
@@ -54,10 +60,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
 
     val finalDeclaration = "final-declaration"
   }
-
-  val getReportingFrequencyUrl = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url
-  val getNextUpdatesUrl = obligations.controllers.routes.NextUpdatesController.show().url
-  val getManageBusinessUrl = manageBusinessRoutes.ManageYourBusinessesController.show().url
+  
   val softwareLink = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 
   val viewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
@@ -82,7 +85,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
       reportingMethod = reportingMethod,
       getSoftwareUrl = appConfig.compatibleSoftwareLink,
       getReportingFrequencyUrl = getReportingFrequencyUrl,
-      getNextUpdatesUrl = getNextUpdatesUrl,
+      getNextUpdatesUrl = nextUpdatesUrl,
       getManageBusinessUrl = getManageBusinessUrl,
       scenario = scenario
     )
@@ -116,7 +119,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
               reportingMethod = ChosenReportingMethod.Quarterly,
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
               getReportingFrequencyUrl = getReportingFrequencyUrl,
-              getNextUpdatesUrl = getNextUpdatesUrl,
+              getNextUpdatesUrl = nextUpdatesUrl,
               getManageBusinessUrl = getManageBusinessUrl,
               scenario = SignUpNextYearOnly
             )
@@ -349,7 +352,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
                 getReportingFrequencyUrl = getReportingFrequencyUrl,
-                getNextUpdatesUrl = getNextUpdatesUrl,
+                getNextUpdatesUrl = nextUpdatesUrl,
                 getManageBusinessUrl = getManageBusinessUrl,
                 scenario = SignUpNextYearOnly
               )
@@ -403,8 +406,8 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 isBusinessHistoric = false,
                 reportingMethod = ChosenReportingMethod.Quarterly,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
-                getReportingFrequencyUrl = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(false).url,
-                getNextUpdatesUrl = obligations.controllers.routes.NextUpdatesController.show().url,
+                getReportingFrequencyUrl = getReportingFrequencyUrl,
+                getNextUpdatesUrl = nextUpdatesUrl,
                 getManageBusinessUrl = manageBusinessRoutes.ManageYourBusinessesController.show().url,
                 scenario = SignUpNextYearOnly
               )
@@ -455,7 +458,7 @@ class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
                 reportingMethod = ChosenReportingMethod.Annual,
                 getSoftwareUrl = appConfig.compatibleSoftwareLink,
                 getReportingFrequencyUrl = getReportingFrequencyUrl,
-                getNextUpdatesUrl = getNextUpdatesUrl,
+                getNextUpdatesUrl = nextUpdatesUrl,
                 getManageBusinessUrl = getManageBusinessUrl,
                 scenario = SignUpNextYearOnly
               )

@@ -17,11 +17,10 @@
 package obligations.services.reportingObligations.optOut
 
 import common.auth.MtdItUser
-import common.mocks.services.{MockDateService, MockITSAStatusService}
+import common.mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import common.testUtils.UnitSpec
-import financials.mocks.services.MockCalculationListService
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnector
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseSuccess
 import obligations.mocks.connectors.MockITSAStatusUpdateConnector

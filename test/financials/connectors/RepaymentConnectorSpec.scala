@@ -17,7 +17,7 @@
 package financials.connectors
 
 import common.connectors.BaseConnectorSpec
-import common.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import financials.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.http.Status.{ACCEPTED, UNAUTHORIZED}

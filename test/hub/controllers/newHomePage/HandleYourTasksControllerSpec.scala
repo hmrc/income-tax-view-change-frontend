@@ -22,6 +22,7 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusOpen}
 import common.services.{AuditingService, DateService, DateServiceInterface, ITSAStatusService}
 import common.testConstants.BaseTestConstants
 import common.utils.sessionUtils.SessionKeys
@@ -48,7 +49,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.{MessagesControllerComponents, Result}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, session, status}
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusOpen}
 
 import java.time.{LocalDate, Month}
 import scala.concurrent.Future

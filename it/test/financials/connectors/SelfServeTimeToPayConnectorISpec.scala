@@ -17,7 +17,7 @@
 package financials.connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import common.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
+import financials.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
@@ -32,8 +32,8 @@ class SelfServeTimeToPayConnectorISpec extends AnyWordSpec with ComponentSpecBas
   val requestBodyWYO = Json.parse(
     s"""
      {
-      "returnUrl": "/report-quarterly/income-and-expenses/view",
-      "backUrl": "/report-quarterly/income-and-expenses/view/what-you-owe"
+      "returnUrl": "$basePath",
+      "backUrl": "$basePath/what-you-owe"
      }
     """.stripMargin
   )

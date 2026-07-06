@@ -21,6 +21,7 @@ import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, Address,
 import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import common.config.FrontendAppConfig
 import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
@@ -218,9 +219,9 @@ class AddBusinessAddressControllerSpec extends MockAuthActions
           "redirect to the business check answers page" when {
             "valid data received" in {
               val checkAnswersUrl = if (mtdRole == MTDIndividual) {
-                "/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-check-answers"
+                addBusinessRoutes.IncomeSourceCheckDetailsController.show(SelfEmployment).url
               } else {
-                "/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add-sole-trader/business-check-answers"
+                addBusinessRoutes.IncomeSourceCheckDetailsController.showAgent(SelfEmployment).url
               }
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(businessesAndPropertyIncome)

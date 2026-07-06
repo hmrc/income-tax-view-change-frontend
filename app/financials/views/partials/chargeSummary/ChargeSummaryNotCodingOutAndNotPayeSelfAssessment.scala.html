@@ -15,7 +15,7 @@
  *@
 
 @import _root_.common.implicits.ImplicitDateFormatterImpl
-@import _root_.financials.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
+@import _root_.shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 @import common.views.html.components._
 @import financials.models.{DocumentDetailWithDueDate, DocumentDetail}
 @import _root_.shared.implicits.HtmlFormatter.NbspString
@@ -52,7 +52,7 @@
                 (if(interestCharge) {
                     chargeItem.interestEndDate.getOrElse(throw MissingFieldException("Interest End Date")).toLongDate
                 } else if(chargeItem.transactionType == financials.models.BalancingCharge && chargeItem.codedOutStatus == None) {
-                    chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDate).getOrElse(messages("tax-year-summary.noData"))
+                    chargeItem.getDueDateForNonZeroBalancingCharge.map(_.toLongDate).getOrElse(messages("chargeSummary.noData"))
                 } else if (chargeItem.isCredit) {
                     chargeItem.dueDate.map(_.toLongDateShort).getOrElse(messages("chargeSummary.noData"))
                 } else {

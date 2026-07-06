@@ -17,21 +17,38 @@
 package businessDetails.testConstants
 
 import play.api.libs.json.Json
+import common.helpers.WiremockHelper.baseUrl
 
 object AddressLookupTestConstants {
 
+  val accessibilityHost = "http://localhost:123456"
+  
+  //Todo update this once accessibility statement is available for income-tax-business-details-frontend
+  val accessibilityPath = {
+    "/accessibility-statement/income-tax-view-change"
+    //"/accessibility-statement/income-tax-business-details"
+  }
+  
+  val accessibilityUrl = {
+    accessibilityHost + accessibilityPath
+  }
+
+  val accessibilityFooterUrl = {
+    accessibilityUrl + "?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"
+  }
+
   val ukRequestBodyIndividual = Json.parse(
-    """{
+    s"""{
       |  "version": 2,
       |  "options": {
-      |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/manage-your-businesses/add/business-address/id/",
+      |    "continueUrl": "$baseUrl/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/session-timeout",
-      |      "timeoutKeepAliveUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/keep-alive"
+      |      "timeoutUrl": "$baseUrl/session-timeout",
+      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
       |    },
-      |    "signOutHref": "http://localhost:9081/report-quarterly/income-and-expenses/view/sign-out",
-      |    "accessibilityFooterUrl": "http://localhost:9081/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview",
+      |    "signOutHref": "$baseUrl/sign-out",
+      |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
       |    },
@@ -50,7 +67,7 @@ object AddressLookupTestConstants {
       |      "showSearchAgainLink": true,
       |      "showConfirmChangeText": true
       |    },
-      |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/feedback",
+      |    "phaseFeedbackLink": "$baseUrl/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": true
@@ -94,18 +111,18 @@ object AddressLookupTestConstants {
       |}""".stripMargin)
 
   val ukRequestBodyAgent = Json.parse(
-    """
+    s"""
       |{
       |  "version": 2,
       |  "options": {
-      |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add/business-address/id/",
+      |    "continueUrl": "$baseUrl/agents/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/session-timeout",
-      |      "timeoutKeepAliveUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/keep-alive"
+      |      "timeoutUrl": "$baseUrl/session-timeout",
+      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
       |    },
-      |    "signOutHref": "http://localhost:9081/report-quarterly/income-and-expenses/view/sign-out",
-      |    "accessibilityFooterUrl": "http://localhost:9081/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview",
+      |    "signOutHref": "$baseUrl/sign-out",
+      |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
       |    },
@@ -124,7 +141,7 @@ object AddressLookupTestConstants {
       |      "showSearchAgainLink": true,
       |      "showConfirmChangeText": true
       |    },
-      |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/feedback",
+      |    "phaseFeedbackLink": "$baseUrl/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": true
@@ -169,18 +186,18 @@ object AddressLookupTestConstants {
       |""".stripMargin)
   
   val internationalRequestBodyInvididual = Json.parse(
-    """
+    s"""
       |{
       |  "version": 2,
       |  "options": {
-      |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/manage-your-businesses/add/business-address/id/",
+      |    "continueUrl": "$baseUrl/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/session-timeout",
-      |      "timeoutKeepAliveUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/keep-alive"
+      |      "timeoutUrl": "$baseUrl/session-timeout",
+      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
       |    },
-      |    "signOutHref": "http://localhost:9081/report-quarterly/income-and-expenses/view/sign-out",
-      |    "accessibilityFooterUrl": "http://localhost:9081/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview",
+      |    "signOutHref": "$baseUrl/sign-out",
+      |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
       |    },
@@ -200,7 +217,7 @@ object AddressLookupTestConstants {
       |      "line3MaxLength": 35,
       |      "townMaxLength": 35
       |    },
-      |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/feedback",
+      |    "phaseFeedbackLink": "$baseUrl/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": false
@@ -257,18 +274,18 @@ object AddressLookupTestConstants {
       |""".stripMargin)
 
   val internationalRequestBodyAgent = Json.parse(
-    """
+    s"""
       |{
       |  "version": 2,
       |  "options": {
-      |    "continueUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/manage-your-businesses/add/business-address/id/",
+      |    "continueUrl": "$baseUrl/agents/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/session-timeout",
-      |      "timeoutKeepAliveUrl": "http://localhost:9081/report-quarterly/income-and-expenses/view/keep-alive"
+      |      "timeoutUrl": "$baseUrl/session-timeout",
+      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
       |    },
-      |    "signOutHref": "http://localhost:9081/report-quarterly/income-and-expenses/view/sign-out",
-      |    "accessibilityFooterUrl": "http://localhost:9081/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview",
+      |    "signOutHref": "$baseUrl/sign-out",
+      |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
       |    },
@@ -288,7 +305,7 @@ object AddressLookupTestConstants {
       |      "line3MaxLength": 35,
       |      "townMaxLength": 35
       |    },
-      |    "phaseFeedbackLink": "http://localhost:9081/report-quarterly/income-and-expenses/view/agents/feedback",
+      |    "phaseFeedbackLink": "$baseUrl/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": false

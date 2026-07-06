@@ -29,7 +29,8 @@ import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.bus
 import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
 import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
 import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, UIJourneySessionData}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
 

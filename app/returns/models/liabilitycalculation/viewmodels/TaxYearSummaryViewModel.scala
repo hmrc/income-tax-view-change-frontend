@@ -18,10 +18,10 @@ package returns.models.liabilitycalculation.viewmodels
 
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
+import common.models.obligations.ObligationsModel
 import financials.controllers.routes as financialsRoutes
 import financials.models.SecondLatePaymentPenalty
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
-import shared.models.ObligationsModel
 
 import java.time.LocalDate
 

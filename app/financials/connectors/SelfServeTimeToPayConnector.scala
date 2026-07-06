@@ -17,7 +17,7 @@
 package financials.connectors
 
 import common.config.FrontendAppConfig
-import common.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
+import financials.models.core.{SelfServeTimeToPayJourneyErrorResponse, SelfServeTimeToPayJourneyResponse, SelfServeTimeToPayJourneyResponseModel}
 import play.api.Logger
 import play.api.http.Status
 import play.api.http.Status.CREATED

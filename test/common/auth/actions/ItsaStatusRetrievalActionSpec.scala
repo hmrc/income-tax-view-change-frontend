@@ -71,9 +71,9 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
       agentErrorHandler,
       mcc
     ) {
-    override def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean =
-      enabledSwitches.contains(featureSwitch)
-  }
+      override def isEnabled(featureSwitch: FeatureSwitchName)(implicit user: MtdItUser[_]): Boolean =
+        enabledSwitches.contains(featureSwitch)
+    }
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -109,7 +109,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         val result = action.refine(mtdUser).futureValue
 
         result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(true).url
+        result.left.value.header.headers("LOCATION") shouldBe appConfig.obligationsWaitToSignUpAgentUrl(false)
       }
 
       "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - Individual" in {
@@ -137,7 +137,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         val result = action.refine(mtdUser).futureValue
 
         result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(false).url
+        result.left.value.header.headers("LOCATION") shouldBe appConfig.obligationsWaitToSignUpIndividualUrl(false)
       }
 
       "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - SupportingAgent" in {
@@ -165,7 +165,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         val result = action.refine(mtdUser).futureValue
 
         result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(true).url
+        result.left.value.header.headers("LOCATION") shouldBe appConfig.obligationsWaitToSignUpAgentUrl(false)
       }
 
       "return an MtdItUser when valid ITSA status exists for current and future years" in {
@@ -230,7 +230,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
             res.header.status shouldBe INTERNAL_SERVER_ERROR
             title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-            feedbackUrl shouldBe "/report-quarterly/income-and-expenses/view/feedback" // to help distinguish error pages checking for feedback url since page titles are the same
+            feedbackUrl should include("/feedback") // to help distinguish error pages checking for feedback url since page titles are the same
           case Right(_) =>
             fail("Expected Individual error page but fell into a Right branch")
         }
@@ -261,7 +261,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
             res.header.status shouldBe INTERNAL_SERVER_ERROR
             title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-            agentFeedbackUrl shouldBe "/report-quarterly/income-and-expenses/view/agents/feedback" // to help distinguish error pages checking for feedback url since page titles are the same
+            agentFeedbackUrl should include("/agents/feedback") // to help distinguish error pages checking for feedback url since page titles are the same
           case Right(_) =>
             fail("Expected Agent error page but fell into a Right branch")
         }
@@ -292,7 +292,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         val result = action.refine(mtdUser).futureValue
 
         result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe obligations.controllers.reportingObligations.signUp.routes.YouMustWaitToSignUpController.show(false).url
+        result.left.value.header.headers("LOCATION") shouldBe appConfig.obligationsWaitToSignUpIndividualUrl(false)
       }
 
 

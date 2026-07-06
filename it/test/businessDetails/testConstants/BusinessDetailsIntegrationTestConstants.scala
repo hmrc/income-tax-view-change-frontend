@@ -20,7 +20,7 @@ import businessDetails.models.incomeSourceDetails.viewmodels.DatesModel
 import common.models.core.{AccountingPeriodModel, AddressModel, CessationModel}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.models.incomeSourceDetails.BusinessDetailsModel
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

@@ -62,6 +62,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
 
   lazy val individualWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("header.serviceName")
   lazy val agentWelshBanner: String = messagesApi.preferred(Seq(Lang("cy")))("agent.header.serviceName")
+  lazy val accessibilityUrl = s"${appConfig.accessibilityUrl}?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"
 
   private def addressJson(continueUrl: String, feedbackUrl: String, headerEnglish: String, headerWelsh: String): JsValue = {
     JsObject(
@@ -69,16 +70,16 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
         "version" -> JsNumber(2),
         "options" -> JsObject(
           Seq(
-            "continueUrl" -> JsString(appConfig.itvcFrontendEnvironment + continueUrl),
+            "continueUrl" -> JsString(appConfig.baseUrl + continueUrl),
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.timeoutUrl),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.keepAliveUrl)
+                "timeoutUrl" -> JsString(appConfig.baseUrl + InternalUrlHelper.timeoutUrl),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.baseUrl + InternalUrlHelper.keepAliveUrl)
               )
             ),
-            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.signoutUrl),
-            "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
+            "signOutHref" -> JsString(appConfig.baseUrl + InternalUrlHelper.signoutUrl),
+            "accessibilityFooterUrl" -> JsString(appConfig.accessibilityUrl),
             "selectPageConfig" -> JsObject(
               Seq(
                 "proposalListLimit" -> JsNumber(15)
@@ -105,7 +106,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 "showConfirmChangeText" -> JsBoolean(true)
               )
             ),
-            "phaseFeedbackLink" -> JsString(appConfig.itvcFrontendEnvironment + feedbackUrl),
+            "phaseFeedbackLink" -> JsString(appConfig.baseUrl + feedbackUrl),
             "deskProServiceName" -> JsString("cds-reimbursement-claim"),
             "showPhaseBanner" -> JsBoolean(true),
             "ukMode" -> JsBoolean(true)
@@ -183,16 +184,16 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
         "version" -> JsNumber(2),
         "options" -> JsObject(
           Seq(
-            "continueUrl" -> JsString(appConfig.itvcFrontendEnvironment + continueUrl),
+            "continueUrl" -> JsString(appConfig.baseUrl + continueUrl),
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.timeoutUrl),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.keepAliveUrl)
+                "timeoutUrl" -> JsString(appConfig.baseUrl + InternalUrlHelper.timeoutUrl),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.baseUrl + InternalUrlHelper.keepAliveUrl)
               )
             ),
-            "signOutHref" -> JsString(appConfig.itvcFrontendEnvironment + InternalUrlHelper.signoutUrl),
-            "accessibilityFooterUrl" -> JsString(appConfig.itvcFrontendEnvironment + "/accessibility-statement/income-tax-view-change?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"),
+            "signOutHref" -> JsString(appConfig.baseUrl + InternalUrlHelper.signoutUrl),
+            "accessibilityFooterUrl" -> JsString(appConfig.accessibilityUrl),
             "selectPageConfig" -> JsObject(
               Seq(
                 "proposalListLimit" -> JsNumber(15)
@@ -220,7 +221,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                 "townMaxLength" -> JsNumber(35)
               )
             ),
-            "phaseFeedbackLink" -> JsString(appConfig.itvcFrontendEnvironment + feedbackUrl),
+            "phaseFeedbackLink" -> JsString(appConfig.baseUrl + feedbackUrl),
             "deskProServiceName" -> JsString("cds-reimbursement-claim"),
             "showPhaseBanner" -> JsBoolean(true),
             "ukMode" -> JsBoolean(false)

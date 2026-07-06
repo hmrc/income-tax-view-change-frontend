@@ -16,7 +16,7 @@
 
 package businessDetails.views.constants
 
-import obligations.testConstants.IncomeSourcesObligationsTestConstants._
+import businessDetails.testConstants.IncomeSourcesObligationsTestConstants._
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
@@ -31,11 +31,7 @@ object IncomeSourceAddedObligationsConstants {
 
   val addIncomeSourceShowURL: String = addBusinessRoutes.AddIncomeSourceController.show().url
   val addIncomeSourceShowAgentURL: String = addBusinessRoutes.AddIncomeSourceController.showAgent().url
-
-  val nextUpdatesUrl: String = obligations.controllers.routes.NextUpdatesController.show().url
-  val nextUpdatesAgentUrl: String = obligations.controllers.routes.NextUpdatesController.showAgent().url
-
-  def reportingFrequencyPageUrl(isAgent: Boolean): String = obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+  
 
   val manageBusinessesUrl: String = manageBusinessRoutes.ManageYourBusinessesController.show().url
   val manageBusinessesAgentUrl: String = manageBusinessRoutes.ManageYourBusinessesController.showAgent().url

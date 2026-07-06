@@ -56,6 +56,10 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
   private lazy val errorHandler: Boolean => ShowInternalServerError =
     (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
+  lazy val newObligationsEnabled: Boolean =
+    //ToDo get this from feature switch for Obligations once implemented
+    false
+    
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
 
     authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
@@ -114,7 +118,8 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                   changeTo = changeTo,
                   isAgent = isAgent,
                   postAction = successPostUrl(isAgent),
-                  isCurrentTaxYear = dateService.getCurrentTaxYearStart.getYear == years.startYear
+                  isCurrentTaxYear = dateService.getCurrentTaxYearStart.getYear == years.startYear,
+                  newObligationsEnabled = newObligationsEnabled
                 ))
               }
           case None =>

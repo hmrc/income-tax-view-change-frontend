@@ -19,12 +19,12 @@ package businessDetails.services
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import common.config.featureswitch.FeatureSwitching
 import common.testUtils.TestSupport
-import obligations.mocks.connectors.MockObligationsConnector
-import obligations.testConstants.BusinessDetailsTestConstants.obligationsDataSuccessModel as _
-import obligations.testConstants.NextUpdatesTestConstants.*
+import businessDetails.mocks.connectors.MockObligationsConnector
+import common.models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.testConstants.NextUpdatesTestConstants.obligationsDataSuccessModel as _
+import shared.testConstants.NextUpdatesTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import shared.models.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 import scala.concurrent.Future

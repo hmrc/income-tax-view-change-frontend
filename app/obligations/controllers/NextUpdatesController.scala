@@ -21,6 +21,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.OptOutFs
+import common.models.obligations.ObligationsModel
 import common.services.AuditingService
 import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
@@ -29,7 +30,6 @@ import obligations.views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesV
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import shared.models.ObligationsModel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
@@ -60,7 +60,7 @@ class NextUpdatesController @Inject()(
     if (user.incomeSources.hasBusinessIncome || user.incomeSources.hasPropertyIncome) {
       action
     } else {
-      Future.successful(Ok(noNextUpdatesView(backUrl = appConfig.individualHomeUrl(origin))))
+      Future.successful(Ok(noNextUpdatesView(backUrl = appConfig.individualHomeUrlWithOrigin(origin))))
     }
   }
 
@@ -115,7 +115,7 @@ class NextUpdatesController @Inject()(
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     getNextUpdates(
-      backUrl = appConfig.individualHomeUrl(origin),
+      backUrl = appConfig.individualHomeUrlWithOrigin(origin),
       isAgent = false,
       errorHandler = itvcErrorHandler,
       origin = origin
@@ -133,5 +133,5 @@ class NextUpdatesController @Inject()(
   }
 
   private def auditNextUpdates[A](user: MtdItUser[A], isAgent: Boolean, origin: Option[String])(implicit hc: HeaderCarrier, request: Request[_]): Unit =
-    auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(if isAgent then appConfig.nextUpdatesAgentUrl else appConfig.nextUpdatesIndividualUrl(origin)))
+    auditingService.extendedAudit(NextUpdatesAuditModel(user), Some(if isAgent then routes.NextUpdatesController.showAgent().url else routes.NextUpdatesController.show(origin).url))
 }

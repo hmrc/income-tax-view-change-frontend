@@ -17,6 +17,7 @@
 package returns.models.liabilitycalculation.viewmodels
 
 import common.exceptions.MissingFieldException
+import common.models.helpers.LiabilityCalculationDataHelper
 import common.models.liabilitycalculation.*
 import common.models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CgtTaxBands, Nic4Bands, TaxBands}
 import common.testConstants.IncomeSourceAddedControllerConstants.testObligationsModel
@@ -29,11 +30,33 @@ import org.scalatest.wordspec.AnyWordSpec
 
 import scala.language.implicitConversions
 
-class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionValues with ScalaFutures {
+class TaxDueSummaryViewModelSpec extends AnyWordSpec with Matchers with OptionValues with ScalaFutures with LiabilityCalculationDataHelper{
 
   given CanEqual[TaxDueSummaryViewModel, TaxDueSummaryViewModel] = CanEqual.derived
 
   "TaxDueSummaryViewModel model" when {
+    "there is no calculation in response" should {
+      "convert to empty model" in {
+        val model: TaxDueSummaryViewModel = TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulWithNoCalc, testObligationsModel)
+        model shouldBe TaxDueSummaryViewModel()
+      }
+    }
+
+    "call getModifiedBaseTaxBand" should {
+      "return expected TaxBand" in {
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionPB, testObligationsModel)
+          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("20"), 12500, 12500, 12500, BigDecimal("5000.99")))
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionSB, testObligationsModel)
+          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("20"), 12510, 12520, 12530, BigDecimal("5001.99")))
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionDB, testObligationsModel)
+          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("21"), 12700, 12800, 12900, BigDecimal("5123.99")))
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionLS, testObligationsModel)
+          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("30"), 13500, 15500, 16500, BigDecimal("7000.99")))
+        TaxDueSummaryViewModel(liabilityCalculationModelSuccessfulConversionGLP, testObligationsModel)
+          .getModifiedBaseTaxBand shouldBe Some(TaxBands("BRT", BigDecimal("50"), 32500, 42500, 52500, BigDecimal("7000.99")))
+      }
+    }
+    
     "create a minimal TaxDueSummaryViewModel when there is a minimal Calculation response" in {
       TaxDueSummaryViewModel(liabilityCalculationModelDeductionsMinimal(), testObligationsModel) shouldBe
         TaxDueSummaryViewModel(

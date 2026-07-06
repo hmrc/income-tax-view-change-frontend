@@ -22,6 +22,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
+import common.models.obligations.{ObligationsErrorModel, ObligationsModel}
 import common.services.AuditingService
 import returns.forms.utils.SessionKeys.calcPagesBackPage
 import play.api.Logger
@@ -36,7 +37,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
 import returns.views.html.TaxCalcBreakdownView
 import shared.connectors.ObligationsConnector
-import shared.models.{ObligationsErrorModel, ObligationsModel}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

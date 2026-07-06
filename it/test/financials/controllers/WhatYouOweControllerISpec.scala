@@ -21,7 +21,6 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
 import common.models.admin.*
-import common.models.core.SelfServeTimeToPayJourneyResponseModel
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSaUtr}
@@ -29,6 +28,7 @@ import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import common.testConstants.messages.WhatYouOweMessages.hmrcAdjustment
 import financials.models.*
 import financials.models.audit.WhatYouOweResponseAuditModel
+import financials.models.core.SelfServeTimeToPayJourneyResponseModel
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
 import financials.testConstants.OutstandingChargesIntegrationTestConstants.*

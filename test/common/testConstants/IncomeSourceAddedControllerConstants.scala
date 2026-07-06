@@ -16,8 +16,8 @@
 
 package common.testConstants
 
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

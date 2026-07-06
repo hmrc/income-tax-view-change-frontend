@@ -17,8 +17,9 @@
 package financials.connectors
 
 import common.config.FrontendAppConfig
-import common.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
-import common.models.core.{RepaymentJourneyResponseModel, RepaymentRefund, ViewHistory}
+import financials.models.core.RepaymentJourneyResponseModel.{RepaymentJourneyErrorResponse, RepaymentJourneyModel}
+import common.models.core.ViewHistory
+import financials.models.core.{RepaymentJourneyResponseModel, RepaymentRefund}
 import play.api.Logger
 import play.api.http.Status.{ACCEPTED, INTERNAL_SERVER_ERROR, UNAUTHORIZED}
 import play.api.libs.json.Json

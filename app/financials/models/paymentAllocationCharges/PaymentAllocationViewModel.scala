@@ -17,7 +17,7 @@
 package financials.models.paymentAllocationCharges
 
 import common.exceptions.MissingFieldException
-import financials.implicits.ImplicitCurrencyFormatter.*
+import shared.implicits.ImplicitCurrencyFormatter.*
 import financials.models.DocumentDetail
 import financials.models.paymentAllocations.AllocationDetail
 

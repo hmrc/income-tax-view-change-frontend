@@ -35,8 +35,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   val manageIncomeSourceDetailsView: ManageIncomeSourceDetailsView = app.injector.instanceOf[ManageIncomeSourceDetailsView]
 
+  //Todo Update tests when feature switch of Obligations is implemented
   def reportingFrequencyLink(isAgent: Boolean): String =
-    obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController.show(isAgent).url
+    appConfig.obligationsReportingFrequencyUrl(isAgent, false)
 
   def backUrl(isAgent: Boolean): String = if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
 
@@ -52,7 +53,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   def signUpLink(i: Int)(implicit document: Document) = document.getElementById(s"sign-up-link-$i")
   def optOutLink(i: Int)(implicit document: Document) = document.getElementById(s"opt-out-link-$i")
 
-
+// Todo Update tests when feature switch of Obligations is implemented
   class SelfEmploymentSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
@@ -65,7 +66,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -84,7 +86,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -103,7 +106,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -118,7 +122,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -137,7 +142,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -155,7 +161,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -173,7 +180,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -188,7 +196,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -207,7 +216,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -225,7 +235,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -243,7 +254,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -258,7 +270,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -272,7 +285,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-      )(messages, implicitly)
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
     }
 
     implicit val document: Document = Jsoup.parse(contentAsString(view))
@@ -404,8 +418,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         testViewModel,
         isAgent = false,
         showStartDate = true,
-        backUrl = backUrl(false)
-      )(messages, implicitly)
+        backUrl = backUrl(false),
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
 
       implicit val document: Document = Jsoup.parse(contentAsString(view))
 
@@ -444,8 +459,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         testViewModel,
         isAgent = false,
         showStartDate = true,
-        backUrl = backUrl(false)
-      )(messages, implicitly)
+        backUrl = backUrl(false),
+        newObligationsEnabled = false
+      )(messages, implicitly, implicitly)
 
       val parsedDocument: Document = Jsoup.parse(contentAsString(view))
       implicit val document: Document = parsedDocument
@@ -475,8 +491,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false)
-        )(messages, implicitly)
+          backUrl = backUrl(false),
+          newObligationsEnabled = false
+        )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
@@ -497,8 +514,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false)
-        )(messages, implicitly)
+          backUrl = backUrl(false),
+          newObligationsEnabled = false
+        )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
@@ -520,8 +538,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false)
-        )(messages, implicitly)
+          backUrl = backUrl(false),
+          newObligationsEnabled = false
+        )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
@@ -541,8 +560,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false)
-        )(messages, implicitly)
+          backUrl = backUrl(false),
+          newObligationsEnabled = false
+        )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
@@ -563,8 +583,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false)
-        )(messages, implicitly)
+          backUrl = backUrl(false),
+          newObligationsEnabled = false
+        )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
@@ -585,8 +606,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false)
-        )(messages, implicitly)
+          backUrl = backUrl(false),
+          newObligationsEnabled = false
+        )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
@@ -607,8 +629,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false)
-        )(messages, implicitly)
+          backUrl = backUrl(false),
+          newObligationsEnabled = false
+        )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument
@@ -629,8 +652,9 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
           testViewModel,
           isAgent = false,
           showStartDate = true,
-          backUrl = backUrl(false)
-        )(messages, implicitly)
+          backUrl = backUrl(false),
+          newObligationsEnabled = false
+        )(messages, implicitly, implicitly)
 
         val parsedDocument: Document = Jsoup.parse(contentAsString(view))
         implicit val document: Document = parsedDocument

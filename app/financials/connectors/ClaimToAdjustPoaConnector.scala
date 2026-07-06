@@ -17,9 +17,9 @@
 package financials.connectors
 
 import common.config.FrontendAppConfig
-import common.models.core.CorrelationId
 import financials.models.claimToAdjustPoa.ClaimToAdjustPoaRequest
 import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.*
+import financials.models.core.CorrelationId
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue

@@ -32,7 +32,7 @@ case class TaxDueResponseAuditModel(mtdItUser: MtdItUser[_],
                                     viewModel: TaxDueSummaryViewModel,
                                     taxYear: Int) extends ExtendedAuditModel {
 
-  import financials.implicits.ImplicitCurrencyFormatter.*
+  import shared.implicits.ImplicitCurrencyFormatter.*
 
   override val transactionName: String = TransactionName.TaxCalculationDetailsResponse
   override val auditType: String = TaxCalculationDetailsResponse

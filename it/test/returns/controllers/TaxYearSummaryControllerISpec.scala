@@ -17,10 +17,12 @@
 package returns.controllers
 
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
 import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
 import common.models.admin.*
 import common.models.liabilitycalculation.{IsMTD, LiabilityCalculationError}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.CalculationListIntegrationTestConstants
 import common.testConstants.CalculationListIntegrationTestConstants.successResponseNonCrystallised
@@ -35,9 +37,7 @@ import play.api.libs.json.Json
 import returns.models.audit.TaxYearSummaryResponseAuditModel
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
-import returns.helpers.servicemocks.CalculationListStub
 import shared.models.audit.NextUpdatesResponseAuditModel
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

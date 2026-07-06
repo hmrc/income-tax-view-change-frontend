@@ -109,7 +109,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "paymentAllocation.heading"),
                   elementAttributeBySelector("#payment-allocation-0 a", "href")(
-                    "/report-quarterly/income-and-expenses/view" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
+                    s"$basePath" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
                   elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")}")
                 )
 

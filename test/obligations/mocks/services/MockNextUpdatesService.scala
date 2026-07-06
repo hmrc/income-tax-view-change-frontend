@@ -22,8 +22,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import businessDetails.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
+import common.models.obligations.ObligationsResponseModel
 import common.testUtils.UnitSpec
-import shared.models.ObligationsResponseModel
 
 import scala.concurrent.Future
 

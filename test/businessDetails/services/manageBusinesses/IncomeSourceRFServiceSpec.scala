@@ -20,7 +20,7 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.actions.AuthActionsSpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.mocks.services.{MockITSAStatusService, MockSessionService}
+import common.mocks.services.{MockCalculationListService, MockITSAStatusService, MockSessionService}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, NoStatus}
@@ -32,11 +32,11 @@ import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import common.testUtils.TestSupport
-import financials.mocks.services.MockCalculationListService
 import shared.enums.AfterSubmissionPage
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -117,7 +117,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         )(journeySessionCodeBlock)(testUser, hc)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+        redirectLocation(result) shouldBe Some(addBusinessRoutes.IncomeSourceAddedController.show(SelfEmployment).url)
       }
 
       "business is in latency for one year period" in new Setup(false, true, Mandated, Mandated) {
@@ -131,7 +131,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         )(journeySessionCodeBlock)(testUser, hc)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+        redirectLocation(result) shouldBe Some(addBusinessRoutes.IncomeSourceAddedController.show(SelfEmployment).url)
       }
 
       "business with latency details but not in latency period" in new Setup(false, false, Mandated, Mandated) {
@@ -145,7 +145,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         )(journeySessionCodeBlock)(testUser, hc)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+        redirectLocation(result) shouldBe Some(addBusinessRoutes.IncomeSourceAddedController.show(SelfEmployment).url)
       }
 
       "business is in latency for both years and CY+1 status is Annual at account level" in new Setup(true, false, Mandated, Annual) {
@@ -159,7 +159,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         )(journeySessionCodeBlock)(testUser, hc)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+        redirectLocation(result) shouldBe Some(addBusinessRoutes.IncomeSourceAddedController.show(SelfEmployment).url)
       }
 
       "business is in latency for both years and CY status is Annual at account level" in new Setup(true, false, Annual, Mandated) {
@@ -173,7 +173,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         )(journeySessionCodeBlock)(testUser, hc)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+        redirectLocation(result) shouldBe Some(addBusinessRoutes.IncomeSourceAddedController.show(SelfEmployment).url)
       }
       "business is in latency for both years and CY status is Exempt at account level" in new Setup(true, false, Exempt, Mandated) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
@@ -186,7 +186,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         )(journeySessionCodeBlock)(testUser, hc)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+        redirectLocation(result) shouldBe Some(addBusinessRoutes.IncomeSourceAddedController.show(SelfEmployment).url)
       }
       "business is in latency for both years and CY+1 status is Exempt at account level" in new Setup(true, false, Mandated, Exempt) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
@@ -199,7 +199,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         )(journeySessionCodeBlock)(testUser, hc)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+        redirectLocation(result) shouldBe Some(addBusinessRoutes.IncomeSourceAddedController.show(SelfEmployment).url)
       }
       "business is in latency for both years CY+1 is empty and CY is Mandated and NOT Rollover" in new Setup(true, false, Mandated, NoStatus, false, true) {
         val result = incomeSourceRFService.redirectChecksForIncomeSourceRF(
@@ -212,7 +212,7 @@ class IncomeSourceRFServiceSpec extends TestSupport
         )(journeySessionCodeBlock)(testUser, hc)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/manage-your-businesses/add-sole-trader/business-added")
+        redirectLocation(result) shouldBe Some(addBusinessRoutes.IncomeSourceAddedController.show(SelfEmployment).url)
       }
     }
     "redirect to the url within the codeblock returned" when {

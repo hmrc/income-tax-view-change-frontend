@@ -20,9 +20,9 @@ import common.auth.actions.AuthActionsTestData.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import common.testUtils.TestSupport
+import financials.models.{DocumentDetail, FinancialDetail, SubItem}
 import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}
 import financials.models.paymentAllocations.AllocationDetail
-import financials.models.{DocumentDetail, FinancialDetail, SubItem}
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

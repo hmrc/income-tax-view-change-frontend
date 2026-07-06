@@ -30,7 +30,9 @@ object AuditStub extends WiremockMethods with Eventually {
       interval = Span(50, Millis)
     )
 
-
+  //ToDo update this to the correct audit source when in new service
+  lazy val auditSource = "income-tax-view-change-frontend"
+  
   def stubAuditing(): Unit = {
     when(method = POST, uri = "/write/audit/merged")
       .thenReturn(status = NO_CONTENT, body = """{"x":2}""")
@@ -65,8 +67,7 @@ object AuditStub extends WiremockMethods with Eventually {
     }
   }
 
-  def verifyAuditEvent(auditEvent: ExtendedAuditModel,
-                       auditSource: String = "income-tax-view-change-frontend"): Unit = {
+  def verifyAuditEvent(auditEvent: ExtendedAuditModel): Unit = {
     eventually {
       val expectedAuditJson =
         Json.obj(

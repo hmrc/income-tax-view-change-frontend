@@ -33,7 +33,7 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.BaseTestConstants.{testMtditid, testNino}
 import businessDetails.testConstants.BusinessDetailsTestConstants.business1
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import shared.models.ObligationsModel
+import common.models.obligations.ObligationsModel
 
 import java.time.LocalDate
 import scala.concurrent.Future

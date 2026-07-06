@@ -28,7 +28,6 @@ import common.config.FrontendAppConfig
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
-import obligations.controllers.routes as obligationsRoutes
 
 @Singleton
 class CheckCompleteController @Inject()(view: CheckCompleteView,
@@ -39,9 +38,11 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
                                         implicit val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
-  private def nextUpdatesLink(isAgent: Boolean): String =
-    if (isAgent) obligationsRoutes.NextUpdatesController.showAgent().url
-    else obligationsRoutes.NextUpdatesController.show().url
+  private def nextUpdatesLink(isAgent: Boolean): String ={
+    //ToDo Get this value from feature switch for Obligations once implemented
+    val newObligationsEnabled: Boolean = false
+    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled)
+  }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
     withTriggeredMigrationFS {

@@ -16,7 +16,7 @@
 
 package financials.views
 
-import _root_.financials.implicits.ImplicitCurrencyFormatter.*
+import shared.implicits.ImplicitCurrencyFormatter.*
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter

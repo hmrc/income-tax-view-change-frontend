@@ -28,12 +28,11 @@ import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation
 import common.models.liabilitycalculation.*
+import common.models.obligations.ObligationsModel
 import common.services.{AuditingService, DateServiceInterface}
-import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
-import financials.controllers.routes as financialsRoutes
+import financials.models.{ChargeItem, DocumentDetail, FirstLatePaymentPenalty, LateSubmissionPenalty, PoaOneDebit, PoaTwoDebit, SecondLatePaymentPenalty, TransactionUtils}
 import financials.models.*
-import financials.services.*
-import financials.services.claimToAdjustPoa.ClaimToAdjustService
+import returns.services.FinancialDetailsService
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
 import play.api.mvc.*
@@ -43,7 +42,6 @@ import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSCl
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 import returns.services.{CalculationService, NextUpdatesService, TaxYearSummaryService}
 import returns.views.html.TaxYearSummaryView
-import shared.models.ObligationsModel
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.language.LanguageUtils
@@ -67,8 +65,7 @@ class TaxYearSummaryController @Inject()(
                                           nextUpdatesService: NextUpdatesService,
                                           messagesApi: MessagesApi,
                                           val languageUtils: LanguageUtils,
-                                          val auditingService: AuditingService,
-                                          claimToAdjustService: ClaimToAdjustService
+                                          val auditingService: AuditingService
                                         )(
                                           implicit val appConfig: FrontendAppConfig,
                                           dateService: DateServiceInterface,
@@ -79,14 +76,21 @@ class TaxYearSummaryController @Inject()(
   // Individual back urls
   private def taxYearsUrl(origin: Option[String]): String = returns.controllers.routes.TaxYearsController.showTaxYears(origin).url
 
-  private def whatYouOweUrl(origin: Option[String]): String = financialsRoutes.WhatYouOweController.show(origin).url
+  //ToDo update isFinancialsFrontendEnabled to true when financials feature switch is built
+  private def whatYouOweUrl(origin: Option[String]): String = appConfig.financialsWhatYouOweUrl(true, origin, financialsFrontendEnabled = false)
 
-  private def homeUrl(origin: Option[String]): String = hub.controllers.routes.HomeController.show(origin).url
+  private def homeUrl(origin: Option[String]): String = appConfig.individualHomeUrlWithOrigin(origin)
 
   // Agent back urls
   private lazy val agentTaxYearsUrl: String = returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
-  private lazy val agentHomeUrl: String = hub.controllers.routes.HomeController.showAgent().url
-  private lazy val agentWhatYouOweUrl: String = financialsRoutes.WhatYouOweController.showAgent().url
+  private lazy val agentHomeUrl: String = appConfig.agentHomeUrl
+  //ToDo update isFinancialsFrontendEnabled to true when financials feature switch is built
+  private lazy val agentWhatYouOweUrl: String = appConfig.financialsWhatYouOweUrl(true, financialsFrontendEnabled = false)
+
+  //ToDo update isFinancialsFrontendEnabled to true when financials feature switch is built
+  private lazy val ctaLink: Boolean => String = isAgent =>
+    appConfig.financialsAmendablePoaUrl(isAgent, financialsFrontendEnabled = false)
+
 
   def formatErrorMessages(
                            liabilityCalc: LiabilityCalculationResponse,
@@ -260,8 +264,6 @@ class TaxYearSummaryController @Inject()(
         pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
       )
 
-    lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
-
     val isNotCrystallisedShowInset: Boolean =
       fromStringToCalculationTypeValue(latestCalc.metadata.calculationType) match {
         case CalculationType.UnknownCalculationType =>
@@ -286,7 +288,7 @@ class TaxYearSummaryController @Inject()(
         backUrl = backUrl,
         origin = origin,
         isAgent = isAgent,
-        ctaLink = ctaLink,
+        ctaLink = ctaLink(isAgent),
         taxYearViewScenarios = taxYearViewScenarios,
         showNoTaxCalc = latestCalc.calculation.isEmpty,
         viewTaxCalcLink = selfAssessmentLink,
@@ -314,7 +316,6 @@ class TaxYearSummaryController @Inject()(
 
     if (error.status == NO_CONTENT) {
 
-      lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
       val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
       val calculationSummary: Option[CalculationSummary] =
@@ -367,7 +368,7 @@ class TaxYearSummaryController @Inject()(
           backUrl = backUrl,
           origin = origin,
           isAgent = isAgent,
-          ctaLink = ctaLink,
+          ctaLink = ctaLink(isAgent),
           taxYearViewScenarios = taxYearViewScenarios,
           showNoTaxCalc = true,
           viewTaxCalcLink = selfAssessmentLink,
@@ -377,7 +378,6 @@ class TaxYearSummaryController @Inject()(
         ))
       )
     } else {
-      lazy val ctaLink = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url
       val lang: Seq[Lang] = Seq(languageUtils.getCurrentLang)
 
       val calculationSummary: Option[CalculationSummary] =
@@ -429,7 +429,7 @@ class TaxYearSummaryController @Inject()(
           backUrl = backUrl,
           origin = origin,
           isAgent = isAgent,
-          ctaLink = ctaLink,
+          ctaLink = ctaLink(isAgent),
           taxYearViewScenarios = taxYearViewScenarios,
           showNoTaxCalc = false,
           viewTaxCalcLink = selfAssessmentLink,
@@ -598,7 +598,7 @@ class TaxYearSummaryController @Inject()(
   }
 
   private def claimToAdjustViewModel(nino: Nino, taxYear: Int)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[TYSClaimToAdjustViewModel] = {
-    claimToAdjustService.getPoaTaxYearForEntryPoint(nino).flatMap {
+    financialDetailsService.getPoaTaxYearForEntryPoint(nino).flatMap {
       case Right(value) => value match {
         case Some(value) if value.endYear == taxYear => Future(TYSClaimToAdjustViewModel(Option(value)))
         case _ => Future(TYSClaimToAdjustViewModel(None))

@@ -22,6 +22,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals, RecentActivity}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
+import common.models.obligations.{ObligationsModel, ObligationsResponseModel, SingleObligationModel}
 import common.services.{AuditingService, DateServiceInterface, ITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
 import financials.models.*
@@ -38,7 +39,6 @@ import obligations.services.reportingObligations.signUp.SignUpService
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
-import shared.models.{ObligationsModel, ObligationsResponseModel, SingleObligationModel}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

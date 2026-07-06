@@ -21,6 +21,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditEvent
 import common.helpers.servicemocks.{IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
@@ -29,7 +30,6 @@ import common.testConstants.NewCalcDataIntegrationTestConstants.*
 import common.testConstants.messages.TaxDueSummaryMessages.*
 import returns.models.audit.TaxDueResponseAuditModel
 import returns.models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
-import shared.models.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 
 import java.time.LocalDate
 

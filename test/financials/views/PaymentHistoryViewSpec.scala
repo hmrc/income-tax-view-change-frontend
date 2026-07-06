@@ -22,7 +22,7 @@ import common.implicits.ImplicitDateFormatter
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import common.testUtils.ViewSpec
-import financials.implicits.ImplicitCurrencyFormatter.*
+import shared.implicits.ImplicitCurrencyFormatter.*
 import financials.models.*
 import financials.models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHistoryViewModel
 import financials.models.repaymentHistory.PaymentHistoryEntry
