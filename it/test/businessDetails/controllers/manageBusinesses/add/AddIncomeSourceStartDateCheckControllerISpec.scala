@@ -142,6 +142,31 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                   )
                 }
               }
+              "redirect to the manage businesses page" when {
+                "the session has no start date" in {
+                  stubAuthorised(mtdUserRole)
+                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+
+                  await(sessionService.setMongoData(
+                    UIJourneySessionData(
+                      sessionId = testSessionId,
+                      journeyType = IncomeSourceJourneyType(Add, incomeSourceType).toString,
+                      addIncomeSourceData = Some(AddIncomeSourceData())
+                    )
+                  ))
+
+                  val result = buildGETMTDClient(path, additionalCookies).futureValue
+
+                  val expectedRedirect =
+                    if (mtdUserRole.isAgent) businessDetails.controllers.manageBusinesses.routes.ManageYourBusinessesController.showAgent().url
+                    else businessDetails.controllers.manageBusinesses.routes.ManageYourBusinessesController.show().url
+
+                  result should have(
+                    httpStatus(SEE_OTHER),
+                    redirectURI(expectedRedirect)
+                  )
+                }
+              }
             }
             testAuthFailures(path, mtdUserRole)
           }
