@@ -49,7 +49,7 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
           whatYouOweUrl = whatYouOweUrl,
           moneyInYourAccountUrl = moneyInYourAccountUrl,
           payPenaltyUrl = payPenaltyUrl,
-          hasInterest = showInterestSection && financialDetailsModels.flatMap(_.documentDetails).exists(hasAccruingInterest),
+          hasInterest = showInterestSection && financialDetailsModels.flatMap(_.documentDetails).exists(isAccruingInterest),
           hasPenalty = financialDetailsModels.flatMap(_.toChargeItem).exists(charge => charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0),
           unallocatedCredit = positiveCredit(balanceDetails.flatMap(_.unallocatedCredit))
             .orElse(positiveCredit(balanceDetails.flatMap(_.totalCreditAvailableForRepayment)))
@@ -61,6 +61,6 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
   private def positiveCredit(credits: List[BigDecimal]): Option[BigDecimal] =
     credits.filter(_ > 0).sortWith(_ > _).headOption
 
-  private def hasAccruingInterest(documentDetail: DocumentDetail): Boolean =
+  private def isAccruingInterest(documentDetail: DocumentDetail): Boolean =
     documentDetail.accruingInterestAmount.exists(_ > 0)
 }

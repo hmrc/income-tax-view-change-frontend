@@ -60,10 +60,10 @@
                     @if(!financialDetail.interestLockExists){
                         <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.charging") </div>
                     }
-                    @if(financialDetail.interestLockExists && !financialDetail.hasAccruedInterest){
+                    @if(financialDetail.interestLockExists && !financialDetail.isAccruingInterest){
                         <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.notCharging") </div>
                     }
-                    @if(financialDetail.interestLockExists && financialDetail.hasAccruedInterest){
+                    @if(financialDetail.interestLockExists && financialDetail.isAccruingInterest){
                         <div class="form-hint govuk-body-s"> @messages("chargeSummary.paymentBreakdown.interestLocks.previouslyCharged") </div>
                     }
                 }

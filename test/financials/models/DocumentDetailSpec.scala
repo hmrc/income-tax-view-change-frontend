@@ -27,35 +27,40 @@ class DocumentDetailSpec extends UnitSpec {
 
   "DocumentDetail" when {
 
-    "calling predicate hasAccruingInterest" should {
+    "calling predicate isAccruingInterest" should {
 
       "return true" when {
         "accruingInterestAmount exists and is greater than 0" in {
           fullDocumentDetailModel.copy(accruingInterestAmount = Some(200))
-            .hasAccruingInterest shouldBe true
+            .isAccruingInterest shouldBe true
         }
       }
 
       "return false" when {
         "accruingInterestAmount exists and is a negative amount" in {
           fullDocumentDetailModel.copy(accruingInterestAmount = Some(-200))
-            .hasAccruingInterest shouldBe false
+            .isAccruingInterest shouldBe false
+        }
+
+        "accruingInterestAmount exists and is equal to 0" in {
+          fullDocumentDetailModel.copy(accruingInterestAmount = Some(0))
+            .isAccruingInterest shouldBe false
         }
 
         "accruingInterestAmount does not exist" in {
           fullDocumentDetailModel.copy(interestOutstandingAmount = None, accruingInterestAmount = Some(0))
-            .hasAccruingInterest shouldBe false
+            .isAccruingInterest shouldBe false
         }
 
         "interestOutstandingAmount is zero and accruingInterestAmount is a non-negative amount or does not exist" in {
           fullDocumentDetailModel.copy(interestOutstandingAmount = Some(0), accruingInterestAmount = Some(0))
-            .hasAccruingInterest shouldBe false
+            .isAccruingInterest shouldBe false
 
           fullDocumentDetailModel.copy(interestOutstandingAmount = Some(0), accruingInterestAmount = Some(-1))
-            .hasAccruingInterest shouldBe false
+            .isAccruingInterest shouldBe false
 
           fullDocumentDetailModel.copy(interestOutstandingAmount = Some(0), accruingInterestAmount = None)
-            .hasAccruingInterest shouldBe false
+            .isAccruingInterest shouldBe false
         }
       }
 

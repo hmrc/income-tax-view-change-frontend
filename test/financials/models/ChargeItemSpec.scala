@@ -34,6 +34,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   val originalAmount: BigDecimal = 100.0
   val outstandingAmount: BigDecimal = 50.0
   val interestOutstandingAmount: Option[BigDecimal] = Some(40.0)
+  val latePaymentInterestAmount: Option[BigDecimal] = Some(50.0)
   val accruingInterestAmount: Option[BigDecimal] = Some(30.0)
   val lpiWithDunningLock: Option[BigDecimal] = Some(20.0)
   val amountCodedOut: Option[BigDecimal] = Some(150.0)
@@ -44,7 +45,8 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     outstandingAmount = outstandingAmount,
     interestOutstandingAmount = interestOutstandingAmount,
     accruingInterestAmount = accruingInterestAmount,
-    lpiWithDunningLock = lpiWithDunningLock)
+    lpiWithDunningLock = lpiWithDunningLock,
+    latePaymentInterestAmount = latePaymentInterestAmount)
 
   val docDetailsNoOutstandingAmout = defaultDocDetails.copy(outstandingAmount = 0)
   val docDetailsAmountCodedOut = defaultDocDetails.copy(amountCodedOut = amountCodedOut)
@@ -135,17 +137,17 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
           documentDetail = defaultDocDetails.copy(accruingInterestAmount = Some(1.00)),
           financialDetails = List(poa1FinancialDetails))
 
-        chargeItem.hasAccruingInterest shouldBe true
+        chargeItem.isAccruingInterest shouldBe true
 
       }
 
-      "Is false if we have and accruing interest amount is not defined or less than 0" in {
+      "Is false if we have and accruing interest amount is not defined or less than or equal to 0" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails.copy(accruingInterestAmount = Some(0.00)),
           financialDetails = List(poa1FinancialDetails))
 
-        chargeItem.hasAccruingInterest shouldBe false
+        chargeItem.isAccruingInterest shouldBe false
 
       }
     }
@@ -349,7 +351,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "interest is not paid, return unpaid" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(30)))
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(50)))
 
         chargeItem.getInterestPaidStatus shouldBe "unpaid"
       }

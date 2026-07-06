@@ -403,7 +403,7 @@
 
 
     @if(!viewModel.isCredit) {
-        @if(viewModel.hasInterestLocks && viewModel.hasAccruedInterest) {
+        @if(viewModel.hasInterestLocks && viewModel.isAccruingInterest) {
             @p(id = Some("p-interest-locks-msg")) {
                 @if(viewModel.isAgent) {
                     @messages("chargeSummary.whatYouOwe.textOne-agent")

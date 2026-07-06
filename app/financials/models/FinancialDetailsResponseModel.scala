@@ -185,7 +185,7 @@ case class FinancialDetailsModel(balanceDetails: BalanceDetails,
 
 
   def docDetailsNotDueWithInterest(currentDate: LocalDate): Int = {
-    this.documentDetails.count(x => !x.isPaid && x.hasAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate))
+    this.documentDetails.count(x => !x.isPaid && x.isAccruingInterest && x.documentDueDate.getOrElse(LocalDate.MIN).isAfter(currentDate))
   }
 
   /////////////////////////// to ChargeItem conversion methods: START //////////////////////////////////////////////////
