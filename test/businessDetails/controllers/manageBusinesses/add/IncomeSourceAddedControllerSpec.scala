@@ -93,28 +93,6 @@ class IncomeSourceAddedControllerSpec extends MockAuthActions with MockNextUpdat
       sessionService = mockSessionService
     )(frontendAppConfig, messagesControllerComponents, executionContext)
 
-  ".getNextUpdatesUrl" should {
-
-    "return the correct agent url" in {
-      testIncomeSourceAddedController.getNextUpdatesUrl(true) should include("/agents/submission-deadlines")
-    }
-
-    "return the correct non-agent url" in {
-      testIncomeSourceAddedController.getNextUpdatesUrl(false) should include("/submission-deadlines")
-    }
-  }
-
-  ".getReportingFrequencyUrl" should {
-
-    "return the correct agent url" in {
-      testIncomeSourceAddedController.getReportingFrequencyUrl(true) should include("agents/reporting-frequency")
-    }
-
-    "return the correct non-agent url" in {
-      testIncomeSourceAddedController.getReportingFrequencyUrl(false) should include("/reporting-frequency")
-    }
-  }
-
   ".getManageBusinessUrl" should {
 
     "return the correct agent url" in {

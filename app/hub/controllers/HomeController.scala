@@ -122,7 +122,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         nextTaxReturnDueDate = nextTaxReturnDueDate)
 
       val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, businessDetailsFrontendEnabled = isEnabled(BusinessDetailsFrontend))
-      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
+      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus, isEnabled(ObligationsFrontend))
       val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
 
       auditingService.extendedAudit(
@@ -137,7 +137,8 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         supportingAgentHomeView(
           yourBusinessesTileViewModel,
           nextUpdatesTileViewModel,
-          yourReportingObligationsTileViewModel
+          yourReportingObligationsTileViewModel,
+          isEnabled(ObligationsFrontend)
         )
       )
     }
@@ -190,7 +191,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
         ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
 
       val yourReportingObligationsTileViewModel =
-        YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus)
+        YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus, isEnabled(ObligationsFrontend))
 
       NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
 
@@ -204,6 +205,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
             yourBusinessesTileViewModel = yourBusinessesTileViewModel,
             yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
             penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
+            obligationsEnabled = isEnabled(ObligationsFrontend),
             dunningLockExists = dunningLockExists,
             origin = origin
           )
@@ -226,9 +228,9 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
           )
 
           if (user.isAgent) {
-            Ok(primaryAgentHomeView(homeViewModel)).addingToSession(mandationStatus)
+            Ok(primaryAgentHomeView(homeViewModel, isEnabled(ObligationsFrontend))).addingToSession(mandationStatus)
           } else {
-            Ok(homeView(homeViewModel)).addingToSession(mandationStatus)
+            Ok(homeView(homeViewModel, isEnabled(ObligationsFrontend))).addingToSession(mandationStatus)
           }
         case Left(ex: Throwable) =>
           Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")

@@ -45,7 +45,8 @@
 @(
     yourBusinessesTileViewModel: YourBusinessesTileViewModel,
     nextUpdatesTileViewModel: NextUpdatesTileViewModel,
-    yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel
+    yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel, 
+    obligationsEnabled: Boolean
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -61,13 +62,13 @@
 @tiles() = {
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @updatesTile(nextUpdatesTileViewModel, true)
+            @updatesTile(nextUpdatesTileViewModel, true, obligationsEnabled)
             @incomeSourcesTile(yourBusinessesTileViewModel, true)
         </div>
     </div>
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
-            @yourReportingObligationsTile(yourReportingObligationsTileViewModel, true)
+            @yourReportingObligationsTile(yourReportingObligationsTileViewModel, true, obligationsEnabled)
         </div>
     </div>
 }

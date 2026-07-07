@@ -67,6 +67,8 @@ object FeatureSwitchName {
       JsSuccess(`CY+1YouMustWaitToSignUpPageEnabled`)
     case JsString(NewHomePage.name) =>
       JsSuccess(NewHomePage)
+    case JsString(ObligationsFrontend.name) =>
+      JsSuccess(ObligationsFrontend)
     case JsString(OverseasBusinessAddress.name) =>
       JsSuccess(OverseasBusinessAddress)
     case JsString(RecentActivity.name) =>
@@ -123,7 +125,8 @@ object FeatureSwitchName {
       MortgageEvidence,
       IdempotencyKeyForCreateIncomeSource,
       NoIncomeSourcesRedirect,
-      BusinessDetailsFrontend
+      BusinessDetailsFrontend,
+      ObligationsFrontend
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -151,6 +154,11 @@ case object PaymentHistoryRefunds extends FeatureSwitchName {
   override val name = "payment-history-refunds"
 
   override def toString: String = "Payment History Refunds"
+}
+
+case object ObligationsFrontend extends FeatureSwitchName {
+  override val name: String = "obligations-frontend"
+  override def toString: String = "Obligations Frontend"
 }
 
 case object OptOutFs extends FeatureSwitchName {

@@ -20,6 +20,7 @@
 @import hub.models.homePage.YourReportingObligationsTileViewModel
 @import common.models.itsaStatus.ITSAStatus
 @import obligations.controllers.reportingObligations.{routes => reportingObligationsRoutes}
+@import common.config.FrontendAppConfig
 
 @this(
     home_tile: home_tile,
@@ -28,11 +29,9 @@
     link: link
 )
 
-@(yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel, isAgent: Boolean)(implicit messages: Messages)
+@(yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel, isAgent: Boolean, newObligationsEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
-@reportingObligationsURL = @{
-    reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent).url
-}
+@reportingObligationsURL = @{appConfig.obligationsReportingFrequencyUrl(isAgent, newObligationsEnabled)}
 
 @reportingObligationsLink = @{
     link(

@@ -25,6 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
 import common.config.FrontendAppConfig
+import common.models.admin.ObligationsFrontend
 
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,12 +38,6 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
                                         implicit val appConfig: FrontendAppConfig,
                                         implicit val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
-
-  private def nextUpdatesLink(isAgent: Boolean): String ={
-    //ToDo Get this value from feature switch for Obligations once implemented
-    val newObligationsEnabled: Boolean = false
-    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled)
-  }
 
   def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
     withTriggeredMigrationFS {
@@ -58,7 +53,7 @@ class CheckCompleteController @Inject()(view: CheckCompleteView,
         view(
           isAgent,
           compatibleSoftwareLink,
-          nextUpdatesLink(isAgent),
+          appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend)),
           postAction = routes.CheckCompleteController.submit(isAgent)
         ))
       )

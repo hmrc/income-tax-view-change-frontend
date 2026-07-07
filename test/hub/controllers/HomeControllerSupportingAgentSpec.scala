@@ -308,7 +308,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
             setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
             mockGetDueDates(Right(Seq.empty))
             mockSingleBusinessIncomeSource()
-            when(mockedYourReportingObligationsTile.apply(any(), any())(any()))
+            when(mockedYourReportingObligationsTile.apply(any(), any(), any())(any(), any()))
               .thenReturn(Html(""))
 
             val result: Future[Result] = controller.showAgent()(fakeRequest)

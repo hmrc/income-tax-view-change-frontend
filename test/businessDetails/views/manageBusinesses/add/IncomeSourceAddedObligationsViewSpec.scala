@@ -29,17 +29,18 @@ import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewMode
 import businessDetails.views.constants.IncomeSourceAddedObligationsConstants.*
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.testUtils.ViewSpec
+import common.config.featureswitch.FeatureSwitching
+import common.models.admin.ObligationsFrontend
+
 
 import java.time.LocalDate
 
-class IncomeSourceAddedObligationsViewSpec extends ViewSpec {
+class IncomeSourceAddedObligationsViewSpec extends ViewSpec with FeatureSwitching {
 
   val view: IncomeSourceAddedObligationsView = app.injector.instanceOf[IncomeSourceAddedObligationsView]
 
-  //Todo Update these tests when feature switch for Obligations is introduced
-  val nextUpdatesUrl: String = appConfig.obligationsNextUpdatesUrl(false, false)
-  val nextUpdatesAgentUrl: String = appConfig.obligationsNextUpdatesUrl(true, false)
-  val getReportingFrequencyUrl = appConfig.obligationsReportingFrequencyIndividualUrl(false)
+  val nextUpdatesUrl: String = appConfig.obligationsNextUpdatesUrl(false, isEnabled(ObligationsFrontend))
+  val getReportingFrequencyUrl = appConfig.obligationsReportingFrequencyUrl(false, isEnabled(ObligationsFrontend))
   
   val getManageBusinessUrl = manageBusinessRoutes.ManageYourBusinessesController.show().url
   object IdSelectors {

@@ -24,6 +24,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.admin.ObligationsFrontend
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.{TestSupport, ViewSpec}
 import financials.controllers.routes as financialsRoutes
@@ -105,7 +106,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
-    val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), currentITSAStatus)
+    val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), currentITSAStatus, isEnabled(ObligationsFrontend))
 
     val penaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
 
@@ -117,11 +118,13 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
+      obligationsEnabled = isEnabled(ObligationsFrontend),
       penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
       dunningLockExists = dunningLockExists
     )
     val view: HtmlFormat.Appendable = agentHome(
-      homePageViewModel
+      homePageViewModel,
+      isEnabled(ObligationsFrontend)
     )(FakeRequest(), implicitly, user, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))

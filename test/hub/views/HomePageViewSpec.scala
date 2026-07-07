@@ -26,6 +26,7 @@ import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
+import common.models.admin.ObligationsFrontend
 import financials.models.creditsandrefunds.CreditsModel
 import financials.testConstants.ANewCreditAndRefundModel
 import hub.models.homePage.*
@@ -97,7 +98,9 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
               nextUpdatesTileViewModel: NextUpdatesTileViewModel = viewModelFuture, utr: Option[String] = Some("1234567890"), paymentHistoryEnabled: Boolean = true, ITSASubmissionIntegrationEnabled: Boolean = true,
               user: MtdItUser[_] = testMtdItUser(), dunningLockExists: Boolean = false, creditAndRefundEnabled: Boolean = false, displayCeaseAnIncome: Boolean = false,
               penaltiesAndAppealsIsEnabled: Boolean = true,
-              penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) {
+              penaltyPoints: Int = 0, submissionFrequency: String = "Annual", currentITSAStatus: ITSAStatus = ITSAStatus.Voluntary) extends FeatureSwitching {
+
+    val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
     val returnsTileViewModel: ReturnsTileViewModel = ReturnsTileViewModel(currentTaxYear = TaxYear(currentTaxYear - 1, currentTaxYear), iTSASubmissionIntegrationEnabled = ITSASubmissionIntegrationEnabled)
 
@@ -111,7 +114,7 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
 
     val yourBusinessesTileViewModel: YourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
-    val yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), currentITSAStatus)
+    val yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), currentITSAStatus, isEnabled(ObligationsFrontend))
 
     val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel = PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled, submissionFrequency, penaltyPoints)
 
@@ -123,18 +126,20 @@ class HomePageViewSpec extends TestSupport with FeatureSwitching {
       paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
       yourBusinessesTileViewModel = yourBusinessesTileViewModel,
       yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
+      obligationsEnabled = isEnabled(ObligationsFrontend),
       penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
       dunningLockExists = dunningLockExists
     )
 
     val home: HomeView = app.injector.instanceOf[HomeView]
     lazy val page: HtmlFormat.Appendable = home(
-      homePageViewModel
+      homePageViewModel,
+      obligationsEnabled = isEnabled(ObligationsFrontend)
     )(FakeRequest(), implicitly, user, implicitly)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
 
     val user2: MtdItUser[Any] = user.copy(authUserDetails = user.authUserDetails.copy(name = None))
-    lazy val page2: HtmlFormat.Appendable = home(homePageViewModel)(FakeRequest(), implicitly, user2, implicitly)
+    lazy val page2: HtmlFormat.Appendable = home(homePageViewModel, isEnabled(ObligationsFrontend))(FakeRequest(), implicitly, user2, implicitly)
     lazy val document2: Document = Jsoup.parse(contentAsString(page2))
 
     def getElementById(id: String): Option[Element] = Option(document.getElementById(id))

@@ -43,7 +43,8 @@
 )
 
 @(
-viewModel: HomePageViewModel
+viewModel: HomePageViewModel,
+obligationsEnabled: Boolean
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -68,7 +69,7 @@ viewModel: HomePageViewModel
     <div class="grid-row">
         <div class="flex-container govuk-!-padding-0">
             @incomeSourcesTile(viewModel.yourBusinessesTileViewModel, user.isAgent)
-            @yourReportingObligationsTile(viewModel.yourReportingObligationsTileViewModel, user.isAgent)
+            @yourReportingObligationsTile(viewModel.yourReportingObligationsTileViewModel, user.isAgent, obligationsEnabled)
         </div>
     </div>
 

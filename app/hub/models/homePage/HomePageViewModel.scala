@@ -30,6 +30,7 @@ case class HomePageViewModel(utr: Option[String],
                              yourBusinessesTileViewModel: YourBusinessesTileViewModel,
                              yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel,
                              penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel,
+                             obligationsEnabled: Boolean,
                              dunningLockExists: Boolean = false,
                              origin: Option[String] = None)
 
@@ -61,7 +62,7 @@ case class ReturnsTileViewModel(currentTaxYear: TaxYear, iTSASubmissionIntegrati
 
 case class YourBusinessesTileViewModel(displayCeaseAnIncome: Boolean, businessDetailsFrontendEnabled: Boolean = false)
 
-case class YourReportingObligationsTileViewModel(currentTaxYear: TaxYear, currentYearITSAStatus: ITSAStatus)
+case class YourReportingObligationsTileViewModel(currentTaxYear: TaxYear, currentYearITSAStatus: ITSAStatus, newObligationsEnabled: Boolean)
 
 case class PenaltiesAndAppealsTileViewModel(penaltiesAndAppealsIsEnabled: Boolean, submissionFrequency: String, penaltyPoints: Int) {
 

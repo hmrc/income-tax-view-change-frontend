@@ -22,6 +22,7 @@
 @import common.models.itsaStatus.ITSAStatus
 @import common.views.html.layouts.unifiedLayout
 @import obligations.controllers.{routes => obligationsRoutes}
+@import common.config.FrontendAppConfig
 
 
 @this(
@@ -31,21 +32,17 @@
     link: link
 )
 
-@(nextUpdatesTileViewModel: NextUpdatesTileViewModel, isAgent: Boolean, optOrigin: Option[String] = None)(implicit messages: Messages)
+@(nextUpdatesTileViewModel: NextUpdatesTileViewModel, isAgent: Boolean, obligationsEnabled: Boolean, optOrigin: Option[String] = None)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 @import implicitDateFormatter.longDate
 
-@nextUpdatesControllerURL = @{
-    if(isAgent) {
-        obligationsRoutes.NextUpdatesController.showAgent().url
-    } else {
-        obligationsRoutes.NextUpdatesController.show(optOrigin).url
-    }
+@nextUpdatesUrl = @{
+    appConfig.obligationsNextUpdatesUrl(isAgent, obligationsEnabled)
 }
 
 @nextUpdatesLink = @{
     link(
-        link = nextUpdatesControllerURL,
+        link = nextUpdatesUrl,
         messageKey = "home.updates.view.reportingFrequency"
     )
 }

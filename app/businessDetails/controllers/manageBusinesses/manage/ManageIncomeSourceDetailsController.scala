@@ -36,11 +36,12 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import common.models.admin.DisplayBusinessStartDate
+import common.models.admin.{DisplayBusinessStartDate, ObligationsFrontend}
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, PropertyDetailsModel, QuarterReportingType, QuarterTypeElection, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateService, ITSAStatusService}
+import common.config.featureswitch.FeatureSwitching
 import shared.enums.InitialPage
 import shared.services.CalculationListService
 
@@ -61,7 +62,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
                                                    (implicit val ec: ExecutionContext,
                                                     val mcc: MessagesControllerComponents,
                                                     val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with JourneyCheckerManageBusinesses {
+  with I18nSupport with JourneyCheckerManageBusinesses with FeatureSwitching {
 
   private def getBackUrl(isAgent: Boolean): String =
     if (isAgent) {
@@ -77,10 +78,6 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
       itvcErrorHandler
     }
   }
-  
-  lazy val newObligationsEnabled: Boolean =
-    //ToDo get this from feature switch for Obligations once implemented
-    false
 
 
   def show(
@@ -170,7 +167,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
         isAgent = isAgent,
         showStartDate = isEnabled(DisplayBusinessStartDate),
         backUrl = backUrl,
-        newObligationsEnabled = newObligationsEnabled
+        newObligationsEnabled = isEnabled(ObligationsFrontend)
       ))
     }
 
@@ -199,7 +196,7 @@ class ManageIncomeSourceDetailsController @Inject()(view: ManageIncomeSourceDeta
             isAgent = isAgent,
             showStartDate = isEnabled(DisplayBusinessStartDate),
             backUrl = backUrl,
-            newObligationsEnabled = newObligationsEnabled
+            newObligationsEnabled = isEnabled(ObligationsFrontend)
           ))
         }.recover {
           case ex =>
