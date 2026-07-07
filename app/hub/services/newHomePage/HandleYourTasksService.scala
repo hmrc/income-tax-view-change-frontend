@@ -18,6 +18,8 @@ package hub.services.newHomePage
 
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.models.admin.ObligationsFrontend
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import financials.controllers.routes as financialsRoutes
@@ -27,13 +29,12 @@ import financials.models.creditsandrefunds.CreditsModel
 import hub.models.newHomePage.*
 import hub.models.newHomePage.YourTaskCardType.{FINANCIALS, PENALTIES, SUBMISSIONS}
 import hub.models.newHomePage.YourTasksCard.*
-import obligations.controllers.routes as obligationsRoutes
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
+class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   private val chargesSet: Set[TransactionType] = Set(PoaOneDebit, PoaTwoDebit, PoaOneReconciliationDebit, PoaTwoReconciliationDebit, BalancingCharge, MfaDebitCharge, ITSAReturnAmendment)
   private val lppSet: Set[TransactionType] = Set(FirstLatePaymentPenalty, SecondLatePaymentPenalty)
@@ -76,12 +77,8 @@ class HandleYourTasksService @Inject(appConfig: FrontendAppConfig) {
     }
   }
 
-  private def getSubmissionTasks(viewModel: SubmissionDeadlinesViewModel, isAgent: Boolean, isQuarterly: Boolean): Seq[YourTasksCard] = {
-    val submissionsLink = if(isAgent) {
-      obligationsRoutes.NextUpdatesController.showAgent().url
-    } else {
-      obligationsRoutes.NextUpdatesController.show().url
-    }
+  private def getSubmissionTasks(viewModel: SubmissionDeadlinesViewModel, isAgent: Boolean, isQuarterly: Boolean)(using MtdItUser[_]): Seq[YourTasksCard] = {
+    val submissionsLink = appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend))
 
     val submissionsLinkTextKey = "new.home.yourTasks.updates-and-deadlines"
 
