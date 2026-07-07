@@ -18,6 +18,7 @@ package hub.views.newHomePage
 
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.getMtdItUser
+import common.models.admin.{ObligationsFrontend, BusinessDetailsFrontend}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
@@ -105,7 +106,8 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         isRecentActivityEnabled,
         creditsRefundsRepayEnabled,
         mortgageEvidenceEnabled,
-        businessDetailsFrontendEnabled = false
+        businessDetailsFrontendEnabled = isEnabled(BusinessDetailsFrontend),
+        obligationsFrontendEnabled = isEnabled(ObligationsFrontend)
       )(testMessages, appConfig, FakeRequest(), testUser)
     lazy val document: Document = Jsoup.parse(contentAsString(page))
     lazy val layoutContent: Element = document.selectHead("#main-content")

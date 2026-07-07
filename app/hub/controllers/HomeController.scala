@@ -294,7 +294,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
           isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence),
-          isEnabled(BusinessDetailsFrontend)))
+          isEnabled(BusinessDetailsFrontend), isEnabled(ObligationsFrontend)))
       }
     }
   }

@@ -84,26 +84,15 @@ trait ExternalRedirectHelper {
       //s"$hubAgentBaseUrl/view-client-from-next-tax-year"
       signUpRoutes.YouMustWaitToSignUpController.show(true).url
 
-  lazy val obligationsNextUpdatesIndividualUrl: Boolean => String = newObligationsEnabled =>
-    if (newObligationsEnabled)
-      s"$obligationsBaseUrl/submission-deadlines"
-    else
-      //s"$hubBaseUrl/submission-deadlines"
-      obligationsRoutes.NextUpdatesController.show().url
-
-  lazy val obligationsNextUpdatesAgentUrl: Boolean => String = newObligationsEnabled =>
-    if (newObligationsEnabled)
-      s"$obligationsAgentBaseUrl/submission-deadlines"
-    else
-      //s"$hubAgentBaseUrl/submission-deadlines"
-      obligationsRoutes.NextUpdatesController.showAgent().url
-
-  def obligationsNextUpdatesUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String = {
-    if (isAgent)
-      obligationsNextUpdatesAgentUrl(newObligationsEnabled)
-    else
-      obligationsNextUpdatesIndividualUrl(newObligationsEnabled)
-  }
+  def obligationsNextUpdatesUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String =
+    val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
+    val oldUrl: String = if isAgent 
+      then obligationsRoutes.NextUpdatesController.showAgent().url
+      else obligationsRoutes.NextUpdatesController.show().url
+    
+    if newObligationsEnabled 
+    then s"$newBaseUrl/submission-deadlines"
+    else oldUrl
 
   def obligationsReportingFrequencyUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String =
     val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
