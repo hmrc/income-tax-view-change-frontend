@@ -39,6 +39,7 @@ import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.models.core.IncomeSourceId
 import shared.enums.CannotGoBackPage
 import shared.models.UIJourneySessionData
+import common.models.admin.ObligationsFrontend
 
 class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,
                                                         val itvcErrorHandler: ItvcErrorHandler,
@@ -70,12 +71,6 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
     }
   }
 
-  private def viewReportingObligationsLink(isAgent: Boolean): String = {
-    //ToDo Get this value from feature switch for Obligations once implemented
-    val newObligationsEnabled: Boolean = false
-    appConfig.obligationsReportingFrequencyUrl(isAgent, newObligationsEnabled)
-  }
-
   private def updateMongoCeased(incomeSourceType: IncomeSourceType)(implicit hc: HeaderCarrier): Future[Boolean] = {
     sessionService.getMongo(IncomeSourceJourneyType(Cease, incomeSourceType)).flatMap {
       case Right(Some(sessionData)) =>
@@ -105,12 +100,6 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
       manageBusinessesRoutes.ManageYourBusinessesController.show().url
     }
 
-  def viewUpcomingUpdatesLink(isAgent: Boolean): String = {
-    //ToDo Get this value from feature switch for Obligations once implemented
-    val newObligationsEnabled: Boolean = false
-    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled)
-  }
-
   private def handleRequest(isAgent: Boolean, incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
 
     withSessionData(IncomeSourceJourneyType(Cease, incomeSourceType), CannotGoBackPage) { sessionData =>
@@ -132,8 +121,8 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
             Ok(obligationsView(
               source = incomeSourceCeasedObligationsViewModel,
               viewAllBusinessLink = viewAllBusinessLink(isAgent),
-              viewUpcomingUpdatesLink = viewUpcomingUpdatesLink(isAgent),
-              reportingObligationsLink = viewReportingObligationsLink(isAgent)
+              viewUpcomingUpdatesLink = appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend)),
+              reportingObligationsLink = appConfig.obligationsReportingFrequencyUrl(isAgent, isEnabled(ObligationsFrontend))
             )))
         case (Some(_), None) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler

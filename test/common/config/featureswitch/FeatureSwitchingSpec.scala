@@ -19,7 +19,6 @@ package common.config.featureswitch
 import common.auth.actions.AuthActionsTestData.*
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
-import common.models.admin.{ChargeHistory, CreditsRefundsRepay, DisplayBusinessStartDate, FeatureSwitch, FeatureSwitchName, ITSASubmissionIntegration, MortgageEvidence, NewHomePage, OptOutFs, OverseasBusinessAddress, PaymentHistoryRefunds, PenaltiesAndAppeals, PenaltiesBackendEnabled, PostFinalisationAmendmentsR18, RecentActivity, SelfServeTimeToPayR17, SignUpFs, SubmitClaimToAdjustToNrs, TriggeredMigration, `CY+1YouMustWaitToSignUpPageEnabled`}
 import common.models.admin.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testUtils.TestSupport
@@ -63,7 +62,8 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     MortgageEvidence,
     IdempotencyKeyForCreateIncomeSource,
     NoIncomeSourcesRedirect,
-    BusinessDetailsFrontend
+    BusinessDetailsFrontend, 
+    ObligationsFrontend
   )
 
   "FeatureSwitchName" when {

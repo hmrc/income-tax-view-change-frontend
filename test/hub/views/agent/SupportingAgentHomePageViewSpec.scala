@@ -24,6 +24,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
+import common.models.admin.ObligationsFrontend
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.{TestSupport, ViewSpec}
 import hub.models.homePage.*
@@ -85,12 +86,13 @@ class SupportingAgentHomePageViewSpec extends TestSupport with FeatureSwitching 
 
     val yourBusinessesTileViewModel: YourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
 
-    val yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), currentITSAStatus)
+    val yourReportingObligationsTileViewModel: YourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), currentITSAStatus, isEnabled(ObligationsFrontend))
 
     val view: HtmlFormat.Appendable = agentHome(
       yourBusinessesTileViewModel,
       nextUpdatesTileViewModel,
-      yourReportingObligationsTileViewModel
+      yourReportingObligationsTileViewModel,
+      isEnabled(ObligationsFrontend),
     )(FakeRequest(), implicitly, user, mockAppConfig)
 
     lazy val document: Document = Jsoup.parse(contentAsString(view))

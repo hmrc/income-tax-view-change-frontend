@@ -84,51 +84,24 @@ trait ExternalRedirectHelper {
       //s"$hubAgentBaseUrl/view-client-from-next-tax-year"
       signUpRoutes.YouMustWaitToSignUpController.show(true).url
 
-  lazy val obligationsNextUpdatesIndividualUrl: Boolean => String = newObligationsEnabled =>
-    if (newObligationsEnabled)
-      s"$obligationsBaseUrl/submission-deadlines"
-    else
-      //s"$hubBaseUrl/submission-deadlines"
-      obligationsRoutes.NextUpdatesController.show().url
+  def obligationsNextUpdatesUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String =
+    val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
+    val oldUrl: String = if isAgent 
+      then obligationsRoutes.NextUpdatesController.showAgent().url
+      else obligationsRoutes.NextUpdatesController.show().url
+    
+    if newObligationsEnabled 
+    then s"$newBaseUrl/submission-deadlines"
+    else oldUrl
 
-  lazy val obligationsNextUpdatesAgentUrl: Boolean => String = newObligationsEnabled =>
-    if (newObligationsEnabled)
-      s"$obligationsAgentBaseUrl/submission-deadlines"
-    else
-      //s"$hubAgentBaseUrl/submission-deadlines"
-      obligationsRoutes.NextUpdatesController.showAgent().url
-
-  def obligationsNextUpdatesUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String = {
-    if (isAgent)
-      obligationsNextUpdatesAgentUrl(newObligationsEnabled)
-    else
-      obligationsNextUpdatesIndividualUrl(newObligationsEnabled)
-  }
-
-  lazy val obligationsReportingFrequencyIndividualUrl: Boolean => String = newObligationsEnabled =>
-    if (newObligationsEnabled)
-      s"$obligationsBaseUrl/reporting-frequency"
-    else
-      //s"$hubBaseUrl/reporting-frequency"
-      reportingObligationRoutes.ReportingFrequencyPageController.show(false).url
-
-  lazy val obligationsReportingFrequencyAgentUrl: Boolean => String = newObligationsEnabled =>
-    if (newObligationsEnabled)
-      s"$obligationsAgentBaseUrl/reporting-frequency"
-    else
-      //s"$hubAgentBaseUrl/reporting-frequency"
-      reportingObligationRoutes.ReportingFrequencyPageController.show(true).url
-
-
-  def obligationsReportingFrequencyUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String = {
-    if (isAgent)
-      obligationsReportingFrequencyAgentUrl(newObligationsEnabled)
-    else
-      obligationsReportingFrequencyIndividualUrl(newObligationsEnabled)
-  }
+  def obligationsReportingFrequencyUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String =
+    val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
+    
+    if newObligationsEnabled 
+    then s"$newBaseUrl/reporting-frequency"
+    else reportingObligationRoutes.ReportingFrequencyPageController.show(isAgent).url
 
   //Business Details routes
-
   lazy val businessDetailsBaseUrl: String = servicesConfig.getString("income-tax-business-details-frontend.baseUrl")
   lazy val businessDetailsAgentBaseUrl: String = s"$businessDetailsBaseUrl/agents"
 

@@ -22,14 +22,15 @@ import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
+import common.config.featureswitch.FeatureSwitching
+import common.models.admin.ObligationsFrontend
 
-class CheckCompleteViewSpec extends TestSupport {
+class CheckCompleteViewSpec extends TestSupport with FeatureSwitching {
 
   val view: CheckCompleteView = app.injector.instanceOf[CheckCompleteView]
   
-  //Todo Update tests when feature switch of Obligations is implemented
   def nextUpdatesLink(isAgent: Boolean): String =
-    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled = false)
+    appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend))
     
   val compatibleSoftwareLink: String = "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax"
 

@@ -26,6 +26,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.core.IncomeSourceId
+import common.models.admin.ObligationsFrontend
 import common.services.DateService
 import common.models.incomeSourceDetails.TaxYear.getTaxYearModel
 import businessDetails.services.NextUpdatesService
@@ -55,10 +56,6 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
 
   private lazy val errorHandler: Boolean => ShowInternalServerError =
     (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-
-  lazy val newObligationsEnabled: Boolean =
-    //ToDo get this from feature switch for Obligations once implemented
-    false
     
   def show(isAgent: Boolean, incomeSourceType: IncomeSourceType): Action[AnyContent] =
 
@@ -119,7 +116,7 @@ class ManageObligationsController @Inject()(val authActions: AuthActions,
                   isAgent = isAgent,
                   postAction = successPostUrl(isAgent),
                   isCurrentTaxYear = dateService.getCurrentTaxYearStart.getYear == years.startYear,
-                  newObligationsEnabled = newObligationsEnabled
+                  newObligationsEnabled = isEnabled(ObligationsFrontend)
                 ))
               }
           case None =>

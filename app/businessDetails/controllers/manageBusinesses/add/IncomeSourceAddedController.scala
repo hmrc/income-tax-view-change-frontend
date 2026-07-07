@@ -43,6 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.postfixOps
 import businessDetails.services.NextUpdatesService
 import shared.models.UIJourneySessionData
+import common.models.admin.ObligationsFrontend
 
 
 class IncomeSourceAddedController @Inject()(
@@ -59,13 +60,6 @@ class IncomeSourceAddedController @Inject()(
 
   val logger: Logger = Logger("application")
 
-
-  private[controllers] def getNextUpdatesUrl(isAgent: Boolean) = {
-    //ToDo Get this value from feature switch for Obligations once implemented
-    val newObligationsEnabled: Boolean = false
-    appConfig.obligationsNextUpdatesUrl(isAgent, newObligationsEnabled)
-  }
-
   private[controllers] def getManageBusinessUrl(isAgent: Boolean) =
     if (isAgent) {
       manageBusinessesRoutes.ManageYourBusinessesController.showAgent().url
@@ -73,12 +67,6 @@ class IncomeSourceAddedController @Inject()(
       manageBusinessesRoutes.ManageYourBusinessesController.show().url
     }
 
-  private[controllers] def getReportingFrequencyUrl(isAgent: Boolean) = {
-    //ToDo Get this value from feature switch for Obligations once implemented
-    val newObligationsEnabled: Boolean = false
-    appConfig.obligationsReportingFrequencyUrl(isAgent, newObligationsEnabled)
-  }
-  
   private[controllers] def getIncomeSourceIdFromSession(incomeSourceType: IncomeSourceType)(implicit user: MtdItUser[_]): Future[Option[IncomeSourceId]] = {
 
     sessionService.getMongo(IncomeSourceJourneyType(Add, incomeSourceType)).flatMap {
@@ -212,8 +200,8 @@ class IncomeSourceAddedController @Inject()(
               isBusinessHistoric = isBusinessHistoric,
               reportingMethod = viewModel.reportingMethod(reportingMethodTaxYear1, reportingMethodTaxYear2),
               getSoftwareUrl = appConfig.compatibleSoftwareLink,
-              getReportingFrequencyUrl = getReportingFrequencyUrl(isAgent),
-              getNextUpdatesUrl = getNextUpdatesUrl(isAgent),
+              getReportingFrequencyUrl = appConfig.obligationsReportingFrequencyUrl(isAgent, isEnabled(ObligationsFrontend)),
+              getNextUpdatesUrl = appConfig.obligationsNextUpdatesUrl(isAgent, isEnabled(ObligationsFrontend)),
               getManageBusinessUrl = getManageBusinessUrl(isAgent),
               scenario = signedUpForMTD
             )

@@ -170,7 +170,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
               .thenReturn(Future.successful(true))
             when(mockedOptOutService.updateJourneyStatusInSessionData(any())(any(), any()))
               .thenReturn(Future.successful(true))
-            when(mockedYourReportingObligationsTile.apply(any(), any())(any()))
+            when(mockedYourReportingObligationsTile.apply(any(), any(), any())(any(), any()))
               .thenReturn(Html(""))
 
             val result: Future[Result] = controller.show()(fakeRequestWithActiveSession)

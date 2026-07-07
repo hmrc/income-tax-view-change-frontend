@@ -17,22 +17,15 @@
 @import hub.views.html.partials.newHome.overview.OverviewCard
 @import obligations.controllers.routes.NextUpdatesController
 @import obligations.controllers.reportingObligations.routes.ReportingFrequencyPageController
+@import common.config.FrontendAppConfig
 
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean)(implicit messages: Messages)
+@(isAgent: Boolean, obligationsEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
-@viewUpdatesUrl: String = @{
-    if(isAgent){
-        NextUpdatesController.showAgent().url
-    } else {
-        NextUpdatesController.show().url
-    }
-}
+@viewUpdatesUrl: String = @{appConfig.obligationsNextUpdatesUrl(isAgent, obligationsEnabled)}
 
-@reportingFreqUrl: String = @{
-    ReportingFrequencyPageController.show(isAgent).url
-}
+@reportingFreqUrl: String = @{appConfig.obligationsReportingFrequencyUrl(isAgent, obligationsEnabled)}
 
 
 

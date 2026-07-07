@@ -21,7 +21,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{FeatureSwitchName, InvalidFS}
 import common.services.admin.FeatureSwitchService
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
-import common.models.admin.BusinessDetailsFrontend
+import common.models.admin.{BusinessDetailsFrontend, ObligationsFrontend}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -96,7 +96,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       val subData: Set[String] =
         submittedData match {
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
-          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => (allFeatureSwitches - BusinessDetailsFrontend).map(_.name)
+          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => (allFeatureSwitches -- Set(BusinessDetailsFrontend, ObligationsFrontend)).map(_.name)
           case _ if submittedData.contains(PROD_FEATURES) => prodEnabledFsList
           case _ => submittedData
         }
@@ -138,7 +138,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       featureSwitches <- featureSwitchService.getAll()
       _ <- Future.sequence(
         featureSwitches.map { featureSwitch =>
-          val enabled = featureSwitch.name != BusinessDetailsFrontend
+          val enabled = if featureSwitch.name == BusinessDetailsFrontend || featureSwitch.name == ObligationsFrontend then false else true
           featureSwitchService.set(featureSwitch.name, enabled = enabled)
         }
       )
