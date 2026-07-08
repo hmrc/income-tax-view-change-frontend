@@ -22,7 +22,7 @@ import common.models.core.Nino
 import financials.connectors.FinancialDetailsConnector
 import financials.models.FinancialDetailsModel
 import financials.models.paymentAllocationCharges.*
-import financials.models.paymentAllocations.PaymentAllocations
+import financials.models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -50,6 +50,9 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
           documentDetailsWithFinancialDetailsModel.documentDetails.head.paymentLotItem.get) flatMap {
           case paymentAllocations: PaymentAllocations =>
             handlePaymentAllocations(paymentAllocations, documentDetailsWithFinancialDetailsModel)
+          case PaymentAllocationsError(404, _) =>
+            Logger("application").warn(s"$functionName Payment allocations returned 404 - rendering page without allocations table")
+            Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, Seq.empty, allocationsUnavailable = true)))
           case _ =>
             Logger("application").error(s"$functionName Could not retrieve payment allocations with document details")
             Future.successful(Left(PaymentAllocationError()))
