@@ -19,7 +19,6 @@ package businessDetails.testConstants
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.PropertyDetailsModel
 import common.testConstants.BaseIntegrationTestConstants.*
-import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
