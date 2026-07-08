@@ -34,6 +34,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
   val originalAmount: BigDecimal = 100.0
   val outstandingAmount: BigDecimal = 50.0
   val interestOutstandingAmount: Option[BigDecimal] = Some(40.0)
+  val latePaymentInterestAmount: Option[BigDecimal] = Some(50.0)
   val accruingInterestAmount: Option[BigDecimal] = Some(30.0)
   val lpiWithDunningLock: Option[BigDecimal] = Some(20.0)
   val amountCodedOut: Option[BigDecimal] = Some(150.0)
@@ -44,9 +45,9 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
     outstandingAmount = outstandingAmount,
     interestOutstandingAmount = interestOutstandingAmount,
     accruingInterestAmount = accruingInterestAmount,
-    lpiWithDunningLock = lpiWithDunningLock)
+    lpiWithDunningLock = lpiWithDunningLock,
+    latePaymentInterestAmount = latePaymentInterestAmount)
 
-  val docDetailsNoOutstandingAmout = defaultDocDetails.copy(outstandingAmount = 0)
   val docDetailsAmountCodedOut = defaultDocDetails.copy(amountCodedOut = amountCodedOut)
 
   val poa1FinancialDetails = financialDetail()
@@ -72,80 +73,71 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
 
   "ChargeItem" when {
 
-    "isNotPaidAndNotOverduePoaReconciliationDebit" when {
+    "isRARAccruingInterest" when {
 
-      "transaction type is PoaOneReconciliationDebit, is not overdue and is not paid returns true" in {
-        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
-
+      "transaction type is PoaOneReconciliationDebit and is accruing interest returns true" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(poaOneReconciliationDebitDetails))
 
 
-        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe true
+        chargeItem.isRARAccruingInterest()(dateService) shouldBe true
       }
 
-      "transaction type is PoaTwoReconciliationDebit, is not overdue and is not paid returns true" in {
-        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
-
+      "transaction type is PoaTwoReconciliationDebit and is accruing interest returns true" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(PoaTwoReconciliationDebitDetails))
 
-        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe true
+        chargeItem.isRARAccruingInterest()(dateService) shouldBe true
       }
 
       "returns false when charge item is not PoaOneReconciliationDebit or PoaTwoReconciliationDebit " in {
-        val dateServiceAfterDueDate = dateService(dueDate.minusDays(1))
-
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
           financialDetails = List(balancingNics2FinancialDetails))
 
-        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceAfterDueDate) shouldBe false
+        chargeItem.isRARAccruingInterest()(dateService) shouldBe false
       }
 
-      "charge is overdue and is not paid returns false" in {
-        val dateServiceAfterDueDate = dateService(dueDate.plusDays(1))
-
+      "charge is not accruing interest returns false" in {
         val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails,
+          documentDetail = defaultDocDetails.copy(accruingInterestAmount = None),
           financialDetails = List(poaOneReconciliationDebitDetails))
 
-        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceAfterDueDate) shouldBe false
-      }
-
-      "charge is not overdue and is paid returns false" in {
-        val dateServiceBeforeDueDate = dateService(dueDate.minusDays(1))
-
-        val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = docDetailsNoOutstandingAmout,
-          financialDetails = List(poaOneReconciliationDebitDetails))
-
-        chargeItem.isNotPaidAndNotOverduePoaReconciliationDebit()(dateServiceBeforeDueDate) shouldBe false
+        chargeItem.isRARAccruingInterest()(dateService) shouldBe false
       }
 
     }
 
-    "hasAccruingInterest" when {
+    "isAccruingInterest" when {
 
       "Is true if we have and accruing interest amount greater than 0" in {
-
         val chargeItem = ChargeItem.fromDocumentPair(
-          documentDetail = defaultDocDetails.copy(accruingInterestAmount = Some(1.00)),
+          documentDetail = defaultDocDetails,
           financialDetails = List(poa1FinancialDetails))
 
-        chargeItem.hasAccruingInterest shouldBe true
+        chargeItem.isAccruingInterest shouldBe true
 
       }
 
-      "Is false if we have and accruing interest amount is not defined or less than 0" in {
+      "Is false if we have and accruing interest amount is not defined" in {
+
+        val chargeItem = ChargeItem.fromDocumentPair(
+          documentDetail = defaultDocDetails.copy(accruingInterestAmount = None),
+          financialDetails = List(poa1FinancialDetails))
+
+        chargeItem.isAccruingInterest shouldBe false
+
+      }
+
+      "Is false if accruing interest amount is defined and is LE. 0" in {
 
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails.copy(accruingInterestAmount = Some(0.00)),
           financialDetails = List(poa1FinancialDetails))
 
-        chargeItem.hasAccruingInterest shouldBe false
+        chargeItem.isAccruingInterest shouldBe false
 
       }
     }
@@ -349,7 +341,7 @@ class ChargeItemSpec extends UnitSpec with ChargeConstants  {
       "interest is not paid, return unpaid" in {
         val chargeItem = ChargeItem.fromDocumentPair(
           documentDetail = defaultDocDetails,
-          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(30)))
+          financialDetails = List(poaOneReconciliationDebitDetails)).copy(interestOutstandingAmount = Some(BigDecimal(50)))
 
         chargeItem.getInterestPaidStatus shouldBe "unpaid"
       }

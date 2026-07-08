@@ -65,14 +65,14 @@ case class ChargeItem(
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
-  def hasAccruingInterest: Boolean = accruingInterestAmount.getOrElse[BigDecimal](0) > 0
+  val isAccruingInterest: Boolean = accruingInterestAmount.exists(_ > 0)
 
   def hasInterest: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) > 0
 
   def hasCrystallisedInterest = latePaymentInterestAmount.exists(_ != 0) && interestOutstandingAmount.exists(_ != 0)
 
-  def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
-    Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
+  def isRARAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
+    Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && isAccruingInterest
   }
 
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
@@ -96,12 +96,6 @@ case class ChargeItem(
   def getAmountCodedOut: BigDecimal = amountCodedOut.getOrElse(throw MissingFieldException("documentAmountCodedOut"))
 
   def isPaid: Boolean = outstandingAmount == 0
-
-  val isAccruingInterest: Boolean = accruingInterestAmount match {
-    case Some(amount) if amount <= 0 => false
-    case Some(_) => true
-    case _ => false
-  }
 
   def isOnlyInterest: Boolean = interestRemainingToPay > 0 && isPaid
 
@@ -180,7 +174,7 @@ case class ChargeItem(
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
-  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != accruingInterestAmount.getOrElse[BigDecimal](0)
+  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
 
   val isPoaReconciliationCredit: Boolean = transactionType == PoaOneReconciliationCredit ||
     transactionType == PoaTwoReconciliationCredit

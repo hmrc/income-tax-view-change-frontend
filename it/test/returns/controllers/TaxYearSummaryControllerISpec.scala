@@ -693,7 +693,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     pageTitle(mtdUserRole, "tax-year-summary.heading"),
                     elementTextByID("paymentTypeLink-0")("First payment on account: extra amount from your tax return"),
                     elementTextByID("paymentTypeLink-1")("Second payment on account: extra amount from your tax return"),
-                    isElementVisibleById("accrues-interest-tag")(expectedValue = true))
+                    isElementVisibleById("accrues-interest-tag")(expectedValue = false))
                 }
               }
 

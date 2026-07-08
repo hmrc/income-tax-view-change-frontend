@@ -509,7 +509,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         "have interest charges for paid reconciliation charges in the same table" in new TestSetup(charges = whatYouOweReconciliationInterestData) {
           val poaExtra1Table: Element = pageDocument.getElementsByClass("govuk-table__row").get(1)
           poaExtra1Table.select("td").first().text() shouldBe interestEndDateFuture.toLongDateShort
-          poaExtra1Table.select("td").get(1).text() shouldBe poa1ReconcileInterest + " 1"
+          poaExtra1Table.select("td").get(1).text() should include(poa1ReconcileInterest + " 1")
           poaExtra1Table.select("td").get(2).text() shouldBe taxYearSummaryText((fixedDate.getYear - 1).toString, fixedDate.getYear.toString)
 
           pageDocument.getElementById("accrued-interest-amount-due-0").text shouldBe "£150.00"

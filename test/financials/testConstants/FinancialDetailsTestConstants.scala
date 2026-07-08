@@ -2330,6 +2330,19 @@ object FinancialDetailsTestConstants {
       documentDueDate = Some(LocalDate.of(2019, 5, 15)))
   )
 
+  val ReviewAndReconcileDocumentDetailsAccruingInterest: List[DocumentDetail] = List(
+    documentDetailModel(documentDescription = Some("SA POA 1 Reconciliation Debit"), transactionId = "RARDEBIT01",
+      documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = Some(100),
+      effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
+      documentDueDate = Some(LocalDate.of(2019, 5, 15))),
+    documentDetailModel(documentDescription = Some("SA POA 2 Reconciliation Debit"), transactionId = "RARDEBIT02",
+      documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
+      outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = Some(200),
+      effectiveDateOfPayment = Some(LocalDate.of(2019, 5, 15)),
+      documentDueDate = Some(LocalDate.of(2019, 5, 15)))
+  )
+
   val ReviewAndReconcileDocumentDetailsNotDue: List[DocumentDetail] = List(
     documentDetailModel(documentDescription = Some("SA POA 1 Reconciliation Debit"), transactionId = "RARDEBIT01",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
@@ -2387,6 +2400,17 @@ object FinancialDetailsTestConstants {
   val financialDetailsWithReviewAndReconcileDebits: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = ReviewAndReconcileDocumentDetailsNotDue,
+    financialDetails = List(
+      FinancialDetail(taxYear = "2018", mainType = Some("SA POA 1 Reconciliation Debit"), mainTransaction = Some("4911"), transactionId = Some("RARDEBIT01"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),
+      FinancialDetail(taxYear = "2018", mainType = Some("SA POA 2 Reconciliation Debit"), mainTransaction = Some("4913"), transactionId = Some("RARDEBIT02"),
+        totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15))))))
+    )
+  )
+
+  val financialDetailsWithAccruingInterestReviewAndReconcileDebits: FinancialDetailsModel = FinancialDetailsModel(
+    balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
+    documentDetails = ReviewAndReconcileDocumentDetailsAccruingInterest,
     financialDetails = List(
       FinancialDetail(taxYear = "2018", mainType = Some("SA POA 1 Reconciliation Debit"), mainTransaction = Some("4911"), transactionId = Some("RARDEBIT01"),
         totalAmount = Some(100), originalAmount = Some(100), outstandingAmount = Some(100), items = Some(Seq(SubItem(Some(LocalDate.of(2019, 5, 15)))))),

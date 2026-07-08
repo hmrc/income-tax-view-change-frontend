@@ -158,8 +158,8 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       whatYouOweChargesList <- getWhatYouOweChargesList(isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
       lpp2Url = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent)
-      hasOverdueCharges = whatYouOweChargesList.chargesList.exists(_.isOverdue()(dateService))
-      hasAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isNotPaidAndNotOverduePoaReconciliationDebit()(dateService))
+      hasOverdueCharges = whatYouOweChargesList.chargesList.exists(charge => charge.isOverdue()(dateService) && charge.isAccruingInterest)
+      isAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isRARAccruingInterest()(dateService))
       crystallisedInterestPresent = whatYouOweChargesList.chargesList.exists(_.hasCrystallisedInterest)
       startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney
     } yield (startUrl, lpp2Url) match {
@@ -175,7 +175,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
         Some(WhatYouOweViewModel(
           currentDate = dateService.getCurrentDate,
-          hasOverdueOrAccruingInterestCharges = hasOverdueCharges || hasAccruingInterestRARCharges,
+          hasOverdueOrAccruingInterestCharges = hasOverdueCharges || isAccruingInterestRARCharges,
           hasCrystallisedInterest = crystallisedInterestPresent,
           whatYouOweChargesList = whatYouOweChargesList,
           hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,

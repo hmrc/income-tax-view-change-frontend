@@ -1040,8 +1040,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.h2.selectFirst("h2").text().contains(charges)
         layoutContent.selectHead("#payments").doesNotHave("table")
       }
-
-      "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView()) {
+      "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView(testDunningLockChargesList)) {
         val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) div:nth-child(3)")
         paymentType.text shouldBe paymentUnderReview
       }
