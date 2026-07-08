@@ -16,7 +16,6 @@
 
 package businessDetails.auth.actions
 
-import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.services.SessionService
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
@@ -25,7 +24,7 @@ import common.connectors.IncomeTaxCalculationConnector
 import common.controllers.BaseController
 import common.enums.JourneyType.TriggeredMigrationJourney
 import common.enums.TaxYearSummary.CalculationRecord.LATEST
-import common.models.admin.TriggeredMigration
+import common.models.admin.{BusinessDetailsFrontend, TriggeredMigration}
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
 import play.api.Logger
@@ -82,7 +81,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                           Future.successful(Right(req))
                         } else {
                           Future.successful(
-                            Left(Redirect(triggeredMigrationRoutes.CheckHmrcRecordsController.show(req.isAgent)))
+                            Left(Redirect(appConfig.triggeredMigrationCheckHMRCRecordsUrl(req.isAgent, isEnabled(BusinessDetailsFrontend))))
                           )
                         }
                       case Left(errorResult) =>

@@ -28,6 +28,7 @@ import obligations.controllers.reportingObligations.signUp.routes as signUpRoute
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
 import returns.controllers.routes as returnsRoutes
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 
 trait ExternalRedirectHelper {
 
@@ -124,6 +125,16 @@ trait ExternalRedirectHelper {
       businessDetailsManageBusinessesAgentUrl(businessDetailsFrontendEnabled)
     else
       businessDetailsManageBusinessesIndividualUrl(businessDetailsFrontendEnabled)
+      
+  //ToDo in business-details-frontend, remove the below method and use the routes directly.
+  def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String = {
+    if(businessDetailsFrontendEnabled) {
+      val baseUri = if(isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
+      s"$baseUri/check-your-active-businesses/hmrc-record"
+    } else {
+        triggeredMigrationRoutes.CheckHmrcRecordsController.show(isAgent).url
+    }
+  }
 
   //Financials routes
 
