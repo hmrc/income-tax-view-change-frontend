@@ -18,22 +18,22 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, idempotencyKeyField}
 import businessDetails.services.SessionService
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
+import common.helpers.GetInsourceDetailsStub
 import common.models.admin.IdempotencyKeyForCreateIncomeSource
 import common.models.core.{CheckMode, Mode, NormalMode}
-import businessDetails.models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, idempotencyKeyField}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
+import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
-import play.api.test.Helpers.await
-import common.testConstants.BaseIntegrationTestConstants.testMtditid
-import common.testConstants.IncomeSourceIntegrationTestConstants.noPropertyOrBusinessResponse
-import play.api.test.Helpers.defaultAwaitTimeout
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+
 import scala.concurrent.ExecutionContext
 
 class AddBusinessNameControllerISpec extends ControllerISpecHelper {
@@ -79,7 +79,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           "render the Add Business Name page" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -96,7 +96,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           "render the Add Business Name page with an idempotency key generated" when {
             "using the manage businesses journey with idempotency FS enabled" in {
               stubAuthorised(mtdUserRole, List(IdempotencyKeyForCreateIncomeSource))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -123,7 +123,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           "render the Add Business Name page" when {
             "User is authorised" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(changePath, additionalCookies).futureValue
 
@@ -148,7 +148,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           "render the Add Business Name page" when {
             "User is authorised" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val result = buildGETMTDClient(triggeredMigrationPath, additionalCookies).futureValue
 
@@ -173,7 +173,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           s"303 SEE_OTHER and redirect to add business start date" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val formData: Map[String, Seq[String]] = {
                 Map(
@@ -193,7 +193,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           "show error when form is filled incorrectly" in {
             stubAuthorised(mtdUserRole)
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
             val formData: Map[String, Seq[String]] = {
               Map(
@@ -226,7 +226,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           s"303 SEE_OTHER and redirect to $expectedRedirectUrl" when {
             "the income sources is enabled" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val formData: Map[String, Seq[String]] = {
                 Map(
@@ -246,7 +246,7 @@ class AddBusinessNameControllerISpec extends ControllerISpecHelper {
           "show error when form is filled incorrectly" in {
             stubAuthorised(mtdUserRole)
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
             val formData: Map[String, Seq[String]] = {
               Map(

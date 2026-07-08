@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.testConstants
+package returns.testConstants
 
 import common.models.liabilitycalculation.LiabilityCalculationResponse
 import play.api.libs.json.*

@@ -26,11 +26,11 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.core.{CheckMode, Mode, NormalMode}
 import AddIncomeSourceData.{accountingPeriodEndDateField, accountingPeriodStartDateField, dateStartedField}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
@@ -128,12 +128,12 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
               "render the Business Start Date Check Page" when {
                 "using the manage businesses journey" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   result should have(
                     httpStatus(OK),
@@ -163,7 +163,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 s"redirect to $checkDetailsUrl" when {
                   "form response is Yes" in {
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -185,7 +185,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                 s"redirect to $addTradeUrl" when {
                   "form response is Yes" in {
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -212,7 +212,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
                         routes.IncomeSourceCheckDetailsController.show(incomeSourceType)
                     
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                     await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -233,7 +233,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
               s"redirect to $expectedUrlForNo" when {
                 "form response is No" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -253,7 +253,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
               "return a BAD_REQUEST" when {
                 "form is empty" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
@@ -268,7 +268,7 @@ class AddIncomeSourceStartDateCheckControllerISpec extends ControllerISpecHelper
 
                 "invalid entry given" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                   await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 

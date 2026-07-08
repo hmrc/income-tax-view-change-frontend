@@ -19,7 +19,7 @@ package obligations.controllers.reportingObligations.signUp
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.MTDIndividual
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.SignUpFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
@@ -27,9 +27,11 @@ import obligations.models.reportingObligations.signUp.SignUpSessionData
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
+import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 
 class SignUpStartControllerISpec extends ControllerISpecHelper {
 
@@ -58,7 +60,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "render the sign up start page" in {
             stubAuthorised(mtdUserRole, List(SignUpFs))
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear)
 
@@ -87,7 +89,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
 
           "render the sign up start page with CY only description" in {
             stubAuthorised(mtdUserRole, List(SignUpFs))
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear)
 
@@ -110,7 +112,7 @@ class SignUpStartControllerISpec extends ControllerISpecHelper {
         "has already completed the sign-up journey (according to session data)" should {
           "redirect to the cannot go back page" in {
             stubAuthorised(mtdUserRole, List(SignUpFs))
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             setupsignUpSessionData(currentTaxYear, journeyComplete = true)
 

@@ -21,7 +21,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.CalculationListStub
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
 import common.models.admin.SignUpFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
@@ -29,17 +29,20 @@ import obligations.controllers.constants.ConfirmOptOutControllerConstants.emptyB
 import obligations.helpers.ITSAStatusUpdateConnectorStub
 import obligations.models.audit.SignUpAuditModel
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
+import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.*
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.mvc.Http.Status
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
-import common.testConstants.CalculationListIntegrationTestConstants
-import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, propertyOnlyResponse}
+import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
+import shared.testConstants.CalculationListIntegrationTestConstants
 
 import scala.concurrent.Future
+import common.helpers.GetInsourceDetailsStub
 
 class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
@@ -98,7 +101,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           stubAuthorised(mtdUserRole, List(SignUpFs))
 
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
@@ -175,7 +178,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           stubAuthorised(mtdUserRole, List(SignUpFs))
           
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = ITSAStatus.Annual,
@@ -231,7 +234,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           stubAuthorised(mtdUserRole, List(SignUpFs))
           
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = ITSAStatus.Annual,
@@ -286,7 +289,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
           stubAuthorised(mtdUserRole, List(SignUpFs))
           
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = ITSAStatus.Annual,
@@ -329,7 +332,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           )
 
           stubAuthorised(mtdUserRole, List(SignUpFs))
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = ITSAStatus.Annual,
@@ -372,7 +375,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           )
 
           stubAuthorised(mtdUserRole, List(SignUpFs))
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = ITSAStatus.Annual,
@@ -415,7 +418,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           )
 
           stubAuthorised(mtdUserRole, List(SignUpFs))
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = ITSAStatus.Annual,
@@ -442,7 +445,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
       "submit the answer to the sign up tax year question - SingleYear" in {
         stubAuthorised(mtdUserRole, List(SignUpFs))
-        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val currentYear = "2022"
         val currentTaxYear = TaxYear(2022, 2023)
@@ -491,7 +494,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 
       "submit the answer to the sign up tax year question - MultiYear" in {
         stubAuthorised(mtdUserRole, List(SignUpFs))
-        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
         val currentYear = "2022"
         val currentTaxYear = TaxYear(2022, 2023)
@@ -542,7 +545,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
         val currentYear = "2022"
         val taxYear = TaxYear(2022, 2023)
         stubAuthorised(mtdUserRole, List(SignUpFs))
-        IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+        GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
         ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
           taxYear = taxYear,
           `itsaStatusCY-1` = ITSAStatus.Annual,
@@ -565,7 +568,7 @@ class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
           val currentYear = "2022"
           val taxYear = TaxYear(2022, 2023)
           stubAuthorised(mtdUserRole, List(SignUpFs))
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
             taxYear = taxYear,
             `itsaStatusCY-1` = ITSAStatus.Annual,

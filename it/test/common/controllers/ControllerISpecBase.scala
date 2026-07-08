@@ -33,7 +33,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.{Application, Environment, Mode}
 import common.testConstants.BaseIntegrationTestConstants.testSessionId
-import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.language.LanguageUtils
 
@@ -74,7 +73,6 @@ trait ControllerISpecBase
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
 
   implicit val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
-  implicit val uiRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
 
   implicit val dateService: DateService =
     new DateService()(frontendAppConfig = testAppConfig) {

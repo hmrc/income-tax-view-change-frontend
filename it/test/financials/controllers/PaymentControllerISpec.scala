@@ -18,12 +18,13 @@ package financials.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
+import financials.helpers.FinancialDetailsStub
 import financials.models.core.PaymentJourneyModel
+import common.helpers.GetInsourceDetailsStub
 
 class PaymentControllerISpec extends ControllerISpecHelper {
 
@@ -68,11 +69,11 @@ class PaymentControllerISpec extends ControllerISpecHelper {
             "redirect the user correctly" when {
               "the payments api responds with a 200 and valid json" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
-                IncomeTaxBusinessDetailsStub.stubPayApiResponse(url, 201, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+                FinancialDetailsStub.stubPayApiResponse(url, 201, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyStubPayApi(url,
+                FinancialDetailsStub.verifyStubPayApi(url,
                   if(mtdUserRole == MTDIndividual) submissionJson else agentSubmissionJson
                 )
                 res.status shouldBe 303
@@ -83,11 +84,11 @@ class PaymentControllerISpec extends ControllerISpecHelper {
             "return an internal server error" when {
               "the payments api responds with a 500" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
-                IncomeTaxBusinessDetailsStub.stubPayApiResponse(url, 500, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+                FinancialDetailsStub.stubPayApiResponse(url, 500, Json.toJson(PaymentJourneyModel("id", "redirect-url")))
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyStubPayApi(url,
+                FinancialDetailsStub.verifyStubPayApi(url,
                   if(mtdUserRole == MTDIndividual) submissionJson else agentSubmissionJson
                 )
                 res.status shouldBe 500

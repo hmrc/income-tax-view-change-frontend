@@ -20,15 +20,17 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{OptOutFs, SignUpFs}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
+import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.*
 import play.api.http.Status.OK
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
+
 import shared.repositories.UIJourneySessionDataRepository
+import common.helpers.GetInsourceDetailsStub
 
 class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
@@ -76,7 +78,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has summary cards for opt out/sign up" when {
               "CY is Quaterly and CY+1 is Quaterly" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -110,7 +112,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has two sign up summary cards" when {
               "CY is Annual and CY+1 is Annual" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -145,7 +147,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has an opt out and a sign up summary card" when {
               "CY is Quaterly and CY+1 is Annual" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -180,7 +182,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
               "CY is Annual and CY+1 is Quaterly" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
@@ -217,7 +219,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has a sign up and an opt out summary card" when {
               "CY is Annual and CY+1 is Quaterly Mandated" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -248,7 +250,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has a single sign up summary card" when {
               "CY is Quaterly Mandated and CY+1 is Annual" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -276,7 +278,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
               "CY-1 and CY are Voluntary and CY+1 is Annual but opt out is disabled" in {
                 stubAuthorised(mtdUserRole, List(SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -308,7 +310,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has a single opt out summary card" when {
               "CY is Quaterly Mandated and CY+1 is Quaterly" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -339,7 +341,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has two opt out and one sign up summary card" when {
               "CY-1 is Quarterly, CY is Quarterly and CY+1 is Annual" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -378,7 +380,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has one opt out and two sign up summary cards" when {
               "CY-1 is Quaterly, CY is Annual and CY+1 is Annual" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -418,7 +420,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has three opt out summary cards" when {
               "CY-1 is Quaterly, CY is Quaterly and CY+1 is Quaterly" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -457,7 +459,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has one CY-1 opt out summary card" when {
               "CY-1 is Quaterly, CY is Mandated and CY+1 is Mandated" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -486,7 +488,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
               "CY-1 is Quarterly, CY and CY+1 are annual with Sign Up disabled" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -519,7 +521,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "does not have Manage your reporting frequency section" when {
               "all business are ceased" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -542,7 +544,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
               }
               "CY, CY-1 and CY+1 are mandated" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -567,7 +569,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
               "Sign up and Opt Out are disabled" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -592,7 +594,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
               "CY and CY+1 is noStatus with CY-1 being mandated" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Mandated,
@@ -618,7 +620,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
             "has a ceased business warning" when {
               "all businesses have ceased" in {
                 stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignAndSoleTraderCeasedBusiness)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                   dateService.getCurrentTaxYear,
                   Voluntary,
@@ -648,7 +650,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
                 s"${response._1} business is latent" in {
                   stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, response._2)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, response._2)
                   ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                     dateService.getCurrentTaxYear,
                     Voluntary,

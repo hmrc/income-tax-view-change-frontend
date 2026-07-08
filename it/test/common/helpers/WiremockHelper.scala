@@ -31,6 +31,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.ws.DefaultBodyWritables.*
 import play.api.libs.ws.{WSClient, WSResponse}
 import common.testConstants.BaseIntegrationTestConstants.testSessionId
+import common.testConstants.MicroserviceSpecificConstants
 
 import scala.concurrent.Future
 
@@ -40,8 +41,8 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   val wiremockHost = "localhost"
   val url = s"http://$wiremockHost:$wiremockPort"
   //ToDo update this to be the basePath and baseUrl for the being tested.
-  val basePath = "/report-quarterly/income-and-expenses/view"
-  val baseUrl = s"http://localhost:9081$basePath"
+  val basePath = MicroserviceSpecificConstants.basePath
+  val baseUrl = MicroserviceSpecificConstants.baseUrl
 
   def verifyPost(uri: String, optBody: Option[String] = None): Unit = {
     val uriMapping = postRequestedFor(urlEqualTo(uri))
@@ -259,7 +260,7 @@ trait WiremockHelper {
   def resetWiremock() = WireMock.reset()
 
   def buildClient(path: String) = {
-    ws.url(s"http://localhost:$port$basePath$path")
+    ws.url(s"$baseUrl$path")
       .withFollowRedirects(false)
   }
 

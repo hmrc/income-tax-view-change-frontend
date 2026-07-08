@@ -18,14 +18,15 @@ package hub.controllers.agent
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.AuditStub
 import common.helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import hub.testConstants.HubIntegrationTestConstants.businessOnlyResponse
 import hub.audit.models.ConfirmClientDetailsAuditModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.*
+import common.helpers.GetInsourceDetailsStub
 
 class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
@@ -38,7 +39,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       "is authenticated, with a valid agent and client delegated enrolment" should {
         "render the confirm client utr page with an empty black banner" in {
           stubAuthorised(MTDPrimaryAgent)
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildMTDClient(path, additionalCookies).futureValue
 
@@ -63,7 +64,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       "is authenticated, with a valid agent and client delegated enrolment" should {
         "render the confirm client utr page with an empty black banner" in {
           stubAuthorised(MTDSupportingAgent)
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -93,7 +94,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       "is authenticated, with a valid agent and client delegated enrolment and session data service post returns an OK response" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
           stubAuthorised(MTDPrimaryAgent)
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
           Then(s"I stub the session-data service call to return status $OK")
           stubPostSessionDataResponseOkResponse()
 
@@ -112,7 +113,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid agent but the income tax session data post call returned an error" should {
           "redirect to an error page" in {
             stubAuthorised(MTDPrimaryAgent)
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
             Then(s"I stub the session-data service call to return status $INTERNAL_SERVER_ERROR")
             stubPostSessionDataResponseFailure()
 
@@ -127,7 +128,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid agent but the income tax session data post call returned no response" should {
           "redirect to an error page" in {
             stubAuthorised(MTDPrimaryAgent)
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
             val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
 
@@ -148,7 +149,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
       "is authenticated, with a valid agent and client delegated enrolment and session data service post returns an OK response" should {
         s"redirect ($SEE_OTHER) to the agent home page" in {
           stubAuthorised(MTDSupportingAgent)
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
           Then(s"I stub the session-data service call to return status $OK")
           stubPostSessionDataResponseOkResponse() //NEED TO ADD TESTS THAT I REMOVED FROM ENTERCLIENTSUTR
 

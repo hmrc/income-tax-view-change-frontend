@@ -17,21 +17,16 @@
 package businessDetails.testConstants
 
 import common.models.core.{AccountingPeriodModel, CessationModel}
-import common.testConstants.BaseIntegrationTestConstants.{getCurrentTaxYearEnd, testLatencyDetails3, testPropertyIncomeId}
 import common.models.incomeSourceDetails.PropertyDetailsModel
+import common.testConstants.BaseIntegrationTestConstants.*
 import play.api.libs.json.{JsValue, Json}
-import BusinessDetailsIntegrationTestConstants.endYear
 
 import java.time.LocalDate
 
 object PropertyDetailsIntegrationTestConstants {
 
-  val startYear = getCurrentTaxYearEnd.getYear - 5
   val propertyAccountingStart = startYear.toString + "-01-01"
-  val propertyAccountingStartLocalDate = LocalDate.of(startYear, 1, 1)
   val propertyAccountingEnd = startYear.toString + "-12-31"
-  val propertyAccounringEndLocalDate = LocalDate.of(startYear, 12, 31)
-  val propertyIncomeType = Some("property-unspecified")
   val propertyTradingStartDate = Some(LocalDate.parse((startYear - 1).toString + "-01-01"))
   val ukPropertyIncomeType = Some("uk-property")
   val foreignPropertyIncomeType = Some("foreign-property")
@@ -39,33 +34,6 @@ object PropertyDetailsIntegrationTestConstants {
   def propertyAccountingStartLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 1, 1)
 
   def propertyAccounringEndLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 12, 31)
-
-
-  val property: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
-    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
-    propertyIncomeType,
-    propertyTradingStartDate,
-    None,
-    None,
-  )
-
-  val oldProperty: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
-    firstAccountingPeriodEndDate = Some(getCurrentTaxYearEnd.minusYears(1)),
-    propertyIncomeType,
-    propertyTradingStartDate,
-    None,
-    None,
-  )
 
   def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,

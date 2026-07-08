@@ -18,13 +18,14 @@ package financials.controllers.claimToAdjustPoa
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import financials.helpers.FinancialDetailsStub
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import common.helpers.GetInsourceDetailsStub
 
 class PoaAdjustedControllerISpec extends ControllerISpecHelper {
 
@@ -53,13 +54,13 @@ class PoaAdjustedControllerISpec extends ControllerISpecHelper {
             s"render the poa adjust success page" when {
               "journey completed flag is set to false" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
                 )
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                   OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
                 )
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
                   OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
                 )
                 await(sessionService.setMongoData(Some(PoaAmendmentData())))
@@ -71,13 +72,13 @@ class PoaAdjustedControllerISpec extends ControllerISpecHelper {
               }
               "The journeyCompleted flag is set to true" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
                 )
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                   OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
                 )
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
                   OK, testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, poaRelevantAmount = Some(2000))
                 )
                 await(sessionService.setMongoData(Some(PoaAmendmentData(None, None, journeyCompleted = true))))
@@ -92,10 +93,10 @@ class PoaAdjustedControllerISpec extends ControllerISpecHelper {
             s"return $INTERNAL_SERVER_ERROR" when {
               "no non-crystallised financial details are found" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(
                   OK, testEmptyFinancialDetailsModelJson
                 )
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(
                   OK, testEmptyFinancialDetailsModelJson
                 )
 

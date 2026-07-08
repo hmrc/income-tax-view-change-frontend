@@ -20,7 +20,7 @@ import businessDetails.models.audit.TriggeredMigrationStartAuditModel
 import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub}
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
@@ -28,8 +28,10 @@ import org.scalatest.Assertion
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
+import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndUkProperty, singleBusinessResponse}
+import common.helpers.GetInsourceDetailsStub
 
 import scala.concurrent.Future
 
@@ -84,7 +86,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
           "render the Check HMRC Records page" that {
             "has an active sole trader business, uk property and foreignProperty" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness.copy(channel = HmrcUnconfirmed.getValue))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness.copy(channel = HmrcUnconfirmed.getValue))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
@@ -101,7 +103,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             }
             "has an active sole trader business and uk property only" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
@@ -117,7 +119,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             }
             "has an active sole trader business and foreign property only" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessWithLatency.copy(channel = HmrcUnconfirmed.getValue))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessWithLatency.copy(channel = HmrcUnconfirmed.getValue))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
@@ -134,7 +136,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             }
             "has an active uk property and foreign property only" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyBusiness.copy(channel = HmrcUnconfirmed.getValue))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyBusiness.copy(channel = HmrcUnconfirmed.getValue))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
@@ -150,7 +152,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             }
             "has an active sole trader business only" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse.copy(channel = HmrcUnconfirmed.getValue))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse.copy(channel = HmrcUnconfirmed.getValue))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
@@ -168,7 +170,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             }
             "has an active uk property only" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(channel = HmrcUnconfirmed.getValue))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(channel = HmrcUnconfirmed.getValue))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
@@ -183,7 +185,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             }
             "has an active foreign property only" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness.copy(channel = HmrcUnconfirmed.getValue))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyAndCeasedBusiness.copy(channel = HmrcUnconfirmed.getValue))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,
@@ -198,7 +200,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
             }
             "has no active businesses" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allCeasedBusinesses.copy(channel = HmrcUnconfirmed.getValue, yearOfMigration = None))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, allCeasedBusinesses.copy(channel = HmrcUnconfirmed.getValue, yearOfMigration = None))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2019", Some("LATEST"))(
                 status = OK,
@@ -215,7 +217,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
             "has active businesses with an unknown income source and business name" in {
               stubAuthorised(mtdUserRole, List(TriggeredMigration))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName.copy(channel = HmrcUnconfirmed.getValue))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponseWithUnknownAddressName.copy(channel = HmrcUnconfirmed.getValue))
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
                 status = OK,

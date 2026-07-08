@@ -17,6 +17,7 @@
 package common.helpers.servicemocks
 
 import common.models.audit.ExtendedAuditModel
+import common.testConstants.MicroserviceSpecificConstants
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
 import play.api.http.Status.NO_CONTENT
@@ -24,14 +25,13 @@ import play.api.libs.json.{JsValue, Json}
 
 object AuditStub extends WiremockMethods with Eventually {
 
-  override implicit val patienceConfig =
+  override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(
       timeout  = Span(5, Seconds),
       interval = Span(50, Millis)
     )
 
-  //ToDo update this to the correct audit source when in new service
-  lazy val auditSource = "income-tax-view-change-frontend"
+  lazy val auditSource = MicroserviceSpecificConstants.auditSource
   
   def stubAuditing(): Unit = {
     when(method = POST, uri = "/write/audit/merged")
@@ -49,21 +49,9 @@ object AuditStub extends WiremockMethods with Eventually {
     }
   }
 
-  def verifyAuditContains(body: JsValue): Unit = {
-    eventually {
-      verifyContains(method = POST, uri = "/write/audit", body)
-    }
-  }
-
   def verifyAuditContainsDetail(body: JsValue): Unit = {
     eventually {
       verifyContainsJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
-    }
-  }
-
-  def verifyAuditDoesNotContainsDetail(body: JsValue): Unit = {
-    eventually {
-      verifyDoesNotContainJson(method = POST, uri = "/write/audit", Json.obj("detail" -> body))
     }
   }
 

@@ -16,21 +16,23 @@
 
 package hub.controllers.agent
 
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDPrimaryAgent
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
+import hub.helpers.FinancialDetailsStub
+import hub.testConstants.messages.HomeMessages.{nextUpdateDue, noPaymentsDue, overdue, overduePayments, overdueUpdates}
 import financials.models.*
 import financials.testConstants.OutstandingChargesIntegrationTestConstants.*
 import hub.audit.models.HomeAudit
+import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
+import hub.helpers.NextUpdatesStub
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
@@ -39,6 +41,7 @@ import play.api.test.FakeRequest
 import shared.models.audit.NextUpdatesResponseAuditModel
 
 import java.time.LocalDate
+import common.helpers.GetInsourceDetailsStub
 
 class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
@@ -78,7 +81,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "displays the next upcoming payment and charge" when {
               "there are payments upcoming and nothing is overdue" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
@@ -91,12 +94,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString
@@ -129,7 +132,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
+                FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -153,7 +156,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "displays no upcoming payment" when {
               "there are no upcoming payments" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
@@ -167,12 +170,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString
@@ -203,7 +206,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
+                FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -227,7 +230,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "displays an overdue payment and an overdue obligation" when {
               "there is a single payment overdue and a single obligation overdue" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
@@ -241,12 +244,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString
@@ -279,7 +282,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
+                FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -301,7 +304,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
 
               "there is a single payment overdue and a single obligation overdue and one overdue CESA " in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
@@ -315,12 +318,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString
@@ -353,7 +356,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
+                FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, getCurrentTaxYearEnd.minusYears(1).getYear.toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -377,7 +380,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               "there is more than one payment overdue and more than one obligation overdue" in {
                 stubAuthorised(mtdUserRole)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
@@ -393,12 +396,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                         ))
                     ))
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString
@@ -449,7 +452,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
+                FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -473,7 +476,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               "using the manage businesses journey" in {
                 stubAuthorised(mtdUserRole)
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
@@ -486,12 +489,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString
@@ -524,7 +527,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
+                FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -543,7 +546,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 stubAuthorised(mtdUserRole)
 
                 ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetailsModel
                 )
@@ -556,12 +559,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
                   from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                   to = getCurrentTaxYearEnd.toString
@@ -594,7 +597,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
+                FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -615,7 +618,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
@@ -628,12 +631,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
               ))
 
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+              NextUpdatesStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
               )
 
-              IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+              FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                 nino = testNino,
                 from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                 to = getCurrentTaxYearEnd.toString
@@ -666,7 +669,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                 ))
               )
 
-              IncomeTaxBusinessDetailsStub.stubGetOutstandingChargesResponse(
+              FinancialDetailsStub.stubGetOutstandingChargesResponse(
                 "utr", testSaUtr.toLong, (getCurrentTaxYearEnd.minusYears(1).getYear).toString)(OK, validOutStandingChargeResponseJsonWithoutAciAndBcdCharges)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -685,7 +688,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
             "retrieving the charges was unsuccessful" in {
               stubAuthorised(mtdUserRole)
 
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
@@ -698,12 +701,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
                   ))
               ))
 
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+              NextUpdatesStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
               )
 
-              IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+              FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                 nino = testNino,
                 from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
                 to = getCurrentTaxYearEnd.toString
@@ -725,12 +728,12 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
           "retrieving the obligations was unsuccessful" in {
             stubAuthorised(mtdUserRole)
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsModel
             )
 
-            IncomeTaxBusinessDetailsStub.stubGetNextUpdatesError(testNino)
+            NextUpdatesStub.stubGetNextUpdatesError(testNino)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -742,7 +745,7 @@ class HomeControllerPrimaryAgentISpec extends ControllerISpecHelper {
           "retrieving the income sources was unsuccessful" in {
             stubAuthorised(mtdUserRole)
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
               status = INTERNAL_SERVER_ERROR)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue

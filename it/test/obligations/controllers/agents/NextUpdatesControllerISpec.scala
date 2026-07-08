@@ -20,7 +20,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.helpers.CalculationListStub
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.admin.OptOutFs
 import common.models.core.AccountingPeriodModel
@@ -30,11 +30,13 @@ import play.api.http.Status.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.CalculationListIntegrationTestConstants
-import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.address
+
+import obligations.helpers.NextUpdatesStub
 import shared.models.audit.NextUpdatesResponseAuditModel
+import shared.testConstants.CalculationListIntegrationTestConstants
 
 import java.time.LocalDate
+import common.helpers.GetInsourceDetailsStub
 
 class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
@@ -84,21 +86,21 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 ))
             ))
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetails
             )
 
-            IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+            NextUpdatesStub.stubGetNextUpdates(
               nino = testNino,
               deadlines = currentObligations
             )
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-            IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+            GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+            NextUpdatesStub.verifyGetNextUpdates(testNino)
 
             Then("the next update view displays the correct title")
             res should have(
@@ -111,21 +113,21 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
           "has no obligations" in {
             stubAuthorised(mtdUserRole)
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetails
             )
 
-            IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+            NextUpdatesStub.stubGetNextUpdates(
               nino = testNino,
               deadlines = ObligationsModel(Seq())
             )
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-            IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+            GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+            NextUpdatesStub.verifyGetNextUpdates(testNino)
 
             Then("then Internal server error is returned")
             res should have(
@@ -145,12 +147,12 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 ))
             ))
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetails
             )
 
-            IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+            NextUpdatesStub.stubGetNextUpdates(
               nino = testNino,
               deadlines = currentObligations
             )
@@ -162,9 +164,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-            IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+            GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+            NextUpdatesStub.verifyGetNextUpdates(testNino)
 
             Then("the next update view displays the correct title")
             res should have(
@@ -187,21 +189,21 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                 ))
             ))
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetails
             )
 
-            IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+            NextUpdatesStub.stubGetNextUpdates(
               nino = testNino,
               deadlines = currentObligations
             )
 
             val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-            IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+            GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-            IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+            NextUpdatesStub.verifyGetNextUpdates(testNino)
 
             Then("the next update view displays the correct title")
             res should have(
@@ -229,12 +231,12 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetails
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
@@ -244,9 +246,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+                NextUpdatesStub.verifyGetNextUpdates(testNino)
 
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR)
@@ -265,12 +267,12 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetails
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
@@ -280,9 +282,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+                NextUpdatesStub.verifyGetNextUpdates(testNino)
 
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR)
@@ -301,12 +303,12 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
                     ))
                 ))
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   status = OK,
                   response = incomeSourceDetails
                 )
 
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+                NextUpdatesStub.stubGetNextUpdates(
                   nino = testNino,
                   deadlines = currentObligations
                 )
@@ -316,9 +318,9 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                IncomeTaxBusinessDetailsStub.verifyGetNextUpdates(testNino)
+                NextUpdatesStub.verifyGetNextUpdates(testNino)
 
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR)

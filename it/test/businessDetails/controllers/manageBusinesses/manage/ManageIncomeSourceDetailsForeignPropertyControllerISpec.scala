@@ -16,17 +16,18 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.enums.IncomeSourceJourney.ForeignProperty
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.CalculationListStub
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.DisplayBusinessStartDate
 import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.CalculationListIntegrationTestConstants
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
+import shared.testConstants.CalculationListIntegrationTestConstants
 
 import java.time.LocalDate
 
@@ -56,7 +57,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
             "URL contains a valid income source ID and user has no latency information" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
 
@@ -74,7 +75,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
             }
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
               // TODO after reenabling TimeMachine, change the tax year range to 25-26 for the below stub
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
@@ -96,7 +97,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "Q", (taxYearEnd + 1).toString, "A")
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
               val mandatoryFromYear = latencyDetailsCty.taxYear2.toInt
@@ -121,7 +122,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
             "URL has valid income source ID and user has latency information, 1st year Annual 2nd year MTD Mandatory | Voluntary and 2 tax years NC" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetailsCty))
 
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
@@ -144,7 +145,7 @@ class ManageIncomeSourceDetailsForeignPropertyControllerISpec extends ManageInco
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseWithUnknownsInLatencyPeriod(latencyDetails))
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2023-24")

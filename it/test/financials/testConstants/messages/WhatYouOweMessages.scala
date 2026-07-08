@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package common.testConstants.messages
+package financials.testConstants.messages
 
 import common.helpers.ComponentSpecBase
 
-object HomeMessages extends ComponentSpecBase {
+object WhatYouOweMessages extends ComponentSpecBase {
 
-  val noPaymentsDue: String = messagesAPI("home.payments.no-payments-due")
-  val overdue: String = messagesAPI("home.overdue.date")
-  def overduePayments(numberOverdue: String): String = messagesAPI("home.overdue.date.payment.count", numberOverdue)
-
-  def overdueUpdates(numberOverdue: String): String = messagesAPI("home.overdue.date.update.count", numberOverdue)
-
-  def nextUpdateDue(date: String): String = messagesAPI("home.updates.R17.nextUpdateDue", date)
+  val hmrcAdjustment: String = messagesAPI("whatYouOwe.hmrcAdjustment.text")
+  val hmrcAdjustmentHeading: String = messagesAPI("whatYouOwe.hmrcAdjustment.heading")
+  val hmrcAdjustmentLine1: String = messagesAPI("whatYouOwe.hmrcAdjustment.line1")
+  val underReview: String = messagesAPI("whatYouOwe.paymentUnderReview")
 
 }

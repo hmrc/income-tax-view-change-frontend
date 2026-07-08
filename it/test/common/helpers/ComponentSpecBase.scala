@@ -38,7 +38,6 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import common.testConstants.BaseIntegrationTestConstants.*
-import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.language.LanguageUtils
 
@@ -101,7 +100,6 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId(testSessionId)))
   implicit val testAppConfig: FrontendAppConfig = appConfig
   implicit val optOutSessionDataRepository: OptOutSessionDataRepository = app.injector.instanceOf[OptOutSessionDataRepository]
-  implicit val uiRepository: UIJourneySessionDataRepository = app.injector.instanceOf[UIJourneySessionDataRepository]
   implicit val dateService: DateService = new DateService()(frontendAppConfig = testAppConfig) {
     override def getCurrentDate: LocalDate = LocalDate.of(2023, 4, 5)
 

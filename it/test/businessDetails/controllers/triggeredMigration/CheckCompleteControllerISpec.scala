@@ -20,15 +20,16 @@ import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.TriggeredMigrationJourney
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub}
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
+import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
@@ -77,7 +78,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
           }
 
           stubAuthorised(mtdRole, List(TriggeredMigration))
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,
@@ -90,7 +91,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
 
         "redirect to home page when TriggeredMigration FS is disabled" in {
           stubAuthorised(mtdRole)
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
 
           val result = buildGETMTDClient(path, additionalCookies).futureValue
           result should have(
@@ -107,7 +108,7 @@ class CheckCompleteControllerISpec extends ControllerISpecHelper {
       s"user is $mtdRole" should {
         "redirect to home page when form is valid and 'Continue' is selected" in {
           stubAuthorised(mtdRole, List(TriggeredMigration))
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
           ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AB123456C")
           IncomeTaxCalculationStub.stubGetCalculationResponse("AB123456C", "2018", Some("LATEST"))(
             status = OK,

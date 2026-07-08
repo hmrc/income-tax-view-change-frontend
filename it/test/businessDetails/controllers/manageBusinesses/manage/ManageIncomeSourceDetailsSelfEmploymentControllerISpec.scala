@@ -19,16 +19,17 @@ package businessDetails.controllers.manageBusinesses.manage
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.DisplayBusinessStartDate
 import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData.incomeSourceIdField
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.helpers.CalculationListStub
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.CalculationListIntegrationTestConstants
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
+import shared.testConstants.CalculationListIntegrationTestConstants
 
 import java.time.LocalDate
 
@@ -52,7 +53,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
           "render the Manage Self Employment business page" when {
             "URL contains a valid income source ID and user has no latency information" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse2)
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated")
 
@@ -77,7 +78,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and two tax years crystallised" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetails2))
 
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", "2023-24")
@@ -106,7 +107,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             "URL contains a valid income source ID and user has latency information, itsa status mandatory/voluntary and 2 tax years not crystallised" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
 
@@ -128,7 +129,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
               val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
 
               val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
               val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd
@@ -149,7 +150,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
 
             "URL contains a valid income source ID and user has latency information, but itsa status is not mandatory or voluntary" in {
               stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWithUnknownsInLatencyPeriod(latencyDetails))
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2022-23")
               ITSAStatusDetailsStub.stubGetITSAStatusDetails("Annual", "2023-24")
 
@@ -178,7 +179,7 @@ class ManageIncomeSourceDetailsSelfEmploymentControllerISpec extends ManageIncom
             stubAuthorised(mtdUserRole, List(DisplayBusinessStartDate))
             val latencyDetailsCty = LatencyDetails(dateNow.plusDays(1), taxYearEnd.toString, "A", (taxYearEnd + 1).toString, "Q")
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod2(latencyDetailsCty))
 
             val taxYearShortString1 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear1.toInt).shortenTaxYearEnd
             val taxYearShortString2 = TaxYear.makeTaxYearWithEndYear(latencyDetailsCty.taxYear2.toInt).shortenTaxYearEnd

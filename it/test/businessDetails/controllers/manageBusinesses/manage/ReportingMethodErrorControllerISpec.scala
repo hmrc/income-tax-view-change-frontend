@@ -21,11 +21,11 @@ import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants._
-import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, noPropertyOrBusinessResponse, ukPropertyOnlyResponse}
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 
 class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
@@ -62,12 +62,12 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
             "render the reporting method error page" when {
               "using the manage businesses journey" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -82,10 +82,10 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
                   stubAuthorised(mtdUserRole)
                   await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                     manageIncomeSourceData = Some(ManageIncomeSourceData(None)))))
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   result should have(
                     httpStatus(INTERNAL_SERVER_ERROR)
@@ -94,10 +94,10 @@ class ReportingMethodErrorControllerISpec extends ControllerISpecHelper {
               } else {
                 "the user does not have a property Income Source" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   result should have(
                     httpStatus(INTERNAL_SERVER_ERROR)

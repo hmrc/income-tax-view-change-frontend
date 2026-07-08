@@ -18,11 +18,12 @@ package returns.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.servicemocks.IncomeTaxCalculationStub
 import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.ReturnIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 
 class IncomeSummaryControllerISpec extends ControllerISpecHelper {
 
@@ -42,7 +43,7 @@ class IncomeSummaryControllerISpec extends ControllerISpecHelper {
           } else {
             "render the income summary page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
               IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, "2018", "LATEST")(
                 status = OK,
                 body = liabilityCalculationModelSuccessful
@@ -50,7 +51,7 @@ class IncomeSummaryControllerISpec extends ControllerISpecHelper {
 
               val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
               IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, "2018", "LATEST")
 
               res should have(

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.testConstants
+package returns.testConstants
 
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.liabilitycalculation.*

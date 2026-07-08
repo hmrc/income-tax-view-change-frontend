@@ -18,15 +18,16 @@ package returns.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{IncomeTaxBusinessDetailsStub, MTDIndividualAuthStub, IncomeTaxCalculationStub}
+import common.helpers.servicemocks.{MTDIndividualAuthStub, IncomeTaxCalculationStub}
 import common.models.liabilitycalculation.LiabilityCalculationError
+import common.helpers.GetInsourceDetailsStub
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK, SEE_OTHER}
 import play.api.i18n.{Lang, Messages, MessagesApi}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
-import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponseWoMigration
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.ReturnIntegrationTestConstants.*
 
 import java.util.Locale
 
@@ -172,7 +173,7 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
             "render the final tax calculation page" that {
               "is in English" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
                 calculationStub()
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -202,7 +203,7 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
 
               "is in welsh" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
                 calculationStub()
 
                 val res = buildGETMTDClient(path, additionalCookies, true).futureValue
@@ -234,7 +235,7 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
             "render the error page" when {
               "there is no calc data model" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
                 calculationStubEmptyCalculations()
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -257,7 +258,7 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
           } else {
             "redirect to the confirmation page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
               calculationStub()
 
               val res = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
@@ -272,7 +273,7 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
               if (mtdUserRole == MTDIndividual) {
                 "there is no name provided in the auth" in {
                   MTDIndividualAuthStub.stubAuthorisedWithNoName()
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
                   calculationStub()
 
                   val res = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
@@ -282,7 +283,7 @@ class FinalTaxCalculationControllerISpec extends ControllerISpecHelper {
 
               "there is no calc information" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
                 calculationStubEmptyCalculations()
 
                 val res = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
