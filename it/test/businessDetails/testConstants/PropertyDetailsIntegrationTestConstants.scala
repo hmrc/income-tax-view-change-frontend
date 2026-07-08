@@ -25,28 +25,10 @@ import java.time.LocalDate
 
 object PropertyDetailsIntegrationTestConstants {
 
-  val propertyAccountingStart = startYear.toString + "-01-01"
-  val propertyAccountingEnd = startYear.toString + "-12-31"
   val propertyTradingStartDate = Some(LocalDate.parse((startYear - 1).toString + "-01-01"))
   val ukPropertyIncomeType = Some("uk-property")
   val foreignPropertyIncomeType = Some("foreign-property")
 
-  def propertyAccountingStartLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 1, 1)
-
-  def propertyAccounringEndLocalDateOfCurrentYear(year: Int) = LocalDate.of(year, 12, 31)
-
-  def propertyWithCurrentYear(endYear: Int): PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDateOfCurrentYear(endYear),
-      end = propertyAccounringEndLocalDateOfCurrentYear(endYear)
-    )),
-    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDateOfCurrentYear(endYear)),
-    propertyIncomeType,
-    propertyTradingStartDate,
-    None,
-    None,
-  )
 
   val ukProperty: PropertyDetailsModel = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
@@ -98,42 +80,6 @@ object PropertyDetailsIntegrationTestConstants {
     None,
     None,
     None,
-  )
-
-  val propertySuccessResponse: JsValue = Json.obj(
-    "incomeSourceId" -> testPropertyIncomeId,
-    "accountingPeriod" -> Json.obj(
-      "start" -> propertyAccountingStart,
-      "end" -> propertyAccountingEnd
-    )
-  )
-
-  val ukPropertyAudit: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
-    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
-    incomeSourceType = ukPropertyIncomeType,
-    tradingStartDate = propertyTradingStartDate,
-    None,
-    cessation = None,
-    latencyDetails = Some(testLatencyDetails3)
-  )
-
-  val foreignPropertyAudit: PropertyDetailsModel = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = Some(AccountingPeriodModel(
-      start = propertyAccountingStartLocalDate,
-      end = propertyAccounringEndLocalDate
-    )),
-    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
-    incomeSourceType = foreignPropertyIncomeType,
-    tradingStartDate = propertyTradingStartDate,
-    None,
-    cessation = None,
-    latencyDetails = Some(testLatencyDetails3)
   )
 
   val ceasedForeignProperty: PropertyDetailsModel = PropertyDetailsModel(

@@ -27,27 +27,13 @@ import common.testConstants.IncomeSourceIntegrationTestConstants.ukProperty
 import java.time.LocalDate
 
 object BusinessDetailsIntegrationTestConstants {
-  val b1CessationDate = LocalDate.of(startYear, 12, 31)
-  val b1CessationReason = "It really, really was a bad idea"
-
-  val b1AddressLine1 = "64 Zoo Lane"
-  val b1AddressLine2 = "Happy Place"
-  val b1AddressLine3 = "Magical Land"
-  val b1AddressLine4 = "England"
-  val b1AddressLine5 = "ZL1 064"
-  val b1CountryCode = "UK"
-
+  
   val b2CessationDate = LocalDate.of(endYear, 12, 31)
 
   val b3TradingName = "thirdBusiness"
   val b2AccountingStart = LocalDate.of(endYear, 1, 1)
   val b2AccountingEnd = LocalDate.of(endYear, 12, 31)
-  val b2AddressLine1 = "742 Evergreen Terrace"
-  val b2AddressLine2 = "Springfield"
-  val b2AddressLine3 = "Oregon"
-  val b2AddressLine4 = "USA"
-  val b2AddressLine5 = "51MP 50N5"
-  val b2CountryCode = "USA"
+
   val ceasedBusinessTradingName = "ceasedBusiness"
   val testBusinessAddress: AddressModel = AddressModel(
     addressLine1 = Some("64 Zoo Lane"),
@@ -163,9 +149,7 @@ object BusinessDetailsIntegrationTestConstants {
     address = expectedAddress,
     latencyDetails = Some(testLatencyDetails3)
   )
-
-  val taxYear: Int = 2022
-
+  
   val datesModelSeq2022: Seq[DatesModel] = Seq(
     DatesModel(
       LocalDate.of(2022, 1, 6),
