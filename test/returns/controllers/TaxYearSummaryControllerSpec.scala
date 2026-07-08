@@ -501,7 +501,6 @@ class TaxYearSummaryControllerSpec
                 }
 
                 status(result) shouldBe OK
-//                Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "Accrues interest"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe chargeSummaryUrl("RARDEBIT01")
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"

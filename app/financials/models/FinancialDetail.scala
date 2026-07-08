@@ -46,7 +46,6 @@ case class FinancialDetail(taxYear: String,
 
   lazy val interestLockExists: Boolean = interestLocks.nonEmpty
 
-  lazy val hasAccruedInterest: Boolean = accruedInterest.exists(_ > 0)
   lazy val isAccruingInterest: Boolean = accruedInterest.exists(_ > 0)
 
   lazy val dunningLocks: Seq[SubItem] = {

@@ -75,10 +75,6 @@ case class ChargeItem(
     Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && isAccruingInterest
   }
 
-  def isNotPaidAndNotOverduePoaReconciliationDebit()(implicit dateService: DateServiceInterface): Boolean = {
-    Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
-  }
-
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
     if (transactionType == BalancingCharge && (codedOutStatus.isEmpty) && originalAmount == 0.0) {
       None
