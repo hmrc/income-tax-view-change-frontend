@@ -20,18 +20,19 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditEvent
-import common.helpers.servicemocks.{IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.servicemocks.IncomeTaxCalculationStub
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
-import common.testConstants.NewCalcDataIntegrationTestConstants.*
-import common.testConstants.messages.TaxDueSummaryMessages.*
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.NewCalcDataIntegrationTestConstants.*
+import returns.testConstants.ReturnIntegrationTestConstants.*
+import returns.testConstants.messages.TaxDueSummaryMessages.*
 import returns.models.audit.TaxDueResponseAuditModel
 import returns.models.liabilitycalculation.viewmodels.TaxDueSummaryViewModel
 
 import java.time.LocalDate
+import common.helpers.GetInsourceDetailsStub
 
 class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
@@ -77,7 +78,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
               "has additional charges, student and graduate payment plan" in {
 
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationModelSuccessful
@@ -85,7 +86,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 verifyAuditEvent(TaxDueResponseAuditModel(testUser(mtdUserRole), TaxDueSummaryViewModel(liabilityCalculationModelSuccessful, testObligationsModel), testYearInt))
@@ -101,7 +102,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
               "has just Gift Aid Additional charges" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationGiftAid
@@ -109,7 +110,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 res should have(
@@ -121,7 +122,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
               "has just Pension Lump Sum Additional charges" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
 
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
@@ -130,7 +131,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 res should have(
@@ -142,7 +143,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
               "has just Pension Savings Additional charges" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationPensionSavings
@@ -150,7 +151,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 res should have(
@@ -162,7 +163,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
               "uses minimal calculation with no Additional Charges" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
                   body = liabilityCalculationMinimal
@@ -170,7 +171,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 res should have(
@@ -186,7 +187,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
               "has class2VoluntaryContributions as false" when {
                 "the flag is missing from the calc data" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                     status = OK,
                     body = liabilityCalculationNonVoluntaryClass2Nic
@@ -194,7 +195,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                   res should have(
@@ -208,7 +209,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
               "has class2VoluntaryContributions as true" when {
                 "the flag is returned in the calc data" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                     status = OK,
                     body = liabilityCalculationVoluntaryClass2Nic
@@ -216,7 +217,7 @@ class TaxDueSummaryControllerISpec extends ControllerISpecHelper {
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                   IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                   res should have(

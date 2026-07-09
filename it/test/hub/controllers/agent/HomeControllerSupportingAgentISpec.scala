@@ -16,24 +16,26 @@
 
 package hub.controllers.agent
 
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDSupportingAgent
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.messages.HomeMessages.{nextUpdateDue, overdue, overdueUpdates}
+import hub.testConstants.messages.HomeMessages.{nextUpdateDue, overdue, overdueUpdates}
+import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
+import hub.helpers.NextUpdatesStub
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
 import shared.models.audit.NextUpdatesResponseAuditModel
 import uk.gov.hmrc.auth.core.retrieve.Name
+import common.helpers.GetInsourceDetailsStub
 
 class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
 
@@ -75,7 +77,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
           "displays the next updates" when {
             "nothing is overdue" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
@@ -88,7 +90,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                   ))
               ))
 
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+              NextUpdatesStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
               )
@@ -109,7 +111,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
           "displays an overdue obligation" when {
             "there is a single obligation overdue" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
@@ -124,7 +126,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+              NextUpdatesStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
               )
@@ -145,7 +147,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
             "there is more than one obligation overdue" in {
               stubAuthorised(mtdUserRole)
 
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
@@ -162,7 +164,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
                   ))
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+              NextUpdatesStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
               )
@@ -182,7 +184,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
 
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
@@ -197,7 +199,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+              NextUpdatesStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
               )
@@ -215,7 +217,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
           "display Your Businesses tile" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                 status = OK,
                 response = incomeSourceDetailsModel
               )
@@ -230,7 +232,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
 
               ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(
+              NextUpdatesStub.stubGetNextUpdates(
                 nino = testNino,
                 deadlines = currentObligations
               )
@@ -252,14 +254,14 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
           "retrieving the obligations was unsuccessful" in {
             stubAuthorised(mtdUserRole)
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
               response = incomeSourceDetailsModel
             )
 
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-            IncomeTaxBusinessDetailsStub.stubGetNextUpdatesError(testNino)
+            NextUpdatesStub.stubGetNextUpdatesError(testNino)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -273,7 +275,7 @@ class HomeControllerSupportingAgentISpec extends ControllerISpecHelper {
 
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
 
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsErrorResponse(testMtditid)(
               status = INTERNAL_SERVER_ERROR)
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue

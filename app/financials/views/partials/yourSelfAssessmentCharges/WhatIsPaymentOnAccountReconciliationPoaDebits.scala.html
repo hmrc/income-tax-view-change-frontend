@@ -54,7 +54,7 @@
     content = HtmlContent(html)
 ))
 
-    @if(viewModel.chargeItem.hasAccruingInterest || viewModel.chargeItem.hasInterest) {
+    @if(viewModel.chargeItem.isAccruingInterest || viewModel.chargeItem.hasInterest) {
     @warningRARPoa(viewModel.dueDate.map(_.toLongDate).getOrElse(""))
     }
 

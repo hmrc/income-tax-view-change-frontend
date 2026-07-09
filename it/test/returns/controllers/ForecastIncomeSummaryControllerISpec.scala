@@ -19,13 +19,14 @@ package returns.controllers
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
 import common.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
+import common.helpers.GetInsourceDetailsStub
 import play.api.http.Status.*
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndUkProperty}
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import returns.models.audit.ForecastIncomeAuditModel
 
 object ForecastIncomeSummaryControllerTestConstants {
@@ -86,7 +87,7 @@ class ForecastIncomeSummaryControllerISpec extends ControllerISpecHelper {
           } else {
             "render the forecast income summary page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018")(
                 status = OK,
                 body = liabilityCalculationModelSuccessful

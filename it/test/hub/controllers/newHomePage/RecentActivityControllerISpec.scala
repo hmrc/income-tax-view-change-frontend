@@ -18,19 +18,21 @@ package hub.controllers.newHomePage
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{FeatureSwitchName, NewHomePage, RecentActivity}
 import common.models.itsaStatus.ITSAStatus
 import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import play.api.http.Status.{OK, SEE_OTHER}
-import common.testConstants.BaseIntegrationTestConstants.{testIncomeSource, testMtditid, testNino}
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{address, b2CessationDate, b2TradingStart}
+import common.testConstants.BaseIntegrationTestConstants.{address, b2TradingStart, testIncomeSource, testMtditid, testNino}
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
+import hub.helpers.NextUpdatesStub
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 
 import java.time.LocalDate
+import common.helpers.GetInsourceDetailsStub
 
 class RecentActivityControllerISpec extends ControllerISpecHelper {
 
@@ -234,9 +236,9 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                   featureSwitches: List[FeatureSwitchName] = List()) {
 
     stubAuthorised(mtdUserRole, featureSwitches)
-    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)
+    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)
     ITSAStatusDetailsStub.stubGetITSAStatusDetails(currentItsaStatus.toString, "2022-23")
-    IncomeTaxBusinessDetailsStub.stubGetFulfilledNextUpdates(nino = testNino, deadlines = obligationsModel)
+    NextUpdatesStub.stubGetFulfilledNextUpdates(nino = testNino, deadlines = obligationsModel)
   }
 
   private val noRecentObligationsModel: ObligationsModel = ObligationsModel(Seq(

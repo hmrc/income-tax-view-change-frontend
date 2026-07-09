@@ -16,14 +16,10 @@
 
 package common.testConstants
 
-import java.security.MessageDigest
+object MicroserviceSpecificConstants {
 
-object ChecksumUtils {
-
-  def calculateSha256(input: Array[Byte]): String =
-    MessageDigest.getInstance("SHA-256").digest(input).map("%02x".format(_)).mkString
-
-  implicit class ByteArrayWithSha256(bytes: Array[Byte]) {
-    def calculateSha256: String = ChecksumUtils.calculateSha256(bytes)
-  }
+  val basePath = "/report-quarterly/income-and-expenses/view"
+  val baseUrl = s"http://localhost:9081$basePath"
+  val auditSource = "income-tax-view-change-frontend"
 }
+

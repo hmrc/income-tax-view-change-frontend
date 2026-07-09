@@ -18,12 +18,13 @@ package returns.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{IncomeTaxBusinessDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.servicemocks.IncomeTaxCalculationStub
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.ReturnIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 
 class DeductionsSummaryControllerISpec extends ControllerISpecHelper {
 
@@ -43,14 +44,14 @@ class DeductionsSummaryControllerISpec extends ControllerISpecHelper {
           } else {
             "render the deduction summary page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessAndPropertyResponseWoMigration)
               IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                 status = OK,
                 body = liabilityCalculationModelSuccessful
               )
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                 IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, testYear, "LATEST")
 
                 result should have(

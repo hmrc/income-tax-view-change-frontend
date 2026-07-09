@@ -32,9 +32,8 @@ import common.viewUtils.InternalUrlHelper
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
-import financials.models.extensions.FinancialDetailsModelExtension
 
-trait ControllerISpecHelper extends ComponentSpecBase with FinancialDetailsModelExtension {
+trait ControllerISpecHelper extends ComponentSpecBase {
 
   val mtdAllRoles = List(MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent)
 

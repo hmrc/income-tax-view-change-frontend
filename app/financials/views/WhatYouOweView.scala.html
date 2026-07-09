@@ -86,7 +86,7 @@
                 Some(HeadCell(content = Text(getMessage("tableHead.due-date")))),
                 Some(HeadCell(content = Text(getMessage("tableHead.charge-type")))),
                 Some(HeadCell(content = Text(getMessage("tableHead.tax-year")))),
-                Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
+                Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)(
                     HeadCell(content = Text(getMessage("tableHead.interest")),
                     classes = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) "govuk-!-text-align-right" else "govuk-!-text-align-left"),
                 ),
@@ -108,7 +108,7 @@ format = Some("numeric")))
                             attributes = Map("id" -> "balancing-charge-tax-year-0"),
                             content = Text(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
                         )),
-                        Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
+                        Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)(
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-na"),
                                 content = Text(getMessage("tableRow.na"))
@@ -134,7 +134,7 @@ format = Some("numeric")))
                             attributes = Map("id" -> "balancing-charge-type-1"),
                             content = HtmlContent(getMessage("pre-mtd-year", (viewModel.currentTaxYear - 2).toString, (viewModel.currentTaxYear - 1).toString))
                         )),
-                        Option.when(viewModel.whatYouOweChargesList.hasInterestAccruing)(
+                        Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)(
                             TableRow(
                                 attributes = Map("id" -> "balancing-charge-na"),
                                 content = HtmlContent(getMessage("tableRow.na"))
@@ -162,14 +162,14 @@ format = Some("numeric")))
                                 attributes = Map("id" -> s"due-charge-tax-year-$index"),
                                 content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
                             )),
-                            Option.when(charge.hasAccruingInterest)(
+                            Option.when(charge.isAccruingInterest)(
                                 TableRow(
                                     attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
                                     content = HtmlContent(charge.accruingInterestAmount.get.toCurrency),
                                     format = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) Some("numeric") else None
                                 )
                             ).orElse(
-                                    if(viewModel.whatYouOweChargesList.hasInterestAccruing){
+                                    if(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest){
                                         Some(TableRow(
                                         attributes = Map("id" -> s"fallback-$index"),
                                         content = HtmlContent(getMessage("tableRow.na"))))

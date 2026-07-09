@@ -19,19 +19,19 @@ package businessDetails.controllers.manageBusinesses.manage
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.business1
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import businessDetails.services.SessionService
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.Manage
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import businessDetails.helpers.NextUpdatesStub
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 
 
@@ -101,15 +101,15 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
             "render the Manage Obligations Page" when {
               "valid url parameters provided and change to is annual" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(annual), Some(2024), Some(true))))))
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, testObligationsModel)
+                NextUpdatesStub.stubGetNextUpdates(testNino, testObligationsModel)
 
                 val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
                 val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -120,15 +120,15 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
 
               "valid url parameters provided and change to is quarterly" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId), Some(quarterly), Some(2024), Some(true))))))
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, testObligationsModel)
+                NextUpdatesStub.stubGetNextUpdates(testNino, testObligationsModel)
 
                 val pathWithValidQueryParams = path + s"?changeTo=$quarterly&taxYear=$taxYear"
                 val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -141,14 +141,14 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
             "render the error page" when {
               "there is no incomeSourceId in the session" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, s"MANAGE-${incomeSourceType.key}",
                   manageIncomeSourceData = None)))
-                IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, testObligationsModel)
+                NextUpdatesStub.stubGetNextUpdates(testNino, testObligationsModel)
 
                 val pathWithValidQueryParams = path + s"?changeTo=$annual&taxYear=$taxYear"
                 val result = buildGETMTDClient(pathWithValidQueryParams, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(INTERNAL_SERVER_ERROR)
@@ -165,7 +165,7 @@ class ManageObligationsControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "redirect to ManageIncomeSources" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
 
               val result = buildPOSTMTDPostClient(path, additionalCookies, Map.empty).futureValue
               if(mtdUserRole != MTDIndividual)

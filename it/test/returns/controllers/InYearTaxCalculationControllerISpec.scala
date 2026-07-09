@@ -18,7 +18,7 @@ package returns.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.AuditStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.liabilitycalculation.LiabilityCalculationError
 import common.helpers.servicemocks.IncomeTaxCalculationStub
@@ -26,8 +26,9 @@ import returns.models.liabilitycalculation.viewmodels.CalculationSummary.toTaxYe
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.i18n.{Lang, Messages}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndPropertyResponse, multipleBusinessesAndPropertyResponseWoMigration}
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.ReturnIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 
 import java.time.LocalDate
 import java.util.Locale
@@ -163,7 +164,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
             "render the new calc page" that {
               "is in english" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
                 calculationStub()
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
@@ -188,7 +189,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
 
               "is in welsh" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
                 calculationStub()
 
                 val res = buildGETMTDClient(path, additionalCookies, true).futureValue
@@ -217,7 +218,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
               "there is no calc data model" in {
                 stubAuthorised(mtdUserRole)
                 calculationStubEmptyCalculations()
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
                 result.status shouldBe INTERNAL_SERVER_ERROR
@@ -226,7 +227,7 @@ class InYearTaxCalculationControllerISpec extends ControllerISpecHelper {
               "there is a different status to NOT_FOUND" in {
                 stubAuthorised(mtdUserRole)
                 calculationStubFailCalculations()
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 

@@ -19,7 +19,6 @@ package common.controllers.agent
 import common.helpers.ComponentSpecBase
 import play.api.http.Status.SEE_OTHER
 
-
 class AgentLanguageControllerISpec extends ComponentSpecBase {
 
   val testRefererRoute: String = "/test/referer/route"
@@ -44,7 +43,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
       resultCy.headers.toString.contains("PLAY_LANG=cy;") shouldBe true
       resultCy should have(
         httpStatus(SEE_OTHER),
-        redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+        redirectURI(appConfig.enterClientsUTRUrl)
       )
     }
   }
@@ -66,7 +65,7 @@ class AgentLanguageControllerISpec extends ComponentSpecBase {
       resultEn.headers.toString.contains("PLAY_LANG=en;") shouldBe true
       resultEn should have(
         httpStatus(SEE_OTHER),
-        redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+        redirectURI(appConfig.enterClientsUTRUrl)
       )
     }
   }

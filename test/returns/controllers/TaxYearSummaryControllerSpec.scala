@@ -501,11 +501,44 @@ class TaxYearSummaryControllerSpec
                 }
 
                 status(result) shouldBe OK
-                Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "Accrues interest"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "First payment on account: extra amount from your tax return"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe chargeSummaryUrl("RARDEBIT01")
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Second payment on account: extra amount from your tax return"
                 Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe chargeSummaryUrl("RARDEBIT02")
+              }
+              "the user has Review and Reconcile debit charges with accruing interest" in {
+                setupMockSuccess(mtdUserRole)
+                mockItsaStatusRetrievalAction()
+                mockLatestAndPreviousSuccess(testMtditid)
+                mockFinancialDetailsSuccess(financialDetailsModelResponse = financialDetailsWithAccruingInterestReviewAndReconcileDebits)
+
+                when(mockIncomeSourceConnector.getIncomeSources()(any(), any()))
+                  .thenReturn(Future(singleBusinessIncome))
+
+                mockGetNextUpdates(fromDate = LocalDate.of(testTaxYear - 1, 4, 6),
+                  toDate = LocalDate.of(testTaxYear, 4, 5))(
+                  response = testObligationsModel
+                )
+
+                setupMockGetPoaTaxYearForEntryPointCall(Right(Some(TaxYear(2017, 2018))))
+
+                when(mockTaxYearSummaryService.determineCannotDisplayCalculationContentScenario(any(), any())(any()))
+                  .thenReturn(MtdSoftwareShowCalc)
+
+                val result = action(fakeRequest)
+
+                def chargeSummaryUrl(id: String, isInterestCharge: Boolean = false) = if (isAgent) {
+                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id, isInterestCharge).url
+                } else {
+                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id, isInterestCharge).url
+                }
+
+                status(result) shouldBe OK
+                Jsoup.parse(contentAsString(result)).getElementById("accrues-interest-tag").text() shouldBe "Accrues interest"
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-0").text() shouldBe "Late payment interest for first payment on account: extra amount"
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-0").attr("href") shouldBe chargeSummaryUrl("RARDEBIT01", true)
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeText-1").text() shouldBe "Late payment interest for second payment on account: extra amount"
+                Jsoup.parse(contentAsString(result)).getElementById("paymentTypeLink-1").attr("href") shouldBe chargeSummaryUrl("RARDEBIT02", true)
               }
             }
 

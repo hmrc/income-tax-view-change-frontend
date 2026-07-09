@@ -101,12 +101,12 @@ class FinancialDetailSpec extends UnitSpec {
     "working with Accrued Interest" when {
 
       "should return true" in {
-        financialDetail(accruedInterest = Some(3)).hasAccruedInterest shouldBe true
+        financialDetail(accruedInterest = Some(3)).isAccruingInterest shouldBe true
       }
 
 
       "should return false" in {
-        financialDetail().hasAccruedInterest shouldBe false
+        financialDetail().isAccruingInterest shouldBe false
       }
     }
 

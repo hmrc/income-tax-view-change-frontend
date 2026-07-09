@@ -16,7 +16,7 @@
 
 package hub.controllers
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import hub.auth.AuthActionsWithTriggeredMigrationCheck
 import common.auth.MtdItUser
 import common.config.*
 import common.config.featureswitch.*

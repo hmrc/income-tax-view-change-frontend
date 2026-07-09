@@ -18,11 +18,12 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub.ITSAYearStatus
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, LatencyDetails}
 import common.services.DateService
@@ -30,11 +31,10 @@ import common.models.itsaStatus.ITSAStatus.Voluntary
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.CalculationListIntegrationTestConstants
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
 import common.helpers.CalculationListStub
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
+import shared.testConstants.CalculationListIntegrationTestConstants
 
 import java.time.LocalDate
 import java.time.Month.APRIL
@@ -147,7 +147,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               val taxYear1: Int = currentTaxYear.getYear
               "user is within latency period (before 23/24) - tax year 1 not crystallised" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
 
                 CalculationListStub.stubGetCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
@@ -163,7 +163,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               }
               "user is within latency period (before 23/24) - tax year 1 crystallised" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
                 CalculationListStub.stubGetCalculationList(testNino, taxYear1.toString)(CalculationListIntegrationTestConstants
@@ -179,7 +179,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               }
               "user is within latency period (after 23/24) - tax year 1 not crystallised" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
                 CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseNonCrystallised.toString())
@@ -193,7 +193,7 @@ class IncomeSourceReportingFrequencyControllerISpec extends ControllerISpecHelpe
               }
               "user is within latency period (after 23/24) - tax year 1 crystallised" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType, true))
                 await(sessionService.setMongoData(testUIJourneySessionData(incomeSourceType)))
                 ITSAStatusDetailsStub.stubGetITSAStatusDetails("MTD Mandated", taxYear1YYYYtoYY)
                 CalculationListStub.stubGetCalculationList(testNino, taxYear1YYtoYY)(CalculationListIntegrationTestConstants.successResponseCrystallised.toString())

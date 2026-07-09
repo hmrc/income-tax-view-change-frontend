@@ -19,13 +19,15 @@ package financials.controllers
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.AuditStub
 import common.models.admin.CreditsRefundsRepay
 import financials.testConstants.ANewCreditAndRefundModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
+import financials.helpers.FinancialDetailsStub
 import financials.models.audit.ClaimARefundAuditModel
 import financials.models.core.ErrorModel
 
@@ -77,8 +79,8 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                   mtdUserRole) {
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
-                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  FinancialDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
                   AuditStub.verifyAuditEvent(ClaimARefundAuditModel(creditsModel = validResponseModel)(mtdUser))
 
                   res should have(
@@ -127,7 +129,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                   mtdUserRole) {
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+                  FinancialDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
                   AuditStub.verifyAuditEvent(ClaimARefundAuditModel(creditsModel = validResponseModel)(mtdUser))
 
                   res should have(
@@ -172,7 +174,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                 mtdUserRole,
                 enableCreditAndRefunds = false) {
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+                FinancialDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
 
                 res should have(
                   httpStatus(OK),
@@ -191,7 +193,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                 mtdUserRole) {
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
+                FinancialDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
                 
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR),
@@ -241,13 +243,13 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
 
     val mtdUser: MtdItUser[_] = getTestUser(mtdUserRole, incomeSources)
 
-    IncomeTaxBusinessDetailsStub
+    GetInsourceDetailsStub
       .stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
 
     responses.foreach(response => {
       val fromYear = {response.taxYear - 1}.toString
       val toYear = {response.taxYear}.toString
-      IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsCreditsByDateRange(
+      FinancialDetailsStub.stubGetFinancialDetailsCreditsByDateRange(
         testNino, s"$fromYear-04-06", s"$toYear-04-05")(
         response.code,
         response.json)

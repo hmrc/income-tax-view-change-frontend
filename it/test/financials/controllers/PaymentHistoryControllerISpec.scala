@@ -20,16 +20,17 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.PaymentHistoryRefunds
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import financials.helpers.FinancialDetailsStub
 import financials.models.Payment
 import financials.models.audit.PaymentHistoryResponseAuditModel
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse
 
 import java.time.LocalDate
+import common.helpers.GetInsourceDetailsStub
 
 class PaymentHistoryControllerISpec extends ControllerISpecHelper {
 
@@ -76,8 +77,8 @@ class PaymentHistoryControllerISpec extends ControllerISpecHelper {
               "has payment history title" when {
                 "the PaymentHistoryRefunds FS is disabled" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-                  IncomeTaxBusinessDetailsStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+                  FinancialDetailsStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                     result should have(
@@ -95,8 +96,8 @@ class PaymentHistoryControllerISpec extends ControllerISpecHelper {
 
                 "the payment is from an earlier tax year description when CutOverCreditsEnabled and credit is defined" in {
                   stubAuthorised(mtdUserRole, List(PaymentHistoryRefunds))
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
-                  IncomeTaxBusinessDetailsStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+                  FinancialDetailsStub.stubGetPaymentsResponse(testNino, s"$twoPreviousTaxYearEnd-04-06", s"$previousTaxYearEnd-04-05")(OK, payments)
 
                   whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                     result should have(

@@ -39,7 +39,7 @@
                     (chargeItem.isAccruingInterest && !chargeItem.interestIsPaid))) {
         <div class="govuk-tag govuk-tag--red">@messages("tax-year-summary.payments.overdue")</div>
     }
-    @if(chargeItem.isAccruingInterest()) {
+    @if(chargeItem.isAccruingInterest) {
         <div class="govuk-tag govuk-tag--red" id="accrues-interest-tag">@messages("taxYears.accruesInterest")</div>
     }
     <div id="paymentTypeText-@{index}">

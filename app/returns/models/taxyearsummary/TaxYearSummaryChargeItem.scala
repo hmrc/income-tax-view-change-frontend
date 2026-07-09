@@ -100,13 +100,6 @@ case class TaxYearSummaryChargeItem(
   val hasLpiWithDunningLock: Boolean =
     lpiWithDunningLock.isDefined && lpiWithDunningLock.getOrElse[BigDecimal](0) > 0
 
-  def hasAccruingInterest: Boolean =
-    interestOutstandingAmount.isDefined && accruingInterestAmount.getOrElse[BigDecimal](0) <= 0
-
-  def isAccruingInterest()(implicit dateService: DateServiceInterface): Boolean = {
-    Seq(PoaOneReconciliationDebit, PoaTwoReconciliationDebit).contains(transactionType) && !isPaid && !isOverdue()
-  }
-
   def getDueDateForNonZeroBalancingCharge: Option[LocalDate] = {
     if (transactionType == BalancingCharge && (codedOutStatus.isEmpty) && originalAmount == 0.0) {
       None
@@ -141,7 +134,7 @@ case class TaxYearSummaryChargeItem(
 
   val isPartPaid: Boolean = outstandingAmount != originalAmount
 
-  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != accruingInterestAmount.getOrElse[BigDecimal](0)
+  val interestIsPartPaid: Boolean = interestOutstandingAmount.getOrElse[BigDecimal](0) != latePaymentInterestAmount.getOrElse[BigDecimal](0)
 
   def getInterestPaidStatus: String = {
     if (interestIsPaid) "paid"

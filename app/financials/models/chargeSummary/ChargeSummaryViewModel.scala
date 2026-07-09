@@ -54,7 +54,7 @@ case class ChargeSummaryViewModel(
   val dueDate = chargeItem.dueDate
   val hasDunningLocks = paymentBreakdown.exists(_.dunningLockExists)
   val hasInterestLocks = paymentBreakdown.exists(_.interestLockExists)
-  val hasAccruedInterest = paymentBreakdown.exists(_.hasAccruedInterest)
+  val isAccruingInterest: Boolean = paymentBreakdown.exists(_.isAccruingInterest)
 
   val isCredit = chargeItem.originalAmount < 0
 

@@ -86,7 +86,7 @@ case class WhatYouOweResponseAuditModel(user: MtdItUser[_],
   }
 
   private def accruingInterestJson(chargeItem: ChargeItem): JsObject = {
-    if (chargeItem.hasAccruingInterest) {
+    if (chargeItem.isAccruingInterest) {
       Json.obj() ++
         Json.obj("accruingInterest"-> chargeItem.interestOutstandingAmount) ++
         Json.obj("interestRate"-> chargeItem.interestRate.map(ratePctString)) ++

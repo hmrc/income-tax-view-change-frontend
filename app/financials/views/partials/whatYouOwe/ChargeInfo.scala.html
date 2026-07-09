@@ -40,7 +40,7 @@
 )
 
 
-@if(charge.isNotPaidAndNotOverduePoaReconciliationDebit()) {
+@if(charge.isRARAccruingInterest()) {
     <div>
         <span class="govuk-tag govuk-tag--red">@messages("taxYears.accruesInterest") </span>
     </div>

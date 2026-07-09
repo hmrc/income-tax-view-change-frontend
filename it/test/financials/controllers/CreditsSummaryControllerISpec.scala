@@ -19,15 +19,16 @@ package financials.controllers
 import common.auth.AuthorisedAndEnrolledRequest
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.AuditStub
+import common.helpers.GetInsourceDetailsStub
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
 import play.api.http.Status.OK
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.ws.WSResponse
 import play.api.test.FakeRequest
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testValidFinancialDetailsModelCreditAndRefundsJson, testValidFinancialDetailsModelCreditAndRefundsJsonV2}
-import financials.helpers.CreditsSummaryDataHelper
+import financials.helpers.{CreditsSummaryDataHelper, FinancialDetailsStub}
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSummaryDataHelper {
@@ -62,8 +63,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
               "a valid response is received" in {
                 import financials.models.audit.CreditSummaryAuditing.*
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   testNino,
                   s"${testTaxYear - 1}-04-06",
                   s"$testTaxYear-04-05")(
@@ -76,8 +77,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 )
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
+                  FinancialDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                   AuditStub.verifyAuditContainsDetail(
                     IncomeSourceDetailsResponseAuditModel(
@@ -113,9 +114,9 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
               "the list contains Balancing Charge Credits" in {
                 import financials.models.audit.CreditSummaryAuditing.*
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
 
-                IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   testNino,
                   s"${testTaxYear - 1}-04-06",
                   s"$testTaxYear-04-05")(
@@ -128,8 +129,8 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                 )
 
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
-                  IncomeTaxBusinessDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid, 1)
+                  FinancialDetailsStub.verifyGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")
 
                   AuditStub.verifyAuditContainsDetail(
                     IncomeSourceDetailsResponseAuditModel(

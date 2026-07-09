@@ -26,11 +26,12 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
 import AddIncomeSourceData.businessTradeField
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, noPropertyOrBusinessResponse, singleBusinessResponse}
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, singleBusinessResponse}
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 
 class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
@@ -65,12 +66,12 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           "render the Add Business trade page for an Agent" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
                 addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
 
               val res = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               res should have(
                 httpStatus(OK),
@@ -92,11 +93,11 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           "render the Add Business trade page for an Agent" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
               await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
                 addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
               val res = buildGETMTDClient(changePath, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               res should have(
                 httpStatus(OK),
@@ -117,7 +118,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           s"303 SEE_OTHER and redirect to add business address" when {
             "User is authorised and business trade is valid" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val formData: Map[String, Seq[String]] = {
                 Map(
@@ -149,7 +150,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               "there is address on file" when {
                 "User is authorised and business trade is valid" in {
                   stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponse)
 
                   val formData: Map[String, Seq[String]] = {
                     Map(
@@ -183,7 +184,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
               "there is no address on file" when {
                 "User is authorised and business trade is valid" in {
                   stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                   val formData: Map[String, Seq[String]] = {
                     Map(
@@ -214,7 +215,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           
           "show error when form is filled incorrectly" in {
             stubAuthorised(mtdUserRole)
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
             await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
               addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName))))))
@@ -247,7 +248,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
           s"303 SEE_OTHER and redirect to Check details" when {
             "User is authorised and business trade is valid" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
               val changedTrade = "Updated Business Trade"
               val formData: Map[String, Seq[String]] = {
@@ -277,7 +278,7 @@ class AddBusinessTradeControllerISpec extends ControllerISpecHelper {
 
           "show error when form is filled incorrectly" in {
             stubAuthorised(mtdUserRole)
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesResponse)
 
             await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-SE",
               addIncomeSourceData = Some(AddIncomeSourceData(Some(testBusinessName), Some(testBusinessTrade))))))

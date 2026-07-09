@@ -18,11 +18,11 @@ package returns.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.PostFinalisationAmendmentsR18
 import play.api.http.Status.*
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
+import returns.testConstants.ReturnIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 
 class TaxYearsControllerISpec extends ControllerISpecHelper {
 
@@ -42,10 +42,10 @@ class TaxYearsControllerISpec extends ControllerISpecHelper {
             "render the forecast income summary page" when {
               "the user has firstAccountingPeriodEndDate and hence valid tax years" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 Then("The view should have the correct headings and all tax years display")
                 res should have(
@@ -60,7 +60,7 @@ class TaxYearsControllerISpec extends ControllerISpecHelper {
 
               "render the amendment guidance text when PostFinalisationAmendmentsR18 FS is enabled" in {
                 stubAuthorised(mtdUserRole, List(PostFinalisationAmendmentsR18))
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
                   OK,
                   multipleBusinessesAndPropertyResponseWoMigration
                 )
@@ -79,10 +79,10 @@ class TaxYearsControllerISpec extends ControllerISpecHelper {
               "no firstAccountingPeriodEndDate exists for both business and property" in {
                 stubAuthorised(mtdUserRole)
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, noPropertyOrBusinessResponse)
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 res should have(
                   httpStatus(BAD_REQUEST)
