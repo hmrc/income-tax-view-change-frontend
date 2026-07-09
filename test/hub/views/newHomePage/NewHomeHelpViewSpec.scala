@@ -40,6 +40,7 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
   class TestSetup(
                    origin: Option[String] = None,
                    isAgent: Boolean = false,
+                   isSupportingAgent: Boolean = false,
                    yourTasksUrl: String = "testYourTasksUrl",
                    recentActivityUrl: String = "testRecentActivityUrl",
                    overViewUrl: String = "testOverviewUrl",
@@ -60,7 +61,8 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
       }
 
     implicit val testUser: MtdItUser[_] =
-      if (isAgent) getMtdItUser(Agent)(request)
+      if (isSupportingAgent) getMtdItUser(Agent, isSupportingAgent = true)(request)
+      else if (isAgent) getMtdItUser(Agent)(request)
       else getMtdItUser(Individual)(request)
 
     lazy val page: HtmlFormat.Appendable =
@@ -102,21 +104,37 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
       document.select("p.govuk-body").first().text() shouldBe messages("new.home.help.openInNewTab")
     }
 
-    "display 4 help cards for an individual user" in new TestSetup(isAgent = false) {
+    "display 6 help cards for an individual user" in new TestSetup(isAgent = false) {
+      cards.size() shouldBe 6
+
+      cards.get(0).text() should include(messages("home.help.link.makingTaxDigital.incomeTax"))
+      cards.get(1).text() should include(messages("home.help.link.makingTaxDigital.changeCircumstances"))
+      cards.get(2).text() should include(messages("home.help.link.makingTaxDigital.findSoftware"))
+      cards.get(3).text() should include(messages("home.help.link.makingTaxDigital.findPenaltyInfo"))
+      cards.get(4).text() should include(messages("home.help.link.selfAssessment.payTaxBill"))
+      cards.get(5).text() should include(messages("home.help.link.taxSupport.getHelp"))
+    }
+
+    "display only 4 help cards for a primary agent user" in new TestSetup(isAgent = true) {
       cards.size() shouldBe 4
 
       cards.get(0).text() should include(messages("home.help.link.makingTaxDigital.incomeTax"))
-      cards.get(1).text() should include(messages("home.help.link.selfAssessment.payTaxBill"))
+      cards.get(1).text() should include(messages("home.help.link.makingTaxDigital.changeCircumstances"))
       cards.get(2).text() should include(messages("home.help.link.makingTaxDigital.findSoftware"))
-      cards.get(3).text() should include(messages("home.help.link.taxSupport.getHelp"))
+      cards.get(3).text() should include(messages("home.help.link.makingTaxDigital.findPenaltyInfo"))
+
+      document.text() should not include messages("home.help.link.selfAssessment.payTaxBill")
+      document.text() should not include messages("home.help.link.taxSupport.getHelp")
     }
 
-    "display only 2 help cards for a supporting or primary agent user" in new TestSetup(isAgent = true) {
+    "display only 2 help cards for a supporting agent user" in new TestSetup(isSupportingAgent = true) {
       cards.size() shouldBe 2
 
       cards.get(0).text() should include(messages("home.help.link.makingTaxDigital.incomeTax"))
       cards.get(1).text() should include(messages("home.help.link.makingTaxDigital.findSoftware"))
 
+      document.text() should not include messages("home.help.link.makingTaxDigital.changeCircumstances")
+      document.text() should not include messages("home.help.link.makingTaxDigital.findPenaltyInfo")
       document.text() should not include messages("home.help.link.selfAssessment.payTaxBill")
       document.text() should not include messages("home.help.link.taxSupport.getHelp")
     }
@@ -124,8 +142,10 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
     "render correct English links and open in new tab" in new TestSetup(isAgent = false) {
       val expectedLinks: Seq[String] = List(
         "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax",
-        "https://www.gov.uk/pay-self-assessment-tax-bill",
+        "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/if-your-circumstances-change",
         "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax",
+        "https://www.gov.uk/guidance/penalties-for-making-tax-digital-for-income-tax",
+        "https://www.gov.uk/pay-self-assessment-tax-bill",
         "https://www.gov.uk/difficulties-paying-hmrc"
       )
 
@@ -143,8 +163,10 @@ class NewHomeHelpViewSpec extends TestSupport with FeatureSwitching with ViewSpe
     "render correct Welsh links and open in new tab" in new TestSetup(isAgent = false, welshLang = true) {
       val expectedLinks: Seq[String] = List(
         "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm",
-        "https://www.gov.uk/taluch-bil-treth-hunanasesiad",
+        "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm/os-bydd-eich-amgylchiadau-n-newid",
         "https://www.gov.uk/guidance/choose-the-right-software-for-making-tax-digital-for-income-tax.cy",
+        "https://www.gov.uk/guidance/penalties-for-making-tax-digital-for-income-tax.cy",
+        "https://www.gov.uk/taluch-bil-treth-hunanasesiad",
         "https://www.gov.uk/anawsterau-talu-cthem"
       )
 
