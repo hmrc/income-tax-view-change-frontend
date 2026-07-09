@@ -410,8 +410,10 @@ new.home.help.openInNewTab                                      = All links open
 new.home.navigation.tabs.help                                   = Help
 
 home.help.link.makingTaxDigital.incomeTax                       = Find information about Making Tax Digital for Income Tax
-home.help.link.selfAssessment.payTaxBill                        = Find information about paying your Self Assessment tax bill
+home.help.link.makingTaxDigital.changeCircumstances             = Find out what you need to do if your circumstances change
 home.help.link.makingTaxDigital.findSoftware                    = Find software that works with Making Tax Digital for Income Tax
+home.help.link.makingTaxDigital.findPenaltyInfo                 = Find information about penalties for Making Tax Digital for Income Tax
+home.help.link.selfAssessment.payTaxBill                        = Find information about paying your Self Assessment tax bill
 home.help.link.taxSupport.getHelp                               = Get help if you’re struggling to pay your tax
 
 ## Recent Activity Tab
