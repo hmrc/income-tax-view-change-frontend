@@ -39,12 +39,9 @@ import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeController @Inject()(val homeView: hub.views.html.HomeView,
-                               val newHomeRecentActivityView: hub.views.html.newHomePage.NewHomeRecentActivityView,
+class HomeController @Inject()(val newHomeRecentActivityView: hub.views.html.newHomePage.NewHomeRecentActivityView,
                                val newHomeOverviewView: hub.views.html.newHomePage.NewHomeOverviewView,
                                val newHomeHelpView: hub.views.html.newHomePage.NewHomeHelpView,
-                               val primaryAgentHomeView: hub.views.html.agent.PrimaryAgentHomeView,
-                               val supportingAgentHomeView: hub.views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActionsWithTriggeredMigrationCheck,
                                val nextUpdatesService: NextUpdatesService,
                                val financialDetailsService: FinancialDetailsService,
