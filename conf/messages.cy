@@ -409,7 +409,7 @@ new.home.help.openInNewTab                                      = Mae pob cysyll
 new.home.navigation.tabs.help                                   = Help
 
 home.help.link.makingTaxDigital.incomeTax                       = Dod o hyd i ragor o wybodaeth am Droi Treth yn Ddigidol ar gyfer Treth Incwm
-home.help.link.makingTaxDigital.changeCircumstances             = Darganfod beth sydd angen i chi ei wneud os bydd eich amgylchiadau'n newid
+home.help.link.makingTaxDigital.changeCircumstances             = Darganfod beth sydd angen i chi ei wneud os bydd eich amgylchiadau’n newid
 home.help.link.makingTaxDigital.findSoftware                    = Dod o hyd i feddalwedd sy’n cydweddu â Throi Treth yn Ddigidol ar gyfer Treth Incwm
 home.help.link.makingTaxDigital.findPenaltyInfo                 = Dod o hyd i wybodaeth am gosbau am Droi Treth yn Ddigidol ar gyfer Treth Incwm
 home.help.link.selfAssessment.payTaxBill                        = Dod o hyd i ragor o wybodaeth am dalu’ch bil treth Hunanasesiad
