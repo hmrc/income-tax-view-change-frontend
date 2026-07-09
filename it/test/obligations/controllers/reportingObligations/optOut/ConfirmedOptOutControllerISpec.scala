@@ -19,21 +19,22 @@ package obligations.controllers.reportingObligations.optOut
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import obligations.helpers.OptOutSessionRepositoryHelper
+import obligations.helpers.{OptOutSessionRepositoryHelper, ObligationsStub}
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testSessionId}
 import common.testConstants.ITSAStatusTestConstants.{successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023}
-import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+
 import shared.repositories.UIJourneySessionDataRepository
+import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.*
 
 import java.time.LocalDate
+import common.helpers.GetInsourceDetailsStub
 
 class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
 
@@ -63,7 +64,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
             s"render confirm single year opt out page" in {
               stubAuthorised(mtdUserRole, List(OptOutFs))
 
-              IncomeTaxBusinessDetailsStub.stubGetAllObligations(
+              ObligationsStub.stubGetAllObligations(
                 nino = testNino,
                 fromDate = LocalDate.of(2021, 1, 1),
                 toDate = LocalDate.of(2022, 1, 1),
@@ -83,7 +84,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
                 )))
               )
 
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
               val calcResponseBody =
                 """
@@ -113,7 +114,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
               )
 
               val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -133,7 +134,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
                 selectedOptOutYear = Some("2021-2022")
               )
 
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
               val responseBody = Json.arr(successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023)
 
@@ -142,7 +143,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
               WiremockHelper.stubGet(url, OK, responseBody.toString())
 
               val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               val isAgent = mtdUserRole != MTDIndividual
               val expectedRedirectPath = obligations.controllers.errors.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)).url

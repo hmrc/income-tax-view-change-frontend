@@ -14,126 +14,17 @@
  * limitations under the License.
  */
 
-package common.helpers.servicemocks
+package financials.helpers
 
-import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import common.helpers.WiremockHelper
 import common.models.core.Nino
-import common.models.incomeSourceDetails.IncomeSourceDetailsResponse
-import common.models.obligations.ObligationsModel
 import financials.models.Payment
 import financials.models.repaymentHistory.RepaymentHistoryModel
-import play.api.http.Status
-import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsValue, Json}
 
-import java.time.LocalDate
+object  FinancialDetailsStub { // scalastyle:off number.of.methods
 
-object  IncomeTaxBusinessDetailsStub { // scalastyle:off number.of.methods
-
-  // NINO Lookup Stubs
-  // =================
-  val ninoLookupUrl: String => String = mtditid => s"/income-tax-business-details/nino-lookup/$mtditid"
-
-  def verifyGetNino(mtditid: String): Unit =
-    WiremockHelper.verifyGet(ninoLookupUrl(mtditid))
-
-
-  // Get Business Details Stubs
-  // ==========================
-  def getBusinessDetailsUrl(nino: String): String = s"/income-tax-business-details/get-business-details/nino/$nino"
-
-  def stubGetBusinessDetails(nino: String)(status: Int, response: JsValue): Unit = {
-    WiremockHelper.stubGet(getBusinessDetailsUrl(nino), status, response.toString())
-  }
-
-  def verifyGetBusinessDetails(nino: String): Unit = {
-    WiremockHelper.verifyGet(getBusinessDetailsUrl(nino))
-  }
-
-  // Income Source Details Stubs
-  // ===========================
-  val incomeSourceDetailsUrl: String => String = mtditid => s"/income-tax-business-details/income-sources/$mtditid"
-
-  def stubGetIncomeSourceDetailsResponse(mtditid: String)(status: Int, response: IncomeSourceDetailsResponse): StubMapping =
-    WiremockHelper.stubGet(incomeSourceDetailsUrl(mtditid), status, response.toJson.toString)
-
-  def stubGetIncomeSourceDetailsErrorResponse(mtditid: String)(status: Int): Unit =
-    WiremockHelper.stubGet(incomeSourceDetailsUrl(mtditid), status, "")
-
-  def verifyGetIncomeSourceDetails(mtditid: String, noOfCalls: Int = 1): Unit = {
-    WiremockHelper.verifyGet(incomeSourceDetailsUrl(mtditid), noOfCalls)
-  }
-
-  def stubPostFeedback(status: Int): Unit = {
-    WiremockHelper.stubPost("http://localhost:9250/contact/beta-feedback/submit?service=ITVC", status, "")
-  }
-
-  // Stub CreateBusinessDetails
-  def stubCreateBusinessDetailsResponse()(status: Int, response: List[CreateIncomeSourceResponse]): Unit =
-    WiremockHelper.stubPost(s"/income-tax-business-details/create-income-source/business", status, Json.toJson(response).toString)
-
-  def stubCreateBusinessDetailsErrorResponse(): Unit =
-    WiremockHelper.stubPost(s"/income-tax-business-details/create-income-source/business", INTERNAL_SERVER_ERROR, "")
-
-  def stubCreateBusinessDetailsErrorResponseNew()(response: List[CreateIncomeSourceErrorResponse]): Unit =
-    WiremockHelper.stubPost(s"/income-tax-business-details/create-income-source/business", INTERNAL_SERVER_ERROR, Json.toJson(response).toString)
-
-  //PreviousObligations Stubs
-  def fulfilledObligationsUrl(nino: String): String = {
-    s"/income-tax-obligations/$nino/fulfilled-report-deadlines"
-  }
-
-  def stubGetFulfilledObligations(nino: String, deadlines: ObligationsModel): Unit =
-    WiremockHelper.stubGet(fulfilledObligationsUrl(nino), Status.OK, Json.toJson(deadlines).toString())
-
-  def allObligationsUrl(nino: String, fromDate: LocalDate, toDate: LocalDate): String = {
-    s"/income-tax-obligations/$nino/obligations/from/$fromDate/to/$toDate"
-  }
-
-  def obligationsUrl(nino: String): String = {
-    s"/income-tax-obligations/$nino/open-obligations"
-  }
-
-  def stubGetAllObligations(nino: String, fromDate: LocalDate, toDate: LocalDate, deadlines: ObligationsModel): StubMapping =
-    WiremockHelper.stubGet(allObligationsUrl(nino, fromDate, toDate), Status.OK, Json.toJson(deadlines).toString())
-
-  def stubGetAllObligationsNotFound(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
-    WiremockHelper.stubGet(allObligationsUrl(nino, fromDate, toDate), Status.NOT_FOUND, Json.obj().toString())
-
-  def stubGetAllObligationsError(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
-    WiremockHelper.stubGet(allObligationsUrl(nino, fromDate, toDate), Status.INTERNAL_SERVER_ERROR, "")
-
-
-  def stubGetFulfilledObligationsNotFound(nino: String): Unit =
-    WiremockHelper.stubGet(fulfilledObligationsUrl(nino), Status.NOT_FOUND, "")
-
-  def verifyGetAllObligations(nino: String, fromDate: LocalDate, toDate: LocalDate): Unit =
-    WiremockHelper.verifyGet(allObligationsUrl(nino, fromDate, toDate))
-
-  def verifyGetObligations(nino: String): Unit =
-    WiremockHelper.verifyGet(obligationsUrl(nino))
-
-  //NextUpdates Stubs
-  //=====================
-  def nextUpdatesUrl(nino: String): String = s"/income-tax-obligations/$nino/open-obligations"
-  def nextUpdatesFulfilledUrl(nino: String): String = s"/income-tax-obligations/$nino/fulfilled-obligations"
-
-  def stubGetNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
-    WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.OK, Json.toJson(deadlines).toString())
-
-  def stubGetFulfilledNextUpdates(nino: String, deadlines: ObligationsModel): Unit =
-    WiremockHelper.stubGet(nextUpdatesFulfilledUrl(nino), Status.OK, Json.toJson(deadlines).toString())
-
-  def stubGetNextUpdatesError(nino: String): Unit =
-    WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.INTERNAL_SERVER_ERROR, "ISE")
-
-  def stubGetNextUpdatesNotFound(nino: String): Unit =
-    WiremockHelper.stubGet(nextUpdatesUrl(nino), Status.NO_CONTENT, "")
-
-  def verifyGetNextUpdates(nino: String): Unit =
-    WiremockHelper.verifyGet(nextUpdatesUrl(nino))
 
   //PayApi Stubs
   def stubPayApiResponse(url: String, status: Int, response: JsValue): StubMapping = {
@@ -222,18 +113,7 @@ object  IncomeTaxBusinessDetailsStub { // scalastyle:off number.of.methods
     WiremockHelper.stubGet(getRepaymentHistoryByIdUrl(nino.value, repaymentId), status, Json.toJson(response).toString())
   }
 
-  def stubUpdateIncomeSource(status: Int, response: JsValue): StubMapping =
-    WiremockHelper.stubPut("/income-tax-business-details/update-income-source", status, response.toString())
 
-  def stubUpdateIncomeSourceError(): StubMapping = {
-    stubUpdateIncomeSource(INTERNAL_SERVER_ERROR, Json.obj("failures" -> Json.arr(
-      Json.obj("code" -> "500", "reason" -> "ETMP is broken :(")
-    )))
-  }
-
-  def verifyUpdateIncomeSource(body: Option[String]): Unit = {
-    WiremockHelper.verifyPut("/income-tax-business-details/update-income-source", body)
-  }
 
    def stubPostClaimToAdjustPoa(status: Int, response: String): Unit = {
      WiremockHelper.stubPost("/income-tax-financial-details/submit-claim-to-adjust-poa", status, response)

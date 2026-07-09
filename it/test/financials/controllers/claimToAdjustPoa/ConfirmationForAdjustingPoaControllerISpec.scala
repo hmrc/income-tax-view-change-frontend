@@ -18,17 +18,17 @@ package financials.controllers.claimToAdjustPoa
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.{propertyOnlyResponseWithMigrationData, testEmptyFinancialDetailsModelJson, testValidFinancialDetailsModelJson}
+import financials.helpers.FinancialDetailsStub
 import financials.models.claimToAdjustPoa.{MainIncomeLower, PoaAmendmentData}
 import financials.services.PaymentOnAccountSessionService
-import financials.testConstants.FinancialDetailsTestConstants.{address, testFinancialDetailsErrorModelJson}
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
 import play.api.http.Status.*
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import common.helpers.GetInsourceDetailsStub
 
 import java.time.LocalDate
 
@@ -66,7 +66,7 @@ class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
   override def beforeEach(): Unit = {
     super.beforeEach()
     await(sessionService.setMongoData(None))
-    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
+    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
       status = OK,
       response = propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString))
     )
@@ -78,9 +78,14 @@ class ConfirmationForAdjustingPoaControllerISpec extends ControllerISpecHelper {
   }
 
   def stubFinancialDetailsResponse(response: JsValue = validFinancialDetailsResponseBody): Unit = {
-    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, response)
-    IncomeTaxBusinessDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(OK, response)
+    FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK, response)
+    FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 2}-04-06", s"${testTaxYear - 1}-04-05")(OK, response)
   }
+
+  val testFinancialDetailsErrorModelJson: JsValue = Json.obj(
+    "code" -> "500",
+    "message" -> "ERROR MESSAGE"
+  )
 
   mtdAllRoles.foreach { case mtdUserRole =>
     val path = getPath(mtdUserRole)

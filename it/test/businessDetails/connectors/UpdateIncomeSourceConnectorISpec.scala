@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package obligations.connectors
+package businessDetails.connectors
 
-import businessDetails.connectors.UpdateIncomeSourceConnector
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import com.github.tomakehurst.wiremock.client.WireMock
 import common.helpers.servicemocks.AuditStub

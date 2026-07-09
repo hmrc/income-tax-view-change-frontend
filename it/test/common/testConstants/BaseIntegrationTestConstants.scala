@@ -16,13 +16,10 @@
 
 package common.testConstants
 
-import businessDetails.models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import common.auth.{AgentClientDetails, AuthUserDetails}
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.core.IncomeSourceId.mkIncomeSourceId
-import common.models.core.{AddressModel, IncomeSourceId}
-import common.models.itsaStatus.ITSAStatus
+import common.models.core.{AccountingPeriodModel, AddressModel, IncomeSourceId}
 import common.utils.sessionUtils.SessionKeys
 import common.models.incomeSourceDetails.*
 import play.api.http.Status
@@ -42,6 +39,7 @@ object BaseIntegrationTestConstants {
   val testDate: LocalDate = LocalDate.of(2018, 5, 5)
   val futureDate: LocalDate = LocalDate.of(2100, 1, 1)
   val startYear = getCurrentTaxYearEnd.getYear - 5
+  val endYear = getCurrentTaxYearEnd.getYear - 4
 
   val propertyTradingStartDate = Some(LocalDate.parse((startYear - 1).toString + "-01-01"))
 
@@ -111,6 +109,10 @@ object BaseIntegrationTestConstants {
   val ninoEnrolment             = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "Activated", None)
   val saEnrolment               = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", testSaUtr)), "Activated", None)
 
+  val b1AccountingStart = LocalDate.of(startYear, 1, 1)
+  val b2AccountingStart = LocalDate.of(endYear, 1, 1)
+  val b2AccountingEnd = LocalDate.of(endYear, 12, 31)
+
   lazy val defaultEnrolments: MTDUserRole => Enrolments = mtdUserRole => {
     mtdUserRole match {
       case MTDIndividual => Enrolments(Set(mtdEnrolment, ninoEnrolment, saEnrolment))
@@ -179,78 +181,68 @@ object BaseIntegrationTestConstants {
     }
   }
 
-  val manageIncomeSourceDetailsViewModelSelfEmploymentBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = IncomeSourceId(testSelfEmploymentId),
-    incomeSource = Some(testTradeName),
-    tradingName = Some(testTradeName),
-    tradingStartDate = Some(testDate),
-    address = expectedAddress,
-    latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsAnnual = LatencyYearsAnnual(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsCrystallised = LatencyYearsCrystallised(
-      firstYear = Some(false),
-      secondYear = Some(false)
-    ),
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = SelfEmployment,
-    currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
-    quarterReportingType = Some(QuarterTypeStandard),
-    currentItsaStatus = ITSAStatus.Voluntary
+  val b1TradingName = "business"
+  val b1AccountingEnd = LocalDate.of(startYear, 12, 31)
+  val b1TradingStart = LocalDate.parse("2017-01-01")
+
+  val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
+
+  val business1 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = b1AccountingStart,
+      end = b1AccountingEnd
+    )),
+    tradingName = Some(b1TradingName),
+    firstAccountingPeriodEndDate = Some(b1AccountingEnd),
+    tradingStartDate = Some(b1TradingStart),
+    contextualTaxYear = None,
+    cessation = None,
+    address = Some(address)
   )
 
-  val manageIncomeSourceDetailsViewModelUkPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
-    incomeSource = None,
-    tradingName = None,
-    tradingStartDate = propertyTradingStartDate,
-    address = None,
-    latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsAnnual = LatencyYearsAnnual(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsCrystallised = LatencyYearsCrystallised(
-      firstYear = Some(false),
-      secondYear = Some(false)
-    ),
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = UkProperty,
-    currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
-    quarterReportingType = Some(QuarterTypeStandard),
-    currentItsaStatus = ITSAStatus.Voluntary
+  val b2TradingStart = LocalDate.parse("2018-01-01")
+  val b2TradingName = "secondBusiness"
+
+  val business2 = BusinessDetailsModel(
+    incomeSourceId = otherTestSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = b2AccountingStart,
+      end = b2AccountingEnd
+    )),
+    tradingName = Some(b2TradingName),
+    firstAccountingPeriodEndDate = Some(b2AccountingEnd),
+    tradingStartDate = Some(b2TradingStart),
+    contextualTaxYear = None,
+    cessation = None,
+    address = Some(address)
   )
 
-  val manageIncomeSourceDetailsViewModelForeignPropertyBusiness: ManageIncomeSourceDetailsViewModel = ManageIncomeSourceDetailsViewModel(
-    incomeSourceId = IncomeSourceId(testPropertyIncomeId),
-    incomeSource = None,
-    tradingName = None,
-    tradingStartDate = propertyTradingStartDate,
-    address = None,
-    latencyYearsQuarterly = LatencyYearsQuarterly(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsAnnual = LatencyYearsAnnual(
-      firstYear = Some(true),
-      secondYear = Some(true)
-    ),
-    latencyYearsCrystallised = LatencyYearsCrystallised(
-      firstYear = Some(false),
-      secondYear = Some(false)
-    ),
-    latencyDetails = Some(testLatencyDetails3),
-    incomeSourceType = ForeignProperty,
-    currentTaxYearEnd = getCurrentTaxYearEnd.getYear,
-    quarterReportingType = None,
-    currentItsaStatus = ITSAStatus.Annual
+  val propertyAccountingStartLocalDate = LocalDate.of(startYear, 1, 1)
+  val propertyAccounringEndLocalDate = LocalDate.of(startYear, 12, 31)
+  val propertyIncomeType = Some("property-unspecified")
+
+  val property: PropertyDetailsModel = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(AccountingPeriodModel(
+      start = propertyAccountingStartLocalDate,
+      end = propertyAccounringEndLocalDate
+    )),
+    firstAccountingPeriodEndDate = Some(propertyAccounringEndLocalDate),
+    propertyIncomeType,
+    propertyTradingStartDate,
+    None,
+    None,
   )
+
+  val businessAndPropertyResponse: IncomeSourceDetailsModel =
+    IncomeSourceDetailsModel(
+      testNino,
+      testMtditid,
+      businesses = List(business1),
+      properties = List(property),
+      yearOfMigration = Some("2018")
+    )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2017 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package common.testConstants
+package businessDetails.helpers
 
-import java.security.MessageDigest
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import common.helpers.WiremockHelper
 
-object ChecksumUtils {
+object  TriggeredMigrationStub { // scalastyle:off number.of.methods
 
-  def calculateSha256(input: Array[Byte]): String =
-    MessageDigest.getInstance("SHA-256").digest(input).map("%02x".format(_)).mkString
-
-  implicit class ByteArrayWithSha256(bytes: Array[Byte]) {
-    def calculateSha256: String = ChecksumUtils.calculateSha256(bytes)
-  }
+  // Triggered Migration - Update Customer Facts
+  def stubUpdateCustomerFacts(mtdId: String)(status: Int): StubMapping =
+    WiremockHelper.stubPut(
+      s"/income-tax-business-details/customer-facts/update/$mtdId",
+      status,
+      ""
+    )
 }

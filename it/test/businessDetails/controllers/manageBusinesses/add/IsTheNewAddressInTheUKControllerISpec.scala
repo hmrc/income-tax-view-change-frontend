@@ -24,13 +24,13 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 
 class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
@@ -67,7 +67,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
           "render the IsTheNewAddressInTheUK page" when {
             "OverseasBusinessAddress FS is enabled" in {
               stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -88,7 +88,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
         "is authenticated, with a valid enrolment" should {
           "form response is Yes" in {
             stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
             await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -102,7 +102,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
           "form response is No" in {
             val isAgent: Boolean = mtdUserRole != MTDIndividual
             stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
             await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -116,7 +116,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
           "return a BAD_REQUEST" when {
             "form is empty" in {
               stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -128,7 +128,7 @@ class IsTheNewAddressInTheUKControllerISpec extends ControllerISpecHelper {
             }
             "form is invalid" in {
               stubAuthorised(mtdUserRole, List(OverseasBusinessAddress))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 

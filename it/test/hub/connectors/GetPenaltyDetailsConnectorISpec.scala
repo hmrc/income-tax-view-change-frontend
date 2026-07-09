@@ -17,7 +17,7 @@
 package hub.connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
-import common.testConstants.PenaltiesIntegrationTestConstants.*
+import hub.testConstants.PenaltiesIntegrationTestConstants.*
 import hub.models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsResponse}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.*

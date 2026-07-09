@@ -20,11 +20,11 @@ import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.core.NormalMode
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
-import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 
 class AddPropertyControllerISpec extends ControllerISpecHelper {
 
@@ -49,7 +49,7 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
           "render the Add Property page" when {
             "using the manage businesses journey" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -70,7 +70,7 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
           "redirect to the add uk property start date page" when {
             "form response is UK" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(path, additionalCookies,
                 body = Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseUK))).futureValue
@@ -84,7 +84,7 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
           "redirect to the add foreign property start date page" when {
             "form response is foreign propery" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(path, additionalCookies,
                 body = Map(AddProprertyForm.response -> Seq(AddProprertyForm.responseForeign))).futureValue
@@ -98,7 +98,7 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
           "return a BAD_REQUEST" when {
             "form is empty" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(path, additionalCookies,
                 body = Map(AddProprertyForm.response -> Seq())).futureValue
@@ -109,7 +109,7 @@ class AddPropertyControllerISpec extends ControllerISpecHelper {
             }
             "form is invalid" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               val result = buildPOSTMTDPostClient(path, additionalCookies,
                 body = Map(AddProprertyForm.response -> Seq("£"))).futureValue

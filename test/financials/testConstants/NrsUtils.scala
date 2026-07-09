@@ -17,7 +17,7 @@
 package financials.testConstants
 
 import cats.implicits.catsSyntaxOptionId
-import common.testConstants.ChecksumUtils.*
+import ChecksumUtils.*
 import financials.models.nrs.*
 import play.api.http.Status.{ACCEPTED, BAD_REQUEST, INTERNAL_SERVER_ERROR, TOO_MANY_REQUESTS}
 import play.api.libs.json.{JsValue, Json}

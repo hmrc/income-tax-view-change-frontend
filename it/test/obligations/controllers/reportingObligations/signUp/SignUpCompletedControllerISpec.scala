@@ -22,17 +22,18 @@ import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.SignUpFs
 import common.models.itsaStatus.ITSAStatus
 import ITSAStatus.{Annual, Mandated}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.incomeSourceDetails.TaxYear
 import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUpSessionData}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
 import scala.concurrent.Future
+import common.helpers.GetInsourceDetailsStub
 
 class SignUpCompletedControllerISpec extends ControllerISpecHelper {
 
@@ -113,13 +114,13 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
           "render the completed page" that {
             "is for the current tax year (CY+1 not mandated)" in {
               stubAuthorised(mtdUserRole, List(SignUpFs))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
               val intent = currentTaxYear
               await(setupSignUpSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -143,14 +144,14 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
             }
             "is for the current tax year (CY+1 mandated)" in {
               stubAuthorised(mtdUserRole, List(SignUpFs))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
 
               val intent = currentTaxYear
               await(setupSignUpSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Mandated, intent))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -177,13 +178,13 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
             }
             "is for the next tax year" in {
               stubAuthorised(mtdUserRole, List(SignUpFs))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
               val intent = currentTaxYear.nextYear
               await(setupSignUpSessionData(currentTaxYear, currentYearStatus = Annual, nextYearStatus = Annual, intent))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -207,13 +208,13 @@ class SignUpCompletedControllerISpec extends ControllerISpecHelper {
             }
             "is for the next tax year (CY is not annual)" in {
               stubAuthorised(mtdUserRole, List(SignUpFs))
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessesAndPropertyIncome)
 
               val intent = currentTaxYear.nextYear
               await(setupSignUpSessionData(currentTaxYear, currentYearStatus = Mandated, nextYearStatus = Annual, intent))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),

@@ -16,7 +16,7 @@
 
 package hub.controllers
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import hub.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes

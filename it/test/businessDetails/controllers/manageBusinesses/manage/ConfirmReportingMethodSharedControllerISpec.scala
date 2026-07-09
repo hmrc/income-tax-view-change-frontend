@@ -20,17 +20,17 @@ import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import businessDetails.services.SessionService
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
+import common.helpers.GetInsourceDetailsStub
 import common.models.incomeSourceDetails.LatencyDetails
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
@@ -100,12 +100,12 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseInLatencyPeriod(latencyDetails))
 
-                IncomeTaxBusinessDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                GetInsourceDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
                 val result = buildGETMTDClient(pathSE, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -128,14 +128,14 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             "render the Confirm Reporting Method page" when {
               "all query parameters are valid" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleUKPropertyResponseInLatencyPeriod(latencyDetails))
 
-                IncomeTaxBusinessDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                GetInsourceDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
                 await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
                 val result = buildGETMTDClient(pathUK, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -158,14 +158,14 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               "all query parameters are valid" in {
                 stubAuthorised(mtdUserRole)
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleForeignPropertyResponseInLatencyPeriod(latencyDetails))
 
-                IncomeTaxBusinessDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
+                GetInsourceDetailsStub.stubUpdateIncomeSource(OK, Json.toJson(UpdateIncomeSourceResponseModel(timestamp)))
 
                 await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 
                 val result = buildGETMTDClient(pathFP, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -192,7 +192,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
                 await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "MANAGE-SE",
                   manageIncomeSourceData = Some(ManageIncomeSourceData(Some(testSelfEmploymentId))))))
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
                 await(sessionService.setMongoData(testUIJourneySessionData(SelfEmployment)))
 
@@ -221,7 +221,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
               "called with a valid form" in {
                 stubAuthorised(mtdUserRole)
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse)
 
                 await(sessionService.setMongoData(testUIJourneySessionData(UkProperty)))
 
@@ -249,7 +249,7 @@ class ConfirmReportingMethodSharedControllerISpec extends ControllerISpecHelper 
             s"redirect to business will report (completion) page" when {
               "called with a valid form" in {
                 stubAuthorised(mtdUserRole)
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, foreignPropertyOnlyResponse)
 
                 await(sessionService.setMongoData(testUIJourneySessionData(ForeignProperty)))
 

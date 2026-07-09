@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package common.testConstants.messages
+package hub.testConstants.messages
 
 import common.helpers.ComponentSpecBase
 
-object TaxDueSummaryMessages  extends ComponentSpecBase {
+object HomeMessages extends ComponentSpecBase {
 
-  val voluntaryClass2Nics: String = messagesAPI("taxCal_breakdown.table.nic2.true")
-  val nonVoluntaryClass2Nics: String = messagesAPI("taxCal_breakdown.table.nic2.false")
-  val additionCharges: String = messagesAPI("taxCal_breakdown.additional_charges")
-  val studentPlan: String = messagesAPI("taxCal_breakdown.table.studentLoanRepaymentsPlanType0X", "1")
-  val postgraduatePlan: String = messagesAPI("taxCal_breakdown.table.studentLoanPostGraduatePlan")
+  val noPaymentsDue: String = messagesAPI("home.payments.no-payments-due")
+  val overdue: String = messagesAPI("home.overdue.date")
+  def overduePayments(numberOverdue: String): String = messagesAPI("home.overdue.date.payment.count", numberOverdue)
+
+  def overdueUpdates(numberOverdue: String): String = messagesAPI("home.overdue.date.update.count", numberOverdue)
+
+  def nextUpdateDue(date: String): String = messagesAPI("home.updates.R17.nextUpdateDue", date)
+
 }

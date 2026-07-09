@@ -18,14 +18,15 @@ package returns.controllers
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.AuditStub
 import common.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
 import common.helpers.servicemocks.IncomeTaxCalculationStub
 import play.api.http.Status.OK
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testYear}
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndUkProperty
-import common.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
+import returns.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessful
 import returns.models.audit.ForecastTaxCalculationAuditModel
+import common.helpers.GetInsourceDetailsStub
 
 object ForecastTaxSummaryControllerTestConstants {
 
@@ -96,7 +97,7 @@ class ForecastTaxCalcSummaryControllerISpec extends ControllerISpecHelper {
           } else {
             "render the forecast income summary page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndUkProperty)
               IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, testYear)(
                 status = OK,
                 body = liabilityCalculationModelSuccessful

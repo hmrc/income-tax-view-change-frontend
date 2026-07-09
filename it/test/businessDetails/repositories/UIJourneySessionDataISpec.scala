@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package shared.repositories
+package businessDetails.repositories
 
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
@@ -24,6 +24,7 @@ import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.SingleObservableFuture
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import shared.models.UIJourneySessionData
+import shared.repositories.UIJourneySessionDataRepository
 
 class UIJourneySessionDataISpec extends ComponentSpecBase {
   private val repository = app.injector.instanceOf[UIJourneySessionDataRepository]

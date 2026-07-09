@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.testConstants.messages
+package financials.testConstants.messages
 
 import common.helpers.ComponentSpecBase
 object ChargeSummaryMessages extends ComponentSpecBase {

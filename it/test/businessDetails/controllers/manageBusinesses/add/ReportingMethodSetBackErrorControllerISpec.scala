@@ -17,15 +17,16 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.services.SessionService
+import businessDetails.testConstants.UIJourneySessionDataTestConstants.*
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.testMtditid
-import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, completedUIJourneySessionData}
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import common.helpers.GetInsourceDetailsStub
 
 class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
 
@@ -59,12 +60,12 @@ class ReportingMethodSetBackErrorControllerISpec extends ControllerISpecHelper {
           "is authenticated, with a valid enrolment" should {
             "render the Cannot go back page" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
               await(sessionService.setMongoData(completedUIJourneySessionData(IncomeSourceJourneyType(Add, incomeSourceType))))
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),

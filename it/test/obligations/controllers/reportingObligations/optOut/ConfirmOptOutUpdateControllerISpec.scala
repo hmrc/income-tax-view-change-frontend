@@ -19,20 +19,21 @@ package obligations.controllers.reportingObligations.optOut
 import common.controllers.ControllerISpecHelper
 import common.enums.JourneyType.OptOutJourney
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.admin.OptOutFs
 import common.models.itsaStatus.ITSAStatus.*
 import obligations.controllers.constants.ConfirmOptOutUpdateControllerConstants.*
 import obligations.helpers.{ITSAStatusUpdateConnectorStub, OptOutSessionRepositoryHelper}
 import obligations.models.reportingObligations.optOut.OptOutSessionData
 import obligations.repositories.OptOutContextData
+import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.*
 import play.api.http.Status
 import play.api.http.Status.OK
 import play.mvc.Http.Status.SEE_OTHER
 import common.testConstants.BaseIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.propertyOnlyResponse
+
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
+import common.helpers.GetInsourceDetailsStub
 
 class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 
@@ -66,7 +67,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 
           s"render check opt-out update answers page" in {
             stubAuthorised(mtdUserRole, List(OptOutFs))
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             helper.stubOptOutInitialState(currentTaxYear(dateService),
               previousYearCrystallised = false,
@@ -76,7 +77,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
               Some(currentTaxYear(dateService).toString))
 
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+            GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(OK)
@@ -88,7 +89,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
         "has already completed the journey (according to session data)" should {
           s"redirect to the cannot go back page" in {
             stubAuthorised(mtdUserRole, List(OptOutFs))
-            IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
             helper.stubOptOutInitialState(currentTaxYear(dateService),
               previousYearCrystallised = false,
@@ -101,7 +102,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 
             val redirectUrl: String = obligations.controllers.errors.routes.SignUpOptOutCannotGoBackController.show(isAgent, isSignUpJourney = Some(false)).url
             val result = buildGETMTDClient(path, additionalCookies).futureValue
-            IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+            GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
             result should have(
               httpStatus(SEE_OTHER),
@@ -121,7 +122,7 @@ class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
             "user confirms opt-out for one-year scenario" in {
               stubAuthorised(mtdUserRole, List(OptOutFs))
 
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponse)
 
               repository.set(
                 UIJourneySessionData(

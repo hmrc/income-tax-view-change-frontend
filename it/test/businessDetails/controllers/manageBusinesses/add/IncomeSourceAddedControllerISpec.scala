@@ -24,12 +24,12 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import common.testConstants.BaseIntegrationTestConstants._
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.business1
-import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import common.testConstants.BaseIntegrationTestConstants.*
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import businessDetails.testConstants.PropertyDetailsIntegrationTestConstants.ukProperty
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import businessDetails.helpers.NextUpdatesStub
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate
@@ -105,11 +105,11 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
 
                   await(sessionService.setMongoData(UIJourneySessionData(testSessionId, journeyType,
                     addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(incomeSourceId), dateStarted = Some(LocalDate.of(2024, 1, 1)))))))
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
-                  IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, testObligationsModel)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceDetailsResponse(incomeSourceType))
+                  NextUpdatesStub.stubGetNextUpdates(testNino, testObligationsModel)
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   val expectedText: String = getExpectedPageTitle(incomeSourceType)
 
@@ -127,7 +127,7 @@ class IncomeSourceAddedControllerISpec extends ControllerISpecHelper {
                 "render error page" when {
                   "UK property income source is missing trading start date" in {
                     stubAuthorised(mtdUserRole)
-                    IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
+                    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, ukPropertyOnlyResponse.copy(properties = List(ukProperty.copy(tradingStartDate = None))))
 
                     await(sessionService.setMongoData(UIJourneySessionData(testSessionId, "ADD-UK",
                       addIncomeSourceData = Some(AddIncomeSourceData(incomeSourceId = Some(testPropertyIncomeId))))))

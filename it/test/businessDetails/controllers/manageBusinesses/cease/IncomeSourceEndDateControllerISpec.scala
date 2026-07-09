@@ -20,7 +20,7 @@ import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData.{dateCea
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants._
-import common.testConstants.IncomeSourceIntegrationTestConstants.{businessOnlyResponse, foreignPropertyOnlyResponse, ukPropertyOnlyResponse}
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
@@ -30,7 +30,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 
 class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
@@ -95,12 +95,12 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
               "render the Date Business Ceased Page" in {
                 stubAuthorised(mtdUserRole)
 
-                IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                 setupTestMongoData(incomeSourceType)
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
-                IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                 result should have(
                   httpStatus(OK),
@@ -120,10 +120,10 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
               "redirect to manageBusinesses" when {
                 "no session data" in {
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildGETMTDClient(path, additionalCookies).futureValue
-                  IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
                   val expectedUrl = if (mtdUserRole == MTDIndividual) {
                     manageBusinessRoutes.ManageYourBusinessesController.show().url
@@ -150,7 +150,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                     Map("value.day" -> Seq("10"), "value.month" -> Seq("10"), "value.year" -> Seq("2022"))
                   }
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   setupTestMongoData(incomeSourceType)
 
@@ -179,7 +179,7 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
                     Map("value.day" -> Seq("aa"), "value.month" -> Seq("5"), "value.year" -> Seq("2022"))
                   }
                   stubAuthorised(mtdUserRole)
-                  IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
 
                   val result = buildPOSTMTDPostClient(path, additionalCookies, formData).futureValue
 

@@ -18,18 +18,18 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import common.testConstants.BaseIntegrationTestConstants._
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.b1TradingName
-import common.testConstants.IncomeSourceIntegrationTestConstants._
+import common.testConstants.BaseIntegrationTestConstants.*
 import businessDetails.testConstants.BusinessDetailsTestConstants.testObligationsModel
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.Cease
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import businessDetails.helpers.NextUpdatesStub
+import common.helpers.GetInsourceDetailsStub
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
@@ -95,12 +95,12 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
           "is authenticated, with a valid enrolment" should {
             "render the Business Ceased obligations page with remaining business content when only one business in latency exists and RF FS is turned on" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, testObligationsModel)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType))
+              NextUpdatesStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),
@@ -112,12 +112,12 @@ class IncomeSourceCeasedObligationsControllerISpec extends ControllerISpecHelper
             }
             "render the Business Ceased obligations page with remaining business content when  all business ceased and RF FS is turned on" in {
               stubAuthorised(mtdUserRole)
-              IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
-              IncomeTaxBusinessDetailsStub.stubGetNextUpdates(testNino, testObligationsModel)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, getIncomeSourceResponse(incomeSourceType, true))
+              NextUpdatesStub.stubGetNextUpdates(testNino, testObligationsModel)
               setupTestMongoData(incomeSourceType)
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
-              IncomeTaxBusinessDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
               result should have(
                 httpStatus(OK),

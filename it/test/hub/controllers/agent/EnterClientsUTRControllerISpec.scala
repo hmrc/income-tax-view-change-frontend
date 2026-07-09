@@ -16,11 +16,10 @@
 
 package hub.controllers.agent
 
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.testMtdItId
 import common.controllers.ControllerISpecHelper
 import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.enums.MTDPrimaryAgent
-import common.helpers.servicemocks.{AuditStub, CitizenDetailsStub, IncomeTaxBusinessDetailsStub, MTDAgentAuthStub}
+import common.helpers.servicemocks.{AuditStub, BusinessDetailsStub, CitizenDetailsStub, MTDAgentAuthStub}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import common.viewUtils.InternalUrlHelper
@@ -161,13 +160,13 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
             nino = testNino
           )
         )
-        IncomeTaxBusinessDetailsStub.stubGetBusinessDetails(testNino)(
+        BusinessDetailsStub.stubGetBusinessDetails(testNino)(
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
 
         whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR)))) { result  =>
-          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -188,14 +187,14 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
             nino = testNino
           )
         )
-        IncomeTaxBusinessDetailsStub.stubGetBusinessDetails(testNino)(
+        BusinessDetailsStub.stubGetBusinessDetails(testNino)(
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
 
         whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(validUTR)))) { result =>
 
-          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
 
           Then("The enter clients utr page is returned with an error")
           result should have(
@@ -219,13 +218,13 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
             nino = testNino
           )
         )
-        IncomeTaxBusinessDetailsStub.stubGetBusinessDetails(testNino)(
+        BusinessDetailsStub.stubGetBusinessDetails(testNino)(
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
 
         whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces)))) { result =>
-          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(false)))
 
           Then("The enter clients utr page is returned with an error")
           result should have(
@@ -249,13 +248,13 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
             nino = testNino
           )
         )
-        IncomeTaxBusinessDetailsStub.stubGetBusinessDetails(testNino)(
+        BusinessDetailsStub.stubGetBusinessDetails(testNino)(
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )
 
         whenReady(buildPOSTMTDPostClient(path, body = Map("utr" -> Seq(utrWithSpaces)))) { result =>
-          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtdItId, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
+          AuditStub.verifyAuditEvent(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(credId), Some(true)))
 
           result should have(
             httpStatus(SEE_OTHER),
@@ -296,7 +295,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
             nino = testNino
           )
         )
-        IncomeTaxBusinessDetailsStub.stubGetBusinessDetails(testNino)(
+        BusinessDetailsStub.stubGetBusinessDetails(testNino)(
           status = NOT_FOUND,
           response = Json.obj()
         )
@@ -323,7 +322,7 @@ class EnterClientsUTRControllerISpec extends ControllerISpecHelper {
           )
         )
 
-        IncomeTaxBusinessDetailsStub.stubGetBusinessDetails(testNino)(
+        BusinessDetailsStub.stubGetBusinessDetails(testNino)(
           status = OK,
           response = Json.toJson(singleBusinessResponse)
         )

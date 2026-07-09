@@ -18,10 +18,10 @@ package hub.controllers.agent
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
-import common.testConstants.IncomeSourceIntegrationTestConstants.businessOnlyResponse
+import hub.testConstants.HubIntegrationTestConstants.businessOnlyResponse
 import play.api.http.Status.*
+import common.helpers.GetInsourceDetailsStub
 
 class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
@@ -34,7 +34,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
       "Removing the client details session keys" should {
         "redirect to client UTR page" in {
           stubAuthorised(MTDPrimaryAgent)
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildMTDClient(path, additionalCookies).futureValue
 
@@ -67,7 +67,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
       "Removing the client details session keys" should {
         "redirect to client UTR page" in {
           stubAuthorised(MTDSupportingAgent)
-          IncomeTaxBusinessDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, businessOnlyResponse)
 
           val result = buildMTDClient(path, additionalCookies).futureValue
 
