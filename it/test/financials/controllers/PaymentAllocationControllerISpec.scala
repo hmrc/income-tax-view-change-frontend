@@ -19,17 +19,17 @@ package financials.controllers
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.helpers.GetInsourceDetailsStub
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
+import common.helpers.servicemocks.YearOfMigrationStub
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import financials.helpers.FinancialDetailsStub
 import financials.models.audit.PaymentAllocationsResponseAuditModel
 import financials.models.paymentAllocationCharges.FinancialDetailsWithDocumentDetailsModel
+import financials.testConstants.FinancialDetailsIntegrationTestConstants.{paymentHistoryBusinessAndPropertyResponse, testValidFinancialDetailsModelJson}
 import financials.testConstants.PaymentAllocationIntegrationTestConstants.*
-import financials.testConstants.FinancialDetailsIntegrationTestConstants.{testValidFinancialDetailsModelJson, paymentHistoryBusinessAndPropertyResponse}
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import play.api.libs.ws.WSResponse
-import common.helpers.GetInsourceDetailsStub
 
 class PaymentAllocationControllerISpec extends ControllerISpecHelper {
 
@@ -104,13 +104,16 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
               FinancialDetailsStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidLpiPaymentAllocationsModel))
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
+              YearOfMigrationStub.stubGetYearOfMigration((getCurrentTaxYearEnd.getYear - 1).toString)
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "paymentAllocation.heading"),
                   elementAttributeBySelector("#payment-allocation-0 a", "href")(
-                    s"$basePath" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
+                    s"$basePath" + {
+                      if (mtdUserRole != MTDIndividual) "/agents" else ""
+                    } + "/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
                   elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")}")
                 )
 

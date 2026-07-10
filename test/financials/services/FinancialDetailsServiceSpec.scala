@@ -22,22 +22,28 @@ import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import common.services.YearOfMigrationService
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
 import financials.enums.CodingOutType.*
 import financials.mocks.connectors.MockFinancialDetailsConnector
 import financials.models.*
 import financials.testConstants.FinancialDetailsTestConstants.*
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.mock
 import play.api.http.Status
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsConnector with FeatureSwitching {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
   }
+
+  val mockYearOfMigrationService: YearOfMigrationService = mock(classOf[YearOfMigrationService])
 
   private val april = 4
   private val fifth = 5
@@ -55,7 +61,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
   }
 
   private def getMultiYearFinancialDetailSuccess(documentDetails: List[DocumentDetail] = List(fullDocumentDetailModel, fullDocumentDetailModel),
-                                                  financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel, fullFinancialDetailModel)) = {
+                                                 financialDetails: List[FinancialDetail] = List(fullFinancialDetailModel, fullFinancialDetailModel)) = {
     FinancialDetailsModel(balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = documentDetails, financialDetails = financialDetails)
   }
@@ -85,7 +91,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
     ))
 
 
-  object TestFinancialDetailsService extends FinancialDetailsService(mockFinancialDetailsConnector, dateService)
+  object TestFinancialDetailsService extends FinancialDetailsService(mockFinancialDetailsConnector, mockYearOfMigrationService, dateService)
 
   val testUserWithRecentYears: MtdItUser[_] = defaultMTDITUser(Some(Individual), IncomeSourceDetailsModel(
     nino = testNino,
@@ -146,6 +152,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         )
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2024)))
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
         result.futureValue shouldBe expectedResult
       }
@@ -160,6 +167,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         setupMockGetFinancialDetails(fixedDate.getYear, testNino)(financialDetailLastYear)
         setupMockGetFinancialDetails(fixedDate.getYear + 1, testNino)(financialDetail)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
@@ -174,6 +182,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailLastYear)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailNotFound)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023)))
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
@@ -184,6 +193,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val expectedResult: List[(Int, FinancialDetailsResponseModel)] = List.empty
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailNotFound)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List()))
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
 
@@ -198,6 +208,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         )
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailsError)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2024)))
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(1), headerCarrier, ec)
 
@@ -212,6 +223,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailsError)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailsError)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
@@ -227,6 +239,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailsErrorLastYear)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetails)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllFinancialDetails(mtdUser(2), headerCarrier, ec)
 
@@ -242,6 +255,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetail)
 
         setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetail)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2024)))
+
         val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
         result.futureValue shouldBe expectedResult
       }
@@ -251,6 +266,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetail)
 
         setupMockGetFinancialDetailsByTaxYearRange(multiYearRange, testNino)(financialDetail)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(2), headerCarrier, ec)
 
@@ -261,6 +277,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val expectedResult: Option[FinancialDetailsResponseModel] = None
 
         setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetailNotFound)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List()))
 
         val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
 
@@ -273,6 +290,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         val expectedResult: Option[FinancialDetailsResponseModel] = Some(financialDetailsError)
 
         setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetailsError)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2024)))
 
         val result = TestFinancialDetailsService.getAllFinancialDetailsV2(mtdUser(1), headerCarrier, ec)
 
@@ -306,6 +324,7 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailLastYear)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
@@ -345,6 +364,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           fullFinancialDetailModel
         )))
 
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
+
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
@@ -365,6 +386,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           fullFinancialDetailModel,
           fullFinancialDetailModel
         )))
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023)))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
@@ -387,6 +410,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           fullFinancialDetailModel,
           fullFinancialDetailModel
         )))
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023)))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
@@ -412,6 +437,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           fullFinancialDetailModel
         )))
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetailError)
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
@@ -444,6 +471,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
 
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate.minusYears(1)), testNino)(financialDetailCodingOut)
         setupMockGetFinancialDetails(getTaxEndYear(fixedDate), testNino)(financialDetail)
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetails()(mtdUser(2), headerCarrier, ec)
 
@@ -488,6 +517,9 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         )
 
         setupMockGetFinancialDetailsByTaxYearRange(fixedTaxYearRange, testNino)(financialDetail)
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2024)))
+
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(1), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
@@ -520,6 +552,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           fullFinancialDetailModel
         )))
 
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
+
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(2), headerCarrier, ec)
 
         result.futureValue shouldBe expectedResult
@@ -537,6 +571,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
           fullFinancialDetailModel,
           fullFinancialDetailModel
         )))
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(2), headerCarrier, ec)
 
@@ -562,6 +598,8 @@ class FinancialDetailsServiceSpec extends TestSupport with MockFinancialDetailsC
         ))
 
         setupMockGetFinancialDetailsByTaxYearRange(multiYearRange, testNino)(financialDetailCodingOut)
+
+        when(mockYearOfMigrationService.orderedTaxYearsByYearOfMigration(any())(any(), any(), any())).thenReturn(Future.successful(List(2023, 2024)))
 
         val result = TestFinancialDetailsService.getAllUnpaidFinancialDetailsV2()(mtdUser(2), headerCarrier, ec)
 

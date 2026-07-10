@@ -18,19 +18,19 @@ package financials.controllers
 
 import common.auth.MtdItUser
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.AuditStub
 import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.{AuditStub, YearOfMigrationStub}
 import common.models.admin.ChargeHistory
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear, testTaxYearTyped}
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
-import financials.testConstants.messages.ChargeSummaryMessages.*
 import financials.enums.ChargeType.ITSA_ENGLAND_AND_NI
 import financials.enums.CodingOutType.*
 import financials.helpers.FinancialDetailsStub
+import financials.helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
 import financials.models.*
 import financials.models.audit.ChargeSummaryAudit
 import financials.testConstants.FinancialDetailsIntegrationTestConstants.*
-import financials.helpers.servicemocks.ChargeItemStub.{chargeItemWithInterestAndOverdue, docDetail}
+import financials.testConstants.messages.ChargeSummaryMessages.*
 import play.api.http.Status.*
 import play.api.libs.json.Json
 
@@ -43,7 +43,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
   }
 
   def getPath(mtdRole: MTDUserRole, taxYear: String = "2018"): String = {
-    val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"
+    val pathStart = if (mtdRole == MTDIndividual) "" else "/agents"
     pathStart + s"/tax-years/$taxYear/charge"
   }
 
@@ -64,8 +64,9 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
                     dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
                   FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                  val result = buildGETMTDClient(path +"?id=1040000124", additionalCookies).futureValue
+                  val result = buildGETMTDClient(path + "?id=1040000124", additionalCookies).futureValue
 
                   GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                   result should have(
@@ -91,8 +92,9 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     dunningLock = oneDunningLock, interestLocks = twoInterestLocks, accruingInterestAmount = None,
                     dueDate = dateService.getCurrentDate.plusDays(20).toString))
                   FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                  val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
+                  val res = buildGETMTDClient(path + "?id=1040000123", additionalCookies).futureValue
 
                   GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
@@ -122,8 +124,9 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                       dateService.getCurrentDate.plusDays(20).toString)
                   FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, json)
                   FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                  val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
+                  val res = buildGETMTDClient(path + "?id=1040000123", additionalCookies).futureValue
 
                   GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
@@ -148,135 +151,139 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                 }
               }
 
-                            "includes late payment interest" when {
-                              "late payment interest flag is true and chargeHistory FS is enabled" in {
-                                stubAuthorised(mtdUserRole, List(ChargeHistory))
-                                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
-                                  123.45, 1.2, latePaymentInterestAmount = Some(54.32)))
+              "includes late payment interest" when {
+                "late payment interest flag is true and chargeHistory FS is enabled" in {
+                  stubAuthorised(mtdUserRole, List(ChargeHistory))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                  FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
+                    123.45, 1.2, latePaymentInterestAmount = Some(54.32)))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                                val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
+                  val res = buildGETMTDClient(path + "?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
-                                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
-                                AuditStub.verifyAuditEvent(
-                                  ChargeSummaryAudit(
-                                    testUser(mtdUserRole),
-                                    chargeItem = chargeItemWithInterestAndOverdue(BalancingCharge, None, Some(LocalDate.of(2018, 2, 14))),
-                                    paymentBreakdown = List.empty,
-                                    chargeHistories = List.empty,
-                                    paymentAllocations = paymentAllocation,
-                                    isLatePaymentCharge = true,
-                                    taxYear = testTaxYearTyped
-                                  ))
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  AuditStub.verifyAuditEvent(
+                    ChargeSummaryAudit(
+                      testUser(mtdUserRole),
+                      chargeItem = chargeItemWithInterestAndOverdue(BalancingCharge, None, Some(LocalDate.of(2018, 2, 14))),
+                      paymentBreakdown = List.empty,
+                      chargeHistories = List.empty,
+                      paymentAllocations = paymentAllocation,
+                      isLatePaymentCharge = true,
+                      taxYear = testTaxYearTyped
+                    ))
 
-                                res should have(
-                                  httpStatus(OK),
-                                  pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("#charge-history-heading")(paymentHistory),
-                                  elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
-                                )
-                              }
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
+                    elementTextBySelector("#charge-history-heading")(paymentHistory),
+                    elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")(lpiCreated)
+                  )
+                }
 
-                              "late payment interest flag is true and chargeHistory FS is disabled" in {
-                                stubAuthorised(mtdUserRole)
-                                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 0.0))
+                "late payment interest flag is true and chargeHistory FS is disabled" in {
+                  stubAuthorised(mtdUserRole)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                  FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 0.0))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                                val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
+                  val res = buildGETMTDClient(path + "?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
-                                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
-                                res should have(
-                                  httpStatus(OK),
-                                  pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
-                                  elementTextBySelector("#charge-history-heading")(paymentHistory),
-                                  elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
-                                )
-                              }
-                            }
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "chargeSummary.lpi.balancingCharge.text"),
+                    elementTextBySelector("#charge-history-heading")(paymentHistory),
+                    elementTextBySelector("tbody tr:nth-child(1) td:nth-child(2)")("")
+                  )
+                }
+              }
 
-                            "is expected" when {
-                              "late payment interest flag is true but there are no payment allocations" in {
-                                stubAuthorised(mtdUserRole)
-                                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
-                                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
-                                  "codingDetails" -> Json.arr(),
-                                  "documentDetails" -> Json.arr(
-                                    Json.obj("taxYear" -> 2018,
-                                      "transactionId" -> "1040001234",
-                                      "documentDueDate" -> "2019-03-29",
-                                      "documentDescription" -> "ITSA- POA 2",
-                                      "outstandingAmount" -> 0.0,
-                                      "originalAmount" -> 10.34,
-                                      "documentDate" -> "2018-03-29",
-                                      "interestFromDate" -> "2018-03-29",
-                                      "interestEndDate" -> "2018-03-29",
-                                      "accruingInterestAmount" -> 100.0,
-                                      "interestOutstandingAmount" -> 80.0
-                                    )),
-                                  "financialDetails" -> Json.arr(
-                                    Json.obj(
-                                      "transactionId" -> "1040001234",
-                                      "taxYear" -> "2018",
-                                      "mainTransaction" -> "4930",
-                                      "chargeReference" -> "chargeRef",
-                                    )
-                                  )))
-                                FinancialDetailsStub.stubGetPaymentAllocationResponse(testNino, "", "")(200, Json.obj())
+              "is expected" when {
+                "late payment interest flag is true but there are no payment allocations" in {
+                  stubAuthorised(mtdUserRole)
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                  FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
+                    "codingDetails" -> Json.arr(),
+                    "documentDetails" -> Json.arr(
+                      Json.obj("taxYear" -> 2018,
+                        "transactionId" -> "1040001234",
+                        "documentDueDate" -> "2019-03-29",
+                        "documentDescription" -> "ITSA- POA 2",
+                        "outstandingAmount" -> 0.0,
+                        "originalAmount" -> 10.34,
+                        "documentDate" -> "2018-03-29",
+                        "interestFromDate" -> "2018-03-29",
+                        "interestEndDate" -> "2018-03-29",
+                        "accruingInterestAmount" -> 100.0,
+                        "interestOutstandingAmount" -> 80.0
+                      )),
+                    "financialDetails" -> Json.arr(
+                      Json.obj(
+                        "transactionId" -> "1040001234",
+                        "taxYear" -> "2018",
+                        "mainTransaction" -> "4930",
+                        "chargeReference" -> "chargeRef",
+                      )
+                    )))
+                  FinancialDetailsStub.stubGetPaymentAllocationResponse(testNino, "", "")(200, Json.obj())
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                                val res = buildGETMTDClient(path +"?id=1040001234&isInterestCharge=true", additionalCookies).futureValue
+                  val res = buildGETMTDClient(path + "?id=1040001234&isInterestCharge=true", additionalCookies).futureValue
 
-                                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                                Then("the result should have a HTTP status of OK (200) and load the correct page")
-                                res should have(
-                                  httpStatus(OK),
-                                  pageTitle(mtdUserRole, "chargeSummary.lpi.paymentOnAccount2.text"),
-                                  elementTextBySelector("#charge-history-heading")("")
-                                )
-                              }
-                            }
+                  Then("the result should have a HTTP status of OK (200) and load the correct page")
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "chargeSummary.lpi.paymentOnAccount2.text"),
+                    elementTextBySelector("#charge-history-heading")("")
+                  )
+                }
+              }
 
-                            "has coding out details" when {
-                              "coding out is enabled and a coded out documentDetail id is passed" in {
-                                stubAuthorised(mtdUserRole, List(ChargeHistory))
-                                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
-                                  "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
-                                  "codingDetails" -> Json.arr(),
-                                  "documentDetails" -> Json.arr(
-                                    Json.obj("taxYear" -> 2018,
-                                      "transactionId" -> "CODINGOUT01",
-                                      "documentDescription" -> "TRM New Charge",
-                                      "documentText" -> CODING_OUT_ACCEPTED,
-                                      "outstandingAmount" -> 2500.00,
-                                      "originalAmount" -> 2500.00,
-                                      "documentDate" -> "2018-03-29"
-                                    )),
-                                  "financialDetails" -> Json.arr(
-                                    Json.obj(
-                                      "transactionId" -> "CODINGOUT01",
-                                      "taxYear" -> "2018",
-                                      "mainTransaction" -> "4910",
-                                      "chargeReference" -> "chargeRef",
-                                      "items" -> Json.arr(
-                                        Json.obj(
-                                        "codedOutStatus" -> "I"
-                                      ))
-                                    )
-                                  )))
+              "has coding out details" when {
+                "coding out is enabled and a coded out documentDetail id is passed" in {
+                  stubAuthorised(mtdUserRole, List(ChargeHistory))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                  FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, Json.obj(
+                    "balanceDetails" -> Json.obj("balanceDueWithin30Days" -> 1.00, "overDueAmount" -> 2.00, "balanceNotDuein30Days" -> 4.00, "totalBalance" -> 3.00),
+                    "codingDetails" -> Json.arr(),
+                    "documentDetails" -> Json.arr(
+                      Json.obj("taxYear" -> 2018,
+                        "transactionId" -> "CODINGOUT01",
+                        "documentDescription" -> "TRM New Charge",
+                        "documentText" -> CODING_OUT_ACCEPTED,
+                        "outstandingAmount" -> 2500.00,
+                        "originalAmount" -> 2500.00,
+                        "documentDate" -> "2018-03-29"
+                      )),
+                    "financialDetails" -> Json.arr(
+                      Json.obj(
+                        "transactionId" -> "CODINGOUT01",
+                        "taxYear" -> "2018",
+                        "mainTransaction" -> "4910",
+                        "chargeReference" -> "chargeRef",
+                        "items" -> Json.arr(
+                          Json.obj(
+                            "codedOutStatus" -> "I"
+                          ))
+                      )
+                    )))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                                val res = buildGETMTDClient(path +"?id=CODINGOUT01", additionalCookies).futureValue
+                  val res = buildGETMTDClient(path + "?id=CODINGOUT01", additionalCookies).futureValue
 
-                                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
-                                res should have(
-                                  httpStatus(OK),
-                                  pageTitle(mtdUserRole, "tax-year-summary.payments.codingOut.text"),
-                                  elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
-                                  elementTextBySelector("#codedOutBCDExplanation")(codingOutMessageWithStringMessagesArgument(2017, 2018))
-                                )
-                              }
-                            }
+                  GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                  res should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "tax-year-summary.payments.codingOut.text"),
+                    elementTextBySelector("#coding-out-notice")(codingOutInsetPara),
+                    elementTextBySelector("#codedOutBCDExplanation")(codingOutMessageWithStringMessagesArgument(2017, 2018))
+                  )
+                }
+              }
 
               "has payments you make" when {
                 "the charge is not a Review & Reconcile or POA charge" in {
@@ -287,8 +294,9 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
                   Given("the ChargeHistory feature switch is disabled")
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                  val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
+                  val res = buildGETMTDClient(path + "?id=1040000123", additionalCookies).futureValue
 
                   GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
@@ -300,155 +308,161 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                 }
               }
 
-                            "has balancing payment title" when {
-                              s"ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
-                                stubAuthorised(mtdUserRole, List(ChargeHistory))
-                                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
-                                FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(NOT_FOUND, Json.parse(
-                                  """
-                                    |{
-                                    |   "code": "NO_DATA_FOUND",
-                                    |   "reason": "The remote endpoint has indicated that no match found for the reference provided."
-                                    |}
-                                    |""".stripMargin))
+              "has balancing payment title" when {
+                s"ChargeHistory FS is enabled and the charge history details API responds with a $NOT_FOUND" in {
+                  stubAuthorised(mtdUserRole, List(ChargeHistory))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                  FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+                  FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(NOT_FOUND, Json.parse(
+                    """
+                      |{
+                      |   "code": "NO_DATA_FOUND",
+                      |   "reason": "The remote endpoint has indicated that no match found for the reference provided."
+                      |}
+                      |""".stripMargin))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                                val result = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
+                  val result = buildGETMTDClient(path + "?id=1040000123", additionalCookies).futureValue
 
-                                result should have(
-                                  httpStatus(OK),
-                                  pageTitle(mtdUserRole, "chargeSummary.balancingCharge.text")
-                                )
-                              }
-                              s"ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
-                                stubAuthorised(mtdUserRole, List(ChargeHistory))
-                                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
-                                FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(FORBIDDEN, Json.parse(
-                                  """
-                                    |{
-                                    |   "code": "REQUEST_NOT_PROCESSED",
-                                    |   "reason": "The remote endpoint has indicated that request could not be processed."
-                                    |}
-                                    |""".stripMargin))
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "chargeSummary.balancingCharge.text")
+                  )
+                }
+                s"ChargeHistory FS is enabled and the charge history details API responds with a $FORBIDDEN" in {
+                  stubAuthorised(mtdUserRole, List(ChargeHistory))
+                  GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                  FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+                  FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(FORBIDDEN, Json.parse(
+                    """
+                      |{
+                      |   "code": "REQUEST_NOT_PROCESSED",
+                      |   "reason": "The remote endpoint has indicated that request could not be processed."
+                      |}
+                      |""".stripMargin))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                                val result = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
+                  val result = buildGETMTDClient(path + "?id=1040000123", additionalCookies).futureValue
 
-                                result should have(
-                                  httpStatus(OK),
-                                  pageTitle(mtdUserRole, "chargeSummary.balancingCharge.text")
-                                )
-                              }
-                            }
+                  result should have(
+                    httpStatus(OK),
+                    pageTitle(mtdUserRole, "chargeSummary.balancingCharge.text")
+                  )
+                }
+              }
 
-                            "has an UNPAID MFADebit" in {
-                              stubAuthorised(mtdUserRole, List(ChargeHistory))
-                              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                              FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsUnpaidMFA)
-                              FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+              "has an UNPAID MFADebit" in {
+                stubAuthorised(mtdUserRole, List(ChargeHistory))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsUnpaidMFA)
+                FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                              val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
+                val res = buildGETMTDClient(path + "?id=1040000123", additionalCookies).futureValue
 
-                              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
-                              val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
-                              val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+                val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
 
-                              res should have(
-                                httpStatus(OK),
-                                pageTitle(mtdUserRole, "chargeSummary.hmrcAdjustment.text"),
-                                elementTextBySelector("#credit-created-text")("HMRC has added this charge after an adjustment to your tax return."),
-                                elementCountBySelector("#payment-history-table tr")(2),
-                                elementTextBySelector("#payment-history-table tr")(paymentHistoryText)
-                              )
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "chargeSummary.hmrcAdjustment.text"),
+                  elementTextBySelector("#credit-created-text")("HMRC has added this charge after an adjustment to your tax return."),
+                  elementCountBySelector("#payment-history-table tr")(2),
+                  elementTextBySelector("#payment-history-table tr")(paymentHistoryText)
+                )
 
-                              AuditStub.verifyAuditEvent(ChargeSummaryAudit(
-                                testUser(mtdUserRole),
-                                chargeItemUnpaid.copy(
-                                  dueDate = Some(LocalDate.parse("2018-03-30"))
-                                ),
-                                paymentBreakdown = List(),
-                                chargeHistories = List.empty,
-                                paymentAllocations = List.empty,
-                                isLatePaymentCharge = false,
-                                isMFADebit = true,
-                                taxYear = testTaxYearTyped
-                              ))
-                            }
+                AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+                  testUser(mtdUserRole),
+                  chargeItemUnpaid.copy(
+                    dueDate = Some(LocalDate.parse("2018-03-30"))
+                  ),
+                  paymentBreakdown = List(),
+                  chargeHistories = List.empty,
+                  paymentAllocations = List.empty,
+                  isLatePaymentCharge = false,
+                  isMFADebit = true,
+                  taxYear = testTaxYearTyped
+                ))
+              }
 
-                            "has a PAID MFADebit" in {
-                              stubAuthorised(mtdUserRole, List(ChargeHistory))
-                              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                              FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsPaidMFA)
-                              FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+              "has a PAID MFADebit" in {
+                stubAuthorised(mtdUserRole, List(ChargeHistory))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsPaidMFA)
+                FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                              val res = buildGETMTDClient(path +"?id=1", additionalCookies).futureValue
+                val res = buildGETMTDClient(path + "?id=1", additionalCookies).futureValue
 
-                              GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
 
-                              val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
-                              val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
-                              val paymentHistoryText2 = "28 Jul 2022 Payment put towards HMRC adjustment 2020 £1,200.00"
+                val hmrcCreated = messagesAPI("chargeSummary.chargeHistory.created.hmrcAdjustment.text")
+                val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,200.00"
+                val paymentHistoryText2 = "28 Jul 2022 Payment put towards HMRC adjustment 2020 £1,200.00"
 
-                              res should have(
-                                httpStatus(OK),
-                                pageTitle(mtdUserRole, "chargeSummary.hmrcAdjustment.text"),
-                                elementCountBySelector(s"#payment-link-$testTaxYear")(0),
-                                elementCountBySelector("#payment-history-table tr")(3),
-                                elementTextBySelector("#payment-history-table tr:nth-child(1)")(paymentHistoryText),
-                                elementTextBySelector("#payment-history-table tr:nth-child(2)")(paymentHistoryText2)
-                              )
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "chargeSummary.hmrcAdjustment.text"),
+                  elementCountBySelector(s"#payment-link-$testTaxYear")(0),
+                  elementCountBySelector("#payment-history-table tr")(3),
+                  elementTextBySelector("#payment-history-table tr:nth-child(1)")(paymentHistoryText),
+                  elementTextBySelector("#payment-history-table tr:nth-child(2)")(paymentHistoryText2)
+                )
 
-                              AuditStub.verifyAuditEvent(ChargeSummaryAudit(
-                                testUser(mtdUserRole),
-                                chargeItemPaid.copy(
-                                  dueDate = Some(LocalDate.parse("2018-03-30"))
-                                ),
-                                paymentBreakdown = List(),
-                                chargeHistories = List.empty,
-                                paymentAllocations = List.empty,
-                                isLatePaymentCharge = false,
-                                isMFADebit = true,
-                                taxYear = testTaxYearTyped
-                              ))
-                            }
+                AuditStub.verifyAuditEvent(ChargeSummaryAudit(
+                  testUser(mtdUserRole),
+                  chargeItemPaid.copy(
+                    dueDate = Some(LocalDate.parse("2018-03-30"))
+                  ),
+                  paymentBreakdown = List(),
+                  chargeHistories = List.empty,
+                  paymentAllocations = List.empty,
+                  isLatePaymentCharge = false,
+                  isMFADebit = true,
+                  taxYear = testTaxYearTyped
+                ))
+              }
             }
-                        "return a technical difficulties page to the user" when {
-                          "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
-                            stubAuthorised(mtdUserRole, List(ChargeHistory))
-                            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                            FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
-                            FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(INTERNAL_SERVER_ERROR, Json.parse(
-                              """
-                                |{
-                                |   "code": "SERVER_ERROR",
-                                |   "reason": "DES is currently experiencing problems that require live service intervention."
-                                |}
-                                |""".stripMargin))
+            "return a technical difficulties page to the user" when {
+              "ChargeHistory FS is enabled and the charge history details API responded with an error" in {
+                stubAuthorised(mtdUserRole, List(ChargeHistory))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+                FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(INTERNAL_SERVER_ERROR, Json.parse(
+                  """
+                    |{
+                    |   "code": "SERVER_ERROR",
+                    |   "reason": "DES is currently experiencing problems that require live service intervention."
+                    |}
+                    |""".stripMargin))
+                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                            val result = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
+                val result = buildGETMTDClient(path + "?id=1040000123", additionalCookies).futureValue
 
-                            result should have(
-                              httpStatus(INTERNAL_SERVER_ERROR),
-                              pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
-                            )
-                          }
+                result should have(
+                  httpStatus(INTERNAL_SERVER_ERROR),
+                  pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
+                )
+              }
 
-                          "When Original Amount value is missing from financial details / document details" in {
-                            stubAuthorised(mtdUserRole, List(ChargeHistory))
-                            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
-                            FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testFinancialDetailsModelWithMissingOriginalAmountJson())
+              "When Original Amount value is missing from financial details / document details" in {
+                stubAuthorised(mtdUserRole, List(ChargeHistory))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testFinancialDetailsModelWithMissingOriginalAmountJson())
+                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-                            val result = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
+                val result = buildGETMTDClient(path + "?id=1040000123", additionalCookies).futureValue
 
-                            result should have(
-                              httpStatus(INTERNAL_SERVER_ERROR),
-                              pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
-                            )
-                          }
-                        }
+                result should have(
+                  httpStatus(INTERNAL_SERVER_ERROR),
+                  pageTitle(mtdUserRole, titleInternalServer, isErrorPage = true)
+                )
+              }
+            }
           }
         }
-        testAuthFailures(path+"?id=1040000123", mtdUserRole)
+        testAuthFailures(path + "?id=1040000123", mtdUserRole)
       }
     }
   }

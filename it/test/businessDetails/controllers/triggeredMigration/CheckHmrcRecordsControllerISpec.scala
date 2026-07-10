@@ -17,21 +17,21 @@
 package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.audit.TriggeredMigrationStartAuditModel
-import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
+import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.controllers.ControllerISpecHelper
+import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub}
+import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub, YearOfMigrationStub}
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
+import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndUkProperty, singleBusinessResponse}
 import org.scalatest.Assertion
 import play.api.http.Status.OK
 import play.api.libs.ws.WSResponse
-import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
-import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
-import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesAndUkProperty, singleBusinessResponse}
-import common.helpers.GetInsourceDetailsStub
 
 import scala.concurrent.Future
 
@@ -93,6 +93,8 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
 
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
+
               whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveSoleTrader(result)
@@ -109,8 +111,9 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
-              whenReady(buildGETMTDClient(path, additionalCookies)) { (result:WSResponse) =>
+              whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)
                 checkActiveSoleTrader(result)
                 checkActiveUkProperty(result)
@@ -125,6 +128,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -142,6 +146,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -158,6 +163,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -176,6 +182,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -191,6 +198,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -206,6 +214,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2019")
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 checkCommonContent(result, mtdUserRole)
@@ -223,6 +232,7 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
                 status = OK,
                 body = liabilityCalculationModelSuccessfulNotCrystallised
               )
+              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
               whenReady(buildGETMTDClient(path, additionalCookies): Future[WSResponse]) { (result: WSResponse) =>
                 checkCommonContent(result, mtdUserRole)

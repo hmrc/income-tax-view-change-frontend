@@ -20,7 +20,7 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.GetInsourceDetailsStub
-import common.helpers.servicemocks.AuditStub
+import common.helpers.servicemocks.{AuditStub, YearOfMigrationStub}
 import common.models.admin.CreditsRefundsRepay
 import financials.testConstants.ANewCreditAndRefundModel
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
@@ -78,6 +78,8 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                     json = Json.toJson(validResponseModel))),
                   mtdUserRole) {
 
+                  YearOfMigrationStub.stubGetYearOfMigration("2023")
+
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
                   GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                   FinancialDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
@@ -127,6 +129,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                       code = OK,
                       json = Json.toJson(validResponseModel))),
                   mtdUserRole) {
+                  YearOfMigrationStub.stubGetYearOfMigration("2023")
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
                   FinancialDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
@@ -151,6 +154,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                     code = NOT_FOUND,
                     json = Json.toJson(ErrorModel(NOT_FOUND, "Not found")))),
                   mtdUserRole) {
+                  YearOfMigrationStub.stubGetYearOfMigration("2023")
 
                   val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -173,6 +177,8 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                   json = Json.toJson(validResponseModel))),
                 mtdUserRole,
                 enableCreditAndRefunds = false) {
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
+
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
                 FinancialDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
 
@@ -191,10 +197,11 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                   code = INTERNAL_SERVER_ERROR,
                   json = Json.toJson(ErrorModel(INTERNAL_SERVER_ERROR, "Internal server error")))),
                 mtdUserRole) {
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
                 FinancialDetailsStub.verifyGetFinancialDetailsCreditsByDateRange(testNino, s"$testPreviousTaxYear-04-06", s"$testTaxYear-04-05")
-                
+
                 res should have(
                   httpStatus(INTERNAL_SERVER_ERROR),
                   pageTitle(mtdUserRole, "standardError.heading", isErrorPage = true),
@@ -209,6 +216,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                   code = OK,
                   json = Json.parse("""{ "invalid": "json" }"""))),
                 mtdUserRole) {
+                YearOfMigrationStub.stubGetYearOfMigration("2023")
 
                 val res = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -238,13 +246,12 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
       stubAuthorised(mtdUserRole)
     }
 
-    val incomeSources = multipleBusinessesAndPropertyResponse
-      .copy(yearOfMigration = Some(s"${responses.map(_.taxYear).min}"))
+    val incomeSources = multipleBusinessesAndPropertyResponse.copy(yearOfMigration = Some(s"${responses.map(_.taxYear).min}"))
 
     val mtdUser: MtdItUser[_] = getTestUser(mtdUserRole, incomeSources)
 
-    GetInsourceDetailsStub
-      .stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
+    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, incomeSources)
+    YearOfMigrationStub.stubGetYearOfMigration("2023")
 
     responses.foreach(response => {
       val fromYear = {response.taxYear - 1}.toString

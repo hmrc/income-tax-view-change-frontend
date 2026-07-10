@@ -22,7 +22,7 @@ import common.controllers.ControllerISpecHelper
 import common.enums.MTDIndividual
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
 import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, MTDIndividualAuthStub}
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, MTDIndividualAuthStub, YearOfMigrationStub}
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
@@ -82,6 +82,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             stubGetFeatureSwitches()
             ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2022, 2023))
             MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
+            YearOfMigrationStub.stubGetYearOfMigration("2022")
 
             GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(
               status = OK,
@@ -161,6 +162,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
               status = OK,
               response = incomeSourceDetailsModel
             )
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
 
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(
@@ -234,6 +236,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
               status = OK,
               response = incomeSourceDetailsModel
             )
+
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
 
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(
@@ -311,6 +315,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
               status = OK,
               response = incomeSourceDetailsModel
             )
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
 
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(
@@ -389,6 +394,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
               status = OK,
               response = incomeSourceDetailsModel
             )
+
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
 
             val currentObligations: ObligationsModel =
               ObligationsModel(
@@ -487,6 +494,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
               response = incomeSourceDetailsModel
             )
 
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
+
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(
                 identification = "testId",
@@ -559,6 +568,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
               status = OK,
               response = incomeSourceDetailsModel
             )
+
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
 
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(
@@ -634,6 +645,8 @@ class HomeControllerISpec extends ControllerISpecHelper {
               response = incomeSourceDetailsModel
             )
 
+            YearOfMigrationStub.stubGetYearOfMigration("2023")
+
             val currentObligations: ObligationsModel = ObligationsModel(Seq(
               GroupedObligationsModel(
                 identification = "testId",
@@ -707,6 +720,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             status = OK,
             response = incomeSourceDetailsModel
           )
+          YearOfMigrationStub.stubGetYearOfMigration("2023")
 
           val currentObligations: ObligationsModel = ObligationsModel(Seq(
             GroupedObligationsModel(
@@ -749,6 +763,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
           status = OK,
           response = incomeSourceDetailsModel
         )
+        YearOfMigrationStub.stubGetYearOfMigration("2023")
 
         NextUpdatesStub.stubGetNextUpdatesError(testNino)
 
