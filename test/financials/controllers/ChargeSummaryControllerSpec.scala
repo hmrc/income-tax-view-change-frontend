@@ -20,8 +20,7 @@ import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.models.admin.{ChargeHistory, PenaltiesAndAppeals}
 import common.services.DateServiceInterface
-import common.testConstants.BaseTestConstants.testTaxYear
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.*
 import financials.controllers.agent.errors.routes as agentErrorRoutes
 import financials.controllers.errors.routes as errorRoutes
 import financials.enums.{AdjustmentReversalReason, AmendedReturnReversalReason}

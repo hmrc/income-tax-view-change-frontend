@@ -27,8 +27,7 @@ import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUp
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-
+import common.testConstants.BaseTestConstants.businessesAndPropertyIncome
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 

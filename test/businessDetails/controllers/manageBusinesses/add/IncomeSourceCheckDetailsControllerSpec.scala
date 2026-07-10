@@ -19,6 +19,7 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.services.{CreateBusinessDetailsService, SessionService}
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -28,6 +29,8 @@ import common.mocks.services.MockSessionService
 import common.models.admin.OverseasBusinessAddress
 import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -38,8 +41,6 @@ import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import common.testConstants.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, noIncomeDetails, notCompletedUIJourneySessionData}
 
 import scala.concurrent.Future
 

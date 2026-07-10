@@ -39,14 +39,7 @@ object BusinessDetailsTestConstants {
   val year2025: Int = 2025
 
   val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
-  val address = AddressModel(
-    Some("8 Test"),
-    Some("New Court"),
-    Some("New Town"),
-    Some("New City"),
-    Some("NE12 6CI"),
-    Some("GB")
-  )
+
   val invalidUKAddressNoPostCode = AddressModel(
     Some("8 Test"), 
     Some("New Court"), 
@@ -93,7 +86,6 @@ object BusinessDetailsTestConstants {
   val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)))
   val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2005 = LocalDate.parse("2005-01-01")
-  val testStartDate2 = LocalDate.parse("2021-01-01")
   val testStartDate3 = LocalDate.parse("2013-01-01")
   val testContextualTaxYear = "2024"
   val testStartDateFormatted = "1 January 2022"

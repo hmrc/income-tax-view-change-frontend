@@ -19,21 +19,21 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.mocks.services.MockIncomeSourceRFService
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseError
-import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockSessionService}
 import common.services.{DateService, DateServiceInterface}
+import common.testConstants.BaseTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future

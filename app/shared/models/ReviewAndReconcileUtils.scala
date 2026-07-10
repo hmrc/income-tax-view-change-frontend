@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.models
+package shared.models
 
 object ReviewAndReconcileUtils {
 

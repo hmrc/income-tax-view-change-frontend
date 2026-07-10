@@ -16,9 +16,7 @@
 
 package common.models
 
-import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.{fakeRequestWithActiveSession, getIndividualUserIncomeSourcesConfigurable}
-import businessDetails.testConstants.BusinessDetailsTestConstants.{testLatencyDetails, *}
-import businessDetails.testConstants.PropertyDetailsTestConstants.*
+import common.testConstants.BusinessDetailsTestConstants.*
 import common.auth.MtdItUser
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
@@ -29,12 +27,12 @@ import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.*
-import common.testUtils.UnitSpec
+import common.testUtils.{TestSupport, UnitSpec}
 import org.scalatest.matchers.should.Matchers
 
 import java.time.LocalDate
 
-class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateService {
+class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateService with TestSupport{
 
   val testQueryString: String = mkIncomeSourceId("XA00001234").toHash.hash
   val testSelfEmploymentIdHash: Either[Throwable, IncomeSourceIdHash] = mkFromQueryString(testQueryString)
@@ -42,7 +40,6 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
   val testSelfEmploymentIdHashValueMaybe: Option[String] = Option(testQueryString)
   val emptyIncomeSourceIdHash: IncomeSourceIdHash = mkIncomeSourceId("").toHash
 
-  lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 4)
 
   "The IncomeSourceDetailsModel" when {
 
@@ -62,11 +59,11 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
         businessesAndPropertyIncome.businesses.head.tradingName.get shouldBe testTradeName
       }
       //Test Property details
-      s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        businessesAndPropertyIncome.properties.head.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
+      s"have the property accounting period start date of ${LocalDate.of(2017, 4, 6)}" in {
+        businessesAndPropertyIncome.properties.head.accountingPeriod.get.start shouldBe LocalDate.of(2017, 4, 6)
       }
-      s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        businessesAndPropertyIncome.properties.head.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
+      s"have the property accounting period end date of ${LocalDate.of(2018, 4, 5)}" in {
+        businessesAndPropertyIncome.properties.head.accountingPeriod.get.end shouldBe LocalDate.of(2018, 4, 5)
       }
     }
 
@@ -97,11 +94,11 @@ class IncomeSourceDetailsModelSpec extends UnitSpec with Matchers with MockDateS
     }
     "the user has just a property income source" should {
       //Test Property details
-      s"have the property accounting period start date of ${testPropertyAccountingPeriod.start}" in {
-        propertyIncomeOnly.properties.head.accountingPeriod.get.start shouldBe testPropertyAccountingPeriod.start
+      s"have the property accounting period start date of ${LocalDate.of(2017, 4, 6)}" in {
+        propertyIncomeOnly.properties.head.accountingPeriod.get.start shouldBe LocalDate.of(2017, 4, 6)
       }
-      s"have the property accounting period end date of ${testPropertyAccountingPeriod.end}" in {
-        propertyIncomeOnly.properties.head.accountingPeriod.get.end shouldBe testPropertyAccountingPeriod.end
+      s"have the property accounting period end date of ${LocalDate.of(2018, 4, 5)}" in {
+        propertyIncomeOnly.properties.head.accountingPeriod.get.end shouldBe LocalDate.of(2018, 4, 5)
       }
       //Test Business Details
       "should not have business details" in {

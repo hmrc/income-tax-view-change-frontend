@@ -18,7 +18,7 @@ package common.services
 
 import org.mockito.Mockito.{mock, when}
 import common.testConstants.BaseTestConstants.{testMtdItUser, testNino}
-import businessDetails.testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetails5}
+import common.testConstants.BusinessDetailsTestConstants.{testLatencyDetails3, testLatencyDetails4, testLatencyDetails5}
 import common.mocks.connectors.MockITSAStatusConnector
 import common.models.incomeSourceDetails.{LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
 import common.testConstants.ITSAStatusTestConstants.*

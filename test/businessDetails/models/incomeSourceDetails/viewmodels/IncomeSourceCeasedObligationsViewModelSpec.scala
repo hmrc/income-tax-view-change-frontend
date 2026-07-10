@@ -17,9 +17,9 @@
 package businessDetails.models.incomeSourceDetails.viewmodels
 
 import common.enums.IncomeSourceJourney.SelfEmployment
-import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import businessDetails.testConstants.BusinessDetailsTestConstants.{business1, business1NoLatency, business2, ceasedBusiness}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.BusinessDetailsTestConstants.{business1NoLatency, ceasedBusiness}
 import common.testUtils.UnitSpec
 
 class IncomeSourceCeasedObligationsViewModelSpec extends UnitSpec {

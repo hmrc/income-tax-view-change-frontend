@@ -16,6 +16,21 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
+import businessDetails.services.SessionService
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
+import common.connectors.ITSAStatusConnector
+import common.enums.IncomeSourceJourney.SelfEmployment
+import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import common.enums.{MTDIndividual, MTDUserRole}
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.MockSessionService
+import common.models.admin.OverseasBusinessAddress
+import common.models.core.{CheckMode, Mode, NormalMode}
+import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.BusinessDetailsTestConstants.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor
@@ -26,23 +41,9 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import businessDetails.testConstants.BusinessDetailsTestConstants.{business1, foreignAddress, invalidUKAddressNoPostCode}
-import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData}
+import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future
-import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
-import businessDetails.services.SessionService
-import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import common.enums.{MTDIndividual, MTDUserRole}
-import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
-import common.models.admin.OverseasBusinessAddress
-import common.models.core.{CheckMode, Mode, NormalMode}
-import common.services.DateServiceInterface
-import shared.models.UIJourneySessionData
 
 class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSessionService {
 

@@ -20,6 +20,7 @@ import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusines
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
@@ -29,6 +30,7 @@ import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.core.*
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.services.{DateService, DateServiceInterface}
+import common.testConstants.BaseTestConstants.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -38,8 +40,6 @@ import play.api.http.Status
 import play.api.http.Status.*
 import play.api.mvc.*
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import common.testConstants.IncomeSourceDetailsTestConstants.*
 
 import java.time.LocalDate
 import scala.concurrent.Future

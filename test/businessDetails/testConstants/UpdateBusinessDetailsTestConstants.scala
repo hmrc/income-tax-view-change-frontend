@@ -18,15 +18,15 @@ package businessDetails.testConstants
 
 import businessDetails.models.incomeSourceDetails.viewmodels.{BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel}
 import common.enums.IncomeSourceJourney.SelfEmployment
-import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.*
+import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.incomeSourceDetails.{BusinessDetailsModel, LatencyDetails, QuarterTypeElection}
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseTestConstants.*
 
 import java.time.{LocalDate, Month}
 
-object BusinessDetailsTestConstants {
+object UpdateBusinessDetailsTestConstants {
 
   val year2017: Int = 2017
   val year2018: Int = 2018
@@ -73,7 +73,6 @@ object BusinessDetailsTestConstants {
   val test2018BusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2019, Month.MARCH, 6), end = LocalDate.of(year2018, Month.MARCH, 6))
   val columnOneUkProperty = "UK property"
   val columnOneForeignProperty = "Foreign property"
-  val testTradeName = "nextUpdates.business"
   val testIncomeSource = "Fruit Ltd"
   val testTradeName2 = "nextUpdates.business2"
   val testTradeNameOption: Option[String] = Some("nextUpdates.business")
@@ -89,7 +88,6 @@ object BusinessDetailsTestConstants {
   val testCessation = CessationModel(Some(LocalDate.of(year2018, Month.JANUARY, 1)))
   val testCessation2 = CessationModel(Some(LocalDate.of(year2019, Month.JANUARY, 1)))
   val testCessation3 = CessationModel(Some(LocalDate.of(year2022, Month.JANUARY, 1)))
-  val testStartDate = LocalDate.parse("2022-01-01")
   val testStartDate2005 = LocalDate.parse("2005-01-01")
   val testStartDate2 = LocalDate.parse("2021-01-01")
   val testStartDate3 = LocalDate.parse("2013-01-01")

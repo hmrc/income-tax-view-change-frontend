@@ -20,7 +20,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.{Html, HtmlFormat}
-import businessDetails.testConstants.BusinessDetailsTestConstants.*
+import common.testConstants.BusinessDetailsTestConstants.*
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import businessDetails.views.messages.ManageIncomeSourceDetailsViewMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes

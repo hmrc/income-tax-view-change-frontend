@@ -18,7 +18,7 @@ package views.components
 
 import common.config.featureswitch.FeatureSwitching
 import common.testUtils.ViewSpec
-import financials.testConstants.ChargeConstants
+import returns.testConstants.ChargeConstants
 import returns.models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import org.jsoup.Jsoup
 import play.twirl.api.HtmlFormat

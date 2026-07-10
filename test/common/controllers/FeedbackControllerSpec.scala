@@ -21,6 +21,7 @@ import common.controllers.feedback.{FeedbackController, routes as feedbackRoutes
 import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
+import common.testConstants.BaseTestConstants.*
 import common.viewUtils.InternalUrlHelper
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,8 +34,6 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import common.testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testAuthSuccessResponse}
-import common.testConstants.IncomeSourceDetailsTestConstants.*
 import uk.gov.hmrc.auth.core.InvalidBearerToken
 
 import scala.concurrent.Future

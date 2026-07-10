@@ -20,10 +20,11 @@ import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.SignUpFs
-import common.models.itsaStatus.ITSAStatus
-import common.services.DateServiceInterface
-import ITSAStatus.{Mandated, Voluntary}
 import common.models.incomeSourceDetails.TaxYear
+import common.models.itsaStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockSignUpService
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
@@ -36,7 +37,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 

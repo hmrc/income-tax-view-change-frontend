@@ -26,8 +26,8 @@ import play.api.data.{Form, FormError}
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import common.testConstants.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyWithSoleTraderIncomeSource
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethodView
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes

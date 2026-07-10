@@ -62,7 +62,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActionsWit
 
   def handleRequest(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean)(implicit user: MtdItUser[_]): Future[Result] = {
     withSessionData(IncomeSourceJourneyType(Add, SelfEmployment), BeforeSubmissionPage) { sessionData =>
-      
+
       val backURL = getBackURL(isAgent)
       val postAction = getPostAction(isAgent, mode, isTriggeredMigration)
 

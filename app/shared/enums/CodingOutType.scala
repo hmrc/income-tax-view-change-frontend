@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package financials.enums
+package shared.enums
 
 import scala.language.implicitConversions
 

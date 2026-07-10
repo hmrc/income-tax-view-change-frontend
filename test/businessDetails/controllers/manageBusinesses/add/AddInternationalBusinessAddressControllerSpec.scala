@@ -26,6 +26,7 @@ import common.mocks.services.{MockDateService, MockSessionService}
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.{CheckMode, NormalMode}
 import common.services.{DateService, DateServiceInterface}
+import common.testConstants.BaseTestConstants.*
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -34,7 +35,6 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.Result
 import play.api.test.Helpers.{redirectLocation, *}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future

@@ -16,14 +16,13 @@
 
 package common.models.incomeSourceDetails
 
-import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.individualUser
 import common.exceptions.NoIncomeSourceFound
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.testConstants.BaseTestConstants.{testMtdItUser, testSelfEmploymentId}
-import common.testUtils.UnitSpec
+import common.testUtils.{TestSupport, UnitSpec}
 
-class IncomeSourceIdSpec extends UnitSpec {
+class IncomeSourceIdSpec extends UnitSpec with TestSupport {
 
   val incomeSourceIdHash: IncomeSourceIdHash = mkIncomeSourceId("1234").toHash
 

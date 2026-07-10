@@ -20,10 +20,11 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
 import common.controllers.routes as appRoutes
 import common.models.admin.{FeatureSwitchName, NoIncomeSourcesRedirect}
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 import org.scalatest.Assertion
 import play.api.mvc.{Result, Results}
 import play.api.test.Helpers.*
-import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, noIncomeDetails}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
 import scala.concurrent.Future

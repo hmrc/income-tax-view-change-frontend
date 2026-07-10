@@ -18,7 +18,9 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess, SessionService}
+import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
@@ -27,7 +29,7 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.core.IncomeSourceId
-import common.services.{DateServiceInterface}
+import common.services.DateServiceInterface
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -43,7 +45,7 @@ import businessDetails.testConstants.UpdateIncomeSourceTestConstants
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with MockSessionService {
+class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceDetailsService {
 
  lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   val validCeaseDate: String = LocalDate.of(2022, 10, 10).toString

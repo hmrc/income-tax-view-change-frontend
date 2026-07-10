@@ -16,20 +16,20 @@
 
 package businessDetails.views.manageBusinesses.cease
 
+import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
+import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
+import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.models.core.IncomeSourceId.mkIncomeSourceId
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate}
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testSelfEmploymentId}
-import businessDetails.testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate, testIncomeSource, testTradeName}
-import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
-import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
-import businessDetails.models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.testUtils.TestSupport
 
 class CeaseCheckIncomeSourceDetailsViewSpec extends TestSupport {
 

@@ -19,8 +19,10 @@ package businessDetails.utils
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
+import businessDetails.testConstants.PropertyDetailsTestConstants.ukPropertyDetails
 import common.testConstants.IncomeSourceDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.testUtils.TestSupport
 
 class IncomeSourceUtilsSpec extends TestSupport {

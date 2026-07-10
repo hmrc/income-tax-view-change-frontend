@@ -20,7 +20,10 @@ import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.admin.{NewHomePage, RecentActivity}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.obligations.ObligationsModel
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
+import common.testConstants.BaseTestConstants.*
 import financials.services.PaymentHistoryService
 import hub.models.newHomePage.RecentActivityViewModel
 import hub.services.newHomePage.RecentActivityService
@@ -30,10 +33,6 @@ import play.api
 import play.api.http.Status
 import play.api.inject
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import businessDetails.testConstants.BusinessDetailsTestConstants.business1
-import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import common.models.obligations.ObligationsModel
 
 import java.time.LocalDate
 import scala.concurrent.Future

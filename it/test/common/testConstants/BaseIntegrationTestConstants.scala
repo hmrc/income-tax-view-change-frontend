@@ -113,6 +113,15 @@ object BaseIntegrationTestConstants {
   val b2AccountingStart = LocalDate.of(endYear, 1, 1)
   val b2AccountingEnd = LocalDate.of(endYear, 12, 31)
 
+  val address = AddressModel(
+    Some("8 Test"),
+    Some("New Court"),
+    Some("New Town"),
+    Some("New City"),
+    Some("NE12 6CI"),
+    Some("GB")
+  )
+
   lazy val defaultEnrolments: MTDUserRole => Enrolments = mtdUserRole => {
     mtdUserRole match {
       case MTDIndividual => Enrolments(Set(mtdEnrolment, ninoEnrolment, saEnrolment))

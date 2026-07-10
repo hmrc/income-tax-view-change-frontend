@@ -34,9 +34,10 @@ import play.api
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import businessDetails.testConstants.BusinessDetailsTestConstants.*
+import businessDetails.testConstants.UpdateBusinessDetailsTestConstants.*
 import businessDetails.testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
-import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, notCompletedUIJourneySessionData}
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 
 import scala.concurrent.Future
 

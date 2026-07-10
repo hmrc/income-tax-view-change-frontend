@@ -17,10 +17,10 @@
 package returns.models.liabilitycalculation.viewmodels
 
 import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.TaxYear
 import common.models.obligations.ObligationsModel
-import financials.controllers.routes as financialsRoutes
-import financials.models.SecondLatePaymentPenalty
+import returns.models.SecondLatePaymentPenalty
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 
 import java.time.LocalDate
@@ -33,7 +33,8 @@ case class TaxYearSummaryViewModel(
                                     showForecastData: Boolean = false,
                                     ctaViewModel: TYSClaimToAdjustViewModel,
                                     LPP2Url: String,
-                                    pfaEnabled: Boolean
+                                    pfaEnabled: Boolean,
+                                    financialsFrontendEnabled: Boolean
                                   ) {
 
   def showSubmissions: Boolean = {
@@ -97,14 +98,14 @@ case class TaxYearSummaryViewModel(
   def getChargeSummaryHref(chargeItem: TaxYearSummaryChargeItem,
                            taxYear: Int,
                            isAgent: Boolean,
-                           origin: Option[String]): String = {
+                           origin: Option[String])(implicit appConfig: FrontendAppConfig): String = {
     if (chargeItem.transactionType == SecondLatePaymentPenalty) {
       LPP2Url
     } else {
       if (isAgent) {
-        financialsRoutes.ChargeSummaryController.showAgent(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest).url
+        appConfig.financialsChargeSummaryAgentUrl(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, financialsFrontendEnabled)
       } else {
-        financialsRoutes.ChargeSummaryController.show(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin).url
+        appConfig.financialsChargeSummaryIndividualUrl(taxYear, chargeItem.transactionId, chargeItem.isAccruingInterest, origin, financialsFrontendEnabled)
       }
     }
   }

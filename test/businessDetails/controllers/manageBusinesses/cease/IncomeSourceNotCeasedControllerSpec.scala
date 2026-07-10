@@ -28,7 +28,8 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 
 import scala.concurrent.Future
 

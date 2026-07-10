@@ -22,8 +22,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.testSessionId
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.*
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService

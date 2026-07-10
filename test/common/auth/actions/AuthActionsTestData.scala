@@ -17,7 +17,6 @@
 package common.auth.actions
 
 import common.utils.AuthUtils.*
-import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.fakeRequestWithClientDetails
 import common.auth.{AgentClientDetails, AuthUserDetails, AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest, AuthorisedUserRequest, MtdItUser}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.models.admin.FeatureSwitch
@@ -117,7 +116,7 @@ object AuthActionsTestData {
       AuthorisedAndEnrolledRequest(testMtditid, mtdUserRole, defaultAuthUserDetails(mtdUserRole), optClientDetails)(request)
   }
 
-  lazy val defaultAuthorisedWithClientDetailsRequest: AuthorisedAgentWithClientDetailsRequest[_] = {
+  lazy val defaultAuthorisedWithClientDetailsRequest: Request[_] => AuthorisedAgentWithClientDetailsRequest[_] = fakeRequestWithClientDetails => {
     AuthorisedAgentWithClientDetailsRequest(defaultAuthUserDetails(MTDPrimaryAgent), getAgentClientDetails(true))(fakeRequestWithClientDetails)
   }
 

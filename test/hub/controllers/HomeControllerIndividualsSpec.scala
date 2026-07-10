@@ -24,7 +24,7 @@ import common.models.admin.*
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.*
 import common.utils.sessionUtils.SessionKeys
 import financials.models.*
 import financials.models.creditsandrefunds.CreditsModel

@@ -22,6 +22,7 @@ import businessDetails.mocks.services.MockIncomeSourceDetailsService
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.models.incomeSourceDetails.*
 import businessDetails.services.NextUpdatesService
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
@@ -29,9 +30,8 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
-import businessDetails.testConstants.BusinessDetailsTestConstants.{year2018, year2019}
-import common.testConstants.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.*
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import common.auth.AuthActions

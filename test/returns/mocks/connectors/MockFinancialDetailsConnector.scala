@@ -14,28 +14,29 @@
  * limitations under the License.
  */
 
-package businessDetails.mocks.connectors
+package returns.mocks.connectors
 
-import common.connectors.BusinessDetailsConnector
-import common.models.incomeSourceDetails.IncomeSourceDetailsResponse
 import common.testUtils.UnitSpec
+import returns.connectors.GetFinancialDetailsConnector
+import returns.models.FinancialDetailsResponseModel
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 
 import scala.concurrent.Future
 
-trait MockBusinessDetailsConnector extends UnitSpec with BeforeAndAfterEach {
+trait MockFinancialDetailsConnector extends UnitSpec with BeforeAndAfterEach {
 
-  lazy val mockBusinessDetailsConnector: BusinessDetailsConnector = mock(classOf[BusinessDetailsConnector])
+  val mockFinancialDetailsConnector: GetFinancialDetailsConnector = mock(classOf[GetFinancialDetailsConnector])
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockBusinessDetailsConnector)
+    reset(mockFinancialDetailsConnector)
   }
-  
-  def setupBusinessDetails(nino: String)(response: Future[IncomeSourceDetailsResponse]): Unit = {
-    when(mockBusinessDetailsConnector.getBusinessDetails(ArgumentMatchers.eq(nino))(ArgumentMatchers.any()))
-      .thenReturn(response)
+
+  def setupMockGetFinancialDetails(taxYear: Int, nino: String)(response: FinancialDetailsResponseModel): Unit = {
+    when(mockFinancialDetailsConnector.getFinancialDetails(ArgumentMatchers.eq(taxYear), ArgumentMatchers.eq(nino))(any(),any()))
+      .thenReturn(Future.successful(response))
   }
 }

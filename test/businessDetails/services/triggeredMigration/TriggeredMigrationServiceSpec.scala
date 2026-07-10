@@ -17,15 +17,15 @@
 package businessDetails.services.triggeredMigration
 
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
+import businessDetails.testConstants.PropertyDetailsTestConstants.ukPropertyDetails
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import common.mocks.services.MockSessionService
 import common.models.core.{CessationModel, IncomeSourceId}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import businessDetails.testConstants.BusinessDetailsTestConstants.business1
-import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import java.time.LocalDate
 

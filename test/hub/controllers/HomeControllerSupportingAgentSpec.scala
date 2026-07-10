@@ -24,7 +24,7 @@ import common.mocks.services.admin.MockFeatureSwitchService
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.*
 import financials.services.CreditService
 import hub.services.NextUpdatesService
 import hub.views.html.HomeView

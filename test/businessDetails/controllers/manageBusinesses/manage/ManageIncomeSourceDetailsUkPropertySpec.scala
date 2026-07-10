@@ -16,19 +16,19 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.enums.IncomeSourceJourney.UkProperty
 import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
-import common.models.admin.DisplayBusinessStartDate
 import common.models.admin.*
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
+import common.testConstants.BaseTestConstants.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.test.Helpers.*
-import common.testConstants.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTrader2023WithUnknowns, ukPlusForeignPropertyAndSoleTraderNoLatency, ukPlusForeignPropertyAndSoleTraderWithLatency, ukPlusForeignPropertyAndSoleTraderWithLatencyExpired}
 
 import scala.concurrent.Future
 

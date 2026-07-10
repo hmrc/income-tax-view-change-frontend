@@ -18,7 +18,8 @@ package common.mocks.connectors
 
 import common.connectors.IncomeSourceConnector
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
-import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus}
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers

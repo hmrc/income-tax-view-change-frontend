@@ -19,7 +19,9 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
+import businessDetails.models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, businessTradeField}
 import businessDetails.services.SessionService
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
@@ -28,7 +30,7 @@ import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.DateServiceInterface
-import AddIncomeSourceData.{businessNameField, businessTradeField}
+import common.testConstants.BaseTestConstants.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.*
@@ -37,7 +39,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
-import common.testConstants.IncomeSourceDetailsTestConstants.*
 
 import scala.concurrent.Future
 

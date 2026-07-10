@@ -21,8 +21,9 @@ import businessDetails.services.SessionService
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import common.testConstants.BaseIntegrationTestConstants.*
-import businessDetails.testConstants.BusinessDetailsTestConstants.testObligationsModel
+import common.testConstants.BaseIntegrationTestConstants._
+import common.testConstants.IncomeSourceIntegrationTestConstants._
+import common.testConstants.BusinessDetailsTestConstants.testObligationsModel
 import common.controllers.ControllerISpecHelper
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.JourneyType.Cease

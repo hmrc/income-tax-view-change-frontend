@@ -18,9 +18,9 @@ package hub.audit.models
 
 import common.enums.AuditType.ClientDetailsConfirmed
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, TransactionName}
-import play.api.libs.json.Json
 import common.testConstants.BaseTestConstants.{testArn, testCredId, testMtditidAgent, testNinoAgent, testSaUtr}
 import common.testUtils.TestSupport
+import play.api.libs.json.Json
 
 class ConfirmClientDetailsAuditModelSpec extends TestSupport {
 

@@ -16,7 +16,8 @@
 
 package businessDetails.testConstants
 
-import businessDetails.testConstants.BusinessDetailsTestConstants.{business2, obligationsDataSuccessModel, nextUpdatesDataPropertySuccessModel}
+import common.testConstants.BusinessDetailsTestConstants.{obligationsDataSuccessModel, nextUpdatesDataPropertySuccessModel}
+import common.testConstants.BaseTestConstants.*
 import common.models.obligations.ObligationsModel
 
 object IncomeSourcesWithDeadlinesTestConstants {

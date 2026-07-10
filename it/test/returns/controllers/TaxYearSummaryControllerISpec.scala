@@ -30,8 +30,7 @@ import returns.testConstants.NewCalcBreakdownItTestConstants.*
 import returns.testConstants.messages.TaxYearSummaryMessages.*
 import returns.testConstants.ReturnIntegrationTestConstants.*
 import financials.controllers.routes as financialsRoutes
-import returns.helpers.FinancialDetailsStub
-import financials.models.*
+import returns.models.*
 import org.jsoup.Jsoup
 import play.api.http.Status.*
 import play.api.libs.json.Json
@@ -296,7 +295,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
                     None, financialDetailsDunningLockSuccess.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
-                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false)))
+                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
               }
 
 
@@ -505,7 +504,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     TaxYearSummaryViewModel(
                       Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                       None, emptyPaymentsList,
-                      allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false
+                      allObligations, showForecastData = true, ctaViewModel = emptyCTAModel,
+                      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false
                     )))
                 }
 
@@ -652,7 +652,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   messagesAPI, TaxYearSummaryViewModel(
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                     None, auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false)))
+                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
 
                 allObligations.obligations.foreach {
                   obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)

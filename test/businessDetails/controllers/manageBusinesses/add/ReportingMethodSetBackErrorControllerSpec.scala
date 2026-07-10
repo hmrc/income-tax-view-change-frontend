@@ -25,13 +25,12 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import common.testConstants.BaseTestConstants.testSessionId
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import shared.models.UIJourneySessionData
 
 class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with MockSessionService {

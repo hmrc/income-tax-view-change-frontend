@@ -21,8 +21,8 @@ import common.connectors.BaseConnectorSpec
 import common.models.audit.{AuditModel, ExtendedAuditModel}
 import common.services.AuditingService
 import common.testConstants.BaseTestConstants.*
-import financials.models.*
-import financials.testConstants.FinancialDetailsTestConstants.*
+import returns.models.*
+import returns.testConstants.FinancialDetailsTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
@@ -107,7 +107,11 @@ class GetFinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponse))
 
+        println(testValidFinancialDetailsModelJsonReads)
+        println(testValidFinancialDetailsModel)
+
         val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testNino)
+        println(result.futureValue)
         result.futureValue shouldBe testValidFinancialDetailsModel
       }
 

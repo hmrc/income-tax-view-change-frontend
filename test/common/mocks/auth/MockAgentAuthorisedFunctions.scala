@@ -17,9 +17,7 @@
 package common.mocks.auth
 
 import common.auth.actions.AuthActionsTestData.delegatedEnrolmentPredicate
-import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.AuthRetrievals
 import org.mockito.Mockito.*
-import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.NrsAgentAuthRetrievals
 import common.auth.FrontendAuthorisedFunctions
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import uk.gov.hmrc.auth.core.*
@@ -35,7 +33,6 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
   lazy val isAgentPredicate: Predicate = Enrolment("HMRC-AS-AGENT") and AffinityGroup.Agent
   lazy val isNotAgentPredicate: Predicate = AffinityGroup.Individual or AffinityGroup.Organisation
   lazy val authPredicateForAgent: Predicate = isAgentPredicate or isNotAgentPredicate
-
 
   def setupMockAgentAuthSuccess[X, Y](mockFAF: FrontendAuthorisedFunctions)(retrievalValue: X ~ Y): Unit =
     when(mockFAF.authorised(authPredicateForAgent))
@@ -77,8 +74,8 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
     }
   }
 
-  def setupMockAgentWithMissingDelegatedMTDEnrolment(mockFAF: FrontendAuthorisedFunctions)(
-                                                      retrievalValue: AuthRetrievals,
+  def setupMockAgentWithMissingDelegatedMTDEnrolment[X, Y](mockFAF: FrontendAuthorisedFunctions)(
+                                                      retrievalValue: X ~ Y,
                                                       mtdItId: String
                                                     ): Unit = {
     setupMockAgentAuthSuccess(mockFAF)(retrievalValue)
@@ -86,7 +83,7 @@ trait MockAgentAuthorisedFunctions extends BeforeAndAfterEach {
     setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)
   }
   
-  def setupMockAgentWithMissingDelegatedMTDEnrolmentWithNrs(mockFAF: FrontendAuthorisedFunctions)(retrievalValue: NrsAgentAuthRetrievals, mtdItId: String): Unit = {
+  def setupMockAgentWithMissingDelegatedMTDEnrolmentWithNrs[X, Y](mockFAF: FrontendAuthorisedFunctions)(retrievalValue: X ~ Y, mtdItId: String): Unit = {
     setupMockAgentAuthSuccess(mockFAF)(retrievalValue)
     setupMockNoPrimaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)
     setupMockNoSecondaryDelegatedEnrolmentForMTDItId(mockFAF)(mtdItId)

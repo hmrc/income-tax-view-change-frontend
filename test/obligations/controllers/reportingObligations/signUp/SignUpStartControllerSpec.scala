@@ -21,8 +21,9 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.SignUpFs
 import common.models.incomeSourceDetails.TaxYear
-import common.services.DateServiceInterface
 import common.models.itsaStatus.ITSAStatus.Voluntary
+import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import obligations.mocks.services.MockSignUpService
 import obligations.models.reportingObligations.signUp.{SignUpSessionData, SignUpTaxYearQuestionViewModel}
 import obligations.services.reportingObligations.signUp.SignUpService
@@ -33,7 +34,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
