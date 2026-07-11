@@ -16,7 +16,6 @@
 
 package returns.testConstants
 
-import common.models.core.AddressModel
 import common.models.liabilitycalculation.{AllowancesAndDeductions, Calculation, ChargeableEventGainsIncome, DividendsIncome, EmploymentAndPensionsIncome, EmploymentExpenses, EndOfYearEstimate, ForeignIncome, ForeignTaxCreditRelief, GiftAid, GiftAidTaxReductionWhereBasicRateDiffers, IncomeSource, IncomeSummaryTotals, Inputs, LiabilityCalculationError, LiabilityCalculationResponse, MarriageAllowanceTransferOut, MarriageAllowanceTransferredIn, Message, Messages, Metadata, OtherIncome, OverseasIncomeAndGains, PensionSavingsTaxCharges, PersonalInformation, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, SavingsAndGainsIncome, ShareSchemesIncome, StateBenefitsIncome, StudentLoan, TaxDeductedAtSource, TopSlicingRelief, TransitionProfit}
 import common.models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, OtherGains, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
 import returns.models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel, TaxDueSummaryViewModel}
@@ -976,17 +975,5 @@ object NewCalcBreakdownUnitTestConstants {
     if (fixedDate.isBefore(LocalDate.of(fixedDate.getYear, Month.APRIL, 6))) LocalDate.of(fixedDate.getYear, Month.APRIL, 5)
     else LocalDate.of(fixedDate.getYear + 1, Month.APRIL, 5)
   }
-
-  val address = AddressModel(
-    Some("8 Test"),
-    Some("New Court"),
-    Some("New Town"),
-    Some("New City"),
-    Some("NE12 6CI"),
-    Some("GB")
-  )
-
-  val testIncomeSource = "Fruit Ltd"
-
 
 }

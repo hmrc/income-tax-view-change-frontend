@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses
 
-import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.viewmodels.ViewIncomeSourcesViewModel
 import businessDetails.services.SessionService
 import businessDetails.services.IncomeSourceDetailsService
@@ -25,7 +25,6 @@ import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.exceptions.MissingFieldException
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.models.admin.{DisplayBusinessStartDate, FeatureSwitchName}
 import common.services.DateServiceInterface
 import org.mockito.ArgumentMatchers.any

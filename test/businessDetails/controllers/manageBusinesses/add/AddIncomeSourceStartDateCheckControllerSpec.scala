@@ -25,10 +25,11 @@ import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockDateService, MockSessionService}
+import common.mocks.services.MockDateService
 import common.models.core.{CheckMode, NormalMode}
 import common.services.{DateService, DateServiceInterface}
 import AddIncomeSourceData.dateStartedField
+import businessDetails.mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentCaptor

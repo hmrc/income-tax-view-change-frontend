@@ -23,11 +23,11 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockDateService, MockSessionService}
+import common.mocks.services.MockDateService
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import common.services.{DateService, DateServiceInterface}
 import businessDetails.models.incomeSourceDetails.*
-import businessDetails.mocks.services.MockNextUpdatesService
+import businessDetails.mocks.services.{MockNextUpdatesService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import businessDetails.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any

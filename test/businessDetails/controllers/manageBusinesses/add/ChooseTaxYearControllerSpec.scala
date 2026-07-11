@@ -16,15 +16,16 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.mocks.services.MockIncomeSourceRFService
+import businessDetails.mocks.services.{MockIncomeSourceRFService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
 import businessDetails.services.SessionService
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
 import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockDateService, MockSessionService}
+import common.mocks.services.MockDateService
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateService, DateServiceInterface}
 import org.mockito.Mockito.mock
@@ -57,8 +58,8 @@ class ChooseTaxYearControllerSpec extends MockAuthActions with MockDateService w
   val displayList = List((true, true), (true, false), (false, true), (false, false))
 
   def setupMockIncomeSourceDetailsCall(incomeSourceType: IncomeSourceType): Unit = incomeSourceType match {
-    case UkProperty => mockUKPropertyIncomeSource()
-    case ForeignProperty => mockForeignPropertyIncomeSource()
+    case UkProperty => setupMockGetIncomeSourceDetails(ukPropertyIncome)
+    case ForeignProperty => setupMockGetIncomeSourceDetails(foreignPropertyIncome)
     case SelfEmployment => mockSingleBusinessIncomeSource()
   }
 

@@ -23,7 +23,6 @@ import common.auth.actions.AuthActionsTestData.{defaultIncomeSourcesData, getMtd
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.IncomeTaxCalculationConnector
 import common.enums.JourneyType.TriggeredMigrationJourney
-import common.mocks.services.MockSessionService
 import common.models.admin.{FeatureSwitchName, TriggeredMigration}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}
@@ -43,6 +42,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import businessDetails.mocks.services.MockSessionService
 import java.time.LocalDate
 import scala.concurrent.Future
 

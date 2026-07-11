@@ -19,7 +19,7 @@ package returns.models.audit
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.models.liabilitycalculation.{EndOfYearEstimate, IncomeSource}
-import common.testConstants.BaseTestConstants.{testMtditid, testNino}
+import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
 import play.api.libs.json.Json
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}

@@ -16,10 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService, MockSessionService}
+import common.mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import common.models.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.nodes.{Document, Element}

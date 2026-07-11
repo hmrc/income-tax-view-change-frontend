@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
@@ -26,7 +27,6 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, Self
 import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.models.core.NormalMode
 import common.services.DateServiceInterface
 import org.jsoup.Jsoup
@@ -92,7 +92,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
           "render the declare incomeSourceCeased page" in {
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-            mockBothPropertyBothBusiness()
+            setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
 
             setupMockCreateSession(true)
             setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
@@ -107,7 +107,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             "journey is complete" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
@@ -139,7 +139,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             "cease declaration is completed" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockSetSessionKeyMongo(Right(true))
 
               val journeyType = IncomeSourceJourneyType(Cease, incomeSourceType)
@@ -157,7 +157,7 @@ class DeclareIncomeSourceCeasedControllerSpec extends MockAuthActions with MockS
             "Exception received from Mongo" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockSetSessionKeyMongo(Left(new Exception))
               val result = action(fakeRequest.withFormUrlEncodedBody(validFormData.toSeq: _*))
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR

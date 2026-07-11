@@ -16,11 +16,11 @@
 
 package businessDetails.services.triggeredMigration
 
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.testConstants.PropertyDetailsTestConstants.ukPropertyDetails
 import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
-import common.mocks.services.MockSessionService
 import common.models.core.{CessationModel, IncomeSourceId}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.*

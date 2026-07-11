@@ -62,7 +62,7 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
           "render the not ceased page" in {
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(ukPropertyIncome)
-            mockUKPropertyIncomeSource()
+            setupMockGetIncomeSourceDetails(ukPropertyIncome)
 
             val result: Future[Result] = action(fakeRequest)
             val document: Document = Jsoup.parse(contentAsString(result))

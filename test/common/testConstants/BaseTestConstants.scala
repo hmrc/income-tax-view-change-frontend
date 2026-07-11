@@ -25,8 +25,10 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDeta
 import common.testUtils.UnitSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ServiceNavigationItem, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation
@@ -269,4 +271,18 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val twoActiveForeignPropertyIncomes = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, List(foreignPropertyDetails, foreignPropertyDetails2))
 
+  def commonAuditDetails(af: AffinityGroup, isSupportingAgent: Boolean = false): JsObject = {
+    val commonDetails = Json.obj(
+      "mtditid" -> testMtditid,
+      "nino" -> testNino,
+      "saUtr" -> testSaUtr,
+      "credId" -> testCredId,
+      "userType" -> af
+    )
+    if (af == Agent) commonDetails ++ Json.obj(
+      "isSupportingAgent" -> isSupportingAgent,
+      "agentReferenceNumber" -> testArn,
+    )
+    else commonDetails
+  }
 }

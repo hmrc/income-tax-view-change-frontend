@@ -16,7 +16,6 @@
 
 package financials.services
 
-import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.config.featureswitch.FeatureSwitching

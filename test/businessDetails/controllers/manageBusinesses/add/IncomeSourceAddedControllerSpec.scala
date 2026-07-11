@@ -18,7 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageBusinessRoutes
-import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.models.incomeSourceDetails.*
 import businessDetails.services.NextUpdatesService
@@ -41,7 +41,7 @@ import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProp
 import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockITSAStatusService, MockSessionService}
+import common.mocks.services.MockITSAStatusService
 import common.models.incomeSourceDetails.LatencyDetails
 import common.services.{DateService, DateServiceInterface}
 import businessDetails.mocks.services.MockNextUpdatesService

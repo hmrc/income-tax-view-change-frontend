@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.mocks.services
+package businessDetails.mocks.services
 
 import businessDetails.services.SessionService
 import common.enums.JourneyType.IncomeSourceJourneyType
