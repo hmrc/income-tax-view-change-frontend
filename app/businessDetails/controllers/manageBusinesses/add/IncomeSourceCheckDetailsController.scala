@@ -108,10 +108,10 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
           }
         case None =>
           val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
+          Logger("application").warn(agentPrefix +
             s"Unable to construct view model for $incomeSourceType")
-          Future.successful {
-            errorHandler.showInternalServerError()
+          sessionService.clearSession(sessionData.sessionId).flatMap { _ =>
+            journeyRestartUrl(isTriggeredMigration)(user)
           }
       }
     }.recover {
