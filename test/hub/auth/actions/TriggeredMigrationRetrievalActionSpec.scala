@@ -17,13 +17,13 @@
 package hub.auth.actions
 
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
+import businessDetails.mocks.services.MockSessionService
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.{defaultIncomeSourcesData, getMtdItUser}
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.IncomeTaxCalculationConnector
 import common.enums.JourneyType.TriggeredMigrationJourney
 import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed, HmrcUnconfirmed}
-import common.mocks.services.MockSessionService
 import common.models.admin.{BusinessDetailsFrontend, FeatureSwitchName, TriggeredMigration}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus.{Annual, DigitallyExempt, Dormant, Exempt, Mandated, NoStatus, Voluntary}

@@ -38,6 +38,7 @@ import returns.helpers.ObligationsStub
 import returns.models.audit.TaxYearSummaryResponseAuditModel
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
+import returns.helpers.FinancialDetailsStub
 import shared.models.audit.NextUpdatesResponseAuditModel
 import shared.testConstants.CalculationListIntegrationTestConstants
 

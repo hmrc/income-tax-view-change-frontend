@@ -19,7 +19,7 @@ package returns.testConstants
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import common.testConstants.BaseIntegrationTestConstants.*
 import financials.enums.ChargeType.ITSA_NI
-import financials.enums.CodingOutType.CODING_OUT_CLASS2_NICS
+import shared.enums.CodingOutType.CODING_OUT_CLASS2_NICS
 import play.api.libs.json.{JsValue, Json}
 
 object ReturnIntegrationTestConstants {

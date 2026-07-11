@@ -22,7 +22,7 @@ import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, PropertyDeta
 import common.services.DateServiceInterface
 import common.testConstants.BaseIntegrationTestConstants.*
 import financials.enums.ChargeType.{ITSA_NI, NIC4_SCOTLAND, NIC4_WALES}
-import financials.enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
+import shared.enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
 import financials.models.*
 import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import financials.testConstants.PaymentHistoryTestConstraints.oldBusiness1

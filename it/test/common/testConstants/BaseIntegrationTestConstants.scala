@@ -193,9 +193,7 @@ object BaseIntegrationTestConstants {
   val b1TradingName = "business"
   val b1AccountingEnd = LocalDate.of(startYear, 12, 31)
   val b1TradingStart = LocalDate.parse("2017-01-01")
-
-  val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
-
+  
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),
