@@ -18,7 +18,6 @@ package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import common.controllers.ControllerISpecHelper
-import common.enums.JourneyType.TriggeredMigrationJourney
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub}
 import common.models.admin.TriggeredMigration
@@ -30,6 +29,7 @@ import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessi
 import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.TriggeredMigrationJourney
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 

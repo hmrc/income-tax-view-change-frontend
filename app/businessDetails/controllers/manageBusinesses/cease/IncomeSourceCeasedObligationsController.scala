@@ -16,7 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -28,18 +28,18 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.models.incomeSourceDetails.viewmodels.IncomeSourceCeasedObligationsViewModel
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import common.models.core.IncomeSourceId
 import shared.enums.CannotGoBackPage
 import shared.models.UIJourneySessionData
 import common.models.admin.ObligationsFrontend
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthActions,
                                                         val itvcErrorHandler: ItvcErrorHandler,

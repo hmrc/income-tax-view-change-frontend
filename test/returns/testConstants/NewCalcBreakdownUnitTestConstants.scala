@@ -16,15 +16,13 @@
 
 package returns.testConstants
 
-import common.models.liabilitycalculation.{AllowancesAndDeductions, Calculation, ChargeableEventGainsIncome, DividendsIncome, EmploymentAndPensionsIncome, EmploymentExpenses, EndOfYearEstimate, ForeignIncome, ForeignTaxCreditRelief, GiftAid, GiftAidTaxReductionWhereBasicRateDiffers, IncomeSource, IncomeSummaryTotals, Inputs, LiabilityCalculationError, LiabilityCalculationResponse, MarriageAllowanceTransferOut, MarriageAllowanceTransferredIn, Message, Messages, Metadata, OtherIncome, OverseasIncomeAndGains, PensionSavingsTaxCharges, PersonalInformation, Reliefs, ReliefsClaimed, ResidentialFinanceCosts, SavingsAndGainsIncome, ShareSchemesIncome, StateBenefitsIncome, StudentLoan, TaxDeductedAtSource, TopSlicingRelief, TransitionProfit}
-import common.models.liabilitycalculation.taxcalculation.{BusinessAssetsDisposalsAndInvestorsRel, CapitalGainsTax, CgtTaxBands, Class2Nics, Class4Nics, Dividends, GainsOnLifePolicies, IncomeTax, LumpSums, Nic4Bands, Nics, OtherGains, PayPensionsProfit, ResidentialPropertyAndCarriedInterest, SavingsAndGains, TaxBands, TaxCalculation}
+import common.models.liabilitycalculation.taxcalculation.*
+import common.models.liabilitycalculation.*
 import returns.models.liabilitycalculation.viewmodels.{CapitalGainsTaxViewModel, TaxDeductedAtSourceViewModel, TaxDueSummaryViewModel}
 
 import java.time.{LocalDate, Month}
 
 object NewCalcBreakdownUnitTestConstants {
-
-  val liabilityCalculationModelError: LiabilityCalculationError = LiabilityCalculationError(432, "someerrorhere")
 
   def liabilityCalculationModelDeductionsMinimal(calculationReason: Option[String] = None): LiabilityCalculationResponse = LiabilityCalculationResponse(
     inputs = Inputs(personalInformation = PersonalInformation(

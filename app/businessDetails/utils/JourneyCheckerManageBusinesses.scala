@@ -24,11 +24,11 @@ import businessDetails.controllers.triggeredMigration.routes as triggeredMigrati
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.auth.MtdItUser
-import common.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import common.models.admin.IdempotencyKeyForCreateIncomeSource
 import play.api.Logger
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
+import shared.enums.JourneyType.{Add, Cease, IncomeSourceJourneyType, Manage}
 import shared.enums.{BeforeSubmissionPage, CannotGoBackPage, FreshInitialPage, InitialPage, JourneyState, ReportingFrequencyPages}
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent

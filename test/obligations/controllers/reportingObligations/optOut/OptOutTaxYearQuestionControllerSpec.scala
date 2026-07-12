@@ -36,6 +36,7 @@ import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 
 import scala.concurrent.Future
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 
 class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOutService {
 
@@ -70,9 +71,9 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
   private def reportingObligationsLink(isAgent: Boolean): Option[String] = {
     if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/reporting-frequency")
+      Some(reportingObligationsRoutes.ReportingFrequencyPageController.show(true).url)
     } else {
-      Some("/report-quarterly/income-and-expenses/view/reporting-frequency")
+      Some(reportingObligationsRoutes.ReportingFrequencyPageController.show(false).url)
     }
   }
 

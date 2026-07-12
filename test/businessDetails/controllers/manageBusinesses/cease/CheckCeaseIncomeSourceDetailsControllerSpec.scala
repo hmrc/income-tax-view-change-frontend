@@ -18,16 +18,15 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationCeased
 import businessDetails.mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import businessDetails.services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import common.enums.TriggeredMigration.TriggeredMigrationCeased
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import common.models.core.IncomeSourceId
 import common.services.DateServiceInterface
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -40,6 +39,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import common.testConstants.BaseTestConstants.testMtditid
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 import java.time.LocalDate
 import scala.concurrent.Future

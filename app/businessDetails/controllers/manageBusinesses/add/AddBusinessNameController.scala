@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
@@ -26,13 +27,12 @@ import businessDetails.views.html.manageBusinesses.add.AddBusinessNameView
 import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.core.{Mode, NormalMode}
 import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.enums.{FreshInitialPage, InitialPage}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 

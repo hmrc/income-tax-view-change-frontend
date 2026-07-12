@@ -26,17 +26,17 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import scala.concurrent.Future
 

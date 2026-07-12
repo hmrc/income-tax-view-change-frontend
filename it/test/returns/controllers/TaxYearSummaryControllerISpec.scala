@@ -29,7 +29,6 @@ import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import returns.testConstants.NewCalcBreakdownItTestConstants.*
 import returns.testConstants.messages.TaxYearSummaryMessages.*
 import returns.testConstants.ReturnIntegrationTestConstants.*
-import financials.controllers.routes as financialsRoutes
 import returns.models.*
 import org.jsoup.Jsoup
 import play.api.http.Status.*
@@ -684,10 +683,11 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   val document = Jsoup.parse(res.body)
 
+                  //ToDo update when FinancialsFrontend is enabled
                   def getChargeSummaryUrl(id: String) = if (mtdUserRole == MTDIndividual) {
-                    financialsRoutes.ChargeSummaryController.show(testYear2023, id).url
+                    appConfig.financialsChargeSummaryIndividualUrl(testYear2023, id, false, None, false)
                   } else {
-                    financialsRoutes.ChargeSummaryController.showAgent(testYear2023, id).url
+                    appConfig.financialsChargeSummaryAgentUrl(testYear2023, id, false, false)
                   }
 
                   document.getElementById("paymentTypeLink-0").attr("href") shouldBe getChargeSummaryUrl("1040000123")

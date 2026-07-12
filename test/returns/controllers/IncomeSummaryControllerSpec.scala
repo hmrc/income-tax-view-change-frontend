@@ -26,8 +26,8 @@ import play.api.http.Status
 import play.api.test.Helpers._
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome2018and2019
-import financials.mocks.services.MockCalculationService
-import financials.mocks.views.agent.MockIncomeSummary
+import returns.mocks.services.MockCalculationService
+import returns.mocks.views.agent.MockIncomeSummary
 import returns.services.CalculationService
 
 class IncomeSummaryControllerSpec extends MockAuthActions

@@ -107,11 +107,7 @@ class GetFinancialDetailsConnectorSpec extends BaseConnectorSpec {
         when(mockRequestBuilder.execute(any[HttpReads[HttpResponse]], any()))
           .thenReturn(Future(successResponse))
 
-        println(testValidFinancialDetailsModelJsonReads)
-        println(testValidFinancialDetailsModel)
-
         val result: Future[FinancialDetailsResponseModel] = connector.getFinancialDetails(testYear2017, testNino)
-        println(result.futureValue)
         result.futureValue shouldBe testValidFinancialDetailsModel
       }
 

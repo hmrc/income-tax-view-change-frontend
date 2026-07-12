@@ -16,14 +16,14 @@
 
 package businessDetails.services.triggeredMigration
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationState
 import businessDetails.models.triggeredMigration.TriggeredMigrationSessionData
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.services.SessionService
 import com.google.inject.Inject
-import common.enums.JourneyType.TriggeredMigrationJourney
-import common.enums.TriggeredMigration.TriggeredMigrationState
-import common.models.core.IncomeSourceId
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import shared.enums.JourneyType.TriggeredMigrationJourney
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.http.HeaderCarrier
 

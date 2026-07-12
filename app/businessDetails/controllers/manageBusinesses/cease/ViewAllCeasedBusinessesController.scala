@@ -30,9 +30,9 @@ import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.enums.JourneyType.Manage
 import common.models.admin.DisplayBusinessStartDate
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import shared.enums.JourneyType.Manage
 
 @Singleton
 class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: ViewAllCeasedBusinessesView,

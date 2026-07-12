@@ -25,7 +25,7 @@ import play.api.Application
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.agentAuthRetrievalSuccess
-import financials.mocks.views.agent.MockUTRError
+import hub.mocks.views.agent.MockUTRError
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import hub.views.html.agent.errorPages.UTRErrorView
 

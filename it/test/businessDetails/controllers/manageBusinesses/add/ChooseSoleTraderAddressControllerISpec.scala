@@ -16,9 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.models.admin.OverseasBusinessAddress
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

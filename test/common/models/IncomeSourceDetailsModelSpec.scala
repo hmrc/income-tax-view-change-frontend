@@ -16,14 +16,14 @@
 
 package common.models
 
+import businessDetails.core.{IncomeSourceId, IncomeSourceIdHash}
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import common.testConstants.BusinessDetailsTestConstants.*
 import common.auth.MtdItUser
-import common.enums.IncomeSourceJourney.SelfEmployment
 import common.exceptions.{MultipleIncomeSourcesFound, NoIncomeSourceFound}
 import common.mocks.services.MockDateService
-import common.models.core.IncomeSourceId.mkIncomeSourceId
-import common.models.core.IncomeSourceIdHash.mkFromQueryString
-import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceIdHash.mkFromQueryString
 import common.models.incomeSourceDetails.{BusinessDetailsModel, ChooseSoleTraderAddressUserAnswer, IncomeSourceDetailsModel, PropertyDetailsModel}
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.*

@@ -20,8 +20,6 @@ import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckF
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
@@ -29,6 +27,7 @@ import common.mocks.services.MockDateService
 import common.models.core.{CheckMode, NormalMode}
 import common.services.{DateService, DateServiceInterface}
 import AddIncomeSourceData.dateStartedField
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockSessionService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -43,6 +42,7 @@ import play.api.http.Status.OK
 import play.api.test.Helpers.*
 import common.testConstants.BaseTestConstants.testSessionId
 import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

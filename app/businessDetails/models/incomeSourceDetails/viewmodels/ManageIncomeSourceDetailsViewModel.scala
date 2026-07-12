@@ -16,11 +16,12 @@
 
 package businessDetails.models.incomeSourceDetails.viewmodels
 
-import common.enums.IncomeSourceJourney.IncomeSourceType
 import common.models.itsaStatus.ITSAStatus
 import businessDetails.models.incomeSourceDetails.*
 import ITSAStatus.ITSAStatus
-import common.models.core.{AddressModel, IncomeSourceId}
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
+import common.models.core.AddressModel
 import common.models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, QuarterReportingType}
 
 import java.time.LocalDate

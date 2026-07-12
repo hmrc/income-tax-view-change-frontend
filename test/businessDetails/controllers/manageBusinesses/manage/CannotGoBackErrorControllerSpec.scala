@@ -16,11 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
@@ -30,6 +29,7 @@ import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
 import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 

@@ -18,11 +18,12 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.forms.manageBusinesses.cease.DeclareIncomeSourceCeasedForm
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -32,10 +33,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.cease.DeclareIncomeSourceCeasedView
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.models.core.{Mode, NormalMode}
 import shared.enums.InitialPage
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

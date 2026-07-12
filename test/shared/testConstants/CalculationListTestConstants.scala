@@ -39,22 +39,7 @@ object CalculationListTestConstants {
       crystallised = Some(false)
     )
   }
-
-  val calculationListNone: CalculationListResponseModel = {
-    CalculationListModel(
-      crystallised = None
-    )
-  }
-
-  val jsonResponseMin: JsValue = Json.parse(
-    """
-      |{
-      |   "calculationId":"c432a56d-e811-474c-a26a-76fc3bcaefe5",
-      |   "calculationTimestamp":"2023-10-31T12:55:51.159Z",
-      |   "calculationType":"finalDeclaration"
-      |}
-      |""".stripMargin)
-
+  
   val calculationListMin: CalculationListResponseModel = {
     CalculationListModel(
       crystallised = None

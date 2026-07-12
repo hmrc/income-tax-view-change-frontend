@@ -18,7 +18,6 @@ package obligations.controllers.reportingObligations.signUp
 
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
@@ -43,6 +42,7 @@ import shared.testConstants.CalculationListIntegrationTestConstants
 
 import scala.concurrent.Future
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Opt, SignUpJourney}
 
 class SignUpTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 

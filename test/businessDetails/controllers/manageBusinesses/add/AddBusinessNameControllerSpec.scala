@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
@@ -24,8 +25,6 @@ import businessDetails.models.incomeSourceDetails.AddIncomeSourceData.{businessN
 import businessDetails.services.SessionService
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.models.core.{CheckMode, Mode, NormalMode}
@@ -39,6 +38,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.mvc.Result
 import play.api.test.Helpers.*
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 
 import scala.concurrent.Future
 

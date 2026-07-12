@@ -16,12 +16,13 @@
 
 package businessDetails.services.triggeredMigration
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.testConstants.PropertyDetailsTestConstants.ukPropertyDetails
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
-import common.models.core.{CessationModel, IncomeSourceId}
+import common.models.core.CessationModel
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport

@@ -18,10 +18,10 @@ package businessDetails.views.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceDetailsView
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.BusinessDetailsTestConstants.{testBizAddress, testEndDate}
 import common.testUtils.TestSupport

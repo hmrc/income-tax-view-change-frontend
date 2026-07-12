@@ -17,7 +17,7 @@
 package obligations.services.reportingObligations.optOut
 
 import common.auth.MtdItUser
-import common.mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, StatusDetail, StatusReason}
 import common.testUtils.UnitSpec
@@ -31,6 +31,7 @@ import obligations.services.reportingObligations.optOut
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.BeforeAndAfter
+import shared.mocks.services.MockCalculationListService
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 import scala.concurrent.ExecutionContext.Implicits.global

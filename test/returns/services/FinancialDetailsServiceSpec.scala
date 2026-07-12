@@ -21,9 +21,10 @@ import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
-import returns.mocks.connectors.{MockCalculationListConnector, MockFinancialDetailsConnector}
+import returns.mocks.connectors.MockFinancialDetailsConnector
 import returns.models.*
 import returns.testConstants.FinancialDetailsTestConstants.*
+import shared.mocks.connectors.MockCalculationListConnector
 import shared.models.calculationList.{CalculationListModel, CalculationListResponseModel}
 
 import java.time.LocalDate

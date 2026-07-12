@@ -16,6 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.enums.ReportingMethod
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import businessDetails.models.incomeSourceDetails.{LatencyYear, ManageIncomeSourceData}
@@ -31,11 +33,9 @@ import businessDetails.views.html.manageBusinesses.manage.ConfirmReportingMethod
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import common.models.core.IncomeSourceId
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateService}
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import shared.enums.{AfterSubmissionPage, BeforeSubmissionPage}
 import shared.models.UIJourneySessionData
 

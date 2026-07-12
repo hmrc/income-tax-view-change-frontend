@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.models.incomeSourceDetails.*
@@ -37,14 +38,13 @@ import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligati
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockITSAStatusService
 import common.models.incomeSourceDetails.LatencyDetails
 import common.services.{DateService, DateServiceInterface}
 import businessDetails.mocks.services.MockNextUpdatesService
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

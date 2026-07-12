@@ -16,9 +16,9 @@
 
 package businessDetails.views.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.BusinessDetailsTestConstants.*
 import common.testUtils.TestSupport

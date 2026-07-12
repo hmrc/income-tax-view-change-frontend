@@ -17,8 +17,7 @@
 package obligations.repositories
 
 import common.auth.MtdItUser
-import common.enums.JourneyType.OptOutJourney
-import common.mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.*
 import common.testUtils.UnitSpec
@@ -32,6 +31,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest, Succeeded}
+import shared.enums.JourneyType.OptOutJourney
+import shared.mocks.services.MockCalculationListService
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

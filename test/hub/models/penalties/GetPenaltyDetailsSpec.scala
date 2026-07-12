@@ -17,7 +17,7 @@
 package hub.models.penalties
 
 import common.testUtils.TestSupport
-import financials.testConstants.PenaltiesTestConstants.getPenaltyDetails
+import hub.testConstants.PenaltiesTestConstants.getPenaltyDetails
 import hub.models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed}
 import play.api.http.Status
 import play.api.http.Status.{IM_A_TEAPOT, INTERNAL_SERVER_ERROR}

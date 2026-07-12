@@ -25,8 +25,8 @@ import play.twirl.api.HtmlFormat
 import businessDetails.views.html.manageBusinesses.add.AddBusinessNameView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
-import common.enums.IncomeSourceJourney.SelfEmployment
 import common.models.core.{CheckMode, NormalMode}
 import common.testUtils.ViewSpec
 

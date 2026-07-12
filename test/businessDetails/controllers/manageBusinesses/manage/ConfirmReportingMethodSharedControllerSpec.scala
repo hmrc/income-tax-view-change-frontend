@@ -19,9 +19,10 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
-import common.enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
-import common.enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
-import common.enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
+import businessDetails.enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
+import businessDetails.enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
@@ -32,13 +33,12 @@ import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
 import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.services.{DateService, DateServiceInterface}
 import common.mocks.services.MockDateService
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import scala.concurrent.Future
 

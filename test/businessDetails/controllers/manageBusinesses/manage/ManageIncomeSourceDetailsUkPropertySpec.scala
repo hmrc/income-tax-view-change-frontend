@@ -16,9 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.UkProperty
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
-import common.enums.IncomeSourceJourney.UkProperty
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.models.admin.*
 import common.models.incomeSourceDetails.TaxYear
@@ -29,6 +28,7 @@ import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.test.Helpers.*
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import scala.concurrent.Future
 

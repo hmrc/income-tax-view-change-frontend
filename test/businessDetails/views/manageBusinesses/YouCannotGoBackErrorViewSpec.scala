@@ -17,15 +17,15 @@
 package businessDetails.views.manageBusinesses
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import businessDetails.views.html.manageBusinesses.YouCannotGoBackErrorView
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType, Manage}
 import common.testUtils.TestSupport
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType, Manage}
 
 class YouCannotGoBackErrorViewSpec extends TestSupport {
   

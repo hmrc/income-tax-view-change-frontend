@@ -18,7 +18,6 @@ package obligations.controllers.reportingObligations.optOut
 
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
-import common.enums.JourneyType.{Opt, OptOutJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub}
@@ -43,6 +42,7 @@ import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusines
 
 import shared.testConstants.CalculationListIntegrationTestConstants
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Opt, OptOutJourney}
 
 class OptOutTaxYearQuestionControllerISpec extends ControllerISpecHelper {
 

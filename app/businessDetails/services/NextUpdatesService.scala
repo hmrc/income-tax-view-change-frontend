@@ -18,7 +18,7 @@ package businessDetails.services
 
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import common.auth.MtdItUser
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import common.services.DateServiceInterface
 import businessDetails.models.incomeSourceDetails.viewmodels.*
 import common.models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}

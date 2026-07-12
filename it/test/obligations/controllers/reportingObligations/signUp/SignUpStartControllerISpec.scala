@@ -17,7 +17,6 @@
 package obligations.controllers.reportingObligations.signUp
 
 import common.controllers.ControllerISpecHelper
-import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.MTDIndividual
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.SignUpFs
@@ -32,6 +31,7 @@ import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.*
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Opt, SignUpJourney}
 
 class SignUpStartControllerISpec extends ControllerISpecHelper {
 

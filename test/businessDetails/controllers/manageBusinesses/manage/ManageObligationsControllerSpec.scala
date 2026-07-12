@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.{MockNextUpdatesService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.*
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
@@ -25,8 +26,6 @@ import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quart
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import businessDetails.utils.IncomeSourcesUtils
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockClientDetailsService, MockDateService}
@@ -40,6 +39,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import java.time.LocalDate
 import scala.concurrent.Future

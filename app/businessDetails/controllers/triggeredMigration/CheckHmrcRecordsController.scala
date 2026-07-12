@@ -17,6 +17,7 @@
 package businessDetails.controllers.triggeredMigration
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationState
 import businessDetails.models.audit.TriggeredMigrationStartAuditModel
 import businessDetails.services.SessionService
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
@@ -27,7 +28,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckHmrcRecordsView
 import common.config.FrontendAppConfig
-import common.enums.TriggeredMigration.TriggeredMigrationState
 import common.services.AuditingService
 
 import scala.concurrent.{ExecutionContext, Future}

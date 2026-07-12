@@ -17,7 +17,6 @@
 package obligations.controllers.reportingObligations.signUp
 
 import common.controllers.ControllerISpecHelper
-import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.SignUpFs
 import common.models.itsaStatus.ITSAStatus
@@ -33,6 +32,7 @@ import shared.repositories.UIJourneySessionDataRepository
 
 import scala.concurrent.Future
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Opt, SignUpJourney}
 
 class SignUpCompletedControllerISpec extends ControllerISpecHelper {
 

@@ -20,14 +20,15 @@ import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockCalculationListService, MockDateService, MockITSAStatusService}
+import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.mockito.Mockito.mock
 import play.api
 import common.testConstants.BaseTestConstants.testSelfEmploymentId
+import shared.mocks.services.MockCalculationListService
 import shared.services.CalculationListService
 
 trait ManageIncomeSourceDetailsHelper

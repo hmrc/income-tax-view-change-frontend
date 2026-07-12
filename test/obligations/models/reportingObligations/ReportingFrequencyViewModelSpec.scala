@@ -24,6 +24,8 @@ import common.testUtils.{TestSupport, UnitSpec}
 import obligations.services.reportingObligations.optOut.{OptOutProposition, OptOutTestSupport}
 import org.mockito.Mockito.mock
 import org.scalatest.Assertion
+import obligations.controllers.reportingObligations.optOut.routes as optOutRoutes
+import obligations.controllers.reportingObligations.signUp.routes as signUpRoutes
 
 class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with TestSupport {
 
@@ -298,7 +300,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
               isBusinessDetailsEnabled = true
             )(mockDateServiceInjected)
 
-            model.getOptOutSignUpLink(currentTaxYear, "optOut.previousYear.single") shouldBe "/report-quarterly/income-and-expenses/view/optout?taxYear=2025"
+            model.getOptOutSignUpLink(currentTaxYear, "optOut.previousYear.single") shouldBe optOutRoutes.OptOutTaxYearQuestionController.show(false, Some("2025")).url
           }
         }
         "return the sign up link" when {
@@ -319,7 +321,7 @@ class ReportingFrequencyViewModelSpec extends UnitSpec with MockDateService with
               isBusinessDetailsEnabled = true
             )(mockDateServiceInjected)
 
-            model.getOptOutSignUpLink(currentTaxYear, "signUp.currentYear") shouldBe "/report-quarterly/income-and-expenses/view/sign-up/start?taxYear=2025"
+            model.getOptOutSignUpLink(currentTaxYear, "signUp.currentYear") shouldBe signUpRoutes.SignUpStartController.show(false, Some("2025")).url
           }
         }
       }

@@ -17,10 +17,10 @@
 package hub.controllers
 
 import hub.auth.AuthActionsWithTriggeredMigrationCheck
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.enums.MTDSupportingAgent
 import common.mocks.services.admin.MockFeatureSwitchService
+import common.models.admin.BusinessDetailsFrontend
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
@@ -285,7 +285,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
 
       "render the home page with the Your Businesses tile with link" when {
         "using the manage businesses journey" in new Setup {
-          setupMockAgentWithClientAuth(isSupportingAgent)
+          setupMockSuccess(MTDSupportingAgent, enabledFeatures = List(BusinessDetailsFrontend))
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
           setupMockGetStatusTillAvailableFutureYears(staticTaxYear)(Future.successful(Map(staticTaxYear -> baseStatusDetail)))
@@ -296,7 +296,7 @@ class HomeControllerSupportingAgentSpec extends HomeControllerHelperSpec with In
           document.title shouldBe homePageTitle
           document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
           document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.newJourney.view")
-          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe appConfig.businessDetailsManageBusinessesAgentUrl(true)
         }
       }
 

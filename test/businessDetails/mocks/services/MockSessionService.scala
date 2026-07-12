@@ -17,12 +17,12 @@
 package businessDetails.mocks.services
 
 import businessDetails.services.SessionService
-import common.enums.JourneyType.IncomeSourceJourneyType
 import common.testUtils.UnitSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.*
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
+import shared.enums.JourneyType.IncomeSourceJourneyType
 import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future

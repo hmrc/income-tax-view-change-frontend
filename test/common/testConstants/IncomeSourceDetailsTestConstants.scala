@@ -16,7 +16,6 @@
 
 package common.testConstants
 
-import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.models.core.AddressModel
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
 import common.testConstants.BaseTestConstants.*
@@ -27,9 +26,7 @@ import java.time.LocalDate
 object IncomeSourceDetailsTestConstants {
 
   val singleBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1), Nil)
-  val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)
   val singleBusinessIncomeNoYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, None, List(business1), Nil)
-  val singleBusinessIncomeUnconfirmed = singleBusinessIncomeNoYearOfMigration.copy(channel = HmrcUnconfirmed.getValue)
   val dualBusinessIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1, business1), Nil)
   val singleBusinessIncomeNoLatency = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(business1NoLatency), Nil)
   val singleBusinessIncomeWithLatency2019 = IncomeSourceDetailsModel(testNino, testMtditid, Some("2017"), List(businessWithLatency2019), Nil)

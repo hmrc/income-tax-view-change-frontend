@@ -17,11 +17,11 @@
 package financials.mocks.views
 
 import financials.models.chargeSummary.ChargeSummaryViewModel
+import financials.views.html.ChargeSummaryView
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, when}
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import play.twirl.api.Html
-import financials.views.html.ChargeSummaryView
 
 trait MockChargeSummary extends BeforeAndAfterEach {
   self: Suite =>

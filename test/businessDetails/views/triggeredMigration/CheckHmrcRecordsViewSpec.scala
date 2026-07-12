@@ -16,11 +16,11 @@
 
 package businessDetails.views.triggeredMigration
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased, TriggeredMigrationState}
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.views.html.triggeredMigration.CheckHmrcRecordsView
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased, TriggeredMigrationState}
-import common.models.core.IncomeSourceId
 import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}

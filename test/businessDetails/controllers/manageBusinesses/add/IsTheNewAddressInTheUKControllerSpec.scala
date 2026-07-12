@@ -17,13 +17,12 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.mocks.auth.MockAuthActions
 import common.models.admin.OverseasBusinessAddress
@@ -41,6 +40,7 @@ import play.api.Application
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.mvc.{Action, AnyContent}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future

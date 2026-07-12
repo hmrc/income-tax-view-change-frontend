@@ -35,8 +35,8 @@ import play.api.Application
 import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.testConstants.BaseTestConstants.{testArn, testCredId, testMtditid, testNino, testSaUtr}
-import financials.mocks.views.agent.MockConfirmClient
 import hub.connectors.PostSessionDataConnector
+import hub.mocks.views.agent.MockConfirmClient
 import uk.gov.hmrc.auth.core.{BearerTokenExpired, InsufficientEnrolments}
 import hub.views.html.agent.ConfirmClientUTRView
 

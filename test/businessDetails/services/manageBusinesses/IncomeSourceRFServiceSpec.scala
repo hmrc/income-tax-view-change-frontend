@@ -18,9 +18,7 @@ package businessDetails.services.manageBusinesses
 
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.actions.AuthActionsSpecHelper
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.mocks.services.{MockCalculationListService, MockITSAStatusService}
+import common.mocks.services.MockITSAStatusService
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
 import common.models.itsaStatus.ITSAStatus.{Annual, Exempt, ITSAStatus, Mandated, NoStatus}
@@ -39,7 +37,10 @@ import shared.models.UIJourneySessionData
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 import uk.gov.hmrc.http.HeaderCarrier
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.mocks.services.MockSessionService
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
+import shared.mocks.services.MockCalculationListService
 
 import java.time.LocalDate
 import scala.concurrent.Future

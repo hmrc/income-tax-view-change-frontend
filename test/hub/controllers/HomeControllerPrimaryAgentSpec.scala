@@ -17,7 +17,6 @@
 package hub.controllers
 
 import hub.auth.AuthActionsWithTriggeredMigrationCheck
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes
 import common.enums.MTDPrimaryAgent
@@ -102,7 +101,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
     mockItsaStatusRetrievalAction()
     when(mockDateServiceInjected.getCurrentDate) thenReturn fixedDate
     when(mockDateServiceInjected.getCurrentTaxYearEnd) thenReturn fixedDate.getYear + 1
-    setupMockAgentWithClientAuth(false)
+    setupMockSuccess(MTDPrimaryAgent, enabledFeatures = List(BusinessDetailsFrontend))
     mockGetNextDueDates((None, None))
 
     val homePageTitle = s"${messages("htmlTitle.agent", messages("home.agent.heading"))}"
@@ -615,7 +614,7 @@ class HomeControllerPrimaryAgentSpec extends HomeControllerHelperSpec with Injec
           document.title shouldBe homePageTitle
           document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
           document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.newJourney.view")
-          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
+          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe appConfig.businessDetailsManageBusinessesAgentUrl(true)
         }
       }
 

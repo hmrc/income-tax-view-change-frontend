@@ -19,7 +19,7 @@ package hub.services
 import common.models.itsaStatus.ITSAStatus
 import common.testConstants.BaseTestConstants
 import common.testUtils.TestSupport
-import financials.testConstants.PenaltiesTestConstants.getPenaltyDetails
+import hub.testConstants.PenaltiesTestConstants.getPenaltyDetails
 import hub.mocks.connectors.MockPenaltyDetailsConnector
 import hub.models.penalties.GetPenaltyDetailsParser.{GetPenaltyDetailsFailureResponse, GetPenaltyDetailsMalformed, GetPenaltyDetailsSuccessResponse}
 import hub.models.penalties.{GetPenaltyDetails, Totalisations}

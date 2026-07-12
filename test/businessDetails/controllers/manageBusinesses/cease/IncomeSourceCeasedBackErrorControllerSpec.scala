@@ -16,11 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.singleUKPropertyIncome2024
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface

@@ -16,7 +16,7 @@
 
 package businessDetails.models.incomeSourceDetails.viewmodels
 
-import common.enums.IncomeSourceJourney.IncomeSourceType
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 
 case class ReportingFrequencyCheckDetailsViewModel(incomeSourceType: IncomeSourceType,
                                                    changeReportingFrequency: Boolean,

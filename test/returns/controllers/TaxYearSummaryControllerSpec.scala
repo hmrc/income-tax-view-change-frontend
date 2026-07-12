@@ -26,8 +26,6 @@ import common.models.liabilitycalculation.{IsMTD, LiabilityCalculationError, Mes
 import common.models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
-import financials.controllers.routes as financialsRoutes
-import financials.mocks.services.MockCalculationService
 import returns.models.*
 import returns.testConstants.ChargeConstants
 import returns.testConstants.FinancialDetailsTestConstants.*
@@ -40,7 +38,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, *}
 import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
-import returns.mocks.services.{MockFinancialDetailsService, MockNextUpdatesService}
+import returns.mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import returns.services.{CalculationService, FinancialDetailsService, NextUpdatesService, TaxYearSummaryService}
@@ -494,10 +492,11 @@ class TaxYearSummaryControllerSpec
 
                 val result = action(fakeRequest)
 
+                //ToDo this will need updating when FinacialsFrontend feature switch is built
                 def chargeSummaryUrl(id: String) = if (isAgent) {
-                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id).url
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, false, false)
                 } else {
-                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id).url
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, false, None, false)
                 }
 
                 status(result) shouldBe OK
@@ -527,10 +526,11 @@ class TaxYearSummaryControllerSpec
 
                 val result = action(fakeRequest)
 
+                //ToDo this will need updating when FinacialsFrontend feature switch is built
                 def chargeSummaryUrl(id: String, isInterestCharge: Boolean = false) = if (isAgent) {
-                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id, isInterestCharge).url
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, isInterestCharge, false)
                 } else {
-                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id, isInterestCharge).url
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, isInterestCharge, None, false)
                 }
 
                 status(result) shouldBe OK
@@ -565,10 +565,11 @@ class TaxYearSummaryControllerSpec
 
                 val result = action(fakeRequest)
 
+                //ToDo this will need updating when FinacialsFrontend feature switch is built
                 def chargeSummaryUrl(id: String) = if (isAgent) {
-                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id).url
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, false, false)
                 } else {
-                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id).url
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, false, None, false)
                 }
 
                 status(result) shouldBe OK

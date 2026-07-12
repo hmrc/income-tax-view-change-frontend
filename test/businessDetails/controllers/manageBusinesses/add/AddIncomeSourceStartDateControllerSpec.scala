@@ -28,18 +28,18 @@ import common.testConstants.IncomeSourceDetailsTestConstants.noIncomeDetails
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.models.core.{CheckMode, Mode, NormalMode}
 import common.services.DateServiceInterface
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 

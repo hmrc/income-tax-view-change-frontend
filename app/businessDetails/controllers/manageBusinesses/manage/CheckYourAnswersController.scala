@@ -16,6 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.enums.{AnnualReportingMethod, QuarterlyReportingMethod, ReportingMethod}
 import businessDetails.models.audit.ManageIncomeSourceCheckYourAnswersAuditModel
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
@@ -31,13 +33,11 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.manage.CheckYourAnswersView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.exceptions.MissingSessionKey
-import common.models.core.IncomeSourceId
 import common.models.incomeSourceDetails.TaxYear
 import common.services.AuditingService
 import shared.enums.BeforeSubmissionPage
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

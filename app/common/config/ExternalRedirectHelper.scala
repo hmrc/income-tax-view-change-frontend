@@ -41,7 +41,7 @@ trait ExternalRedirectHelper {
   
   lazy val individualHomeUrl: String =
     hubRoutes.HomeController.show().url
-    //hubBaseUrl
+    //origin.fold(hubBaseUrl)(o =>s"$hubBaseUrl?origin=$o")
 
   lazy val individualHomeUrlWithOrigin: Option[String] => String = origin =>
       hubRoutes.HomeController.show(origin).url

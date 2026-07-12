@@ -24,7 +24,6 @@ import common.models.admin.{MortgageEvidence, NewHomePage}
 import common.models.itsaStatus.ITSAStatusResponseModel
 import common.models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
-import financials.mocks.services.MockCalculationService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -34,6 +33,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import hub.views.html.partials.newHome.overview.ProofOfYourIncomeView
+import returns.mocks.services.MockCalculationService
 import returns.services.CalculationService
 
 import java.time.LocalDate

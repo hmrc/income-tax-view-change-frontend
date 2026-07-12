@@ -18,8 +18,7 @@ package common.testConstants
 
 import common.auth.{AgentClientDetails, AuthUserDetails}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.models.core.IncomeSourceId.mkIncomeSourceId
-import common.models.core.{AccountingPeriodModel, AddressModel, IncomeSourceId}
+import common.models.core.{AccountingPeriodModel, AddressModel}
 import common.utils.sessionUtils.SessionKeys
 import common.models.incomeSourceDetails.*
 import play.api.http.Status
@@ -84,10 +83,8 @@ object BaseIntegrationTestConstants {
 
   val testSelfEmploymentId = "ABC123456789"
   val testIncomeSource = "Fruit Ltd"
-  val testSelfEmploymentIdHashed: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
   val otherTestSelfEmploymentId = "ABC123456780"
   val testPropertyIncomeId = "1234"
-  val testPropertyIncomeIdHashed: String = mkIncomeSourceId(testPropertyIncomeId).toHash.hash
   val otherTestPropertyIncomeId = "ABC123456789"
   val testEndDate2022: String = "2022-10-10"
 

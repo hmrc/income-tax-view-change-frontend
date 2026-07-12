@@ -16,6 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.models.audit.IncomeSourceReportingMethodAuditModel
 import businessDetails.models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponse, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
@@ -29,11 +31,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.enums.IncomeSourceJourney.IncomeSourceType
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.core.{IncomeSourceId, NormalMode}
+import common.models.core.NormalMode
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.services.{AuditingService, DateServiceInterface}
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.enums.{AfterSubmissionPage, ReportingFrequencyPages}
 
 import javax.inject.Inject

@@ -16,18 +16,18 @@
 
 package businessDetails.testConstants
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.*
 import businessDetails.models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import businessDetails.models.updateIncomeSource.*
 import businessDetails.testConstants.PropertyDetailsTestConstants.*
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.core.IncomeSourceId
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.BusinessDetailsTestConstants.*
 import play.api.libs.json.{JsValue, Json}
 import play.mvc.Http.Status
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.http.HttpResponse
 

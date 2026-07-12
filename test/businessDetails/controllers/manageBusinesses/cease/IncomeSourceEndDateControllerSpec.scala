@@ -18,18 +18,17 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.core.*
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import common.services.{DateService, DateServiceInterface}
 import common.testConstants.BaseTestConstants.*
 import org.jsoup.Jsoup
@@ -41,6 +40,7 @@ import play.api.http.Status
 import play.api.http.Status.*
 import play.api.mvc.*
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -16,6 +16,7 @@
 
 package businessDetails.services
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockNextUpdatesService
 import businessDetails.models.incomeSourceDetails.viewmodels.*
 import businessDetails.testConstants.PropertyDetailsTestConstants.*
@@ -23,11 +24,10 @@ import businessDetails.testConstants.UpdateBusinessDetailsTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.auth.actions.AuthActionsTestData.defaultMTDITUser
 import common.auth.{AuthorisedAndEnrolledRequest, MtdItUser}
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.mocks.services.config.MockAppConfig
 import common.mocks.services.{MockAsyncCacheApi, MockAuditingService}
 import common.models.admin.{DisplayBusinessStartDate, FeatureSwitch}
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport

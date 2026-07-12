@@ -17,10 +17,10 @@
 package businessDetails.models.audit
 
 import businessDetails.enums.FailureCategory.ApiFailure
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckPropertyViewModel}
 import common.enums.AuditType.CreateIncomeSource
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole, TransactionName}
 import play.api.libs.json.{JsObject, Json}
 import common.testConstants.BaseTestConstants.*

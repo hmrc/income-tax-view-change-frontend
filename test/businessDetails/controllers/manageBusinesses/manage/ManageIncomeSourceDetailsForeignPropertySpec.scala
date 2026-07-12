@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import common.enums.IncomeSourceJourney.ForeignProperty
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import businessDetails.enums.IncomeSourceJourney.ForeignProperty
 import common.enums.MTDIndividual
 import common.models.admin.DisplayBusinessStartDate
 import common.models.incomeSourceDetails.TaxYear
@@ -29,6 +28,7 @@ import play.api.test.Helpers.*
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import scala.concurrent.Future
 

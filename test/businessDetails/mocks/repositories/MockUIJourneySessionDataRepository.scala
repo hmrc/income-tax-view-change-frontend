@@ -18,7 +18,6 @@ package businessDetails.mocks.repositories
 
 import businessDetails.repositories.SensitiveUIJourneySessionDataRepository
 import common.config.FrontendAppConfig
-import common.enums.JourneyType.Operation
 import common.testUtils.UnitSpec
 import org.bson.BsonValue
 import org.mockito.ArgumentMatchers
@@ -26,6 +25,7 @@ import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito._
 import org.mongodb.scala.result.UpdateResult
 import org.scalatest.BeforeAndAfterEach
+import shared.enums.JourneyType.Operation
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 

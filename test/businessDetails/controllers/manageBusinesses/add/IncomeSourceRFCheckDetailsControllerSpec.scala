@@ -16,13 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.{MockIncomeSourceRFService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseError
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService

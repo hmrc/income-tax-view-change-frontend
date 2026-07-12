@@ -37,6 +37,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 
 import scala.concurrent.Future
 
@@ -62,9 +63,9 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
 
   private def reportingObligationsLink(isAgent: Boolean): Option[String] = {
     if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/reporting-frequency")
+      Some(reportingObligationsRoutes.ReportingFrequencyPageController.show(true).url)
     } else {
-      Some("/report-quarterly/income-and-expenses/view/reporting-frequency")
+      Some(reportingObligationsRoutes.ReportingFrequencyPageController.show(false).url)
     }
   }
 
@@ -73,11 +74,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
   }
 
   private def confirmPageLink(isAgent: Boolean): Option[String] = {
-    if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/sign-up/completed")
-    } else {
-      Some("/report-quarterly/income-and-expenses/view/sign-up/completed")
-    }
+    Some(routes.SignUpCompletedController.show(isAgent).url)
   }
 
   mtdAllRoles.foreach { mtdRole =>

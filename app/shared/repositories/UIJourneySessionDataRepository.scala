@@ -17,7 +17,6 @@
 package shared.repositories
 
 import common.config.FrontendAppConfig
-import common.enums.JourneyType.{JourneyType, Operation}
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.*
@@ -25,6 +24,7 @@ import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.Updates.combine
 import org.mongodb.scala.result.UpdateResult
 import play.api.libs.json.Format
+import shared.enums.JourneyType.{JourneyType, Operation}
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository

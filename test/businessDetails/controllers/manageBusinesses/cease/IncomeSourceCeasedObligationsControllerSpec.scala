@@ -16,11 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.services.SessionService
 import businessDetails.utils.IncomeSourcesUtils
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
@@ -41,6 +40,7 @@ import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

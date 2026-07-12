@@ -16,12 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.viewmodels.CeaseIncomeSourcesViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.exceptions.MissingFieldException
 import common.implicits.ImplicitDateFormatter
@@ -37,6 +36,7 @@ import businessDetails.testConstants.UpdateBusinessDetailsTestConstants.*
 import businessDetails.testConstants.PropertyDetailsTestConstants.{ceaseForeignPropertyDetailsViewModel, ceaseUkPropertyDetailsViewModel}
 import common.testConstants.BaseTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 import scala.concurrent.Future
 

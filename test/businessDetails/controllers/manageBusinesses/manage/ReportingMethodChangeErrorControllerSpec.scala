@@ -17,11 +17,11 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface

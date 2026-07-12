@@ -19,10 +19,10 @@ package businessDetails.views.manageBusinesses.cease
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceCeasedBackErrorView
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.testUtils.TestSupport
 
 class IncomeSourceCeasedBackErrorViewSpec extends TestSupport{

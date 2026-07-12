@@ -16,7 +16,7 @@
 
 package businessDetails.forms.manageBusinesses.add
 
-import common.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import common.testUtils.TestSupport
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

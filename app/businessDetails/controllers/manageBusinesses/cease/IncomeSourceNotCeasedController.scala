@@ -25,9 +25,9 @@ import common.views.html.errorPages.templates.ErrorTemplateWithLink
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import common.auth.{AuthActions, MtdItUser}
 import common.config.FrontendAppConfig
-import common.enums.IncomeSourceJourney.IncomeSourceType
 
 class IncomeSourceNotCeasedController @Inject()(val authActions: AuthActions,
                                                 val errorTemplate: ErrorTemplateWithLink)

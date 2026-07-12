@@ -16,15 +16,15 @@
 
 package businessDetails.models.audit
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.utils.audit.Utilities.userAuditDetails
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseError
 import common.auth.MtdItUser
 import common.enums.AuditType.CeaseIncomeSource
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import common.enums.TransactionName
 import common.implicits.ImplicitDateParser
 import common.models.audit.ExtendedAuditModel
-import common.models.core.IncomeSourceId
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class CeaseIncomeSourceAuditModel(incomeSourceType: IncomeSourceType,

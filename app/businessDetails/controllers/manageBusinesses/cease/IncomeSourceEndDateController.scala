@@ -17,7 +17,7 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
-import common.models.core.IncomeSourceIdHash.mkFromQueryString
+import businessDetails.core.IncomeSourceIdHash.mkFromQueryString
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -29,17 +29,18 @@ import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.core.{IncomeSourceId, IncomeSourceIdHash}
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.forms.manageBusinesses.cease.CeaseIncomeSourceEndDateFormProvider
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import common.models.core.{IncomeSourceId, IncomeSourceIdHash, Mode}
+import common.models.core.Mode
 import common.services.DateService
 import shared.enums.BeforeSubmissionPage
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 @Singleton
 class IncomeSourceEndDateController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
