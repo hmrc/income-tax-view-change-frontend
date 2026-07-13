@@ -26,7 +26,6 @@ import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDeta
 import common.testConstants.BaseIntegrationTestConstants.*
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
-import hub.helpers.NextUpdatesStub
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.test.FakeRequest
