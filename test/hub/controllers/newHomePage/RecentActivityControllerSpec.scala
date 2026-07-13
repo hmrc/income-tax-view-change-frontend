@@ -22,6 +22,7 @@ import common.mocks.services.{MockDateService, MockITSAStatusService}
 import common.models.admin.RecentActivity
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.obligations.ObligationsModel
 import common.testConstants.BaseTestConstants.*
 import financials.services.PaymentHistoryService
 import hub.models.newHomePage.RecentActivityViewModel
