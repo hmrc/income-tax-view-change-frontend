@@ -30,6 +30,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetailsConnector,
                                      val appConfig: FrontendAppConfig)
                                     (implicit ec: ExecutionContext) {
+  // This logic is based on the findings in => RepaymentHistoryUtils.combinePaymentHistoryData method
+  // Problem: we need to get list of credits (MFA + CutOver) and filter it out by calendar year
+  // MFA credits are driven by taxYear
+  // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
 
   private def getCreditsByTaxYear(taxYear: Int, nino: String)
                                   (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
@@ -51,56 +55,11 @@ class CreditHistoryService @Inject()(financialDetailsConnector: FinancialDetails
         Left(CreditHistoryError)
     }
   }
-
-  // This logic is based on the findings in => RepaymentHistoryUtils.combinePaymentHistoryData method
-  // Problem: we need to get list of credits (MFA + CutOver) and filter it out by calendar year
-  // MFA credits are driven by taxYear
-  // CutOver credit by dueDate found in financialDetails related to the corresponding documentDetail (see getDueDateFor)
-//  private def getCreditsByTaxYear2(taxYear: Int, nino: String)
-//                                 (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
-//    financialDetailsConnector.getFinancialDetails(taxYear, nino).flatMap {
-//      case financialDetailsModel: FinancialDetailsModel =>
-//        val fdRes = financialDetailsModel.asChargeItems.flatMap {
-//          // Apply rewiring to use ChargeItem instead of DocumentDetails here
-//          case (chargeItem: ChargeItem) =>
-//            (chargeItem.transactionType, chargeItem.credit.isDefined) match {
-//              case (CutOverCreditType, true) =>
-//                Some(
-//                  CreditDetailModel(
-//                    date = chargeItem.dueDateForFinancialDetail.get,
-//                    charge = chargeItem,
-//                    CutOverCreditType,
-//                    availableCredit = financialDetailsModel.balanceDetails.totalCredit
-//                      )
-//                )
-//
-//              case (creditTypeV, true) =>
-//                Some(
-//                  CreditDetailModel(
-//                    date = chargeItem.documentDate,
-//                    chargeItem,
-//                    creditType = creditTypeV.asInstanceOf[CreditType], // TODO: use safe type conversion instead
-//                    availableCredit = financialDetailsModel.balanceDetails.totalCredit
-//                      )
-//                )
-//              case (_, _) =>
-//                None
-//            }
-//        }
-//        Future {
-//          Right(fdRes)
-//        }
-//      case _ =>
-//        Future {
-//          Left(CreditHistoryError)
-//        }
-//    }
-//  }
-
+  
   def getCreditsHistory(calendarYear: Int, nino: String)
                        (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[CreditHistoryError.type, List[CreditDetailModel]]] = {
 
-    for { 
+    for {
       creditModelForTaxYear <- getCreditsByTaxYear(calendarYear, nino)
       creditModelForTaxYearPlusOne <- getCreditsByTaxYear(calendarYear + 1, nino)
     } yield (creditModelForTaxYear, creditModelForTaxYearPlusOne) match {
