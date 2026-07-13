@@ -18,7 +18,7 @@ package hub.controllers.newHomePage
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{FeatureSwitchName, RecentActivity}
 import common.models.itsaStatus.ITSAStatus
 import ITSAStatus.ITSAStatus

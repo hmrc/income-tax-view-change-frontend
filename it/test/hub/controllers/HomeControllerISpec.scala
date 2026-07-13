@@ -20,7 +20,7 @@ import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDIndividual
-import common.helpers.servicemocks.{IncomeTaxBusinessDetailsStub, MTDIndividualAuthStub}
+import common.helpers.servicemocks.MTDIndividualAuthStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}

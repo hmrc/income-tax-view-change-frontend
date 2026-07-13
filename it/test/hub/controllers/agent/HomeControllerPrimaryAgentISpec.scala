@@ -19,7 +19,6 @@ package hub.controllers.agent
 import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDPrimaryAgent
-import common.helpers.servicemocks.IncomeTaxBusinessDetailsStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
