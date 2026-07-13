@@ -22,16 +22,14 @@ import common.models.core.AccountingPeriodModel
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.models.liabilitycalculation.{Message, Messages}
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
-import common.testConstants.BaseTestConstants.{taxYear, testMtditid, testNino}
+import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
-import financials.models.*
-import financials.testConstants.ChargeConstants
-import org.scalatest.matchers.should.Matchers.*
+import returns.models.*
+import returns.testConstants.ChargeConstants
 import org.scalatest.wordspec.AnyWordSpecLike
 import play.api.libs.json.*
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
-import returns.testConstants.NewCalcBreakdownUnitTestConstants.*
 import uk.gov.hmrc.auth.core.AffinityGroup
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
@@ -308,7 +306,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
           forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
           forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
         ), charges = payments(paymentHasADunningLock, codedOutStatusType, hasInterest).map(TaxYearSummaryChargeItem.fromChargeItem),
-        obligations = updates, ctaViewModel = emptyCTAViewModel, LPP2Url = "", pfaEnabled = false, previousCalculationSummary = None
+        obligations = updates, ctaViewModel = emptyCTAViewModel, LPP2Url = "", pfaEnabled = false,
+        previousCalculationSummary = None, financialsFrontendEnabled = false
         ),
       messages
     )
@@ -329,7 +328,8 @@ class TaxYearSummaryResponseAuditModelSpec extends AnyWordSpecLike with TestSupp
         forecastIncomeTaxAndNics = forecastIncomeTaxAndNics,
         forecastAllowancesAndDeductions = forecastAllowancesAndDeductions)
       ), charges = payments(paymentHasADunningLock, codedOutStatusType, hasInterest).map(TaxYearSummaryChargeItem.fromChargeItem(_)),
-        obligations = updates, showForecastData = true, ctaViewModel = emptyCTAViewModel, LPP2Url = "", pfaEnabled = false, previousCalculationSummary = None
+        obligations = updates, showForecastData = true, ctaViewModel = emptyCTAViewModel, LPP2Url = "",
+        pfaEnabled = false, previousCalculationSummary = None, financialsFrontendEnabled = false
       )
     )
 

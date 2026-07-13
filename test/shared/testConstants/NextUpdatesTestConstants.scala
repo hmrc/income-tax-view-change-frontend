@@ -26,20 +26,6 @@ object NextUpdatesTestConstants {
 
   val heading: String = "Your submission deadlines"
   val title: String = "Your submission deadlines - Manage your Self Assessment - GOV.UK"
-  val summary: String = "What are the update types?"
-  val summaryQuarterly: String = "Quarterly updates"
-  val quarterlyLine1: String = "A quarterly update is a record of all your business income in a 3 month period."
-  val quarterlyLine2: String = "Using your record-keeping software, you must send 4 quarterly updates in a year for each source of income."
-  val declarationLine1: String = "Your final declaration is the last step in your tax return, where you confirm you’ve submitted all your income and expenses (to the best of your knowledge). This is done using your record-keeping software."
-  val summaryDeclaration: String = "Final declaration"
-  val updatesInSoftware: String = "Submitting updates in software"
-  val updatesInSoftwareDesc: String = "Use your compatible record keeping software (opens in new tab) to keep digital records of all your business income and expenses. You must submit these updates through your software by each date shown."
-  val info: String = "To view previously submitted updates visit the tax years page."
-  val oneYearOptOutMessage: String = "You are currently reporting quarterly on a voluntary basis for the 2023 to 2024 tax year. You can choose to opt out of quarterly updates and report annually instead."
-  val multiYearOptOutMessage: String = "You are currently reporting quarterly on a voluntary basis. You can choose to opt out of quarterly updates and report annually instead."
-  val reportingObligationsLink: String = "Depending on your circumstances, you may be able to view and change your reporting obligations."
-  val quarterly: String = "Quarterly update"
-  val businessIncome: String = "Business income"
   val noNextUpdatesHeading: String = "Report deadlines"
   val noNextUpdatesTitle: String = "Report deadlines - Manage your Self Assessment - GOV.UK"
   val noNextUpdatesText: String = "You don’t have any reports due right now. Your next deadline will show here on the first Monday of next month."
@@ -131,9 +117,7 @@ object NextUpdatesTestConstants {
   val nextUpdatesDataSelfEmploymentSuccessModel: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(overdueObligation, openObligation))
 
   val obligationsModelDataSucessful: GroupedObligationsModel = GroupedObligationsModel(testSelfEmploymentId, List(quarterlyObligation2016, quarterlyObligation2017First, quarterlyObligation2017Second))
-
-  val nextUpdatesDataPropertySuccessModel: GroupedObligationsModel = GroupedObligationsModel(testPropertyIncomeId, List(overdueObligation, openObligation))
-
+  
   val obligationsDataSelfEmploymentOnlySuccessModel: ObligationsModel = ObligationsModel(List(nextUpdatesDataSelfEmploymentSuccessModel))
 
   val nextUpdateOverdueJson = Json.obj(

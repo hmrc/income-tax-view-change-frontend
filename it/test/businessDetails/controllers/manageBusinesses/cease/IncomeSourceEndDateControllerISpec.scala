@@ -24,14 +24,15 @@ import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 
 import java.time.LocalDate
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 
 class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
 
@@ -57,6 +58,8 @@ class IncomeSourceEndDateControllerISpec extends ControllerISpecHelper {
     super.beforeEach()
     await(sessionService.deleteSession(Cease))
   }
+
+  val testSelfEmploymentIdHashed: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType, isChange: Boolean): String = {
     val pathStart = if (mtdRole == MTDIndividual) "/manage-your-businesses/cease" else "/agents/manage-your-businesses/cease"

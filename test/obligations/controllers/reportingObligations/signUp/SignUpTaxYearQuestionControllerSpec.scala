@@ -20,10 +20,11 @@ import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.SignUpFs
-import common.models.itsaStatus.ITSAStatus
-import common.services.DateServiceInterface
-import ITSAStatus.{Mandated, Voluntary}
 import common.models.incomeSourceDetails.TaxYear
+import common.models.itsaStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockSignUpService
 import obligations.models.reportingObligations.signUp.SignUpTaxYearQuestionViewModel
@@ -36,7 +37,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 
 import scala.concurrent.Future
 
@@ -62,9 +63,9 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
 
   private def reportingObligationsLink(isAgent: Boolean): Option[String] = {
     if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/reporting-frequency")
+      Some(reportingObligationsRoutes.ReportingFrequencyPageController.show(true).url)
     } else {
-      Some("/report-quarterly/income-and-expenses/view/reporting-frequency")
+      Some(reportingObligationsRoutes.ReportingFrequencyPageController.show(false).url)
     }
   }
 
@@ -73,11 +74,7 @@ class SignUpTaxYearQuestionControllerSpec extends MockAuthActions with MockSignU
   }
 
   private def confirmPageLink(isAgent: Boolean): Option[String] = {
-    if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/sign-up/completed")
-    } else {
-      Some("/report-quarterly/income-and-expenses/view/sign-up/completed")
-    }
+    Some(routes.SignUpCompletedController.show(isAgent).url)
   }
 
   mtdAllRoles.foreach { mtdRole =>

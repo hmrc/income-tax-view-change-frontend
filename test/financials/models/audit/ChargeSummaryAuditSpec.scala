@@ -16,13 +16,12 @@
 
 package financials.models.audit
 
-import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.commonAuditDetails
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear}
 import common.services.DateService
 import common.testConstants.BaseTestConstants.*
 import financials.enums.ChargeType.*
-import financials.enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
+import shared.enums.CodingOutType.{CODING_OUT_ACCEPTED, CODING_OUT_CANCELLED}
 import financials.models.*
 import financials.models.chargeHistory.ChargeHistoryModel
 import financials.models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}

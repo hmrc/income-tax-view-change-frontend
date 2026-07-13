@@ -18,6 +18,8 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessesRoutes
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceFromUser, NotSigningUp, OnlyOneYearAvailableToSignUp, OptedOut, SignUpBothYears, SignUpCurrentYearOnly, SignUpNextYearOnly, SignedUpForMTD, Unknown}
 import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
@@ -31,9 +33,6 @@ import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligati
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.IncomeSourceType
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.models.core.IncomeSourceId
 import common.models.incomeSourceDetails.LatencyDetails
 import common.services.DateServiceInterface
 
@@ -44,6 +43,7 @@ import scala.language.postfixOps
 import businessDetails.services.NextUpdatesService
 import shared.models.UIJourneySessionData
 import common.models.admin.ObligationsFrontend
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 
 
 class IncomeSourceAddedController @Inject()(

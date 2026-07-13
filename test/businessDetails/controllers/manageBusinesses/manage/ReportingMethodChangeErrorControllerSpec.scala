@@ -16,22 +16,22 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.MockSessionService
+import businessDetails.services.{SessionService, UpdateIncomeSourceService}
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
+import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
+import common.mocks.auth.MockAuthActions
+import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import common.testConstants.IncomeSourceDetailsTestConstants.ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome
-import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
-import businessDetails.services.{SessionService, UpdateIncomeSourceService}
-import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.MTDIndividual
-import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
-import common.services.DateServiceInterface
 
 import scala.concurrent.Future
 
@@ -67,7 +67,7 @@ class ReportingMethodChangeErrorControllerSpec extends MockAuthActions with Mock
 
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
 
               if (incomeSourceType == SelfEmployment)
 

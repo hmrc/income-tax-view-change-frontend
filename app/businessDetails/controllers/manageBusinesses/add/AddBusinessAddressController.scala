@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import com.google.inject.Singleton
 import play.api.Logger
@@ -28,9 +29,8 @@ import businessDetails.utils.IncomeSourcesUtils
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.core.Mode
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import javax.inject.Inject

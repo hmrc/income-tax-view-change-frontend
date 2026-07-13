@@ -16,15 +16,16 @@
 
 package businessDetails.forms.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.auth.actions.AuthActionsTestData.getMinimalMTDITUser
 import common.auth.MtdItUser
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.services.DateService
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.data.{Form, FormError}
-import common.testConstants.BaseTestConstants.testSelfEmploymentId
 import common.testConstants.IncomeSourceDetailsTestConstants.*
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

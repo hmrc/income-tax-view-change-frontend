@@ -23,11 +23,10 @@ import common.models.liabilitycalculation.{Message, Messages}
 import common.models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import common.testUtils.ViewSpec
 import common.viewUtils.ExternalUrlHelper
-import financials.controllers.routes as financialsRoutes
 import shared.implicits.ImplicitCurrencyFormatter.{CurrencyFormatter, CurrencyFormatterInt}
-import financials.models.*
-import financials.testConstants.ChargeConstants
-import financials.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentDetailsWithDueDates, fullDocumentDetailModel}
+import returns.models.*
+import returns.testConstants.ChargeConstants
+import returns.testConstants.FinancialDetailsTestConstants.{MFADebitsDocumentsTransactionIds, fullDocumentDetailModel}
 import shared.testConstants.NextUpdatesTestConstants.*
 import org.jsoup.nodes.Element
 import play.twirl.api.{Html, HtmlFormat}
@@ -36,6 +35,7 @@ import returns.models.taxyearsummary.{LegacyAndCesa, MtdSoftwareShowCalc, TaxYea
 import returns.views.html.TaxYearSummaryView
 
 import java.time.LocalDate
+import returns.controllers.routes as returnsRoutes
 
 class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeConstants {
 
@@ -236,7 +236,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     TaxYearSummaryChargeItem.fromChargeItem(chargeItemModel(originalAmount = 1000.0)),
   )
 
-  val ctaLink: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+  val ctaLink: String = appConfig.financialsAmendablePoaIndividualUrl(true)
 
   val testObligationsModel: ObligationsModel = ObligationsModel(Seq(nextUpdatesDataSelfEmploymentSuccessModel))
 
@@ -249,7 +249,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def estimateView(chargeItems: List[TaxYearSummaryChargeItem] = testChargesList, isAgent: Boolean = false, obligations: ObligationsModel = testObligationsModel): Html =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, chargeItems, obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, chargeItems, obligations, ctaViewModel = emptyCTAModel, LPP2Url = "",
+        pfaEnabled = false, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -270,7 +271,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
                      ): Html =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(calculationSummary = Some(modelComplete(crystallised = isCrystallised, testPeriod = 2017)), previousCalculationSummary = None, charges = chargeItems, obligations = obligations, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      viewModel = TaxYearSummaryViewModel(calculationSummary = Some(modelComplete(crystallised = isCrystallised, testPeriod = 2017)),
+        previousCalculationSummary = None, charges = chargeItems, obligations = obligations, ctaViewModel = emptyCTAModel,
+        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -285,7 +288,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def class2NicsView(isAgent: Boolean = false): Html =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None, class2NicsChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), previousCalculationSummary = None,
+        class2NicsChargesList, testObligationsModel, ctaViewModel = emptyCTAModel,
+        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -300,7 +305,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def estimateViewWithNoCalcData(isAgent: Boolean = false): Html =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      viewModel = TaxYearSummaryViewModel(None, None, testChargesList,
+        testObligationsModel, ctaViewModel = emptyCTAModel,
+        LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -314,7 +321,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def unattendedCalcView(isAgent: Boolean = false, unattendedCalc: Boolean): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, unattendedCalc = unattendedCalc)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, unattendedCalc = unattendedCalc)),
+      None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel,
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackUrl",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -328,7 +337,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def multipleDunningLockView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testDunningLockChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testDunningLockChargesList,
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -342,7 +352,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def crystallisedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList,
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -356,7 +367,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def payeView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, payeChargeList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, payeChargeList,
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -370,7 +382,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def testBalancingPaymentChargeWithZeroValueView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testBalancingPaymentChargeWithZeroValue, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None,
+      testBalancingPaymentChargeWithZeroValue, testObligationsModel, ctaViewModel = emptyCTAModel,
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -384,7 +398,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def testPaymentOnAccountChargesCodedOutAcceptedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOut(Accepted), testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None,
+      testPaymentsOnAccountCodedOut(Accepted), testObligationsModel, ctaViewModel = emptyCTAModel,
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -398,7 +414,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def testPaymentOnAccountChargesCodedOutFullyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOut(FullyCollected), testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None,
+      testPaymentsOnAccountCodedOut(FullyCollected), testObligationsModel, ctaViewModel = emptyCTAModel,
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -413,7 +431,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def testPaymentOnAccountChargesCodedOutCancelledView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testPaymentsOnAccountCodedOutCancelled, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None,
+      testPaymentsOnAccountCodedOutCancelled, testObligationsModel, ctaViewModel = emptyCTAModel,
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -427,7 +447,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def immediatelyRejectedByNpsView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, immediatelyRejectedByNps, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, immediatelyRejectedByNps,
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -441,7 +462,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def rejectedByNpsPartWayView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, rejectedByNpsPartWay, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, rejectedByNpsPartWay,
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -455,7 +477,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def codingOutPartiallyCollectedView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, codingOutPartiallyCollected, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, codingOutPartiallyCollected,
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -469,7 +492,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def forecastCalcView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList,
+      testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel,
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -483,7 +508,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def forecastCalcViewCrystallised(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, testChargesList,
+      testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel,
+      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -497,7 +524,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def noForecastDataView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, testChargesList,
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -512,7 +540,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def forecastWithNoCalcData(isAgent: Boolean = false): Html =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      viewModel = TaxYearSummaryViewModel(None, None, testChargesList, testObligationsModel, showForecastData = true,
+        ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -526,7 +555,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def mfaDebitsView(isAgent: Boolean): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, mfaCharges, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = true)), None, mfaCharges, testObligationsModel,
+      ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -540,7 +570,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def calculationMultipleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelWithMultipleErrorMessages), None, testChargesList,
+      testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -554,7 +585,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def calculationSingleErrorView(isAgent: Boolean = false): Html = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+    viewModel = TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel,
+      ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -567,10 +599,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   )
 
   def poaView(isAgent: Boolean = false): Html = {
-    val ctaLink = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start" else "/report-quarterly/income-and-expenses/view/adjust-poa/start"
+    val ctaLink = appConfig.financialsAmendablePoaUrl(isAgent, true)
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel, ctaViewModel = testCTAModel, LPP2Url = "", pfaEnabled = false),
+      viewModel = TaxYearSummaryViewModel(Some(modelWithErrorMessages), None, testChargesList, testObligationsModel,
+        ctaViewModel = testCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -585,7 +618,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def calculationWithLatestAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true),
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), None,
+      List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
     ctaLink = ctaLink,
@@ -601,7 +635,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def calculationWithLatestAndPreviousAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), Some(modelComplete(crystallised = false, isAmended = true)), List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true),
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)),
+        Some(modelComplete(crystallised = false, isAmended = true)), List.empty, testObligationsModel,
+        ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -616,7 +652,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def calculationWithLatestAmendmentButPfaDisabledView(isAgent: Boolean): HtmlFormat.Appendable =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false),
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty,
+        testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -632,7 +669,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def calculationWithNoAmendmentPfaEnabled(isAgent: Boolean): HtmlFormat.Appendable =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true),
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false)), None, List.empty,
+        testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
       ctaLink = ctaLink,
@@ -654,7 +692,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         obligations = testObligationsModel,
         ctaViewModel = emptyCTAModel,
         LPP2Url = "",
-        pfaEnabled = true
+        pfaEnabled = true, financialsFrontendEnabled = true
       ),
       backUrl = "testBackUrl",
       isAgent = isAgent,
@@ -734,8 +772,9 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val submissionsDescription: String = "This is a record of your completed and upcoming submissions for the tax year."
     val claimToAdjustPoaParagraph: String = "You can reduce both payments on account if you expect the total of your Income Tax and Class 4 National Insurance contributions to be different from the total amount of your current payments on account."
     val claimToAdjustPoaLinkText: String = "Adjust payments on account"
-    val claimToAdjustPoaLinkIndividual: String = "/report-quarterly/income-and-expenses/view/adjust-poa/start"
-    val claimToAdjustPoaLinkAgent: String = "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
+    
+    val claimToAdjustPoaLinkIndividual: String = appConfig.financialsAmendablePoaIndividualUrl(true)
+    val claimToAdjustPoaLinkAgent: String = appConfig.financialsAmendablePoaAgentUrl(true)
 
     val latestCalculationTab: String = "Latest calculation"
     val latestCalculationDesc: String = "Your tax return was amended on 1 January 2020 and as a result this is your most up-to-date calculation."
@@ -789,8 +828,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
 
-        val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/2018/forecast-income"
-        val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/2018/forecast-tax-calculation"
+        val incomeForecastUrl = returnsRoutes.ForecastIncomeSummaryController.show(2018).url
+        val taxDueForecastUrl = returnsRoutes.ForecastTaxCalcSummaryController.show(2018).url
 
         document.select(".forecast_table tbody tr").size() shouldBe 4
         document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
@@ -1021,7 +1060,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(chargeItems = testChargesWithoutLpiList)) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe paymentOnAccount1
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear, fullDocumentDetailModel.transactionId, false, None, financialsFrontendEnabled = true)
       }
 
       "display the Due date in the Payments tab" in new Setup(estimateView()) {
@@ -1048,8 +1087,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount1
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId, isInterestCharge = true).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, true, financialsFrontendEnabled = true)
       }
 
       "display the Due date in the Payments tab for late payment interest POA1" in new Setup(estimateView()) {
@@ -1064,8 +1103,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(2) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount2
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId, isInterestCharge = true).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, true, financialsFrontendEnabled = true)
       }
 
       "display the Due date in the Payments tab for late payment interest POA2" in new Setup(estimateView()) {
@@ -1080,8 +1119,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(3) a")
         paymentTypeLink.text shouldBe lpiRemainingBalance
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId, isInterestCharge = true).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, true, financialsFrontendEnabled = true)
       }
 
       "display the Due date in the Payments tab for late payment interest Balancing payment" in new Setup(estimateView()) {
@@ -1102,15 +1141,15 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display the Class 2 National Insurance payment link on the payments table when coding out is enabled" in new Setup(class2NicsView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display the PAYE Self Assessment link on the payments table when coding out is enabled" in new Setup(payeView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe payeSA
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       s"display the Due date in the Payments tab for PAYE Self Assessment as $noData" in new Setup(payeView()) {
@@ -1128,50 +1167,50 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe remainingBalance
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year" in new Setup(rejectedByNpsPartWayView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe cancelledPaye
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe remainingBalance
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected)" in new Setup(codingOutPartiallyCollectedView()) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
         paymentTypeLink.text shouldBe cancelledPaye
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display the Balancing payment on the payments table when coding out is enabled and a zero amount" in new Setup(testBalancingPaymentChargeWithZeroValueView()) {
@@ -1190,16 +1229,16 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "No data"
         paymentTabRow1.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText1.text shouldBe codedOutPoa1
-        paymentTypeText1.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeText1.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
 
         val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
         val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
         paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "No data"
         paymentTabRow2.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text shouldBe codedOutPoa2
-        paymentTypeText2.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeText2.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display payments on account on the payments table when coding out is cancelled" in new Setup(testPaymentOnAccountChargesCodedOutCancelledView()) {
@@ -1208,16 +1247,16 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         paymentTabRow1.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "31 Mar 2040"
         paymentTabRow1.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText1.text() shouldBe cancelledPaye
-        paymentTypeText1.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeText1.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
 
         val paymentTypeText2: Element = layoutContent.getElementById("paymentTypeLink-1")
         val paymentTabRow2: Element = layoutContent.getElementById("payments-table").getElementsByClass("govuk-table__row").get(2)
         paymentTabRow2.getElementsByClass("govuk-table__cell").get(1).text() shouldBe "31 Mar 2040"
         paymentTabRow2.getElementsByClass("govuk-table__cell").get(2).text() shouldBe BigDecimal(1400).toCurrencyString
         paymentTypeText2.text() shouldBe cancelledPaye
-        paymentTypeText2.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeText2.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
 
       "display submissions by due-date" in new Setup(estimateView()) {
@@ -1357,8 +1396,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         document.getOptionalSelector("#forecast").isDefined shouldBe true
         document.getOptionalSelector(".forecast_table").isDefined shouldBe true
 
-        val incomeForecastUrl = "/report-quarterly/income-and-expenses/view/agents/2018/forecast-income"
-        val taxDueForecastUrl = "/report-quarterly/income-and-expenses/view/agents/2018/forecast-tax-calculation"
+        val incomeForecastUrl = returnsRoutes.ForecastIncomeSummaryController.showAgent(2018).url
+        val taxDueForecastUrl = returnsRoutes.ForecastTaxCalcSummaryController.showAgent(2018).url
 
         document.select(".forecast_table tbody tr").size() shouldBe 4
         document.select(".forecast_table tbody tr:nth-child(1) th:nth-child(1) a").attr("href") shouldBe incomeForecastUrl
@@ -1420,94 +1459,96 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       "display the payment type as a link to Charge Summary in the Payments tab" in new Setup(estimateView(chargeItems = testChargesWithoutLpiList, isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe paymentOnAccount1
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display the payment type as a link to Charge Summary in the Payments tab for late payment interest POA1" in new Setup(estimateView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe lpiPaymentOnAccount1
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId, isInterestCharge = true).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          true, financialsFrontendEnabled = true)
       }
 
       "display the Class 2 National Insurance payment link on the payments table" in new Setup(
         class2NicsView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display the PAYE Self Assessment link on the payments table" in new Setup(payeView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe payeSA
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display Class 2 National Insurance - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS - Agent" in new Setup(immediatelyRejectedByNpsView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe remainingBalance
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display Class 2 Nics - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display Cancelled Self Assessment payment - User has Coding out that has been accepted and rejected by NPS part way through the year - Agent" in new Setup(rejectedByNpsPartWayView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe cancelledPaye
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display Class 2 National Insurance - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display Balancing payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-1")
         paymentTypeLink.text shouldBe remainingBalance
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display Cancelled Self Assessment payment - At crystallization, the user has the coding out requested amount has not been fully collected (partially collected) - Agent" in new Setup(codingOutPartiallyCollectedView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-2")
         paymentTypeLink.text shouldBe cancelledPaye
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, fullDocumentDetailModel.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear, fullDocumentDetailModel.transactionId,
+          false, financialsFrontendEnabled = true)
       }
 
       "display MFA Debits - Individual" in new Setup(mfaDebitsView(isAgent = false)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe hmrcAdjustment
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
-          testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          MFADebitsDocumentsTransactionIds.head, false, financialsFrontendEnabled = true)
+
       }
 
       "display MFA Debits - Agent" in new Setup(mfaDebitsView(isAgent = true)) {
         val paymentTypeLink: Element = layoutContent.getElementById("paymentTypeLink-0")
         paymentTypeLink.text shouldBe hmrcAdjustment
-        paymentTypeLink.attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(
-          testYear, MFADebitsDocumentDetailsWithDueDates.head.documentDetail.transactionId).url
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryAgentUrl(testYear,
+          MFADebitsDocumentsTransactionIds.head,
+          false, financialsFrontendEnabled = true)
       }
-
     }
   }
 }

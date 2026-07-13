@@ -17,7 +17,7 @@
 package hub.models.penalties.lateSubmission
 
 import common.testUtils.TestSupport
-import financials.testConstants.PenaltiesTestConstants.lspDetails
+import hub.testConstants.PenaltiesTestConstants.lspDetails
 import play.api.libs.json.{JsValue, Json}
 
 class LSPDetailsSpec extends TestSupport {

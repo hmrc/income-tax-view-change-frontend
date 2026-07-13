@@ -19,7 +19,6 @@ package financials.controllers.claimToAdjustPoa
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockCalculationListService
 import common.models.core.{CheckMode, NormalMode}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
@@ -35,6 +34,7 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import shared.mocks.services.MockCalculationListService
 
 import scala.concurrent.Future
 

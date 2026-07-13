@@ -17,7 +17,6 @@
 package obligations.controllers.reportingObligations.signUp
 
 import common.controllers.ControllerISpecHelper
-import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.SignUpFs
 import common.models.itsaStatus.ITSAStatus
@@ -27,13 +26,13 @@ import obligations.models.reportingObligations.signUp.{SignUpContextData, SignUp
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-
+import common.testConstants.BaseTestConstants.businessesAndPropertyIncome
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 
 import scala.concurrent.Future
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Opt, SignUpJourney}
 
 class SignUpCompletedControllerISpec extends ControllerISpecHelper {
 

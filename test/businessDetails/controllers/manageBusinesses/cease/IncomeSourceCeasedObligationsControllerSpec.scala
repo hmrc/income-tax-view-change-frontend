@@ -16,18 +16,17 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.services.SessionService
 import businessDetails.utils.IncomeSourcesUtils
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockDateService, MockSessionService}
+import common.mocks.services.MockDateService
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel}
 import common.services.{DateService, DateServiceInterface}
 import businessDetails.models.incomeSourceDetails.*
-import businessDetails.mocks.services.MockNextUpdatesService
+import businessDetails.mocks.services.{MockNextUpdatesService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
 import businessDetails.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
@@ -37,11 +36,11 @@ import play.api
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.mvc.Result
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import common.testConstants.BaseTestConstants.{testNino, testPropertyIncomeId, testSelfEmploymentId, testSessionId}
-import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSource
-import common.testConstants.IncomeSourceDetailsTestConstants.{foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, ObligationsResponseModel, SingleObligationModel, StatusFulfilled}
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

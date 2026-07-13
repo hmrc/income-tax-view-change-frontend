@@ -16,20 +16,20 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import common.testConstants.BaseIntegrationTestConstants.*
-import businessDetails.testConstants.BusinessDetailsTestConstants.testObligationsModel
+import common.testConstants.BaseIntegrationTestConstants._
+import common.testConstants.BusinessDetailsTestConstants.testObligationsModel
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.Cease
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import businessDetails.helpers.NextUpdatesStub
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.Cease
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 

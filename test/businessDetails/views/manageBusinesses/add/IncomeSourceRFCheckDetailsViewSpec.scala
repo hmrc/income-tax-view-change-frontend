@@ -16,13 +16,13 @@
 
 package businessDetails.views.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.viewmodels.ReportingFrequencyCheckDetailsViewModel
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceRFCheckDetailsView
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.testUtils.TestSupport
 
 class IncomeSourceRFCheckDetailsViewSpec extends TestSupport {

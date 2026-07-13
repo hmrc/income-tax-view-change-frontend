@@ -70,12 +70,12 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          defaultAuthorisedWithClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails),
           defaultAsyncBody { res =>
             res.mtditId shouldBe testMtditid
             res.mtdUserRole shouldBe MTDPrimaryAgent
-            res.clientDetails.get shouldBe defaultAuthorisedWithClientDetailsRequest.clientDetails
-            res.authUserDetails shouldBe defaultAuthorisedWithClientDetailsRequest.authUserDetails
+            res.clientDetails.get shouldBe defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails).clientDetails
+            res.authUserDetails shouldBe defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails).authUserDetails
           }
         )
 
@@ -93,12 +93,12 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          defaultAuthorisedWithClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails),
           defaultAsyncBody { res =>
             res.mtditId shouldBe testMtditid
             res.mtdUserRole shouldBe MTDSupportingAgent
-            res.clientDetails.get shouldBe defaultAuthorisedWithClientDetailsRequest.clientDetails
-            res.authUserDetails shouldBe defaultAuthorisedWithClientDetailsRequest.authUserDetails
+            res.clientDetails.get shouldBe defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails).clientDetails
+            res.authUserDetails shouldBe defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails).authUserDetails
           }
         )
 
@@ -119,7 +119,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          defaultAuthorisedWithClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails),
           defaultAsync
         )
 
@@ -137,7 +137,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
           Future.failed(NoAssignment())
         )
 
-        val result = authAction.invokeBlock(defaultAuthorisedWithClientDetailsRequest, defaultAsync)
+        val result = authAction.invokeBlock(defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails), defaultAsync)
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).get should include("/agents/no-assignment")
       }
@@ -151,7 +151,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          defaultAuthorisedWithClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails),
           redirectAsync("/session-timeout")
         )
 
@@ -167,7 +167,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          defaultAuthorisedWithClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails),
           defaultAsync
         )
 
@@ -183,7 +183,7 @@ class AuthoriseAndRetrieveMtdAgentSpec extends AuthActionsSpecHelper {
         )
 
         val result = authAction.invokeBlock(
-          defaultAuthorisedWithClientDetailsRequest,
+          defaultAuthorisedWithClientDetailsRequest(fakeRequestWithClientDetails),
           defaultAsync
         )
 

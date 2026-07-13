@@ -23,6 +23,7 @@ import common.models.admin.SignUpFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import obligations.mocks.services.MockSignUpService
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.services.reportingObligations.signUp.core.SignUpProposition.createSignUpProposition
@@ -33,7 +34,6 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 

@@ -16,7 +16,6 @@
 
 package hub.views.agent
 
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
 import common.config.FrontendAppConfig
@@ -104,7 +103,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
 
     val nextPaymentsTileViewModel = NextPaymentsTileViewModel(nextPaymentDueDate, overDuePaymentsCount, paymentsAccruingInterestCount)
 
-    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome)
+    val yourBusinessesTileViewModel = YourBusinessesTileViewModel(displayCeaseAnIncome, true)
 
     val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(TaxYear(currentTaxYear, currentTaxYear + 1), currentITSAStatus, isEnabled(ObligationsFrontend))
 
@@ -454,7 +453,7 @@ class PrimaryAgentHomePageViewSpec extends TestSupport with FeatureSwitching wit
           }
           "has a link to ManageYourBusinessController.show()" in new TestSetup(user = testMtdItUserMigrated) {
             getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").text()) shouldBe Some("Add, manage or cease a business or income source")
-            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(manageBusinessRoutes.ManageYourBusinessesController.showAgent().url)
+            getElementById("income-sources-tile").map(_.select("div > p:nth-child(2) > a").attr("href")) shouldBe Some(appConfig.businessDetailsManageBusinessesAgentUrl(true))
           }
         }
       }

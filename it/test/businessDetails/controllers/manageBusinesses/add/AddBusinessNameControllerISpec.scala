@@ -17,13 +17,12 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessNameForm
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData.{businessNameField, idempotencyKeyField}
 import businessDetails.services.SessionService
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.GetInsourceDetailsStub
 import common.models.admin.IdempotencyKeyForCreateIncomeSource
@@ -33,6 +32,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 
 import scala.concurrent.ExecutionContext
 

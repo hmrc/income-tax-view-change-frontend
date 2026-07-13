@@ -18,7 +18,7 @@ package financials.models.audit
 
 import common.auth.actions.AuthActionsTestData.*
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import common.testConstants.BaseTestConstants.{testMtditid, testNino}
+import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
 import financials.models.{DocumentDetail, FinancialDetail, SubItem}
 import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, FinancialDetailsWithDocumentDetailsModel, PaymentAllocationViewModel}

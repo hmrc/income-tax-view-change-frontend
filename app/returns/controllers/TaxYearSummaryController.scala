@@ -30,8 +30,8 @@ import common.models.liabilitycalculation
 import common.models.liabilitycalculation.*
 import common.models.obligations.ObligationsModel
 import common.services.{AuditingService, DateServiceInterface}
-import financials.models.{ChargeItem, DocumentDetail, FirstLatePaymentPenalty, LateSubmissionPenalty, PoaOneDebit, PoaTwoDebit, SecondLatePaymentPenalty, TransactionUtils}
-import financials.models.*
+import returns.models.{ChargeItem, DocumentDetail, FirstLatePaymentPenalty, LateSubmissionPenalty, PoaOneDebit, PoaTwoDebit, SecondLatePaymentPenalty, TransactionUtils}
+import returns.models.*
 import returns.services.FinancialDetailsService
 import play.api.Logger
 import play.api.i18n.{I18nSupport, Lang, Messages, MessagesApi}
@@ -73,23 +73,23 @@ class TaxYearSummaryController @Inject()(
                                           val ec: ExecutionContext
                                         ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
 
+  //ToDo update isFinancialsFrontendEnabled to use the isEnabled feature when exists
+  lazy val financialsFrontendEnabled: Boolean = false
+
   // Individual back urls
   private def taxYearsUrl(origin: Option[String]): String = returns.controllers.routes.TaxYearsController.showTaxYears(origin).url
 
-  //ToDo update isFinancialsFrontendEnabled to true when financials feature switch is built
-  private def whatYouOweUrl(origin: Option[String]): String = appConfig.financialsWhatYouOweUrl(true, origin, financialsFrontendEnabled = false)
+  private def whatYouOweUrl(origin: Option[String]): String = appConfig.financialsWhatYouOweUrl(true, origin, financialsFrontendEnabled)
 
   private def homeUrl(origin: Option[String]): String = appConfig.individualHomeUrlWithOrigin(origin)
 
   // Agent back urls
   private lazy val agentTaxYearsUrl: String = returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
   private lazy val agentHomeUrl: String = appConfig.agentHomeUrl
-  //ToDo update isFinancialsFrontendEnabled to true when financials feature switch is built
-  private lazy val agentWhatYouOweUrl: String = appConfig.financialsWhatYouOweUrl(true, financialsFrontendEnabled = false)
+  private lazy val agentWhatYouOweUrl: String = appConfig.financialsWhatYouOweUrl(true, financialsFrontendEnabled = financialsFrontendEnabled)
 
-  //ToDo update isFinancialsFrontendEnabled to true when financials feature switch is built
   private lazy val ctaLink: Boolean => String = isAgent =>
-    appConfig.financialsAmendablePoaUrl(isAgent, financialsFrontendEnabled = false)
+    appConfig.financialsAmendablePoaUrl(isAgent, financialsFrontendEnabled)
 
 
   def formatErrorMessages(
@@ -261,7 +261,8 @@ class TaxYearSummaryController @Inject()(
         showForecastData = showForecast(latestCalc.submissionChannel, calculationSummary),
         ctaViewModel = claimToAdjustViewModel,
         LPP2Url = lpp2Url,
-        pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
+        pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
+        financialsFrontendEnabled = financialsFrontendEnabled
       )
 
     val isNotCrystallisedShowInset: Boolean =
@@ -335,7 +336,8 @@ class TaxYearSummaryController @Inject()(
           showForecastData = true,
           ctaViewModel = claimToAdjustViewModel,
           LPP2Url = lpp2Url,
-          pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
+          pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
+          financialsFrontendEnabled = financialsFrontendEnabled
         )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
@@ -397,7 +399,8 @@ class TaxYearSummaryController @Inject()(
           showForecastData = true,
           ctaViewModel = claimToAdjustViewModel,
           LPP2Url = lpp2Url,
-          pfaEnabled = isEnabled(PostFinalisationAmendmentsR18)
+          pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
+          financialsFrontendEnabled = financialsFrontendEnabled
         )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
@@ -497,7 +500,7 @@ class TaxYearSummaryController @Inject()(
 
         val chargeItemsCodingOutPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
-            .filter(_.codedOutStatus.contains(financials.models.Accepted))
+            .filter(_.codedOutStatus.contains(returns.models.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 
@@ -510,7 +513,7 @@ class TaxYearSummaryController @Inject()(
 
         val chargeItemsCodingOutNotPaye: List[TaxYearSummaryChargeItem] = {
           chargeItemsCodingOut
-            .filterNot(_.codedOutStatus.contains(financials.models.Accepted))
+            .filterNot(_.codedOutStatus.contains(returns.models.Accepted))
             .filterNot(_.originalAmount <= 0)
         }
 

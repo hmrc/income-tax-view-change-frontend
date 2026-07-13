@@ -292,7 +292,7 @@ class ITSAStatusUpdateConnectorISpec extends AnyWordSpec with ComponentSpecBase 
           "with INVALID_PAYLOAD" in {
 
             WiremockHelper.stubPut(s"/income-tax-obligations/itsa-status/update/$taxableEntityId", BAD_REQUEST, correctsignUptRequestBody, invalidPayLoadFailureResponseBody)
-            WiremockHelper.stubPut(s"/income-tax-view-change/itsa-status/update/$taxableEntityId", BAD_REQUEST, correctsignUptRequestBody, invalidPayLoadFailureResponseBody)
+            WiremockHelper.stubPut(s"/income-tax-obligations/itsa-status/update/$taxableEntityId", BAD_REQUEST, correctsignUptRequestBody, invalidPayLoadFailureResponseBody)
 
             val result = connector.signUp(taxYear2024, taxableEntityId).futureValue
 

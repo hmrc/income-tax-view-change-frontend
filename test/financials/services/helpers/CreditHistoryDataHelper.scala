@@ -16,7 +16,7 @@
 
 package financials.services.helpers
 
-import businessDetails.testConstants.BusinessDetailsTestConstants.fixedDate
+import common.testConstants.BusinessDetailsTestConstants.fixedDate
 import financials.enums.ChargeType.NIC4_WALES
 import financials.models.*
 import financials.models.creditDetailModel.CreditDetailModel

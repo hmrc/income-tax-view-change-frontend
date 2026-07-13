@@ -20,10 +20,11 @@ import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.OptOutFs
-import common.models.itsaStatus.ITSAStatus
-import common.services.DateServiceInterface
-import ITSAStatus.{Mandated, Voluntary}
 import common.models.incomeSourceDetails.TaxYear
+import common.models.itsaStatus.ITSAStatus
+import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
+import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import obligations.enums.ChosenTaxYear.*
 import obligations.mocks.services.MockOptOutService
 import obligations.models.reportingObligations.optOut.*
@@ -34,7 +35,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 

@@ -17,8 +17,8 @@
 package financials.models
 
 import common.testUtils.UnitSpec
-import financials.enums.CodingOutType.*
-import financials.enums.DocumentType.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
+import shared.enums.CodingOutType.*
+import shared.enums.DocumentType.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
 import financials.testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 
 import java.time.LocalDate

@@ -29,7 +29,7 @@ import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
 import financials.models.{BalanceDetails, FinancialDetailsErrorModel, FinancialDetailsModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import financials.testConstants.ClaimToAdjustPoaTestConstants.*
-import returns.mocks.connectors.MockCalculationListConnector
+import financials.mocks.connectors.MockCalculationListConnector
 import shared.models.calculationList.{CalculationListModel, CalculationListResponseModel}
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual
 

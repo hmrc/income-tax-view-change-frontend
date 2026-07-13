@@ -24,25 +24,24 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import common.testConstants.IncomeSourceDetailsTestConstants.notCompletedUIJourneySessionData
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 
 import java.time.LocalDate
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import businessDetails.mocks.services.MockIncomeSourceRFService
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.{MockIncomeSourceRFService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, IncomeSourceReportingFrequencySourceData}
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.services.manageBusinesses.IncomeSourceRFService
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.models.itsaStatus.StatusDetail
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 import shared.services.CalculationListService
 
@@ -103,14 +102,14 @@ class IncomeSourceReportingFrequencyControllerSpec extends MockAuthActions with 
   }
 
   def setupMockIncomeSourceDetailsCall(scenario: Scenario, incomeSourceType: IncomeSourceType): Unit = (scenario, incomeSourceType) match {
-    case (NO_LATENCY, UkProperty) => mockUKPropertyIncomeSource()
-    case (NO_LATENCY, ForeignProperty) => mockForeignPropertyIncomeSource()
+    case (NO_LATENCY, UkProperty) => setupMockGetIncomeSourceDetails(ukPropertyIncome)
+    case (NO_LATENCY, ForeignProperty) => setupMockGetIncomeSourceDetails(foreignPropertyIncome)
     case (NO_LATENCY, SelfEmployment) => mockSingleBusinessIncomeSource()
-    case (CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS, UkProperty) => mockUKPropertyIncomeSourceWithLatency2024()
-    case (CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS, ForeignProperty) => mockForeignPropertyIncomeSourceWithLatency2024()
+    case (CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS, UkProperty) => setupMockGetIncomeSourceDetails(singleUKPropertyIncome2024)
+    case (CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS, ForeignProperty) => setupMockGetIncomeSourceDetails(singleForeignPropertyIncome2024)
     case (CURRENT_TAX_YEAR_2024_IN_LATENCY_YEARS, SelfEmployment) => mockBusinessIncomeSourceWithLatency2024()
-    case (_, UkProperty) => mockUKPropertyIncomeSourceWithLatency2023()
-    case (_, ForeignProperty) => mockForeignPropertyIncomeSourceWithLatency2023()
+    case (_, UkProperty) => setupMockGetIncomeSourceDetails(singleUKPropertyIncome2023)
+    case (_, ForeignProperty) => setupMockGetIncomeSourceDetails(singleForeignPropertyIncome2023)
     case (_, SelfEmployment) => mockBusinessIncomeSourceWithLatency2023()
   }
 

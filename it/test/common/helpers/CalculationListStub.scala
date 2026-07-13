@@ -19,9 +19,7 @@ package common.helpers
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 
 object CalculationListStub {
-
-  def legacyUrl(nino: String, taxYearEnd: String): String = s"""/income-tax-view-change/list-of-calculation-results/$nino/$taxYearEnd"""
-
+  
   def url(nino: String, taxYearRange: String): String = s"""/income-tax-calculation/calculation-list/$nino/$taxYearRange"""
 
   def stubGetCalculationList(nino: String, taxYearRange: String)(jsonResponse: String): Unit = {

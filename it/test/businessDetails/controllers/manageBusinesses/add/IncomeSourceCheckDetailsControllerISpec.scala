@@ -18,6 +18,8 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationAdded
 import businessDetails.helpers.IncomeSourceCheckDetailsConstants.*
 import businessDetails.helpers.servicemocks.CreateBusinessDetailsStub
 import businessDetails.models.createIncomeSource.{CreateIncomeSourceErrorResponse, CreateIncomeSourceResponse}
@@ -29,14 +31,12 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentId, testSessionId}
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.AuditStub
 import common.models.admin.OverseasBusinessAddress
 import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 class IncomeSourceCheckDetailsControllerISpec extends ControllerISpecHelper {

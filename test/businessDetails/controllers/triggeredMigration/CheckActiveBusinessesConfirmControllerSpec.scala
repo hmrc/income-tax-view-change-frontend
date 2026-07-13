@@ -16,11 +16,12 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import businessDetails.mocks.services.MockCustomerFactsUpdateService
 import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.TriggeredMigration
-import common.services.DateServiceInterface
+import common.services.{CustomerFactsUpdateService, DateServiceInterface}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api
@@ -30,13 +31,14 @@ import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncom
 
 import scala.concurrent.Future
 
-class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions {
+class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions with MockCustomerFactsUpdateService {
 
   override lazy val app: Application =
     applicationBuilderWithAuthBindings
       .overrides(
         api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
         api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
+        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService),
         api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
       )
       .build()

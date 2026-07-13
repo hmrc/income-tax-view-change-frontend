@@ -17,10 +17,12 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.IncomeSourcesUtils
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc._
@@ -28,10 +30,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.manage.ReportingMethodChangeErrorView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.exceptions.MissingSessionKey
-import common.models.core.IncomeSourceId
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

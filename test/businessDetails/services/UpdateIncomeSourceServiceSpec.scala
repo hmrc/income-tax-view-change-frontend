@@ -23,8 +23,8 @@ import common.config.featureswitch.FeatureSwitching
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.{failureResponse, successResponse, taxYearSpecific}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
-import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import common.testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants
 import common.testUtils.TestSupport
 import uk.gov.hmrc.auth.core.AffinityGroup.Individual

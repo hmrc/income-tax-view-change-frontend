@@ -16,19 +16,19 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import common.enums.IncomeSourceJourney.UkProperty
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import businessDetails.enums.IncomeSourceJourney.UkProperty
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.enums.MTDIndividual
-import common.models.admin.DisplayBusinessStartDate
 import common.models.admin.*
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.{ITSAStatus, ITSAStatusResponseModel, StatusDetail, StatusReason}
+import common.testConstants.BaseTestConstants.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
 import play.api.http.Status
 import play.api.test.Helpers.*
-import common.testConstants.IncomeSourceDetailsTestConstants.{emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTrader2023WithUnknowns, ukPlusForeignPropertyAndSoleTraderNoLatency, ukPlusForeignPropertyAndSoleTraderWithLatency, ukPlusForeignPropertyAndSoleTraderWithLatencyExpired}
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import scala.concurrent.Future
 
@@ -71,7 +71,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-              mockUkPlusForeignPlusSoleTraderNoLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderNoLatency)
               setupMockCreateSession(true)
               setupMockSetSessionKeyMongo(Right(true))
 
@@ -94,7 +94,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockCreateSession(true)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2024)
-              mockUkPlusForeignPlusSoleTraderWithLatencyExpired()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatencyExpired)
               setupMockCreateSession(true)
               setupMockSetSessionKeyMongo(Right(true))
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
@@ -119,7 +119,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
-              mockUkPlusForeignPlusSoleTraderWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty)))))
               setupMockSetSessionKeyMongo(Right(true))
@@ -157,7 +157,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-              mockUkPlusForeignPlusSoleTraderWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
 
@@ -187,7 +187,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, false)
-              mockUkPlusForeignPlusSoleTraderWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
 
@@ -212,7 +212,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-              mockUkPlusForeignPlusSoleTraderWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockTaxYearCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
 
@@ -238,7 +238,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2023)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-              mockUkPlusForeignPlusSoleTraderWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockTaxYearCrystallised(2023)
               setupMockTaxYearCrystallised(2024)
 
@@ -266,7 +266,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockLatencyYearsQuarterlyAndAnnualStatus(false, false)
               setupMockTaxYearCrystallised(2023)
               setupMockTaxYearCrystallised(2024)
-              mockUkPlusForeignPlusSoleTrader2023WithLatencyAndUnknowns()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTrader2023WithUnknowns)
 
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, UkProperty)))))
 
@@ -290,7 +290,7 @@ class ManageIncomeSourceDetailsUkPropertySpec extends ManageIncomeSourceDetailsH
               setupMockITSAStatusDetail(staticTaxYear)(Future.successful(List(ITSAStatusResponseModel(staticTaxYear.toString, Some(List(StatusDetail("", ITSAStatus.Mandated, StatusReason.MtdItsaOptIn)))))))
               setupMockGetCurrentTaxYearEnd(mockDateServiceInjected)(2025)
               setupMockLatencyYearsQuarterlyAndAnnualStatus(true, true)
-              mockUkPlusForeignPlusSoleTraderWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
               setupMockTaxYearNotCrystallised(2023)
               setupMockTaxYearNotCrystallised(2024)
 

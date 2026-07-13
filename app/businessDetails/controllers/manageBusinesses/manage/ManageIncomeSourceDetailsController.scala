@@ -17,12 +17,14 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.core.{IncomeSourceId, IncomeSourceIdHash}
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.incomeSourceDetails.viewmodels.ManageIncomeSourceDetailsViewModel
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import common.models.core.IncomeSourceId.mkIncomeSourceId
-import common.models.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceIdHash.{mkFromQueryString, mkIncomeSourceIdHash}
 import businessDetails.models.incomeSourceDetails.*
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
 import play.api.Logger
@@ -34,15 +36,13 @@ import uk.gov.hmrc.play.bootstrap.frontend.http.FrontendErrorHandler
 import businessDetails.views.html.manageBusinesses.manage.ManageIncomeSourceDetailsView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.models.admin.{DisplayBusinessStartDate, ObligationsFrontend}
-import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, LatencyYearsAnnual, LatencyYearsCrystallised, LatencyYearsQuarterly, PropertyDetailsModel, QuarterReportingType, QuarterTypeElection, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.services.{DateService, ITSAStatusService}
 import common.config.featureswitch.FeatureSwitching
 import shared.enums.InitialPage
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import shared.services.CalculationListService
 
 import javax.inject.{Inject, Singleton}

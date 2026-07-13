@@ -16,19 +16,20 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.core.NormalMode
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData.ceaseIncomeSourceDeclare
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSelfEmploymentIdHashed, testSessionId}
+import common.testConstants.BaseIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 
 class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
   val sessionService: SessionService = app.injector.instanceOf[SessionService]
@@ -39,6 +40,8 @@ class DeclareIncomeSourceCeasedControllerISpec extends ControllerISpecHelper {
     super.beforeEach()
     await(sessionService.deleteSession(Cease))
   }
+
+  val testSelfEmploymentIdHashed: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
 
   def getPath(mtdRole: MTDUserRole, incomeSourceType: IncomeSourceType): String = {
     val pathStart = if(mtdRole == MTDIndividual) "" else "/agents"

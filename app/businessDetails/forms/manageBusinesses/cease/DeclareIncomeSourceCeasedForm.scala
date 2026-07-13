@@ -16,7 +16,7 @@
 
 package businessDetails.forms.manageBusinesses.cease
 
-import common.enums.IncomeSourceJourney.IncomeSourceType
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import play.api.data.Form
 import play.api.data.Forms._
 

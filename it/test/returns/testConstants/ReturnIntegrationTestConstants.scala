@@ -18,8 +18,7 @@ package returns.testConstants
 
 import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import common.testConstants.BaseIntegrationTestConstants.*
-import financials.enums.ChargeType.ITSA_NI
-import financials.enums.CodingOutType.CODING_OUT_CLASS2_NICS
+import shared.enums.CodingOutType.CODING_OUT_CLASS2_NICS
 import play.api.libs.json.{JsValue, Json}
 
 object ReturnIntegrationTestConstants {
@@ -106,7 +105,7 @@ object ReturnIntegrationTestConstants {
         "mainType" -> "SA POA 1 Reconciliation Debit",
         "mainTransaction" -> "4911",
         "transactionId" -> "1040000123",
-        "chargeType" -> ITSA_NI,
+        "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 10000,
@@ -120,7 +119,7 @@ object ReturnIntegrationTestConstants {
         "mainType" -> "SA POA 2 Reconciliation Debit",
         "mainTransaction" -> "4913",
         "transactionId" -> "1040000124",
-        "chargeType" -> ITSA_NI,
+        "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 9000,
@@ -238,7 +237,7 @@ object ReturnIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge",
         "mainTransaction" -> "4910",
         "transactionId" -> "1040000123",
-        "chargeType" -> ITSA_NI,
+        "chargeType" -> "ITSA NI",
         "chargeReference" -> "ABCD1234",
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
@@ -252,7 +251,7 @@ object ReturnIntegrationTestConstants {
         "mainTransaction" -> "4920",
         "transactionId" -> "1040000124",
         "chargeReference" -> "ABCD1234",
-        "chargeType" -> ITSA_NI,
+        "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 9000,
@@ -269,7 +268,7 @@ object ReturnIntegrationTestConstants {
         "mainTransaction" -> "4930",
         "transactionId" -> "1040000125",
         "chargeReference" -> "ABCD1234",
-        "chargeType" -> ITSA_NI,
+        "chargeType" -> "ITSA NI",
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(
           Json.obj("amount" -> 8000,
@@ -285,7 +284,7 @@ object ReturnIntegrationTestConstants {
         "mainType" -> "SA Balancing Charge",
         "mainTransaction" -> "4910",
         "transactionId" -> "PAYID01",
-        "chargeType" -> ITSA_NI,
+        "chargeType" -> "ITSA NI",
         "chargeReference" -> "ABCD1234",
         "originalAmount" -> originalAmount,
         "items" -> Json.arr(

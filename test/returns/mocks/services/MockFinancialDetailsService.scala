@@ -18,12 +18,11 @@ package returns.mocks.services
 
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
-import common.testConstants.BaseTestConstants.testTaxYear
+import common.testConstants.BaseTestConstants.{testTaxYear, testErrorNotFoundStatus, testErrorMessage}
 import common.testUtils.UnitSpec
-import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import financials.models.{FinancialDetailsModel, FinancialDetailsResponseModel}
+import returns.models.*
 import returns.services.FinancialDetailsService
-import financials.testConstants.FinancialDetailsTestConstants.*
+import returns.testConstants.FinancialDetailsTestConstants.*
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -39,6 +38,9 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
     super.beforeEach()
     reset(mockFinancialDetailsService)
   }
+
+  lazy val testFinancialDetailsNotFoundErrorModel: FinancialDetailsErrorModel = FinancialDetailsErrorModel(testErrorNotFoundStatus, testErrorMessage)
+
 
   def setupMockGetFinancialDetails(taxYear: Int)(response: FinancialDetailsResponseModel): Unit =
     when(mockFinancialDetailsService.getFinancialDetails(any(), any())
@@ -58,31 +60,6 @@ trait MockFinancialDetailsService extends UnitSpec with BeforeAndAfterEach {
   def mockFinancialDetailsNotFound(): Unit =
     setupMockGetFinancialDetails(testTaxYear)(testFinancialDetailsNotFoundErrorModel)
 
-  val defaultPaymentOnAccountModel: PaymentOnAccountViewModel = PaymentOnAccountViewModel(
-    poaOneTransactionId = "poaOne-Id",
-    poaTwoTransactionId = "poaTwo-Id",
-    taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-    totalAmountOne = 5000.00,
-    totalAmountTwo = 5000.00,
-    relevantAmountOne = 5000.00,
-    relevantAmountTwo = 5000.00,
-    partiallyPaid = false,
-    fullyPaid = false,
-    previouslyAdjusted = Some(false)
-  )
-
-  val previouslyReducedPaymentOnAccountModel: PaymentOnAccountViewModel = PaymentOnAccountViewModel(
-    poaOneTransactionId = "poaOne-Id",
-    poaTwoTransactionId = "poaTwo-Id",
-    taxYear = TaxYear.makeTaxYearWithEndYear(2024),
-    totalAmountOne = 3000.00,
-    totalAmountTwo = 3000.00,
-    relevantAmountOne = 5000.00,
-    relevantAmountTwo = 5000.00,
-    partiallyPaid = false,
-    fullyPaid = false,
-    previouslyAdjusted = Some(false)
-  )
 
   def setupMockGetPoaTaxYearForEntryPointCall(response: Either[Throwable, Option[TaxYear]]): Unit = {
     when(mockFinancialDetailsService

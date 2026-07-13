@@ -24,7 +24,7 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedBackErrorView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.testUtils.TestSupport
 
 class IncomeSourceAddedBackErrorViewSpec extends TestSupport{

@@ -16,7 +16,7 @@
 
 package hub.mocks.services
 
-import businessDetails.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
+import hub.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
 import common.implicits.ImplicitDateFormatter
 import common.models.obligations.{ObligationsErrorModel, ObligationsResponseModel}
 import common.testUtils.UnitSpec

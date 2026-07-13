@@ -20,6 +20,7 @@ import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import obligations.mocks.services.MockSignUpService
 import obligations.services.reportingObligations.signUp.SignUpService
 import org.mockito.ArgumentMatchers.any
@@ -28,7 +29,6 @@ import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 

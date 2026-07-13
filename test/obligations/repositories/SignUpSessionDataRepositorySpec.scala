@@ -17,7 +17,6 @@
 package obligations.repositories
 
 import common.auth.MtdItUser
-import common.enums.JourneyType.{Opt, SignUpJourney}
 import common.mocks.services.MockDateService
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.UnitSpec
@@ -27,6 +26,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfter, OneInstancePerTest}
+import shared.enums.JourneyType.{Opt, SignUpJourney}
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}

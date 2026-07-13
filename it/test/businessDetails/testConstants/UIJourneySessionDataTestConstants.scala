@@ -16,11 +16,11 @@
 
 package businessDetails.testConstants
 
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, CeaseIncomeSourceData, ManageIncomeSourceData}
-import common.enums.JourneyType.IncomeSourceJourneyType
 import common.testConstants.BaseIntegrationTestConstants.{testPropertyIncomeId, testSelfEmploymentId, testSessionId}
 import shared.models.UIJourneySessionData
-import common.enums.IncomeSourceJourney.SelfEmployment
+import shared.enums.JourneyType.IncomeSourceJourneyType
 
 object UIJourneySessionDataTestConstants {
 

@@ -21,8 +21,8 @@ import play.twirl.api.Html
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.views.html.manageBusinesses.cease.IncomeSourceCeasedObligationsView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, IncomeSourceCeasedObligationsViewModel, ObligationsViewModel}
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import common.testUtils.ViewSpec
 
 import java.time.LocalDate

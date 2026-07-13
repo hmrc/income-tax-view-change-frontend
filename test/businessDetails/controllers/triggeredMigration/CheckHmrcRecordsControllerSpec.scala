@@ -16,22 +16,25 @@
 
 package businessDetails.controllers.triggeredMigration
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.mocks.services.MockTriggeredMigrationService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
 import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
-import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.MTDIndividual
-import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import common.mocks.auth.MockAuthActions
 import common.models.admin.TriggeredMigration
-import common.models.core.IncomeSourceId
 import common.services.DateServiceInterface
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeNoYearOfMigration
+import common.testConstants.BaseTestConstants.*
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeUnconfirmed
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 
 import scala.concurrent.Future
 
@@ -58,6 +61,10 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
     hasActiveForeignProperty = true,
     triggeredMigrationState = None
   )
+
+  val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)
+
+  val singleBusinessIncomeUnconfirmed = singleBusinessIncomeNoYearOfMigration.copy(channel = HmrcUnconfirmed.getValue)
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)

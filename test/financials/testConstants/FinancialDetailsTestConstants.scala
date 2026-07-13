@@ -16,18 +16,17 @@
 
 package financials.testConstants
 
-import common.models.core.AddressModel
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateService
-import common.testConstants.BaseTestConstants.{app, chargeReference, testErrorMessage, testErrorNotFoundStatus, testErrorStatus, testTaxYear}
+import common.testConstants.BaseTestConstants.*
 import financials.enums.ChargeType.NIC4_WALES
-import financials.enums.CodingOutType.*
 import financials.models.*
 import financials.models.creditDetailModel.CreditDetailModel
 import financials.models.creditsandrefunds.{CreditsModel, Transaction}
 import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import financials.testConstants.FinancialDetailsTestConstants.{documentDetailWithDueDateModel, financialDetail}
 import play.api.libs.json.{JsValue, Json}
+import shared.enums.CodingOutType.*
 
 import java.time.LocalDate
 
@@ -40,8 +39,6 @@ object FinancialDetailsTestConstants {
 
   val futureFixedDate: LocalDate = LocalDate.of(2030, 3, 12)
 
-  val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
-  
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
   val id1040000123 = "1040000123"

@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.forms.manageBusinesses.add.IncomeSourceReportingFrequencyForm
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
@@ -32,10 +33,9 @@ import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingFreq
 import common.auth.{AuthActions, MtdItUser}
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.IncomeSourceType
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.services.DateService
 import shared.enums.AfterSubmissionPage
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 import shared.utils.MtdConstants
 

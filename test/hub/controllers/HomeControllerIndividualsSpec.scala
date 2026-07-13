@@ -17,14 +17,14 @@
 package hub.controllers
 
 import hub.auth.AuthActionsWithTriggeredMigrationCheck
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.controllers.routes as appRoutes
+import common.enums.MTDIndividual
 import common.models.admin.*
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.AuditingService
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.*
 import common.utils.sessionUtils.SessionKeys
 import financials.models.*
 import financials.models.creditsandrefunds.CreditsModel
@@ -678,7 +678,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
 
       "render the home page with the Your Businesses tile with link" when {
         "using the manage businesses journey" in new Setup {
-          setupMockUserAuth
+          setupMockSuccess(MTDIndividual, enabledFeatures = List(BusinessDetailsFrontend))
           mockItsaStatusRetrievalAction()
           mockGetDueDates(Right(futureDueDates))
           setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -703,7 +703,7 @@ class HomeControllerIndividualsSpec extends HomeControllerHelperSpec with Inject
           document.title shouldBe homePageTitle
           document.select("#income-sources-tile h2:nth-child(1)").text() shouldBe messages("home.incomeSources.newJourneyHeading")
           document.select("#income-sources-tile > div > p:nth-child(2) > a").text() shouldBe messages("home.incomeSources.newJourney.view")
-          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe manageBusinessRoutes.ManageYourBusinessesController.show().url
+          document.select("#income-sources-tile > div > p:nth-child(2) > a").attr("href") shouldBe appConfig.businessDetailsManageBusinessesIndividualUrl(true)
         }
       }
 

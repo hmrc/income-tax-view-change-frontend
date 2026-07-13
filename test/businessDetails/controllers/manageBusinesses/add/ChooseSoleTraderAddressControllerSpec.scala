@@ -31,12 +31,12 @@ import common.testConstants.IncomeSourceDetailsTestConstants.{businessIncome2018
 import scala.annotation.unused
 import scala.concurrent.Future
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.models.admin.OverseasBusinessAddress
 import common.services.DateServiceInterface
 import shared.models.UIJourneySessionData

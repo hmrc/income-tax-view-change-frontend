@@ -16,8 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
@@ -28,7 +28,8 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.ukPropertyIncome
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 
 import scala.concurrent.Future
 
@@ -61,7 +62,7 @@ class IncomeSourceNotCeasedControllerSpec extends MockAuthActions {
           "render the not ceased page" in {
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(ukPropertyIncome)
-            mockUKPropertyIncomeSource()
+            setupMockGetIncomeSourceDetails(ukPropertyIncome)
 
             val result: Future[Result] = action(fakeRequest)
             val document: Document = Jsoup.parse(contentAsString(result))

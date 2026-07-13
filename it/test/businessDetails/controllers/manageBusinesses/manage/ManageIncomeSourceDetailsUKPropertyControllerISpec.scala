@@ -16,8 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
-import common.enums.IncomeSourceJourney.{SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.DisplayBusinessStartDate

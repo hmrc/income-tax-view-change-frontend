@@ -16,11 +16,11 @@
 
 package common.models.incomeSourceDetails
 
+import businessDetails.core.{IncomeSourceId, IncomeSourceIdHash}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.auth.MtdItUser
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
-import common.models.core.IncomeSourceId.mkIncomeSourceId
-import common.models.core.{IncomeSourceId, IncomeSourceIdHash}
+import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import common.services.DateServiceInterface
 import play.api.libs.json.{Format, JsValue, Json, OFormat}
 import play.api.{Logger, Logging}

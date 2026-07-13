@@ -17,10 +17,12 @@
 package businessDetails.controllers.manageBusinesses.manage
 
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
-import common.enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
-import common.enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
-import common.enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
+import businessDetails.enums.IncomeSourceJourney.ForeignProperty.reportingMethodChangeErrorPrefix as foreignFormError
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment.reportingMethodChangeErrorPrefix as seFormError
+import businessDetails.enums.IncomeSourceJourney.UkProperty.reportingMethodChangeErrorPrefix as ukFormError
 import org.mockito.Mockito.mock
 import play.api
 import play.api.Application
@@ -28,15 +30,15 @@ import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{Action, AnyContent, Result}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderWithLatency}
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.services.{DateService, DateServiceInterface}
-import common.mocks.services.{MockDateService, MockSessionService}
+import common.mocks.services.MockDateService
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import scala.concurrent.Future
 
@@ -105,7 +107,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSuccess(mtdRole, false, List())
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderWithLatency)
-              mockBothPropertyBothBusinessWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -127,7 +129,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSuccess(mtdRole, false, List())
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusinessWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -146,7 +148,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val mtdRole: MTDUserRole = testMtdRole
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               val result: Future[Result] = action(fakeRequest)
@@ -167,7 +169,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusinessWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -187,7 +189,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusinessWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -204,7 +206,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusinessWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -221,7 +223,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
                 setupMockSuccess(mtdRole)
                 mockItsaStatusRetrievalAction()
-                mockBothPropertyBothBusinessWithLatency()
+                setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
                 setupMockCreateSession(true)
                 setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
@@ -262,7 +264,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
 
               setupMockSuccess(mtdRole, false, List())
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
@@ -287,7 +289,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val changeTo: String = "quarterly"
               setupMockSuccess(mtdRole, false, List())
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
@@ -314,7 +316,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val taxYear: String = invalidTaxYear
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)
@@ -330,7 +332,7 @@ class ConfirmReportingMethodSharedControllerSpec extends MockAuthActions
               override val changeTo: String = invalidChangeTo
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction()
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
               setupMockSetMongoData(true)

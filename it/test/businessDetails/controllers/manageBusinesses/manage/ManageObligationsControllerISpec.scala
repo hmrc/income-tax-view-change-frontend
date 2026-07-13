@@ -21,17 +21,17 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.{testObligationsModel, testQuarterlyObligationDates}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import businessDetails.services.SessionService
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.Manage
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import businessDetails.helpers.NextUpdatesStub
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.Manage
 import shared.models.UIJourneySessionData
 
 

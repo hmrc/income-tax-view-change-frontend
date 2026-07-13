@@ -25,7 +25,7 @@ import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino,
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import financials.testConstants.messages.ChargeSummaryMessages.*
 import financials.enums.ChargeType.ITSA_ENGLAND_AND_NI
-import financials.enums.CodingOutType.*
+import shared.enums.CodingOutType.*
 import financials.helpers.FinancialDetailsStub
 import financials.models.*
 import financials.models.audit.ChargeSummaryAudit

@@ -17,7 +17,6 @@
 package hub.audit.models
 
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
-import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.commonAuditDetails
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.models.itsaStatus.ITSAStatus
 import hub.models.homePage.NextUpdatesTileViewModel
