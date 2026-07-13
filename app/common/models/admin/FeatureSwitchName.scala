@@ -65,8 +65,6 @@ object FeatureSwitchName {
       JsSuccess(PostFinalisationAmendmentsR18)
     case JsString(`CY+1YouMustWaitToSignUpPageEnabled`.name) =>
       JsSuccess(`CY+1YouMustWaitToSignUpPageEnabled`)
-    case JsString(NewHomePage.name) =>
-      JsSuccess(NewHomePage)
     case JsString(ObligationsFrontend.name) =>
       JsSuccess(ObligationsFrontend)
     case JsString(OverseasBusinessAddress.name) =>
@@ -119,7 +117,6 @@ object FeatureSwitchName {
       TriggeredMigration,
       PostFinalisationAmendmentsR18,
       `CY+1YouMustWaitToSignUpPageEnabled`,
-      NewHomePage,
       OverseasBusinessAddress,
       RecentActivity,
       MortgageEvidence,
@@ -214,11 +211,6 @@ case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {
 case object `CY+1YouMustWaitToSignUpPageEnabled` extends FeatureSwitchName {
   override val name: String = "cy-plus-one-you-must-wait-to-sign-up-page-enabled"
   override val toString: String = "CY+1 You Must Wait To Sign Up Page Enabled"
-}
-
-case object NewHomePage extends FeatureSwitchName {
-  override val name: String = "new-home-page"
-  override val toString: String = "New Home Page"
 }
 
 case object OverseasBusinessAddress extends FeatureSwitchName {

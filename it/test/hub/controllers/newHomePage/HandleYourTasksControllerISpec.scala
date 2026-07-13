@@ -20,8 +20,8 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.WiremockHelper
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.ITSAStatusDetailsStub
-import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, NewHomePage, PenaltiesAndAppeals}
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, PenaltiesAndAppeals}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
 import common.models.itsaStatus.ITSAStatus
@@ -152,7 +152,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
         "render the your tasks page" which {
           "displays the no tasks card" when {
             if(mtdUserRole != MTDSupportingAgent) {
-              "the user has no current tasks" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "the user has no current tasks" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -164,7 +164,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 verifyAuditContainsDetail(Json.obj("userIsCYPlusOne" -> false))
               }
             } else {
-              "the user has tasks relating to penalties and financials but they are a supporting agent" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "the user has tasks relating to penalties and financials but they are a supporting agent" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -180,7 +180,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
             "the user is a CY+1 user" in new TestSetup(
               currentItsaStatus = ITSAStatus.NoStatus,
               mtdUserRole = mtdUserRole,
-              featureSwitches = List(NewHomePage, CreditsRefundsRepay)
+              featureSwitches = List(CreditsRefundsRepay)
             ) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -194,7 +194,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
           }
 
           "display overdue submissions task cards" when {
-            "the user has an overdue annual submission" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueAnnualObligationsModel())), mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "the user has an overdue annual submission" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueAnnualObligationsModel())), mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -208,7 +208,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "the user has an overdue quarterly submission" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Mandated, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "the user has an overdue quarterly submission" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Mandated, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -222,7 +222,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "the user has multiple overdue annual submissions" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueAnnualObligationsModel(), overdueAnnualObligationsModel(currentDate.minusYears(1)))), mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "the user has multiple overdue annual submissions" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueAnnualObligationsModel(), overdueAnnualObligationsModel(currentDate.minusYears(1)))), mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -236,7 +236,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "the user has multiple overdue quarterly submissions" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel(), overdueQuarterlyObligationsModel(currentDate.minusYears(1)))), currentItsaStatus = ITSAStatus.Mandated, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "the user has multiple overdue quarterly submissions" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel(), overdueQuarterlyObligationsModel(currentDate.minusYears(1)))), currentItsaStatus = ITSAStatus.Mandated, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -253,7 +253,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
           if(mtdUserRole != MTDSupportingAgent) {
             "display overdue penalties and financial task cards" when {
-              "the user has an overdue charge" in new TestSetup(chargesJson = overdueChargeJson, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "the user has an overdue charge" in new TestSetup(chargesJson = overdueChargeJson, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -267,7 +267,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "the user has multiple overdue charges" in new TestSetup(chargesJson = multipleOverdueChargeJson, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "the user has multiple overdue charges" in new TestSetup(chargesJson = multipleOverdueChargeJson, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -281,7 +281,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "the user has an overdue late submission penalty" in new TestSetup(chargesJson = overdueLspJson, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay, PenaltiesAndAppeals)) {
+              "the user has an overdue late submission penalty" in new TestSetup(chargesJson = overdueLspJson, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay, PenaltiesAndAppeals)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -295,7 +295,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "the user has multiple overdue late submission penalties" in new TestSetup(chargesJson = multipleOverdueLspJson, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay, PenaltiesAndAppeals)) {
+              "the user has multiple overdue late submission penalties" in new TestSetup(chargesJson = multipleOverdueLspJson, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay, PenaltiesAndAppeals)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -309,7 +309,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "the user has an overdue late payment penalty" in new TestSetup(chargesJson = overdueLppJson, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay, PenaltiesAndAppeals)) {
+              "the user has an overdue late payment penalty" in new TestSetup(chargesJson = overdueLppJson, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay, PenaltiesAndAppeals)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -323,7 +323,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "the user has multiple overdue late payment penalties" in new TestSetup(chargesJson = multipleOverdueLppJson, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay, PenaltiesAndAppeals)) {
+              "the user has multiple overdue late payment penalties" in new TestSetup(chargesJson = multipleOverdueLppJson, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay, PenaltiesAndAppeals)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -342,7 +342,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 chargesJson = overdueAllChargesJson,
                 currentItsaStatus = ITSAStatus.Mandated,
                 mtdUserRole = mtdUserRole,
-                featureSwitches = List(NewHomePage, CreditsRefundsRepay, PenaltiesAndAppeals)) {
+                featureSwitches = List(CreditsRefundsRepay, PenaltiesAndAppeals)) {
                 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
@@ -376,7 +376,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
           }
 
           "not display the overdue quarterly submissions cards" when {
-            "user's ITSA status is Annual" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Annual, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "user's ITSA status is Annual" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Annual, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -389,7 +389,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "user's ITSA status is Exempt" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Exempt, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "user's ITSA status is Exempt" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Exempt, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -402,7 +402,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "user's ITSA status is Digitally Exempt" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.DigitallyExempt, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "user's ITSA status is Digitally Exempt" in new TestSetup(obligationsModel = ObligationsModel(Seq(overdueQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.DigitallyExempt, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -418,7 +418,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
           if(mtdUserRole != MTDSupportingAgent) {
             "display dateless submission cards" when {
-              "the user has money in their account" in new TestSetup(creditAmount = 100, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "the user has money in their account" in new TestSetup(creditAmount = 100, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -434,7 +434,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
           "not display the money in your account task" when {
             if(mtdUserRole != MTDSupportingAgent) {
-              "the user has no money in their account" in new TestSetup(creditAmount = 0, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "the user has no money in their account" in new TestSetup(creditAmount = 0, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -445,7 +445,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "creditsRefundsRepayEnabled FS is disabled" in new TestSetup(creditAmount = 100, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage)) {
+              "creditsRefundsRepayEnabled FS is disabled" in new TestSetup(creditAmount = 100, mtdUserRole = mtdUserRole) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -456,7 +456,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
             } else {
-              "user is a supporting agent" in new TestSetup(creditAmount = 100, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "user is a supporting agent" in new TestSetup(creditAmount = 100, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -471,7 +471,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
           if(mtdUserRole != MTDSupportingAgent) {
             "shows the due dates in the correct tag colour" when {
-              "task is overdue" in new TestSetup(chargesJson = overdueLppJson, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay, PenaltiesAndAppeals)) {
+              "task is overdue" in new TestSetup(chargesJson = overdueLppJson, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay, PenaltiesAndAppeals)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -480,7 +480,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "upcoming task is due today" in new TestSetup(chargesJson = upcomingChargeJson(LocalDate.now()), mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "upcoming task is due today" in new TestSetup(chargesJson = upcomingChargeJson(LocalDate.now()), mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -489,7 +489,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "upcoming task is due within 30 days" in new TestSetup(chargesJson = upcomingChargeJson(LocalDate.now().plusDays(30)), mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "upcoming task is due within 30 days" in new TestSetup(chargesJson = upcomingChargeJson(LocalDate.now().plusDays(30)), mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -498,7 +498,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "upcoming task is due in over 30 days" in new TestSetup(chargesJson = upcomingChargeJson(LocalDate.now().plusDays(31)), mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "upcoming task is due in over 30 days" in new TestSetup(chargesJson = upcomingChargeJson(LocalDate.now().plusDays(31)), mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -510,7 +510,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
           }
 
           "show upcoming submissions task cards" when {
-            "user has an upcoming annual submission" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingAnnualObligationsModel())), mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "user has an upcoming annual submission" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingAnnualObligationsModel())), mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -524,7 +524,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "user has an upcoming quarterly submission" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Voluntary, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "user has an upcoming quarterly submission" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Voluntary, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -541,7 +541,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
           if(mtdUserRole != MTDSupportingAgent) {
             "show upcoming penalties and financials task cards" when {
-              "user has an upcoming charge" in new TestSetup(chargesJson = upcomingChargeJson(), mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+              "user has an upcoming charge" in new TestSetup(chargesJson = upcomingChargeJson(), mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -560,7 +560,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 currentItsaStatus = ITSAStatus.Voluntary,
                 mtdUserRole = mtdUserRole,
                 chargesJson = upcomingChargeJson(),
-                featureSwitches = List(NewHomePage, CreditsRefundsRepay)
+                featureSwitches = List(CreditsRefundsRepay)
               ) {
 
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
@@ -587,7 +587,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
           }
 
           "not display the upcoming quarterly submissions cards" when {
-            "user's ITSA status is Annual" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Annual, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "user's ITSA status is Annual" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Annual, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -599,7 +599,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                 elementCountBySelector(".govuk-tag--green")(0)
               )
             }
-            "user's ITSA status is Exempt" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Exempt, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "user's ITSA status is Exempt" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.Exempt, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -612,7 +612,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
               )
             }
 
-            "user's ITSA status is Digitally Exempt" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.DigitallyExempt, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, CreditsRefundsRepay)) {
+            "user's ITSA status is Digitally Exempt" in new TestSetup(obligationsModel = ObligationsModel(Seq(upcomingQuarterlyObligationsModel())), currentItsaStatus = ITSAStatus.DigitallyExempt, mtdUserRole = mtdUserRole, featureSwitches = List(CreditsRefundsRepay)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
@@ -633,7 +633,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
               mtdUserRole = mtdUserRole,
               creditAmount = 100,
               chargesJson = multipleAllChargesJson,
-              featureSwitches = List(NewHomePage, CreditsRefundsRepay, PenaltiesAndAppeals)) {
+              featureSwitches = List(CreditsRefundsRepay, PenaltiesAndAppeals)) {
 
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 

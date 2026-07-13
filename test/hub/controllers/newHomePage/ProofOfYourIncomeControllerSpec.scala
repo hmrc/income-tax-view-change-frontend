@@ -20,7 +20,7 @@ import common.auth.AuthActions
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
-import common.models.admin.{MortgageEvidence, NewHomePage}
+import common.models.admin.MortgageEvidence
 import common.models.itsaStatus.ITSAStatusResponseModel
 import common.models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
@@ -96,7 +96,7 @@ with MockDateService {
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(itsaResponse))
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(getTestCalcResponse("DF")))
-            val activeSwitches = List(NewHomePage, MortgageEvidence)
+            val activeSwitches = List(MortgageEvidence)
             setupMockSuccess(mtdRole, enabledFeatures = activeSwitches)
 
             val result = action(fakeRequest)
@@ -120,7 +120,7 @@ with MockDateService {
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(itsaResponse))
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(getTestCalcResponse("IF")))
-            val activeSwitches = List(NewHomePage, MortgageEvidence)
+            val activeSwitches = List(MortgageEvidence)
             setupMockSuccess(mtdRole, enabledFeatures = activeSwitches)
 
             val result = action(fakeRequest)

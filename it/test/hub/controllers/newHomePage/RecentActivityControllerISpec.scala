@@ -18,8 +18,8 @@ package hub.controllers.newHomePage
 
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.ITSAStatusDetailsStub
-import common.models.admin.{FeatureSwitchName, NewHomePage, RecentActivity}
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxBusinessDetailsStub}
+import common.models.admin.{FeatureSwitchName, RecentActivity}
 import common.models.itsaStatus.ITSAStatus
 import ITSAStatus.ITSAStatus
 import common.models.core.{AccountingPeriodModel, CessationModel}
@@ -96,7 +96,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
         "render the recent activity page" which {
           "displays the no activity card" when {
             if (mtdUserRole != MTDSupportingAgent) {
-              "the user has no current tasks" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
+              "the user has no current tasks" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -109,7 +109,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
           }
           if (mtdUserRole != MTDSupportingAgent) {
             "display submission recent activity cards" when {
-              "the user has submitted their tax return within 90 days" in new TestSetup(obligationsModel = obligationsWithRecentAnnualSubmission, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
+              "the user has submitted their tax return within 90 days" in new TestSetup(obligationsModel = obligationsWithRecentAnnualSubmission, mtdUserRole = mtdUserRole, featureSwitches = List(RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -122,7 +122,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "the user has submitted a quarterly update within 90 days" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlySubmission, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
+              "the user has submitted a quarterly update within 90 days" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlySubmission, mtdUserRole = mtdUserRole, featureSwitches = List(RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -135,7 +135,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "the user has submitted a quarterly update within 90 days and the income source is reporting for calendar periods" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlySubmissionCalendar, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
+              "the user has submitted a quarterly update within 90 days and the income source is reporting for calendar periods" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlySubmissionCalendar, mtdUserRole = mtdUserRole, featureSwitches = List(RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -148,7 +148,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "the user submitted multiple tax returns and quarterly updates within 90 days" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlyAndAnnualSubmission, mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
+              "the user submitted multiple tax returns and quarterly updates within 90 days" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlyAndAnnualSubmission, mtdUserRole = mtdUserRole, featureSwitches = List(RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -167,7 +167,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
           }
           if (mtdUserRole != MTDSupportingAgent) {
             "not display the quarterly updates card" when {
-              "user's ITSA status is Annual" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlyAndAnnualSubmission, mtdUserRole = mtdUserRole, currentItsaStatus = ITSAStatus.Annual, featureSwitches = List(NewHomePage, RecentActivity)) {
+              "user's ITSA status is Annual" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlyAndAnnualSubmission, mtdUserRole = mtdUserRole, currentItsaStatus = ITSAStatus.Annual, featureSwitches = List(RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -182,7 +182,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "user's ITSA status is Exempt" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlyAndAnnualSubmission, mtdUserRole = mtdUserRole, currentItsaStatus = ITSAStatus.Exempt, featureSwitches = List(NewHomePage, RecentActivity)) {
+              "user's ITSA status is Exempt" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlyAndAnnualSubmission, mtdUserRole = mtdUserRole, currentItsaStatus = ITSAStatus.Exempt, featureSwitches = List(RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -197,7 +197,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
                 )
               }
 
-              "user's ITSA status is Digitally Exempt" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlyAndAnnualSubmission, mtdUserRole = mtdUserRole, currentItsaStatus = ITSAStatus.DigitallyExempt, featureSwitches = List(NewHomePage, RecentActivity)) {
+              "user's ITSA status is Digitally Exempt" in new TestSetup(obligationsModel = obligationsWithRecentQuarterlyAndAnnualSubmission, mtdUserRole = mtdUserRole, currentItsaStatus = ITSAStatus.DigitallyExempt, featureSwitches = List(RecentActivity)) {
                 val result = buildGETMTDClient(path, additionalCookies).futureValue
 
                 result should have(
@@ -216,7 +216,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
         }
         "redirect the user to the overview page" when {
           if(mtdUserRole == MTDSupportingAgent) {
-            "the user is a supporting agent" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(NewHomePage, RecentActivity)) {
+            "the user is a supporting agent" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(RecentActivity)) {
               val result = buildGETMTDClient(path, additionalCookies).futureValue
 
               result should have(
