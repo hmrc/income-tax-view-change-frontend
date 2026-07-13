@@ -30,7 +30,6 @@ import common.models.obligations.{GroupedObligationsModel, ObligationsModel, Sin
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import hub.helpers.NextUpdatesStub
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
-
 import java.time.LocalDate
 import common.helpers.GetInsourceDetailsStub
 
