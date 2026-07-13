@@ -24,7 +24,8 @@ case class MakingPaymentViewModel(
                                    payPenaltyUrl: String,
                                    hasInterest: Boolean,
                                    hasPenalty: Boolean,
-                                   unallocatedCredit: Option[BigDecimal]
+                                   unallocatedCredit: Option[BigDecimal],
+                                   hasOverdue: Boolean
                                  ) {
 
   val hasMoneyInAccount: Boolean = unallocatedCredit.exists(_ > 0)

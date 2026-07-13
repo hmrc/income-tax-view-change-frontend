@@ -29,7 +29,8 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
 
   def viewModel(hasInterest: Boolean = false,
                 hasPenalty: Boolean = false,
-                unallocatedCredit: Option[BigDecimal] = None): MakingPaymentViewModel =
+                unallocatedCredit: Option[BigDecimal] = None,
+                hasOverdue: Boolean = false): MakingPaymentViewModel =
     MakingPaymentViewModel(
       backUrl = "/what-you-owe",
       paymentHandoffUrl = "/payment?amountInPence=10000",
@@ -38,7 +39,8 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       payPenaltyUrl = "/pay-penalty",
       hasInterest = hasInterest,
       hasPenalty = hasPenalty,
-      unallocatedCredit = unallocatedCredit
+      unallocatedCredit = unallocatedCredit,
+      hasOverdue = hasOverdue
     )
 
   def render(model: MakingPaymentViewModel = viewModel()): Document =
@@ -79,5 +81,38 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.getElementById("money-in-account-p1").text should include("£400.00")
       document.getElementById("money-in-account-p1").text should include("account; your current balance")
     }
+// TODO remove it when done
+    /*AC-05: No penalties
+            Given I am logged in as an individual or main agent
+            And my account does not contain penalty charges
+            When I navigate to the "Make a payment" interstitial page
+            Then the penalties content is not displayed*/
+
+    "render no penalties when does not contain penalty charges" in {
+      val document = render()
+      document.select("h1").text shouldBe messages("making-payment.heading")
+      document.select("#main-content h2").isEmpty shouldBe true
+      document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
+      document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
+      document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
+      document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
+    }
+// TODO remove it when done
+    /*AC - 04: Penalties overdue
+      Given I am logged in as an individual or main agent
+    And all the penalty charges(Late Submission Penalties and / or Late Payment Penalties) are overdue
+    When I navigate to the
+    "Make a payment" interstitial page
+    Then the penalties content is not displayed*/
+    "render no penalties section when all the penalties are overdue" in {
+      val document = render(viewModel(hasPenalty = true, hasOverdue = true))
+      document.select("h1").text shouldBe messages("making-payment.heading")
+//      document.select("#main-content h2").isEmpty shouldBe true
+      document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
+      document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
+      document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
+      document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
+    }
+
   }
 }

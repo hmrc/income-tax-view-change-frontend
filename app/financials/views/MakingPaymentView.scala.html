@@ -67,7 +67,7 @@
         @messages("making-payment.what-payment-goes-towards.p3")
     }
 
-    @if(viewModel.hasPenalty) {
+    @if(viewModel.hasPenalty && !viewModel.hasOverdue) {
         @h2(msg = messages("making-payment.penalty.heading"))
 
         @p(id = Some("penalty-p1")) {

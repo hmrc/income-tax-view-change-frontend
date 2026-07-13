@@ -52,7 +52,8 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
           hasInterest = showInterestSection && financialDetailsModels.flatMap(_.documentDetails).exists(isAccruingInterest),
           hasPenalty = financialDetailsModels.flatMap(_.toChargeItem).exists(charge => charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0),
           unallocatedCredit = positiveCredit(balanceDetails.flatMap(_.unallocatedCredit))
-            .orElse(positiveCredit(balanceDetails.flatMap(_.totalCreditAvailableForRepayment)))
+            .orElse(positiveCredit(balanceDetails.flatMap(_.totalCreditAvailableForRepayment))),
+          hasOverdue = financialDetailsModels.flatMap(_.toChargeItem).exists(_.isOverdue())
         ))
       }
     }
