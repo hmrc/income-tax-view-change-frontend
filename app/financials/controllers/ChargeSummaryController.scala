@@ -67,6 +67,9 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                         val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FallBackBackLinks with TransactionUtils with FeatureSwitching {
 
+  //ToDo update this when the ReturnsFrontend feature switch is built
+  override val returnsFrontendEnabled: Boolean = false
+
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
     Logger("application").error(s"$errorPrefix $message")

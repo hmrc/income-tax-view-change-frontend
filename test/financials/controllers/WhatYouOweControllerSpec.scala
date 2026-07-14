@@ -129,7 +129,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                    LPP2Url: String = "",
                    hasOverdueOrAccruingInterestCharges: Boolean = false,
                    hasCrystallisedInterest: Boolean = false,
-                   poaTaxYear: Option[TaxYear] = None
+                   poaTaxYear: Option[TaxYear] = None,
+                  //Todo Update this field to true when the FS is built
+                   returnsFrontendEnabled: Boolean = false
                   ): WhatYouOweViewModel = WhatYouOweViewModel(
     currentDate = mockDateServiceInjected.getCurrentDate,
     hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
@@ -142,10 +144,11 @@ class WhatYouOweControllerSpec extends MockAuthActions
     dunningLock = dunningLock,
     moneyInYourAccountUrl = if (isAgent) MoneyInYourAccountController.showAgent().url else MoneyInYourAccountController.show().url,
     creditAndRefundEnabled = true,
-    taxYearSummaryUrl = taxYearEnd => if (isAgent)
-      returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYearEnd).url
-    else
-      returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYearEnd).url,
+    taxYearSummaryUrl = taxYearEnd => if (isAgent) {
+      appConfig.returnsTaxYearSummaryAgentUrl(taxYearEnd, returnsFrontendEnabled = returnsFrontendEnabled)
+    } else {
+      appConfig.returnsTaxYearSummaryIndividualUrl(taxYearEnd, returnsFrontendEnabled = returnsFrontendEnabled)
+    },
     claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(ctaViewModel(adjustPaymentsOnAccountFSEnabled, poaTaxYear)),
     lpp2Url = LPP2Url,
     adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url,
@@ -173,7 +176,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
     when(mockDateServiceInjected.getCurrentTaxYearStart).thenReturn(LocalDate.of(fixedDate.getYear, 4, 6))
     when(mockDateServiceInjected.getCurrentTaxYear).thenReturn(TaxYear(fixedDate.getYear, fixedDate.getYear + 1))
   }
-
+  
+  //ToDo Update these tests to have returnsFrontendEnabled = true when the FS is built
   mtdAllRoles.foreach { case mtdUserRole =>
     val isAgent = mtdUserRole != MTDIndividual
     val action = if (isAgent) testController.showAgent() else testController.show()

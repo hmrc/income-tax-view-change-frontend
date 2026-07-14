@@ -57,7 +57,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
                   isAgent: Boolean = false,
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory,
                   poaExtraChargeLink: Option[String] = None,
-                  whatYouOweUrl: String = "/report-quarterly/income-and-expenses/view/what-you-owe") {
+                  whatYouOweUrl: String = financialsRoutes.WhatYouOweController.show().url) {
 
     val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
       currentDate = dateService.getCurrentDate,
@@ -1086,7 +1086,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
         val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
-        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=PAYID01"
+        val allocationLinkHref = financialsRoutes.PaymentAllocationsController.viewPaymentAllocation("PAYID01").url
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
         document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")
@@ -1303,7 +1303,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       paymentBreakdown = paymentBreakdownWhenInterestAccrues
     ) {
       document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
-      document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+      document.select("#what-you-owe-interest-link").attr("href") shouldBe financialsRoutes.WhatYouOweController.show().url
       document.select("#p-interest-locks-msg").text().contains(s"$interestLinkFirstWord $interestLinkText $interestLinkFullText") shouldBe true
     }
 
@@ -1312,7 +1312,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest
     ) {
       document.select("#what-you-owe-interest-link").text() shouldBe interestLinkText
-      document.select("#what-you-owe-interest-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+      document.select("#what-you-owe-interest-link").attr("href") shouldBe financialsRoutes.WhatYouOweController.show().url
       document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWord $interestLinkText $interestLinkFullText"
     }
 
@@ -1321,7 +1321,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest
     ) {
       document.select("#what-you-owe-link").text() shouldBe interestLinkText
-      document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+      document.select("#what-you-owe-link").attr("href") shouldBe financialsRoutes.WhatYouOweController.show().url
     }
 
     "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(
@@ -1329,7 +1329,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       paymentBreakdown = paymentBreakdownWithOnlyInterestLock
     ) {
       document.select("#what-you-owe-link").text() shouldBe interestLinkText
-      document.select("#what-you-owe-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/what-you-owe"
+      document.select("#what-you-owe-link").attr("href") shouldBe financialsRoutes.WhatYouOweController.show().url
     }
 
     "charge history" should {
@@ -1532,7 +1532,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         LPPUrl = "")
       val thrownException = intercept[MissingFieldException] {
 
-        chargeSummary(exceptionViewModel, "/report-quarterly/income-and-expenses/view/what-you-owe")
+        chargeSummary(exceptionViewModel, financialsRoutes.WhatYouOweController.show().url)
       }
       thrownException.getMessage shouldBe "Missing Mandatory Expected Field: Due Date"
     }
@@ -1592,27 +1592,27 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
     "The charge summary view" should {
 
       "have a interest lock payment link when the interest is accruing" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWhenInterestAccrues, isAgent = true,
-        whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
+        whatYouOweUrl = financialsRoutes.WhatYouOweController.showAgent().url) {
         document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWordAgent $interestLinkTextAgent $interestLinkFullTextAgent"
       }
 
       "have a interest lock payment link when the interest has previously" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithPreviouslyAccruedInterest, isAgent = true,
-        whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
+        whatYouOweUrl = financialsRoutes.WhatYouOweController.showAgent().url) {
         document.select("#what-you-owe-interest-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-interest-link-agent").attr("href") shouldBe whatYouOweAgentUrl
         document.select("#p-interest-locks-msg").text() shouldBe s"$interestLinkFirstWordAgent $interestLinkTextAgent $interestLinkFullTextAgent"
       }
 
       "have no interest lock payment link when there is no accrued interest" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyAccruedInterest, isAgent = true,
-        whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
+        whatYouOweUrl = financialsRoutes.WhatYouOweController.showAgent().url) {
         document.select("#what-you-owe-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }
 
       "have no interest lock payment link when there is an intererst lock but no accrued interest" in new TestSetup(chargeItem = chargeItemModel(lpiWithDunningLock = None), paymentBreakdown = paymentBreakdownWithOnlyInterestLock, isAgent = true,
-        whatYouOweUrl = "/report-quarterly/income-and-expenses/view/agents/what-your-client-owes") {
+        whatYouOweUrl = financialsRoutes.WhatYouOweController.showAgent().url) {
         document.select("#what-you-owe-link-agent").text() shouldBe interestLinkTextAgent
         document.select("#what-you-owe-link-agent").attr("href") shouldBe whatYouOweAgentUrl
       }
@@ -1668,7 +1668,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         val paymentHistoryText = "Date Description Amount 29 Mar 2018 " + hmrcCreated + " £1,400.00"
         val MFADebitAllocation1 = "30 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,500.00"
         val MFADebitAllocation2 = "31 Mar 2018 " + messages("chargeSummary.paymentAllocations.mfaDebit") + " 2019 £1,600.00"
-        val allocationLinkHref = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=PAYID01"
+        val allocationLinkHref = financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent("PAYID01").url
         // heading should be hmrc adjustment
         document.getElementsByClass("govuk-caption-xl").first().text() shouldBe poa1Caption(2019)
         document.select("h1").text() shouldBe messages("chargeSummary.hmrcAdjustment.text")

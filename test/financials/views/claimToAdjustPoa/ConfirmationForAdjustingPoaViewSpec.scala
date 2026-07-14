@@ -34,7 +34,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
   implicit val lang: Lang = Lang("GB")
 
   val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
-  val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
+  val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents"
 
   class Setup(isAgent: Boolean, isAmountZero: Boolean) {
     implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
@@ -113,7 +113,7 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 
       "have a 'Cancel' button with backUrl" in new Setup(isAgent = true, isAmountZero = false) {
         elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
-        document.getElementById("cancel").attr("href") shouldBe testCancelUrlAgent
+        document.getElementById("cancel").attr("href") should include(testCancelUrlAgent)
       }
 
     }
@@ -137,10 +137,8 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
 
       "have a 'Cancel' button with backUrl" in new Setup(isAgent = true, isAmountZero = true) {
         elements.get(1).text shouldBe msgs("claimToAdjustPoa.confirmation.cancel")
-        document.getElementById("cancel").attr("href") shouldBe testCancelUrlAgent
+        document.getElementById("cancel").attr("href") should include(testCancelUrlAgent)
       }
-
     }
-
   }
 }

@@ -53,9 +53,9 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
 
   lazy val paymentRefundHistoryBackLink: Boolean => String = isAgent => {
     if (isAgent) {
-      "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+      routes.PaymentHistoryController.showAgent().url
     } else {
-      "/report-quarterly/income-and-expenses/view/payment-refund-history"
+      routes.PaymentHistoryController.show().url
     }
   }
 

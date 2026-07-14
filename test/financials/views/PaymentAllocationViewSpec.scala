@@ -202,7 +202,7 @@ class PaymentAllocationViewSpec extends ViewSpec with ImplicitDateFormatter {
         val allTableData: Element = document.selectHead("tbody").selectHead("tr")
         val chargePageLink: String = document.selectHead("tbody").link.attr("href")
         val taxYear = 2022
-        val chargePageLinkTrue = s"/report-quarterly/income-and-expenses/view/tax-years/$taxYear/charge?id=chargeReference3"
+        val chargePageLinkTrue = financialsRoutes.ChargeSummaryController.show(taxYear, "chargeReference3").url
 
         allTableData.selectNth("td", 1).text() shouldBe "31 Jan 2021"
         allTableData.selectNth("td", 2).text() shouldBe s"$paymentAllocationsHmrcAdjustment"

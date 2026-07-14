@@ -26,6 +26,7 @@ import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
+import financials.controllers.routes as financialsRoutes
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,8 +39,8 @@ class SelfServeTimeToPayConnector @Inject()(http: HttpClientV2,
   private val bodyWYO: JsValue = Json.parse(
     s"""
        {
-        "returnUrl": "/report-quarterly/income-and-expenses/view",
-        "backUrl": "/report-quarterly/income-and-expenses/view/what-you-owe"
+        "returnUrl": "${config.homePageUrl(false)}",
+        "backUrl": "${financialsRoutes.WhatYouOweController.show().path}"
        }
       """.stripMargin
   )

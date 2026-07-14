@@ -45,11 +45,11 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
                                              val auditingService: AuditingService,
                                              mcc: MessagesControllerComponents)
                                             (implicit val appConfig: FrontendAppConfig,
-                                          val individualErrorHandler: ItvcErrorHandler,
-                                          val agentErrorHandler: AgentItvcErrorHandler,
-                                          val languageUtils: LanguageUtils,
-                                          val ec: ExecutionContext,
-                                          val customNotFoundErrorView: CustomNotFoundErrorView)
+                                             val individualErrorHandler: ItvcErrorHandler,
+                                             val agentErrorHandler: AgentItvcErrorHandler,
+                                             val languageUtils: LanguageUtils,
+                                             val ec: ExecutionContext,
+                                             val customNotFoundErrorView: CustomNotFoundErrorView)
   extends FrontendController(mcc)
     with FeatureSwitching
     with I18nSupport
@@ -59,7 +59,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDIndividual().async {
       implicit user =>
         handleRequest(
-          backUrl = hub.controllers.routes.HomeController.show(origin).url
+          backUrl = appConfig.individualHomeUrlWithOrigin(origin)
         ) recover logAndRedirect
     }
 
@@ -79,7 +79,7 @@ class MoneyInYourAccountController @Inject()(val authActions: AuthActions,
     authActions.asMTDPrimaryAgent() async {
       implicit mtdItUser =>
         handleRequest(
-          backUrl = hub.controllers.routes.HomeController.showAgent().url
+          backUrl = appConfig.homePageUrl(isAgent = true)
         ) recover logAndRedirect
     }
   }
