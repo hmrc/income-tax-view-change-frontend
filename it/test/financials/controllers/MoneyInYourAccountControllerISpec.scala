@@ -38,17 +38,18 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
   lazy val fixedDate : LocalDate = LocalDate.of(2020, 11, 29)
 
   val testTaxYear: Int = 2023
-
   val testPreviousTaxYear: Int = 2022
+  val testPreviousTaxYearMinusOne: Int = 2021
 
   val validResponseModel = ANewCreditAndRefundModel()
     .withAvailableCredit(5.0)
     .withAllocatedFutureCredit(45.0)
+    .withTotalCredit(50.0)
     .withFirstRefund(3.0)
     .withSecondRefund(2.0)
+    .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 4, 15), 2000.0)
     .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)
-    .withCutoverCredit(LocalDate.of(testPreviousTaxYear, 3, 29), 2000.0)
-    .withPayment(LocalDate.of(testPreviousTaxYear, 3, 29), 500.0)
+    .withPayment(LocalDate.of(testPreviousTaxYear, 3, 29), 500.0, Some(LocalDate.of(testPreviousTaxYearMinusOne, 1, 15)))
     .withRepaymentInterest(LocalDate.of(testTaxYear, 3, 29), 2000.0)
     .withBalancingChargeCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
     .withMfaCredit(LocalDate.of(testTaxYear, 3, 29), 2000.0)
@@ -85,33 +86,33 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
 
                   res should have(
                     httpStatus(OK),
-                    //TODO: Re-enable as part of MISUV-10631
-//                    elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
-//                      messagesAPI("credit-and-refund.row.repaymentInterest-2") + s" $testPreviousTaxYear to $testTaxYear tax year"),
-//
-//                    elementTextBySelectorList("#main-content", "li:nth-child(2)", "p")(expectedValue = "£2,000.00 " +
-//                      messagesAPI("credit-and-refund.credit-from-balancing-charge-prt-1") + s" $testPreviousTaxYear to $testTaxYear tax year"),
-//
-//                    elementTextBySelectorList("#main-content", "li:nth-child(3)", "p")(expectedValue = "£2,000.00 " +
-//                      messagesAPI("credit-and-refund.credit-from-adjustment-prt-1") + s" $testPreviousTaxYear to $testTaxYear tax year"),
-//
-//                    elementTextBySelectorList("#main-content", "li:nth-child(4)", "p")(expectedValue = "£2,000.00 " +
-//                      messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + s" $testPreviousTaxYear to $testTaxYear tax year"),
-//
-//                    elementTextBySelectorList("#main-content", "li:nth-child(5)", "p")(expectedValue = "£2,000.00 " +
-//                      messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + s" ${testPreviousTaxYear - 1} to $testPreviousTaxYear tax year"),
-//
-//                    elementTextBySelectorList("#main-content", "li:nth-child(6)", "p")(expectedValue = "£2,000.00 " +
-//                      messagesAPI("credit-and-refund.credit-from-earlier-tax-year") + s" ${testPreviousTaxYear - 1} to $testPreviousTaxYear tax year"),
-//
-//                    elementTextBySelectorList("#main-content", "li:nth-child(7)", "p")(expectedValue = "£500.00 " +
-//                      messagesAPI("credit-and-refund.payment") + " 29 March 2022"),
-//
-//                    elementTextBySelectorList("#main-content", "li:nth-child(8)", "p")(expectedValue = "£3.00 "
-//                      + messagesAPI("credit-and-refund.refundProgress-prt-2")),
-//
-//                    elementTextBySelectorList("#main-content", "li:nth-child(9)", "p")(expectedValue = "£2.00 "
-//                      + messagesAPI("credit-and-refund.refundProgress-prt-2")),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(1)")(expectedValue = s"29 Mar $testPreviousTaxYear " +
+                      messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£2,000.00"),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(2)")(expectedValue =  s"29 Mar $testPreviousTaxYear "+
+                      messagesAPI("money-in-your-account.where-from.payment-row.description", "15 Jan 2021") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£500.00"),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(3)")(expectedValue =  s"15 Apr $testPreviousTaxYear " +
+                      messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYear to $testTaxYear " + "£2,000.00"),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(4)")(expectedValue =  s"29 Mar $testTaxYear " +
+                      messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYear to $testTaxYear " + "£2,000.00"),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(5)")(expectedValue =  s"29 Mar $testTaxYear " +
+                      messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYear to $testTaxYear " + "£2,000.00"),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(6)")(expectedValue = s"29 Mar $testTaxYear " +
+                      messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYear to $testTaxYear " + "£2,000.00"),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(7)")(expectedValue = s"29 Mar $testTaxYear " +
+                      messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYear to $testTaxYear " + "£2,000.00"),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(8)")(expectedValue = messagesAPI("chargeSummary.noData") +
+                      " " + messagesAPI("money-in-your-account.where-from.refund-row.description") + " " + messagesAPI("chargeSummary.noData") +" −£3.00"),
+
+                    elementTextBySelectorList("#where-the-money-came-from-table tbody tr:nth-child(9)")(expectedValue = messagesAPI("chargeSummary.noData") +
+                      " " + messagesAPI("money-in-your-account.where-from.refund-row.description")  + " " + messagesAPI("chargeSummary.noData") +" −£2.00"),
 
                     pageTitle(mtdUserRole, "money-in-your-account.heading")
                   )
@@ -134,11 +135,10 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
 
                   res should have(
                     httpStatus(OK),
-                    //TODO: Re-enable as part of MISUV-10631
-//                    elementTextBySelectorList("#main-content", "li:nth-child(1)", "p")(expectedValue = "£2,000.00 " +
-//                      messagesAPI("credit-and-refund.row.repaymentInterest-2") + s" $testPreviousTaxYear to $testTaxYear tax year"),
-//                    elementTextBySelectorList("#main-content", "li:nth-child(8)", "p")(expectedValue = "£3.00 "
-//                      + messagesAPI("credit-and-refund.refundProgress-prt-2")),
+                    elementTextBySelectorList("#where-the-money-came-from-table  tbody  tr:nth-child(1)")(expectedValue =  s"29 Mar $testPreviousTaxYear " +
+                      messagesAPI("money-in-your-account.where-from.credit-row.description") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£2,000.00"),
+                    elementTextBySelectorList("#where-the-money-came-from-table  tbody  tr:nth-child(2)")(expectedValue = s"29 Mar $testPreviousTaxYear " +
+                      messagesAPI("money-in-your-account.where-from.payment-row.description", "15 Jan 2021") + s" $testPreviousTaxYearMinusOne to $testPreviousTaxYear " + "£500.00"),
                     pageTitle(mtdUserRole, "money-in-your-account.heading")
                   )
                 }
