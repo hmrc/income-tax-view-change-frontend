@@ -67,26 +67,6 @@
         @messages("making-payment.what-payment-goes-towards.p3")
     }
 
-    @if(viewModel.hasPenalty && !viewModel.hasOverdue) {
-        @h2(msg = messages("making-payment.penalty.heading"))
-
-        @p(id = Some("penalty-p1")) {
-            @messages("making-payment.penalty.p1")
-        }
-
-        @p(id = Some("penalty-p2")) {
-            @messages("making-payment.penalty.p2.before")
-            @link(
-                link = viewModel.payPenaltyUrl,
-                messageKey = "making-payment.penalty.p2.link",
-                id = Some("pay-penalty-link"),
-                target = Some("_blank"),
-                rel = Some("noreferrer noopener")
-            )
-            @messages("making-payment.penalty.p2.after")
-        }
-    }
-
     @if(viewModel.hasInterest) {
         @h2(msg = messages("making-payment.accruing-interest.heading"))
 
@@ -102,6 +82,33 @@
                 id = Some("what-you-owe-link")
             )
             @messages("making-payment.accruing-interest.p2.after")
+        }
+    }
+
+    @if(viewModel.hasPenalty && !viewModel.hasAllPenaltiesOverdue) {
+        @h2(msg = messages("making-payment.penalty.heading"))
+
+        @if(viewModel.hasNotOverdueLPPAndOverdueNonPenaltyCharge) {
+            @p(id = Some("penalty-p1")) {
+                @messages("making-payment.penalty.p1")
+            }
+        }
+
+        @p(id = Some("penalty-p2")) {
+            @messages("making-payment.penalty.p2")
+        }
+
+        @p(id = Some("penalty-p3")) {
+            @messages("making-payment.penalty.p3.before")
+            @link(
+                link = viewModel.payPenaltyUrl,
+                messageKey = "making-payment.penalty.p3.link",
+                outerMessage = ".",
+                id = Some("pay-penalty-link"),
+                target = Some("_blank"),
+                rel = Some("noreferrer noopener")
+            )
+            @messages("making-payment.penalty.p3.after")
         }
     }
 

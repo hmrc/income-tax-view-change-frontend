@@ -25,10 +25,14 @@ case class MakingPaymentViewModel(
                                    hasInterest: Boolean,
                                    hasPenalty: Boolean,
                                    unallocatedCredit: Option[BigDecimal],
-                                   hasOverdue: Boolean
+                                   hasAllPenaltiesOverdue: Boolean,
+                                   hasOverdueNonPenaltyCharges: Boolean,
+                                   hasNotOverdueLPP: Boolean
                                  ) {
 
   val hasMoneyInAccount: Boolean = unallocatedCredit.exists(_ > 0)
 
   val hasAdditionalSections: Boolean = hasInterest || hasPenalty || hasMoneyInAccount
+
+  val hasNotOverdueLPPAndOverdueNonPenaltyCharge: Boolean = hasNotOverdueLPP && hasOverdueNonPenaltyCharges
 }

@@ -27,10 +27,15 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
 
   val makingPaymentView: MakingPaymentView = app.injector.instanceOf[MakingPaymentView]
 
+  val penaltyP3MessageText: String = s"${messages("making-payment.penalty.p3.before")} ${messages("making-payment.penalty.p3.link")} ${messages("pagehelp.opensInNewTabText")}. ${messages("making-payment.penalty.p3.after")}"
+
   def viewModel(hasInterest: Boolean = false,
                 hasPenalty: Boolean = false,
                 unallocatedCredit: Option[BigDecimal] = None,
-                hasOverdue: Boolean = false): MakingPaymentViewModel =
+                hasOverdue: Boolean = false,
+                hasAllPenaltiesOverdue: Boolean = false,
+                hasOverdueNonPenaltyCharges: Boolean = false,
+                hasNotOverdueLPP: Boolean = false): MakingPaymentViewModel =
     MakingPaymentViewModel(
       backUrl = "/what-you-owe",
       paymentHandoffUrl = "/payment?amountInPence=10000",
@@ -40,7 +45,9 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       hasInterest = hasInterest,
       hasPenalty = hasPenalty,
       unallocatedCredit = unallocatedCredit,
-      hasOverdue = hasOverdue
+      hasAllPenaltiesOverdue = hasAllPenaltiesOverdue,
+      hasOverdueNonPenaltyCharges = hasOverdueNonPenaltyCharges,
+      hasNotOverdueLPP = hasNotOverdueLPP
     )
 
   def render(model: MakingPaymentViewModel = viewModel()): Document =
@@ -81,15 +88,46 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.getElementById("money-in-account-p1").text should include("£400.00")
       document.getElementById("money-in-account-p1").text should include("account; your current balance")
     }
-// TODO remove it when done
-    /*AC-05: No penalties
-            Given I am logged in as an individual or main agent
-            And my account does not contain penalty charges
-            When I navigate to the "Make a payment" interstitial page
-            Then the penalties content is not displayed*/
 
-    "render no penalties when does not contain penalty charges" in {
-      val document = render()
+    "render penalty section with H1/P2/P3 when penalties not overdue" in {
+      val document = render(viewModel(hasPenalty = true))
+      val headings = document.select("#main-content h2")
+
+      headings.get(0).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
+      headings.get(1).text shouldBe messages("making-payment.penalty.heading")
+      document.selectById("penalty-p2").text() shouldBe messages("making-payment.penalty.p2")
+      document.selectById("penalty-p3").text() shouldBe penaltyP3MessageText
+      document.getElementById("pay-penalty-link").attr("href") shouldBe "/pay-penalty"
+      document.getElementById("pay-penalty-link").attr("target") shouldBe "_blank"
+    }
+
+    "render penalty section with H1/P1/P2/P3 when LPP not overdue with overdue non-penalty charges" in {
+      val document = render(viewModel(hasPenalty = true, hasNotOverdueLPP = true, hasOverdueNonPenaltyCharges = true))
+      val headings = document.select("#main-content h2")
+
+      headings.get(0).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
+      headings.get(1).text shouldBe messages("making-payment.penalty.heading")
+      document.selectById("penalty-p1").text() shouldBe messages("making-payment.penalty.p1")
+      document.selectById("penalty-p2").text() shouldBe messages("making-payment.penalty.p2")
+      document.selectById("penalty-p3").text() shouldBe penaltyP3MessageText
+      document.getElementById("pay-penalty-link").attr("href") shouldBe "/pay-penalty"
+      document.getElementById("pay-penalty-link").attr("target") shouldBe "_blank"
+    }
+
+    "render penalty section with H1/P2/P3 when Penalties not overdue with no overdue non penalty charges" in {
+      val document = render(viewModel(hasPenalty = true, hasNotOverdueLPP = true))
+      val headings = document.select("#main-content h2")
+
+      headings.get(0).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
+      headings.get(1).text shouldBe messages("making-payment.penalty.heading")
+      document.selectById("penalty-p2").text() shouldBe messages("making-payment.penalty.p2")
+      document.selectById("penalty-p3").text() shouldBe penaltyP3MessageText
+      document.getElementById("pay-penalty-link").attr("href") shouldBe "/pay-penalty"
+      document.getElementById("pay-penalty-link").attr("target") shouldBe "_blank"
+    }
+
+    "render no penalties section when all the penalties are overdue" in {
+      val document = render(viewModel(hasAllPenaltiesOverdue = true))
       document.select("h1").text shouldBe messages("making-payment.heading")
       document.select("#main-content h2").isEmpty shouldBe true
       document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
@@ -97,22 +135,5 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
       document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
       document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
     }
-// TODO remove it when done
-    /*AC - 04: Penalties overdue
-      Given I am logged in as an individual or main agent
-    And all the penalty charges(Late Submission Penalties and / or Late Payment Penalties) are overdue
-    When I navigate to the
-    "Make a payment" interstitial page
-    Then the penalties content is not displayed*/
-    "render no penalties section when all the penalties are overdue" in {
-      val document = render(viewModel(hasPenalty = true, hasOverdue = true))
-      document.select("h1").text shouldBe messages("making-payment.heading")
-//      document.select("#main-content h2").isEmpty shouldBe true
-      document.getElementById("payment-goes-towards").text shouldBe messages("making-payment.what-payment-goes-towards.p1")
-      document.select("#main-content li").get(0).text shouldBe messages("making-payment.what-payment-goes-towards.bullet1")
-      document.select("#main-content li").get(1).text shouldBe messages("making-payment.what-payment-goes-towards.bullet2")
-      document.getElementById("continue-to-payment-button").attr("href") shouldBe "/payment?amountInPence=10000"
-    }
-
   }
 }

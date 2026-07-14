@@ -187,6 +187,8 @@ case class ChargeItem(
 
   val isPenalty: Boolean = List(LateSubmissionPenalty, FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
 
+  val isLPPPenalty: Boolean = List(FirstLatePaymentPenalty, SecondLatePaymentPenalty).contains(this.transactionType)
+
   val isLPP2: Boolean = transactionType == SecondLatePaymentPenalty
 
   def getInterestPaidStatus: String = {
