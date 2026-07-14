@@ -22,7 +22,7 @@ import financials.models.*
 import financials.models.repaymentHistory.RepaymentHistoryUtils.*
 import financials.testConstants.ChargeConstants
 import org.scalatest.matchers.should.Matchers
-
+import financials.controllers.routes as financialsRoutes
 import java.time.LocalDate
 
 class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeConstants {
@@ -141,33 +141,59 @@ class RepaymentHistoryUtilsSpec extends TestSupport with Matchers with ChargeCon
 
   private def groupedPayments(cutoverEnabled: Boolean = true, mfaEnabled: Boolean = true, isAgent: Boolean = false) = {
     val bcc = List(PaymentHistoryEntry(LocalDate.parse("2019-12-24"), BalancingChargeCreditType, Some(-12000.0), None,
-      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202203", Some(2019)))
+      (if isAgent then financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(2019)
+      else financialsRoutes.CreditsSummaryController.showCreditsSummary(2019)).url, "AY777777202203", Some(2019)))
     val cutover = if (cutoverEnabled) List(PaymentHistoryEntry(LocalDate.parse("2019-12-25"), CutOverCreditType, Some(-11000.0), None,
-      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2019", "AY777777202202", Some(2019))) else Nil
+      (if isAgent then financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(2019) else financialsRoutes.CreditsSummaryController.showCreditsSummary(2019)).url,
+      "AY777777202202", Some(2019))) else Nil
     val reviewAndReconcileCredits = List(
       PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PoaOneReconciliationCredit, Some(-11000.0), None,
-      s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202298", "AY777777202298", Some(2019)),
+        (if isAgent then financialsRoutes.ChargeSummaryController.showAgent(2019, "AY777777202298") else financialsRoutes.ChargeSummaryController.show(2019, "AY777777202298")).url,
+        "AY777777202298", Some(2019)),
       PaymentHistoryEntry(LocalDate.parse("2019-12-23"), PoaTwoReconciliationCredit, Some(-11000.0), None,
-        s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}tax-years/2019/charge?id=AY777777202299", "AY777777202299", Some(2019)),
+        (if isAgent then financialsRoutes.ChargeSummaryController.showAgent(2019, "AY777777202299") else financialsRoutes.ChargeSummaryController.show(2019, "AY777777202299")).url,
+        "AY777777202299", Some(2019))
     )
     val standardPayments = List(
-      PaymentHistoryEntry(LocalDate.parse("2019-12-25"), PaymentType, Some(10000), Some("DOCID02"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID02", "2019-12-25 &pound;10,000.00", Some(9999)),
-      PaymentHistoryEntry(LocalDate.parse("2019-12-26"), PaymentType, Some(10000), Some("DOCID01"), s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}payment-made-to-hmrc?documentNumber=DOCID01", "2019-12-26 &pound;10,000.00", Some(9999))
+      PaymentHistoryEntry(LocalDate.parse("2019-12-25"), PaymentType, Some(10000), Some("DOCID02"),
+        (if isAgent then financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent("DOCID02") else financialsRoutes.PaymentAllocationsController.viewPaymentAllocation("DOCID02")).url,
+        "2019-12-25 &pound;10,000.00", Some(9999)),
+      PaymentHistoryEntry(LocalDate.parse("2019-12-26"), PaymentType, Some(10000), Some("DOCID01"),
+        (if isAgent then financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent("DOCID01") else financialsRoutes.PaymentAllocationsController.viewPaymentAllocation("DOCID01")).url,
+        "2019-12-26 &pound;10,000.00", Some(9999))
     )
-    val mfa = if (mfaEnabled) List((2020, List(PaymentHistoryEntry(LocalDate.parse("2020-04-12"), MfaCreditType, Some(-11000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202210", Some(2020)),
-      PaymentHistoryEntry(LocalDate.parse("2020-04-13"), MfaCreditType, Some(-10000.0), None, s"/report-quarterly/income-and-expenses/view/${if (isAgent) "agents/" else ""}credits-from-hmrc/2020", "AY777777202201", Some(2020))))) else List()
+    val mfa = if (mfaEnabled) List((2020, List(PaymentHistoryEntry(LocalDate.parse("2020-04-12"),
+      MfaCreditType, Some(-11000.0), None,
+      (if isAgent then financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(2020) else financialsRoutes.CreditsSummaryController.showCreditsSummary(2020)).url,
+      "AY777777202210", Some(2020)),
+      PaymentHistoryEntry(LocalDate.parse("2020-04-13"), MfaCreditType, Some(-10000.0), None,
+        (if isAgent then financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(2020) else financialsRoutes.CreditsSummaryController.showCreditsSummary(2020)).url,
+        "AY777777202201", Some(2020))))) else List()
 
     mfa ++ List((2019, reviewAndReconcileCredits ++ bcc ++ cutover ++ standardPayments))
   }
 
   private def groupedCodedOutBcdCharges() = List(
-    (2018, List(PaymentHistoryEntry(date = LocalDate.of(2018, 3, 29), creditType = BalancingCharge, amount = codedOutDocumentDetailPayeSACi.originalAmount.some, transactionId = codedOutDocumentDetailPayeSACi.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=CODINGOUT02&codedOut=true", visuallyHiddenText = BalancingCharge.toString, Some(2021)))),
-    (2017, List(PaymentHistoryEntry(date = LocalDate.of(2017, 3, 29), creditType = BalancingCharge, amount = balancingChargePaye.originalAmount.some, transactionId = balancingChargePaye.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2021/charge?id=1040000126&codedOut=true", visuallyHiddenText = BalancingCharge.toString, Some(2021))))
+    (2018, List(PaymentHistoryEntry(date = LocalDate.of(2018, 3, 29), creditType = BalancingCharge,
+      amount = codedOutDocumentDetailPayeSACi.originalAmount.some,
+      transactionId = codedOutDocumentDetailPayeSACi.transactionId.some,
+      linkUrl = s"${financialsRoutes.ChargeSummaryController.show(2021, "CODINGOUT02").url}&codedOut=true",
+      visuallyHiddenText = BalancingCharge.toString, Some(2021)))),
+    (2017, List(PaymentHistoryEntry(date = LocalDate.of(2017, 3, 29), creditType = BalancingCharge,
+      amount = balancingChargePaye.originalAmount.some, transactionId = balancingChargePaye.transactionId.some,
+      linkUrl = s"${financialsRoutes.ChargeSummaryController.show(2021, "1040000126").url}&codedOut=true",
+      visuallyHiddenText = BalancingCharge.toString, Some(2021))))
   )
 
   private def groupedCodedOutPoaCharges() = List(
-    (2016, List(PaymentHistoryEntry(date = LocalDate.of(2016, 3, 29), creditType = PoaTwoDebit, amount = poa2WithCodingutAccepted.originalAmount.some, transactionId = poa2WithCodingutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000124&codedOut=true", visuallyHiddenText = PoaTwoDebit.toString, Some(2023)))),
-    (2015, List(PaymentHistoryEntry(date = LocalDate.of(2015, 3, 29), creditType = PoaOneDebit, amount = poa1WithCodingOutAccepted.originalAmount.some, transactionId = poa1WithCodingOutAccepted.transactionId.some, linkUrl = "/report-quarterly/income-and-expenses/view/tax-years/2023/charge?id=1040000123&codedOut=true", visuallyHiddenText = PoaOneDebit.toString, Some(2023))))
+    (2016, List(PaymentHistoryEntry(date = LocalDate.of(2016, 3, 29), creditType = PoaTwoDebit,
+      amount = poa2WithCodingutAccepted.originalAmount.some, transactionId = poa2WithCodingutAccepted.transactionId.some,
+      linkUrl = s"${financialsRoutes.ChargeSummaryController.show(2023, "1040000124").url}&codedOut=true",
+      visuallyHiddenText = PoaTwoDebit.toString, Some(2023)))),
+    (2015, List(PaymentHistoryEntry(date = LocalDate.of(2015, 3, 29), creditType = PoaOneDebit,
+      amount = poa1WithCodingOutAccepted.originalAmount.some, transactionId = poa1WithCodingOutAccepted.transactionId.some,
+      linkUrl = s"${financialsRoutes.ChargeSummaryController.show(2023, "1040000123").url}&codedOut=true",
+      visuallyHiddenText = PoaOneDebit.toString, Some(2023))))
   )
 
   "RepaymentHistoryUtils" should {

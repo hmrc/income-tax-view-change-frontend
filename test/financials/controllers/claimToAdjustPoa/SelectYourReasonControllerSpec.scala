@@ -34,11 +34,10 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.Helpers.{OK, contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import shared.mocks.services.MockCalculationListService
 
 import scala.concurrent.Future
 
-class SelectYourReasonControllerSpec extends MockAuthActions with MockClaimToAdjustService with MockPaymentOnAccountSessionService with MockCalculationListService {
+class SelectYourReasonControllerSpec extends MockAuthActions with MockClaimToAdjustService with MockPaymentOnAccountSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
@@ -71,7 +70,6 @@ class SelectYourReasonControllerSpec extends MockAuthActions with MockClaimToAdj
   def setupTest(sessionResponse: Either[Throwable, Option[PoaAmendmentData]], claimToAdjustResponse: Option[PaymentOnAccountViewModel]): Unit = {
     mockSingleBISWithCurrentYearAsMigrationYear()
     setupMockGetPaymentsOnAccount(claimToAdjustResponse)
-    setupMockTaxYearCrystallised()
     setupMockPaymentOnAccountSessionService(Future.successful(sessionResponse))
   }
 

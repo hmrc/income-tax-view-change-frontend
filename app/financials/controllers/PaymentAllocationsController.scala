@@ -55,6 +55,9 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              val appConfig: FrontendAppConfig) extends FrontendController(mcc)
   with I18nSupport with FeatureSwitching with FallBackBackLinks {
 
+  //ToDo update this when the ReturnsFrontend feature switch is built
+  override val returnsFrontendEnabled: Boolean = false
+
   private lazy val redirectUrlIndividual: String = errorRoutes.NotFoundDocumentIDLookupController.show().url
   private lazy val redirectUrlAgent: String = agentErrorRoutes.AgentNotFoundDocumentIDLookupController.show().url
 

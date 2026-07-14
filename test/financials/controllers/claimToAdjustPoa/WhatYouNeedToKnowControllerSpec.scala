@@ -29,13 +29,11 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import shared.mocks.services.MockCalculationListService
 
 import scala.concurrent.Future
 
 class WhatYouNeedToKnowControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
-  with MockCalculationListService
   with MockPaymentOnAccountSessionService {
 
   override lazy val app: Application = applicationBuilderWithAuthBindings
@@ -62,7 +60,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount()
-              setupMockTaxYearNotCrystallised()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
               setupMockSuccess(mtdRole)
@@ -73,7 +70,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount(Some(previouslyReducedPaymentOnAccountModel))
-              setupMockTaxYearNotCrystallised()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData()))))
 
               setupMockSuccess(mtdRole)
@@ -86,7 +82,6 @@ class WhatYouNeedToKnowControllerSpec extends MockAuthActions
               mockSingleBISWithCurrentYearAsMigrationYear()
               mockItsaStatusRetrievalAction()
               setupMockGetPaymentsOnAccount()
-              setupMockTaxYearNotCrystallised()
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
 
               setupMockSuccess(mtdRole)

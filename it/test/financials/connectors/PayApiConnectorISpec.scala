@@ -17,6 +17,7 @@
 package financials.connectors
 
 import common.helpers.{ComponentSpecBase, WiremockHelper}
+import common.testConstants.MicroserviceSpecificConstants
 import financials.models.core.{PaymentJourneyErrorResponse, PaymentJourneyModel, PaymentJourneyResponse}
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.http.Status.{CREATED, INTERNAL_SERVER_ERROR}
@@ -47,8 +48,8 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl": "http://localhost:9081$basePath/what-you-owe",
-              | "backUrl": "http://localhost:9081$basePath/what-you-owe"
+              | "returnUrl": "${MicroserviceSpecificConstants.baseUrl}/what-you-owe",
+              | "backUrl": "${MicroserviceSpecificConstants.baseUrl}/what-you-owe"
               |}
               """.stripMargin
           )
@@ -80,8 +81,8 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl":"http://localhost:9081$basePath/agents/payments-owed",
-              | "backUrl": "http://localhost:9081$basePath/agents/payments-owed"
+              | "returnUrl":"${MicroserviceSpecificConstants.baseUrl}/agents/payments-owed",
+              | "backUrl": "${MicroserviceSpecificConstants.baseUrl}/agents/payments-owed"
               |}
               """.stripMargin
           )
@@ -117,8 +118,8 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl": "http://localhost:9081$basePath/what-you-owe",
-              | "backUrl": "http://localhost:9081$basePath/what-you-owe"
+              | "returnUrl": "${MicroserviceSpecificConstants.baseUrl}/what-you-owe",
+              | "backUrl": "${MicroserviceSpecificConstants.baseUrl}/what-you-owe"
               |}
               """.stripMargin
           )
@@ -154,8 +155,8 @@ class PayApiConnectorISpec extends AnyWordSpec with ComponentSpecBase {
               |{
               | "utr": "saUtr",
               | "amountInPence": 10000,
-              | "returnUrl": "http://localhost:9081$basePath/what-you-owe",
-              | "backUrl": "http://localhost:9081$basePath/what-you-owe"
+              | "returnUrl": "${MicroserviceSpecificConstants.baseUrl}/what-you-owe",
+              | "backUrl": "${MicroserviceSpecificConstants.baseUrl}/what-you-owe"
               |}
               """.stripMargin
           )

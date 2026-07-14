@@ -233,4 +233,26 @@ trait ExternalRedirectHelper {
     else
       returnsTaxYearsIndividualUrl(returnsFrontendEnabled)
 
+  def returnsTaxYearSummaryIndividualUrl(taxYear: Int, origin: Option[String] = None,
+                                         fragment: Option[String] = None, returnsFrontendEnabled: Boolean): String = {
+    if (returnsFrontendEnabled) {
+      val baseUri = s"$returnsBaseUrl/tax-year-summary/$taxYear"
+      val baseUriWithOptOrigin = origin.fold(baseUri)(o => s"$baseUri?origin=$o")
+      fragment.fold(baseUriWithOptOrigin)(f => s"$baseUriWithOptOrigin#$f")
+    } else {
+      val baseUri = returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
+      fragment.fold(baseUri)(f => baseUri.withFragment(f)).path
+    }
+  }
+
+  def returnsTaxYearSummaryAgentUrl(taxYear: Int, fragment: Option[String] = None, returnsFrontendEnabled: Boolean): String = {
+    if (returnsFrontendEnabled) {
+      val baseUri = s"$returnsAgentBaseUrl/tax-year-summary/$taxYear"
+      fragment.fold(baseUri)(f => s"$baseUri#$f")
+    } else {
+      val baseUri = returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
+      fragment.fold(baseUri)(f => baseUri.withFragment(f)).path
+    }
+  }
+
 }

@@ -74,6 +74,6 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
   def showAgent(): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit user =>
       handleShowRequest(errorHandler = itvcErrorHandlerAgent,
-        backUrl = hub.controllers.routes.HomeController.showAgent().url)
+        backUrl = appConfig.homePageUrl(isAgent = true))
   }
 }

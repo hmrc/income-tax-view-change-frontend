@@ -17,6 +17,7 @@
 package financials.views.partials.paymentAllocations
 
 import common.testUtils.TestSupport
+import financials.controllers.routes as financialsRoutes
 import financials.models.paymentAllocationCharges.PaymentAllocationViewModel
 import financials.testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModelWithCredit
 import financials.views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
@@ -46,12 +47,12 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
     "display the money in account row" in new Setup() {
       pageDocument.select("a#money-on-account-link").size() shouldBe 1
       pageDocument.select("a#money-on-account-link").text() shouldBe messages("paymentAllocation.moneyOnAccount")
-      pageDocument.select("a#money-on-account-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/money-in-your-account"
+      pageDocument.select("a#money-on-account-link").attr("href") shouldBe financialsRoutes.MoneyInYourAccountController.show().url
     }
 
     "display the money in account row for AGENT" in new Setup(true) {
       pageDocument.select("a#money-on-account-link").size() shouldBe 1
-      pageDocument.select("a#money-on-account-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/money-in-your-account"
+      pageDocument.select("a#money-on-account-link").attr("href") shouldBe financialsRoutes.MoneyInYourAccountController.showAgent().url
     }
 
     "not display link when credits and refunds page feature switch is disabled" in new Setup(false, false) {
