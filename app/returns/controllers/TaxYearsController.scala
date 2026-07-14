@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{ITSASubmissionIntegration, MortgageEvidence, PostFinalisationAmendmentsR18}
 import common.models.incomeSourceDetails.TaxYear
-import common.services.DateServiceInterface
+import common.services.{DateServiceInterface, YearOfMigrationService}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -32,7 +32,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
-                                   val authActions: AuthActions
+                                   val authActions: AuthActions,
+                                   yearOfMigrationService: YearOfMigrationService
                                   )
                                   (implicit val appConfig: FrontendAppConfig,
                                    mcc: MessagesControllerComponents,
@@ -47,11 +48,11 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_]): Future[Result] = {
 
-    user.incomeSources.orderedTaxYearsByAccountingPeriods match {
-      case orderedTaxYearsByAccountingPeriods if orderedTaxYearsByAccountingPeriods.nonEmpty =>
-        Logger("application").debug(s"[TaxYearsController][handleRequest] taxYears = ${user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse}")
+    yearOfMigrationService.orderedTaxYearsByYearOfMigration(user.nino).flatMap {
+      case taxYearList @ orderedTaxYearsByYearOfMigration if orderedTaxYearsByYearOfMigration.nonEmpty =>
+        Logger("application").debug(s"[TaxYearsController][handleRequest] taxYears = ${taxYearList.reverse}")
         Future(Ok(taxYearsView(
-          taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
+          taxYears = taxYearList.reverse,
           backUrl = backUrl,
           isAgent = isAgent,
           utr = user.saUtr,
@@ -63,7 +64,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
           origin = origin
         )))
       case _ =>
-        Logger("application").error(s"[TaxYearsController][handleRequest] failed to render taxYearsView for taxYears due to no orderedTaxYearsByAccountingPeriods returned")
+        Logger("application").error(s"[TaxYearsController][handleRequest] failed to render taxYearsView for taxYears due to no orderedTaxYearsByYearOfMigration returned")
         Future(BadRequest(taxYearsView(
           taxYears = List(),
           backUrl = backUrl,

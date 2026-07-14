@@ -87,6 +87,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   }
 
   private def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (user.isAgent match {
+    
     case true if user.incomeSources.yearOfMigration.isDefined  => routes.MoneyInYourAccountController.showAgent()
     case true                                                  => routes.NotMigratedUserController.showAgent()
     case false if user.incomeSources.yearOfMigration.isDefined => routes.MoneyInYourAccountController.show()

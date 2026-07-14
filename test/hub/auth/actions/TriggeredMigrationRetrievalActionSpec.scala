@@ -24,9 +24,9 @@ import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfir
 import common.models.admin.{BusinessDetailsFrontend, FeatureSwitchName, TriggeredMigration}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus.{Annual, Mandated, Voluntary}
-import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail, StatusReason}
+import common.models.itsaStatus.{ITSAStatusResponseModel, ITSAStatusYearOfMigrationModel, StatusDetail, StatusReason}
 import common.models.liabilitycalculation.*
-import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
+import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService, YearOfMigrationService}
 import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{reset, times, verify, when}
@@ -48,6 +48,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
   lazy val mockIncomeTaxCalculationConnector = mock[IncomeTaxCalculationConnector]
   lazy val mockDateServiceInterface = mock[DateServiceInterface]
   lazy val mockCustomerFactsUpdateService = mock[CustomerFactsUpdateService]
+  lazy val mockYearOfMigrationService = mock[YearOfMigrationService]
 
   override lazy val app: Application =
     new GuiceApplicationBuilder()
@@ -62,6 +63,7 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
     appConfig,
     mockItsaStatusService,
     mockIncomeTaxCalculationConnector,
+    mockYearOfMigrationService,
     mockDateServiceInterface,
     mockCustomerFactsUpdateService
   )(
@@ -172,6 +174,9 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(Future(testCalcResponse))
 
+        when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+          .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
+
         val result = action().invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
         status(result) shouldBe OK
@@ -188,6 +193,9 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
           .thenReturn(Future(List(ITSAStatusResponseModel("2025-26", Some(List(StatusDetail("", Mandated, StatusReason.Complex)))))))
 
         when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(Future(testCalcResponse))
+
+        when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+          .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
         val result = action().invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
@@ -222,6 +230,9 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
         when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(
           Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
 
+        when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+          .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
+
         val result = action().invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
         status(result) shouldBe SEE_OTHER
@@ -239,6 +250,9 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(
           Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
+
+        when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+          .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
         val result = action().invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
@@ -260,6 +274,9 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any())).thenReturn(
           Future(LiabilityCalculationError(500, "Internal Server Error")))
+
+        when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+          .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
         val result = action().invokeBlock(confirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
@@ -298,6 +315,9 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
         when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
 
+        when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+          .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(None)))
+
         val result = action().invokeBlock(unconfirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
         status(result) shouldBe BAD_REQUEST
@@ -313,6 +333,9 @@ class TriggeredMigrationRetrievalActionSpec extends TestSupport {
 
         when(mockIncomeTaxCalculationConnector.getCalculationResponse(any(), any(), any(), any())(any(), any()))
           .thenReturn(Future(testCalcResponse.copy(metadata = testCalcResponse.metadata.copy(calculationType = "inYear"))))
+
+        when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+          .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(None)))
 
         val result = action().invokeBlock(unconfirmedMtdUser, defaultAsyncBody(_.headers.get("Gov-Test-Scenario") shouldBe None))
 
