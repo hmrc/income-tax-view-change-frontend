@@ -61,6 +61,31 @@ class MakingPaymentServiceSpec extends TestSupport {
       financialDetails = financialDetails
     )
 
+  val penaltyTransactionIdFirst = "penalty-transaction-1"
+  val penaltyTransactionIdSecond = "penalty-transaction-2"
+  val penaltyTransactionIdThird = "penalty-transaction-3"
+  val nonPenaltyTransactionId = "non-penalty-transaction"
+  val balancingChargeMainTransaction = "4910"
+
+  private def getDocumentDetail(transactionId: String, documentDueDate: Option[LocalDate] = Some(dateService.getCurrentDate.minusDays(1))): DocumentDetail = DocumentDetail(
+    taxYear = 2025,
+    transactionId = transactionId,
+    documentDescription = None,
+    documentText = None,
+    outstandingAmount = 100,
+    originalAmount = 100,
+    documentDueDate = documentDueDate,
+    documentDate = LocalDate.of(2025, 4, 6)
+  )
+
+  private def getFinancialDetail(mainTransaction: Option[String], transactionId: Option[String]): FinancialDetail = FinancialDetail(
+    taxYear = "2025",
+    mainTransaction = mainTransaction,
+    transactionId = transactionId,
+    outstandingAmount = Some(100),
+    items = None
+  )
+
   "MakingPaymentService.createViewModel" should {
 
     "set hasInterest when any financial details response has accruing interest" in {
@@ -215,6 +240,156 @@ class MakingPaymentServiceSpec extends TestSupport {
         .futureValue
 
       result.map(_.hasPenalty) shouldBe Some(true)
+      result.map(_.hasAdditionalSections) shouldBe Some(true)
+    }
+
+    "set hasAllPenaltiesOverdue to true when all LSP/LPP outstanding penalties charges overdue" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(penaltyTransactionIdFirst),
+              getDocumentDetail(penaltyTransactionIdSecond),
+              getDocumentDetail(penaltyTransactionIdThird)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4027"), Some(penaltyTransactionIdFirst)),
+              getFinancialDetail(Some("4028"), Some(penaltyTransactionIdSecond)),
+              getFinancialDetail(Some("4029"), Some(penaltyTransactionIdThird)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasAllPenaltiesOverdue) shouldBe Some(true)
+      result.map(_.hasAdditionalSections) shouldBe Some(true)
+    }
+
+    "set hasAllPenaltiesOverdue to false when at least one of the LSP/LPP outstanding penalties charge not overdue" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(penaltyTransactionIdFirst, Some(dateService.getCurrentDate)),
+              getDocumentDetail(penaltyTransactionIdSecond),
+              getDocumentDetail(penaltyTransactionIdThird)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4027"), Some(penaltyTransactionIdFirst)),
+              getFinancialDetail(Some("4028"), Some(penaltyTransactionIdSecond)),
+              getFinancialDetail(Some("4029"), Some(penaltyTransactionIdThird)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasAllPenaltiesOverdue) shouldBe Some(false)
+      result.map(_.hasAdditionalSections) shouldBe Some(true)
+    }
+
+    "set hasOverdueNonPenaltyCharges to true when there is an overdue non-LSP/LPP outstanding penalty charge" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(penaltyTransactionIdFirst),
+              getDocumentDetail(penaltyTransactionIdSecond),
+              getDocumentDetail(penaltyTransactionIdThird),
+              getDocumentDetail(nonPenaltyTransactionId)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4027"), Some(penaltyTransactionIdFirst)),
+              getFinancialDetail(Some("4028"), Some(penaltyTransactionIdSecond)),
+              getFinancialDetail(Some("4029"), Some(penaltyTransactionIdThird)),
+              getFinancialDetail(Some(balancingChargeMainTransaction), Some(nonPenaltyTransactionId))
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasOverdueNonPenaltyCharges) shouldBe Some(true)
+      result.map(_.hasAdditionalSections) shouldBe Some(true)
+    }
+
+    "set hasOverdueNonPenaltyCharges to false when there is no overdue non-LSP/LPP outstanding penalties charge" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(penaltyTransactionIdFirst),
+              getDocumentDetail(penaltyTransactionIdSecond),
+              getDocumentDetail(penaltyTransactionIdThird),
+              getDocumentDetail(nonPenaltyTransactionId, Some(dateService.getCurrentDate))
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4027"), Some(penaltyTransactionIdFirst)),
+              getFinancialDetail(Some("4028"), Some(penaltyTransactionIdSecond)),
+              getFinancialDetail(Some("4029"), Some(penaltyTransactionIdThird)),
+              getFinancialDetail(Some(balancingChargeMainTransaction), Some(nonPenaltyTransactionId))
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasOverdueNonPenaltyCharges) shouldBe Some(false)
+      result.map(_.hasAdditionalSections) shouldBe Some(true)
+    }
+
+    "set hasNotOverdueLPP to true when there is no overdue LPP outstanding penalty charge" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(penaltyTransactionIdFirst, Some(dateService.getCurrentDate)),
+              getDocumentDetail(penaltyTransactionIdSecond)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4028"), Some(penaltyTransactionIdFirst)),
+              getFinancialDetail(Some("4029"), Some(penaltyTransactionIdSecond)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasNotOverdueLPP) shouldBe Some(true)
+      result.map(_.hasAdditionalSections) shouldBe Some(true)
+    }
+
+    "set hasNotOverdueLPP to false when there is no overdue LPP outstanding penalty charge" in {
+      when(mockFinancialDetailsService.getAllFinancialDetails(any(), any(), any()))
+        .thenReturn(Future.successful(List(
+          2025 -> financialDetailsModel(
+            documentDetails = List(
+              getDocumentDetail(penaltyTransactionIdFirst),
+              getDocumentDetail(penaltyTransactionIdSecond)
+            ),
+            financialDetails = List(
+              getFinancialDetail(Some("4028"), Some(penaltyTransactionIdFirst)),
+              getFinancialDetail(Some("4029"), Some(penaltyTransactionIdSecond)),
+            )
+          )
+        )))
+
+      val result = TestMakingPaymentService
+        .createViewModel("/back", "/payment", "/what-you-owe", "/money-in-account", "/penalties")
+        .futureValue
+
+      result.map(_.hasNotOverdueLPP) shouldBe Some(false)
       result.map(_.hasAdditionalSections) shouldBe Some(true)
     }
 
