@@ -30,6 +30,7 @@ import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusines
 import financials.helpers.FinancialDetailsStub
 import financials.models.audit.ClaimARefundAuditModel
 import financials.models.core.ErrorModel
+import financials.models.creditsandrefunds.CreditsModel
 
 import java.time.LocalDate
 
@@ -41,7 +42,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
   val testPreviousTaxYear: Int = 2022
   val testPreviousTaxYearMinusOne: Int = 2021
 
-  val validResponseModel = ANewCreditAndRefundModel()
+  val validResponseModel: CreditsModel = ANewCreditAndRefundModel()
     .withAvailableCredit(5.0)
     .withAllocatedFutureCredit(45.0)
     .withTotalCredit(50.0)
