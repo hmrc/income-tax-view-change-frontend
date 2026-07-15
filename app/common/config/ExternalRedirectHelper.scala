@@ -19,7 +19,6 @@ package common.config
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import hub.controllers.routes as hubRoutes
 import hub.controllers.agent.routes as hubAgentRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import obligations.controllers.routes as obligationsRoutes
@@ -36,26 +35,18 @@ trait ExternalRedirectHelper {
   val config: Configuration
   
   // hub routes KEEP COMMENTED IN income-tax-view-change-frontend 
-//  lazy val hubBaseUrl: String = servicesConfig.getString("income-tax-view-change-frontend.baseUrl")
-//  lazy val hubAgentBaseUrl: String = s"${hubBaseUrl}/agents"
+  lazy val hubBaseUrl: String = servicesConfig.getString("base.fullUrl")
+  lazy val hubAgentBaseUrl: String = s"${hubBaseUrl}/agents"
   
   lazy val individualHomeUrl: String =
-    hubRoutes.HomeController.show().url
-    //origin.fold(hubBaseUrl)(o =>s"$hubBaseUrl?origin=$o")
+    s"$hubBaseUrl/income-tax"
 
   lazy val individualHomeUrlWithOrigin: Option[String] => String = origin =>
-      hubRoutes.HomeController.show(origin).url
-  //s"$hubBaseUrl?origin=$origin"
-
-  lazy val homePageUrl: String = {
-    servicesConfig.getString("base.fullUrl")
-    //individualHomeUrl
-  }
+      s"$individualHomeUrl?origin=$origin"
 
 
   lazy val agentHomeUrl: String =
-    hubRoutes.HomeController.showAgent().url
-    //hubAgentBaseUrl
+    s"$hubAgentBaseUrl/client-income-tax"
     
   def homePageUrl(isAgent: Boolean): String = if (isAgent) agentHomeUrl else individualHomeUrl
 
