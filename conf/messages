@@ -2044,7 +2044,7 @@ whatYouOwe.adjust-poa.paid-3                                       = at any poin
 whatYouOwe.adjust-poa.paid-4                                       = 31 January {0}.
 whatYouOwe.adjust-poa.paid-5                                       =
 whatYouOwe.interestChargesWarning                                  = Interest charges will keep increasing every day until the charges they relate to are paid in full.
-whatYouOwe.interestChargesWarning.crystallised                     = Interest to date is estimated. To stop it increasing every day, pay the related tax in full. It can then take up to 3 working days for the total interest to be calculated and shown here.
+whatYouOwe.interestChargesWarning.accruingInterest                 = Interest to date is estimated. To stop it increasing every day, pay the related tax in full. It can then take up to 3 working days for the total interest to be calculated and shown here.
 
 whatYouOwe.pre-mtd.heading                                         = You may still have payments due for your earlier Self Assessment tax years
 whatYouOwe.pre-mtd.body                                            = To check if you have outstanding payments you need to
