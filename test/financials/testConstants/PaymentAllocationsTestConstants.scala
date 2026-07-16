@@ -369,6 +369,9 @@ object PaymentAllocationsTestConstants {
 
   val paymentAllocationViewModelNoPayment: PaymentAllocationViewModel = PaymentAllocationViewModel(paymentAllocationChargesModelNoPayment)
 
+  val paymentAllocationViewModelNoAllocations: PaymentAllocationViewModel = PaymentAllocationViewModel(
+    paymentAllocationChargesModel, Seq.empty, allocationsUnavailable = true)
+
 
   val financialDetailsWithCreditZeroOutstanding: FinancialDetailsWithDocumentDetailsModel = FinancialDetailsWithDocumentDetailsModel(
     List(documentDetailNoPaymentCredit),

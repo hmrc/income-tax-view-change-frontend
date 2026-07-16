@@ -88,9 +88,16 @@ class PaymentAllocationsServiceSpec extends TestSupport with MockFinancialDetail
         TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError(Some(404)))
       }
 
-      "all calls succeed except the call to payment Allocation which returns an error" in {
+      "payment allocations returns 404 - renders page without allocations table" in {
         setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
         setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(PaymentAllocationsError(404, "NOT FOUND"))
+
+        TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Right(paymentAllocationViewModelNoAllocations)
+      }
+
+      "all calls succeed except the call to payment Allocation which returns a non-404 error" in {
+        setupGetPaymentAllocationCharges(testNino, docNumber)(paymentAllocationChargesModel)
+        setupGetPaymentAllocation(testNino, "paymentLot", "paymentLotItem")(PaymentAllocationsError(500, "INTERNAL_SERVER_ERROR"))
 
         TestPaymentAllocationsService.getPaymentAllocation(testUserNino, docNumber).futureValue shouldBe Left(PaymentAllocationError())
       }

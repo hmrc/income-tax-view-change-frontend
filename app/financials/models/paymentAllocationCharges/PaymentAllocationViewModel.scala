@@ -37,7 +37,8 @@ case class PaymentAllocationViewModel(
                                        paymentAllocationChargeModel: FinancialDetailsWithDocumentDetailsModel,
                                        originalPaymentAllocationWithClearingDate: Seq[AllocationDetailWithClearingDate] = Seq(),
                                        latePaymentInterestPaymentAllocationDetails: Option[LatePaymentInterestPaymentAllocationDetails] = None,
-                                       isLpiPayment: Boolean = false
+                                       isLpiPayment: Boolean = false,
+                                       allocationsUnavailable: Boolean = false
                                      ) {
 
   val outstandingAmount: Option[BigDecimal] = paymentAllocationChargeModel.documentDetails.headOption.map(_.outstandingAmount)
@@ -58,6 +59,7 @@ case class PaymentAllocationViewModel(
       .getOrElse(throw new Error("paymentLotItem and/or paymentLot are missing"))
 
   def showPaymentAllocationsTable(): Boolean =
+    !allocationsUnavailable &&
     !(paymentAllocationChargeModel.documentDetails.exists(_.outstandingAmountZero) &&
       paymentAllocationChargeModel.documentDetails.exists(_.credit.isDefined))
 }
