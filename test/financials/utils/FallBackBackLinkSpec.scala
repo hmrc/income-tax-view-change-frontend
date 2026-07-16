@@ -21,6 +21,8 @@ import common.testUtils.TestSupport
 
 class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
+  override val returnsFrontendEnabled: Boolean = true
+
   private val testTaxYear = 2018
 
   "FallBackBacklinks trait" when {
@@ -41,7 +43,7 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
       }
       "return Agent Tax Year Summary link" in {
         val url = getPaymentAllocationBackUrl(Some(TaxYearSummaryPage), Some(testTaxYear), None, isAgent = true)
-        url should include(s"/report-quarterly/income-and-expenses/view/agents/tax-year-summary/$testTaxYear#payments")
+        url should include(s"/agents/tax-year-summary/$testTaxYear#payments")
       }
 
       "return homepage link when no tax year available" in {

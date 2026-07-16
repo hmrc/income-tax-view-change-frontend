@@ -105,7 +105,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
       handleRequest(
         isAgent = false,
         origin = origin,
-        backUrl = hub.controllers.routes.HomeController.show(origin).url
+        backUrl = appConfig.individualHomeUrlWithOrigin(origin)
       )
   }
 
@@ -113,7 +113,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
     implicit mtdItUser =>
       handleRequest(
         isAgent = true,
-        backUrl = hub.controllers.routes.HomeController.showAgent().url
+        backUrl = appConfig.homePageUrl(isAgent = true)
       )
   }
 

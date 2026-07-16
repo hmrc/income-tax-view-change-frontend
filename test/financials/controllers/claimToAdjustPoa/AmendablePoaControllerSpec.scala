@@ -27,14 +27,12 @@ import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*
-import shared.mocks.services.MockCalculationListService
 
 import scala.concurrent.Future
 
 class AmendablePoaControllerSpec
   extends MockAuthActions
     with MockClaimToAdjustService
-    with MockCalculationListService
     with MockPaymentOnAccountSessionService {
 
   val getMongoResponseJourneyIncomplete: Option[PoaAmendmentData] = Some(PoaAmendmentData())
@@ -67,7 +65,6 @@ class AmendablePoaControllerSpec
               setupMockPaymentOnAccountSessionService(Future(Right(None)))
               setupMockPaymentOnAccountSessionServiceCreateSession(Future(Right(())))
               setupMockGetPaymentOnAccountViewModel()
-              setupMockTaxYearNotCrystallised()
 
               val result = action(fakeRequest)
               status(result) shouldBe OK
@@ -80,7 +77,6 @@ class AmendablePoaControllerSpec
               setupMockPaymentOnAccountSessionService(Future(Right(getMongoResponseJourneyComplete)))
               setupMockPaymentOnAccountSessionServiceCreateSession(Future(Right(())))
               setupMockGetPaymentOnAccountViewModel()
-              setupMockTaxYearNotCrystallised()
 
               val result = action(fakeRequest)
               status(result) shouldBe OK
@@ -93,7 +89,6 @@ class AmendablePoaControllerSpec
               mockSingleBISWithCurrentYearAsMigrationYear()
               setupMockPaymentOnAccountSessionService(Future(Right(getMongoResponseJourneyIncomplete)))
               setupMockGetPaymentOnAccountViewModel()
-              setupMockTaxYearNotCrystallised()
 
               val result = action(fakeRequest)
               status(result) shouldBe OK
@@ -121,7 +116,6 @@ class AmendablePoaControllerSpec
               setupMockPaymentOnAccountSessionService(Future.successful(Right(Some(PoaAmendmentData(None, None, journeyCompleted = true)))))
               setupMockPaymentOnAccountSessionServiceCreateSession(Future.successful(Left(new Error("Error"))))
               setupMockGetPaymentOnAccountViewModel()
-              setupMockTaxYearNotCrystallised()
 
               val result = action(fakeRequest)
               status(result) shouldBe INTERNAL_SERVER_ERROR

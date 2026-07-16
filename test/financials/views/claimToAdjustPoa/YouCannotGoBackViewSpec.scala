@@ -35,7 +35,7 @@ class YouCannotGoBackViewSpec extends TestSupport {
     val document: Document =
       Jsoup.parse(
         contentAsString(
-          view(TaxYear(2023, 2024))
+          view(TaxYear(2023, 2024), true)
         )
       )
   }
@@ -48,8 +48,10 @@ class YouCannotGoBackViewSpec extends TestSupport {
   }
 
   def getTaxYearSummaryControllerLink(isAgent: Boolean): String = {
-    if (isAgent) returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(2024).url
-    else returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(2024).url
+    if (isAgent)
+      appConfig.returnsTaxYearSummaryAgentUrl(2024, returnsFrontendEnabled = true)
+    else
+      appConfig.returnsTaxYearSummaryIndividualUrl(2024, returnsFrontendEnabled = true)
   }
 
   def executeTest(isAgent: Boolean): Unit = {

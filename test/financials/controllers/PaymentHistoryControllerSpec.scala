@@ -116,9 +116,9 @@ class PaymentHistoryControllerSpec extends MockAuthActions
               val link = document.select("#payment-0 a.govuk-link")
               link.isEmpty shouldBe false
               if(isAgent){
-                link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2022"
-              }else{
-                link.attr("href") shouldBe "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2022"
+                link.attr("href") shouldBe routes.CreditsSummaryController.showAgentCreditsSummary(2022).url
+              } else {
+                link.attr("href") shouldBe routes.CreditsSummaryController.showCreditsSummary(2022).url
               }
             }
           }

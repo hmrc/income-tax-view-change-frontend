@@ -22,6 +22,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import common.testConstants.BaseTestConstants.testMtditid
 import common.testUtils.{TestSupport, ViewSpec}
+import financials.controllers.routes as financialsRoutes
 import financials.models.creditDetailModel.CreditDetailModel
 import financials.services.helpers.CreditHistoryDataHelper
 import financials.testConstants.FinancialDetailsTestConstants.*
@@ -74,8 +75,8 @@ class CreditsSummaryViewSpec extends TestSupport with FeatureSwitching
   val moneyInYourAccountMoneyClaimARefundLinkText: String = messages("credits.money-in-your-account-section.claim-a-refund-link")
   val moneyInYourAccountContent: String = s"""${messages("credits.money-in-your-account-section.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} $moneyInYourAccountMoneyClaimARefundLinkText."""
   val moneyInYourAccountAgentContent: String = s"""${messages("credits.money-in-your-account-section.agent.content", s"${financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment.get.toCurrencyString}")} $moneyInYourAccountMoneyClaimARefundLinkText."""
-  val moneyInYourAccountMoneyClaimARefundLink: String = "/report-quarterly/income-and-expenses/view/money-in-your-account"
-  val moneyInYourAccountMoneyClaimARefundAgentLink: String = "/report-quarterly/income-and-expenses/view/agents/money-in-your-account"
+  val moneyInYourAccountMoneyClaimARefundLink: String = financialsRoutes.MoneyInYourAccountController.show().url
+  val moneyInYourAccountMoneyClaimARefundAgentLink: String = financialsRoutes.MoneyInYourAccountController.showAgent().url
 
   class TestSetup(creditCharges: List[CreditDetailModel] = List.empty,
               maybeAvailableCredit: Option[BigDecimal] = None,

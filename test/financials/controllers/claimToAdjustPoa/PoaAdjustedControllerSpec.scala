@@ -31,14 +31,12 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import shared.mocks.services.MockCalculationListService
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
 class PoaAdjustedControllerSpec extends MockAuthActions
   with MockClaimToAdjustService
-  with MockCalculationListService
   with MockPaymentOnAccountSessionService
   with MockDateService {
 
@@ -75,7 +73,6 @@ class PoaAdjustedControllerSpec extends MockAuthActions
               when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(newPoaAmount = Some(1200))))))
 
               setupMockGetPaymentsOnAccount()
-              setupMockTaxYearNotCrystallised()
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
@@ -90,7 +87,6 @@ class PoaAdjustedControllerSpec extends MockAuthActions
               when(mockPaymentOnAccountSessionService.getMongo(any(), any())).thenReturn(Future(Right(Some(PoaAmendmentData(None, newPoaAmount = Some(5000), journeyCompleted = true)))))
 
               setupMockGetPaymentsOnAccount()
-              setupMockTaxYearNotCrystallised()
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)
@@ -106,7 +102,6 @@ class PoaAdjustedControllerSpec extends MockAuthActions
               when(mockPaymentOnAccountSessionService.setCompletedJourney(any(), any())).thenReturn(Future(Left(new Error(""))))
 
               setupMockGetPaymentsOnAccount()
-              setupMockTaxYearNotCrystallised()
 
               setupMockSuccess(mtdRole)
               val result = action(fakeRequest)

@@ -21,6 +21,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import common.testUtils.{TestSupport, ViewSpec}
+import financials.controllers.routes as financialsRoutes
 import financials.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import financials.testConstants.ANewCreditAndRefundModel
 import financials.views.html.MoneyInYourAccountView
@@ -88,7 +89,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         document.title() shouldBe individualTitle
         layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
         document.selectById("credit-explanation").text() shouldBe "You do not have any money in your account at the moment, but you have a refund in progress."
-        document.selectById("refunds-link").attribute("href").toString.contains("/report-quarterly/income-and-expenses/view/refund-status")
+        document.selectById("refunds-link").attribute("href").toString.contains(financialsRoutes.PaymentHistoryController.refundStatus().url)
       }
       "the user has no credit and more than one refund" in new TestSetup(
         creditAndRefundModel = ANewCreditAndRefundModel().firstRefundAmountRequested(100).secondRefundAmountRequested(200).get()
@@ -96,7 +97,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         document.title() shouldBe individualTitle
         layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
         document.selectById("credit-explanation").text() shouldBe "You do not have any money in your account at the moment, but you have refunds in progress."
-        document.selectById("refunds-link").attribute("href").toString.contains("/report-quarterly/income-and-expenses/view/refund-status")
+        document.selectById("refunds-link").attribute("href").toString.contains(financialsRoutes.PaymentHistoryController.refundStatus().url)
       }
 
       "the user has credit which has not been allocated" in new TestSetup(
@@ -149,7 +150,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         document.hasTableWithCorrectSize(1, 3)
         document.hasTableWithCorrectHeadings(List("Date", "Description", "Tax year", "Amount"))
         document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
-        document.selectById("claim-a-refund-button").attribute("href").toString shouldBe "href=\"/report-quarterly/income-and-expenses/view/start-refund\""
+        document.selectById("claim-a-refund-button").attribute("href").toString shouldBe s"href=\"${financialsRoutes.MoneyInYourAccountController.startRefund().url}\""
       }
     }
 
@@ -164,7 +165,7 @@ class MoneyInYourAccountViewSpec extends TestSupport with FeatureSwitching with 
         ) {
           document.title() shouldBe agentTitle
           document.selectById("claim-a-refund-button").text() shouldBe "Claim a refund"
-          document.selectById("claim-a-refund-button").attribute("href").toString shouldBe "href=\"/report-quarterly/income-and-expenses/view/agents/start-refund\""
+          document.selectById("claim-a-refund-button").attribute("href").toString shouldBe s"href=\"${financialsRoutes.MoneyInYourAccountController.startRefundAgents().url}\""
           layoutContent.selectHead("h1").text shouldBe moneyInYourAccountHeading
         }
       }

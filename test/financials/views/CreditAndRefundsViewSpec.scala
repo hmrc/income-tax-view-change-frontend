@@ -21,6 +21,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatter
 import common.testUtils.{TestSupport, ViewSpec}
+import financials.controllers.routes as financialsRoutes
 import financials.models.creditsandrefunds.{CreditsModel, MoneyInYourAccountViewModel}
 import financials.testConstants.ANewCreditAndRefundModel
 import financials.views.html.CreditAndRefundsView
@@ -52,11 +53,11 @@ class CreditAndRefundsViewSpec extends TestSupport with FeatureSwitching with Im
   val creditAndRefundsPaymentToHMRC: String = messages("credit-and-refund.payment")
   val creditAndRefundFromAdjustment: String = messages("credit-and-refund.credit-from-adjustment-prt-1")
 
-  val linkPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/payment-made-to-hmrc?documentNumber=1040000123"
-  val linkCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2018"
-  val linkCreditsSummaryPageMFAPreviousYear = "/report-quarterly/income-and-expenses/view/credits-from-hmrc/2017"
-  val linkAgentCreditsSummaryPage = "/report-quarterly/income-and-expenses/view/agents/credits-from-hmrc/2018"
-  val linkAgentPaymentMadeToHmrc = "/report-quarterly/income-and-expenses/view/agents/payment-made-to-hmrc?documentNumber=1040000123"
+  val linkPaymentMadeToHmrc = financialsRoutes.PaymentAllocationsController.viewPaymentAllocation("1040000123").url
+  val linkCreditsSummaryPage = financialsRoutes.CreditsSummaryController.showCreditsSummary(2018).url
+  val linkCreditsSummaryPageMFAPreviousYear = financialsRoutes.CreditsSummaryController.showCreditsSummary(2017).url
+  val linkAgentCreditsSummaryPage = financialsRoutes.CreditsSummaryController.showAgentCreditsSummary(2018).url
+  val linkAgentPaymentMadeToHmrc = financialsRoutes.PaymentAllocationsController.viewPaymentAllocationAgent("1040000123").url
 
   class TestSetup(
                    creditAndRefundModel: CreditsModel,
