@@ -161,14 +161,13 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
               }
 
               "has a multiple charge from financial details and BCD and ACI charges from CESA" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(SelfServeTimeToPayR17))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString))
                 FinancialDetailsStub.stubGetOutstandingChargesResponse(
                   "utr", testSaUtr.toLong, (testTaxYear - 1).toString)(OK, validOutStandingChargeResponseJsonWithAciAndBcdCharges)
                 FinancialDetailsStub.stubPostStartSelfServeTimeToPayJourney()(CREATED, Json.toJson(SelfServeTimeToPayJourneyResponseModel("journey-id", "nextUrl")))
-
                 whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                   AuditStub.verifyAuditContainsDetail(WhatYouOweResponseAuditModel(testUser(mtdUserRole), whatYouOweDataWithDataDueIn30DaysIt)(dateService).detail)
 
@@ -194,7 +193,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
               }
 
               "has a multiple charge, without BCD and ACI charges from CESA" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(SelfServeTimeToPayR17))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val financialDetailsResponseJson = testValidFinancialDetailsModelJson(2000, 2000, testTaxYear.toString, testDate.minusDays(15).toString)
@@ -245,7 +244,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
               }
 
               "has multiple charges and one charge equals zero" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(SelfServeTimeToPayR17))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
 
                 val mixedJson = Json.obj(
@@ -514,7 +513,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
               "has ACI and BCD charge" when {
 
                 "YearOfMigration exists with Invalid financial details charges and valid outstanding charges" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(SelfServeTimeToPayR17))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   val mixedJson = Json.obj(
@@ -561,7 +560,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
               "has empty BCD charge" when {
                 "YearOfMigration exists with valid financial details charges and invalid outstanding charges" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(SelfServeTimeToPayR17))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -595,7 +594,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
               "has a Coding out banner" when {
                 "CodingOut FS is enabled" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(SelfServeTimeToPayR17))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK,
                     propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                   FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
@@ -627,7 +626,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
               }
 
               "has a multiple charges ~ TxM extension" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(SelfServeTimeToPayR17))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, propertyOnlyResponseWithMigrationData(testTaxYear - 1, Some(testTaxYear.toString)))
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, s"${testTaxYear - 1}-04-06", s"$testTaxYear-04-05")(OK,
                   testValidFinancialDetailsModelJson(2000, 2000, (testTaxYear - 1).toString, testDate.toString, isClass2Nic = true))

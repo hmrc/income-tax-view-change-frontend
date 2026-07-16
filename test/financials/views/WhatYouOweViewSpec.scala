@@ -169,11 +169,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         financialsRoutes.ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
       paymentHandOffUrl = financialsRoutes.PaymentController.makingPayment(_, None).url,
-      selfServeTimeToPayEnabled = true,
-      selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
-    )
+      selfServeTimeToPayEnabled = true)
 
-    val html: HtmlFormat.Appendable = whatYouOweView(wyoViewModel)(FakeRequest(), individualUser, implicitly, dateService)
+    val html: HtmlFormat.Appendable = whatYouOweView(viewModel = wyoViewModel, origin = None, isSelfServeTimeToPayEnabled = true)(FakeRequest(), individualUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
 
     def findElementById(id: String): Option[Element] = {
@@ -228,11 +226,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       chargeSummaryUrl = (taxYearEnd: Int, transactionId: String, isInterest: Boolean, origin: Option[String]) =>
         financialsRoutes.ChargeSummaryController.showAgent(taxYearEnd, transactionId, isInterest).url,
       paymentHandOffUrl = financialsRoutes.PaymentController.makingPayment(_, None).url,
-      selfServeTimeToPayEnabled = true,
-      selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
-    )
+      selfServeTimeToPayEnabled = true)
 
-    val html: HtmlFormat.Appendable = whatYouOweView(wyoViewModelAgent)(FakeRequest(), agentUser, implicitly, dateService)
+    val html: HtmlFormat.Appendable = whatYouOweView(viewModel = wyoViewModelAgent, origin = None, isSelfServeTimeToPayEnabled = true)(FakeRequest(), agentUser, implicitly, dateService)
     val pageDocument: Document = Jsoup.parse(contentAsString(html))
   }
 

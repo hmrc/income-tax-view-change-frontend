@@ -47,4 +47,7 @@ GET          /agents/how-to-claim-refund                                  financ
 GET          /how-to-claim-refund-external                                financials.controllers.NotMigratedUserController.redirect()
 GET          /agents/how-to-claim-refund-external                         financials.controllers.NotMigratedUserController.redirectAgent()
 
+# Self serve time to pay
+
+POST         /self-serve-time-to-pay                                      financials.controllers.SelfServeTimeToPayController.fetchUrl()
 ->          /                                                             claimToAdjustPoa.Routes
