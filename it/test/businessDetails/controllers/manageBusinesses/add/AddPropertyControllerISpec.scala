@@ -16,9 +16,9 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.models.core.NormalMode
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

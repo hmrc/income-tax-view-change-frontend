@@ -16,10 +16,10 @@
 
 package businessDetails.models.audit
 
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.AuditType.CeaseIncomeSource
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole, TransactionName}
-import common.models.core.IncomeSourceId.mkIncomeSourceId
+import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants.failureResponse
 import play.api.libs.json.{JsValue, Json}
 import common.testConstants.BaseTestConstants.*

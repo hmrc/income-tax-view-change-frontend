@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import play.api.Logger
@@ -25,9 +26,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.YouCannotGoBackErrorView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.enums.IncomeSourceJourney.IncomeSourceType
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import shared.enums.CannotGoBackPage
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

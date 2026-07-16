@@ -22,14 +22,14 @@ import common.enums.MTDUserRole
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.IncomeSourceIntegrationTestConstants.multipleBusinessesAndPropertyResponse
-import financials.enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
-import financials.models.*
+import shared.enums.CodingOutType.{CODING_OUT_CANCELLED, CODING_OUT_CLASS2_NICS}
+import returns.models.*
 import returns.models.liabilitycalculation.viewmodels.TYSClaimToAdjustViewModel
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 
 import java.time.LocalDate
 
-trait TaxSummaryISpecHelper extends ControllerISpecHelper {
+trait TaxSummaryISpecHelper extends ControllerISpecHelper with TransactionUtils {
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -16,19 +16,20 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{defaultAwaitTimeout, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, emptyUIJourneySessionData, singleUKPropertyIncome2024}
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionService {
 
@@ -58,7 +59,7 @@ class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionSe
           "render the manage income sources page" in {
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction(singleUKPropertyIncome2024)
-            mockUKPropertyIncomeSourceWithLatency2024()
+            setupMockGetIncomeSourceDetails(singleUKPropertyIncome2024)
             setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
             val result = action(fakeRequest)
@@ -69,7 +70,7 @@ class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionSe
             "Required Mongo data is missing" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(singleUKPropertyIncome2024)
-              mockUKPropertyIncomeSourceWithLatency2024()
+              setupMockGetIncomeSourceDetails(singleUKPropertyIncome2024)
               setupMockGetMongo(Right(Some(emptyUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
               val result = action(fakeRequest)
@@ -80,7 +81,7 @@ class CannotGoBackErrorControllerSpec extends MockAuthActions with MockSessionSe
           "render the cannot go back page" when {
             "there is no journey session data in mongo" in {
               setupMockSuccess(mtdRole)
-              mockUKPropertyIncomeSourceWithLatency2024()
+              setupMockGetIncomeSourceDetails(singleUKPropertyIncome2024)
               setupMockGetMongo(Right(None))
 
               val result = actionForNoMongoSession(fakeRequest)

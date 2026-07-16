@@ -16,12 +16,12 @@
 
 package obligations.mocks.services
 
+import obligations.testConstants.IncomeSourcesWithDeadlinesTestConstants.{businessAndPropertyAlignedWithDeadlines, noIncomeDetailsWithNoDeadlines, propertyIncomeOnlyWithDeadlines, singleBusinessIncomeWithDeadlines}
 import common.implicits.ImplicitDateFormatter
 import obligations.services.NextUpdatesService
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
-import businessDetails.testConstants.IncomeSourcesWithDeadlinesTestConstants.*
 import common.models.obligations.ObligationsResponseModel
 import common.testUtils.UnitSpec
 

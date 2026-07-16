@@ -20,7 +20,7 @@ import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
 import common.viewUtils.InternalUrlHelper
-import financials.mocks.views.agent.MockEnterClientsUTR
+import hub.mocks.views.agent.MockEnterClientsUTR
 import play.api
 import play.api.Application
 import play.api.http.Status

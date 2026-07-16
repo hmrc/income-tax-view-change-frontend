@@ -99,6 +99,28 @@
         openInNewTab = true
     )
 
+    @if(!user.isSupportingAgent) {
+        @overviewCard(
+            messages("home.help.link.makingTaxDigital.changeCircumstances"),
+            appConfig.circumstancesChangeLink,
+            openInNewTab = true
+        )
+    }
+    
+    @overviewCard(
+        messages("home.help.link.makingTaxDigital.findSoftware"),
+        appConfig.compatibleSoftwareLink,
+        openInNewTab = true
+    )
+
+    @if(!user.isSupportingAgent) {
+        @overviewCard(
+            messages("home.help.link.makingTaxDigital.findPenaltyInfo"),
+            appConfig.infoAboutPenaltiesLink,
+            openInNewTab = true
+        )
+    }
+    
     @if(!user.isAgent) {
         @overviewCard(
             messages("home.help.link.selfAssessment.payTaxBill"),
@@ -106,13 +128,7 @@
             openInNewTab = true
         )
     }
-
-    @overviewCard(
-        messages("home.help.link.makingTaxDigital.findSoftware"),
-        appConfig.compatibleSoftwareLink,
-        openInNewTab = true
-    )
-
+    
     @if(!user.isAgent) {
         @overviewCard(
             messages("home.help.link.taxSupport.getHelp"),

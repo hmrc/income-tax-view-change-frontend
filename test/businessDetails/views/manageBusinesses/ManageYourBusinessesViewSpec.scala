@@ -16,13 +16,13 @@
 
 package businessDetails.views.manageBusinesses
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.models.incomeSourceDetails.viewmodels.{CeasedBusinessDetailsViewModel, ViewBusinessDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import businessDetails.views.html.manageBusinesses.ManageYourBusinessesView
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.models.core.IncomeSourceId
 import common.testUtils.TestSupport
 
 import java.time.LocalDate

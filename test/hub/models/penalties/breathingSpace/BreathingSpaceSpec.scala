@@ -17,7 +17,7 @@
 package hub.models.penalties.breathingSpace
 
 import common.testUtils.TestSupport
-import financials.testConstants.PenaltiesTestConstants.breathingSpace
+import hub.testConstants.PenaltiesTestConstants.breathingSpace
 import play.api.libs.json.{JsObject, Json}
 
 class BreathingSpaceSpec extends TestSupport {

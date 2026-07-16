@@ -16,12 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.services.SessionService
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.singleUKPropertyIncome2024
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
 import play.api
 import play.api.http.Status.OK
@@ -49,7 +50,7 @@ class IncomeSourceCeasedBackErrorControllerSpec extends MockAuthActions with Moc
           "return 200 OK" in {
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()
-            mockUKPropertyIncomeSourceWithLatency2024()
+            setupMockGetIncomeSourceDetails(singleUKPropertyIncome2024)
             val result = action(fakeRequest)
             status(result) shouldBe OK
           }

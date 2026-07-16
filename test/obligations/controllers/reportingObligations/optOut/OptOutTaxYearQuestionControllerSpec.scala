@@ -23,6 +23,7 @@ import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponseFailure, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockOptOutService
 import obligations.models.reportingObligations.optOut.OptOutTaxYearQuestionViewModel
@@ -33,9 +34,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
+import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 
 class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOutService {
 
@@ -70,9 +71,9 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
   private def reportingObligationsLink(isAgent: Boolean): Option[String] = {
     if (isAgent) {
-      Some("/report-quarterly/income-and-expenses/view/agents/reporting-frequency")
+      Some(reportingObligationsRoutes.ReportingFrequencyPageController.show(true).url)
     } else {
-      Some("/report-quarterly/income-and-expenses/view/reporting-frequency")
+      Some(reportingObligationsRoutes.ReportingFrequencyPageController.show(false).url)
     }
   }
 

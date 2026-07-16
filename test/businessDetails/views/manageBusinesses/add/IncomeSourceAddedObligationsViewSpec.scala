@@ -25,9 +25,9 @@ import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.{fina
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import businessDetails.views.messages.IncomeSourceAddedMessages.*
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.viewmodels.ObligationsViewModel
 import businessDetails.views.constants.IncomeSourceAddedObligationsConstants.*
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.testUtils.ViewSpec
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.ObligationsFrontend

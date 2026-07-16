@@ -23,9 +23,9 @@ import play.api.mvc.Call
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import businessDetails.views.html.manageBusinesses.add.ChooseTaxYearView
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.add.ChooseTaxYearForm
 import businessDetails.forms.models.ChooseTaxYearFormModel
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.models.incomeSourceDetails.TaxYear
 import common.testUtils.TestSupport
 

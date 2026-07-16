@@ -16,9 +16,10 @@
 
 @import _root_.shared.implicits.ImplicitCurrencyFormatter._
 @import _root_.common.implicits.ImplicitDateFormatterImpl
-@import financials.models._
+@import returns.models._
 @import returns.models.taxyearsummary.TaxYearSummaryChargeItem
 @import returns.models.liabilitycalculation.viewmodels.TaxYearSummaryViewModel
+@import common.config.FrontendAppConfig
 @import common.services.DateServiceInterface
 @import common.views.html.components.{h2, p}
 @import returns.views.html.partials.taxYearSummary.GetChargeSummaryMessage
@@ -29,7 +30,7 @@
         govukTable: GovukTable,
         getChargeSummaryMessage: GetChargeSummaryMessage,
         implicitDateFormatter: ImplicitDateFormatterImpl)
-@(viewModel: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean, origin: Option[String])(implicit messages: Messages, dateService: DateServiceInterface)
+@(viewModel: TaxYearSummaryViewModel, taxYear: Int, isAgent: Boolean, origin: Option[String])(implicit messages: Messages, dateService: DateServiceInterface, appConfig: FrontendAppConfig)
 @import implicitDateFormatter._
 
 @renderChargeTypeCell(chargeItem: TaxYearSummaryChargeItem, index: Int) = {
@@ -47,7 +48,7 @@
             @getChargeSummaryMessage(chargeItem)
         } else {
             <a class="govuk-link" id="paymentTypeLink-@{index}"
-               href="@viewModel.getChargeSummaryHref(chargeItem, taxYear, isAgent, origin)">@getChargeSummaryMessage(chargeItem)</a>
+               href="@viewModel.getChargeSummaryHref(chargeItem, taxYear, isAgent, origin)(appConfig)">@getChargeSummaryMessage(chargeItem)</a>
         }
     </div>
     @if(chargeItem.dunningLock) {

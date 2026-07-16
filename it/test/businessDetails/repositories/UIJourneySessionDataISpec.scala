@@ -16,13 +16,13 @@
 
 package businessDetails.repositories
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
-import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.helpers.ComponentSpecBase
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.SingleObservableFuture
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 

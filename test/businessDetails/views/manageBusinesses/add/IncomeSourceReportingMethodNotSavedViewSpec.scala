@@ -24,7 +24,7 @@ import play.twirl.api.HtmlFormat
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceReportingMethodNotSavedView
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.testUtils.ViewSpec
 
 class IncomeSourceReportingMethodNotSavedViewSpec extends ViewSpec {

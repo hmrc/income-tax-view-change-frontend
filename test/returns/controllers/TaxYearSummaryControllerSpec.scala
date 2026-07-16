@@ -26,11 +26,9 @@ import common.models.liabilitycalculation.{IsMTD, LiabilityCalculationError, Mes
 import common.models.obligations.{GroupedObligationsModel, ObligationsErrorModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
 import common.testConstants.BaseTestConstants.{testMtditid, testTaxYear}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
-import financials.controllers.routes as financialsRoutes
-import financials.mocks.services.MockCalculationService
-import financials.models.*
-import financials.testConstants.ChargeConstants
-import financials.testConstants.FinancialDetailsTestConstants.*
+import returns.models.*
+import returns.testConstants.ChargeConstants
+import returns.testConstants.FinancialDetailsTestConstants.*
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
@@ -40,7 +38,7 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.http.{HeaderNames, Status}
 import play.api.test.Helpers.{status, *}
 import returns.forms.utils.SessionKeys.{calcPagesBackPage, gatewayPage}
-import returns.mocks.services.{MockFinancialDetailsService, MockNextUpdatesService}
+import returns.mocks.services.{MockCalculationService, MockFinancialDetailsService, MockNextUpdatesService}
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TYSClaimToAdjustViewModel, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.{MtdSoftwareShowCalc, TaxYearSummaryChargeItem}
 import returns.services.{CalculationService, FinancialDetailsService, NextUpdatesService, TaxYearSummaryService}
@@ -250,7 +248,7 @@ class TaxYearSummaryControllerSpec
                   showForecastData = false,
                   ctaViewModel = emptyCTAViewModel,
                   LPP2Url = "",
-                  pfaEnabled = false
+                  pfaEnabled = false, financialsFrontendEnabled = false
                 )
 
                 val expectedContent: String =
@@ -306,7 +304,7 @@ class TaxYearSummaryControllerSpec
                     testChargesList,
                     testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false
+                    pfaEnabled = false, financialsFrontendEnabled = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -356,7 +354,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false
+                    pfaEnabled = false, financialsFrontendEnabled = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -494,10 +492,11 @@ class TaxYearSummaryControllerSpec
 
                 val result = action(fakeRequest)
 
+                //ToDo this will need updating when FinacialsFrontend feature switch is built
                 def chargeSummaryUrl(id: String) = if (isAgent) {
-                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id).url
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, false, false)
                 } else {
-                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id).url
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, false, None, false)
                 }
 
                 status(result) shouldBe OK
@@ -527,10 +526,11 @@ class TaxYearSummaryControllerSpec
 
                 val result = action(fakeRequest)
 
+                //ToDo this will need updating when FinacialsFrontend feature switch is built
                 def chargeSummaryUrl(id: String, isInterestCharge: Boolean = false) = if (isAgent) {
-                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id, isInterestCharge).url
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, isInterestCharge, false)
                 } else {
-                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id, isInterestCharge).url
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, isInterestCharge, None, false)
                 }
 
                 status(result) shouldBe OK
@@ -565,10 +565,11 @@ class TaxYearSummaryControllerSpec
 
                 val result = action(fakeRequest)
 
+                //ToDo this will need updating when FinacialsFrontend feature switch is built
                 def chargeSummaryUrl(id: String) = if (isAgent) {
-                  financialsRoutes.ChargeSummaryController.showAgent(testTaxYear, id).url
+                  appConfig.financialsChargeSummaryAgentUrl(testTaxYear, id, false, false)
                 } else {
-                  financialsRoutes.ChargeSummaryController.show(testTaxYear, id).url
+                  appConfig.financialsChargeSummaryIndividualUrl(testTaxYear, id, false, None, false)
                 }
 
                 status(result) shouldBe OK
@@ -641,7 +642,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel,
                     LPP2Url = "",
-                    pfaEnabled = false),
+                    pfaEnabled = false, financialsFrontendEnabled = false),
                   backUrl = homeBackLink(isAgent),
                   ctaLink = ctaLink(isAgent),
                   isAgent = isAgent,
@@ -698,7 +699,7 @@ class TaxYearSummaryControllerSpec
                     charges = class2NicsChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false),
+                    pfaEnabled = false, financialsFrontendEnabled = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -755,7 +756,7 @@ class TaxYearSummaryControllerSpec
                     charges = payeChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false),
+                    pfaEnabled = false, financialsFrontendEnabled = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -810,7 +811,7 @@ class TaxYearSummaryControllerSpec
                     charges = charges,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false
+                    pfaEnabled = false, financialsFrontendEnabled = false
                   ),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
@@ -859,7 +860,7 @@ class TaxYearSummaryControllerSpec
                       testEmptyChargesList,
                       testObligationsModel,
                       ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                      pfaEnabled = false),
+                      pfaEnabled = false, financialsFrontendEnabled = false),
                     backUrl = taxYearsBackLink(isAgent),
                     isAgent = isAgent,
                     ctaLink = ctaLink(isAgent),
@@ -910,7 +911,7 @@ class TaxYearSummaryControllerSpec
                     obligations = testObligationsModel,
                     showForecastData = true,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false),
+                    pfaEnabled = false, financialsFrontendEnabled = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),
@@ -959,7 +960,7 @@ class TaxYearSummaryControllerSpec
                     charges = testChargesList,
                     obligations = testObligationsModel,
                     ctaViewModel = emptyCTAViewModel, LPP2Url = "",
-                    pfaEnabled = false),
+                    pfaEnabled = false, financialsFrontendEnabled = false),
                   backUrl = taxYearsBackLink(isAgent),
                   isAgent = isAgent,
                   ctaLink = ctaLink(isAgent),

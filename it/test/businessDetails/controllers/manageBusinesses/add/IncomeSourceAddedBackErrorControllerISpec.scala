@@ -16,17 +16,17 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.Add
 import common.enums.{MTDIndividual, MTDUserRole}
 import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.Add
 import shared.models.UIJourneySessionData
 
 class IncomeSourceAddedBackErrorControllerISpec extends ControllerISpecHelper {

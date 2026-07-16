@@ -18,16 +18,16 @@ package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.controllers.manageBusinesses.cease.routes as ceaseBusinessRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
-import businessDetails.services.{IncomeSourceDetailsService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess, SessionService}
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationCeased
+import businessDetails.mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
+import businessDetails.services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService, UpdateIncomeSourceSuccess}
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import common.enums.TriggeredMigration.TriggeredMigrationCeased
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
-import common.models.core.IncomeSourceId
-import common.services.{DateServiceInterface}
+import common.services.DateServiceInterface
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -39,11 +39,12 @@ import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLoca
 import common.testConstants.BaseTestConstants.testMtditid
 import common.testConstants.IncomeSourceDetailsTestConstants.*
 import businessDetails.testConstants.UpdateIncomeSourceTestConstants
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with MockSessionService {
+class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with MockSessionService with MockIncomeSourceDetailsService {
 
  lazy val mockUpdateIncomeSourceService: UpdateIncomeSourceService = mock(classOf[UpdateIncomeSourceService])
   val validCeaseDate: String = LocalDate.of(2022, 10, 10).toString
@@ -106,7 +107,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
             "using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
               mockGetCeaseIncomeSourceDetails(incomeSourceType)
@@ -125,7 +126,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
             "the journey is complete" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
@@ -161,7 +162,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
             "using the manage businesses journey" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
@@ -178,7 +179,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
             "updating Cessation date fails" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))
@@ -197,7 +198,7 @@ class CheckCeaseIncomeSourceDetailsControllerSpec extends MockAuthActions with M
             "using the triggered migration journey" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Cease, incomeSourceType)))))
 
               when(mockUpdateIncomeSourceService.updateCessationDate(any(), any(), any())(any(), any()))

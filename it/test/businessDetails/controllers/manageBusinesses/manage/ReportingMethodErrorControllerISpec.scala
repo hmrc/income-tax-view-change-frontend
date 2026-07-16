@@ -16,10 +16,10 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.enums.{MTDIndividual, MTDUserRole}
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}

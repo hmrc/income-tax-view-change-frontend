@@ -29,7 +29,6 @@
 @this(layout: unifiedLayout,
       breakdownPartial: taxYearSummaryBreakdownPartial,
       inset: GovukInsetText,
-      form: FormWithCSRF,
       continueButton: ContinueButton,
       p: p,
       h1Caption: h1_itsa,
@@ -56,11 +55,11 @@
     messages(key, timeStamp)
 }
 
-@formCall = @{
+@homeUrl = @{
     if(isAgent){
-        hub.controllers.routes.HomeController.showAgent()
+        appConfig.agentHomeUrl
     } else {
-        hub.controllers.routes.HomeController.show(origin)
+        appConfig.individualHomeUrlWithOrigin(origin)
     }
 }
     
@@ -79,7 +78,5 @@
 
     @breakdownPartial(overview, taxYear, isFinalCalc = false, isAgent)
 
-    @form(formCall) {
-        @continueButton(Some(messages("InYear-tax-overview.goToTaxAccount")))
-    }
+    @continueButton(Some(messages("InYear-tax-overview.goToTaxAccount")), href = Some(homeUrl))
 }

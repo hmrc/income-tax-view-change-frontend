@@ -21,7 +21,7 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.obligations.ObligationsModel
 import common.services.DateService
 import common.testUtils.UnitSpec
-import financials.testConstants.ChargeConstants
+import returns.testConstants.ChargeConstants
 import returns.models.liabilitycalculation.viewmodels.CalculationSummary.localDate
 import shared.testConstants.NextUpdatesTestConstants.nextUpdatesDataSelfEmploymentSuccessModel
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
@@ -64,7 +64,8 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel.apply(
           Some(testCalculationSummary.copy(forecastIncomeTaxAndNics = None)), None,
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, showForecastData = true, ctaViewModel = testCTAViewModel, LPP2Url = "", pfaEnabled = false
+          testObligationsModel, showForecastData = true, ctaViewModel = testCTAViewModel,
+          LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Forecast Tax Due"
@@ -76,7 +77,8 @@ class TaxYearSummaryViewModelSpec extends UnitSpec with ChargeConstants with Moc
         val thrown = the[IllegalArgumentException] thrownBy TaxYearSummaryViewModel(
           Some(testCalculationSummary.copy(timestamp = None)), None,
           testWithMissingOriginalAmountChargesList,
-          testObligationsModel, showForecastData = true, ctaViewModel = testCTAViewModel, LPP2Url = "", pfaEnabled = false
+          testObligationsModel, showForecastData = true, ctaViewModel = testCTAViewModel, LPP2Url = "",
+          pfaEnabled = false, financialsFrontendEnabled = false
         )
 
         thrown.getMessage shouldBe "requirement failed: missing Calculation timestamp"

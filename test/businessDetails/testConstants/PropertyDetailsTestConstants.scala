@@ -16,13 +16,13 @@
 
 package businessDetails.testConstants
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import businessDetails.models.incomeSourceDetails.viewmodels.{CeasePropertyDetailsViewModel, PropertyDetailsViewModel, ViewPropertyDetailsViewModel}
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, UkProperty}
 import common.models.core.{AccountingPeriodModel, CessationModel}
-import common.testConstants.BaseTestConstants.{testPropertyIncomeId, testPropertyIncomeId2, testSelfEmploymentId, testSelfEmploymentId2}
-import businessDetails.testConstants.BusinessDetailsTestConstants.{quarterTypeElectionCalendar, quarterTypeElectionStandard, testLatencyDetails4, testLatencyDetails5, fakeNextUpdatesModel}
 import common.models.incomeSourceDetails.{LatencyDetails, PropertyDetailsModel}
 import common.models.obligations.{SingleObligationModel, StatusFulfilled}
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.BusinessDetailsTestConstants.*
 
 import java.time.LocalDate
 
@@ -40,15 +40,12 @@ object PropertyDetailsTestConstants {
   val testPropertyCessation2 = CessationModel(Some(LocalDate.of(2023, 6, 6)))
   val testPropertyCessation3 = CessationModel(Some(LocalDate.of(2020, 2, 2)))
   val testCeaseDate = Some(LocalDate.of(2022, 1, 1))
-  val testStartDate = LocalDate.of(2022, 1, 1)
   val testStartDate2 = LocalDate.of(2021, 1, 1)
   val testStartDateBeforeEarliestStartDate = LocalDate.of(2013, 1, 1)
   val testContextualTaxYear = "2024"
   val testPropertyStartDateOption: Option[LocalDate] = Some(LocalDate.of(2022, 1, 1))
   val testPropertyStartDateOption2: Option[LocalDate] = Some(LocalDate.of(2021, 1, 1))
-  val testIncomeType = "property-unspecified"
   val ukIncomeType = "uk-property"
-  val foreignIncomeType = "foreign-property"
 
   val propertyDetails = PropertyDetailsModel(
     incomeSourceId = testPropertyIncomeId,
@@ -70,27 +67,6 @@ object PropertyDetailsTestConstants {
 
   val viewUkPropertyDetailsViewModel = ViewPropertyDetailsViewModel(
     tradingStartDate = testPropertyStartDateOption
-  )
-
-  val foreignPropertyDetails = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId,
-    accountingPeriod = None,
-    firstAccountingPeriodEndDate = None,
-    incomeSourceType = Some(foreignIncomeType),
-    tradingStartDate = Some(testStartDate),
-    contextualTaxYear = None,
-    cessation = None,
-    quarterTypeElection = Some(quarterTypeElectionCalendar),
-  )
-
-  val foreignPropertyDetails2 = PropertyDetailsModel(
-    incomeSourceId = testPropertyIncomeId2,
-    accountingPeriod = None,
-    firstAccountingPeriodEndDate = None,
-    incomeSourceType = Some(foreignIncomeType),
-    tradingStartDate = Some(testStartDate),
-    contextualTaxYear = None,
-    cessation = None,
   )
 
   val foreignPropertyDetailsNoStartDate = PropertyDetailsModel(

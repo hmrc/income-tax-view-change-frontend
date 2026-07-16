@@ -23,20 +23,20 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.SEE_OTHER
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.testSelfEmploymentId
-import common.testConstants.IncomeSourceDetailsTestConstants.{completedUIJourneySessionData, notCompletedUIJourneySessionData, ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome}
+import common.testConstants.BaseTestConstants.*
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import businessDetails.controllers.manageBusinesses.manage.routes as manageYourBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.updateIncomeSource.{UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import scala.concurrent.Future
 
@@ -70,7 +70,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions with ImplicitDateFo
             "the session contains all relevant data" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusinessWithLatency()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderWithLatency)
 
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
@@ -90,7 +90,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions with ImplicitDateFo
             "the journey is complete" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(completedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType)))))
 
@@ -113,7 +113,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions with ImplicitDateFo
             "the reporting method is updated to annual" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
                 .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(
@@ -141,7 +141,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions with ImplicitDateFo
             "the reporting method is updated to quarterly" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
                 .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(
@@ -171,7 +171,7 @@ class CheckYourAnswersControllerSpec extends MockAuthActions with ImplicitDateFo
             "UpdateIncomeSourceService returns a UpdateIncomeSourceResponseError response" in {
               setupMockSuccess(mtdRole)
               mockItsaStatusRetrievalAction(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
-              mockBothPropertyBothBusiness()
+              setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
               setupMockCreateSession(true)
               setupMockGetMongo(Right(Some(notCompletedUIJourneySessionData(IncomeSourceJourneyType(Manage, incomeSourceType))
                 .copy(manageIncomeSourceData = Some(ManageIncomeSourceData(

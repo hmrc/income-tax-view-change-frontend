@@ -236,6 +236,18 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
       case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm"
       case _ => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax"
     }
+    
+  def circumstancesChangeLink(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "cy" => "https://www.gov.uk/guidance/defnyddio-r-cynllun-troi-treth-yn-ddigidol-ar-gyfer-treth-incwm/os-bydd-eich-amgylchiadau-n-newid"
+      case _ => "https://www.gov.uk/guidance/use-making-tax-digital-for-income-tax/if-your-circumstances-change"
+    }
+
+  def infoAboutPenaltiesLink(implicit messages: Messages): String =
+    messages.lang.code match {
+      case "cy" => "https://www.gov.uk/guidance/penalties-for-making-tax-digital-for-income-tax.cy"
+      case _ => "https://www.gov.uk/guidance/penalties-for-making-tax-digital-for-income-tax"
+    }
 
   def paySelfAssessmentBillLink(implicit messages: Messages): String =
     messages.lang.code match {

@@ -17,6 +17,7 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.ChooseSoleTraderAddressForm
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, Address, Country}
 import businessDetails.services.SessionService
@@ -30,10 +31,9 @@ import businessDetails.views.html.manageBusinesses.add.ChooseSoleTraderAddressVi
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.admin.OverseasBusinessAddress
 import common.models.incomeSourceDetails.ChooseSoleTraderAddressUserAnswer
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import javax.inject.Inject

@@ -19,8 +19,11 @@ package hub.controllers.newHomePage
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
-import common.models.admin.{NewHomePage, RecentActivity}
+import common.models.admin.RecentActivity
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.obligations.ObligationsModel
+import common.testConstants.BaseTestConstants.*
 import financials.services.PaymentHistoryService
 import hub.models.newHomePage.RecentActivityViewModel
 import hub.services.newHomePage.RecentActivityService
@@ -30,10 +33,6 @@ import play.api
 import play.api.http.Status
 import play.api.inject
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.{testMtditid, testNino}
-import businessDetails.testConstants.BusinessDetailsTestConstants.business1
-import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import common.models.obligations.ObligationsModel
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -77,7 +76,7 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
               when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
               when(mockPaymentHistoryService.getRepaymentHistory(any())(any(), any())).thenReturn(Future(Right(Seq.empty)))
               when(mockRecentActivityService.recentActivityCards(any(), any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
-              setupMockSuccess(mtdRole, false, List(NewHomePage, RecentActivity))
+              setupMockSuccess(mtdRole, false, List(RecentActivity))
 
               val result = action(fakeRequest)
 
@@ -95,7 +94,7 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
             when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
             when(mockPaymentHistoryService.getRepaymentHistory(any())(any(), any())).thenReturn(Future(Right(Seq.empty)))
             when(mockRecentActivityService.recentActivityCards(any(), any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
-            setupMockSuccess(mtdRole, false, List(NewHomePage))
+            setupMockSuccess(mtdRole, false)
 
             val result = action(fakeRequest)
             val yourTasksUrl = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/your-tasks" else "/report-quarterly/income-and-expenses/view/your-tasks"
@@ -113,7 +112,7 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
               when(mockPaymentHistoryService.getPaymentHistory(any(), any())).thenReturn(Future(Right(List.empty)))
               when(mockPaymentHistoryService.getRepaymentHistory(any())(any(), any())).thenReturn(Future(Right(Seq.empty)))
               when(mockRecentActivityService.recentActivityCards(any(), any(), any())(any())).thenReturn(RecentActivityViewModel(Seq.empty))
-              setupMockSuccess(mtdRole, false, List(NewHomePage, RecentActivity))
+              setupMockSuccess(mtdRole, false, List(RecentActivity))
 
               val result = action(fakeRequest)
               val overviewUrl = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/overview" else "/report-quarterly/income-and-expenses/view/overview"

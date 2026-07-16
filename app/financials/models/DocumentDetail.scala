@@ -17,12 +17,12 @@
 package financials.models
 
 import common.services.DateServiceInterface
-import financials.enums.CodingOutType.*
-import financials.enums.DocumentType
-import financials.enums.DocumentType.*
+import shared.enums.CodingOutType.*
+import shared.enums.DocumentType.*
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{Json, Reads, Writes, __}
+import shared.enums.DocumentType
 
 import java.time.LocalDate
 

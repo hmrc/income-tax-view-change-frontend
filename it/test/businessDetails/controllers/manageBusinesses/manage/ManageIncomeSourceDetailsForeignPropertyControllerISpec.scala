@@ -16,8 +16,8 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.ForeignProperty
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
-import common.enums.IncomeSourceJourney.ForeignProperty
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.CalculationListStub
 import common.helpers.servicemocks.ITSAStatusDetailsStub

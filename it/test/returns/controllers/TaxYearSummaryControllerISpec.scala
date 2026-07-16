@@ -29,9 +29,7 @@ import common.testConstants.IncomeSourceIntegrationTestConstants.*
 import returns.testConstants.NewCalcBreakdownItTestConstants.*
 import returns.testConstants.messages.TaxYearSummaryMessages.*
 import returns.testConstants.ReturnIntegrationTestConstants.*
-import financials.controllers.routes as financialsRoutes
-import returns.helpers.FinancialDetailsStub
-import financials.models.*
+import returns.models.*
 import org.jsoup.Jsoup
 import play.api.http.Status.*
 import play.api.libs.json.Json
@@ -39,6 +37,7 @@ import returns.helpers.ObligationsStub
 import returns.models.audit.TaxYearSummaryResponseAuditModel
 import returns.models.liabilitycalculation.viewmodels.{CalculationSummary, TaxYearSummaryViewModel}
 import returns.models.taxyearsummary.TaxYearSummaryChargeItem
+import returns.helpers.FinancialDetailsStub
 import shared.models.audit.NextUpdatesResponseAuditModel
 import shared.testConstants.CalculationListIntegrationTestConstants
 
@@ -296,7 +295,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
                   messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
                     None, financialDetailsDunningLockSuccess.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
-                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false)))
+                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
               }
 
 
@@ -505,7 +504,8 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     TaxYearSummaryViewModel(
                       Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                       None, emptyPaymentsList,
-                      allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false
+                      allObligations, showForecastData = true, ctaViewModel = emptyCTAModel,
+                      LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false
                     )))
                 }
 
@@ -652,7 +652,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   messagesAPI, TaxYearSummaryViewModel(
                     Some(CalculationSummary(liabilityCalculationModelSuccessful)),
                     None, auditDD.map(dd => ChargeItem.fromDocumentPair(dd.documentDetail, financialDetailsMFADebits.financialDetails)).map(TaxYearSummaryChargeItem.fromChargeItem), allObligations,
-                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false)))
+                    showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
 
                 allObligations.obligations.foreach {
                   obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
@@ -683,10 +683,11 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   val document = Jsoup.parse(res.body)
 
+                  //ToDo update when FinancialsFrontend is enabled
                   def getChargeSummaryUrl(id: String) = if (mtdUserRole == MTDIndividual) {
-                    financialsRoutes.ChargeSummaryController.show(testYear2023, id).url
+                    appConfig.financialsChargeSummaryIndividualUrl(testYear2023, id, false, None, false)
                   } else {
-                    financialsRoutes.ChargeSummaryController.showAgent(testYear2023, id).url
+                    appConfig.financialsChargeSummaryAgentUrl(testYear2023, id, false, false)
                   }
 
                   document.getElementById("paymentTypeLink-0").attr("href") shouldBe getChargeSummaryUrl("1040000123")

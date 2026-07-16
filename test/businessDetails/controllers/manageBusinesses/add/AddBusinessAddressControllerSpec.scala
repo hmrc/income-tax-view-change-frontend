@@ -17,16 +17,18 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, Address, BusinessAddressModel, Country}
 import businessDetails.services.{AddressLookupService, IncomeSourceDetailsService, SessionService}
 import common.config.FrontendAppConfig
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockDateService, MockSessionService}
+import common.mocks.services.MockDateService
 import common.models.core.{CheckMode, NormalMode}
 import common.services.{DateService, DateServiceInterface}
+import common.testConstants.BaseTestConstants.*
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -35,7 +37,6 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.mvc.{Call, Result}
 import play.api.test.Helpers.*
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 import shared.models.UIJourneySessionData
 
 import scala.concurrent.Future

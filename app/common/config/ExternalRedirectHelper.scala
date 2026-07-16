@@ -41,7 +41,7 @@ trait ExternalRedirectHelper {
   
   lazy val individualHomeUrl: String =
     hubRoutes.HomeController.show().url
-    //hubBaseUrl
+    //origin.fold(hubBaseUrl)(o =>s"$hubBaseUrl?origin=$o")
 
   lazy val individualHomeUrlWithOrigin: Option[String] => String = origin =>
       hubRoutes.HomeController.show(origin).url
@@ -56,7 +56,7 @@ trait ExternalRedirectHelper {
   lazy val agentHomeUrl: String =
     hubRoutes.HomeController.showAgent().url
     //hubAgentBaseUrl
-    
+
   def homePageUrl(isAgent: Boolean): String = if (isAgent) agentHomeUrl else individualHomeUrl
 
   lazy val enterClientsUTRUrl: String =
@@ -163,16 +163,16 @@ trait ExternalRedirectHelper {
 
   lazy val financialsAmendablePoaIndividualUrl: (Boolean) => String = financialsFrontendEnabled =>
     if (financialsFrontendEnabled)
-      s"$financialsBaseUrl/what-you-owe"
+      s"$financialsBaseUrl/adjust-poa/start"
     else
-      //s"$hubBaseUrl/what-you-owe"
+      //s"$hubBaseUrl/adjust-poa/start"
       claimToAdjustPoaRoutes.AmendablePoaController.show(false).url
 
   lazy val financialsAmendablePoaAgentUrl: Boolean => String = financialsFrontendEnabled =>
     if (financialsFrontendEnabled)
-      s"$financialsAgentBaseUrl/what-your-client-owes"
+      s"$financialsAgentBaseUrl/adjust-poa/start"
     else
-      //s"$hubAgentBaseUrl/what-your-client-owes"
+      //s"$hubAgentBaseUrl/adjust-poa/start"
       claimToAdjustPoaRoutes.AmendablePoaController.show(true).url
 
   def financialsAmendablePoaUrl(isAgent: Boolean, financialsFrontendEnabled: Boolean): String =
@@ -180,6 +180,32 @@ trait ExternalRedirectHelper {
       financialsAmendablePoaAgentUrl(financialsFrontendEnabled)
     else
       financialsAmendablePoaIndividualUrl(financialsFrontendEnabled)
+
+  def financialsChargeSummaryIndividualUrl(taxYear: Int,
+                                           transactionId: String,
+                                           isAccruingInterest: Boolean,
+                                           origin: Option[String] = None,
+                                           financialsFrontendEnabled: Boolean): String = {
+    lazy val queryPathNoOrigin = s"?id=$transactionId&isInterestCharge=$isAccruingInterest"
+    lazy val queryPathString = origin.fold(queryPathNoOrigin)(o => s"$queryPathNoOrigin&origin=$o")
+    if (financialsFrontendEnabled) {
+      s"$financialsBaseUrl/tax-years/$taxYear/charge$queryPathString"
+    } else
+      //s"$hubBaseUrl/tax-years/$taxYear/charge$queryPathString"
+      financialsRoutes.ChargeSummaryController.show(taxYear, transactionId, isAccruingInterest, origin).url
+  }
+
+  def financialsChargeSummaryAgentUrl(taxYear: Int,
+                                      transactionId: String,
+                                      isAccruingInterest: Boolean,
+                                      financialsFrontendEnabled: Boolean): String = {
+    lazy val queryPathString = s"?id=$transactionId&isInterestCharge=$isAccruingInterest"
+    if (financialsFrontendEnabled)
+      s"$financialsAgentBaseUrl/tax-years/$taxYear/charge$queryPathString"
+    else
+      //s"$hubAgentBaseUrl/tax-years/$taxYear/charge$queryPathString"
+      financialsRoutes.ChargeSummaryController.showAgent(taxYear, transactionId, isAccruingInterest).url
+  }
 
   //Returns routes
 

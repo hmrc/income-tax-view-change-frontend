@@ -18,10 +18,12 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.manageBusinesses.manage.routes as manageBusinessRoutes
-import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.models.incomeSourceDetails.*
 import businessDetails.services.NextUpdatesService
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
@@ -29,22 +31,20 @@ import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK, SEE_OTHER}
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.Helpers.{await, defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.{testSelfEmploymentId, testSessionId}
-import businessDetails.testConstants.BusinessDetailsTestConstants.{year2018, year2019}
-import common.testConstants.IncomeSourceDetailsTestConstants.{businessIncome, notCompletedUIJourneySessionData}
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.businessIncome
 import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.*
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceAddedObligationsView
 import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockITSAStatusService, MockSessionService}
+import common.mocks.services.MockITSAStatusService
 import common.models.incomeSourceDetails.LatencyDetails
 import common.services.{DateService, DateServiceInterface}
 import businessDetails.mocks.services.MockNextUpdatesService
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

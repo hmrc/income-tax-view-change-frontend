@@ -20,40 +20,28 @@ import hub.auth.AuthActionsWithTriggeredMigrationCheck
 import common.auth.MtdItUser
 import common.config.*
 import common.config.featureswitch.*
-import common.enums.MTDSupportingAgent
 import common.models.admin.*
 import common.models.core.Nino
-import common.models.incomeSourceDetails.TaxYear
-import common.models.itsaStatus.ITSAStatus
-import common.services.{AuditingService, DateServiceInterface, ITSAStatusService}
-import common.utils.sessionUtils.SessionKeys
+import common.services.{DateServiceInterface, ITSAStatusService}
 import financials.models.*
-import financials.models.outstandingCharges.{OutstandingChargeModel, OutstandingChargesModel}
 import financials.services.*
-import hub.audit.models.HomeAudit
-import hub.models.homePage.*
 import hub.services.{NextUpdatesService, PenaltyDetailsService}
 import hub.utils.HomePageUtils
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
-import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HomeController @Inject()(val homeView: hub.views.html.HomeView,
-                               val newHomeRecentActivityView: hub.views.html.newHomePage.NewHomeRecentActivityView,
+class HomeController @Inject()(val newHomeRecentActivityView: hub.views.html.newHomePage.NewHomeRecentActivityView,
                                val newHomeOverviewView: hub.views.html.newHomePage.NewHomeOverviewView,
                                val newHomeHelpView: hub.views.html.newHomePage.NewHomeHelpView,
-                               val primaryAgentHomeView: hub.views.html.agent.PrimaryAgentHomeView,
-                               val supportingAgentHomeView: hub.views.html.agent.SupportingAgentHomeView,
                                val authActions: AuthActionsWithTriggeredMigrationCheck,
                                val nextUpdatesService: NextUpdatesService,
                                val financialDetailsService: FinancialDetailsService,
@@ -63,8 +51,7 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
                                val penaltyDetailsService: PenaltyDetailsService,
                                val creditService: CreditService,
                                val signUpService: SignUpService,
-                               val optOutService: OptOutService,
-                               auditingService: AuditingService)
+                               val optOutService: OptOutService)
                               (implicit
                                val ec: ExecutionContext,
                                val itvcErrorHandler: ItvcErrorHandler,
@@ -84,193 +71,13 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
 
   def handleShowRequest(origin: Option[String] = None)
                        (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    if (isEnabled(NewHomePage)) {
       handleYourTasks(origin, user.isAgent)
-    } else {
-      handleOldHomePage(origin)
-    }
-  }
-
-  private def handleOldHomePage(origin: Option[String] = None)
-                               (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[Result] = {
-    nextUpdatesService.getDueDates().flatMap {
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) if user.usersRole == MTDSupportingAgent =>
-        buildHomePageForSupportingAgent(nextUpdatesDueDates)
-      case Right(nextUpdatesDueDates: Seq[LocalDate]) =>
-        buildHomePage(nextUpdatesDueDates, origin)
-      case Left(ex) =>
-        Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
-        Future.successful(handleErrorGettingDueDates(user.isAgent))
-    }
-  }
-
-  private def buildHomePageForSupportingAgent(nextUpdatesDueDates: Seq[LocalDate])
-                                             (implicit user: MtdItUser[_]): Future[Result] = {
-
-    val currentTaxYear = TaxYear(dateService.getCurrentTaxYearEnd - 1, dateService.getCurrentTaxYearEnd)
-
-    for {
-      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
-      (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
-      _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
-      _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
-    } yield {
-      val nextUpdatesTileViewModel = NextUpdatesTileViewModel(nextUpdatesDueDates,
-        currentDate = dateService.getCurrentDate,
-        currentYearITSAStatus = currentITSAStatus,
-        nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
-        nextTaxReturnDueDate = nextTaxReturnDueDate)
-
-      val yourBusinessesTileViewModel = YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, businessDetailsFrontendEnabled = isEnabled(BusinessDetailsFrontend))
-      val yourReportingObligationsTileViewModel = YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus, isEnabled(ObligationsFrontend))
-      val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
-
-      auditingService.extendedAudit(
-        HomeAudit.applySupportingAgent(user,
-          nextUpdatesTileViewModel.getNumberOfOverdueObligations,
-          nextUpdatesTileViewModel.getNextDeadline,
-          userIsCYPlusOne
-        )
-      )
-
-      Ok(
-        supportingAgentHomeView(
-          yourBusinessesTileViewModel,
-          nextUpdatesTileViewModel,
-          yourReportingObligationsTileViewModel,
-          isEnabled(ObligationsFrontend)
-        )
-      )
-    }
-  }
-
-  private def buildHomePage(nextUpdatesDueDates: Seq[LocalDate], origin: Option[String])
-                           (implicit user: MtdItUser[_]): Future[Result] = {
-
-    val getCurrentTaxYearEnd = dateService.getCurrentTaxYearEnd
-    val getCurrentDate = dateService.getCurrentDate
-    val currentTaxYear = TaxYear(getCurrentTaxYearEnd - 1, getCurrentTaxYearEnd)
-
-    for {
-      credits <- creditService.getAllCredits
-      unpaidCharges <- financialDetailsService.getAllUnpaidFinancialDetails()
-      paymentsDue = getDueDates(unpaidCharges, isEnabled(PenaltiesAndAppeals))
-      dunningLockExists = hasDunningLock(unpaidCharges)
-      outstandingChargesModel <- getOutstandingChargesModel(unpaidCharges)
-      outstandingChargeDueDates = getRelevantDates(outstandingChargesModel)
-      overDuePaymentsCount = calculateOverduePaymentsCount(paymentsDue, outstandingChargesModel)
-      accruingInterestPaymentsCount = NextPaymentsTileViewModel.paymentsAccruingInterestCount(unpaidCharges, getCurrentDate)
-      currentITSAStatus <- getCurrentITSAStatus(currentTaxYear)
-      penaltiesCount <- penaltyDetailsService.getPenaltiesCount(isEnabled(PenaltiesBackendEnabled))
-      paymentsDueMerged = mergePaymentsDue(paymentsDue, outstandingChargeDueDates)
-      mandation <- ITSAStatusService.hasMandatedOrVoluntaryStatusCurrentYear(_.isMandated)
-      (nextQuarterlyUpdateDueDate, nextTaxReturnDueDate) <- getNextDueDatesIfEnabled()
-      _ <- signUpService.updateJourneyStatusInSessionData(journeyComplete = false)
-      _ <- optOutService.updateJourneyStatusInSessionData(journeyComplete = false)
-    } yield {
-
-      val nextUpdatesTileViewModel =
-        NextUpdatesTileViewModel(
-          dueDates = nextUpdatesDueDates,
-          currentDate = getCurrentDate,
-          currentYearITSAStatus = currentITSAStatus,
-          nextQuarterlyUpdateDueDate = nextQuarterlyUpdateDueDate,
-          nextTaxReturnDueDate = nextTaxReturnDueDate
-        )
-
-      val penaltiesAndAppealsTileViewModel: PenaltiesAndAppealsTileViewModel =
-        PenaltiesAndAppealsTileViewModel(isEnabled(PenaltiesAndAppeals), penaltyDetailsService.getPenaltySubmissionFrequency(currentITSAStatus), penaltiesCount)
-
-      val paymentCreditAndRefundHistoryTileViewModel =
-        PaymentCreditAndRefundHistoryTileViewModel(credits, isEnabled(CreditsRefundsRepay), isEnabled(PaymentHistoryRefunds), user.incomeSources.yearOfMigration.isDefined)
-
-      val yourBusinessesTileViewModel =
-        YourBusinessesTileViewModel(user.incomeSources.hasOngoingBusinessOrPropertyIncome, businessDetailsFrontendEnabled = isEnabled(BusinessDetailsFrontend))
-
-      val returnsTileViewModel =
-        ReturnsTileViewModel(currentTaxYear, isEnabled(ITSASubmissionIntegration))
-
-      val yourReportingObligationsTileViewModel =
-        YourReportingObligationsTileViewModel(currentTaxYear, currentITSAStatus, isEnabled(ObligationsFrontend))
-
-      NextPaymentsTileViewModel(paymentsDueMerged, overDuePaymentsCount, accruingInterestPaymentsCount).verify match {
-
-        case Right(viewModel: NextPaymentsTileViewModel) =>
-          val homeViewModel = HomePageViewModel(
-            utr = user.saUtr,
-            nextPaymentsTileViewModel = viewModel,
-            returnsTileViewModel = returnsTileViewModel,
-            nextUpdatesTileViewModel = nextUpdatesTileViewModel,
-            paymentCreditAndRefundHistoryTileViewModel = paymentCreditAndRefundHistoryTileViewModel,
-            yourBusinessesTileViewModel = yourBusinessesTileViewModel,
-            yourReportingObligationsTileViewModel = yourReportingObligationsTileViewModel,
-            penaltiesAndAppealsTileViewModel = penaltiesAndAppealsTileViewModel,
-            obligationsEnabled = isEnabled(ObligationsFrontend),
-            dunningLockExists = dunningLockExists,
-            origin = origin
-          )
-
-          val mandationStatus =
-            if (mandation) SessionKeys.mandationStatus -> "on"
-            else SessionKeys.mandationStatus -> "off"
-
-          val userIsCYPlusOne = currentITSAStatus == ITSAStatus.NoStatus
-
-          auditingService.extendedAudit(
-            HomeAudit(
-              user,
-              paymentsDueMerged,
-              overDuePaymentsCount,
-              nextUpdatesTileViewModel.getNumberOfOverdueObligations,
-              nextUpdatesTileViewModel.getNextDeadline,
-              userIsCYPlusOne
-            )
-          )
-
-          if (user.isAgent) {
-            Ok(primaryAgentHomeView(homeViewModel, isEnabled(ObligationsFrontend))).addingToSession(mandationStatus)
-          } else {
-            Ok(homeView(homeViewModel, isEnabled(ObligationsFrontend))).addingToSession(mandationStatus)
-          }
-        case Left(ex: Throwable) =>
-          Logger("application").error(s"Unable to create the view model ${ex.getMessage} - ${ex.getCause}")
-          handleErrorGettingDueDates(user.isAgent)
-      }
-    }
-  }
-
-  private def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
-                                        (implicit user: MtdItUser[_]): Future[List[OutstandingChargeModel]] =
-    whatYouOweService.getWhatYouOweChargesList(
-      unpaidCharges,
-      isPenaltiesEnabled = isEnabled(PenaltiesAndAppeals),
-      mainChargeIsNotPaidFilter
-    ) map {
-      case WhatYouOweChargesList(_, _, Some(OutstandingChargesModel(outstandingCharges)), _) =>
-        outstandingCharges.filter(_.isBalancingChargeDebit)
-          .filter(_.relevantDueDate.isDefined)
-      case _ => Nil
-    }
-
-  private def hasDunningLock(financialDetails: List[FinancialDetailsResponseModel]): Boolean =
-    financialDetails
-      .collectFirst { case fdm: FinancialDetailsModel if fdm.dunningLockExists => true }
-      .getOrElse(false)
-
-
-  private def handleErrorGettingDueDates(isAgent: Boolean)(implicit user: MtdItUser[_]): Result = {
-    val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-    errorHandler.showInternalServerError()
   }
 
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
   }
 
-  private def getNextDueDatesIfEnabled()
-                                      (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[(Option[LocalDate], Option[LocalDate])] = {
-    nextUpdatesService.getNextDueDates()
-  }
 
   private def handleYourTasks(@unused origin: Option[String] = None, isAgent: Boolean)
                              (implicit  @unused user: MtdItUser[_]): Future[Result] = {
@@ -316,10 +123,4 @@ class HomeController @Inject()(val homeView: hub.views.html.HomeView,
       remainingToPayByChargeOrInterestWhenChargeIsPaidOrNot = mainChargeIsNotPaidFilter)
   }
 
-  private def getCurrentITSAStatus(taxYear: TaxYear)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[ITSAStatus.ITSAStatus] = {
-    ITSAStatusService.getStatusTillAvailableFutureYears(taxYear.previousYear).map(_.view.mapValues(_.status)
-      .toMap
-      .withDefaultValue(ITSAStatus.NoStatus)
-    ).map(detail => detail(taxYear))
-  }
 }

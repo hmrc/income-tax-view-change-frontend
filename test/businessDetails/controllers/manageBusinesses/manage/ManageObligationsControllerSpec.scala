@@ -16,32 +16,30 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.{MockNextUpdatesService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.*
-import businessDetails.services.NextUpdatesService
+import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
+import businessDetails.services.{NextUpdatesService, SessionService}
+import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
+import businessDetails.utils.IncomeSourcesUtils
+import common.connectors.ITSAStatusConnector
+import common.enums.MTDIndividual
+import common.mocks.auth.MockAuthActions
+import common.mocks.services.{MockClientDetailsService, MockDateService}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, TaxYear}
+import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import common.services.{DateService, DateServiceInterface}
+import common.testConstants.BaseTestConstants.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.{testNino, testPropertyIncomeId}
-import businessDetails.testConstants.BusinessDetailsTestConstants.testIncomeSource
-import common.testConstants.IncomeSourceDetailsTestConstants.{businessesAndPropertyIncome, emptyUIJourneySessionData, foreignPropertyIncomeWithCeasedForiegnPropertyIncome, ukPropertyIncomeWithCeasedUkPropertyIncome}
-import businessDetails.testConstants.IncomeSourcesObligationsTestConstants.quarterlyObligationDatesSimple
-import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import businessDetails.services.SessionService
-import businessDetails.utils.IncomeSourcesUtils
-import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
-import common.enums.MTDIndividual
-import common.mocks.auth.MockAuthActions
-import common.mocks.services.{MockClientDetailsService, MockDateService, MockSessionService}
-import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, PropertyDetailsModel, TaxYear}
-import common.services.{DateService, DateServiceInterface}
-import businessDetails.mocks.services.MockNextUpdatesService
-import businessDetails.models.incomeSourceDetails.viewmodels.{DatesModel, ObligationsViewModel}
-import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled}
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 
 import java.time.LocalDate
 import scala.concurrent.Future

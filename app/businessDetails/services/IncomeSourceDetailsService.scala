@@ -16,11 +16,11 @@
 
 package businessDetails.services
 
+import businessDetails.core.IncomeSourceId
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.models.core.IncomeSourceId
 import IncomeSourceId.mkIncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.IncomeSourceFromUser
 import businessDetails.models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeaseBusinessDetailsViewModel, CeaseIncomeSourcesViewModel, CeasePropertyDetailsViewModel, CeasedBusinessDetailsViewModel, CheckCeaseIncomeSourceDetailsViewModel, PropertyDetailsViewModel, ViewBusinessDetailsViewModel, ViewIncomeSourcesViewModel, ViewPropertyDetailsViewModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails}

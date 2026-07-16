@@ -19,6 +19,9 @@ package businessDetails.controllers.manageBusinesses.cease
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationCeased
 import businessDetails.models.audit.CeaseIncomeSourceAuditModel
 import businessDetails.models.incomeSourceDetails.viewmodels.CheckCeaseIncomeSourceDetailsViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService, UpdateIncomeSourceService}
@@ -31,12 +34,9 @@ import businessDetails.views.html.manageBusinesses.cease.CeaseCheckIncomeSourceD
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import common.enums.JourneyType.{Cease, IncomeSourceJourneyType}
-import common.enums.TriggeredMigration.TriggeredMigrationCeased
-import common.models.core.IncomeSourceId
 import common.services.AuditingService
 import shared.enums.BeforeSubmissionPage
+import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 import java.time.LocalDate
 import javax.inject.Inject

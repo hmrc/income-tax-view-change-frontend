@@ -96,7 +96,7 @@ class ConfirmedOptOutControllerISpec extends ControllerISpecHelper {
                   |}
                   |""".stripMargin
 
-              WiremockHelper.stubGet("/income-tax-view-change/list-of-calculation-results/AA123456A/2022", 200, calcResponseBody)
+              WiremockHelper.stubGet("/income-tax-calculations/calculation-list/AA123456A/2022", 200, calcResponseBody)
 
               val responseBody = Json.arr(successITSAStatusResponseJson2021, successITSAStatusResponseJson2022, successITSAStatusResponseJson2023)
 

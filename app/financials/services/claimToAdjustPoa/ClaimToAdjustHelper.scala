@@ -21,7 +21,7 @@ import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
 import financials.connectors.ChargeHistoryConnector
-import financials.enums.DocumentType.{Poa1Charge, Poa2Charge}
+import shared.enums.DocumentType.{Poa1Charge, Poa2Charge}
 import financials.models.*
 import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel

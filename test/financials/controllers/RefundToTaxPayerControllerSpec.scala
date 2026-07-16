@@ -29,7 +29,6 @@ import financials.models.audit.RefundToTaxPayerResponseAuditModel
 import financials.models.creditsandrefunds.RefundToTaxPayerViewModel
 import financials.models.repaymentHistory.*
 import financials.views.html.RefundToTaxPayerView
-import hub.controllers.routes
 import play.api
 import play.api.Application
 import play.api.http.Status
@@ -175,8 +174,8 @@ class RefundToTaxPayerControllerSpec extends MockAuthActions with MockRepaymentH
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.SEE_OTHER
-              val homeUrl = if (isAgent) routes.HomeController.showAgent() else routes.HomeController.show()
-              redirectLocation(result) shouldBe Some(homeUrl.url)
+              val homeUrl = appConfig.homePageUrl(isAgent)
+              redirectLocation(result) shouldBe Some(homeUrl)
             }
           }
 

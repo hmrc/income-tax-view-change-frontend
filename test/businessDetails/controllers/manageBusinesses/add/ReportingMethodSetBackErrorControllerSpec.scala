@@ -16,22 +16,21 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import org.jsoup.Jsoup
 import play.api
 import play.api.Application
 import play.api.http.Status.OK
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
-import common.testConstants.BaseTestConstants.testSessionId
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import shared.models.UIJourneySessionData
 
 class ReportingMethodSetBackErrorControllerSpec extends MockAuthActions with MockSessionService {

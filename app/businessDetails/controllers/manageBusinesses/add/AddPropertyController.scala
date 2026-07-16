@@ -18,6 +18,7 @@ package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import businessDetails.forms.manageBusinesses.add.AddProprertyForm as form
 import businessDetails.utils.IncomeSourcesUtils
 import play.api.Logger
@@ -27,7 +28,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddPropertyView
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
-import common.enums.IncomeSourceJourney.{ForeignProperty, UkProperty}
 import common.models.core.NormalMode
 
 import javax.inject.Inject

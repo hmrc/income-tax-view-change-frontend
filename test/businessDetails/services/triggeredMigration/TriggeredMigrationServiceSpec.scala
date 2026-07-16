@@ -16,16 +16,17 @@
 
 package businessDetails.services.triggeredMigration
 
+import businessDetails.core.IncomeSourceId
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
-import common.mocks.services.MockSessionService
-import common.models.core.{CessationModel, IncomeSourceId}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import businessDetails.testConstants.BusinessDetailsTestConstants.business1
-import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetails, ukPropertyDetails}
+import businessDetails.testConstants.PropertyDetailsTestConstants.ukPropertyDetails
+import common.models.core.CessationModel
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import java.time.LocalDate
 

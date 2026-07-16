@@ -21,7 +21,7 @@ import common.models.incomeSourceDetails.TaxYear.makeTaxYearWithEndYear
 import common.services.DateServiceInterface
 import financials.models.ChargeType.allChargeMainTransactions
 import financials.models.CreditType.{creditsWithSummaryPages, cutOver}
-import financials.models.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
+import shared.models.ReviewAndReconcileUtils.{isReviewAndReconcilePoaOne, isReviewAndReconcilePoaTwo}
 import financials.models.chargeSummary.{PaymentHistoryAllocation, PaymentHistoryAllocations}
 import financials.services.claimToAdjustPoa.ClaimToAdjustHelper.poaDocumentDescriptions
 import play.api.Logger

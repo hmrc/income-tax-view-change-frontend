@@ -17,10 +17,7 @@
 package hub.audit.models
 
 import common.auth.actions.AuthActionsTestData.{defaultMTDITUser, getMinimalMTDITUser}
-import businessDetails.forms.manageBusinesses.IncomeSourcesFormsSpec.commonAuditDetails
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import common.models.itsaStatus.ITSAStatus
-import hub.models.homePage.NextUpdatesTileViewModel
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
@@ -119,63 +116,6 @@ class HomeAuditSpec extends AnyWordSpecLike with Matchers {
           "overdueUpdates" -> 2,
           "userIsCYPlusOne" -> true
         ))
-      }
-    }
-  }
-
-  "applySupportingAgent" should {
-    "render the expected audit event" when {
-      val user = defaultMTDITUser(Some(Agent), IncomeSourceDetailsModel("nino", "mtditid", None, Nil, Nil, "1"), isSupportingAgent = true)
-      "there are updates due" that {
-        "are not overdue" in {
-          val nextDetailsTile = NextUpdatesTileViewModel(dueDates = List(fixedDate),
-            currentDate = fixedDate.minusDays(5),
-            currentYearITSAStatus = ITSAStatus.NoStatus,
-            nextQuarterlyUpdateDueDate = None,
-            nextTaxReturnDueDate = None)
-          HomeAudit.applySupportingAgent(user,
-            nextDetailsTile.getNumberOfOverdueObligations,
-            nextDetailsTile.getNextDeadline,
-            userIsCYPlusOne = false).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
-            "nextUpdateDeadline" -> fixedDate.toString,
-            "userIsCYPlusOne" -> false
-          )
-        }
-
-        "are overdue" in {
-          val nextDetailsTile = NextUpdatesTileViewModel(dueDates = List(fixedDate),
-            currentDate = fixedDate.plusDays(5),
-            currentYearITSAStatus = ITSAStatus.NoStatus,
-            nextQuarterlyUpdateDueDate = None,
-            nextTaxReturnDueDate = None)
-
-          HomeAudit.applySupportingAgent(
-            user,
-            nextDetailsTile.getNumberOfOverdueObligations,
-            nextDetailsTile.getNextDeadline,
-            userIsCYPlusOne = false
-          ).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
-            "nextUpdateDeadline" -> fixedDate.toString,
-            "userIsCYPlusOne" -> false
-          )
-        }
-      }
-
-      "there are multiple overdue updates" in {
-        val nextDetailsTile = NextUpdatesTileViewModel(List(fixedDate.minusDays(5), fixedDate.minusDays(10)),
-          currentDate = fixedDate,
-          currentYearITSAStatus = ITSAStatus.NoStatus,
-          nextQuarterlyUpdateDueDate = None,
-          nextTaxReturnDueDate = None)
-        HomeAudit.applySupportingAgent(
-          user,
-          nextDetailsTile.getNumberOfOverdueObligations,
-          nextDetailsTile.getNextDeadline,
-          userIsCYPlusOne = false
-        ).detail shouldBe commonAuditDetails(Agent, true) ++ Json.obj(
-          "overdueUpdates" -> 2,
-          "userIsCYPlusOne" -> false
-        )
       }
     }
   }

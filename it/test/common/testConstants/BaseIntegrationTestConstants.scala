@@ -18,8 +18,7 @@ package common.testConstants
 
 import common.auth.{AgentClientDetails, AuthUserDetails}
 import common.enums.{MTDIndividual, MTDUserRole}
-import common.models.core.IncomeSourceId.mkIncomeSourceId
-import common.models.core.{AccountingPeriodModel, AddressModel, IncomeSourceId}
+import common.models.core.{AccountingPeriodModel, AddressModel}
 import common.utils.sessionUtils.SessionKeys
 import common.models.incomeSourceDetails.*
 import play.api.http.Status
@@ -84,10 +83,8 @@ object BaseIntegrationTestConstants {
 
   val testSelfEmploymentId = "ABC123456789"
   val testIncomeSource = "Fruit Ltd"
-  val testSelfEmploymentIdHashed: String = mkIncomeSourceId(testSelfEmploymentId).toHash.hash
   val otherTestSelfEmploymentId = "ABC123456780"
   val testPropertyIncomeId = "1234"
-  val testPropertyIncomeIdHashed: String = mkIncomeSourceId(testPropertyIncomeId).toHash.hash
   val otherTestPropertyIncomeId = "ABC123456789"
   val testEndDate2022: String = "2022-10-10"
 
@@ -112,6 +109,15 @@ object BaseIntegrationTestConstants {
   val b1AccountingStart = LocalDate.of(startYear, 1, 1)
   val b2AccountingStart = LocalDate.of(endYear, 1, 1)
   val b2AccountingEnd = LocalDate.of(endYear, 12, 31)
+
+  val address = AddressModel(
+    Some("8 Test"),
+    Some("New Court"),
+    Some("New Town"),
+    Some("New City"),
+    Some("NE12 6CI"),
+    Some("GB")
+  )
 
   lazy val defaultEnrolments: MTDUserRole => Enrolments = mtdUserRole => {
     mtdUserRole match {
@@ -184,9 +190,7 @@ object BaseIntegrationTestConstants {
   val b1TradingName = "business"
   val b1AccountingEnd = LocalDate.of(startYear, 12, 31)
   val b1TradingStart = LocalDate.parse("2017-01-01")
-
-  val address = AddressModel(Some("8 Test"), Some("New Court"), Some("New Town"), Some("New City"), Some("NE12 6CI"), Some("United Kingdom"))
-
+  
   val business1 = BusinessDetailsModel(
     incomeSourceId = testSelfEmploymentId,
     incomeSource = Some(testIncomeSource),

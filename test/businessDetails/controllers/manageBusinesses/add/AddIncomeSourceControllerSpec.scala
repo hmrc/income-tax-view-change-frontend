@@ -16,14 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.mocks.services.MockIncomeSourceDetailsService
+import businessDetails.mocks.services.{MockIncomeSourceDetailsService, MockSessionService}
 import businessDetails.models.incomeSourceDetails.viewmodels.AddIncomeSourcesViewModel
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -33,8 +32,9 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
-import businessDetails.testConstants.BusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
+import businessDetails.testConstants.UpdateBusinessDetailsTestConstants.{businessDetailsViewModel, businessDetailsViewModel2, ceasedBusinessDetailsViewModel}
 import businessDetails.testConstants.PropertyDetailsTestConstants.{foreignPropertyDetailsViewModel, ukPropertyDetailsViewModel}
+import businessDetails.testConstants.UpdateIncomeSourceTestConstants.*
 
 import scala.util.{Failure, Success}
 
@@ -104,7 +104,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFor
         }
         "render the add income source page with all tables showing" when {
           "user has a ceased business, sole trader business and uk/foreign property" in {
-            mockBothPropertyBothBusiness()
+            setupMockGetIncomeSourceDetails(ukPlusForeignPropertyAndSoleTraderPlusCeasedBusinessIncome)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()
 
@@ -136,7 +136,7 @@ class AddIncomeSourceControllerSpec extends MockAuthActions with ImplicitDateFor
 
         "show error page" when {
           s"failed to return incomeSourceViewModel" in {
-            mockUkPropertyWithSoleTraderBusiness()
+            setupMockGetIncomeSourceDetails(ukPropertyWithSoleTraderBusiness)
             setupMockSuccess(mtdRole)
             mockItsaStatusRetrievalAction()
 

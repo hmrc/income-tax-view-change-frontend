@@ -21,14 +21,13 @@ import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.WiremockHelper
 import common.helpers.servicemocks.ITSAStatusDetailsStub
-import common.models.admin.{OptOutFs, SignUpFs}
+import common.models.admin.{BusinessDetailsFrontend, OptOutFs, SignUpFs}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Annual, Mandated, NoStatus, Voluntary}
 import obligations.testConstants.messages.ReportingFrequencyMessages.PageMessages.*
 import obligations.testConstants.IncomeSourcesObligationsIntegrationTestConstants.*
 import play.api.http.Status.OK
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
-
 import shared.repositories.UIJourneySessionDataRepository
 import common.helpers.GetInsourceDetailsStub
 
@@ -65,7 +64,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
         |  "crystallised": false
         |}
         |""".stripMargin
-    WiremockHelper.stubGet(s"/income-tax-view-change/list-of-calculation-results/$testNino/$taxYearEnd", OK, responseBody)
+    WiremockHelper.stubGet(s"/income-tax-calculations/calculation-list/$testNino/$taxYearEnd", OK, responseBody)
   }
 
   mtdAllRoles.foreach { case mtdUserRole =>
@@ -649,7 +648,7 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
               Seq(("sole trader", businessWithLatency), ("property", propertyWithLatency), ("all", allBusinessesWithLatency)).foreach { response =>
 
                 s"${response._1} business is latent" in {
-                  stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs))
+                  stubAuthorised(mtdUserRole, List(OptOutFs, SignUpFs, BusinessDetailsFrontend))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, response._2)
                   ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(
                     dateService.getCurrentTaxYear,
@@ -678,11 +677,11 @@ class ReportingFrequencyControllerISpec extends ControllerISpecHelper {
 
                   if (mtdUserRole == MTDIndividual) {
                     result should have(
-                      elementAttributeBySelector(latencyDetailsLink, "href")(s"$basePath/manage-your-businesses")
+                      elementAttributeBySelector(latencyDetailsLink, "href")(s"http://localhost:9088/manage-self-assessment/businesses/manage-your-businesses")
                     )
                   } else {
                     result should have(
-                      elementAttributeBySelector(latencyDetailsLink, "href")(s"$basePath/agents/manage-your-businesses")
+                      elementAttributeBySelector(latencyDetailsLink, "href")(s"http://localhost:9088/manage-self-assessment/businesses/agents/manage-your-businesses")
                     )
                   }
                 }

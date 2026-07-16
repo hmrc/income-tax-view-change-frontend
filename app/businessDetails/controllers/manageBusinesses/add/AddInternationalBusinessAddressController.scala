@@ -17,18 +17,18 @@
 package businessDetails.controllers.manageBusinesses.add
 
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.services.{AddressLookupService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
 import com.google.inject.Inject
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.models.core.Mode
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}

@@ -16,7 +16,7 @@
 
 package businessDetails.models.incomeSourceDetails.viewmodels
 
-import common.models.core.IncomeSourceId
+import businessDetails.core.IncomeSourceId
 import java.time.LocalDate
 
 case class ViewIncomeSourcesViewModel(viewSoleTraderBusinesses: List[ViewBusinessDetailsViewModel],

@@ -19,7 +19,6 @@ package financials.controllers.claimToAdjustPoa
 import common.connectors.ITSAStatusConnector
 import common.enums.{MTDIndividual, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockCalculationListService
 import common.services.DateServiceInterface
 import financials.mocks.services.{MockClaimToAdjustService, MockPaymentOnAccountSessionService}
 import financials.models.claimToAdjustPoa.PoaAmendmentData
@@ -28,6 +27,7 @@ import financials.services.claimToAdjustPoa.ClaimToAdjustService
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*
+import shared.mocks.services.MockCalculationListService
 
 import scala.concurrent.Future
 

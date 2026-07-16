@@ -16,8 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.DisplayBusinessStartDate
@@ -29,6 +28,7 @@ import play.api.http.Status.OK
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import shared.testConstants.CalculationListIntegrationTestConstants
 
 import java.time.LocalDate

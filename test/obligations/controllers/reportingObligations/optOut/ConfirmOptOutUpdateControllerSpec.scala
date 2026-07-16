@@ -19,11 +19,11 @@ package obligations.controllers.reportingObligations.optOut
 import common.connectors.ITSAStatusConnector
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.models.admin.OptOutFs
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import common.services.DateServiceInterface
+import common.testConstants.BaseTestConstants.*
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.ITSAStatusUpdateResponseFailure.defaultFailure
 import obligations.connectors.itsastatus.ITSAStatusUpdateConnectorModel.{ITSAStatusUpdateResponse, ITSAStatusUpdateResponseSuccess}
 import obligations.mocks.services.MockOptOutService
@@ -34,11 +34,10 @@ import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
 
 import scala.concurrent.Future
 
-class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutService with MockSessionService {
+class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutService {
 
   lazy val mockConfirmOptOutUpdateService: OptOutSubmissionService = mock(classOf[OptOutSubmissionService])
 

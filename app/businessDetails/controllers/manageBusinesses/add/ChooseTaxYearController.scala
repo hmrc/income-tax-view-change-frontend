@@ -16,6 +16,7 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.forms.manageBusinesses.add.ChooseTaxYearForm
 import businessDetails.forms.models.ChooseTaxYearFormModel
 import businessDetails.models.incomeSourceDetails.IncomeSourceReportingFrequencySourceData
@@ -30,9 +31,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.ChooseTaxYearView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.FrontendAppConfig
-import common.enums.IncomeSourceJourney.IncomeSourceType
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.services.DateService
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.enums.ReportingFrequencyPages
 import shared.models.UIJourneySessionData
 import shared.services.CalculationListService

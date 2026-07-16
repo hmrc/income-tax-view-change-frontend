@@ -20,6 +20,7 @@ import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateCheckF
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import AddIncomeSourceStartDateCheckForm.*
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.services.SessionService
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -29,12 +30,11 @@ import uk.gov.hmrc.play.language.LanguageUtils
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateCheckView
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.implicits.ImplicitDateFormatter
 import common.models.core.{Mode, NormalMode}
 import common.services.DateService
 import shared.enums.BeforeSubmissionPage
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

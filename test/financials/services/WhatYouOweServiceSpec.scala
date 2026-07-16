@@ -25,7 +25,7 @@ import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncom
 import common.testUtils.TestSupport
 import financials.connectors.{FinancialDetailsConnector, OutstandingChargesConnector}
 import financials.enums.ChargeType.NIC4_WALES
-import financials.enums.CodingOutType.*
+import shared.enums.CodingOutType.*
 import financials.models.*
 import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService

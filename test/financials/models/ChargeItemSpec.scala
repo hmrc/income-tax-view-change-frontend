@@ -21,7 +21,7 @@ import common.exceptions.MissingFieldException
 import common.services.{DateService, DateServiceInterface}
 import common.testConstants.BaseTestConstants.app
 import common.testUtils.UnitSpec
-import financials.enums.CodingOutType.CODING_OUT_CLASS2_NICS
+import shared.enums.CodingOutType.CODING_OUT_CLASS2_NICS
 import financials.models.ChargeItem.filterAllowedCharges
 import financials.testConstants.ChargeConstants
 import financials.testConstants.FinancialDetailsTestConstants.{documentDetailModel, financialDetail}

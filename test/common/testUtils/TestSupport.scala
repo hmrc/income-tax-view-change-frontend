@@ -42,7 +42,6 @@ import play.api.test.Helpers.*
 import play.api.test.{FakeRequest, Injecting}
 import play.api.{Configuration, Environment}
 import play.twirl.api.Html
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.*
 import uk.gov.hmrc.auth.core.{AffinityGroup, ConfidenceLevel, CredentialRole, Enrolments}
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId, SessionKeys}
@@ -151,21 +150,6 @@ trait TestSupport extends UnitSpec with GuiceOneAppPerSuite with BeforeAndAfterA
     defaultMTDITUser(Some(testUserTypeAgent), IncomeSourceDetailsModel(testNino, "test", None, List.empty, List.empty))
 
   implicit val individualUser: MtdItUser[_] = getIndividualUser(FakeRequest())
-
-  def commonAuditDetails(af: AffinityGroup, isSupportingAgent: Boolean = false): JsObject = {
-    val commonDetails = Json.obj(
-      "mtditid" -> testMtditid,
-      "nino" -> testNino,
-      "saUtr" -> testSaUtr,
-      "credId" -> testCredId,
-      "userType" -> af
-    )
-    if (af == Agent) commonDetails ++ Json.obj(
-      "isSupportingAgent" -> isSupportingAgent,
-      "agentReferenceNumber" -> testArn,
-    )
-    else commonDetails
-  }
 
   def getIndividualUser(request: FakeRequest[AnyContentAsEmpty.type]): MtdItUser[_] = {
     defaultMTDITUser(Some(testUserTypeIndividual), businessAndPropertyAligned, request)

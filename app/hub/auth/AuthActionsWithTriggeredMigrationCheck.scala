@@ -36,21 +36,21 @@ class AuthActionsWithTriggeredMigrationCheck @Inject()(
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
 
-  def asMTDIndividual(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividual(): ActionBuilder[MtdItUser, AnyContent] = {
     authActions.asMTDIndividual() andThen
-      triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
+      triggeredMigrationRetrievalAction()
   }
   
-  def asMTDAgentWithConfirmedClient(isTriggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDAgentWithConfirmedClient(): ActionBuilder[MtdItUser, AnyContent] = {
     authActions.asMTDAgentWithConfirmedClient() andThen
-      triggeredMigrationRetrievalAction(isTriggeredMigrationPage)
+      triggeredMigrationRetrievalAction()
   }
   
-  def asMTDIndividualOrAgentWithClient(isAgent: Boolean, triggeredMigrationPage: Boolean = false): ActionBuilder[MtdItUser, AnyContent] = {
+  def asMTDIndividualOrAgentWithClient(isAgent: Boolean): ActionBuilder[MtdItUser, AnyContent] = {
     if (isAgent) {
-      asMTDAgentWithConfirmedClient(triggeredMigrationPage)
+      asMTDAgentWithConfirmedClient()
     } else {
-      asMTDIndividual(triggeredMigrationPage)
+      asMTDIndividual()
     }
   }
 

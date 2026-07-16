@@ -16,15 +16,16 @@
 
 package businessDetails.views.manageBusinesses.add
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
 import businessDetails.models.incomeSourceDetails.viewmodels.{AddIncomeSourcesViewModel, BusinessDetailsViewModel, CeasedBusinessDetailsViewModel, PropertyDetailsViewModel}
+import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
+import common.testConstants.BaseTestConstants.*
+import common.testConstants.BusinessDetailsTestConstants.*
+import common.testUtils.TestSupport
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 import play.twirl.api.HtmlFormat
-import businessDetails.testConstants.BusinessDetailsTestConstants._
-import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
-import common.enums.IncomeSourceJourney.{ForeignProperty, SelfEmployment, UkProperty}
-import common.testUtils.TestSupport
 
 class AddIncomeSourcesViewSpec extends TestSupport {
   val addIncomeSources: AddIncomeSourcesView = app.injector.instanceOf[AddIncomeSourcesView]

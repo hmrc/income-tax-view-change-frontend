@@ -20,11 +20,10 @@ import common.auth.AuthActions
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockDateService, MockITSAStatusService}
-import common.models.admin.{MortgageEvidence, NewHomePage}
+import common.models.admin.MortgageEvidence
 import common.models.itsaStatus.ITSAStatusResponseModel
 import common.models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
 import common.services.{DateService, DateServiceInterface, ITSAStatusService}
-import financials.mocks.services.MockCalculationService
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -34,6 +33,7 @@ import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, status}
 import hub.views.html.partials.newHome.overview.ProofOfYourIncomeView
+import returns.mocks.services.MockCalculationService
 import returns.services.CalculationService
 
 import java.time.LocalDate
@@ -96,7 +96,7 @@ with MockDateService {
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(itsaResponse))
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(getTestCalcResponse("DF")))
-            val activeSwitches = List(NewHomePage, MortgageEvidence)
+            val activeSwitches = List(MortgageEvidence)
             setupMockSuccess(mtdRole, enabledFeatures = activeSwitches)
 
             val result = action(fakeRequest)
@@ -120,7 +120,7 @@ with MockDateService {
             when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any())).thenReturn(Future(itsaResponse))
             when(mockCalculationService.getLiabilityCalculationDetail(any(), any(), any())(any()))
               .thenReturn(Future.successful(getTestCalcResponse("IF")))
-            val activeSwitches = List(NewHomePage, MortgageEvidence)
+            val activeSwitches = List(MortgageEvidence)
             setupMockSuccess(mtdRole, enabledFeatures = activeSwitches)
 
             val result = action(fakeRequest)

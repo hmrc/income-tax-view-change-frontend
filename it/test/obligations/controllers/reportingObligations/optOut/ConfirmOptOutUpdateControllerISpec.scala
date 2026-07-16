@@ -17,7 +17,6 @@
 package obligations.controllers.reportingObligations.optOut
 
 import common.controllers.ControllerISpecHelper
-import common.enums.JourneyType.OptOutJourney
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.OptOutFs
 import common.models.itsaStatus.ITSAStatus.*
@@ -34,6 +33,7 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import shared.models.UIJourneySessionData
 import shared.repositories.UIJourneySessionDataRepository
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.OptOutJourney
 
 class ConfirmOptOutUpdateControllerISpec extends ControllerISpecHelper {
 

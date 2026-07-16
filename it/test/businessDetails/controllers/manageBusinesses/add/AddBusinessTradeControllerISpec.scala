@@ -20,18 +20,18 @@ import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.SelfEmployment
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
 import AddIncomeSourceData.businessTradeField
+import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSessionId}
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.testConstants.IncomeSourceIntegrationTestConstants.{multipleBusinessesResponse, singleBusinessResponse}
 import common.helpers.GetInsourceDetailsStub
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 class AddBusinessTradeControllerISpec extends ControllerISpecHelper {

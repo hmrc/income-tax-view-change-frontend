@@ -17,7 +17,7 @@
 package obligations.services.reportingObligations.optOut.quarterlyupdates
 
 import common.config.FrontendAppConfig
-import common.mocks.services.{MockAuditingService, MockCalculationListService, MockDateService, MockITSAStatusService}
+import common.mocks.services.{MockAuditingService, MockDateService, MockITSAStatusService}
 import common.mocks.MockHttpV2
 import common.services.DateService
 import obligations.repositories.OptOutSessionDataRepository
@@ -33,6 +33,7 @@ import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants.testNino
 import common.testUtils.UnitSpec
 import shared.connectors.ObligationsConnector
+import shared.mocks.services.MockCalculationListService
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 

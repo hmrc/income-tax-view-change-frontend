@@ -16,23 +16,24 @@
 
 package common.testConstants
 
-import common.auth.{AuthorisedAndEnrolledRequest, MtdItUser}
 import common.auth.actions.AuthActionsTestData.*
+import common.auth.{AuthorisedAndEnrolledRequest, MtdItUser}
 import common.config.FrontendAppConfig
 import common.enums.MTDIndividual
-import common.models.core.Nino
+import common.models.core.{AccountingPeriodModel, AddressModel, Nino}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, LatencyDetails, PropertyDetailsModel, QuarterTypeElection, TaxYear, TaxYearRange}
+import common.testUtils.UnitSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.FakeRequest
-import businessDetails.testConstants.BusinessDetailsTestConstants.business1
-import businessDetails.testConstants.PropertyDetailsTestConstants.propertyDetails
-import IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
-import common.models.incomeSourceDetails.{IncomeSourceDetailsModel, TaxYear, TaxYearRange}
-import common.testUtils.UnitSpec
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name, ~}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{ServiceNavigationItem, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigation
+
+import java.time.{LocalDate, Month}
 
 object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
@@ -74,6 +75,9 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testYearPlusFour = 2022
   val testYearPlusFive = 2023
   val testYearPlusSix = 2024
+  val year2017: Int = 2017
+  val year2018: Int = 2018
+  val year2019: Int = 2019
   val testUserName = "Albert Einstein"
   val testFirstName = "Jon"
   val testSecondName = "Jones"
@@ -83,6 +87,17 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val testMandationStatusOn = "on"
   val testMandationStatusOff = "off"
   val testSetUpPaymentPlanUrl = "http://localhost:9215/set-up-a-payment-plan/sa-payment-plan"
+  val testIncomeType = "property-unspecified"
+  val testIncomeSource = "Fruit Ltd"
+  val testStartDate = LocalDate.parse("2022-01-01")
+  val testStartDate2 = LocalDate.parse("2021-01-01")
+  val testTradeName = "nextUpdates.business"
+  val testTradeName2 = "nextUpdates.business2"
+
+  val quarterTypeElectionStandard = QuarterTypeElection("STANDARD", "2021")
+  val quarterTypeElectionCalendar = QuarterTypeElection("CALENDAR", "2021")
+
+  val testBusinessAccountingPeriod = AccountingPeriodModel(start = LocalDate.of(year2017, Month.JUNE, 1), end = LocalDate.of(year2018, Month.MAY, 30))
 
   lazy val testAuthorisedAndEnrolled: AuthorisedAndEnrolledRequest[_] = defaultAuthorisedAndEnrolledRequest(MTDIndividual, FakeRequest())
 
@@ -120,6 +135,15 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
   val mtdItEnrolment = Enrolment("HMRC-MTD-IT", Seq(EnrolmentIdentifier("MTDITID", testMtditid)), "activated")
   val ninoEnrolment = Enrolment("HMRC-NI", Seq(EnrolmentIdentifier("NINO", testNino)), "activated")
   val saEnrolment = Enrolment("IR-SA", Seq(EnrolmentIdentifier("UTR", "1234567890")), "activated")
+  val foreignIncomeType = "foreign-property"
+
+
+  val testLatencyDetails = LatencyDetails(
+    latencyEndDate = LocalDate.of(year2019, 1, 1),
+    taxYear1 = year2018.toString,
+    latencyIndicator1 = "A",
+    taxYear2 = year2019.toString,
+    latencyIndicator2 = "Q")
 
   def testAuthSuccessResponse(confidenceLevel: ConfidenceLevel = testConfidenceLevel,
                               affinityGroup: AffinityGroup = AffinityGroup.Individual) = new ~(new ~(new ~(new ~(Enrolments(Set(
@@ -168,6 +192,15 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
 
   val testReferrerUrl = "/test/url"
 
+  val address = AddressModel(
+    Some("8 Test"),
+    Some("New Court"),
+    Some("New Town"),
+    Some("New City"),
+    Some("NE12 6CI"),
+    Some("GB")
+  )
+
   val testServiceNavigation = ServiceNavigation(
       navigation = Seq(ServiceNavigationItem(
       content = Text("testHome"),
@@ -175,4 +208,81 @@ object BaseTestConstants extends UnitSpec with GuiceOneAppPerSuite {
     )), 
     navigationId = "bta-service-navigation"
   )
+
+  val business1 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName),
+    firstAccountingPeriodEndDate = Some(LocalDate.of(year2018, Month.APRIL, 5)),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    latencyDetails = Some(testLatencyDetails),
+    address = Some(address),
+  )
+
+  val testPropertyAccountingPeriod = AccountingPeriodModel(LocalDate.of(2017, 4, 6), LocalDate.of(2018, 4, 5))
+
+  val propertyDetails = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = Some(testPropertyAccountingPeriod),
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(testIncomeType),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None
+  )
+
+  val business2 = BusinessDetailsModel(
+    incomeSourceId = testSelfEmploymentId2,
+    incomeSource = Some(testIncomeSource),
+    accountingPeriod = Some(testBusinessAccountingPeriod),
+    tradingName = Some(testTradeName2),
+    contextualTaxYear = None,
+    firstAccountingPeriodEndDate = None,
+    cessation = None,
+    tradingStartDate = Some(testStartDate2),
+    address = Some(address),
+  )
+
+  val businessesAndPropertyIncome = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), List(business1, business2), List(propertyDetails))
+
+  val foreignPropertyDetails = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId,
+    accountingPeriod = None,
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+    quarterTypeElection = Some(quarterTypeElectionCalendar),
+  )
+
+  val foreignPropertyDetails2 = PropertyDetailsModel(
+    incomeSourceId = testPropertyIncomeId2,
+    accountingPeriod = None,
+    firstAccountingPeriodEndDate = None,
+    incomeSourceType = Some(foreignIncomeType),
+    tradingStartDate = Some(testStartDate),
+    contextualTaxYear = None,
+    cessation = None,
+  )
+
+  val twoActiveForeignPropertyIncomes = IncomeSourceDetailsModel(testNino, testMtditid, Some("2018"), Nil, List(foreignPropertyDetails, foreignPropertyDetails2))
+
+  def commonAuditDetails(af: AffinityGroup, isSupportingAgent: Boolean = false): JsObject = {
+    val commonDetails = Json.obj(
+      "mtditid" -> testMtditid,
+      "nino" -> testNino,
+      "saUtr" -> testSaUtr,
+      "credId" -> testCredId,
+      "userType" -> af
+    )
+    if (af == Agent) commonDetails ++ Json.obj(
+      "isSupportingAgent" -> isSupportingAgent,
+      "agentReferenceNumber" -> testArn,
+    )
+    else commonDetails
+  }
 }

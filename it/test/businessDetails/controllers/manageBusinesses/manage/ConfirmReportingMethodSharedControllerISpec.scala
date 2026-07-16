@@ -16,14 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.manage
 
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import businessDetails.forms.manageBusinesses.manage.ChangeReportingMethodForm
 import businessDetails.models.incomeSourceDetails.ManageIncomeSourceData
 import businessDetails.models.updateIncomeSource.UpdateIncomeSourceResponseModel
 import businessDetails.services.SessionService
 import businessDetails.testConstants.BusinessDetailsIntegrationTestConstants.*
 import common.controllers.ControllerISpecHelper
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.GetInsourceDetailsStub
 import common.models.incomeSourceDetails.LatencyDetails
@@ -31,6 +30,7 @@ import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import common.testConstants.BaseIntegrationTestConstants.*
+import shared.enums.JourneyType.{IncomeSourceJourneyType, Manage}
 import shared.models.UIJourneySessionData
 
 import java.time.LocalDate

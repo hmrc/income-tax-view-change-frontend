@@ -22,18 +22,17 @@ import play.api.Application
 import play.api.http.Status
 import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
-import common.testConstants.BaseTestConstants.testSessionId
-import common.testConstants.IncomeSourceDetailsTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.*
 import businessDetails.controllers.manageBusinesses.add.routes as addBusinessRoutes
+import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
+import businessDetails.mocks.services.MockSessionService
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import common.connectors.ITSAStatusConnector
-import common.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
-import common.mocks.services.MockSessionService
 import common.services.DateServiceInterface
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType, JourneyType}
 import shared.models.UIJourneySessionData
 
 class IncomeSourceAddedBackErrorControllerSpec extends MockAuthActions with MockSessionService {

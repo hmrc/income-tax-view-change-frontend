@@ -25,9 +25,9 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourcesView
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.enums.JourneyType.Add
 import common.models.admin.DisplayBusinessStartDate
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import shared.enums.JourneyType.Add
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

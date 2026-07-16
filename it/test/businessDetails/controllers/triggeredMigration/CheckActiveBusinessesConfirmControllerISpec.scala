@@ -26,10 +26,12 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
-import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.BaseIntegrationTestConstants.*
 import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
-import common.testConstants.IncomeSourceDetailsTestConstants.{singleBusinessIncome, singleBusinessIncomeUnconfirmed, singleBusinessIncomeWithYearOfMigration}
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import common.helpers.GetInsourceDetailsStub
+import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
 
@@ -62,6 +64,11 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
       elementTextByID("continue-button")(CheckActiveBusinessesConfirmMessages.continueText)
     )
   }
+
+  val singleBusinessIncomeNoYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, None, List(business1), Nil)
+  val singleBusinessIncomeUnconfirmed = singleBusinessIncomeNoYearOfMigration.copy(channel = HmrcUnconfirmed.getValue)
+  val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)
+
 
   mtdAllRoles.foreach { mtdRole =>
     val path = getPath(mtdRole)

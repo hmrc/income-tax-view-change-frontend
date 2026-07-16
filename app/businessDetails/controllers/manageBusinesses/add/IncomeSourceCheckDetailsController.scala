@@ -19,6 +19,8 @@ package businessDetails.controllers.manageBusinesses.add
 import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.enums.FailureCategory.ApiFailure
+import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
+import businessDetails.enums.TriggeredMigration.TriggeredMigrationAdded
 import businessDetails.models.audit.CreateIncomeSourceAuditModel
 import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
@@ -31,14 +33,12 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import common.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
-import common.enums.JourneyType.{Add, IncomeSourceJourneyType}
-import common.enums.TriggeredMigration.TriggeredMigrationAdded
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 import common.services.AuditingService
 import shared.enums.BeforeSubmissionPage
+import shared.enums.JourneyType.{Add, IncomeSourceJourneyType}
 import shared.models.UIJourneySessionData
 
 import javax.inject.Inject

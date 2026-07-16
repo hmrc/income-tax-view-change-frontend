@@ -31,7 +31,7 @@ import play.api.test.Helpers.*
 import play.twirl.api.HtmlFormat
 import common.services.agent.ClientDetailsService.*
 import common.testConstants.BaseTestConstants.{agentAuthRetrievalSuccess, testArn, testCredId, testMtditid, testNino}
-import financials.mocks.views.agent.MockEnterClientsUTR
+import hub.mocks.views.agent.MockEnterClientsUTR
 import uk.gov.hmrc.auth.core.{Enrolment, InsufficientEnrolments}
 import hub.views.html.agent.EnterClientsUTRView
 

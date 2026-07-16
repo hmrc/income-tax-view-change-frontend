@@ -19,6 +19,7 @@ package financials.models.audit
 import common.enums.AuditType.AdjustPaymentsOnAccount
 import common.enums.TransactionName
 import common.testUtils.TestSupport
+import common.testConstants.BaseTestConstants.commonAuditDetails
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.AffinityGroup

@@ -18,13 +18,13 @@ package businessDetails.repositories
 
 import businessDetails.models.SensitiveUIJourneySessionData
 import common.config.FrontendAppConfig
-import common.enums.JourneyType.{JourneyType, Operation}
 import org.mongodb.scala.bson.collection.mutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.Configuration
 import play.api.libs.json.Format
+import shared.enums.JourneyType.{JourneyType, Operation}
 import shared.models.UIJourneySessionData
 import uk.gov.hmrc.crypto.SymmetricCryptoFactory
 import uk.gov.hmrc.mongo.MongoComponent

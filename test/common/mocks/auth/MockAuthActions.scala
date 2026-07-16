@@ -17,7 +17,6 @@
 package common.mocks.auth
 
 import common.auth.actions.AuthActionsTestData.*
-import businessDetails.mocks.services.{MockCustomerFactsUpdateService, MockIncomeSourceDetailsService}
 import common.auth.FrontendAuthorisedFunctions
 import common.connectors.{ITSAStatusConnector, IncomeSourceConnector}
 import common.controllers.agent.routes as agentRoutes
@@ -47,8 +46,7 @@ import play.api.mvc.{Action, AnyContent, AnyContentAsEmpty}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
-import businessDetails.services.IncomeSourceDetailsService
-import common.services.{CustomerFactsUpdateService, DateServiceInterface, SessionDataService}
+import common.services.{DateServiceInterface, SessionDataService}
 import common.services.agent.ClientDetailsService
 import scala.concurrent.Future
 import common.testConstants.BaseTestConstants.{testErrorMessage, testErrorStatus, testMtditid, testRetrievedUserName}
@@ -61,13 +59,11 @@ import java.time.Instant
 trait MockAuthActions
   extends TestSupport
     with MockAuthServiceSupport
-    with MockIncomeSourceDetailsService
     with MockAgentAuthorisedFunctions
     with MockUserAuthorisedFunctions
     with MockAuditingService
     with MockSessionDataService
     with MockClientDetailsService
-    with MockCustomerFactsUpdateService
     with MockFeatureSwitchService
     with MockITSAStatusService
     with MockIncomeTaxCalculationConnector
@@ -77,8 +73,6 @@ trait MockAuthActions
     super.beforeEach()
     reset(mockAuthService)
     reset(mockFAF)
-    reset(mockCustomerFactsUpdateService)
-    reset(mockIncomeSourceDetailsService)
   }
 
   override def afterEach() = {
@@ -99,7 +93,6 @@ trait MockAuthActions
         api.inject.bind[IncomeSourceConnector].toInstance(mockIncomeSourceConnector),
         api.inject.bind[SessionDataService].toInstance(mockSessionDataService),
         api.inject.bind[ClientDetailsService].toInstance(mockClientDetailsService),
-        api.inject.bind[CustomerFactsUpdateService].toInstance(mockCustomerFactsUpdateService),
         api.inject.bind[FeatureSwitchService].toInstance(mockFeatureSwitchService)
       )
       .configure(Map("feature-switches.read-from-mongo" -> true))
