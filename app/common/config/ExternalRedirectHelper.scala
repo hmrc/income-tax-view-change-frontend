@@ -56,7 +56,7 @@ trait ExternalRedirectHelper {
   lazy val agentHomeUrl: String =
     hubRoutes.HomeController.showAgent().url
     //hubAgentBaseUrl
-    
+
   def homePageUrl(isAgent: Boolean): String = if (isAgent) agentHomeUrl else individualHomeUrl
 
   lazy val enterClientsUTRUrl: String =
