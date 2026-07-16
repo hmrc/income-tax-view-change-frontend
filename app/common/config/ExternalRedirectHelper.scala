@@ -34,7 +34,6 @@ trait ExternalRedirectHelper {
   val servicesConfig: ServicesConfig
   val config: Configuration
   
-  // hub routes KEEP COMMENTED IN income-tax-view-change-frontend 
   lazy val hubBaseUrl: String = servicesConfig.getString("base.fullUrl")
   lazy val hubAgentBaseUrl: String = s"${hubBaseUrl}/agents"
   
