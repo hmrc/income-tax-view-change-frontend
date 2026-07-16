@@ -46,7 +46,8 @@ class PoaAdjustedViewSpec extends TestSupport{
     if(isAgent) {
       appConfig.returnsTaxYearSummaryAgentUrl(taxYear.endYear, returnsFrontendEnabled = true)
     } else {
-      appConfig.returnsTaxYearSummaryIndividualUrl(taxYear.endYear, returnsFrontendEnabled = true)    }
+      appConfig.returnsTaxYearSummaryIndividualUrl(taxYear.endYear, returnsFrontendEnabled = true)
+    }
   }
 
   def whatYouOweUrl(isAgent: Boolean): String = {

@@ -33,8 +33,8 @@ class ConfirmationForAdjustingPoaViewSpec extends TestSupport{
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
   implicit val lang: Lang = Lang("GB")
 
-  val testCancelUrl: String = "/report-quarterly/income-and-expenses/view"
-  val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents"
+  val testCancelUrl: String = "/report-quarterly/income-and-expenses/view/income-tax"
+  val testCancelUrlAgent: String = "/report-quarterly/income-and-expenses/view/agents/client-income-tax"
 
   class Setup(isAgent: Boolean, isAmountZero: Boolean) {
     implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
