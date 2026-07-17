@@ -95,6 +95,7 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
 
       headings.get(0).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
       headings.get(1).text shouldBe messages("making-payment.penalty.heading")
+      document.select("#penalty-p1").isEmpty shouldBe true
       document.selectById("penalty-p2").text() shouldBe messages("making-payment.penalty.p2")
       document.selectById("penalty-p3").text() shouldBe penaltyP3MessageText
       document.getElementById("pay-penalty-link").attr("href") shouldBe "/pay-penalty"
@@ -120,6 +121,7 @@ class MakingPaymentViewSpec extends TestSupport with ViewSpec {
 
       headings.get(0).text shouldBe messages("making-payment.what-payment-goes-towards.heading")
       headings.get(1).text shouldBe messages("making-payment.penalty.heading")
+      document.select("#penalty-p1").isEmpty shouldBe true
       document.selectById("penalty-p2").text() shouldBe messages("making-payment.penalty.p2")
       document.selectById("penalty-p3").text() shouldBe penaltyP3MessageText
       document.getElementById("pay-penalty-link").attr("href") shouldBe "/pay-penalty"
