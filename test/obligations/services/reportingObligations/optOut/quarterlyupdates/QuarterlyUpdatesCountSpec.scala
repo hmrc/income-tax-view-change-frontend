@@ -54,7 +54,7 @@ class QuarterlyUpdatesCountSpec extends UnitSpec
   }
 
   val obligationsConnector: ObligationsConnector = new ObligationsConnector(mockHttpClientV2, mockAuditingService, appConfig)
-  val nextUpdatesService: NextUpdatesService = new NextUpdatesService(obligationsConnector)
+  val nextUpdatesService: NextUpdatesService = new NextUpdatesService(obligationsConnector)(implicitly, implicitly, appConfig)
   val repository: OptOutSessionDataRepository = mock(classOf[OptOutSessionDataRepository])
 
   val service: OptOutService = new OptOutService(mockITSAStatusService, mockCalculationListService,

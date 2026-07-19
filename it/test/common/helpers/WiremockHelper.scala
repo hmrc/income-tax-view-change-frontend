@@ -40,7 +40,6 @@ object WiremockHelper extends Eventually with IntegrationPatience {
   val wiremockPort = 11111
   val wiremockHost = "localhost"
   val url = s"http://$wiremockHost:$wiremockPort"
-  //ToDo update this to be the basePath and baseUrl for the being tested.
   val basePath = MicroserviceSpecificConstants.basePath
   val baseUrl = MicroserviceSpecificConstants.baseUrl
 
