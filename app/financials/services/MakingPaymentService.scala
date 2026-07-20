@@ -55,7 +55,7 @@ class MakingPaymentService @Inject()(financialDetailsService: FinancialDetailsSe
             .orElse(positiveCredit(balanceDetails.flatMap(_.totalCreditAvailableForRepayment))),
           hasAllPenaltiesOverdue = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0).forall(_.isOverdue()),
           hasOverdueNonPenaltyCharges = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => !charge.isPenalty && charge.remainingToPayByChargeOrInterest > 0).exists(_.isOverdue()),
-          hasNotOverdueLPP = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => charge.isLPPPenalty && charge.remainingToPayByChargeOrInterest > 0).exists(!_.isOverdue())
+          hasNotOverdueLPP = financialDetailsModels.flatMap(_.toChargeItem).filter(charge => charge.isLPP && charge.remainingToPayByChargeOrInterest > 0).exists(!_.isOverdue())
         ))
       }
     }
