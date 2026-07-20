@@ -69,7 +69,7 @@ class ITSAStatusUpdateConnector @Inject()(val httpClient: HttpClientV2, val appC
           case _ =>
             response.json.validate[ITSAStatusUpdateResponseFailure].fold(
               invalid => {
-                logger.error(s"Json validation error parsing itsa-status update response, error $invalid")
+                logger.error(s"Json validation error parsing itsa-status update")
                 ITSAStatusUpdateResponseFailure.defaultFailure(s"json response: $invalid")
               },
               valid => {

@@ -19,10 +19,9 @@ package hub.services.newHomePage
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.ObligationsFrontend
+import common.models.admin.{FinancialsFrontend, ObligationsFrontend}
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
-import financials.controllers.routes as financialsRoutes
 import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.*
 import financials.models.creditsandrefunds.CreditsModel
@@ -147,14 +146,10 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
                                 credits: CreditsModel,
                                 creditsRefundsRepayEnabled: Boolean,
                                 isAgent: Boolean,
-                                        penaltiesAndAppealsEnabled: Boolean): Seq[YourTasksCard] = {
+                                penaltiesAndAppealsEnabled: Boolean)(implicit user: MtdItUser[_]): Seq[YourTasksCard] = {
 
     val redirectLinkMoneyInYourAccount = {
-      if (isAgent) {
-        financialsRoutes.MoneyInYourAccountController.showAgent().url
-      } else {
-        financialsRoutes.MoneyInYourAccountController.show().url
-      }
+      appConfig.financialsMoneyInAccountUrl(isAgent, isEnabled(FinancialsFrontend))
     }
 
     val datelessTasks = if (creditsRefundsRepayEnabled) getMoneyInAccount(credits, redirectLinkMoneyInYourAccount) else Seq.empty
@@ -176,7 +171,8 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
 
   private def getPaymentsCard(chargeItemList: List[ChargeItem],
                               isAgent: Boolean,
-                              penaltiesAndAppealsEnabled: Boolean): Seq[YourTasksCard] = {
+                              penaltiesAndAppealsEnabled: Boolean)
+                             (implicit user: MtdItUser[_]): Seq[YourTasksCard] = {
 
     val dueChargesList: List[ChargeItem] = dueChargesByTypes(chargeItemList, chargesSet)
     val dueLppsList: List[ChargeItem]    = dueChargesByTypes(chargeItemList, lppSet)
@@ -189,10 +185,11 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
     chargeTask ++ lppTask ++ lspTask
   }
 
-  private def getChargesCard(chargeList: List[ChargeItem], isAgent: Boolean) = {
+  private def getChargesCard(chargeList: List[ChargeItem], isAgent: Boolean)
+                            (implicit user: MtdItUser[_]) = {
     val linkText = "newHome.yourTasks.selfAssessment"
-    val redirectLink = if(isAgent) financialsRoutes.WhatYouOweController.showAgent().url else financialsRoutes.WhatYouOweController.show().url
-
+    val redirectLink = appConfig.financialsWhatYouOweUrl(isAgent, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
+    
     val oldestCharge = oldestTransaction(chargeList)
     val overdueCharges = chargeList.filter(charge => chargesSet.contains(charge.transactionType) && charge.dueDate.exists(_.isBefore(LocalDate.now())))
 
@@ -226,7 +223,8 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
     }
   }
 
-  private def getLppCard(latePaymentPenaltyList: List[ChargeItem], isAgent: Boolean) = {
+  private def getLppCard(latePaymentPenaltyList: List[ChargeItem], isAgent: Boolean)
+                        (implicit user: MtdItUser[_]) = {
     val oldestLpp = oldestTransaction(latePaymentPenaltyList)
 
     val linkText = if(latePaymentPenaltyList.size > 1) "newHome.yourTasks.selfAssessment.lpp.multiple.link" else "newHome.yourTasks.selfAssessment.lpp.single.link"
@@ -237,9 +235,11 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
         case _ => ""
       }
     } else if (isAgent) {
-      financialsRoutes.ChargeSummaryController.showAgent(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
+      appConfig.financialsChargeSummaryAgentUrl(latePaymentPenaltyList.head.taxYear.endYear,
+        latePaymentPenaltyList.head.transactionId, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
     } else {
-      financialsRoutes.ChargeSummaryController.show(latePaymentPenaltyList.head.taxYear.endYear, latePaymentPenaltyList.head.transactionId).url
+      appConfig.financialsChargeSummaryIndividualUrl(latePaymentPenaltyList.head.taxYear.endYear,
+        latePaymentPenaltyList.head.transactionId, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
     }
 
     val contentDescription = if(latePaymentPenaltyList.size > 1) {
@@ -263,7 +263,8 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
     }
   }
 
-  private def getLspCard(lateSubmissionPenaltyList: List[ChargeItem], isAgent: Boolean) = {
+  private def getLspCard(lateSubmissionPenaltyList: List[ChargeItem], isAgent: Boolean)
+                        (implicit user: MtdItUser[_]) = {
     val oldestLsp = oldestTransaction(lateSubmissionPenaltyList)
 
     val linkText = if(lateSubmissionPenaltyList.size > 1) "newHome.yourTasks.selfAssessment.lsp.multiple.link" else "newHome.yourTasks.selfAssessment.lsp.single.link"
@@ -274,9 +275,9 @@ class HandleYourTasksService @Inject(val appConfig: FrontendAppConfig) extends F
         case _ => ""
       }
     } else if (isAgent) {
-      financialsRoutes.ChargeSummaryController.showAgent(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
+      appConfig.financialsChargeSummaryAgentUrl(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
     } else {
-      financialsRoutes.ChargeSummaryController.show(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId).url
+      appConfig.financialsChargeSummaryIndividualUrl(lateSubmissionPenaltyList.head.taxYear.endYear, lateSubmissionPenaltyList.head.transactionId, financialsFrontendEnabled = isEnabled(FinancialsFrontend))
     }
 
     val contentDescription = if (lateSubmissionPenaltyList.size > 1) {

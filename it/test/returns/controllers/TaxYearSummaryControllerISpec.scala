@@ -141,7 +141,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "includes the forecast calculation tab" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -193,7 +193,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "that includes submissions" in {
 
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -244,7 +244,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
 
               "has payments with and without dunning locks in the payments tab" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -300,7 +300,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
 
               "has Coding out that is requested and immediately rejected by NPS" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -349,7 +349,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "has Coding out that has been accepted and rejected by NPS part way through the year" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -400,7 +400,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               "has expected content" when {
 
                 "the user has the coding out requested amount has not been fully collected (partially collected)" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                     status = OK,
@@ -449,7 +449,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 }
 
                 "financial details service returns a not found" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                     status = OK,
@@ -511,7 +511,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 "retrieving a calculation summary which is empty" in {
 
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, "2018", "LATEST")(OK, liabilityCalculationModelSuccessful)
                   ObligationsStub.stubGetAllObligations(
@@ -546,7 +546,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 }
 
                 "calculation response contain error messages" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                     status = OK,
@@ -609,7 +609,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "MFA Debits on the Payment Tab with FS ENABLED" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
                   status = OK,
@@ -672,7 +672,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "that has the charges table" when {
                 "the user has Review and Reconcile debit charges" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(status = OK, body = liabilityCalculationModelDeductionsMinimal)
                   CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
@@ -683,11 +683,10 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                   val document = Jsoup.parse(res.body)
 
-                  //ToDo update when FinancialsFrontend is enabled
                   def getChargeSummaryUrl(id: String) = if (mtdUserRole == MTDIndividual) {
-                    appConfig.financialsChargeSummaryIndividualUrl(testYear2023, id, false, None, false)
+                    appConfig.financialsChargeSummaryIndividualUrl(testYear2023, id, false, None, true)
                   } else {
-                    appConfig.financialsChargeSummaryAgentUrl(testYear2023, id, false, false)
+                    appConfig.financialsChargeSummaryAgentUrl(testYear2023, id, false, true)
                   }
 
                   document.getElementById("paymentTypeLink-0").attr("href") shouldBe getChargeSummaryUrl("1040000123")
@@ -704,7 +703,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "adjust POA link visible" when {
                 "The user has amendable POAs for the given tax year" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(status = OK, body = liabilityCalculationModelDeductionsMinimal)
                   CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
@@ -721,7 +720,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
               "does not have adjustable POA link visible" when {
                 "The user has no amendable POAs" in {
-                  stubAuthorised(mtdUserRole)
+                  stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                   GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                   IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(status = OK, body = liabilityCalculationModelDeductionsMinimal)
                   CalculationListStub.stubGetCalculationList(testNino, "22-23")(successResponseNonCrystallised.toString)
@@ -739,7 +738,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
             "render the error page" when {
               "financial details service returns an error" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, testYear, "LATEST")(
                   status = OK,
@@ -759,7 +758,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "retrieving a calculation failed with INTERNAL_SERVER_ERROR" in {
 
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 IncomeTaxCalculationStub.stubGetCalculationErrorResponseWithFlag(testNino, "2018", "LATEST")(INTERNAL_SERVER_ERROR, LiabilityCalculationError(INTERNAL_SERVER_ERROR, "error"))
                 ObligationsStub.stubGetAllObligations(
@@ -795,7 +794,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "retrieving a getAllObligations error" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
                   nino = testNino,
@@ -822,7 +821,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
               "retrieving a calculation failed" in {
 
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
 
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
@@ -856,7 +855,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
               }
 
               "retrieving a financial transaction failed" in {
-                stubAuthorised(mtdUserRole)
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(INTERNAL_SERVER_ERROR, testFinancialDetailsErrorModelJson())
 

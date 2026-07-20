@@ -23,7 +23,7 @@ import common.enums.GatewayPage.TaxYearSummaryPage
 import common.enums.TaxYearSummary.*
 import common.enums.TaxYearSummary.CalculationType.fromStringToCalculationTypeValue
 import common.implicits.ImplicitDateFormatter
-import common.models.admin.{PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
+import common.models.admin.{FinancialsFrontend, PenaltiesAndAppeals, PostFinalisationAmendmentsR18}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation
@@ -73,23 +73,23 @@ class TaxYearSummaryController @Inject()(
                                           val ec: ExecutionContext
                                         ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ImplicitDateFormatter with TransactionUtils {
 
-  //ToDo update isFinancialsFrontendEnabled to use the isEnabled feature when exists
-  lazy val financialsFrontendEnabled: Boolean = false
+  lazy val financialsFrontendEnabled: MtdItUser[_] => Boolean = user => isEnabled(FinancialsFrontend)(user)
 
   // Individual back urls
   private def taxYearsUrl(origin: Option[String]): String = returns.controllers.routes.TaxYearsController.showTaxYears(origin).url
 
-  private def whatYouOweUrl(origin: Option[String]): String = appConfig.financialsWhatYouOweUrl(true, origin, financialsFrontendEnabled)
+  private def whatYouOweUrl(origin: Option[String])(implicit user: MtdItUser[_]): String = appConfig.financialsWhatYouOweUrl(true, origin, financialsFrontendEnabled(user))
 
   private def homeUrl(origin: Option[String]): String = appConfig.individualHomeUrlWithOrigin(origin)
 
   // Agent back urls
   private lazy val agentTaxYearsUrl: String = returns.controllers.routes.TaxYearsController.showAgentTaxYears().url
   private lazy val agentHomeUrl: String = appConfig.agentHomeUrl
-  private lazy val agentWhatYouOweUrl: String = appConfig.financialsWhatYouOweUrl(true, financialsFrontendEnabled = financialsFrontendEnabled)
+  private lazy val agentWhatYouOweUrl: MtdItUser[_] => String = user =>
+    appConfig.financialsWhatYouOweUrl(true, financialsFrontendEnabled = financialsFrontendEnabled(user))
 
-  private lazy val ctaLink: Boolean => String = isAgent =>
-    appConfig.financialsAmendablePoaUrl(isAgent, financialsFrontendEnabled)
+  private lazy val ctaLink: (MtdItUser[_], Boolean) => String = (user, isAgent) =>
+    appConfig.financialsAmendablePoaUrl(isAgent, financialsFrontendEnabled(user))
 
 
   def formatErrorMessages(
@@ -262,7 +262,7 @@ class TaxYearSummaryController @Inject()(
         ctaViewModel = claimToAdjustViewModel,
         LPP2Url = lpp2Url,
         pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-        financialsFrontendEnabled = financialsFrontendEnabled
+        financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
       )
 
     val isNotCrystallisedShowInset: Boolean =
@@ -289,7 +289,7 @@ class TaxYearSummaryController @Inject()(
         backUrl = backUrl,
         origin = origin,
         isAgent = isAgent,
-        ctaLink = ctaLink(isAgent),
+        ctaLink = ctaLink(mtdItUser, isAgent),
         taxYearViewScenarios = taxYearViewScenarios,
         showNoTaxCalc = latestCalc.calculation.isEmpty,
         viewTaxCalcLink = selfAssessmentLink,
@@ -337,7 +337,7 @@ class TaxYearSummaryController @Inject()(
           ctaViewModel = claimToAdjustViewModel,
           LPP2Url = lpp2Url,
           pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-          financialsFrontendEnabled = financialsFrontendEnabled
+          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
         )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
@@ -370,7 +370,7 @@ class TaxYearSummaryController @Inject()(
           backUrl = backUrl,
           origin = origin,
           isAgent = isAgent,
-          ctaLink = ctaLink(isAgent),
+          ctaLink = ctaLink(mtdItUser, isAgent),
           taxYearViewScenarios = taxYearViewScenarios,
           showNoTaxCalc = true,
           viewTaxCalcLink = selfAssessmentLink,
@@ -400,7 +400,7 @@ class TaxYearSummaryController @Inject()(
           ctaViewModel = claimToAdjustViewModel,
           LPP2Url = lpp2Url,
           pfaEnabled = isEnabled(PostFinalisationAmendmentsR18),
-          financialsFrontendEnabled = financialsFrontendEnabled
+          financialsFrontendEnabled = financialsFrontendEnabled(mtdItUser)
         )
 
       auditingService.extendedAudit(TaxYearSummaryResponseAuditModel(mtdItUser, messagesApi, viewModel))
@@ -432,7 +432,7 @@ class TaxYearSummaryController @Inject()(
           backUrl = backUrl,
           origin = origin,
           isAgent = isAgent,
-          ctaLink = ctaLink(isAgent),
+          ctaLink = ctaLink(mtdItUser, isAgent),
           taxYearViewScenarios = taxYearViewScenarios,
           showNoTaxCalc = false,
           viewTaxCalcLink = selfAssessmentLink,
@@ -547,7 +547,8 @@ class TaxYearSummaryController @Inject()(
     }
   }
 
-  private def getBackURL(referer: Option[String], origin: Option[String]): String = {
+  private def getBackURL(referer: Option[String], origin: Option[String])
+                        (implicit mtdItUser: MtdItUser[_]): String = {
     referer.map(URI.create(_).getPath.equals(taxYearsUrl(origin))) match {
       case Some(true) => taxYearsUrl(origin)
       case Some(false) if referer.map(URI.create(_).getPath.equals(whatYouOweUrl(origin))).get => whatYouOweUrl(origin)
@@ -555,10 +556,10 @@ class TaxYearSummaryController @Inject()(
     }
   }
 
-  private def getAgentBackURL(referer: Option[String]): String = {
+  private def getAgentBackURL(referer: Option[String])(implicit mtdItUser: MtdItUser[_]): String = {
     referer.map(URI.create(_).getPath.equals(agentTaxYearsUrl)) match {
       case Some(true) => agentTaxYearsUrl
-      case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get => agentWhatYouOweUrl
+      case Some(false) if referer.map(URI.create(_).getPath.equals(agentWhatYouOweUrl)).get => agentWhatYouOweUrl(mtdItUser)
       case _ => agentHomeUrl
     }
   }

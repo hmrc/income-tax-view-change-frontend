@@ -109,7 +109,6 @@ trait ExternalRedirectHelper {
     else
       businessDetailsManageBusinessesIndividualUrl(businessDetailsFrontendEnabled)
       
-  //ToDo in business-details-frontend, remove the below method and use the routes directly.
   def triggeredMigrationCheckHMRCRecordsUrl(isAgent: Boolean, businessDetailsFrontendEnabled: Boolean): String = {
     if(businessDetailsFrontendEnabled) {
       val baseUri = if(isAgent) businessDetailsAgentBaseUrl else businessDetailsBaseUrl
@@ -162,7 +161,7 @@ trait ExternalRedirectHelper {
 
   def financialsChargeSummaryIndividualUrl(taxYear: Int,
                                            transactionId: String,
-                                           isAccruingInterest: Boolean,
+                                           isAccruingInterest: Boolean = false,
                                            origin: Option[String] = None,
                                            financialsFrontendEnabled: Boolean): String = {
     lazy val queryPathNoOrigin = s"?id=$transactionId&isInterestCharge=$isAccruingInterest"
@@ -175,7 +174,7 @@ trait ExternalRedirectHelper {
 
   def financialsChargeSummaryAgentUrl(taxYear: Int,
                                       transactionId: String,
-                                      isAccruingInterest: Boolean,
+                                      isAccruingInterest: Boolean = false,
                                       financialsFrontendEnabled: Boolean): String = {
     lazy val queryPathString = s"?id=$transactionId&isInterestCharge=$isAccruingInterest"
     if (financialsFrontendEnabled)
@@ -183,6 +182,42 @@ trait ExternalRedirectHelper {
     else
       financialsRoutes.ChargeSummaryController.showAgent(taxYear, transactionId, isAccruingInterest).url
   }
+  
+  lazy val financialsMoneyInAccountIndividualUrl: Boolean => String = financialsFrontendEnabled =>
+    if (financialsFrontendEnabled)
+      s"$financialsBaseUrl/money-in-your-account"
+    else
+      financialsRoutes.MoneyInYourAccountController.show().url
+
+  lazy val financialsMoneyInAccountAgentUrl: Boolean => String = financialsFrontendEnabled =>
+    if (financialsFrontendEnabled)
+      s"$financialsAgentBaseUrl/money-in-your-account"
+    else
+      financialsRoutes.MoneyInYourAccountController.showAgent().url
+
+  def financialsMoneyInAccountUrl(isAgent: Boolean, financialsFrontendEnabled: Boolean): String =
+    if (isAgent)
+      financialsMoneyInAccountAgentUrl(financialsFrontendEnabled)
+    else
+      financialsMoneyInAccountIndividualUrl(financialsFrontendEnabled)
+
+  lazy val financialsPaymentHistoryIndividualUrl: Boolean => String = financialsFrontendEnabled =>
+    if (financialsFrontendEnabled)
+      s"$financialsBaseUrl/payment-refund-history"
+    else
+    financialsRoutes.PaymentHistoryController.show().url
+
+  lazy val financialsPaymentHistoryAgentUrl: Boolean => String = financialsFrontendEnabled =>
+    if (financialsFrontendEnabled)
+      s"$financialsAgentBaseUrl/payment-refund-history"
+    else
+      financialsRoutes.PaymentHistoryController.showAgent().url
+
+  def financialsPaymentHistoryUrl(isAgent: Boolean, financialsFrontendEnabled: Boolean): String =
+    if (isAgent)
+      financialsPaymentHistoryAgentUrl(financialsFrontendEnabled)
+    else
+      financialsPaymentHistoryIndividualUrl(financialsFrontendEnabled)
 
   //Returns routes
 

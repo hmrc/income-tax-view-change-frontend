@@ -21,11 +21,12 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
 import common.controllers.BaseController
-import common.models.admin.`CY+1YouMustWaitToSignUpPageEnabled`
+import common.models.admin.{ObligationsFrontend, `CY+1YouMustWaitToSignUpPageEnabled`}
 import common.services.DateServiceInterface
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -69,10 +70,7 @@ class ItsaStatusRetrievalAction @Inject()(
 
     implicit val req: MtdItUser[A] = request
     
-    //ToDo add logic to check if new obligations feature switch enabled once built
-    lazy val newObligationsEnabled: Boolean =
-      //isEnabled(`NEW-OBLIGATIONS-FEATURE-SWITCH`)
-      false
+    lazy val newObligationsEnabled: Boolean = isEnabled(ObligationsFrontend)
     
     lazy val authAction: Future[Either[Result, MtdItUser[A]]] =
       itsaStatusConnector.getITSAStatusDetail(

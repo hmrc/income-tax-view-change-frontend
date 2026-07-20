@@ -62,7 +62,8 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     IdempotencyKeyForCreateIncomeSource,
     NoIncomeSourcesRedirect,
     BusinessDetailsFrontend, 
-    ObligationsFrontend
+    ObligationsFrontend,
+    FinancialsFrontend
   )
 
   "FeatureSwitchName" when {

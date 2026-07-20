@@ -59,11 +59,11 @@ class NrsConnector @Inject()(http: HttpClientV2, appConfig: FrontendAppConfig)(
           Future.successful(Right(response.json.as[NrsSuccessResponse]))
 
         case response if shouldRetry(response) && remainingAttempts > 0 =>
-          logger.warn(s"NRS submission retry due to status: ${response.status}, body: ${response.body}")
+          logger.warn(s"NRS submission retry due to status: ${response.status}")
           submit(nrsSubmission, remainingAttempts = remainingAttempts - 1)
 
         case response =>
-          logger.info(s"NRS submission failed with status: ${response.status}, details: ${response.body}")
+          logger.info(s"NRS submission failed with status: ${response.status}")
           Future.successful(Left(NrsErrorResponse(response.status)))
       }
       .recover {

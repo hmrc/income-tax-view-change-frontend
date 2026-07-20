@@ -14,41 +14,28 @@
  * limitations under the License.
  *@
 
+@import common.config.FrontendAppConfig
 @import hub.views.html.partials.newHome.overview.OverviewCard
-@import financials.controllers.routes.{WhatYouOweController, PaymentHistoryController, MoneyInYourAccountController}
-@import financials.controllers.claimToAdjustPoa.routes.AmendablePoaController
 @import financials.models.WYOClaimToAdjustViewModel
 @this(overviewCard: OverviewCard)
 
-@(isAgent: Boolean, noChargesToPay: Boolean, moneyInYourAccount: Boolean, ctaViewModel: WYOClaimToAdjustViewModel, creditsRefundsRepayEnabled: Boolean)(implicit messages: Messages)
+@(isAgent: Boolean, noChargesToPay: Boolean, moneyInYourAccount: Boolean, ctaViewModel: WYOClaimToAdjustViewModel, creditsRefundsRepayEnabled: Boolean, financialsFrontendEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 
 @whatYouOweUrl: String = @{
-    if(isAgent){
-        WhatYouOweController.showAgent().url
-    } else {
-        WhatYouOweController.show().url
-    }
+    appConfig.financialsWhatYouOweUrl(isAgent, financialsFrontendEnabled = financialsFrontendEnabled)
 }
 
 @paymentHistoryUrl: String = @{
-    if(isAgent){
-        PaymentHistoryController.showAgent().url
-    } else {
-        PaymentHistoryController.show().url
-    }
+    appConfig.financialsPaymentHistoryUrl(isAgent, financialsFrontendEnabled = financialsFrontendEnabled)
 }
 
 @moneyInAccountUrl: String = @{
-    if(isAgent){
-        MoneyInYourAccountController.showAgent().url
-    } else {
-        MoneyInYourAccountController.show().url
-    }
+    appConfig.financialsMoneyInAccountUrl(isAgent, financialsFrontendEnabled = financialsFrontendEnabled)
 }
 
 @amendablePoaUrl: String = @{
-    AmendablePoaController.show(isAgent).url
+    appConfig.financialsAmendablePoaUrl(isAgent, financialsFrontendEnabled = financialsFrontendEnabled)
 }
 
 

@@ -35,9 +35,8 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
 
   val manageIncomeSourceDetailsView: ManageIncomeSourceDetailsView = app.injector.instanceOf[ManageIncomeSourceDetailsView]
 
-  //Todo Update tests when feature switch of Obligations is implemented
   def reportingFrequencyLink(isAgent: Boolean): String =
-    appConfig.obligationsReportingFrequencyUrl(isAgent, false)
+    appConfig.obligationsReportingFrequencyUrl(isAgent, true)
 
   def backUrl(isAgent: Boolean): String = if (isAgent) manageBusinessRoutes.ManageYourBusinessesController.showAgent().url
 
@@ -53,7 +52,6 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
   def signUpLink(i: Int)(implicit document: Document) = document.getElementById(s"sign-up-link-$i")
   def optOutLink(i: Int)(implicit document: Document) = document.getElementById(s"opt-out-link-$i")
 
-// Todo Update tests when feature switch of Obligations is implemented
   class SelfEmploymentSetup(isAgent: Boolean, startDateEnabled: Boolean = true) {
 
     def changeReportingMethodUrl(id: String, taxYear: String, changeTo: String): String = {
@@ -66,7 +64,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        newObligationsEnabled = true
       )(messages, implicitly, implicitly)
     }
 
@@ -285,7 +283,7 @@ class ManageIncomeSourceDetailsViewSpec extends TestSupport with ViewSpec {
         isAgent,
         backUrl = backUrl(isAgent),
         showStartDate = startDateEnabled,
-        newObligationsEnabled = false
+        newObligationsEnabled = true
       )(messages, implicitly, implicitly)
     }
 

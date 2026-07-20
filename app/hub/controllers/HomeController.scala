@@ -101,7 +101,7 @@ class HomeController @Inject()(val newHomeRecentActivityView: hub.views.html.new
           yourTasksUrl(origin, isAgent), recentActivityUrl(origin, isAgent), overviewUrl(origin, isAgent),
           helpUrl(origin, isAgent), unpaidCharges.isEmpty, credits.availableCreditInAccount, ctaViewModel, chargeItem,
           isEnabled(PenaltiesAndAppeals), isEnabled(RecentActivity), isEnabled(CreditsRefundsRepay), isEnabled(MortgageEvidence),
-          isEnabled(BusinessDetailsFrontend), isEnabled(ObligationsFrontend)))
+          isEnabled(BusinessDetailsFrontend), isEnabled(ObligationsFrontend), isEnabled(FinancialsFrontend)))
       }
     }
   }
