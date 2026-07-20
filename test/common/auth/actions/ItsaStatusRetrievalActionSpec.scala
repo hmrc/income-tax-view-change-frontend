@@ -20,32 +20,25 @@ import common.auth.MtdItUser
 import common.auth.actions.AuthActionsTestData.*
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.ITSAStatusConnector
-import common.models.admin.{FeatureSwitchName, `CY+1YouMustWaitToSignUpPageEnabled`}
-import common.models.incomeSourceDetails.TaxYear
+import common.models.admin.FeatureSwitchName
+import common.models.itsaStatus.ITSAStatusResponseModel
 import common.services.DateServiceInterface
-import common.models.itsaStatus.ITSAStatus.Voluntary
-import common.models.itsaStatus.{ITSAStatusResponseError, ITSAStatusResponseModel, StatusDetail}
-import common.models.itsaStatus.StatusReason.MtdItsaOptOut
 import common.testUtils.TestSupport
-import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyBoolean}
-import org.mockito.Mockito.{never, reset, verify, when}
-import org.scalatest.EitherValues.*
+import org.mockito.Mockito.{never, reset, verify}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.Application
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{MessagesControllerComponents, Result}
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
 import scala.concurrent.Future
 
 class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
-  lazy val mockItsaStatusConnector = mock[ITSAStatusConnector]
-  lazy val mockDateServiceInterface = mock[DateServiceInterface]
+  lazy val mockItsaStatusConnector: ITSAStatusConnector = mock[ITSAStatusConnector]
+  lazy val mockDateServiceInterface: DateServiceInterface = mock[DateServiceInterface]
 
   override lazy val app: Application =
     new GuiceApplicationBuilder()
@@ -54,13 +47,13 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
 
   lazy val mcc = app.injector.instanceOf[MessagesControllerComponents]
 
-  lazy val itvcErrorHandler =
+  lazy val itvcErrorHandler: ItvcErrorHandler =
     app.injector.instanceOf[ItvcErrorHandler]
 
-  lazy val agentErrorHandler =
+  lazy val agentErrorHandler: AgentItvcErrorHandler =
     app.injector.instanceOf[AgentItvcErrorHandler]
 
-  def actionWithSwitch(enabledSwitches: Set[FeatureSwitchName]) =
+  def actionWithSwitch(enabledSwitches: Set[FeatureSwitchName]): ItsaStatusRetrievalAction =
     new ItsaStatusRetrievalAction(
       appConfig,
       mockItsaStatusConnector,
@@ -80,224 +73,7 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
     reset(mockItsaStatusConnector)
   }
 
-  ".refine()" when {
-
-    "CY+1YouMustWaitToSignUpPageEnabled feature switch is Enabled" should {
-
-      "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - Agent" in {
-
-        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
-
-        val itsaStatusResponse =
-          ITSAStatusResponseModel(
-            taxYear = "2026-27",
-            itsaStatusDetails = Some(List(
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-            ))
-          )
-
-        val mtdUser = getMtdItUser(Agent)
-
-        when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
-          .thenReturn(Future(Right(List(itsaStatusResponse))))
-
-        when(mockDateServiceInterface.getCurrentTaxYear)
-          .thenReturn(TaxYear(2025, 2026))
-
-        val result = action.refine(mtdUser).futureValue
-
-        result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe appConfig.obligationsWaitToSignUpAgentUrl(false)
-      }
-
-      "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - Individual" in {
-
-        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
-
-        val itsaStatusResponse =
-          ITSAStatusResponseModel(
-            taxYear = "2026-27",
-            itsaStatusDetails = Some(List(
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-            ))
-          )
-
-        val mtdUser = getMtdItUser(Individual, isSupportingAgent = true)
-
-        when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
-          .thenReturn(Future(Right(List(itsaStatusResponse))))
-
-        when(mockDateServiceInterface.getCurrentTaxYear)
-          .thenReturn(TaxYear(2025, 2026))
-
-        val result = action.refine(mtdUser).futureValue
-
-        result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe appConfig.obligationsWaitToSignUpIndividualUrl(false)
-      }
-
-      "redirect to YouMustWaitToSignUp page when only next-year ITSA status exists - SupportingAgent" in {
-
-        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
-
-        val itsaStatusResponse =
-          ITSAStatusResponseModel(
-            taxYear = "2026-27",
-            itsaStatusDetails = Some(List(
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-            ))
-          )
-
-        val mtdUser = getMtdItUser(Agent, isSupportingAgent = true)
-
-        when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
-          .thenReturn(Future(Right(List(itsaStatusResponse))))
-
-        when(mockDateServiceInterface.getCurrentTaxYear)
-          .thenReturn(TaxYear(2025, 2026))
-
-        val result = action.refine(mtdUser).futureValue
-
-        result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe appConfig.obligationsWaitToSignUpAgentUrl(false)
-      }
-
-      "return an MtdItUser when valid ITSA status exists for current and future years" in {
-
-        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
-
-        val itsaStatusResponses = List(
-          ITSAStatusResponseModel(
-            taxYear = "2024-25",
-            itsaStatusDetails = Some(List(
-              StatusDetail("ts", Voluntary, MtdItsaOptOut, None)
-            ))
-          ),
-          ITSAStatusResponseModel(
-            taxYear = "2025-26",
-            itsaStatusDetails = Some(List(
-              StatusDetail("ts", Voluntary, MtdItsaOptOut, None)
-            ))
-          )
-        )
-
-        val mtdUser = getMtdItUser(Individual)
-
-        when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
-          .thenReturn(Future(Right(itsaStatusResponses)))
-
-        when(mockDateServiceInterface.getCurrentTaxYear)
-          .thenReturn(TaxYear(2025, 2026))
-
-        val result = action.refine(mtdUser).futureValue
-
-        result.map(_.mtditid) shouldBe Right(mtdUser.mtditid)
-        result.map(_.nino) shouldBe Right(defaultIncomeSourcesData.nino)
-        result.map(_.usersRole) shouldBe Right(mtdUser.usersRole)
-        result.map(_.authUserDetails) shouldBe Right(mtdUser.authUserDetails)
-        result.map(_.clientDetails) shouldBe Right(mtdUser.clientDetails)
-        result.map(_.incomeSources) shouldBe Right(defaultIncomeSourcesData)
-      }
-
-      "return Individual error page" in {
-
-        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
-
-        val itsaStatusResponseError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "some random failure")
-
-        val mtdUser = getMtdItUser(Individual)
-
-        when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
-          .thenReturn(Future(Left(itsaStatusResponseError)))
-
-        when(mockDateServiceInterface.getCurrentTaxYear)
-          .thenReturn(TaxYear(2025, 2026))
-
-        val result = action.refine(mtdUser).futureValue
-
-        result match {
-          case Left(res) =>
-            val body = contentAsString(Future.successful(res))
-            val document = Jsoup.parse(body)
-            val title = document.title()
-            val feedbackUrl = document.getElementById("individuals-feedback-url").select("a").attr("href")
-
-            res.header.status shouldBe INTERNAL_SERVER_ERROR
-            title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-            feedbackUrl should include("/feedback") // to help distinguish error pages checking for feedback url since page titles are the same
-          case Right(_) =>
-            fail("Expected Individual error page but fell into a Right branch")
-        }
-      }
-
-      "return Agent error page" in {
-
-        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
-
-        val itsaStatusResponseError = ITSAStatusResponseError(INTERNAL_SERVER_ERROR, "some random failure")
-
-        val mtdUser = getMtdItUser(Agent)
-
-        when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
-          .thenReturn(Future(Left(itsaStatusResponseError)))
-
-        when(mockDateServiceInterface.getCurrentTaxYear)
-          .thenReturn(TaxYear(2025, 2026))
-
-        val result = action.refine(mtdUser).futureValue
-
-        result match {
-          case Left(res) =>
-            val body = contentAsString(Future.successful(res))
-            val document = Jsoup.parse(body)
-            val title = document.title()
-            val agentFeedbackUrl = document.getElementById("agent-feedback-url").select("a").attr("href")
-
-            res.header.status shouldBe INTERNAL_SERVER_ERROR
-            title shouldBe "Sorry, there is a problem with the service - GOV.UK"
-            agentFeedbackUrl should include("/agents/feedback") // to help distinguish error pages checking for feedback url since page titles are the same
-          case Right(_) =>
-            fail("Expected Agent error page but fell into a Right branch")
-        }
-      }
-
-      "redirect to error page when user's affinity group is 'Organisation'" in {
-
-        val action = actionWithSwitch(Set(`CY+1YouMustWaitToSignUpPageEnabled`))
-
-        val itsaStatusResponse =
-          ITSAStatusResponseModel(
-            taxYear = "2026-27",
-            itsaStatusDetails = Some(List(
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-              StatusDetail("some fake timestamp", Voluntary, MtdItsaOptOut, None),
-            ))
-          )
-
-        val mtdUser = getMtdItUser(Organisation)
-
-        when(mockItsaStatusConnector.getITSAStatusDetail(any(), any(), any(), any())(any()))
-          .thenReturn(Future(Right(List(itsaStatusResponse))))
-
-        when(mockDateServiceInterface.getCurrentTaxYear)
-          .thenReturn(TaxYear(2025, 2026))
-
-        val result = action.refine(mtdUser).futureValue
-
-        result.left.value.header.status shouldBe SEE_OTHER
-        result.left.value.header.headers("LOCATION") shouldBe appConfig.obligationsWaitToSignUpIndividualUrl(false)
-      }
-
-
-    }
-    "CY+1YouMustWaitToSignUpPageEnabled feature switch is Disabled" should {
+  ".refine()" should {
 
       "return the request unmodified" in {
 
@@ -314,6 +90,5 @@ class ItsaStatusRetrievalActionSpec extends TestSupport with ScalaFutures {
         verify(mockItsaStatusConnector, never())
           .getITSAStatusDetail(any(), any(), anyBoolean(), anyBoolean())(any())
       }
-    }
   }
 }

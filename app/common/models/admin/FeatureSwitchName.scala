@@ -63,8 +63,6 @@ object FeatureSwitchName {
       JsSuccess(SubmitClaimToAdjustToNrs)
     case JsString(PostFinalisationAmendmentsR18.name) =>
       JsSuccess(PostFinalisationAmendmentsR18)
-    case JsString(`CY+1YouMustWaitToSignUpPageEnabled`.name) =>
-      JsSuccess(`CY+1YouMustWaitToSignUpPageEnabled`)
     case JsString(ObligationsFrontend.name) =>
       JsSuccess(ObligationsFrontend)
     case JsString(OverseasBusinessAddress.name) =>
@@ -118,7 +116,6 @@ object FeatureSwitchName {
       SelfServeTimeToPayR17,
       TriggeredMigration,
       PostFinalisationAmendmentsR18,
-      `CY+1YouMustWaitToSignUpPageEnabled`,
       OverseasBusinessAddress,
       RecentActivity,
       MortgageEvidence,
@@ -209,11 +206,6 @@ case object SubmitClaimToAdjustToNrs extends FeatureSwitchName {
 case object PostFinalisationAmendmentsR18 extends FeatureSwitchName {
   override val name: String = "post-finalisation-amendments-r18"
   override val toString: String = "Post Finalisation Amendments R18"
-}
-
-case object `CY+1YouMustWaitToSignUpPageEnabled` extends FeatureSwitchName {
-  override val name: String = "cy-plus-one-you-must-wait-to-sign-up-page-enabled"
-  override val toString: String = "CY+1 You Must Wait To Sign Up Page Enabled"
 }
 
 case object OverseasBusinessAddress extends FeatureSwitchName {

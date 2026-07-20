@@ -21,7 +21,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
 import common.controllers.BaseController
-import common.models.admin.{ObligationsFrontend, `CY+1YouMustWaitToSignUpPageEnabled`}
+import common.models.admin.ObligationsFrontend
 import common.services.DateServiceInterface
 import play.api.Logger
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
@@ -101,12 +101,7 @@ class ItsaStatusRetrievalAction @Inject()(
           Logger(getClass).error(s"[ItsaStatusRetrievalAction][refine] Unsuccessful income source and itsa details retrieved or unknown error, redirecting to internal server error page for user")
           Left(internalServerErrorFor(req, "itsa-status", Some(ItsaStatusRetrievalActionError.ItsaStatus(error))))
       }
-
-    if (isEnabled(`CY+1YouMustWaitToSignUpPageEnabled`)) {
-      authAction
-    } else {
-      Future(Right(req))
-    }
+    authAction
   }
 }
 //scalastyle:on
