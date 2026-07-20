@@ -56,14 +56,14 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     TriggeredMigration,
     PostFinalisationAmendmentsR18,
     `CY+1YouMustWaitToSignUpPageEnabled`,
-    NewHomePage,
     OverseasBusinessAddress,
     RecentActivity,
     MortgageEvidence,
     IdempotencyKeyForCreateIncomeSource,
     NoIncomeSourcesRedirect,
     BusinessDetailsFrontend, 
-    ObligationsFrontend
+    ObligationsFrontend,
+    FinancialsFrontend
   )
 
   "FeatureSwitchName" when {

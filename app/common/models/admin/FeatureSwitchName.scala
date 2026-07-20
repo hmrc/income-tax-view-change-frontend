@@ -65,8 +65,6 @@ object FeatureSwitchName {
       JsSuccess(PostFinalisationAmendmentsR18)
     case JsString(`CY+1YouMustWaitToSignUpPageEnabled`.name) =>
       JsSuccess(`CY+1YouMustWaitToSignUpPageEnabled`)
-    case JsString(NewHomePage.name) =>
-      JsSuccess(NewHomePage)
     case JsString(ObligationsFrontend.name) =>
       JsSuccess(ObligationsFrontend)
     case JsString(OverseasBusinessAddress.name) =>
@@ -81,6 +79,8 @@ object FeatureSwitchName {
       JsSuccess(NoIncomeSourcesRedirect)
     case JsString(BusinessDetailsFrontend.name) =>
       JsSuccess(BusinessDetailsFrontend)
+    case JsString(FinancialsFrontend.name) =>
+      JsSuccess(FinancialsFrontend)
     case invalidName =>
       Logger("application").error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
@@ -119,14 +119,14 @@ object FeatureSwitchName {
       TriggeredMigration,
       PostFinalisationAmendmentsR18,
       `CY+1YouMustWaitToSignUpPageEnabled`,
-      NewHomePage,
       OverseasBusinessAddress,
       RecentActivity,
       MortgageEvidence,
       IdempotencyKeyForCreateIncomeSource,
       NoIncomeSourcesRedirect,
       BusinessDetailsFrontend,
-      ObligationsFrontend
+      ObligationsFrontend,
+      FinancialsFrontend
     )
 
   def get(str: String): Option[FeatureSwitchName] = allFeatureSwitches find (_.name == str)
@@ -216,11 +216,6 @@ case object `CY+1YouMustWaitToSignUpPageEnabled` extends FeatureSwitchName {
   override val toString: String = "CY+1 You Must Wait To Sign Up Page Enabled"
 }
 
-case object NewHomePage extends FeatureSwitchName {
-  override val name: String = "new-home-page"
-  override val toString: String = "New Home Page"
-}
-
 case object OverseasBusinessAddress extends FeatureSwitchName {
   override val name: String = "overseas-business-address"
   override val toString: String = "Overseas Business Address"
@@ -249,4 +244,9 @@ case object NoIncomeSourcesRedirect extends FeatureSwitchName {
 case object BusinessDetailsFrontend extends FeatureSwitchName {
   override val name: String = "business-details-frontend"
   override val toString: String = "Business Details Frontend"
+}
+
+case object FinancialsFrontend extends FeatureSwitchName {
+  override val name: String = "financials-frontend"
+  override val toString: String = "Financials Frontend"
 }

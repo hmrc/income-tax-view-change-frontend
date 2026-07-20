@@ -162,7 +162,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       dunningLock = dunningLock,
       moneyInYourAccountUrl = financialsRoutes.MoneyInYourAccountController.show().url,
       creditAndRefundEnabled = true,
-      taxYearSummaryUrl = _ => returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url,
+      taxYearSummaryUrl = _ => appConfig.returnsTaxYearSummaryIndividualUrl(taxYear, returnsFrontendEnabled = true),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
       lpp2Url = LPP2Url,
       adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = false).url,
@@ -219,7 +219,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       dunningLock = dunningLock,
       moneyInYourAccountUrl = financialsRoutes.MoneyInYourAccountController.showAgent().url,
       creditAndRefundEnabled = true,
-      taxYearSummaryUrl = _ => returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url,
+      taxYearSummaryUrl = _ => appConfig.returnsTaxYearSummaryAgentUrl(taxYear, returnsFrontendEnabled = true),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
       lpp2Url = "",
       adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = true).url,
@@ -438,13 +438,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
   val noUtrModel: WhatYouOweChargesList = WhatYouOweChargesList(balanceDetails = BalanceDetails(0.00, 0.00, 0.00, 0.00, None, None, None, None, None, None, None))
 
-  def claimToAdjustLink(isAgent: Boolean): String = {
-    if (isAgent) {
-      "/report-quarterly/income-and-expenses/view/agents/adjust-poa/start"
-    } else {
-      "/report-quarterly/income-and-expenses/view/adjust-poa/start"
-    }
-  }
+  def claimToAdjustLink(isAgent: Boolean): String =
+    claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent).url
 
   "individual" when {
     "The What you owe view with financial details model" when {
@@ -560,7 +555,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
           pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -579,7 +574,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
         }
 
         "display bullets and not display the paragraph about payments under review when there are no dunningLock" in new TestSetup(
@@ -590,7 +585,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
         }
 
         "money in your account section with available credits with totalCredit" in
@@ -650,8 +645,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("due-0-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
           findElementById("due-0-overdue") shouldBe None
-          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-            fixedDate.getYear).url
+          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
         }
 
         "have data with POA2 with hyperlink and no overdue" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
@@ -681,7 +676,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
           pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -698,7 +693,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
           pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -722,7 +717,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
           pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -745,7 +740,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
           pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -785,7 +780,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
         }
 
         "have overdue payments header and data with POA1 charge type and show Late payment interest on payment on account 1 of 2" in
@@ -803,8 +798,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
-            pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-              fixedDate.getYear).url
+            pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+              appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
           }
 
         "should have payment made paragraph when there is POA1 charge and lpi on poa 1 of 2" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(Some(34.56), None), List(Some(100.00), None))) {
@@ -812,7 +807,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
           pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -839,13 +834,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
-            pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-              fixedDate.getYear).url
+            pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+              appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
 
             pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
             val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
             pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-            pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+            pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           }
 
         "have overdue payments header, paragraph and data with POA1 charge type and show Late payment interest on payment on account 1 of 2 - No LPI Dunning Block" in
@@ -865,13 +860,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
-            pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-              fixedDate.getYear).url
+            pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+              appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
 
             pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
             val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
             pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-            pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+            pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           }
 
         "have overdue payments header, paragraph and data with POA1 charge type and No Late payment interest" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None), List(Some(100.00), None))) {
@@ -890,13 +885,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
-          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-            fixedDate.getYear).url
+          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
         }
 
         "have overdue payments header, paragraph and data with POA1 charge type" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None), List(Some(100.00), None))) {
@@ -917,13 +912,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
-          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-            fixedDate.getYear).url
+          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
         }
         "have overdue payments with POA2 charge type with hyperlink and overdue tag" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(None, None), List(Some(100.00), None))) {
           val overduePaymentsTableRow2: Element = pageDocument.select("tr").get(4)
@@ -940,7 +935,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
           pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -1029,7 +1024,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
           pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
           pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
           pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -1058,19 +1053,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000125").url
-          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-            fixedDate.getYear).url
+          pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
 
           pageDocument.getElementById("due-1-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000123").url
           findElementById("due-1-overdue") shouldBe None
-          pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-            fixedDate.getYear).url
+          pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe
+            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
           pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+          pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
         }
 
       }
@@ -1129,19 +1124,19 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
         pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           fixedDate.getYear, "1040000125").url
-        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-          fixedDate.getYear).url
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+          appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
 
         pageDocument.getElementById("due-1-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           fixedDate.getYear, "1040000123").url
         findElementById("due-1-overdue") shouldBe None
-        pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(
-          fixedDate.getYear).url
+        pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe
+          appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
 
         pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
         val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
         pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-        pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+        pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
       }
 
       s"have payment data with button when charges overdue" in new TestSetup(charges = whatYouOweDataWithWithAciValueZeroAndOverdue) {
@@ -1242,7 +1237,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
         val amount: String = codedOutDetails.amountCodedOut.toCurrencyString
         pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-        pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/payment-refund-history"
+        pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.show().url
         pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
         pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
         pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
@@ -1286,7 +1281,8 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
         pageDocument.getElementById("due-0-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
-        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(fixedDate.getYear).url
+        pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
+          appConfig.returnsTaxYearSummaryAgentUrl(fixedDate.getYear, returnsFrontendEnabled = true)
       }
 
       "not have button Pay now with no charges but coded out" in new AgentTestSetup(charges = noChargesButCodedOutModel) {
@@ -1318,7 +1314,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
       val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
       pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
-      pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe "/report-quarterly/income-and-expenses/view/agents/payment-refund-history"
+      pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.showAgent().url
       pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
       pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
       pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2

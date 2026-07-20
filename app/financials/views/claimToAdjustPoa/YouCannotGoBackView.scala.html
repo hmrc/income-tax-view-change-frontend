@@ -25,66 +25,67 @@
 @import common.config.FrontendAppConfig
 
 @this(
-        mainTemplate: unifiedLayout,
-        p: p,
-        link: link,
-        govukBackLink : GovukBackLink,
-        hmrcPageHeading: HmrcPageHeading,
-        govukButton : GovukButton,
-        govukWarningText : GovukWarningText, 
-        appConfig: FrontendAppConfig
+mainTemplate: unifiedLayout,
+p: p,
+link: link,
+govukBackLink : GovukBackLink,
+hmrcPageHeading: HmrcPageHeading,
+govukButton : GovukButton,
+govukWarningText : GovukWarningText,
+appConfig: FrontendAppConfig
 )
 
 @(
-        poaTaxYear: TaxYear
+poaTaxYear: TaxYear,
+returnsFrontendEnabled: Boolean
 )(
-        implicit messages: Messages,  request: RequestHeader, user: MtdItUser[_]
+implicit messages: Messages,  request: RequestHeader, user: MtdItUser[_]
 )
 
 @getMessage(key: String, args: String*) = @{
-    messages(s"claimToAdjustPoa.youCannotGoBack.$key", args: _*)
+messages(s"claimToAdjustPoa.youCannotGoBack.$key", args: _*)
 }
 
 @tysLinkUrl = @{
-    if(user.isAgent) returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(poaTaxYear.endYear).url
-    else returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(poaTaxYear.endYear).url
+if(user.isAgent) appConfig.returnsTaxYearSummaryAgentUrl(poaTaxYear.endYear, returnsFrontendEnabled = returnsFrontendEnabled)
+else appConfig.returnsTaxYearSummaryIndividualUrl(poaTaxYear.endYear, returnsFrontendEnabled = returnsFrontendEnabled)
 }
 
 @wyoLinkUrl = @{
-    if(user.isAgent) financialsRoutes.WhatYouOweController.showAgent().url
-    else financialsRoutes.WhatYouOweController.show().url
+if(user.isAgent) financialsRoutes.WhatYouOweController.showAgent().url
+else financialsRoutes.WhatYouOweController.show().url
 }
 
 @getHomeUrl = @{
-    appConfig.homePageUrl(user.isAgent)
+appConfig.homePageUrl(user.isAgent)
 }
 
 @mainTemplate(
-    pageTitle = getMessage("heading"),
-    backUrl = None,
-    isAgent = user.isAgent,
-    btaAndPtaServiceNavigation = user.serviceNavigationPartial,
-    useFallbackBackLink = true
+pageTitle = getMessage("heading"),
+backUrl = None,
+isAgent = user.isAgent,
+btaAndPtaServiceNavigation = user.serviceNavigationPartial,
+useFallbackBackLink = true
 ) {
 
-    @hmrcPageHeading(PageHeading(
-        text = getMessage("heading"),
-        headingClasses = Some("govuk-heading-xl"),
-    ))
+@hmrcPageHeading(PageHeading(
+text = getMessage("heading"),
+headingClasses = Some("govuk-heading-xl"),
+))
 
-    @p(id = Some("paragraph-text-1")){
-        @getMessage("para1")
-    }
+@p(id = Some("paragraph-text-1")){
+@getMessage("para1")
+}
 
-    @p(id = Some("paragraph-text-2")){
-        @getMessage("para2")
-    }
+@p(id = Some("paragraph-text-2")){
+@getMessage("para2")
+}
 
-    <div class="govuk-!-margin-bottom-9">
-        <ul class="govuk-list govuk-list--bullet">
-            <li>@p(classes = "govuk-!-margin-bottom-4") {
-                @getMessage("bullet1Text")
-                @link(link = tysLinkUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet1Link", id = Some("link-1"))
+<div class="govuk-!-margin-bottom-9">
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@p(classes = "govuk-!-margin-bottom-4") {
+            @getMessage("bullet1Text")
+            @link(link = tysLinkUrl, messageKey = "claimToAdjustPoa.youCannotGoBack.bullet1Link", id = Some("link-1"))
             }
         </li>
 

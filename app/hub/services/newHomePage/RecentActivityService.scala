@@ -18,11 +18,13 @@ package hub.services.newHomePage
 
 import com.google.inject.Inject
 import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.models.admin.FinancialsFrontend
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import common.models.obligations.{ObligationsModel, SingleObligationModel}
 import common.services.DateServiceInterface
-import financials.controllers.routes as financialsRoutes
 import financials.models.*
 import financials.models.repaymentHistory.RepaymentHistoryModel
 import hub.models.newHomePage.*
@@ -34,7 +36,8 @@ import javax.inject.Singleton
 
 @Singleton
 class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector,
-                                      dateService: DateServiceInterface) {
+                                      dateService: DateServiceInterface)
+                                     (implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   def getFulfilledObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]) = {
     obligationsConnector.getFulfilledObligations()
@@ -97,7 +100,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
     recentPayment.map { payment =>
       RecentActivityCard(
         linkContentText = "new.home.recentActivity.payments.link.text",
-        linkUrl = if (mtdUser.isAgent) financialsRoutes.PaymentHistoryController.showAgent().url else financialsRoutes.PaymentHistoryController.show().url,
+        linkUrl = appConfig.financialsPaymentHistoryUrl(mtdUser.isAgent, isEnabled(FinancialsFrontend)),
         contentText = "new.home.recentActivity.payments.content.text",
         dateContentText = "new.home.recentActivity.payments.date.content.text",
         cardDate = payment.dateOfPayment,
@@ -152,11 +155,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
 
   private def getRecentRefundCard(recentRefundModel: Option[RecentRefundModel])(implicit mtdItUser: MtdItUser[_]): Option[RecentActivityCard] = {
 
-    val paymentCreditRefundUrl = if (mtdItUser.isAgent) {
-      financialsRoutes.PaymentHistoryController.showAgent().url
-    } else {
-      financialsRoutes.PaymentHistoryController.show().url
-    }
+    val paymentCreditRefundUrl = appConfig.financialsPaymentHistoryUrl(mtdItUser.isAgent, isEnabled(FinancialsFrontend))
 
     recentRefundModel.map { refund =>
       RecentActivityCard(

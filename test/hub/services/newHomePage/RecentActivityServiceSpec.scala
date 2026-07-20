@@ -17,6 +17,7 @@
 package hub.services.newHomePage
 
 import common.auth.MtdItUser
+import common.models.admin.*
 import common.mocks.services.MockDateService
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{Mandated, Voluntary}
@@ -214,6 +215,7 @@ class RecentActivityServiceSpec
       implicit val supportingAgentUser: MtdItUser[_] = MockitoSugar.mock[MtdItUser[_]]
 
       when(supportingAgentUser.isSupportingAgent).thenReturn(true)
+      when(supportingAgentUser.featureSwitches).thenReturn(List(FeatureSwitch(FinancialsFrontend, true)))
 
       val submissions = RecentActivitySubmissionsModel(None, None)
       val result = service.recentActivityCards(submissions, None, None)
@@ -226,6 +228,7 @@ class RecentActivityServiceSpec
 
       when(agentUser.isSupportingAgent).thenReturn(false)
       when(agentUser.isAgent).thenReturn(true)
+      when(agentUser.featureSwitches).thenReturn(List(FeatureSwitch(FinancialsFrontend, true)))
 
       val annual = obligation("Crystallisation", LocalDate.of(2023, 4, 6), Some(within90Days))
       val quarterly = obligation("Quarterly", LocalDate.of(2023, 4, 6), Some(within90Days))
@@ -241,6 +244,7 @@ class RecentActivityServiceSpec
 
       when(agentUser.isSupportingAgent).thenReturn(false)
       when(agentUser.isAgent).thenReturn(true)
+      when(agentUser.featureSwitches).thenReturn(List(FeatureSwitch(FinancialsFrontend, true)))
       val submissions = RecentActivitySubmissionsModel(None, None)
       val payment = RecentActivityPaymentModel(BigDecimal(123.45), within90Days)
       val result = service.recentActivityCards(submissions, Some(payment), None)
@@ -254,6 +258,7 @@ class RecentActivityServiceSpec
 
       when(user.isSupportingAgent).thenReturn(false)
       when(user.isAgent).thenReturn(false)
+      when(user.featureSwitches).thenReturn(List(FeatureSwitch(FinancialsFrontend, true)))
 
       val recentRefund = refund(Some(within90Days))
       val submissions = RecentActivitySubmissionsModel(None, None)
@@ -269,6 +274,7 @@ class RecentActivityServiceSpec
 
       when(user.isSupportingAgent).thenReturn(false)
       when(user.isAgent).thenReturn(false)
+      when(user.featureSwitches).thenReturn(List(FeatureSwitch(FinancialsFrontend, true)))
 
       val annual = obligation("Crystallisation", LocalDate.of(2023, 4, 6), Some(within90Days))
 

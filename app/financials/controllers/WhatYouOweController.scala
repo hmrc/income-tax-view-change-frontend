@@ -25,11 +25,9 @@ import common.services.DateServiceInterface
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.WhatYouOweService
 import financials.forms.utils.SessionKeys.gatewayPage
-import hub.controllers.routes as appRoutes
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import returns.controllers.routes as returnsRoutes
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import financials.views.html.WhatYouOweView
@@ -73,7 +71,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       handleRequest(
-        backUrl = hub.controllers.routes.HomeController.show(origin).url,
+        backUrl = appConfig.individualHomeUrlWithOrigin(origin),
         itvcErrorHandler = itvcErrorHandler,
         isAgent = false,
         origin = origin
@@ -83,7 +81,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
-        backUrl = appRoutes.HomeController.showAgent().url,
+        backUrl = appConfig.homePageUrl(isAgent = true),
         itvcErrorHandler = itvcErrorHandlerAgent,
         isAgent = true
       )
@@ -97,8 +95,10 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
   }).url
 
   private def getTaxYearSummaryUrl(origin: Option[String])(implicit user: MtdItUser[_]): Int => String = {
-    if (user.isAgent) returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(_).url
-    else                returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(_, origin).url
+    //ToDo update this when the ReturnsFrontend feature switch is built
+    val returnsFrontendEnabled: Boolean = false
+    if (user.isAgent) appConfig.returnsTaxYearSummaryAgentUrl(_, None, returnsFrontendEnabled)
+    else appConfig.returnsTaxYearSummaryIndividualUrl(_, origin, None, returnsFrontendEnabled)
   }
 
   private def getAdjustPoaUrl(implicit user: MtdItUser[_]): String = claimToAdjustPoaRoutes.AmendablePoaController.show(user.isAgent).url

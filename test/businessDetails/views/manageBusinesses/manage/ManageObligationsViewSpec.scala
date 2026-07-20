@@ -65,16 +65,15 @@ class ManageObligationsViewSpec extends ViewSpec {
   val emptyViewModel: ObligationsViewModel = ObligationsViewModel(Seq.empty, Seq.empty, 2023, showPrevTaxYears = false)
 
 
-  //Todo: Update tests when feature switch of Obligations is implemented
-  val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = false)
-  val validSECallNoName: Html = view(viewModelWithAllData, "Not Found", taxYear, annually, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = false)
-  val validUKCall: Html = view(viewModelWithAllData, "UK property", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = false)
-  val validFPCall: Html = view(viewModelWithAllData, "Foreign property", taxYear, annually, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = false)
-  val validCallNoData: Html = view(emptyViewModel, "test name", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = false)
-  val quarterlyCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "quarterly", isAgent = false, testCall, isCurrentTaxYear = true, newObligationsEnabled = false)
-  val quarterlyCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "quarterly", isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = false)
-  val annualCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "annual", isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = false)
-  val annualCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "annual", isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = false)
+  val validSECallWithName: Html = view(viewModelWithAllData, "test name", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = true)
+  val validSECallNoName: Html = view(viewModelWithAllData, "Not Found", taxYear, annually, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = true)
+  val validUKCall: Html = view(viewModelWithAllData, "UK property", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = true)
+  val validFPCall: Html = view(viewModelWithAllData, "Foreign property", taxYear, annually, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = true)
+  val validCallNoData: Html = view(emptyViewModel, "test name", taxYear, quarterly, isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = true)
+  val quarterlyCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "quarterly", isAgent = false, testCall, isCurrentTaxYear = true, newObligationsEnabled = true)
+  val quarterlyCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "quarterly", isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = true)
+  val annualCy: Html = view(viewModelWithAllData, "test name", TaxYear(2024, 2025), "annual", isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = true)
+  val annualCyPlus1: Html = view(viewModelWithAllData, "test name", TaxYear(2025, 2026), "annual", isAgent = false, testCall, isCurrentTaxYear = false, newObligationsEnabled = true)
 
   //Testing banner for each mode/scenario, obligations are displayed the same for each so will only be tested once
 

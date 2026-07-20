@@ -37,7 +37,7 @@ class SignInControllerSpec extends TestSupport {
     }
 
     "Redirect to GG Sign In on Company Auth Frontend" in {
-      val redirectUrl = URLEncoder.encode("http://localhost:9081/report-quarterly/income-and-expenses/view", "UTF-8")
+      val redirectUrl = URLEncoder.encode("http://localhost:9081/report-quarterly/income-and-expenses/view/income-tax", "UTF-8")
       redirectLocation(result) shouldBe Some(
         appConfig.ggSignInUrl + "?continue_url=" + redirectUrl + "&origin=" + appConfig.appName
       )

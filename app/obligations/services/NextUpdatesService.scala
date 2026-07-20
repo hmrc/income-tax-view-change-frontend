@@ -17,6 +17,9 @@
 package obligations.services
 
 import common.auth.MtdItUser
+import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
+import common.models.admin.FinancialsFrontend
 import common.services.DateServiceInterface
 import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStandard, TaxYear}
 import common.models.obligations.{ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
@@ -40,7 +43,9 @@ object NextUpdatesService {
 @Singleton
 class NextUpdatesService @Inject()(
                                     val obligationsConnector: ObligationsConnector
-                                  )(implicit ec: ExecutionContext, val dateService: DateServiceInterface) {
+                                  )(implicit ec: ExecutionContext,
+                                    val dateService: DateServiceInterface,
+                                    val appConfig: FrontendAppConfig) extends FeatureSwitching {
 
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
     val allDeadlines =
@@ -59,8 +64,7 @@ class NextUpdatesService @Inject()(
 
     val (missedDeadlines, remainingDeadlines) = allDeadlines.partition(_.deadline.isBefore(dateService.getCurrentDate))
 
-    // ToDo will be replaced with a feature switch check in the future
-    val isFinancialsEnabled = false 
+    val isFinancialsEnabled = isEnabled(FinancialsFrontend) 
     NextUpdatesViewModel(remainingDeadlines, missedDeadlines, isFinancialsEnabled)
   }
 

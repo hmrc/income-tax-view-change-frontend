@@ -51,17 +51,15 @@ object GetPenaltyDetailsParser {
     override def read(method: String, url: String, response: HttpResponse): GetPenaltyDetailsResponse = {
       response.status match {
         case OK =>
-          logger.debug(s"[GetPenaltyDetailsReads][read] Json response: ${response.json}")
           response.json.validate[GetPenaltyDetails] match {
             case JsSuccess(getPenaltyDetails, _) =>
-              logger.debug(s"[GetPenaltyDetailsReads][read] Model: $getPenaltyDetails")
               Right(GetPenaltyDetailsSuccessResponse(getPenaltyDetails))
             case JsError(errors) =>
-              logger.debug(s"[GetPenaltyDetailsReads][read] Json validation errors: $errors")
+              logger.warn(s"[GetPenaltyDetailsReads][read] failed to read penalty details")
               Left(GetPenaltyDetailsMalformed)
           }
         case status@(BAD_REQUEST | CONFLICT | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE) => {
-          logger.error(s"[GetPenaltyDetailsReads][read] Received $status when trying to call GetPenaltyDetails - with body: ${response.body}")
+          logger.error(s"[GetPenaltyDetailsReads][read] Received $status when trying to call GetPenaltyDetails")
           Left(GetPenaltyDetailsFailureResponse(status))
         }
         //Status of NOT FOUND is currently the default return value for penalties,
@@ -71,11 +69,11 @@ object GetPenaltyDetailsParser {
           Right(GetPenaltyDetailsSuccessResponse(GetPenaltyDetails(None, None, None, None)))
         }
         case status@UNPROCESSABLE_ENTITY => {
-          logger.error(s"[GetPenaltyDetailsReads][read] Received 422 when trying to call GetPenaltyDetails - with body: ${response.body}")
+          logger.error(s"[GetPenaltyDetailsReads][read] Received 422 when trying to call GetPenaltyDetails")
           Left(GetPenaltyDetailsFailureResponse(status))
         }
         case _@status =>
-          logger.error(s"[GetPenaltyDetailsReads][read] Received unexpected response from GetPenaltyDetails, status code: $status and body: ${response.body}")
+          logger.error(s"[GetPenaltyDetailsReads][read] Received unexpected response from GetPenaltyDetails, status code: $status")
           Left(GetPenaltyDetailsFailureResponse(status))
       }
     }
