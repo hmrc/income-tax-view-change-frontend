@@ -55,7 +55,6 @@ class FeatureSwitchingSpec extends TestSupport with MockitoSugar {
     SubmitClaimToAdjustToNrs,
     TriggeredMigration,
     PostFinalisationAmendmentsR18,
-    `CY+1YouMustWaitToSignUpPageEnabled`,
     OverseasBusinessAddress,
     RecentActivity,
     MortgageEvidence,
