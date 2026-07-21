@@ -153,7 +153,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val wyoViewModel: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = dateService.getCurrentDate,
       hasOverdueOrAccruingInterestCharges = false,
-      hasCrystallisedInterest = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
@@ -212,7 +211,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     val wyoViewModelAgent: WhatYouOweViewModel = WhatYouOweViewModel(
       currentDate = currentDateIs,
       hasOverdueOrAccruingInterestCharges = false,
-      hasCrystallisedInterest = false,
       whatYouOweChargesList = charges,
       hasLpiWithDunningLock = hasLpiWithDunningLock,
       currentTaxYear = currentTaxYear,
