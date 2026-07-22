@@ -145,7 +145,6 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
-  // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
   def getChargeTypeKey: String = documentDescription match {
     case Some(poa1) if poa1.replace(" ", "") == Poa1Charge.key.replace(" ", "") => "paymentOnAccount1.text"
     case Some(poa2) if poa2.replace(" ", "") == Poa2Charge.key.replace(" ", "") => "paymentOnAccount2.text"

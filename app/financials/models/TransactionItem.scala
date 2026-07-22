@@ -44,9 +44,7 @@ trait TransactionItem {
       case _ => true
     }
   }
-
-  // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
-  // TODO: We should remove DocumentDetail.getChargeTypeKey and keep this method below as it is tied to ChargeItem
+  
   def getChargeTypeKey: String =
     (transactionType, codedOutStatus) match {
       case (PoaOneDebit, Some(Accepted))        => "poa1CodedOut.text"
