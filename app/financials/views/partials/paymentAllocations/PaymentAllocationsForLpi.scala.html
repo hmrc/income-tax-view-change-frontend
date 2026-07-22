@@ -31,10 +31,10 @@
             <td class="govuk-table__cell" id="payment-allocation-0">
                 @if(user.isAgent){
                     <a class="govuk-link" style="display:block" href="@{financialsRoutes.ChargeSummaryController.showAgent(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true)}" class="govuk-link">
-                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey}")
+                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getDocumentChargeTypeKey}")
                 } else {
                     <a class="govuk-link" style="display:block" href="@{financialsRoutes.ChargeSummaryController.show(lpiAllocationDetails.documentDetail.taxYear.toInt, lpiAllocationDetails.documentDetail.transactionId, true, origin)}" class="govuk-link">
-                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getChargeTypeKey}")
+                    @messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getDocumentChargeTypeKey}")
                 }
                 </a>
             </td>
