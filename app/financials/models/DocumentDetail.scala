@@ -119,7 +119,7 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
-  def isBalancingCharge: Boolean = getDocumentChargeTypeKey == "balancingCharge.text" 
+  def isBalancingCharge: Boolean = getDocumentChargeTypeKey == "balancingCharge.text"
 
   def isBalancingChargeZero: Boolean = {
     (isBalancingCharge, this.originalAmount) match {
