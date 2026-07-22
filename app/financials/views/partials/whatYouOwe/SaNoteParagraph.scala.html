@@ -80,14 +80,25 @@
             " " +
             getMessage("sa-note-1-body-3")))
 
-        @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
-            link(link = financials.controllers.routes.SelfServeTimeToPayController.fetchUrl().url,
-                messageKey = getMessage("sa-link-1-body-1"),
-                rel = Some("noreferrer noopener"),
-                target = Some("_blank")).toString() +
-            " " +
-            getMessage("sa-note-1-body-4")))
-}
+       @if(user.isAgent){
+            @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
+                    link(link = financials.controllers.routes.SelfServeTimeToPayController.agentFetchUrl().url,
+                        messageKey = getMessage("sa-link-1-body-1"),
+                        rel = Some("noreferrer noopener"),
+                        target = Some("_blank")).toString() +
+                    " " +
+                    getMessage("sa-note-1-body-4")))
+        } else {
+            @p(id = Some("sa-note-1-migrated-2"))(Html(getMessage("sa-note-1-body-2") +
+                        link(link = financials.controllers.routes.SelfServeTimeToPayController.fetchUrl().url,
+                            messageKey = getMessage("sa-link-1-body-1"),
+                            rel = Some("noreferrer noopener"),
+                            target = Some("_blank")).toString() +
+                        " " +
+                        getMessage("sa-note-1-body-4")))
+        }
+    }
+
     @if(!user.isAgent) {
             @h2(msg = getMessage("sa-note-2-heading"))
             @p(id = Some("sa-note-2-migrated")){
