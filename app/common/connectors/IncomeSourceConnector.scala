@@ -21,9 +21,11 @@ import common.config.FrontendAppConfig
 import common.models.audit.IncomeSourceDetailsResponseAuditModel
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
 import common.services.AuditingService
+import common.utils.sessionUtils.SessionKeys
 import play.api.Logger
 import play.api.http.Status.OK
-import play.api.http.{HeaderNames, Status}
+import play.api.http.Status
+import play.api.mvc.Request
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -46,16 +48,17 @@ class IncomeSourceConnector @Inject()(
   def modifyHeaderCarrier(
                            path: String,
                            headerCarrier: HeaderCarrier
-                         )(implicit appConfig: FrontendAppConfig): HeaderCarrier = {
+                         )(implicit appConfig: FrontendAppConfig, request: Request[_]): HeaderCarrier = {
 
     val manageBusinessesPattern = """.*/manage-your-businesses/.*""".r
     val incomeSourcesPattern    = """.*/income-sources/.*""".r
-    val confirmTriggeredMigrationUrl   = "/check-your-active-businesses/confirm"
-    val completedTriggeredMigrationUrl = "/check-your-active-businesses/complete"
 
-    val refererOpt = headerCarrier.extraHeaders.find(_._1.equalsIgnoreCase(HeaderNames.REFERER)).map(_._2)
-
-    if (refererOpt.exists(ref => ref.contains(confirmTriggeredMigrationUrl) || ref.contains(completedTriggeredMigrationUrl))) {
+    // After the user confirms migration, send the Gov-Test-Scenario: afterMigration header so local and staging
+    // environments return the post-migration stub data instead of the default response.
+    // The header is not included in production's headersAllowlist, so it is never forwarded downstream in production.
+    //
+    // To test the post-migration stub data in QA, add Gov-Test-Scenario to QA's headersAllowlist.
+    if (request.session.get(SessionKeys.triggeredMigrationConfirmed).contains("true")) {
       return checkAndAddTestHeader(path, headerCarrier, appConfig.triggeredMigrationOverrides(), "afterMigration")
     }
 
@@ -71,7 +74,7 @@ class IncomeSourceConnector @Inject()(
     val url = getIncomeSourcesUrl(mtdItUser.mtditId)
     Logger("application").debug(s"GET $url")
 
-    val hc: HeaderCarrier = modifyHeaderCarrier(mtdItUser.path, headerCarrier)(appConfig)
+    val hc: HeaderCarrier = modifyHeaderCarrier(mtdItUser.path, headerCarrier)(appConfig, mtdItUser)
 
     httpClient
       .get(url"$url")
