@@ -97,91 +97,91 @@ class DocumentDetailSpec extends UnitSpec {
       }
     }
 
-    "getChargeTypeKey" should {
+    "getDocumentChargeTypeKey" should {
 
       "return POA1" when {
         "when document description is ITSA- POA 1" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")).getChargeTypeKey shouldBe "paymentOnAccount1.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 1")).getDocumentChargeTypeKey shouldBe "paymentOnAccount1.text"
 
         }
       }
       "return POA2" when {
         "when document description is ITSA - POA 2" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 2")).getChargeTypeKey shouldBe "paymentOnAccount2.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- POA 2")).getDocumentChargeTypeKey shouldBe "paymentOnAccount2.text"
 
         }
       }
       "return unknown charge" when {
         "when document description is ITSA- XYZ" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- XYZ")).getChargeTypeKey shouldBe "unknownCharge"
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA- XYZ")).getDocumentChargeTypeKey shouldBe "unknownCharge"
         }
       }
       "return BCD" when {
         "when document description is TRM New Charge and is not coding out" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")).getChargeTypeKey shouldBe "balancingCharge.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge")).getDocumentChargeTypeKey shouldBe "balancingCharge.text"
         }
         "when document description is TRM Amend Charge and is not coding out" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge")).getChargeTypeKey shouldBe "balancingCharge.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge")).getDocumentChargeTypeKey shouldBe "balancingCharge.text"
         }
       }
       "return class 2 nics or BCD charge" when {
         "when document description is TRM New Charge and is class 2 nics" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_CLASS2_NICS)).getChargeTypeKey shouldBe "class2Nic.text"
+            documentText = Some(CODING_OUT_CLASS2_NICS)).getDocumentChargeTypeKey shouldBe "class2Nic.text"
         }
         "when document description is TRM Amend Charge, coding out is enabled and is class 2 nics" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_CLASS2_NICS)).getChargeTypeKey shouldBe "class2Nic.text"
+            documentText = Some(CODING_OUT_CLASS2_NICS)).getDocumentChargeTypeKey shouldBe "class2Nic.text"
         }
       }
       "return coding out text or BCD charge" when {
         "when document description is TRM New Charge and is paye self assessment" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_ACCEPTED)).getChargeTypeKey shouldBe "codingOut.text"
+            documentText = Some(CODING_OUT_ACCEPTED)).getDocumentChargeTypeKey shouldBe "codingOut.text"
         }
         "when document description is TRM Amend Charge, coding out is enabled and is paye self assessment" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_ACCEPTED)).getChargeTypeKey shouldBe "codingOut.text"
+            documentText = Some(CODING_OUT_ACCEPTED)).getDocumentChargeTypeKey shouldBe "codingOut.text"
         }
       }
       "return cancelled paye self assessment text or BCD charge" when {
         "when document description is TRM New Charge and is cancelled paye self assessment" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM New Charge"),
-            documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey shouldBe "cancelledPayeSelfAssessment.text"
+            documentText = Some(CODING_OUT_CANCELLED)).getDocumentChargeTypeKey shouldBe "cancelledPayeSelfAssessment.text"
         }
         "when document description is TRM Amend Charge, coding out is enabled and is cancelled paye self assessment" in {
           fullDocumentDetailModel.copy(documentDescription = Some("TRM Amend Charge"),
-            documentText = Some(CODING_OUT_CANCELLED)).getChargeTypeKey shouldBe "cancelledPayeSelfAssessment.text"
+            documentText = Some(CODING_OUT_CANCELLED)).getDocumentChargeTypeKey shouldBe "cancelledPayeSelfAssessment.text"
         }
       }
       "return POA 1 Reconciliation Debit" when {
         "document description is POA 1 Reconciliation Debit" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("POA 1 Reconciliation Debit")).getChargeTypeKey shouldBe "poa1ExtraCharge.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("POA 1 Reconciliation Debit")).getDocumentChargeTypeKey shouldBe "poa1ExtraCharge.text"
         }
       }
       "return POA 2 Reconciliation Debit" when {
         "document description is POA 2 Reconciliation Debit" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("POA 2 Reconciliation Debit")).getChargeTypeKey shouldBe "poa2ExtraCharge.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("POA 2 Reconciliation Debit")).getDocumentChargeTypeKey shouldBe "poa2ExtraCharge.text"
         }
       }
       "return Late submission penalty" when {
         "document description is LSP" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("LSP")).getChargeTypeKey shouldBe "lateSubmissionPenalty.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("LSP")).getDocumentChargeTypeKey shouldBe "lateSubmissionPenalty.text"
         }
       }
       "return Balancing charge" when {
         "document description is ITSA BCD" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("ITSA BCD")).getChargeTypeKey shouldBe "balancingCharge.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("ITSA BCD")).getDocumentChargeTypeKey shouldBe "balancingCharge.text"   
         }
       }
       "return First late payment penalty" when {
         "document description is LPP1" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("LPP1")).getChargeTypeKey shouldBe "firstLatePaymentPenalty.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("LPP1")).getDocumentChargeTypeKey shouldBe "firstLatePaymentPenalty.text"
         }
       }
       "return Second late payment penalty" when {
         "document description is LPP2" in {
-          fullDocumentDetailModel.copy(documentDescription = Some("LPP2")).getChargeTypeKey shouldBe "secondLatePaymentPenalty.text"
+          fullDocumentDetailModel.copy(documentDescription = Some("LPP2")).getDocumentChargeTypeKey shouldBe "secondLatePaymentPenalty.text"
         }
       }
     }
