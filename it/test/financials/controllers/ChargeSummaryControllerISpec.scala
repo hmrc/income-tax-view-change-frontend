@@ -18,8 +18,8 @@ package financials.controllers
 
 import common.auth.MtdItUser
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.servicemocks.AuditStub
 import common.helpers.GetInsourceDetailsStub
+import common.helpers.servicemocks.{AuditStub, YearOfMigrationStub}
 import common.models.admin.ChargeHistory
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino, testTaxYear, testTaxYearTyped}
 import common.testConstants.IncomeSourceIntegrationTestConstants.*
@@ -47,7 +47,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
     pathStart + s"/tax-years/$taxYear/charge"
   }
 
-  mtdAllRoles.foreach { case mtdUserRole =>
+  mtdAllRoles.foreach { mtdUserRole =>
     val path = getPath(mtdUserRole)
     val additionalCookies = getAdditionalCookies(mtdUserRole)
     s"GET $path" when {
@@ -64,6 +64,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJson(10.34, 1.2,
                     dunningLock = twoDunningLocks, interestLocks = twoInterestLocks))
                   FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                   val result = buildGETMTDClient(path +"?id=1040000124", additionalCookies).futureValue
 
@@ -91,6 +92,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                     dunningLock = oneDunningLock, interestLocks = twoInterestLocks, accruingInterestAmount = None,
                     dueDate = dateService.getCurrentDate.plusDays(20).toString))
                   FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                   val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
@@ -122,6 +124,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                       dateService.getCurrentDate.plusDays(20).toString)
                   FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, json)
                   FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                   val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
@@ -154,6 +157,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelJsonAccruingInterest(
                                   123.45, 1.2, latePaymentInterestAmount = Some(54.32)))
+                                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                                 val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
@@ -181,6 +185,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 stubAuthorised(mtdUserRole)
                                 GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                                 FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testValidFinancialDetailsModelWithPaymentAllocationJson(10.34, 0.0))
+                                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                                 val res = buildGETMTDClient(path +"?id=1040000123&isInterestCharge=true", additionalCookies).futureValue
 
@@ -223,6 +228,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                     )
                                   )))
                                 FinancialDetailsStub.stubGetPaymentAllocationResponse(testNino, "", "")(200, Json.obj())
+                                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                                 val res = buildGETMTDClient(path +"?id=1040001234&isInterestCharge=true", additionalCookies).futureValue
 
@@ -265,6 +271,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                       ))
                                     )
                                   )))
+                                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                                 val res = buildGETMTDClient(path +"?id=CODINGOUT01", additionalCookies).futureValue
 
@@ -287,6 +294,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                   FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
 
                   Given("the ChargeHistory feature switch is disabled")
+                  YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                   val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
@@ -312,6 +320,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                     |   "reason": "The remote endpoint has indicated that no match found for the reference provided."
                                     |}
                                     |""".stripMargin))
+                                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                                 val result = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
@@ -331,6 +340,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                     |   "reason": "The remote endpoint has indicated that request could not be processed."
                                     |}
                                     |""".stripMargin))
+                                YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                                 val result = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
@@ -346,6 +356,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                               GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                               FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsUnpaidMFA)
                               FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                               val res = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
@@ -380,6 +391,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                               GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                               FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, financialDetailsPaidMFA)
                               FinancialDetailsStub.stubChargeHistoryResponse(testNino, "ABCD1234")(OK, testChargeHistoryJson(testNino, "ABCD1234", 2500))
+                              YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                               val res = buildGETMTDClient(path +"?id=1", additionalCookies).futureValue
 
@@ -424,6 +436,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                                 |   "reason": "DES is currently experiencing problems that require live service intervention."
                                 |}
                                 |""".stripMargin))
+                            YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                             val result = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 
@@ -437,6 +450,7 @@ class ChargeSummaryControllerISpec extends ChargeSummaryISpecHelper {
                             stubAuthorised(mtdUserRole, List(ChargeHistory))
                             GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesAndPropertyResponse)
                             FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino)(OK, testFinancialDetailsModelWithMissingOriginalAmountJson())
+                            YearOfMigrationStub.stubGetYearOfMigration("2018")
 
                             val result = buildGETMTDClient(path +"?id=1040000123", additionalCookies).futureValue
 

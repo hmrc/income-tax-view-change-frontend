@@ -47,22 +47,6 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
     }
   }
   
-    //At this moment we are defaulting to 21-22 TY
-  def getTaxYears(futureYears: Boolean = true, history: Boolean = false)
-                 (implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[List[String]] = {
-    itsaStatusConnector.getITSAStatusDetail(
-      nino = user.nino,
-      taxYear = "21-22",
-      futureYears = futureYears,
-      history = history).flatMap {
-      case Right(itsaStatus) => Future.successful(itsaStatus.map(_.taxYear))
-      case Left(error) =>
-        Logger("application").error(s"$error")
-        Future.failed(new Exception("Failed to retrieve tax years from ITSAStatus"))
-    }
-  }
-
-  
   private def getStatusDetail(itsaStatusResponseModel: ITSAStatusResponseModel): Option[StatusDetail] = {
     itsaStatusResponseModel.itsaStatusDetails.flatMap(statusDetail => statusDetail.headOption)
   }

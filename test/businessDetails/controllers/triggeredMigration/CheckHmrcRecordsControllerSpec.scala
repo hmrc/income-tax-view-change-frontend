@@ -18,6 +18,8 @@ package businessDetails.controllers.triggeredMigration
 
 import businessDetails.core.IncomeSourceId
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
+import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import businessDetails.mocks.services.MockTriggeredMigrationService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
@@ -25,27 +27,32 @@ import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.models.admin.TriggeredMigration
-import common.services.DateServiceInterface
-import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeNoYearOfMigration
+import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.models.itsaStatus.ITSAStatusYearOfMigrationModel
+import common.services.{DateServiceInterface, YearOfMigrationService}
 import common.testConstants.BaseTestConstants.*
+import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeNoYearOfMigration
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+
 import play.api
 import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
-import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 
 import scala.concurrent.Future
+import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
 class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredMigrationService {
+
+  lazy val mockYearOfMigrationService = sMock[YearOfMigrationService]
 
   override lazy val app = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[TriggeredMigrationService].toInstance(mockTriggeredMigrationService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInterface),
-      api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector)
+      api.inject.bind[IncomeTaxCalculationConnector].toInstance(mockIncomeTaxCalculationConnector),
+      api.inject.bind[YearOfMigrationService].toInstance(mockYearOfMigrationService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[CheckHmrcRecordsController]
@@ -79,6 +86,8 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             mockItsaStatusRetrievalAction()
             mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel)
+            when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+              .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
             when(
               mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -95,6 +104,8 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             mockItsaStatusRetrievalAction()
             mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationCeased)))
+            when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+              .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
             when(
               mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())
@@ -111,6 +122,8 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             mockItsaStatusRetrievalAction()
             mockTriggeredMigrationRetrievalAction()
             mockGetCheckHmrcRecordsViewModel(testCheckHmrcRecordsViewModel.copy(triggeredMigrationState = Some(TriggeredMigrationAdded(SelfEmployment))))
+            when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+              .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
             when(
               mockIncomeSourceConnector.getIncomeSources()(ArgumentMatchers.any(), ArgumentMatchers.any())

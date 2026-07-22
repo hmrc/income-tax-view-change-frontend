@@ -20,7 +20,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.*
 import common.enums.GatewayPage.WhatYouOwePage
-import common.services.DateServiceInterface
+import common.services.{DateServiceInterface, YearOfMigrationService}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.WhatYouOweService
 import financials.forms.utils.SessionKeys.gatewayPage
@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class WhatYouOweController @Inject()(val authActions: AuthActions,
                                      val whatYouOweService: WhatYouOweService,
+                                     val yearOfMigrationService: YearOfMigrationService,
                                      val itvcErrorHandler: ItvcErrorHandler,
                                      val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                      implicit val dateService: DateServiceInterface,
@@ -52,13 +53,15 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-    whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, getTaxYearSummaryUrl(origin), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
-      case Some(viewModel) =>
-        Ok(whatYouOwe(viewModel, origin))
-          .addingToSession(gatewayPage -> WhatYouOwePage.name)
-      case None =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" + "Failed to create WhatYouOweViewModel")
-        itvcErrorHandler.showInternalServerError()
+    getMoneyInYourAccountUrl.flatMap { getMoneyInYourAccountUrl =>
+      whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, getTaxYearSummaryUrl(origin), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
+        case Some(viewModel) =>
+          Ok(whatYouOwe(viewModel, origin))
+            .addingToSession(gatewayPage -> WhatYouOwePage.name)
+        case None =>
+          Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" + "Failed to create WhatYouOweViewModel")
+          itvcErrorHandler.showInternalServerError()
+      }
     }
   } recover {
     case ex: Exception =>
@@ -86,12 +89,16 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
-  private def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (user.isAgent match {
-    case true if user.incomeSources.yearOfMigration.isDefined  => routes.MoneyInYourAccountController.showAgent()
-    case true                                                  => routes.NotMigratedUserController.showAgent()
-    case false if user.incomeSources.yearOfMigration.isDefined => routes.MoneyInYourAccountController.show()
-    case false                                                 => routes.NotMigratedUserController.show()
-  }).url
+  private[financials] def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): Future[String] = {
+    yearOfMigrationService.getYearOfMigration(user.nino).map(_.yearOfMigrationEndYear).map { yearOfMigration =>
+      (user.isAgent match {
+          case true if yearOfMigration.isDefined  => routes.MoneyInYourAccountController.showAgent()
+          case true                               => routes.NotMigratedUserController.showAgent()
+          case false if yearOfMigration.isDefined => routes.MoneyInYourAccountController.show()
+          case false                              => routes.NotMigratedUserController.show()
+      }).url
+    }
+  }
 
   private def getTaxYearSummaryUrl(origin: Option[String])(implicit user: MtdItUser[_]): Int => String = {
     //ToDo update this when the ReturnsFrontend feature switch is built

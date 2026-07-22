@@ -17,12 +17,13 @@
 package financials.controllers
 
 import common.connectors.ITSAStatusConnector
-import common.enums.{MTDIndividual, MTDSupportingAgent}
+import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
 import common.models.admin.{CreditsRefundsRepay, PenaltiesAndAppeals}
 import common.models.incomeSourceDetails.TaxYear
-import common.services.{DateService, DateServiceInterface}
+import common.models.itsaStatus.ITSAStatusYearOfMigrationModel
+import common.services.{DateService, DateServiceInterface, YearOfMigrationService}
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes.{ChargeSummaryController, MoneyInYourAccountController, PaymentController}
 import financials.forms.utils.SessionKeys.gatewayPage
@@ -43,16 +44,20 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import org.scalatestplus.mockito.MockitoSugar.mock => sMock
 
 class WhatYouOweControllerSpec extends MockAuthActions
   with ChargeConstants with MockDateService{
 
-  lazy val whatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
+  lazy val mockWhatYouOweService: WhatYouOweService = mock(classOf[WhatYouOweService])
   implicit val hc: HeaderCarrier = HeaderCarrier()
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
+  lazy val mockYearOfMigrationService = sMock[YearOfMigrationService]
+
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
-      api.inject.bind[WhatYouOweService].toInstance(whatYouOweService),
+      api.inject.bind[WhatYouOweService].toInstance(mockWhatYouOweService),
+      api.inject.bind[YearOfMigrationService].toInstance(mockYearOfMigrationService),
       api.inject.bind[DateService].toInstance(mockDateServiceInjected),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
       api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
@@ -129,8 +134,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
                    LPP2Url: String = "",
                    hasOverdueOrAccruingInterestCharges: Boolean = false,
                    poaTaxYear: Option[TaxYear] = None,
-                  //Todo Update this field to true when the FS is built
-                   returnsFrontendEnabled: Boolean = false
+                   returnsFrontendEnabled: Boolean = false,
+                   moneyInYourAccountUrlOpt: Option[String] = None,
                   ): WhatYouOweViewModel = WhatYouOweViewModel(
     currentDate = mockDateServiceInjected.getCurrentDate,
     hasOverdueOrAccruingInterestCharges = hasOverdueOrAccruingInterestCharges,
@@ -140,7 +145,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
     backUrl = "testBackURL",
     utr = Some("1234567890"),
     dunningLock = dunningLock,
-    moneyInYourAccountUrl = if (isAgent) MoneyInYourAccountController.showAgent().url else MoneyInYourAccountController.show().url,
+    moneyInYourAccountUrl = if (moneyInYourAccountUrlOpt.isDefined) moneyInYourAccountUrlOpt.get else {
+      if (isAgent) MoneyInYourAccountController.showAgent().url else MoneyInYourAccountController.show().url
+    },
     creditAndRefundEnabled = true,
     taxYearSummaryUrl = taxYearEnd => if (isAgent) {
       appConfig.returnsTaxYearSummaryAgentUrl(taxYearEnd, returnsFrontendEnabled = returnsFrontendEnabled)
@@ -191,12 +198,15 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
                 when(mockDateServiceInjected.getCurrentDate).thenReturn(fixedDate)
                 when(mockDateServiceInjected.getCurrentTaxYearEnd).thenReturn(fixedDate.getYear + 1)
+                when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+                  .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
+
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
                 result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
@@ -206,10 +216,12 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListEmpty))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
+                when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+                  .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
                 val result = action(fakeRequest)
                 status(result) shouldBe Status.OK
@@ -225,10 +237,12 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
                 mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
-                  .thenReturn(Future(Some(wyoViewModel(isAgent, whatYouOweWithAvailableCredits))))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(wyoViewModel(isAgent, whatYouOweWithAvailableCredits, moneyInYourAccountUrlOpt = Some("testMoneyInYourAccountUrl")))))
+                when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+                  .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
 
                 val result = action(fakeRequest)
@@ -237,6 +251,31 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 val doc: Document = Jsoup.parse(contentAsString(result))
                 Option(doc.getElementById("money-in-your-account")).isDefined shouldBe true
                 doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount")
+                doc.select("#money-in-your-account-content-link").attr("href") shouldBe "testMoneyInYourAccountUrl"
+              }
+
+              "the user has available credit in his account and CreditsRefundsRepay FS enabled with no year of migration" in {
+                def whatYouOweWithAvailableCredits: WhatYouOweChargesList = WhatYouOweChargesList(
+                  BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(300.00), None, None, Some(350.00), None, None, None), List.empty)
+
+                setupMockSuccess(mtdUserRole, false, List(CreditsRefundsRepay))
+                mockItsaStatusRetrievalAction()
+                mockSingleBISWithCurrentYearAsMigrationYear()
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                  .thenReturn(Future.successful(whatYouOweWithAvailableCredits))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                  .thenReturn(Future(Some(wyoViewModel(isAgent, whatYouOweWithAvailableCredits, moneyInYourAccountUrlOpt = Some("testMoneyInYourAccountUrl")))))
+                when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+                  .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(None)))
+
+
+                val result = action(fakeRequest)
+                status(result) shouldBe Status.OK
+                result.futureValue.session.get(gatewayPage) shouldBe Some("whatYouOwe")
+                val doc: Document = Jsoup.parse(contentAsString(result))
+                Option(doc.getElementById("money-in-your-account")).isDefined shouldBe true
+                doc.select("#money-in-your-account").select("div h2").text() shouldBe messages("whatYouOwe.moneyOnAccount")
+                doc.select("#money-in-your-account-content-link").attr("href") shouldBe "testMoneyInYourAccountUrl"
               }
             }
 
@@ -248,9 +287,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweWithZeroAvailableCredits))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, whatYouOweWithZeroAvailableCredits))))
 
 
@@ -270,9 +309,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
                 val poaModel: WYOClaimToAdjustViewModel = ctaViewModel(true, Some(TaxYear(2017, 2018)))
 
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, claimToAdjustViewModel = Some(poaModel)))))
 
 
@@ -284,9 +323,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockItsaStatusRetrievalAction()
                 mockSingleBISWithCurrentYearAsMigrationYear()
 
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListFull))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent))))
 
 
@@ -302,9 +341,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
 
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithReviewReconcile))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithReviewReconcile))))
 
                 val result = action(fakeRequest)
@@ -319,9 +358,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true))))
 
                 val result = action(fakeRequest)
@@ -334,9 +373,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithOverdueCharge))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithOverdueCharge, hasOverdueOrAccruingInterestCharges = true))))
 
                 val result = action(fakeRequest)
@@ -351,9 +390,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
                 mockSingleBISWithCurrentYearAsMigrationYear()
                 setupMockSuccess(mtdUserRole)
                 mockItsaStatusRetrievalAction()
-                when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                   .thenReturn(Future.successful(whatYouOweChargesListWithBalancingChargeNotOverdue))
-                when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+                when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                   .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithBalancingChargeNotOverdue))))
 
                 val result = action(fakeRequest)
@@ -367,9 +406,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
               setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLpp2))
-              when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(Some(wyoViewModel(isAgent, charges = whatYouOweChargesListWithLpp2))))
 
               val result = action(fakeRequest)
@@ -382,9 +421,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.failed(new Exception("failed to retrieve data")))
-              when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(None))
 
 
@@ -397,9 +436,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
               mockItsaStatusRetrievalAction()
               mockSingleBISWithCurrentYearAsMigrationYear()
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListFull))
-              when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(None))
 
               val result = action(fakeRequest)
@@ -411,9 +450,9 @@ class WhatYouOweControllerSpec extends MockAuthActions
               setupMockSuccess(mtdUserRole, false, List(PenaltiesAndAppeals))
               mockItsaStatusRetrievalAction()
 
-              when(whatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.getWhatYouOweChargesList(any(), any(), any())(any(), any()))
                 .thenReturn(Future.successful(whatYouOweChargesListWithLPP2NoChargeRef))
-              when(whatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
+              when(mockWhatYouOweService.createWhatYouOweViewModel(any(), any(), any(), any(), any(), any())(any(), any()))
                 .thenReturn(Future(None))
 
               val result = action(fakeRequest)
@@ -423,6 +462,32 @@ class WhatYouOweControllerSpec extends MockAuthActions
         }
       }
       testMTDAuthFailuresForRole(action, mtdUserRole, supportingAgentAccessAllowed = false)(fakeRequest)
+    }
+  }
+
+  "getMoneyInYourAccountUrl" should {
+    "return the correct url for an agent" in {
+      when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+        .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
+
+      val result = testController.getMoneyInYourAccountUrl(getAgentUser(fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)))
+      result.futureValue shouldBe routes.MoneyInYourAccountController.showAgent().url
+    }
+
+    "return the correct url for an individual" in {
+      when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+        .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
+
+      val result = testController.getMoneyInYourAccountUrl()
+      result.futureValue shouldBe routes.MoneyInYourAccountController.show().url
+    }
+
+    "return the correct url for an individual when no year of migration" in {
+      when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+        .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(None)))
+
+      val result = testController.getMoneyInYourAccountUrl()
+      result.futureValue shouldBe routes.NotMigratedUserController.show().url
     }
   }
 }
