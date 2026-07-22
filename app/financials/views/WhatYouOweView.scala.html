@@ -73,10 +73,10 @@
 ) {
     @h1(msg = getHeading, id = Some("page-heading"))
 
-    @if(viewModel.hasOverdueOrAccruingInterestCharges || viewModel.hasCrystallisedInterest) {
+    @if(viewModel.hasOverdueOrAccruingInterestCharges) {
         @govukWarningText(WarningText(
         attributes = Map("id" -> "interest-charges-warning"),
-        content = Text(getMessage("interestChargesWarning.crystallised"))
+        content = Text(getMessage("interestChargesWarning.accruingInterest"))
         ))
     }
 

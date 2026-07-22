@@ -158,9 +158,9 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       whatYouOweChargesList <- getWhatYouOweChargesList(isEnabled(PenaltiesAndAppeals), mainChargeIsNotPaidFilter)
       ctaViewModel <- claimToAdjustViewModel(Nino(user.nino))
       lpp2Url = getSecondLatePaymentPenaltyLink(whatYouOweChargesList.chargesList, user.isAgent)
-      hasOverdueCharges = whatYouOweChargesList.chargesList.exists(charge => charge.isOverdue()(dateService) && charge.isAccruingInterest)
       isAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isRARAccruingInterest()(dateService))
-      crystallisedInterestPresent = whatYouOweChargesList.chargesList.exists(_.hasCrystallisedInterest)
+      hasAccruingInterestCharges = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest)
+      startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney
     } yield lpp2Url match {
       case  None =>
         Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
@@ -170,8 +170,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
 
         Some(WhatYouOweViewModel(
           currentDate = dateService.getCurrentDate,
-          hasOverdueOrAccruingInterestCharges = hasOverdueCharges || isAccruingInterestRARCharges,
-          hasCrystallisedInterest = crystallisedInterestPresent,
+          hasOverdueOrAccruingInterestCharges = hasAccruingInterestCharges || isAccruingInterestRARCharges,
           whatYouOweChargesList = whatYouOweChargesList,
           hasLpiWithDunningLock = whatYouOweChargesList.hasLpiWithDunningLock,
           currentTaxYear = dateService.getCurrentTaxYearEnd,
