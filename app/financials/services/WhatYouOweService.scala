@@ -161,15 +161,11 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       isAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isRARAccruingInterest()(dateService))
       hasAccruingInterestCharges = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest)
       startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney
-    } yield (startUrl, lpp2Url) match {
-      case (Left(ex), _) =>
-        Logger("application").error(s"Unable to retrieve selfServeTimeToPayStartUrl: ${ex.getMessage} - ${ex.getCause}")
-        None
-      case (_, None) =>
+    } yield lpp2Url match {
+      case  None =>
         Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
         None
-      case (Right(startUrl), Some(lpp2Url)) =>
-
+      case Some(lpp2Url) =>
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList) (dateService))
 
         Some(WhatYouOweViewModel(
@@ -189,9 +185,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           adjustPoaUrl = adjustPoaUrl,
           chargeSummaryUrl = chargeSummaryUrl,
           paymentHandOffUrl = paymentHandOffUrl,
-          selfServeTimeToPayEnabled = isEnabled(SelfServeTimeToPayR17)(user),
-          selfServeTimeToPayStartUrl = startUrl
-        ))
+          selfServeTimeToPayEnabled = isEnabled(SelfServeTimeToPayR17)(user)))
     }
   }
 

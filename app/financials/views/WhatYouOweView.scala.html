@@ -54,7 +54,8 @@
 )
 @(
         viewModel: WhatYouOweViewModel,
-        origin: Option[String] = None
+        origin: Option[String] = None,
+        isSelfServeTimeToPayEnabled: Boolean
 )(
         implicit request: Request[_],
         user: MtdItUser[_],
@@ -236,8 +237,8 @@ format = Some("numeric")))
         }
 
         @saNoteParagraph(utr = viewModel.utr,
-            selfServeTimeToPayStartUrl = viewModel.selfServeTimeToPayStartUrl,
             budgetPaymentPlanUrl = ExternalUrlHelper.budgetPaymentPlanURL,
-            isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0)
+            isOverdueCharge = viewModel.whatYouOweChargesList.balanceDetails.overDueAmount > 0,
+            isSelfServeTimeToPayEnabled)
     }
 }

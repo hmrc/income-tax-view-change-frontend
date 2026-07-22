@@ -155,9 +155,7 @@ class WhatYouOweControllerSpec extends MockAuthActions
     else
       ChargeSummaryController.show(taxYearEnd, transactionId, isInterest, origin).url,
     paymentHandOffUrl = PaymentController.paymentHandoff(_, None).url,
-    selfServeTimeToPayEnabled = true,
-    selfServeTimeToPayStartUrl = "/self-serve-time-to-pay"
-  )
+    selfServeTimeToPayEnabled = true)
 
   val noFinancialDetailErrors = List(testFinancialDetail(2018))
   val hasFinancialDetailErrors = List(testFinancialDetail(2018), testFinancialDetailsErrorModel)
