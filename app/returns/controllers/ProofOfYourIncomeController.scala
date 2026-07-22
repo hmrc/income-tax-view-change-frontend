@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package hub.controllers.newHomePage
+package returns.controllers
 
 import common.auth.{AuthActions, MtdItUser}
-import common.config.featureswitch.FeatureSwitching
 import common.config.FrontendAppConfig
+import common.config.featureswitch.FeatureSwitching
 import common.models.admin.MortgageEvidence
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.{DateServiceInterface, ITSAStatusService}
-import hub.models.newHomePage.ProofOfYourIncomeCardViewModel
+import returns.views.html.partials.overview.ProofOfYourIncomeView
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
+import returns.models.ProofOfYourIncomeCardViewModel
+import returns.services.CalculationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import hub.views.html.partials.newHome.overview.ProofOfYourIncomeView
-import returns.services.CalculationService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,18 +48,18 @@ class ProofOfYourIncomeController @Inject()(val authActions: AuthActions,
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
       if (isEnabled(MortgageEvidence)) {
-        handleRequest(hub.controllers.routes.HomeController.show(origin).url, false)
+        handleRequest(appConfig.individualHomeUrlWithOrigin(origin), false)
       } else {
-        Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.show()))
+        Future.successful(Redirect(appConfig.individualYourTasksUrl))
       }
   }
 
   def showAgent(): Action[AnyContent] = authActions.asMTDAgentWithConfirmedClient().async {
     implicit mtdItUser =>
       if (isEnabled(MortgageEvidence)) {
-        handleRequest(hub.controllers.routes.HomeController.showAgent().url, true)
+        handleRequest(appConfig.agentHomeUrl, true)
       } else {
-        Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
+        Future.successful(Redirect(appConfig.agentYourTasksUrl))
       }
   }
 
