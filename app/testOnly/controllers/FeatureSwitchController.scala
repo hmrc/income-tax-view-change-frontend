@@ -140,7 +140,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       featureSwitches <- featureSwitchService.getAll()
       _ <- Future.sequence(
         featureSwitches.map { featureSwitch =>
-          val enabled = if featureSwitch.name == BusinessDetailsFrontend || featureSwitch.name == ObligationsFrontend then false else true
+          val enabled = true 
           featureSwitchService.set(featureSwitch.name, enabled = enabled)
         }
       )
