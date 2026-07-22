@@ -16,17 +16,18 @@
 
 package financials.controllers
 
-import common.auth.AuthActions
+import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.services.DateServiceInterface
 import financials.services.SelfServeTimeToPayService
 import play.api.Logger
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SelfServeTimeToPayController @Inject()(val authActions: AuthActions,
                                               val itvcErrorHandler: ItvcErrorHandler,
@@ -39,11 +40,24 @@ class SelfServeTimeToPayController @Inject()(val authActions: AuthActions,
 
   def fetchUrl(): Action[AnyContent] = authActions.asMTDIndividual().async {
     implicit user =>
+     handleRequest()
+  }
+
+  def agentFetchUrl(): Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
+    implicit user =>
+      handleRequest()
+  }
+
+  def handleRequest()(implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
       selfServeTimeToPayService.startSelfServeTimeToPayJourney.map {
-        case Left(value) => {
-          Logger("application").error(s"Unexpected future failed error")
-          itvcErrorHandler.showInternalServerError()
-        }
+        case Left(value) =>
+          if(user.isAgent){
+            Logger("application").error(s"Unexpected error")
+            itvcErrorHandlerAgent.showInternalServerError()
+          }else {
+            Logger("application").error(s"Unexpected error")
+            itvcErrorHandler.showInternalServerError()
+          }
         case Right(url) => SeeOther(url)
       }
   }
