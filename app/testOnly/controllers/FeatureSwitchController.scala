@@ -21,7 +21,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{FeatureSwitchName, InvalidFS}
 import common.services.admin.FeatureSwitchService
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
-import common.models.admin.{BusinessDetailsFrontend, ObligationsFrontend}
+import common.models.admin.{BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -91,12 +91,14 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
 
     //Team is in agreement that environments in app configs will be exactly as in prod, and we use test-only/feature-switch to change FS.
     val prodEnabledFsList: Set[String] = featureSwitchService.getFSListFromConfig.filter(_.isEnabled).map(_.name.name).toSet
+    
 
     def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
+      val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend)
       val subData: Set[String] =
         submittedData match {
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
-          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => (allFeatureSwitches -- Set(BusinessDetailsFrontend, ObligationsFrontend)).map(_.name)
+          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => (allFeatureSwitches -- newServices).map(_.name)
           case _ if submittedData.contains(PROD_FEATURES) => prodEnabledFsList
           case _ => submittedData
         }
