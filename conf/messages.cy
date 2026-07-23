@@ -1964,6 +1964,7 @@ whatYouOwe.tableHead.amount-due                                 = Swm
 whatYouOwe.tableHead.tax-year                                   = Crynodeb o’r flwyddyn dreth
 whatYouOwe.tableHead.interest                                   = Llog hyd yma
 whatYouOwe.tableRow.na                                          = Ddim yn berthnasol
+whatYouOwe.total-row.label                                      = Cyfanswm (heb gynnwys llog sy’n cronni):
 whatYouOwe.paymentOnAccount1.text							    = Taliad cyntaf ar gyfrif
 whatYouOwe.paymentOnAccount2.text							    = Ail daliad ar gyfrif
 whatYouOwe.reviewAndReconcilePoa1.text                          = Taliad cyntaf ar gyfrif: swm ychwanegol o’ch Ffurflen Dreth

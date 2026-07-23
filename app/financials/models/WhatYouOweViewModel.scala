@@ -37,7 +37,9 @@ case class WhatYouOweViewModel(currentDate: LocalDate,
                                adjustPoaUrl: String,
                                chargeSummaryUrl: (Int, String, Boolean, Option[String]) => String,
                                paymentHandOffUrl: Long => String,
-                               selfServeTimeToPayEnabled: Boolean)(implicit val dateServiceInterface: DateServiceInterface) {
+                               selfServeTimeToPayEnabled: Boolean,
+                               totalBalance: Option[BigDecimal] = None
+                              )(implicit val dateServiceInterface: DateServiceInterface) {
 
   val chargesListAndCodedOutDetailsAreEmpty: Boolean = whatYouOweChargesList.isChargesListEmpty && whatYouOweChargesList.codedOutDetails.isEmpty
 
