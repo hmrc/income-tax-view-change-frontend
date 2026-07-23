@@ -81,6 +81,8 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
   }
 
+  lazy val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend)
+
   // TODO: refactor next method
   def submit(): Action[AnyContent] = Action.async { implicit request =>
 
@@ -94,7 +96,6 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     
 
     def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
-      val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend)
       val subData: Set[String] =
         submittedData match {
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
@@ -140,7 +141,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       featureSwitches <- featureSwitchService.getAll()
       _ <- Future.sequence(
         featureSwitches.map { featureSwitch =>
-          val enabled = if featureSwitch.name == BusinessDetailsFrontend || featureSwitch.name == ObligationsFrontend then false else true
+          val enabled = !newServices.contains(featureSwitch.name)
           featureSwitchService.set(featureSwitch.name, enabled = enabled)
         }
       )
