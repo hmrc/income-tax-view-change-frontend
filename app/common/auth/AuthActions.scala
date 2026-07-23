@@ -35,7 +35,6 @@ class AuthActions @Inject()(
                              val agentIsPrimaryAction: AgentIsPrimaryAction,
                              val retrieveNavBar: NavBarRetrievalAction,
                              val incomeSourceRetrievalAction: IncomeSourceRetrievalAction,
-                             val itsaStatusRetrievalAction: ItsaStatusRetrievalAction,
                              val retrieveClientData: RetrieveClientData,
                              val retrieveFeatureSwitches: FeatureSwitchRetrievalAction,
                              val authoriseAndRetrieveIndividualForNrs: AuthoriseAndRetrieveIndividualForNrs,
@@ -49,8 +48,7 @@ class AuthActions @Inject()(
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividual andThen
       incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
-      itsaStatusRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       retrieveNavBar
   }
 
@@ -58,8 +56,7 @@ class AuthActions @Inject()(
     checkSessionTimeout andThen
       authoriseAndRetrieveIndividualForNrs andThen
       incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches andThen  // order of feature switch action prior to enable feature switching in itsaStatusRetrievalAction
-      itsaStatusRetrievalAction andThen
+      retrieveFeatureSwitches andThen
       retrieveNavBar
   }
 
@@ -73,8 +70,7 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentHasConfirmedClientAction andThen
       incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches andThen
-      itsaStatusRetrievalAction
+      retrieveFeatureSwitches
   }
 
   def asMTDAgentWithUnconfirmedClient: ActionBuilder[MtdItUser, AnyContent] = {
@@ -93,8 +89,7 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches andThen
-      itsaStatusRetrievalAction
+      retrieveFeatureSwitches
   }
   
   def asMTDPrimaryAgentForNrs: ActionBuilder[MtdItUser, AnyContent] = {
@@ -104,8 +99,7 @@ class AuthActions @Inject()(
       authoriseAndRetrieveMtdAgent andThen
       agentIsPrimaryAction andThen
       incomeSourceRetrievalAction andThen
-      retrieveFeatureSwitches andThen
-      itsaStatusRetrievalAction
+      retrieveFeatureSwitches
   }
 
   def asMTDIndividualWithIncomeSources(): ActionBuilder[MtdItUser, AnyContent] =

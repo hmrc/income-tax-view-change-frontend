@@ -16,18 +16,16 @@
 
 package common.config
 
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-
-import hub.controllers.agent.routes as hubAgentRoutes
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessRoutes
-import obligations.controllers.routes as obligationsRoutes
-import obligations.controllers.reportingObligations.routes as reportingObligationRoutes
-import obligations.controllers.reportingObligations.signUp.routes as signUpRoutes
+import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
+import hub.controllers.agent.routes as hubAgentRoutes
+import obligations.controllers.reportingObligations.routes as reportingObligationRoutes
+import obligations.controllers.routes as obligationsRoutes
+import play.api.Configuration
 import returns.controllers.routes as returnsRoutes
-import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait ExternalRedirectHelper {
 
@@ -63,18 +61,6 @@ trait ExternalRedirectHelper {
   
   lazy val obligationsBaseUrl: String = servicesConfig.getString("income-tax-obligations-frontend.baseUrl")
   lazy val obligationsAgentBaseUrl: String = s"$obligationsBaseUrl/agents"
-  
-  lazy val obligationsWaitToSignUpIndividualUrl: Boolean => String = newObligationsEnabled =>
-    if (newObligationsEnabled)
-      s"$obligationsBaseUrl/access-service-from-next-tax-year"
-    else
-      signUpRoutes.YouMustWaitToSignUpController.show(false).url
-
-  lazy val obligationsWaitToSignUpAgentUrl: Boolean => String = newObligationsEnabled =>
-    if (newObligationsEnabled)
-      s"$obligationsAgentBaseUrl/view-client-from-next-tax-year"
-    else
-      signUpRoutes.YouMustWaitToSignUpController.show(true).url
 
   def obligationsNextUpdatesUrl(isAgent: Boolean, newObligationsEnabled: Boolean): String =
     val newBaseUrl = if isAgent then obligationsAgentBaseUrl else obligationsBaseUrl
