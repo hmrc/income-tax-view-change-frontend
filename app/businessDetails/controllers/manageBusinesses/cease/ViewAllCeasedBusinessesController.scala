@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -28,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import businessDetails.controllers.manageBusinesses.routes as manageBusinessesRoutes
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
-import common.auth.MtdItUser
+import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.models.admin.DisplayBusinessStartDate
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -36,7 +35,7 @@ import shared.enums.JourneyType.Manage
 
 @Singleton
 class ViewAllCeasedBusinessesController @Inject()(val viewAllCeasedBusinesses: ViewAllCeasedBusinessesView,
-                                                  val authActions: AuthActionsWithTriggeredMigrationCheck,
+                                                  val authActions: AuthActions,
                                                   val incomeSourceDetailsService: IncomeSourceDetailsService,
                                                   val sessionService: SessionService,
                                                   val itvcErrorHandler: ItvcErrorHandler,

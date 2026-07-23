@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.enums.TriggeredMigration.TriggeredMigrationState
 import businessDetails.models.audit.TriggeredMigrationStartAuditModel
 import businessDetails.services.SessionService
@@ -27,6 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckHmrcRecordsView
+import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.services.AuditingService
 
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckHmrcRecordsController @Inject()(view: CheckHmrcRecordsView,
-                                           val auth: AuthActionsWithTriggeredMigrationCheck,
+                                           val auth: AuthActions,
                                            triggeredMigrationService: TriggeredMigrationService,
                                            sessionService: SessionService,
                                            auditingService: AuditingService)

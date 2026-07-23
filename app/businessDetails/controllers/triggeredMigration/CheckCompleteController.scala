@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.triggeredMigration
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.services.SessionService
 import businessDetails.utils.TriggeredMigrationUtils
 import com.google.inject.{Inject, Singleton}
@@ -24,6 +23,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.triggeredMigration.CheckCompleteView
+import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.models.admin.ObligationsFrontend
 
@@ -32,14 +32,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CheckCompleteController @Inject()(view: CheckCompleteView,
-                                        val auth: AuthActionsWithTriggeredMigrationCheck,
+                                        val auth: AuthActions,
                                         sessionService: SessionService)
                                        (mcc: MessagesControllerComponents,
                                         implicit val appConfig: FrontendAppConfig,
                                         implicit val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with TriggeredMigrationUtils {
 
-  def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent, triggeredMigrationPage = true).async { implicit user =>
+  def show(isAgent: Boolean): Action[AnyContent] = auth.asMTDIndividualOrAgentWithClient(isAgent).async { implicit user =>
     withTriggeredMigrationFS {
       val compatibleSoftwareLink: String = appConfig.compatibleSoftwareLink
 

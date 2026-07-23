@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, BusinessAddressModel}
 import com.google.inject.Singleton
@@ -26,7 +25,7 @@ import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.services.{AddressLookupService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
-import common.auth.MtdItUser
+import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.Mode
@@ -38,7 +37,7 @@ import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddBusinessAddressController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
+class AddBusinessAddressController @Inject()(val authActions: AuthActions,
                                              addressLookupService: AddressLookupService)
                                             (implicit
                                              val appConfig: FrontendAppConfig,

@@ -16,14 +16,13 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
 import businessDetails.forms.manageBusinesses.add.AddIncomeSourceStartDateFormProvider
 import businessDetails.models.incomeSourceDetails.AddIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
 import businessDetails.views.html.manageBusinesses.add.AddIncomeSourceStartDateView
-import common.auth.MtdItUser
+import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.core.{CheckMode, Mode, NormalMode}
@@ -41,7 +40,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
+class AddIncomeSourceStartDateController @Inject()(val authActions: AuthActions,
                                                    val addIncomeSourceStartDate: AddIncomeSourceStartDateView,
                                                    val customNotFoundErrorView: CustomNotFoundErrorView,
                                                    val sessionService: SessionService,
