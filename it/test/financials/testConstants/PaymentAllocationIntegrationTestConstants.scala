@@ -416,7 +416,7 @@ object PaymentAllocationIntegrationTestConstants {
       |				"paymentLot": "MA999991A",
       |				"paymentLotItem": "5",
       |				"effectiveDateOfPayment": "2021-01-31",
-      |				"statisticalFlag": false
+      |				"statisticalFlag": ""
       |			}
       |		],
       |		"financialDetails": [

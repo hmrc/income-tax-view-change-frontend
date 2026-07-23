@@ -299,9 +299,11 @@ object DocumentDetail {
               JsError("error.expected.validTaxYear")
           }
         }
+        .orElse((json \ "taxYear").validate[Int])
 
       transactionId <-
-        (json \ "documentID").validate[String]
+        (json \ "transactionId").validate[String]
+          .orElse((json \ "documentID").validate[String])
 
       formBundleNumber <-
         (json \ "formBundleNumber").validateOpt[String]
@@ -322,10 +324,12 @@ object DocumentDetail {
         (json \ "documentDescription").validateOpt[String]
 
       originalAmount <-
-        (json \ "totalAmount").validate[BigDecimal]
+        (json \ "originalAmount").validate[BigDecimal]
+          .orElse((json \ "totalAmount").validate[BigDecimal])
 
       outstandingAmount <-
-        (json \ "documentOutstandingAmount").validate[BigDecimal]
+        (json \ "outstandingAmount").validate[BigDecimal]
+          .orElse((json \ "documentOutstandingAmount").validate[BigDecimal])
 
       poaRelevantAmount <-
         (json \ "poaRelevantAmount").validateOpt[BigDecimal]
@@ -340,7 +344,7 @@ object DocumentDetail {
         (json \ "lastClearedAmount").validateOpt[BigDecimal]
 
       statisticalFlag <-
-        (json \ "statisticalFlag").validate[String]
+        (json \ "statisticalFlag").validateOpt[String].map(_.getOrElse(""))
 
       informationCode <-
         (json \ "informationCode").validateOpt[String]
@@ -367,7 +371,10 @@ object DocumentDetail {
         (json \ "interestEndDate").validateOpt[LocalDate]
 
       latePaymentInterestId <-
-        (json \ "latePaymentInterestID").validateOpt[String]
+        (json \ "latePaymentInterestId").validateOpt[String].flatMap {
+          case value@Some(_) => JsSuccess(value)
+          case None => (json \ "latePaymentInterestID").validateOpt[String]
+        }
 
       latePaymentInterestAmount <-
         (json \ "latePaymentInterestAmount").validateOpt[BigDecimal]

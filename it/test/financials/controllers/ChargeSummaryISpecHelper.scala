@@ -122,7 +122,7 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
         "documentText" -> "documentText",
         "documentDueDate" -> "2021-04-15",
         "formBundleNumber" -> "88888888",
-        "statisticalFlag" -> false,
+        "statisticalFlag" -> "",
         "paymentLot" -> "MA999991A",
         "paymentLotItem" -> "5",
         "effectiveDateOfPayment" -> "2018-03-30"
