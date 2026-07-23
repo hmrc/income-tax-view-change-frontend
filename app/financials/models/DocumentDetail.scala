@@ -17,36 +17,37 @@
 package financials.models
 
 import common.services.DateServiceInterface
-import shared.enums.CodingOutType.*
-import shared.enums.DocumentType.*
 import play.api.Logger
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{Json, Reads, Writes, __}
+import play.api.libs.json.{JsError, Reads, Writes, __}
+import shared.enums.CodingOutType.*
 import shared.enums.DocumentType
+import shared.enums.DocumentType.*
 
 import java.time.LocalDate
 
-case class DocumentDetail(taxYear: Int,
-                          transactionId: String,
-                          documentDescription: Option[String],
-                          documentText: Option[String],
-                          outstandingAmount: BigDecimal,
-                          originalAmount: BigDecimal,
-                          documentDate: LocalDate,
-                          interestOutstandingAmount: Option[BigDecimal] = None,
-                          interestRate: Option[BigDecimal] = None,
-                          latePaymentInterestId: Option[String] = None,
-                          latePaymentInterestAmount: Option[BigDecimal] = None,
-                          interestFromDate: Option[LocalDate] = None,
-                          interestEndDate: Option[LocalDate] = None,
-                          accruingInterestAmount: Option[BigDecimal] = None,
-                          lpiWithDunningLock: Option[BigDecimal] = None,
-                          paymentLotItem: Option[String] = None,
-                          paymentLot: Option[String] = None,
-                          effectiveDateOfPayment: Option[LocalDate] = None,
-                          amountCodedOut: Option[BigDecimal] = None,
-                          documentDueDate: Option[LocalDate] = None,
-                          poaRelevantAmount: Option[BigDecimal] = None
+case class DocumentDetail(
+                           taxYear: Int,
+                           transactionId: String,
+                           documentDescription: Option[String],
+                           documentText: Option[String],
+                           outstandingAmount: BigDecimal,
+                           originalAmount: BigDecimal,
+                           documentDate: LocalDate,
+                           interestOutstandingAmount: Option[BigDecimal] = None,
+                           interestRate: Option[BigDecimal] = None,
+                           latePaymentInterestId: Option[String] = None,
+                           latePaymentInterestAmount: Option[BigDecimal] = None,
+                           interestFromDate: Option[LocalDate] = None,
+                           interestEndDate: Option[LocalDate] = None,
+                           accruingInterestAmount: Option[BigDecimal] = None,
+                           lpiWithDunningLock: Option[BigDecimal] = None,
+                           paymentLotItem: Option[String] = None,
+                           paymentLot: Option[String] = None,
+                           effectiveDateOfPayment: Option[LocalDate] = None,
+                           amountCodedOut: Option[BigDecimal] = None,
+                           documentDueDate: Option[LocalDate] = None,
+                           poaRelevantAmount: Option[BigDecimal] = None
                          ) {
 
   def findTaxYear: Int = taxYear match {
@@ -206,19 +207,76 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
   }
 }
 
+
 object DocumentDetail {
-  implicit val writes: Writes[DocumentDetail] = Json.writes[DocumentDetail]
+
+  implicit val writes: Writes[DocumentDetail] = (
+    (__ \ "taxYear").write[String].contramap[Int](_.toString) and
+      (__ \ "documentID").write[String] and
+      (__ \ "documentDescription").writeNullable[String] and
+      (__ \ "documentText").writeNullable[String] and
+      (__ \ "documentOutstandingAmount").write[BigDecimal] and
+      (__ \ "totalAmount").write[BigDecimal] and
+      (__ \ "documentDate").write[LocalDate] and
+      (__ \ "interestOutstandingAmount").writeNullable[BigDecimal] and
+      (__ \ "interestRate").writeNullable[BigDecimal] and
+      (__ \ "latePaymentInterestID").writeNullable[String] and
+      (__ \ "latePaymentInterestAmount").writeNullable[BigDecimal] and
+      (__ \ "interestFromDate").writeNullable[LocalDate] and
+      (__ \ "interestEndDate").writeNullable[LocalDate] and
+      (__ \ "accruingInterestAmount").writeNullable[BigDecimal] and
+      (__ \ "lpiWithDunningLock").writeNullable[BigDecimal] and
+      (__ \ "paymentLotItem").writeNullable[String] and
+      (__ \ "paymentLot").writeNullable[String] and
+      (__ \ "effectiveDateOfPayment").writeNullable[LocalDate] and
+      (__ \ "amountCodedOut").writeNullable[BigDecimal] and
+      (__ \ "documentDueDate").writeNullable[LocalDate] and
+      (__ \ "poaRelevantAmount").writeNullable[BigDecimal]
+    )(detail =>
+    (
+      detail.taxYear,
+      detail.transactionId,
+      detail.documentDescription,
+      detail.documentText,
+      detail.outstandingAmount,
+      detail.originalAmount,
+      detail.documentDate,
+      detail.interestOutstandingAmount,
+      detail.interestRate,
+      detail.latePaymentInterestId,
+      detail.latePaymentInterestAmount,
+      detail.interestFromDate,
+      detail.interestEndDate,
+      detail.accruingInterestAmount,
+      detail.lpiWithDunningLock,
+      detail.paymentLotItem,
+      detail.paymentLot,
+      detail.effectiveDateOfPayment,
+      detail.amountCodedOut,
+      detail.documentDueDate,
+      detail.poaRelevantAmount
+    )
+  )
+
   implicit val reads: Reads[DocumentDetail] = (
-    (__ \ "taxYear").read[Int] and
-      (__ \ "transactionId").read[String] and
+    (__ \ "taxYear")
+      .read[String]
+      .flatMap {
+        case value if value.toIntOption.isDefined =>
+          Reads.pure(value.toInt)
+
+        case _ =>
+          Reads(_ => JsError("error.expected.validTaxYear"))
+      } and
+      (__ \ "documentID").read[String] and
       (__ \ "documentDescription").readNullable[String] and
       (__ \ "documentText").readNullable[String] and
-      (__ \ "outstandingAmount").read[BigDecimal] and
-      (__ \ "originalAmount").read[BigDecimal] and
+      (__ \ "documentOutstandingAmount").read[BigDecimal] and
+      (__ \ "totalAmount").read[BigDecimal] and
       (__ \ "documentDate").read[LocalDate] and
       (__ \ "interestOutstandingAmount").readNullable[BigDecimal] and
       (__ \ "interestRate").readNullable[BigDecimal] and
-      (__ \ "latePaymentInterestId").readNullable[String] and
+      (__ \ "latePaymentInterestID").readNullable[String] and
       (__ \ "latePaymentInterestAmount").readNullable[BigDecimal] and
       (__ \ "interestFromDate").readNullable[LocalDate] and
       (__ \ "interestEndDate").readNullable[LocalDate] and
