@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,25 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package financials.models
+@import _root_.shared.implicits.ImplicitCurrencyFormatter._
+@import common.views.html.components._
+@import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
 
-import common.models.incomeSourceDetails.TaxYear
+@this()
 
+@(
+totalAmount: BigDecimal
+)(
+implicit messages: Messages
+)
 
-case class WYOClaimToAdjustViewModel(poaTaxYear: Option[TaxYear]) {
-
-  val claimToAdjustTaxYear: Option[TaxYear] = poaTaxYear
-
-}
+<div id="what-you-owe-total-row" class="govuk-!-margin-top-0">
+    <span class="govuk-body govuk-!-font-weight-bold what-you-owe-total-row__label">
+        @getMessage("total-row.label")
+    </span>
+    <span class="govuk-body govuk-!-font-weight-bold what-you-owe-total-row__amount">
+        @totalAmount.toCurrency
+    </span>
+</div>

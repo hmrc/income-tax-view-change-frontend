@@ -147,6 +147,12 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       .sortBy(_.dueDate.get)
   }
 
+  private[services] def getTotalBalance(whatYouOweChargesList: WhatYouOweChargesList): Option[BigDecimal] = {
+    val totalBalance = whatYouOweChargesList.balanceDetails.totalBalance
+    whatYouOweChargesList.outstandingChargesModel
+      .fold(if (totalBalance > 0) Some(totalBalance) else None)(_ => None)
+  }
+
   def createWhatYouOweViewModel(backUrl: String,
                                 moneyInYourAccountUrl: String,
                                 taxYearSummaryUrl: Int => String,
@@ -161,6 +167,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       isAccruingInterestRARCharges = whatYouOweChargesList.chargesList.exists(_.isRARAccruingInterest()(dateService))
       hasAccruingInterestCharges = whatYouOweChargesList.chargesList.exists(_.isAccruingInterest)
       startUrl <- selfServeTimeToPayService.startSelfServeTimeToPayJourney
+      optTotalBalance = getTotalBalance(whatYouOweChargesList)
     } yield lpp2Url match {
       case  None =>
         Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
@@ -185,7 +192,9 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
           adjustPoaUrl = adjustPoaUrl,
           chargeSummaryUrl = chargeSummaryUrl,
           paymentHandOffUrl = paymentHandOffUrl,
-          selfServeTimeToPayEnabled = isEnabled(SelfServeTimeToPayR17)(user)))
+          selfServeTimeToPayEnabled = isEnabled(SelfServeTimeToPayR17)(user),
+          totalBalance = optTotalBalance
+        ))
     }
   }
 

@@ -356,5 +356,62 @@ class WhatYouOweServiceSpec extends TestSupport with FeatureSwitching with Charg
       ChargeItem.isAKnownTypeOfCharge(chargeItemModel(transactionType = MfaDebitCharge))
     }
   }
+
+  "WhatYouOweService.getTotalBalance method" when {
+    val chargesListWithPositiveBalance: WhatYouOweChargesList =
+      whatYouOweDataWithDataDueInMoreThan30Days()
+        .copy(balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 250.00, None, None, None, None, None, None, None))
+
+    val chargesListWithPositiveBalanceAndNoOutstandingCharges: WhatYouOweChargesList =
+      chargesListWithPositiveBalance.copy(outstandingChargesModel = None)
+
+    val chargesListWithZeroBalance: WhatYouOweChargesList =
+      chargesListWithPositiveBalance.copy(
+        balanceDetails = chargesListWithPositiveBalance.balanceDetails.copy(totalBalance = 0.00)
+      )
+
+    val chargesListWithZeroBalanceAndNoOutstandingCharges: WhatYouOweChargesList =
+      chargesListWithZeroBalance.copy(outstandingChargesModel = None)
+
+
+    "the user has a year of migration and a UTR" when {
+
+      "there are no outstanding charges and the total balance is greater than zero" should {
+        "return the total balance" in {
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+          TestWhatYouOweService.getTotalBalance(chargesListWithPositiveBalanceAndNoOutstandingCharges) shouldBe Some(BigDecimal(250.00))
+        }
+      }
+
+      "there are no outstanding charges but the total balance is zero" should {
+        "return None" in {
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(OutstandingChargesErrorModel(404, "NOT_FOUND")))
+          TestWhatYouOweService.getTotalBalance(chargesListWithZeroBalanceAndNoOutstandingCharges) shouldBe None
+        }
+      }
+
+      "there are outstanding charges present" should {
+        "return None regardless of the total balance" in {
+          when(mockOutstandingChargesConnector.getOutstandingCharges(any(), any(), any())(any()))
+            .thenReturn(Future.successful(outstandingChargesDueInMoreThan30Days))
+          TestWhatYouOweService.getTotalBalance(chargesListWithPositiveBalance) shouldBe None
+        }
+      }
+    }
+
+    "the user has no year of migration" should {
+      "return None without calling the outstanding charges connector" in {
+        TestWhatYouOweService.getTotalBalance(chargesListWithPositiveBalance) shouldBe None
+      }
+    }
+
+    "the user has no UTR" should {
+      "return None without calling the outstanding charges connector" in {
+        TestWhatYouOweService.getTotalBalance(chargesListWithPositiveBalance) shouldBe None
+      }
+    }
+  }
 }
 
