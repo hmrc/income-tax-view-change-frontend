@@ -471,7 +471,8 @@ object FinancialDetailsTestConstants {
                           transactionId: String = id1040000123,
                           lpiWithDunningLock: Option[BigDecimal] = Some(100),
                           effectiveDateOfPayment: Option[LocalDate] = Some(LocalDate.of(2019, 5, 15)),
-                          amountCodedOut: Option[BigDecimal] = None): DocumentDetail =
+                          amountCodedOut: Option[BigDecimal] = None,
+                          chargeClassification: Option[String] = None): DocumentDetail =
     DocumentDetail(
       taxYear = taxYear,
       transactionId = transactionId,
@@ -491,7 +492,8 @@ object FinancialDetailsTestConstants {
       paymentLotItem = paymentLotItem,
       paymentLot = paymentLot,
       effectiveDateOfPayment = effectiveDateOfPayment,
-      amountCodedOut = amountCodedOut
+      amountCodedOut = amountCodedOut,
+      chargeClassification = chargeClassification
     )
 
   def financialDetail(taxYear: Int = 2018,
@@ -574,6 +576,7 @@ object FinancialDetailsTestConstants {
   val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
   val fullFinancialDetailModel: FinancialDetail = financialDetail()
   val fullDocumentDetailWithDueDateModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
+  val documentDetailModelWithRevenueAmendment: DocumentDetail = documentDetailModel(chargeClassification = Some("RA"))
 
   def financialDetails(balanceDetails: BalanceDetails = balanceDetails,
                        documentDetails: DocumentDetail = documentDetailModel(),

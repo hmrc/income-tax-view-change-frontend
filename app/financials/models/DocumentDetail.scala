@@ -45,6 +45,7 @@ case class DocumentDetail(taxYear: Int,
                           paymentLot: Option[String] = None,
                           effectiveDateOfPayment: Option[LocalDate] = None,
                           amountCodedOut: Option[BigDecimal] = None,
+                          chargeClassification: Option[String] = None,
                           documentDueDate: Option[LocalDate] = None,
                           poaRelevantAmount: Option[BigDecimal] = None
                          ) {
@@ -187,6 +188,12 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
+  def isRevenueAmendment: Boolean =
+    chargeClassification match {
+      case Some("RA") => true
+      case _ => false
+    }
+
 }
 
 
@@ -228,6 +235,7 @@ object DocumentDetail {
       (__ \ "paymentLot").readNullable[String] and
       (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
       (__ \ "amountCodedOut").readNullable[BigDecimal] and
+      (__ \ "chargeClassification").readNullable[String] and
       (__ \ "documentDueDate").readNullable[LocalDate] and
       (__ \ "poaRelevantAmount").readNullable[BigDecimal]
     )(DocumentDetail.apply _)

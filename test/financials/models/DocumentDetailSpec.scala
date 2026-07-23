@@ -19,7 +19,7 @@ package financials.models
 import common.testUtils.UnitSpec
 import shared.enums.CodingOutType.*
 import shared.enums.DocumentType.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
-import financials.testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
+import financials.testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, documentDetailModelWithRevenueAmendment, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 
 import java.time.LocalDate
 
@@ -340,6 +340,19 @@ class DocumentDetailSpec extends UnitSpec {
   "isAccruingInterest" should {
     "false when isReviewAndReconcileDebit is false with outstanding amount unpaid and obligations is still due" in {
       fullDocumentDetailWithDueDateModel.isAccruingInterest shouldBe false
+    }
+  }
+
+  "isRevenueAmendment" should {
+    "return true" when {
+      "the chargeClassification is RA" in {
+        documentDetailModelWithRevenueAmendment.isRevenueAmendment shouldBe true
+      }
+    }
+    "return false" when {
+      "the chargeClassification is not present" in {
+        fullDocumentDetailModel.isRevenueAmendment shouldBe false
+      }
     }
   }
 
