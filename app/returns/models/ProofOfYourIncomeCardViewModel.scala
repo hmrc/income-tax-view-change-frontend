@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package hub.models.newHomePage
+package returns.models
 
 import play.api.i18n.Messages
 

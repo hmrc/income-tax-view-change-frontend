@@ -39,3 +39,6 @@ GET         /agents/:taxYear/forecast-income                              return
 #Forecast Tax Calc Summary
 GET         /:taxYear/forecast-tax-calculation                            returns.controllers.ForecastTaxCalcSummaryController.show(taxYear: Int, origin: Option[String] ?= None)
 GET         /agents/:taxYear/forecast-tax-calculation                     returns.controllers.ForecastTaxCalcSummaryController.showAgent(taxYear: Int)
+
+GET         /mortgage-evidence/proof-of-income                            returns.controllers.ProofOfYourIncomeController.show(origin: Option[String] ?= None)
+GET         /agents/mortgage-evidence/proof-of-income                     returns.controllers.ProofOfYourIncomeController.showAgent()

@@ -14,9 +14,6 @@ GET         /agents/client-income-tax                                     hub.co
 GET         /agents                                                       hub.controllers.HomeController.showAgent()
 GET         /your-tasks                                                   hub.controllers.newHomePage.HandleYourTasksController.show()
 GET         /agents/your-tasks                                            hub.controllers.newHomePage.HandleYourTasksController.showAgent()
-GET         /mortgage-evidence/proof-of-income                            hub.controllers.newHomePage.ProofOfYourIncomeController.show(origin: Option[String] ?= None)
-GET         /agents/mortgage-evidence/proof-of-income                     hub.controllers.newHomePage.ProofOfYourIncomeController.showAgent()
-
 
 GET         /recent-activity                                              hub.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = false, origin: Option[String] ?= None)
 GET         /agents/recent-activity                                       hub.controllers.newHomePage.RecentActivityController.show(isAgent: Boolean = true, origin: Option[String] ?= None)
