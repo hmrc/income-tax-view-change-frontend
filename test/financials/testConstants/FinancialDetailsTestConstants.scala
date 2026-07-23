@@ -33,22 +33,22 @@ import java.time.LocalDate
 
 object FinancialDetailsTestConstants {
 
-  val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
+  lazy val fixedDate: LocalDate = LocalDate.of(2023, 12, 15)
 
-  val fixedDateTwo: LocalDate = LocalDate.of(2018, 12, 15)
+  lazy val fixedDateTwo: LocalDate = LocalDate.of(2018, 12, 15)
 
-  val futureFixedDate: LocalDate = LocalDate.of(2030, 3, 12)
+  lazy val futureFixedDate: LocalDate = LocalDate.of(2030, 3, 12)
 
   implicit val dateService: DateService = app.injector.instanceOf[DateService]
 
-  val id1040000123 = "1040000123"
-  val id1040000124 = "1040000124"
-  val id1040000125 = "1040000125"
-  val id1040000126 = "1040000126"
-  val id1040000127 = "1040000127"
-  val codingout = "CODINGOUT01"
+  lazy val id1040000123 = "1040000123"
+  lazy val id1040000124 = "1040000124"
+  lazy val id1040000125 = "1040000125"
+  lazy val id1040000126 = "1040000126"
+  lazy val id1040000127 = "1040000127"
+  lazy val codingout = "CODINGOUT01"
 
-  val testValidFinancialDetailsModelJsonWrites: JsValue = Json.obj(
+  lazy val testValidFinancialDetailsModelJsonWrites: JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
@@ -160,7 +160,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val testValidFinancialDetailsModelJsonReads: JsValue = Json.obj(
+  lazy val testValidFinancialDetailsModelJsonReads: JsValue = Json.obj(
     "balanceDetails" -> Json.obj(
       "balanceDueWithin30Days" -> 1.00,
       "overDueAmount" -> 2.00,
@@ -273,7 +273,7 @@ object FinancialDetailsTestConstants {
   )
 
 
-  val testValidFinancialDetailsLpiModelJson: JsValue = Json.obj(
+  lazy val testValidFinancialDetailsLpiModelJson: JsValue = Json.obj(
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> "2019",
@@ -367,7 +367,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val testValidFinancialDetailsNoLpiModelJson: JsValue = Json.obj(
+  lazy val testValidFinancialDetailsNoLpiModelJson: JsValue = Json.obj(
     "documentDetails" -> Json.arr(
       Json.obj(
         "taxYear" -> "2019",
@@ -551,7 +551,7 @@ object FinancialDetailsTestConstants {
       originalAmount = originalAmount, documentText = documentText, transactionId = transactionId, paymentLot = paymentLot, paymentLotItem = paymentLotItem,
       accruingInterestAmount = accruingInterestAmount, documentDueDate = dueDate), dueDate = dueDate, isMFADebit = isMFADebit)
 
-  val balanceDetails: BalanceDetails = BalanceDetails(
+  lazy val balanceDetails: BalanceDetails = BalanceDetails(
     balanceDueWithin30Days = 1.00,
     overDueAmount = 2.00,
     balanceNotDuein30Days = 0.00,
@@ -565,15 +565,15 @@ object FinancialDetailsTestConstants {
     None
   )
 
-  val documentDetailPOA1: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 1"))
-  val documentDetailPOA2: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 2"))
-  val documentDetailBalancingCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"))
-  val documentDetailAmendedBalCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM Amend Charge"))
-  val documentDetailClass2Nic: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS), paymentLot = None, accruingInterestAmount = None)
-  val documentDetailPaye: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED), paymentLot = None, accruingInterestAmount = None)
-  val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
-  val fullFinancialDetailModel: FinancialDetail = financialDetail()
-  val fullDocumentDetailWithDueDateModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
+  lazy val documentDetailPOA1: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 1"))
+  lazy val documentDetailPOA2: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("ITSA- POA 2"))
+  lazy val documentDetailBalancingCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"))
+  lazy val documentDetailAmendedBalCharge: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM Amend Charge"))
+  lazy val documentDetailClass2Nic: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_CLASS2_NICS), paymentLot = None, accruingInterestAmount = None)
+  lazy val documentDetailPaye: DocumentDetailWithDueDate = documentDetailWithDueDateModel(documentDescription = Some("TRM New Charge"), documentText = Some(CODING_OUT_ACCEPTED), paymentLot = None, accruingInterestAmount = None)
+  lazy val fullDocumentDetailModel: DocumentDetail = documentDetailModel()
+  lazy val fullFinancialDetailModel: FinancialDetail = financialDetail()
+  lazy val fullDocumentDetailWithDueDateModel: DocumentDetailWithDueDate = DocumentDetailWithDueDate(fullDocumentDetailModel, Some(LocalDate.of(2019, 5, 15)))
 
   def financialDetails(balanceDetails: BalanceDetails = balanceDetails,
                        documentDetails: DocumentDetail = documentDetailModel(),
@@ -794,7 +794,7 @@ object FinancialDetailsTestConstants {
           chargeType = "Cutover Credits"))
     )
 
-  val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val testValidFinancialDetailsModel: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 4.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -893,7 +893,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val testValidFinancialDetailsModelWithBalancingCharge: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val testValidFinancialDetailsModelWithBalancingCharge: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -948,7 +948,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val testValidFinancialDetailsModelWithITSAReturnAmendment: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val testValidFinancialDetailsModelWithITSAReturnAmendment: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -1003,7 +1003,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val testValidFinancialDetailsModelWithLateSubmissionPenalty: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val testValidFinancialDetailsModelWithLateSubmissionPenalty: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -1059,7 +1059,7 @@ object FinancialDetailsTestConstants {
   )
 
 
-  val testValidFinancialDetailsModelWithLspCrystallisedInterest: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val testValidFinancialDetailsModelWithLspCrystallisedInterest: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -1114,7 +1114,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val testValidFinancialDetailsModelWithLatePaymentPenalty: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val testValidFinancialDetailsModelWithLatePaymentPenalty: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2021,
@@ -1169,7 +1169,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val testValidFinancialDetailsModelWithBalancingChargeWithAccruingInterest: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -1224,7 +1224,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val testValidFinancialDetailsModelWithBalancingChargeWithCrystallisedInterest: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val testValidFinancialDetailsModelWithBalancingChargeWithCrystallisedInterest: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
     documentDetails = List(
       DocumentDetail(taxYear = 2019,
@@ -1279,17 +1279,17 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val noDunningLocks: List[Option[String]] = List(None, None)
-  val oneDunningLock: List[Option[String]] = List(Some("Stand over order"), None)
-  val twoDunningLocks: List[Option[String]] = List(Some("Stand over order"), Some("Stand over order"))
+  lazy val noDunningLocks: List[Option[String]] = List(None, None)
+  lazy val oneDunningLock: List[Option[String]] = List(Some("Stand over order"), None)
+  lazy val twoDunningLocks: List[Option[String]] = List(Some("Stand over order"), Some("Stand over order"))
 
-  val dueDateMoreThan30Days: List[Option[LocalDate]] = List(Some(fixedDate.plusDays(45)), Some(fixedDate.plusDays(50)))
-  val dueDateDueIn30Days: List[Option[LocalDate]] = List(Some(fixedDate), Some(fixedDate.plusDays(1)))
+  lazy val dueDateMoreThan30Days: List[Option[LocalDate]] = List(Some(fixedDate.plusDays(45)), Some(fixedDate.plusDays(50)))
+  lazy val dueDateDueIn30Days: List[Option[LocalDate]] = List(Some(fixedDate), Some(fixedDate.plusDays(1)))
 
-  val dueDateOverdue: List[Option[LocalDate]] = List(Some(fixedDate.minusDays(10)), Some(fixedDate.minusDays(1)))
+  lazy val dueDateOverdue: List[Option[LocalDate]] = List(Some(fixedDate.minusDays(10)), Some(fixedDate.minusDays(1)))
 
-  val currentYear: String = fixedDate.getYear.toString
-  val currentYearMinusOne: String = (fixedDate.getYear - 1).toString
+  lazy val currentYear: String = fixedDate.getYear.toString
+  lazy val currentYearMinusOne: String = (fixedDate.getYear - 1).toString
 
   private def testFinancialDetailsModel(dueDate: List[Option[LocalDate]],
                                         dunningLock: List[Option[String]],
@@ -1699,7 +1699,7 @@ object FinancialDetailsTestConstants {
         FinancialDetail(taxYear, mainType(1), mainTransaction(1), Some(id1040000124), Some(LocalDate.parse("2022-08-16")), chargeReference = chargeReference(1), Some("type"), Some(100), Some(100), Some(100), Some(100), Some(NIC4_WALES), Some(100), Some(Seq(SubItem(dueDate(1)))))
       )
     )
-  val testFinancialDetailsModelWithReviewAndReconcileAndPoas: FinancialDetailsModel =
+  lazy val testFinancialDetailsModelWithReviewAndReconcileAndPoas: FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
@@ -1718,7 +1718,7 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  val testFinancialDetailsModelWithReviewAndReconcileInterest: FinancialDetailsModel =
+  lazy val testFinancialDetailsModelWithReviewAndReconcileInterest: FinancialDetailsModel =
     FinancialDetailsModel(
       balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, None, None, None, None, None, None, None),
       documentDetails = List(
@@ -1757,33 +1757,33 @@ object FinancialDetailsTestConstants {
       )
     )
 
-  val testInvalidFinancialDetailsJson: JsValue = Json.obj(
+  lazy val testInvalidFinancialDetailsJson: JsValue = Json.obj(
     "amount" -> "invalidAmount",
     "payMethod" -> "Payment by Card",
     "valDate" -> "2019-05-27"
   )
 
-  val testFinancialDetailsErrorModelParsing: FinancialDetailsErrorModel = FinancialDetailsErrorModel(
+  lazy val testFinancialDetailsErrorModelParsing: FinancialDetailsErrorModel = FinancialDetailsErrorModel(
     testErrorStatus, "Json Validation Error. Parsing FinancialDetails Data Response")
 
-  val testFinancialDetailsErrorModel: FinancialDetailsErrorModel = FinancialDetailsErrorModel(testErrorStatus, testErrorMessage)
-  val testFinancialDetailsErrorModelJson: JsValue = Json.obj(
+  lazy val testFinancialDetailsErrorModel: FinancialDetailsErrorModel = FinancialDetailsErrorModel(testErrorStatus, testErrorMessage)
+  lazy val testFinancialDetailsErrorModelJson: JsValue = Json.obj(
     "code" -> testErrorStatus,
     "message" -> testErrorMessage
   )
 
-  val testFinancialDetailsNotFoundErrorModel: FinancialDetailsErrorModel = FinancialDetailsErrorModel(testErrorNotFoundStatus, testErrorMessage)
+  lazy val testFinancialDetailsNotFoundErrorModel: FinancialDetailsErrorModel = FinancialDetailsErrorModel(testErrorNotFoundStatus, testErrorMessage)
 
 
   def outstandingChargesModel(dueDate: LocalDate, aciAmount: BigDecimal = 12.67): OutstandingChargesModel = OutstandingChargesModel(
     List(OutstandingChargeModel("BCD", Some(dueDate), 123456.67, 1234), OutstandingChargeModel("ACI", None, aciAmount, 1234))
   )
 
-  val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusDays(30))
+  lazy val outstandingChargesOverdueData: OutstandingChargesModel = outstandingChargesModel(fixedDate.minusDays(30))
 
-  val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(fixedDate.plusDays(35))
+  lazy val outstandingChargesDueInMoreThan30Days: OutstandingChargesModel = outstandingChargesModel(fixedDate.plusDays(35))
 
-  val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(fixedDate.plusDays(30))
+  lazy val outstandingChargesDueIn30Days: OutstandingChargesModel = outstandingChargesModel(fixedDate.plusDays(30))
 
   def financialDetailsDueInMoreThan30Days(dunningLocks: List[Option[String]] = noDunningLocks): FinancialDetailsModel = testFinancialDetailsModel(
     dueDate = dueDateMoreThan30Days,
@@ -1809,7 +1809,7 @@ object FinancialDetailsTestConstants {
       dunningLock = dunningLocks
     )
 //
-  val financialDetailsBalancingCharges: FinancialDetailsModel = testFinancialDetailsModel(
+  lazy val financialDetailsBalancingCharges: FinancialDetailsModel = testFinancialDetailsModel(
     documentDescription = List(Some("TRM New Charge"), Some("TRM Amend Charge")),
     mainType = List(Some("SA Balancing Charge"), Some("SA Balancing Charge")),
     mainTransaction = List(Some("4910"), Some("4910")),
@@ -1817,7 +1817,7 @@ object FinancialDetailsTestConstants {
     dunningLock = noDunningLocks
   )
 
-  val financialDetailsMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsMFADebits: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("TRM New Charge"), Some("TRM New Charge")),
     mainType = List(Some("ITSA PAYE Charge"), Some("ITSA Calc Error Correction")),
     mainTransaction = List(Some("4000"), Some("4001")),
@@ -1830,7 +1830,7 @@ object FinancialDetailsTestConstants {
   )
 //
 
-  val financialDetailsReviewAndReconcile: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsReviewAndReconcile: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
     mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
     mainTransaction = List(Some("4911"), Some("4913")),
@@ -1839,7 +1839,7 @@ object FinancialDetailsTestConstants {
     taxYear = fixedDate.getYear.toString,
     accruingInterestAmount = List(None, None)
   )
-  val financialDetailsReviewAndReconcileNotYetDue: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsReviewAndReconcileNotYetDue: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
     mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
     mainTransaction = List(Some("4911"), Some("4913")),
@@ -1848,7 +1848,7 @@ object FinancialDetailsTestConstants {
     taxYear = fixedDate.getYear.toString,
     accruingInterestAmount = List(None, None)
   )
-  val financialDetailsReviewAndReconcileInterest: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsReviewAndReconcileInterest: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("SA POA 2 Reconciliation Debit")),
     mainType = List(Some("SA POA 1 Reconciliation"), Some("SA POA 2 Reconciliation")),
     mainTransaction = List(Some("4911"), Some("4913")),
@@ -1861,7 +1861,7 @@ object FinancialDetailsTestConstants {
     lpiWithDunningLock = List(None, None)
   )
 
-  val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsWithMixedData1: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4920"), Some("4930")),
@@ -1870,7 +1870,7 @@ object FinancialDetailsTestConstants {
     taxYear = fixedDate.getYear.toString
   )
 
-  val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsWithMixedData2: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4920"), Some("4930")),
@@ -1879,7 +1879,7 @@ object FinancialDetailsTestConstants {
     taxYear = fixedDate.getYear.toString
   )
 
-  val financialDetailsWithMixedData3: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsWithMixedData3: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("ITSA- POA 1"), Some("ITSA- POA 2")),
     mainType = List(Some("SA Payment on Account 1"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4920"), Some("4930")),
@@ -1889,7 +1889,7 @@ object FinancialDetailsTestConstants {
     accruingInterestAmount = List(None, None)
   )
 
-  val financialDetailsWithMixedData4: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsWithMixedData4: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("SA POA 1 Reconciliation Debit"), Some("ITSA- POA 2")),
     mainType = List(Some("SA POA 1 Reconciliation"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4911"), Some("4930")),
@@ -1899,7 +1899,7 @@ object FinancialDetailsTestConstants {
     accruingInterestAmount = List(None, None)
   )
 
-  val financialDetailsWithMixedData4Penalties: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
+  lazy val financialDetailsWithMixedData4Penalties: FinancialDetailsModel = testFinancialDetailsModelWithChargesOfSameType(
     documentDescription = List(Some("Late Submission Penalty"), Some("ITSA- POA 2")),
     mainType = List(Some("LSP"), Some("SA Payment on Account 2")),
     mainTransaction = List(Some("4027"), Some("4930")),
@@ -1930,13 +1930,13 @@ object FinancialDetailsTestConstants {
 
 
 
-  val codedOutDocumentDetailsA = DocumentDetail(2022, id1040000124, Some("documentDescription"), Some("documentText"),
+  lazy val codedOutDocumentDetailsA = DocumentDetail(2022, id1040000124, Some("documentDescription"), Some("documentText"),
     BigDecimal("5.00"), 43.21, LocalDate.of(2018, 3, 29), Some(100), Some(100),
     Some("latePaymentInterestId"), None, Some(LocalDate.of(2018, 3, 29)),
     Some(LocalDate.of(2018, 3, 29)), None, Some(100), Some("paymentLotItem"), Some("paymentLot"),
     amountCodedOut = Some(BigDecimal("2500.00")))
 
-  val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 0.0, 3.0, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
+  lazy val whatYouOweEmptyMFA: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 0.0, 3.0, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
 
 //  val whatYouOwePartialChargesList: WhatYouOweChargesList = WhatYouOweChargesList(
 //    balanceDetails = BalanceDetails(balanceDueWithin30Days = 1.00, overDueAmount = 2.00, totalBalance = 3.00, None, None, None, None, None),
@@ -1969,20 +1969,20 @@ object FinancialDetailsTestConstants {
 //  )
 
 
-  val whatYouOweEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 4.0, 3.0, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
+  lazy val whatYouOweEmpty: WhatYouOweChargesList = WhatYouOweChargesList(BalanceDetails(1.0, 2.0, 4.0, 3.0, None, None, None, None, None, None, None), List(), Some(OutstandingChargesModel(List())), None)
 
-  val creditDocumentDetailList = List(
+  lazy val creditDocumentDetailList = List(
     documentDetailModel(originalAmount = BigDecimal(-100.00), paymentLotItem = None, paymentLot = None),
     documentDetailModel(originalAmount = BigDecimal(-500.00), paymentLotItem = None, paymentLot = None)
   )
 
-  val creditAndRefundDocumentDetailList = List(
+  lazy val creditAndRefundDocumentDetailList = List(
     documentDetailModel(transactionId = id1040000124, outstandingAmount = BigDecimal(-100.00), paymentLotItem = Some("1"),
       paymentLot = Some("01")),
     documentDetailModel(transactionId = id1040000125, outstandingAmount = BigDecimal(-500.00), paymentLotItem = Some("2"), paymentLot = Some("02"))
   )
 
-  val financialDetailCreditCharge = FinancialDetailsModel(
+  lazy val financialDetailCreditCharge = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(1.00), Some(3.00), Some(7.00), Some(2.00), Some(4.00), None),
     documentDetails = creditDocumentDetailList,
     financialDetails = List(
@@ -1995,7 +1995,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val financialDetailCreditAndRefundCharge = FinancialDetailsModel(
+  lazy val financialDetailCreditAndRefundCharge = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(0), Some(3.00), Some(7.00), Some(2.00), Some(4.00), None),
     documentDetails = creditAndRefundDocumentDetailList,
     financialDetails = List(
@@ -2008,12 +2008,12 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val creditAndRefundDocumentDetailListMFA = List(
+  lazy val creditAndRefundDocumentDetailListMFA = List(
     documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = BigDecimal(-1400.00), paymentLotItem = None, paymentLot = None),
     documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = BigDecimal(-500.00), paymentLotItem = None, paymentLot = None)
   )
 
-  val financialDetailCreditChargeMFA = FinancialDetailsModel(
+  lazy val financialDetailCreditChargeMFA = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(1.00), Some(3.00), Some(7.00), Some(2.00), Some(4.00), None),
     documentDetails = creditAndRefundDocumentDetailListMFA,
     financialDetails = List(
@@ -2026,7 +2026,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val creditAndRefundDocumentDetailAllCreditTypesList = List(
+  lazy val creditAndRefundDocumentDetailAllCreditTypesList = List(
     documentDetailModel(transactionId = id1040000124, outstandingAmount = BigDecimal(-100.00), paymentLotItem = Some("1"), paymentLot = Some("01")),
     documentDetailModel(transactionId = id1040000125, outstandingAmount = BigDecimal(-500.00), paymentLotItem = Some("2"), paymentLot = Some("02")),
     documentDetailModel(transactionId = id1040000126, outstandingAmount = BigDecimal(-300.00), paymentLotItem = Some("2"), paymentLot = Some("02")),
@@ -2040,7 +2040,7 @@ object FinancialDetailsTestConstants {
     documentDetailModel(documentDescription = Some("ITSA PAYE Charge"), transactionId = "CUTOVERCREDIT01", documentDate = LocalDate.of(2018, 3, 29), originalAmount = -700.00, outstandingAmount = BigDecimal(-700.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None)
   )
 
-  val financialDetailCreditAndRefundChargeAllCreditTypes = FinancialDetailsModel(
+  lazy val financialDetailCreditAndRefundChargeAllCreditTypes = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(1.00), Some(6.00), Some(3.00), Some(7.00), Some(2.00), Some(4.00), None),
     documentDetails = creditAndRefundDocumentDetailAllCreditTypesList,
     financialDetails = List(
@@ -2058,7 +2058,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val creditAndRefundCreditDetailListMFA = {
+  lazy val creditAndRefundCreditDetailListMFA = {
     val documentDetail1 = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = BigDecimal(-1400.00), paymentLotItem = None, paymentLot = None)
     val documentDetail2 = documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = BigDecimal(-500.00), paymentLotItem = None, paymentLot = None)
 
@@ -2087,7 +2087,7 @@ object FinancialDetailsTestConstants {
     )
   }
 
-  val creditAndRefundCreditDetailListMFAWithCutoverAndBCC = {
+  lazy val creditAndRefundCreditDetailListMFAWithCutoverAndBCC = {
     val documentDetailMFA1 = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = BigDecimal(-1400.00), paymentLotItem = None, paymentLot = None)
     val documentDetailMFA2 = documentDetailModel(documentDescription = Some("ITSA Standalone Claim"), outstandingAmount = BigDecimal(-500.00), paymentLotItem = None, paymentLot = None)
     val documentDetailCutoverCredit1 = documentDetailModel(documentDescription = Some("ITSA Cutover Credits"), outstandingAmount = BigDecimal(200.00), paymentLotItem = None, paymentLot = None, originalAmount = 200)
@@ -2122,10 +2122,10 @@ object FinancialDetailsTestConstants {
     )
   }
 
-  val creditAndRefundDocumentDetailMFA = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = BigDecimal(-1400.00), paymentLotItem = None, paymentLot = None)
+  lazy val creditAndRefundDocumentDetailMFA = documentDetailModel(documentDescription = Some("ITSA Overpayment Relief"), outstandingAmount = BigDecimal(-1400.00), paymentLotItem = None, paymentLot = None)
 
 
-  val creditAndRefundDocumentDetailListMultipleChargesMFA = List(
+  lazy val creditAndRefundDocumentDetailListMultipleChargesMFA = List(
     documentDetailModel(
       documentDescription = Some("ITSA Standalone Claim"),
       outstandingAmount = BigDecimal(-500.00),
@@ -2144,7 +2144,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val creditAndRefundCreditDetailListMultipleChargesMFA = {
+  lazy val creditAndRefundCreditDetailListMultipleChargesMFA = {
     val documentDetail1 = documentDetailModel(
       documentDescription = Some("ITSA Standalone Claim"),
       outstandingAmount = BigDecimal(-500.00),
@@ -2181,7 +2181,7 @@ object FinancialDetailsTestConstants {
     )
   }
 
-  val creditAndRefundDocumentDetailListFullyAllocatedMFA = List(
+  lazy val creditAndRefundDocumentDetailListFullyAllocatedMFA = List(
     documentDetailModel(
       documentDescription = Some("ITSA Overpayment Relief"),
       outstandingAmount = BigDecimal(0),
@@ -2191,7 +2191,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val creditAndRefundCreditDetailListFullyAllocatedMFA = {
+  lazy val creditAndRefundCreditDetailListFullyAllocatedMFA = {
     val documentDetail = documentDetailModel(
       transactionId = "someTransactionId",
       documentDescription = Some("ITSA Overpayment Relief"),
@@ -2217,7 +2217,7 @@ object FinancialDetailsTestConstants {
     ))
   }
 
-  val creditAndRefundDocumentDetailListNotYetAllocatedMFA = List(
+  lazy val creditAndRefundDocumentDetailListNotYetAllocatedMFA = List(
     documentDetailModel(
       documentDescription = Some("ITSA Overpayment Relief"),
       outstandingAmount = BigDecimal(-3000),
@@ -2227,7 +2227,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val creditAndRefundCreditDetailListNotYetAllocatedMFA = {
+  lazy val creditAndRefundCreditDetailListNotYetAllocatedMFA = {
     val documentDetail = documentDetailModel(
       transactionId = "someTransactionId",
       documentDescription = Some("ITSA Overpayment Relief"),
@@ -2254,7 +2254,7 @@ object FinancialDetailsTestConstants {
     ))
   }
 
-  val creditAndRefundDocumentDetailListPartiallyAllocatedMFA = List(
+  lazy val creditAndRefundDocumentDetailListPartiallyAllocatedMFA = List(
     documentDetailModel(
       documentDescription = Some("ITSA Overpayment Relief"),
       outstandingAmount = BigDecimal(-3000),
@@ -2264,7 +2264,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val creditAndRefundCreditDetailListPartiallyAllocatedMFA = {
+  lazy val creditAndRefundCreditDetailListPartiallyAllocatedMFA = {
     val documentDetail = documentDetailModel(
       transactionId = "someTransactionId",
       documentDescription = Some("ITSA Overpayment Relief"),
@@ -2293,7 +2293,7 @@ object FinancialDetailsTestConstants {
     ))
   }
 
-  val MFADebitsDocumentDetails: List[DocumentDetail] = List(
+  lazy val MFADebitsDocumentDetails: List[DocumentDetail] = List(
     documentDetailModel(documentDescription = Some("TRM New Charge"), transactionId = "MFADEBIT01",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
       outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
@@ -2314,7 +2314,7 @@ object FinancialDetailsTestConstants {
       documentDueDate = Some(LocalDate.of(2019, 5, 15)))
   )
 
-  val ReviewAndReconcileDocumentDetails: List[DocumentDetail] = List(
+  lazy val ReviewAndReconcileDocumentDetails: List[DocumentDetail] = List(
     documentDetailModel(documentDescription = Some("SA POA 1 Reconciliation Debit"), transactionId = "RARDEBIT01",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
       outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
@@ -2327,7 +2327,7 @@ object FinancialDetailsTestConstants {
       documentDueDate = Some(LocalDate.of(2019, 5, 15)))
   )
 
-  val ReviewAndReconcileDocumentDetailsAccruingInterest: List[DocumentDetail] = List(
+  lazy val ReviewAndReconcileDocumentDetailsAccruingInterest: List[DocumentDetail] = List(
     documentDetailModel(documentDescription = Some("SA POA 1 Reconciliation Debit"), transactionId = "RARDEBIT01",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
       outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = Some(100),
@@ -2340,7 +2340,7 @@ object FinancialDetailsTestConstants {
       documentDueDate = Some(LocalDate.of(2019, 5, 15)))
   )
 
-  val ReviewAndReconcileDocumentDetailsNotDue: List[DocumentDetail] = List(
+  lazy val ReviewAndReconcileDocumentDetailsNotDue: List[DocumentDetail] = List(
     documentDetailModel(documentDescription = Some("SA POA 1 Reconciliation Debit"), transactionId = "RARDEBIT01",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
       outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
@@ -2353,7 +2353,7 @@ object FinancialDetailsTestConstants {
       documentDueDate = Some(LocalDate.of(2100, 5, 15)))
   )
 
-  val penaltiesDocumentDetails: List[DocumentDetail] = List(
+  lazy val penaltiesDocumentDetails: List[DocumentDetail] = List(
     documentDetailModel( transactionId = "LSP",
       documentDate = LocalDate.of(2018, 3, 29), originalAmount = 100.00,
       outstandingAmount = BigDecimal(100.00), paymentLotItem = None, paymentLot = None, accruingInterestAmount = None,
@@ -2380,7 +2380,7 @@ object FinancialDetailsTestConstants {
 //      isReviewAndReconcilePoaTwoDebit = dd.documentDescription.contains("SA POA 2 Reconciliation Debit")
 //    ))
 
-  val MFADebitsFinancialDetails: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val MFADebitsFinancialDetails: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = MFADebitsDocumentDetails,
     financialDetails = List(
@@ -2394,7 +2394,7 @@ object FinancialDetailsTestConstants {
   )
 
 
-  val financialDetailsWithReviewAndReconcileDebits: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val financialDetailsWithReviewAndReconcileDebits: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = ReviewAndReconcileDocumentDetailsNotDue,
     financialDetails = List(
@@ -2405,7 +2405,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val financialDetailsWithAccruingInterestReviewAndReconcileDebits: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val financialDetailsWithAccruingInterestReviewAndReconcileDebits: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = ReviewAndReconcileDocumentDetailsAccruingInterest,
     financialDetails = List(
@@ -2416,7 +2416,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val financialDetailsWithReviewAndReconcileDebitsOverdue: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val financialDetailsWithReviewAndReconcileDebitsOverdue: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = ReviewAndReconcileDocumentDetails,
     financialDetails = List(
@@ -2427,7 +2427,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val financialDetailsWithAllThreePenalties: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val financialDetailsWithAllThreePenalties: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = penaltiesDocumentDetails,
     financialDetails = List(
@@ -2440,7 +2440,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val financialDetailsWithLPP2NoChargeRef: FinancialDetailsModel = FinancialDetailsModel(
+  lazy val financialDetailsWithLPP2NoChargeRef: FinancialDetailsModel = FinancialDetailsModel(
     balanceDetails = BalanceDetails(1.00, 2.00, 0.00, 3.00, Some(6.00), Some(3.00), Some(7.00), Some(1.00), Some(2.00), Some(4.00), None),
     documentDetails = penaltiesDocumentDetails,
     financialDetails = List(
@@ -2449,7 +2449,7 @@ object FinancialDetailsTestConstants {
     )
   )
 
-  val MFADebitsDocumentDetailsWithDueDates: List[DocumentDetailWithDueDate] = MFADebitsFinancialDetails.getAllDocumentDetailsWithDueDates()
+  lazy val MFADebitsDocumentDetailsWithDueDates: List[DocumentDetailWithDueDate] = MFADebitsFinancialDetails.getAllDocumentDetailsWithDueDates()
 
 }
 

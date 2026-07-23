@@ -28,10 +28,8 @@ import java.time.LocalDate
 case class DocumentDetail(
                            taxYear: Int,
                            transactionId: String,
-                           formBundleNumber: Option[String] = None,
-                           creditReason: Option[String] = None,
-                           documentDescription: Option[String] = None,
-                           documentText: Option[String] = None,
+                           documentDescription: Option[String],
+                           documentText: Option[String],
                            outstandingAmount: BigDecimal,
                            originalAmount: BigDecimal,
                            documentDate: LocalDate,
@@ -49,10 +47,12 @@ case class DocumentDetail(
                            amountCodedOut: Option[BigDecimal] = None,
                            documentDueDate: Option[LocalDate] = None,
                            poaRelevantAmount: Option[BigDecimal] = None,
+                           formBundleNumber: Option[String] = None,
+                           creditReason: Option[String] = None,
                            lastClearingDate: Option[LocalDate] = None,
                            lastClearingReason: Option[String] = None,
                            lastClearedAmount: Option[BigDecimal] = None,
-                           statisticalFlag: String,
+                           statisticalFlag: String = "",
                            informationCode: Option[String] = None,
                            documentNumberReducedCharge: Option[String] = None,
                            chargeTypeReducedCharge: Option[String] = None,
@@ -219,6 +219,25 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
 
 
 object DocumentDetail {
+
+  def apply(
+             taxYear: Int,
+             transactionId: String,
+             documentDescription: Option[String],
+             documentText: Option[String],
+             outstandingAmount: BigDecimal,
+             originalAmount: BigDecimal,
+             documentDate: LocalDate
+           ): DocumentDetail =
+    new DocumentDetail(
+      taxYear = taxYear,
+      transactionId = transactionId,
+      documentDescription = documentDescription,
+      documentText = documentText,
+      outstandingAmount = outstandingAmount,
+      originalAmount = originalAmount,
+      documentDate = documentDate
+    )
 
   implicit val writes: OWrites[DocumentDetail] = OWrites { model =>
     Json
