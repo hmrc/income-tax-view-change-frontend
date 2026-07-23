@@ -18,8 +18,7 @@ package financials.models
 
 import common.services.DateServiceInterface
 import play.api.Logger
-import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsError, Reads, Writes, __}
+import play.api.libs.json.*
 import shared.enums.CodingOutType.*
 import shared.enums.DocumentType
 import shared.enums.DocumentType.*
@@ -29,8 +28,10 @@ import java.time.LocalDate
 case class DocumentDetail(
                            taxYear: Int,
                            transactionId: String,
-                           documentDescription: Option[String],
-                           documentText: Option[String],
+                           formBundleNumber: Option[String] = None,
+                           creditReason: Option[String] = None,
+                           documentDescription: Option[String] = None,
+                           documentText: Option[String] = None,
                            outstandingAmount: BigDecimal,
                            originalAmount: BigDecimal,
                            documentDate: LocalDate,
@@ -47,7 +48,16 @@ case class DocumentDetail(
                            effectiveDateOfPayment: Option[LocalDate] = None,
                            amountCodedOut: Option[BigDecimal] = None,
                            documentDueDate: Option[LocalDate] = None,
-                           poaRelevantAmount: Option[BigDecimal] = None
+                           poaRelevantAmount: Option[BigDecimal] = None,
+                           lastClearingDate: Option[LocalDate] = None,
+                           lastClearingReason: Option[String] = None,
+                           lastClearedAmount: Option[BigDecimal] = None,
+                           statisticalFlag: String,
+                           informationCode: Option[String] = None,
+                           documentNumberReducedCharge: Option[String] = None,
+                           chargeTypeReducedCharge: Option[String] = None,
+                           amendmentDateReducedCharge: Option[LocalDate] = None,
+                           taxYearReducedCharge: Option[String] = None
                          ) {
 
   def findTaxYear: Int = taxYear match {
@@ -210,83 +220,205 @@ case class DocumentDetailWithDueDate(documentDetail: DocumentDetail, dueDate: Op
 
 object DocumentDetail {
 
-  implicit val writes: Writes[DocumentDetail] = (
-    (__ \ "taxYear").write[String].contramap[Int](_.toString) and
-      (__ \ "documentID").write[String] and
-      (__ \ "documentDescription").writeNullable[String] and
-      (__ \ "documentText").writeNullable[String] and
-      (__ \ "documentOutstandingAmount").write[BigDecimal] and
-      (__ \ "totalAmount").write[BigDecimal] and
-      (__ \ "documentDate").write[LocalDate] and
-      (__ \ "interestOutstandingAmount").writeNullable[BigDecimal] and
-      (__ \ "interestRate").writeNullable[BigDecimal] and
-      (__ \ "latePaymentInterestID").writeNullable[String] and
-      (__ \ "latePaymentInterestAmount").writeNullable[BigDecimal] and
-      (__ \ "interestFromDate").writeNullable[LocalDate] and
-      (__ \ "interestEndDate").writeNullable[LocalDate] and
-      (__ \ "accruingInterestAmount").writeNullable[BigDecimal] and
-      (__ \ "lpiWithDunningLock").writeNullable[BigDecimal] and
-      (__ \ "paymentLotItem").writeNullable[String] and
-      (__ \ "paymentLot").writeNullable[String] and
-      (__ \ "effectiveDateOfPayment").writeNullable[LocalDate] and
-      (__ \ "amountCodedOut").writeNullable[BigDecimal] and
-      (__ \ "documentDueDate").writeNullable[LocalDate] and
-      (__ \ "poaRelevantAmount").writeNullable[BigDecimal]
-    )(detail =>
-    (
-      detail.taxYear,
-      detail.transactionId,
-      detail.documentDescription,
-      detail.documentText,
-      detail.outstandingAmount,
-      detail.originalAmount,
-      detail.documentDate,
-      detail.interestOutstandingAmount,
-      detail.interestRate,
-      detail.latePaymentInterestId,
-      detail.latePaymentInterestAmount,
-      detail.interestFromDate,
-      detail.interestEndDate,
-      detail.accruingInterestAmount,
-      detail.lpiWithDunningLock,
-      detail.paymentLotItem,
-      detail.paymentLot,
-      detail.effectiveDateOfPayment,
-      detail.amountCodedOut,
-      detail.documentDueDate,
-      detail.poaRelevantAmount
+  implicit val writes: OWrites[DocumentDetail] = OWrites { model =>
+    Json
+      .obj(
+        "taxYear" -> model.taxYear.toString,
+        "documentID" -> model.transactionId,
+        "formBundleNumber" -> model.formBundleNumber,
+        "creditReason" -> model.creditReason,
+        "documentDate" -> model.documentDate,
+        "documentText" -> model.documentText,
+        "documentDueDate" -> model.documentDueDate,
+        "documentDescription" -> model.documentDescription,
+        "totalAmount" -> model.originalAmount,
+        "documentOutstandingAmount" -> model.outstandingAmount,
+        "poaRelevantAmount" -> model.poaRelevantAmount,
+        "lastClearingDate" -> model.lastClearingDate,
+        "lastClearingReason" -> model.lastClearingReason,
+        "lastClearedAmount" -> model.lastClearedAmount,
+        "statisticalFlag" -> model.statisticalFlag,
+        "informationCode" -> model.informationCode,
+        "paymentLot" -> model.paymentLot,
+        "paymentLotItem" -> model.paymentLotItem,
+        "effectiveDateOfPayment" -> model.effectiveDateOfPayment,
+        "accruingInterestAmount" -> model.accruingInterestAmount,
+        "interestRate" -> model.interestRate,
+        "interestFromDate" -> model.interestFromDate,
+        "interestEndDate" -> model.interestEndDate,
+        "latePaymentInterestID" -> model.latePaymentInterestId,
+        "latePaymentInterestAmount" -> model.latePaymentInterestAmount,
+        "lpiWithDunningLock" -> model.lpiWithDunningLock,
+        "interestOutstandingAmount" -> model.interestOutstandingAmount,
+        "amountCodedOut" -> model.amountCodedOut,
+        "documentNumberReducedCharge" -> model.documentNumberReducedCharge,
+        "chargeTypeReducedCharge" -> model.chargeTypeReducedCharge,
+        "amendmentDateReducedCharge" -> model.amendmentDateReducedCharge,
+        "taxYearReducedCharge" -> model.taxYearReducedCharge
+      )
+      .fields
+      .collect {
+        case (key, value) if value != JsNull =>
+          key -> value
+      }
+      .foldLeft(Json.obj()) {
+        case (json, (key, value)) =>
+          json + (key -> value)
+      }
+  }
+
+  implicit val reads: Reads[DocumentDetail] = Reads { json =>
+    for {
+      taxYear <- (json \ "taxYear")
+        .validate[String]
+        .flatMap { value =>
+          value.toIntOption match {
+            case Some(year) =>
+              JsSuccess(year)
+
+            case None =>
+              JsError("error.expected.validTaxYear")
+          }
+        }
+
+      transactionId <-
+        (json \ "documentID").validate[String]
+
+      formBundleNumber <-
+        (json \ "formBundleNumber").validateOpt[String]
+
+      creditReason <-
+        (json \ "creditReason").validateOpt[String]
+
+      documentDate <-
+        (json \ "documentDate").validate[LocalDate]
+
+      documentText <-
+        (json \ "documentText").validateOpt[String]
+
+      documentDueDate <-
+        (json \ "documentDueDate").validateOpt[LocalDate]
+
+      documentDescription <-
+        (json \ "documentDescription").validateOpt[String]
+
+      originalAmount <-
+        (json \ "totalAmount").validate[BigDecimal]
+
+      outstandingAmount <-
+        (json \ "documentOutstandingAmount").validate[BigDecimal]
+
+      poaRelevantAmount <-
+        (json \ "poaRelevantAmount").validateOpt[BigDecimal]
+
+      lastClearingDate <-
+        (json \ "lastClearingDate").validateOpt[LocalDate]
+
+      lastClearingReason <-
+        (json \ "lastClearingReason").validateOpt[String]
+
+      lastClearedAmount <-
+        (json \ "lastClearedAmount").validateOpt[BigDecimal]
+
+      statisticalFlag <-
+        (json \ "statisticalFlag").validate[String]
+
+      informationCode <-
+        (json \ "informationCode").validateOpt[String]
+
+      paymentLot <-
+        (json \ "paymentLot").validateOpt[String]
+
+      paymentLotItem <-
+        (json \ "paymentLotItem").validateOpt[String]
+
+      effectiveDateOfPayment <-
+        (json \ "effectiveDateOfPayment").validateOpt[LocalDate]
+
+      accruingInterestAmount <-
+        (json \ "accruingInterestAmount").validateOpt[BigDecimal]
+
+      interestRate <-
+        (json \ "interestRate").validateOpt[BigDecimal]
+
+      interestFromDate <-
+        (json \ "interestFromDate").validateOpt[LocalDate]
+
+      interestEndDate <-
+        (json \ "interestEndDate").validateOpt[LocalDate]
+
+      latePaymentInterestId <-
+        (json \ "latePaymentInterestID").validateOpt[String]
+
+      latePaymentInterestAmount <-
+        (json \ "latePaymentInterestAmount").validateOpt[BigDecimal]
+
+      lpiWithDunningLock <- {
+        val oldField =
+          (json \ "lpiWithDunningBlock").validateOpt[BigDecimal]
+
+        val newField =
+          (json \ "lpiWithDunningLock").validateOpt[BigDecimal]
+
+        oldField.flatMap {
+          case value@Some(_) =>
+            JsSuccess(value)
+          case None =>
+            newField
+        }
+      }
+
+      interestOutstandingAmount <-
+        (json \ "interestOutstandingAmount").validateOpt[BigDecimal]
+
+      amountCodedOut <-
+        (json \ "amountCodedOut").validateOpt[BigDecimal]
+
+      documentNumberReducedCharge <-
+        (json \ "documentNumberReducedCharge").validateOpt[String]
+
+      chargeTypeReducedCharge <-
+        (json \ "chargeTypeReducedCharge").validateOpt[String]
+
+      amendmentDateReducedCharge <-
+        (json \ "amendmentDateReducedCharge").validateOpt[LocalDate]
+
+      taxYearReducedCharge <-
+        (json \ "taxYearReducedCharge").validateOpt[String]
+
+    } yield DocumentDetail(
+      taxYear = taxYear,
+      transactionId = transactionId,
+      documentDescription = documentDescription,
+      documentText = documentText,
+      outstandingAmount = outstandingAmount,
+      originalAmount = originalAmount,
+      documentDate = documentDate,
+      interestOutstandingAmount = interestOutstandingAmount,
+      interestRate = interestRate,
+      latePaymentInterestId = latePaymentInterestId,
+      latePaymentInterestAmount = latePaymentInterestAmount,
+      interestFromDate = interestFromDate,
+      interestEndDate = interestEndDate,
+      accruingInterestAmount = accruingInterestAmount,
+      lpiWithDunningLock = lpiWithDunningLock,
+      paymentLotItem = paymentLotItem,
+      paymentLot = paymentLot,
+      effectiveDateOfPayment = effectiveDateOfPayment,
+      amountCodedOut = amountCodedOut,
+      documentDueDate = documentDueDate,
+      poaRelevantAmount = poaRelevantAmount,
+      formBundleNumber = formBundleNumber,
+      creditReason = creditReason,
+      lastClearingDate = lastClearingDate,
+      lastClearingReason = lastClearingReason,
+      lastClearedAmount = lastClearedAmount,
+      statisticalFlag = statisticalFlag,
+      informationCode = informationCode,
+      documentNumberReducedCharge = documentNumberReducedCharge,
+      chargeTypeReducedCharge = chargeTypeReducedCharge,
+      amendmentDateReducedCharge = amendmentDateReducedCharge,
+      taxYearReducedCharge = taxYearReducedCharge
     )
-  )
-
-  implicit val reads: Reads[DocumentDetail] = (
-    (__ \ "taxYear")
-      .read[String]
-      .flatMap {
-        case value if value.toIntOption.isDefined =>
-          Reads.pure(value.toInt)
-
-        case _ =>
-          Reads(_ => JsError("error.expected.validTaxYear"))
-      } and
-      (__ \ "documentID").read[String] and
-      (__ \ "documentDescription").readNullable[String] and
-      (__ \ "documentText").readNullable[String] and
-      (__ \ "documentOutstandingAmount").read[BigDecimal] and
-      (__ \ "totalAmount").read[BigDecimal] and
-      (__ \ "documentDate").read[LocalDate] and
-      (__ \ "interestOutstandingAmount").readNullable[BigDecimal] and
-      (__ \ "interestRate").readNullable[BigDecimal] and
-      (__ \ "latePaymentInterestID").readNullable[String] and
-      (__ \ "latePaymentInterestAmount").readNullable[BigDecimal] and
-      (__ \ "interestFromDate").readNullable[LocalDate] and
-      (__ \ "interestEndDate").readNullable[LocalDate] and
-      (__ \ "accruingInterestAmount").readNullable[BigDecimal] and
-      (__ \ "lpiWithDunningLock").readNullable[BigDecimal] and
-      (__ \ "paymentLotItem").readNullable[String] and
-      (__ \ "paymentLot").readNullable[String] and
-      (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
-      (__ \ "amountCodedOut").readNullable[BigDecimal] and
-      (__ \ "documentDueDate").readNullable[LocalDate] and
-      (__ \ "poaRelevantAmount").readNullable[BigDecimal]
-    )(DocumentDetail.apply _)
+  }
 }
