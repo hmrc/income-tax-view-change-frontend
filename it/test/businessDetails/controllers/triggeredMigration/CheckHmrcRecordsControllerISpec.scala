@@ -17,7 +17,7 @@
 package businessDetails.controllers.triggeredMigration
 
 import businessDetails.models.audit.TriggeredMigrationStartAuditModel
-import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import businessDetails.enums.TriggeredMigration.Channel.{HmrcConfirmed, HmrcUnconfirmed}
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDUserRole}
 import common.helpers.servicemocks.{AuditStub, ITSAStatusDetailsStub, IncomeTaxCalculationStub}
@@ -25,7 +25,7 @@ import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus
 import org.scalatest.Assertion
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testNino}
 import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
@@ -238,6 +238,25 @@ class CheckHmrcRecordsControllerISpec extends ControllerISpecHelper {
 
                 AuditStub.verifyAuditEvent(TriggeredMigrationStartAuditModel("-")(getTestUser(mtdUserRole, multipleBusinessesAndUkProperty.copy(channel = HmrcUnconfirmed.getValue))))
               }
+            }
+          }
+        }
+        
+        "redirect to the home page" when {
+          "user is already confirmed" in {
+            stubAuthorised(mtdUserRole, List(TriggeredMigration))
+            GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, multipleBusinessesWithBothPropertiesAndCeasedBusiness.copy(channel = HmrcConfirmed.getValue))
+            ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary)
+            IncomeTaxCalculationStub.stubGetCalculationResponse(testNino, "2018", Some("LATEST"))(
+              status = OK,
+              body = liabilityCalculationModelSuccessfulNotCrystallised
+            )
+
+            whenReady(buildGETMTDClient(path, additionalCookies)) { (result: WSResponse) =>
+              result should have(
+                httpStatus(SEE_OTHER),
+                redirectURI(appConfig.homePageUrl(mtdUserRole.isAgent))
+              )
             }
           }
         }

@@ -16,29 +16,30 @@
 
 package hub.controllers.newHomePage
 
+import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
-import common.helpers.WiremockHelper
+import common.helpers.{GetInsourceDetailsStub, WiremockHelper}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
-import common.helpers.servicemocks.ITSAStatusDetailsStub
-import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, PenaltiesAndAppeals}
+import common.helpers.servicemocks.{ITSAStatusDetailsStub, IncomeTaxCalculationStub}
+import common.models.admin.{CreditsRefundsRepay, FeatureSwitchName, PenaltiesAndAppeals, TriggeredMigration}
 import common.models.core.{AccountingPeriodModel, CessationModel}
-import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
+import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel, TaxYear}
 import common.models.itsaStatus.ITSAStatus
 import common.models.itsaStatus.ITSAStatus.ITSAStatus
-import common.models.obligations.{GroupedObligationsModel, ObligationsModel, SingleObligationModel, StatusFulfilled, StatusOpen}
+import common.models.obligations.*
 import common.testConstants.BaseIntegrationTestConstants.*
-import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import financials.enums.ChargeType.ITSA_NI
-import hub.helpers.FinancialDetailsStub
 import financials.models.creditsandrefunds.CreditsModel
-import hub.helpers.NextUpdatesStub
+import hub.helpers.{FinancialDetailsStub, NextUpdatesStub}
+import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import obligations.testConstants.NextUpdatesIntegrationTestConstants.currentDate
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
+import play.api.libs.ws.WSResponse
 
 import java.time.LocalDate
-import common.helpers.GetInsourceDetailsStub
 
 class HandleYourTasksControllerISpec extends ControllerISpecHelper {
 
@@ -699,6 +700,24 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
           }
         }
       }
+      "redirect to triggered migration" when {
+        "user is unconfirmed" in new TestSetup(mtdUserRole = mtdUserRole, featureSwitches = List(TriggeredMigration), incomeSourcesModel = incomeSourceDetailsModel.copy(channel = HmrcUnconfirmed.getValue)) {
+          ITSAStatusDetailsStub.stubGetITSAStatusFutureYearsDetails(TaxYear(2023, 2024), ITSAStatus.Voluntary, ITSAStatus.Voluntary, ITSAStatus.Voluntary, "AA123456A")
+          IncomeTaxCalculationStub.stubGetCalculationResponse("AA123456A", "2023", Some("LATEST"))(
+            status = OK,
+            body = liabilityCalculationModelSuccessfulNotCrystallised
+          )
+
+          val trigMigUrl: String = if(mtdUserRole.isAgent) "/report-quarterly/income-and-expenses/view/agents/check-your-active-businesses/hmrc-record" else "/report-quarterly/income-and-expenses/view/check-your-active-businesses/hmrc-record"
+
+          val result: WSResponse = buildGETMTDClient(path, additionalCookies).futureValue
+
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(trigMigUrl)
+          )
+        }
+      }
     }
   }
 
@@ -707,7 +726,8 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
                   obligationsModel: ObligationsModel = noObligationsModel,
                   chargesJson: JsValue = noChargesModel(),
                   mtdUserRole: MTDUserRole,
-                  featureSwitches: List[FeatureSwitchName] = List()) {
+                  featureSwitches: List[FeatureSwitchName] = List(),
+                  incomeSourcesModel: IncomeSourceDetailsModel = incomeSourceDetailsModel) {
 
     val testCreditModel = CreditsModel(0.0, 0.0, 0.0, creditAmount, None, None, Nil)
     val response: String = Json.toJson(testCreditModel).toString()
@@ -715,7 +735,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
     val url = s"/income-tax-financial-details/$testNino/financial-details/credits/from/2022-04-06/to/2023-04-05"
 
     stubAuthorised(mtdUserRole, featureSwitches)
-    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourceDetailsModel)
+    GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(status = OK, response = incomeSourcesModel)
     WiremockHelper.stubGet(url, OK, response)
     FinancialDetailsStub.stubGetFinancialDetailsByDateRange(testNino, "2022-04-06", "2023-04-05")(OK, chargesJson)
     ITSAStatusDetailsStub.stubGetITSAStatusDetails(currentItsaStatus.toString, "2022-23")
