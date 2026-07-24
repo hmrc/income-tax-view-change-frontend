@@ -17,6 +17,7 @@
 package financials.models
 
 import common.services.DateServiceInterface
+import financials.enums.ChargeClassificationType
 import shared.enums.CodingOutType.*
 import shared.enums.DocumentType.*
 import play.api.Logger
@@ -189,8 +190,8 @@ case class DocumentDetail(taxYear: Int,
   }
 
   def isRevenueAmendment: Boolean =
-    chargeClassification match {
-      case Some("RA") => true
+    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
+      case Some(ChargeClassificationType.RevenueAmendments) => true
       case _ => false
     }
 
