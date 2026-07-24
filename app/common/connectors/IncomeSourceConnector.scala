@@ -53,13 +53,11 @@ class IncomeSourceConnector @Inject()(
     val manageBusinessesPattern = """.*/manage-your-businesses/.*""".r
     val incomeSourcesPattern    = """.*/income-sources/.*""".r
 
-    // After the user confirms migration, send the Gov-Test-Scenario: afterMigration header so local and staging
-    // environments return the post-migration stub data instead of the default response.
-    // The header is not included in production's headersAllowlist, so it is never forwarded downstream in production.
-    //
-    // To test the post-migration stub data in QA, add Gov-Test-Scenario to QA's headersAllowlist.
+    // Once the user has confirmed migration, send Gov-Test-Scenario: afterMigration on every request for the rest
+    // of the session. Local and staging environments keep returning the post-migration stub data no matter which page is requested.
+    // The header is not in production's QA headersAllowlist, so it is never forwarded downstream in production.
     if (request.session.get(SessionKeys.triggeredMigrationConfirmed).contains("true")) {
-      return checkAndAddTestHeader(path, headerCarrier, appConfig.triggeredMigrationOverrides(), "afterMigration")
+      return headerCarrier.withExtraHeaders("Gov-Test-Scenario" -> "afterMigration")
     }
 
     if (manageBusinessesPattern.matches(path) || incomeSourcesPattern.matches(path)) {

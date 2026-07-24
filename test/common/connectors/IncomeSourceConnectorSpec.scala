@@ -226,30 +226,34 @@ class IncomeSourceConnectorSpec extends BaseConnectorSpec {
     "the triggered migration session flag is set" should {
 
       val scenarios = Table(
-        ("scenarioName", "path", "expectedHeader"),
-        ("Home, which is on the allow-list", "/income-tax", Some("afterMigration")),
-        ("Complete, which is on the allow-list", "/check-your-active-businesses/complete", Some("afterMigration")),
-        ("Overview, which is on the allow-list", "/overview", Some("afterMigration")),
-        ("Help, which is on the allow-list", "/help", Some("afterMigration")),
-        ("a page not on the allow-list", "/some-other-page", Some(""))
+        ("scenarioName", "path"),
+        ("Home", "/income-tax"),
+        ("Complete", "/check-your-active-businesses/complete"),
+        ("Overview", "/overview"),
+        ("Help", "/help"),
+        ("Your tasks", "/your-tasks"),
+        ("Recent activity", "/recent-activity"),
+        ("Reporting frequency", "/reporting-frequency"),
+        ("any other page", "/some-other-page")
       )
 
-      forAll(scenarios) { (scenarioName: String, path: String, expectedHeader: Option[String]) =>
-        s"add the migration test header based on the allow-list, not the referer, for $scenarioName with path: $path" in new Setup {
+      forAll(scenarios) { (scenarioName: String, path: String) =>
+        s"add the migration test header for $scenarioName with path: $path" in new Setup {
           implicit val appConfig: FrontendAppConfig = getAppConfig
           implicit val request: AuthorisedAndEnrolledRequest[_] =
             defaultAuthorisedAndEnrolledRequest(MTDIndividual, FakeRequest().withSession(SessionKeys.triggeredMigrationConfirmed -> "true"))
 
           val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
 
-          modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
+
+          modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe Some("afterMigration")
         }
       }
     }
 
     "the triggered migration session flag is not set" should {
 
-      "not add the migration test header, even for a page on the allow-list" in new Setup {
+      "not add the migration test header for any page" in new Setup {
         implicit val appConfig: FrontendAppConfig = getAppConfig
         val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/income-tax", hc)
 
