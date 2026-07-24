@@ -406,7 +406,8 @@ newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = Bwrw golwg dr
 ### Help Tab
 new.home.help.heading                                           = Troi Treth yn Ddigidol
 new.home.help.openInNewTab                                      = Mae pob cysylltiad yn agor mewn tab newydd.
-new.home.navigation.tabs.help                                   = Help
+new.home.navigation.tabs.help                                   = Cymorth
+new.home.navigation.opensInNewTab                               = (yn agor mewn tab newydd)
 
 home.help.link.makingTaxDigital.incomeTax                       = Dod o hyd i ragor o wybodaeth am Droi Treth yn Ddigidol ar gyfer Treth Incwm
 home.help.link.makingTaxDigital.changeCircumstances             = Darganfod beth sydd angen i chi ei wneud os bydd eich amgylchiadau’n newid
