@@ -408,6 +408,7 @@ newHome.overview.tax-year.proofOfIncome.card.sa302value.action   = View
 new.home.help.heading                                           = Making Tax Digital
 new.home.help.openInNewTab                                      = All links open in new tab.
 new.home.navigation.tabs.help                                   = Help
+new.home.navigation.opensInNewTab                               = (opens in new tab)
 
 home.help.link.makingTaxDigital.incomeTax                       = Find information about using Making Tax Digital for Income Tax
 home.help.link.makingTaxDigital.changeCircumstances             = Find out what you need to do if your circumstances change
