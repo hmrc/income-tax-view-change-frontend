@@ -119,7 +119,7 @@ case class DocumentDetail(taxYear: Int,
     case _ => false
   }
 
-  def isBalancingCharge: Boolean = getChargeTypeKey == "balancingCharge.text"
+  def isBalancingCharge: Boolean = getDocumentChargeTypeKey == "balancingCharge.text"
 
   def isBalancingChargeZero: Boolean = {
     (isBalancingCharge, this.originalAmount) match {
@@ -145,8 +145,7 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
-  // TODO: duplicate logic, in scope of => https://jira.tools.tax.service.gov.uk/browse/MISUV-8557
-  def getChargeTypeKey: String = documentDescription match {
+  def getDocumentChargeTypeKey: String = documentDescription match {
     case Some(poa1) if poa1.replace(" ", "") == Poa1Charge.key.replace(" ", "") => "paymentOnAccount1.text"
     case Some(poa2) if poa2.replace(" ", "") == Poa2Charge.key.replace(" ", "") => "paymentOnAccount2.text"
     case Some(Poa1ReconciliationDebit.key) => "poa1ExtraCharge.text"

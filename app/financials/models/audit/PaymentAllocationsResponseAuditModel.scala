@@ -85,7 +85,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
       Json.obj("paymentAllocations" -> Json.arr(
         paymentAllocations.latePaymentInterestPaymentAllocationDetails.map { lpiad =>
           Json.obj() ++
-            Json.obj("paymentAllocationDescription"-> Some(getAllocationDescriptionFromKey(lpiad.documentDetail.getChargeTypeKey))) ++
+            Json.obj("paymentAllocationDescription"-> Some(getAllocationDescriptionFromKey(lpiad.documentDetail.getDocumentChargeTypeKey))) ++
             Json.obj("amount"-> Some(lpiad.amount)) ++
             Json.obj("taxYear"-> Some(getTaxYearString(LocalDate.parse(s"${lpiad.documentDetail.taxYear}-04-05"))))
         }
