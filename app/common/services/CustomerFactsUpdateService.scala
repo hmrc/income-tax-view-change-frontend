@@ -18,7 +18,7 @@ package common.services
 
 import common.connectors.CustomerFactsUpdateConnector
 import play.api.Logger
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -30,22 +30,21 @@ class CustomerFactsUpdateService @Inject()(
                                           ) {
 
   def updateCustomerFacts(mtdId: String)
-                                   (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
 
-    customerFactsUpdateConnector.updateCustomerFacts(mtdId).map { response =>
-      response.status match {
-        case OK =>
-          Logger("application").info(s"Customer facts update returned OK for mtdId=$mtdId")
-
-        case status if status >= INTERNAL_SERVER_ERROR =>
-          Logger("application").error(s"Customer facts update failed. status=$status for mtdId=$mtdId body=${response.body}")
-
-        case status =>
-          Logger("application").warn(s"Customer facts update returned  status=$status for mtdId=$mtdId body=${response.body}")
-
+    customerFactsUpdateConnector.updateCustomerFacts(mtdId)
+      .map { response =>
+        response.status match {
+          case OK => Logger("application").info(s"Customer facts update returned OK for mtdId=$mtdId")
+          case status => 
+            Logger("application").error(s"[CustomerFactsUpdateService][updateCustomerFacts] Customer facts update failed. status=$status for mtdId=$mtdId body=${response.body}")
+            throw new Exception(s"Customer facts update failed. status=$status for mtdId=$mtdId body=${response.body}")
+        }
       }
-    }.recover { case e: Exception =>
-      Logger("application").error(s"Customer facts update failed due to exception for mtdId=$mtdId", e)
-    }
+      .recoverWith {
+        case e =>
+          Logger("application").error(s"[CustomerFactsUpdateService][updateCustomerFacts] Customer facts update failed due to exception for mtdId=$mtdId", e)
+          Future.failed(e)
+      }
   }
 }

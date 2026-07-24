@@ -21,7 +21,7 @@ import common.services.CustomerFactsUpdateService
 import common.testUtils.TestSupport
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{mock, verify, when}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import scala.concurrent.Future
 
@@ -38,24 +38,13 @@ class CustomerFactsUpdateServiceSpec extends TestSupport {
     )
 
     val mtdId = "XAIT0000123456"
-
-    when(
-      mockCustomerFactsUpdateConnector.updateCustomerFacts(any[String])(any[HeaderCarrier])
-    ).thenReturn(Future.successful(()))
   }
 
   "updateCustomerFacts" should {
 
-    "call the connector and return Unit on success" in new Setup {
-      val result: Future[Unit] = service.updateCustomerFacts(mtdId)
+    "return Unit when the connector returns OK" in new Setup {
 
-      result.futureValue shouldBe ()
-      verify(mockCustomerFactsUpdateConnector).updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier])
-    }
-
-    "still return Unit when the connector fails with an exception" in new Setup {
-      when(mockCustomerFactsUpdateConnector.updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier]))
-        .thenReturn(Future.failed(new RuntimeException("boom")))
+      when(mockCustomerFactsUpdateConnector.updateCustomerFacts(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(HttpResponse(200, "")))
 
       val result: Future[Unit] = service.updateCustomerFacts(mtdId)
 
@@ -63,13 +52,27 @@ class CustomerFactsUpdateServiceSpec extends TestSupport {
       verify(mockCustomerFactsUpdateConnector).updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier])
     }
 
-    "not throw even if connector returns a failed future" in new Setup {
-      when(mockCustomerFactsUpdateConnector.updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier]))
-        .thenReturn(Future.failed(new Exception("unexpected")))
+    "fail when the connector returns a non-OK response" in new Setup {
 
-      noException should be thrownBy {
+      when(mockCustomerFactsUpdateConnector.updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier])).thenReturn(Future.successful(HttpResponse(500, "boom")))
+
+      val exception: Exception = intercept[Exception] {
         service.updateCustomerFacts(mtdId).futureValue
       }
+
+      exception.getMessage should include("Customer facts update failed")
+    }
+
+    "propagate connector exceptions" in new Setup {
+
+      when(mockCustomerFactsUpdateConnector.updateCustomerFacts(eqTo(mtdId))(any[HeaderCarrier]))
+        .thenReturn(Future.failed(new RuntimeException("fail")))
+
+      val exception: RuntimeException = intercept[RuntimeException] {
+        service.updateCustomerFacts(mtdId).futureValue
+      }
+
+      exception.getMessage shouldBe "The future returned an exception of type: java.lang.RuntimeException, with message: fail."
     }
   }
 }
