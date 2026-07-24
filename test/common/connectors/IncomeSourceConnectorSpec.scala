@@ -33,10 +33,12 @@
 package common.connectors
 
 import common.auth.AuthorisedAndEnrolledRequest
+import common.auth.actions.AuthActionsTestData.defaultAuthorisedAndEnrolledRequest
 import common.config.FrontendAppConfig
 import common.models.audit.{ExtendedAuditModel, IncomeSourceDetailsResponseAuditModel}
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsResponse}
 import common.services.AuditingService
+import common.utils.sessionUtils.SessionKeys
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{mock, reset, verify, when}
 import org.mockito.{AdditionalMatchers, ArgumentMatchers}
@@ -45,9 +47,11 @@ import org.scalatest.prop.Tables.Table
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc.Request
+import play.api.test.FakeRequest
 import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants.*
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessAndPropertyMigrat2019
+import common.enums.MTDIndividual
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, SessionId}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -216,6 +220,44 @@ class IncomeSourceConnectorSpec extends BaseConnectorSpec {
 
           modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe expectedHeader
         }
+      }
+    }
+
+    "the triggered migration session flag is set" should {
+
+      val scenarios = Table(
+        ("scenarioName", "path"),
+        ("Home", "/income-tax"),
+        ("Complete", "/check-your-active-businesses/complete"),
+        ("Overview", "/overview"),
+        ("Help", "/help"),
+        ("Your tasks", "/your-tasks"),
+        ("Recent activity", "/recent-activity"),
+        ("Reporting frequency", "/reporting-frequency"),
+        ("any other page", "/some-other-page")
+      )
+
+      forAll(scenarios) { (scenarioName: String, path: String) =>
+        s"add the migration test header for $scenarioName with path: $path" in new Setup {
+          implicit val appConfig: FrontendAppConfig = getAppConfig
+          implicit val request: AuthorisedAndEnrolledRequest[_] =
+            defaultAuthorisedAndEnrolledRequest(MTDIndividual, FakeRequest().withSession(SessionKeys.triggeredMigrationConfirmed -> "true"))
+
+          val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier(path, hc)
+
+
+          modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe Some("afterMigration")
+        }
+      }
+    }
+
+    "the triggered migration session flag is not set" should {
+
+      "not add the migration test header for any page" in new Setup {
+        implicit val appConfig: FrontendAppConfig = getAppConfig
+        val modifiedHeaderCarrier: HeaderCarrier = connector.modifyHeaderCarrier("/income-tax", hc)
+
+        modifiedHeaderCarrier.extraHeaders.toMap.get("Gov-Test-Scenario") shouldBe None
       }
     }
   }

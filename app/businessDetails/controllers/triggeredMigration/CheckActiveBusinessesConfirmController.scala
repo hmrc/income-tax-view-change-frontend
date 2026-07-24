@@ -28,6 +28,7 @@ import businessDetails.views.html.triggeredMigration.CheckActiveBusinessesConfir
 import common.auth.AuthActions
 import common.config.FrontendAppConfig
 import common.services.{AuditingService, CustomerFactsUpdateService}
+import common.utils.sessionUtils.SessionKeys
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -84,7 +85,15 @@ class CheckActiveBusinessesConfirmController @Inject()(
                 triggeredMigrationService.saveConfirmedData().flatMap {
                   _ => {
                     auditingService.extendedAudit(TriggeredMigrationCompleteAuditModel())
-                    Future.successful(Redirect(routes.CheckCompleteController.show(isAgent)))
+                    Future.successful(
+                      // Stores the confirmation in the session cookie so IncomeSourceConnector can send the Gov-Test-Scenario header
+                      // and retrieve post-migration stub data on subsequent requests in local and staging environments.
+                      // This has no effect in production.
+                      //
+                      // To test the post-migration stub data in QA, add Gov-Test-Scenario to QA's headersAllowlist.
+                      Redirect(routes.CheckCompleteController.show(isAgent))
+                        .addingToSession(SessionKeys.triggeredMigrationConfirmed -> "true")
+                    )
                   }
                 }
               }
