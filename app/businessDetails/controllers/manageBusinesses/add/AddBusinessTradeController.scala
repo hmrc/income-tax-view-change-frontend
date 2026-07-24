@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.BusinessTradeForm
 import businessDetails.models.incomeSourceDetails.Address
@@ -27,7 +26,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.AddBusinessTradeView
-import common.auth.MtdItUser
+import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.OverseasBusinessAddress
@@ -41,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class AddBusinessTradeController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
+class AddBusinessTradeController @Inject()(val authActions: AuthActions,
                                            val addBusinessTradeView: AddBusinessTradeView,
                                            val sessionService: SessionService)
                                           (implicit val appConfig: FrontendAppConfig,

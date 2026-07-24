@@ -50,7 +50,7 @@ class CheckCompleteControllerSpec extends MockAuthActions {
       mockIncomeSourceConnector.getIncomeSources()(
         ArgumentMatchers.any(), ArgumentMatchers.any()
       )
-    ).thenReturn(Future(singleBusinessIncome.copy(channel = "2")))
+    ).thenReturn(Future(singleBusinessIncome.copy(channel = "Customer-led")))
 
 
   mtdAllRoles.foreach { mtdRole =>

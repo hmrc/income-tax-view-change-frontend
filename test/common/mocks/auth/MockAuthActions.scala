@@ -34,7 +34,7 @@ import common.services.admin.FeatureSwitchService
 import common.viewUtils.InternalUrlHelper
 import common.models.itsaStatus.StatusReason.MtdItsaOptOut
 import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
-import common.models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, Metadata, PersonalInformation}
+import common.models.liabilitycalculation.{Inputs, LiabilityCalculationResponse, LiabilityCalculationResponseModel, Metadata, PersonalInformation}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
@@ -145,7 +145,7 @@ trait MockAuthActions
       .thenReturn(taxYear)
   }
 
-  def mockTriggeredMigrationRetrievalAction() = {
+  def mockTriggeredMigrationRetrievalAction(): OngoingStubbing[Future[LiabilityCalculationResponseModel]] = {
     when(mockITSAStatusService.getITSAStatusDetail(any(), any(), any())(any(), any(), any()))
       .thenReturn(Future.successful(List(
         ITSAStatusResponseModel(

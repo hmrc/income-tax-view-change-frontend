@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package businessDetails.auth.actions
+package common.auth.actions
 
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import common.auth.MtdItUser
@@ -58,9 +58,10 @@ class TriggeredMigrationRetrievalAction @Inject()(
         implicit val req: MtdItUser[A] = request
 
         lazy val authAction: Future[Either[Result, MtdItUser[A]]] = {
-          (request.incomeSources.isConfirmedUser) match {
-            case true => Future(Right(req))
-            case false =>
+          (request.incomeSources.isConfirmedUser, isTriggeredMigrationPage) match {
+            case (true, false) => Future(Right(req))
+            case (true, true) => Future(Left(redirectToHome(req.isAgent)))
+            case (false, _) =>
               isItsaStatusVoluntaryOrMandated().flatMap {
                 case Right(false) => confirmIneligibleUser(req, isTriggeredMigrationPage)
                 case Left(errorResult) => Future(Left(errorResult))

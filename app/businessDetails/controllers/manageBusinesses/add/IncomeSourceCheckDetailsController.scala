@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import businessDetails.enums.FailureCategory.ApiFailure
 import businessDetails.enums.IncomeSourceJourney.{IncomeSourceType, SelfEmployment}
@@ -31,7 +30,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.add.IncomeSourceCheckDetailsView
-import common.auth.MtdItUser
+import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.models.admin.OverseasBusinessAddress
 import common.models.core.NormalMode
@@ -46,7 +45,7 @@ import scala.annotation.unused
 import scala.concurrent.{ExecutionContext, Future}
 
 class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsView: IncomeSourceCheckDetailsView,
-                                                   val authActions: AuthActionsWithTriggeredMigrationCheck,
+                                                   val authActions: AuthActions,
                                                    val businessDetailsService: CreateBusinessDetailsService,
                                                    val auditingService: AuditingService,
                                                    val sessionService: SessionService,

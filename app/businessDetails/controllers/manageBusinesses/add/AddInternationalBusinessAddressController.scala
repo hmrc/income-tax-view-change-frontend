@@ -16,12 +16,11 @@
 
 package businessDetails.controllers.manageBusinesses.add
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.services.{AddressLookupService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
 import com.google.inject.Inject
-import common.auth.MtdItUser
+import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.Mode
@@ -33,7 +32,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AddInternationalBusinessAddressController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
+class AddInternationalBusinessAddressController @Inject()(val authActions: AuthActions,
                                                           addressLookupService: AddressLookupService)
                                                          (implicit
                                                           val appConfig: FrontendAppConfig,

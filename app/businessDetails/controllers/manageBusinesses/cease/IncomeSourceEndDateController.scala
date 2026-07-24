@@ -16,7 +16,6 @@
 
 package businessDetails.controllers.manageBusinesses.cease
 
-import businessDetails.auth.AuthActionsWithTriggeredMigrationCheck
 import businessDetails.core.IncomeSourceIdHash.mkFromQueryString
 import play.api.Logger
 import play.api.i18n.I18nSupport
@@ -35,7 +34,7 @@ import businessDetails.forms.manageBusinesses.cease.CeaseIncomeSourceEndDateForm
 import businessDetails.models.incomeSourceDetails.CeaseIncomeSourceData
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import common.auth.MtdItUser
+import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.models.core.Mode
 import common.services.DateService
@@ -43,7 +42,7 @@ import shared.enums.BeforeSubmissionPage
 import shared.enums.JourneyType.{Cease, IncomeSourceJourneyType}
 
 @Singleton
-class IncomeSourceEndDateController @Inject()(val authActions: AuthActionsWithTriggeredMigrationCheck,
+class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
                                               val incomeSourceEndDate: IncomeSourceEndDateView,
                                               val sessionService: SessionService,
                                               form: CeaseIncomeSourceEndDateFormProvider,

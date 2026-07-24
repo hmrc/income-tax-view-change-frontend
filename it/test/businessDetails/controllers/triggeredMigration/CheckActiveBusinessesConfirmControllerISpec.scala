@@ -114,6 +114,17 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
           )
         }
 
+        "redirect to the home page when the user is already confirmed" in {
+          stubAuthorised(mtdRole, List(TriggeredMigration))
+          GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessIncome)
+
+          val result = buildGETMTDClient(path, additionalCookies).futureValue
+          result should have(
+            httpStatus(SEE_OTHER),
+            redirectURI(expectedRedirect)
+          )
+        }
+
         testAuthFailures(path, mtdRole)
       }
     }
