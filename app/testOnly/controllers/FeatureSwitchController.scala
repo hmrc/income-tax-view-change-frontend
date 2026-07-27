@@ -96,8 +96,6 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     
 
     def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
-      val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend)
-      
       val subData: Set[String] =
         submittedData match {
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
