@@ -30,7 +30,7 @@ import common.testConstants.BaseIntegrationTestConstants.*
 import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import common.helpers.GetInsourceDetailsStub
-import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
+import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {

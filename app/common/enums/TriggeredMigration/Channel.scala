@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package businessDetails.enums.TriggeredMigration
+package common.enums.TriggeredMigration
 
 enum Channel(value: String) {
   case CustomerLed extends Channel("Customer-led")

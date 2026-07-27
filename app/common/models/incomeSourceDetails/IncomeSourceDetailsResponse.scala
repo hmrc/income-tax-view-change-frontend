@@ -19,7 +19,7 @@ package common.models.incomeSourceDetails
 import businessDetails.core.{IncomeSourceId, IncomeSourceIdHash}
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.auth.MtdItUser
-import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
+import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import common.services.DateServiceInterface
 import play.api.libs.json.{Format, JsValue, Json, OFormat}

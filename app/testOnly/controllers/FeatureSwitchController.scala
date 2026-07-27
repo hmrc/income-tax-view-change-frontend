@@ -111,7 +111,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     def getDisabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
       val subData: Set[String] =
         submittedData match {
-          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => Set.empty
+          case _ if submittedData.contains(ENABLE_ALL_FEATURES) => newServices.map(_.name)
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => allFeatureSwitches.map(_.name)
           case _ if submittedData.contains(PROD_FEATURES) => allFeatureSwitches.map(_.name) diff prodEnabledFsList
           case _ => allFeatureSwitches.map(_.name) diff submittedData
