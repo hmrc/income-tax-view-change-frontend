@@ -44,7 +44,7 @@ trait ExternalRedirectHelper {
   lazy val agentHomeUrl: String =
     s"$hubAgentBaseUrl/client-income-tax"
     
-  def homePageUrl(isAgent: Boolean): String = if (isAgent) agentHomeUrl else individualHomeUrl
+  def homePageUrl(isAgent: Boolean, origin: Option[String] = None): String = if (isAgent) agentHomeUrl else individualHomeUrlWithOrigin(origin)
 
   lazy val individualYourTasksUrl: String =
     s"$hubBaseUrl/your-tasks"
@@ -235,26 +235,18 @@ trait ExternalRedirectHelper {
     else
       returnsTaxYearsIndividualUrl(returnsFrontendEnabled)
 
-  def returnsTaxYearSummaryIndividualUrl(taxYear: Int, origin: Option[String] = None,
-                                         fragment: Option[String] = None, returnsFrontendEnabled: Boolean): String = {
-    if (returnsFrontendEnabled) {
-      val baseUri = s"$returnsBaseUrl/tax-year-summary/$taxYear"
-      val baseUriWithOptOrigin = origin.fold(baseUri)(o => s"$baseUri?origin=$o")
-      fragment.fold(baseUriWithOptOrigin)(f => s"$baseUriWithOptOrigin#$f")
-    } else {
-      val baseUri = returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear)
-      fragment.fold(baseUri)(f => baseUri.withFragment(f)).path
-    }
-  }
+  def taxYearSummaryUrl(isAgent: Boolean, taxYear: Int, origin: Option[String] = None, fragment: Option[String] = None, returnsEnabled: Boolean = false): String =
+    def taxYearSummaryAction(taxYear: Int) =
+      if isAgent
+      then returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
+      else returnsRoutes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear)
+      
+    val baseUri = if returnsEnabled
+      then s"${if isAgent then returnsAgentBaseUrl else returnsBaseUrl}/tax-year-summary/$taxYear"
+      else taxYearSummaryAction(taxYear).path
 
-  def returnsTaxYearSummaryAgentUrl(taxYear: Int, fragment: Option[String] = None, returnsFrontendEnabled: Boolean): String = {
-    if (returnsFrontendEnabled) {
-      val baseUri = s"$returnsAgentBaseUrl/tax-year-summary/$taxYear"
-      fragment.fold(baseUri)(f => s"$baseUri#$f")
-    } else {
-      val baseUri = returnsRoutes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear)
-      fragment.fold(baseUri)(f => baseUri.withFragment(f)).path
-    }
-  }
+    val baseUriWithMaybeOrigin = origin.fold(baseUri)(o => s"$baseUri?origin=$o")
+
+    fragment.fold(baseUriWithMaybeOrigin)(fragment => s"$baseUriWithMaybeOrigin#$fragment")
 
 }

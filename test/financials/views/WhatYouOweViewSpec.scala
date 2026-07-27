@@ -163,7 +163,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       dunningLock = dunningLock,
       moneyInYourAccountUrl = financialsRoutes.MoneyInYourAccountController.show().url,
       creditAndRefundEnabled = true,
-      taxYearSummaryUrl = _ => appConfig.returnsTaxYearSummaryIndividualUrl(taxYear, returnsFrontendEnabled = true),
+      taxYearSummaryUrl = _ => appConfig.taxYearSummaryUrl(isAgent = false, taxYear, returnsEnabled = true),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
       lpp2Url = LPP2Url,
       adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = false).url,
@@ -222,7 +222,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       dunningLock = dunningLock,
       moneyInYourAccountUrl = financialsRoutes.MoneyInYourAccountController.showAgent().url,
       creditAndRefundEnabled = true,
-      taxYearSummaryUrl = _ => appConfig.returnsTaxYearSummaryAgentUrl(taxYear, returnsFrontendEnabled = true),
+      taxYearSummaryUrl = _ => appConfig.taxYearSummaryUrl(isAgent = true, taxYear = taxYear, returnsEnabled = true),
       claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(defaultClaimToAdjustViewModel),
       lpp2Url = "",
       adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = true).url,
@@ -651,7 +651,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             fixedDate.getYear, "1040000124").url
           findElementById("due-0-overdue") shouldBe None
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+            appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
         }
 
         "have data with POA2 with hyperlink and no overdue" in new TestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
@@ -804,7 +804,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-              appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+              appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
           }
 
         "should have payment made paragraph when there is POA1 charge and lpi on poa 1 of 2" in new TestSetup(charges = whatYouOweDataWithOverdueAccruedInterest(List(Some(34.56), None), List(Some(100.00), None))) {
@@ -840,7 +840,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("LpiDunningLock").text shouldBe "Payment under review"
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-              appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+              appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
             pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
             val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -866,7 +866,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
             pageDocument.getElementById("due-0-late-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
               fixedDate.getYear, "1040000124", isInterestCharge = true).url
             pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-              appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+              appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
             pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
             val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -891,7 +891,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+            appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -918,7 +918,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000124").url
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+            appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -1059,13 +1059,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
           pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000125").url
           pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
-
+            appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
+            
           pageDocument.getElementById("due-1-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
             fixedDate.getYear, "1040000123").url
           findElementById("due-1-overdue") shouldBe None
           pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe
-            appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+            appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
           pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
           val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -1130,13 +1130,13 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.getElementById("due-0-late-link2").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           fixedDate.getYear, "1040000125").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-          appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+          appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
         pageDocument.getElementById("due-1-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.show(
           fixedDate.getYear, "1040000123").url
         findElementById("due-1-overdue") shouldBe None
         pageDocument.getElementById("taxYearSummary-link-1").attr("href") shouldBe
-          appConfig.returnsTaxYearSummaryIndividualUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+          appConfig.taxYearSummaryUrl(isAgent = false, fixedDate.getYear, returnsEnabled = true)
 
         pageDocument.getElementsByTag("h2").text should include(paymentsMadeHeading)
         val amount: String = balancingCodedOut.amountCodedOut.toCurrencyString
@@ -1287,7 +1287,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
         pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
         pageDocument.getElementById("due-0-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
-          appConfig.returnsTaxYearSummaryAgentUrl(fixedDate.getYear, returnsFrontendEnabled = true)
+          appConfig.taxYearSummaryUrl(isAgent = true, taxYear = fixedDate.getYear, returnsEnabled = true)
       }
 
       "not have button Pay now with no charges but coded out" in new AgentTestSetup(charges = noChargesButCodedOutModel) {

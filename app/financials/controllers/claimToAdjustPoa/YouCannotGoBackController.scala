@@ -20,6 +20,7 @@ import cats.data.EitherT
 import common.auth.AuthActions
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
+import common.models.admin.ReturnsFrontend
 import financials.services.PaymentOnAccountSessionService
 import financials.services.claimToAdjustPoa.{ClaimToAdjustService, RecalculatePoaHelper}
 import financials.utils.claimToAdjust.WithSessionAndPoa
@@ -43,13 +44,10 @@ class YouCannotGoBackController @Inject()(val authActions: AuthActions,
                                           val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with RecalculatePoaHelper with WithSessionAndPoa {
 
-  //ToDo update this when the ReturnsFrontend feature switch is built
-  val returnsFrontendEnabled: Boolean = false
-
   def show(isAgent: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrPrimaryAgentWithClient(isAgent) async {
     implicit user =>
       withSessionDataAndPoa(journeyState = CannotGoBackPage) {(_, poa) =>
-        EitherT.rightT(Ok(view(poa.taxYear, returnsFrontendEnabled)))
+        EitherT.rightT(Ok(view(poa.taxYear, isEnabled(ReturnsFrontend))))
       } recover logAndRedirect
   }
 }

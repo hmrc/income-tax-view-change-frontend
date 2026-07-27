@@ -23,57 +23,34 @@ import financials.controllers.routes as financialsRoutes
 trait FallBackBackLinks {
 
   val appConfig: FrontendAppConfig
-  val returnsFrontendEnabled: Boolean
 
-  def getPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage],
+  def getPaymentAllocationBackUrl(isAgent: Boolean,
+                                  gatewayPageOpt: Option[GatewayPage],
                                   taxYearOpt: Option[Int],
                                   origin: Option[String],
-                                  isAgent: Boolean): String =
-    if (isAgent) getAgentPaymentAllocationBackUrl(gatewayPageOpt, taxYearOpt)
-    else getIndividualPaymentAllocationBackUrl(gatewayPageOpt, taxYearOpt, origin)
-
-  private def getIndividualPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage],
-                                                    taxYearOpt: Option[Int],
-                                                    origin: Option[String]): String =
-    (gatewayPageOpt, taxYearOpt) match {
+                                  isReturnsFrontendEnabled: Boolean = false): String =
+    (gatewayPageOpt, taxYearOpt) match
       case (Some(TaxYearSummaryPage), Some(taxYear)) =>
-        appConfig.returnsTaxYearSummaryIndividualUrl(taxYear, origin, Some("payments"), returnsFrontendEnabled)
-      case (Some(TaxYearSummaryPage), None) => appConfig.individualHomeUrlWithOrigin(origin)
-      case (Some(WhatYouOwePage), _) => financialsRoutes.WhatYouOweController.show(origin).path
-      case (Some(PaymentHistoryPage), _) => financialsRoutes.PaymentHistoryController.show(origin).path
-      case _ => appConfig.individualHomeUrlWithOrigin(origin)
-    }
+        appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"), isReturnsFrontendEnabled)
+      case (Some(TaxYearSummaryPage), None) => appConfig.homePageUrl(isAgent, origin)
+      case (Some(WhatYouOwePage), _) => whatYouOweUrl(isAgent, origin)
+      case (Some(PaymentHistoryPage), _) => paymentHistoryUrl(isAgent, origin)
+      case _ => appConfig.homePageUrl(isAgent, origin)
 
-  private def getAgentPaymentAllocationBackUrl(gatewayPageOpt: Option[GatewayPage],
-                                               taxYearOpt: Option[Int]): String =
-    (gatewayPageOpt, taxYearOpt) match {
-      case (Some(TaxYearSummaryPage), Some(taxYear)) =>
-        appConfig.returnsTaxYearSummaryAgentUrl(taxYear, Some("payments"), returnsFrontendEnabled)
-      case (Some(TaxYearSummaryPage), None) => appConfig.homePageUrl(true)
-      case (Some(WhatYouOwePage), _) => financialsRoutes.WhatYouOweController.showAgent().path
-      case (Some(PaymentHistoryPage), _) => financialsRoutes.PaymentHistoryController.showAgent().path
-      case _ => appConfig.homePageUrl(true)
-    }
-
-  def getChargeSummaryBackUrl(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isAgent: Boolean): String =
-    if (isAgent) getChargeSummaryBackUrlAgent(gatewayPageOpt, taxYear)
-    else getChargeSummaryBackUrlIndividual(gatewayPageOpt, taxYear, origin)
-
-  private def getChargeSummaryBackUrlAgent(gatewayPageOpt: Option[GatewayPage], taxYear: Int): String =
-    gatewayPageOpt match {
+  def getChargeSummaryBackUrl(isAgent: Boolean, gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String], isReturnsFrontendEnabled: Boolean = false): String =
+    gatewayPageOpt match
       case Some(TaxYearSummaryPage) =>
-        appConfig.returnsTaxYearSummaryAgentUrl(taxYear, Some("payments"), returnsFrontendEnabled)
-      case Some(WhatYouOwePage) => financialsRoutes.WhatYouOweController.showAgent().path
-      case Some(PaymentHistoryPage) => financialsRoutes.PaymentHistoryController.showAgent().path
-      case _ => appConfig.homePageUrl(true)
-    }
+        appConfig.taxYearSummaryUrl(isAgent, taxYear, origin, Some("payments"), isReturnsFrontendEnabled)
+      case Some(WhatYouOwePage) => whatYouOweUrl(isAgent, origin)
+      case Some(PaymentHistoryPage) => paymentHistoryUrl(isAgent, origin)
+      case _ => appConfig.homePageUrl(isAgent, origin)
 
-  private def getChargeSummaryBackUrlIndividual(gatewayPageOpt: Option[GatewayPage], taxYear: Int, origin: Option[String]): String =
-    gatewayPageOpt match {
-      case Some(TaxYearSummaryPage) =>
-        appConfig.returnsTaxYearSummaryIndividualUrl(taxYear, origin, Some("payments"), returnsFrontendEnabled)
-      case Some(WhatYouOwePage) => financialsRoutes.WhatYouOweController.show(origin).path
-      case Some(PaymentHistoryPage) => financialsRoutes.PaymentHistoryController.show(origin).path
-      case _ => appConfig.individualHomeUrlWithOrigin(origin)
-    }
+  private def whatYouOweUrl(isAgent: Boolean, origin: Option[String]): String =
+    if isAgent then financialsRoutes.WhatYouOweController.showAgent().path
+    else financialsRoutes.WhatYouOweController.show(origin).path
+
+  private def paymentHistoryUrl(isAgent: Boolean, origin: Option[String]): String =
+    if isAgent then financialsRoutes.PaymentHistoryController.showAgent().path
+    else financialsRoutes.PaymentHistoryController.show(origin).path
+
 }
