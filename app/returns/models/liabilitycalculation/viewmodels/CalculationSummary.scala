@@ -17,7 +17,7 @@
 package returns.models.liabilitycalculation.viewmodels
 
 import common.implicits.ImplicitDateParser
-import common.models.liabilitycalculation.{LiabilityCalculationResponse, Messages}
+import common.models.liabilitycalculation.{CalculationRevisionType, LiabilityCalculationResponse, Messages}
 
 import java.time.LocalDate
 
@@ -36,7 +36,7 @@ case class CalculationSummary(
                                periodFrom: Option[LocalDate] = None,
                                periodTo: Option[LocalDate] = None,
                                messages: Option[Messages] = None,
-                               isAmended: Boolean = false
+                               calculationRevisionType: Option[CalculationRevisionType]
                              ) {
 
   def errorPresent(): Boolean = {
@@ -84,7 +84,7 @@ object CalculationSummary extends ImplicitDateParser {
       periodFrom = calc.metadata.periodFrom,
       periodTo = calc.metadata.periodTo,
       messages = calc.messages,
-      isAmended = calc.metadata.hasAnAmendment
+      calculationRevisionType = calc.metadata.calculationRevisionType
     )
   }
 }

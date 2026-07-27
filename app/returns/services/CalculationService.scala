@@ -59,11 +59,11 @@ class CalculationService @Inject()(
       getCalculationDetailsWithFlag(mtditid, nino, taxYear, isPrevious = false)
 
     latestResponse.flatMap {
-      case liabilityCalc: LiabilityCalculationResponse if isEnabled(PostFinalisationAmendmentsR18) && liabilityCalc.metadata.hasAnAmendment =>
+      case liabilityCalc: LiabilityCalculationResponse if isEnabled(PostFinalisationAmendmentsR18) && liabilityCalc.metadata.calculationRevisionType.isDefined =>
         getCalculationDetailsWithFlag(mtditid, nino, taxYear, isPrevious = true).map { previous =>
           (liabilityCalc, Some(previous))
         }
-      case liabilityCalc: LiabilityCalculationResponse if isEnabled(PostFinalisationAmendmentsR18) && !liabilityCalc.metadata.hasAnAmendment =>
+      case liabilityCalc: LiabilityCalculationResponse if isEnabled(PostFinalisationAmendmentsR18) && liabilityCalc.metadata.calculationRevisionType.isEmpty =>
         Future((liabilityCalc, None))
       case other =>
         Future((other, None))
