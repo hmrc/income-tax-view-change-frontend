@@ -26,5 +26,9 @@ object SessionKeys {
   val isSupportingAgent: String = "isSupportingAgent"
   val confirmedClient: String = "ConfirmedClient"
   val mandationStatus: String = "mandation_status"
+  // Set after a user confirms Triggered Migration. IncomeSourceConnector uses it to request the
+  // "afterMigration" stub response in local and staging environments.
+  // To test this response in QA, add Gov-Test-Scenario to QA's headersAllowlist.
+  val triggeredMigrationConfirmed: String = "TriggeredMigrationConfirmed"
 
 }

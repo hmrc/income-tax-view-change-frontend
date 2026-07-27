@@ -24,9 +24,10 @@ import common.models.admin.TriggeredMigration
 import common.services.{CustomerFactsUpdateService, DateServiceInterface}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import common.utils.sessionUtils.SessionKeys
 import play.api
 import play.api.Application
-import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, session, status}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 
 import scala.concurrent.Future
@@ -105,6 +106,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions with Mo
           redirectLocation(result).value should include(
             routes.CheckCompleteController.show(isAgent).url
           )
+          session(result).get(SessionKeys.triggeredMigrationConfirmed) shouldBe Some("true")
         }
 
         "redirect back to the Check HMRC Records page when form is valid and 'No' is selected" in {
@@ -122,6 +124,7 @@ class CheckActiveBusinessesConfirmControllerSpec extends MockAuthActions with Mo
           redirectLocation(result).value should include(
             routes.CheckHmrcRecordsController.show(isAgent).url
           )
+          session(result).get(SessionKeys.triggeredMigrationConfirmed) shouldBe None
         }
 
         "return BadRequest when no option is selected" in {

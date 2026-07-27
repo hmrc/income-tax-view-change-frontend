@@ -188,8 +188,6 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
 
   def poaAdjustmentOverrides(): Option[Seq[String]] = config.getOptional[Seq[String]]("afterPoaAmountAdjusted")
 
-  def triggeredMigrationOverrides(): Option[Seq[String]] = config.getOptional[Seq[String]]("afterMigration")
-
   val cacheTtl: Int = config.get[Int]("mongodb.timeToLiveInSeconds")
 
   val encryptionIsEnabled: Boolean = config.get[Boolean]("encryption.isEnabled")
