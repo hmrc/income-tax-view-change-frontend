@@ -21,25 +21,31 @@ import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent}
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.MockDateService
-import common.services.{DateService, DateServiceInterface}
+import common.models.itsaStatus.ITSAStatusYearOfMigrationModel
+import common.services.{DateService, DateServiceInterface, YearOfMigrationService}
 import financials.services.PaymentHistoryService
-import org.mockito.Mockito.mock
+import org.mockito.Mockito.{mock, when}
 import play.api
 import play.api.Application
 import play.api.http.Status
 import play.api.test.Helpers.*
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncomeNotMigrated
+import org.mockito.ArgumentMatchers.any
+
+import scala.concurrent.Future
 
 class NotMigratedUserControllerSpec extends MockAuthActions
   with ImplicitDateFormatter with MockDateService {
 
   lazy val mockPaymentHistoryService: PaymentHistoryService = mock(classOf[PaymentHistoryService])
   lazy val mockDateServiceInjected: DateService = mock(classOfDateService)
+  lazy val mockYearOfMigrationService: YearOfMigrationService = mock(classOf[YearOfMigrationService])
   override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[PaymentHistoryService].toInstance(mockPaymentHistoryService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
-      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected)
+      api.inject.bind[DateServiceInterface].toInstance(mockDateServiceInjected),
+      api.inject.bind[YearOfMigrationService].toInstance(mockYearOfMigrationService)
     ).build()
 
   lazy val testController = app.injector.instanceOf[NotMigratedUserController]
@@ -59,7 +65,8 @@ class NotMigratedUserControllerSpec extends MockAuthActions
             "the user has not migrated to ETMP" in {
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction(singleBusinessIncomeNotMigrated)
-              mockSingleBusinessIncomeSource(userMigrated = false)
+              when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+                .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(None)))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.OK
@@ -71,6 +78,8 @@ class NotMigratedUserControllerSpec extends MockAuthActions
               setupMockSuccess(mtdUserRole)
               mockItsaStatusRetrievalAction()
               mockSingleBusinessIncomeSource()
+              when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
+                .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
 
               val result = action(fakeRequest)
               status(result) shouldBe Status.INTERNAL_SERVER_ERROR
