@@ -16,7 +16,7 @@
 
 @this()
 
-@(title: String, link: String, openInNewTab: Boolean = false)
+@(title: String, link: String, openInNewTab: Boolean = false)(implicit messages: Messages)
 
 <div class="govuk-summary-card-no-border govuk-!-padding-top-1">
     <div class="govuk-summary-card__title-wrapper govuk-!-padding-bottom-2 govuk-!-padding-top-2">
@@ -24,6 +24,7 @@
             <a class="govuk-link--no-visited-state govuk-link--no-underline" href="@link"
                @if(openInNewTab){ target="_blank" rel="noopener noreferrer"}>
                 @title
+                @if(openInNewTab){<span class="govuk-visually-hidden">@messages("new.home.navigation.opensInNewTab")</span>}
                 <span class="hmrc-card__chevron" aria-hidden="true"></span>
             </a>
         </h3>
