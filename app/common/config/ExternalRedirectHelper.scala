@@ -249,4 +249,9 @@ trait ExternalRedirectHelper {
 
     fragment.fold(baseUriWithMaybeOrigin)(fragment => s"$baseUriWithMaybeOrigin#$fragment")
 
+  def proofOfIncomeUrl(isAgent: Boolean, returnsEnabled: Boolean): String = (isAgent, returnsEnabled) match 
+    case (false, false) => returnsRoutes.ProofOfYourIncomeController.show().path
+    case (true, false) => returnsRoutes.ProofOfYourIncomeController.showAgent().path
+    case (false, true) => returnsBaseUrl + "/mortgage-evidence/proof-of-income"
+    case (true, true) => returnsAgentBaseUrl + "/mortgage-evidence/proof-of-income"
 }

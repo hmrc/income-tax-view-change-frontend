@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.FinancialsFrontend
+import common.models.admin.{FinancialsFrontend, ReturnsFrontend}
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.{ITSAStatus, Mandated, Voluntary}
 import common.models.obligations.{ObligationsModel, SingleObligationModel}
@@ -112,16 +112,11 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
 
   private def getRecentSubmissionsCards(recentAnnualSubmission: Option[SingleObligationModel], recentQuarterlySubmission: Option[SingleObligationModel])(implicit mtdUser: MtdItUser[_]) = {
 
-    def getTaxYearSummaryUrl(taxYear: Int) = mtdUser.isAgent match {
-      case true => returns.controllers.routes.TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear).url
-      case false => returns.controllers.routes.TaxYearSummaryController.renderTaxYearSummaryPage(taxYear).url
-    }
-
     val recentAnnualCard: Option[RecentActivityCard] = recentAnnualSubmission.flatMap { obligation =>
       obligation.dateReceived.map { date =>
         RecentActivityCard(
           linkContentText = "new.home.recentActivity.submissions.annual.link.text",
-          linkUrl = getTaxYearSummaryUrl(TaxYear.getTaxYear(obligation.start).endYear),
+          linkUrl = appConfig.taxYearSummaryUrl(mtdUser.isAgent, TaxYear.getTaxYear(obligation.start).endYear, returnsEnabled=isEnabled(ReturnsFrontend)),
           contentText = "new.home.recentActivity.submissions.annual.content.text",
           dateContentText = "new.home.recentActivity.submissions.annual.date.content.text",
           cardDate = date,
@@ -134,7 +129,7 @@ class RecentActivityService @Inject()(obligationsConnector: ObligationsConnector
       obligation.dateReceived.map { date =>
         RecentActivityCard(
           linkContentText = "new.home.recentActivity.submissions.quarterly.link.text",
-          linkUrl = getTaxYearSummaryUrl(getTaxYearIncludingCalendar(obligation.start)),
+          linkUrl = appConfig.taxYearSummaryUrl(mtdUser.isAgent, getTaxYearIncludingCalendar(obligation.start), returnsEnabled=isEnabled(ReturnsFrontend)),
           contentText = "new.home.recentActivity.submissions.quarterly.content.text",
           dateContentText = "new.home.recentActivity.submissions.quarterly.date.content.text",
           cardDate = date
