@@ -39,4 +39,6 @@ object CalculationRevisionType {
       }
     }
   }
+  
+  val correctionAndRevenueAmendmentTypes: Set[CalculationRevisionType] = Set(HmrcAutoCorrection, HmrcManualCorrection, RevenueAmendment)
 }

@@ -222,7 +222,7 @@
                 paymentsContent(viewModel, taxYear, isAgent, origin),
                 forecastContent(viewModel, taxYear, isAgent),
                 submissionsContent(viewModel),
-                viewModel.calculationSummary.exists(_.isAmended),
+                viewModel.calculationSummary.map(_.calculationRevisionType.isDefined),
                 viewModel.pfaEnabled
             )
         </div>

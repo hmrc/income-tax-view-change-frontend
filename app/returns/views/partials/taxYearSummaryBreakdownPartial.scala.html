@@ -20,6 +20,7 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 @import common.views.html.components._
 @import play.twirl.api.HtmlFormat
+@import common.models.liabilitycalculation.CalculationRevisionType.{correctionAndRevenueAmendmentTypes, CustomerRejection}
 
 @this(
     govukWarningText : GovukWarningText,
@@ -28,8 +29,10 @@
     h3: h3,
     implicitDateFormatter: ImplicitDateFormatterImpl,
     p: p,
-    link : link
+    link : link,
+    govukInsetText: GovukInsetText
 )
+
 
 @(
     overview: CalculationSummary,
@@ -61,13 +64,57 @@
 }
 
 @overviewDescription = @{
-    (isLatest, isPrevious) match {
-        case (true, false) =>
+    (isLatest, isPrevious, overview.calculationRevisionType) match {
+        case (true, false, Some(revisionType)) if correctionAndRevenueAmendmentTypes.contains(revisionType) =>
+            p(id = Some("tax-year-summary.latest-calculation.correction-revenueAmendment.overview-description")) {
+                Html(messages("tax-year-summary.latest-calculation.correction-revenueAmendment.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+            }
+
+            govukInsetText(InsetText(
+                id = Some("update-inset"),
+                content = HtmlContent(messages("tax-year-summary.latest-calculation.rejection.inset-1"))
+            ))
+
+        case (false, true, Some(revisionType)) if correctionAndRevenueAmendmentTypes.contains(revisionType) =>
+
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("previous-calculation-overview-description")) {
+                        Html(messages("tax-year-summary.previous-calculation.correction-revenueAmendment.desc"))
+                    },
+                    h3(optId = Some("previous-calculation-subheading"), msg = messages("tax-year-summary.previous-calculation.correction-revenueAmendment.subheading", overview.timestamp.map(_.toLongDate).getOrElse("")), classes = "govuk-heading-m"),
+                    p(id = Some("previous-calculation-note")) {
+                        Html(messages("tax-year-summary.previous-calculation.correction-revenueAmendment.subheading.desc"))
+                    }
+                )
+            )
+        case (true, false, Some(revisionType)) if revisionType == CustomerRejection =>
+            p(id = Some("tax-year-summary.latest-calculation.rejection-overview-description")) {
+                Html(messages("tax-year-summary.latest-calculation.rejection.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+            }
+
+            govukInsetText(InsetText(
+                id = Some("update-inset"),
+                content = HtmlContent(messages("tax-year-summary.latest-calculation.rejection.inset-1"))
+            ))
+        case (false, true, Some(revisionType)) if revisionType == CustomerRejection =>
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("previous-calculation-overview-description")) {
+                        Html(messages("tax-year-summary.previous-calculation.rejection.desc"))
+                    },
+                    h3(optId = Some("previous-calculation-subheading"), msg = messages("tax-year-summary.previous-calculation.rejection.subheading", overview.timestamp.map(_.toLongDate).getOrElse("")), classes = "govuk-heading-m"),
+                    p(id = Some("previous-calculation-note")) {
+                        Html(messages("tax-year-summary.previous-calculation.rejection.subheading.desc"))
+                    }
+                )
+            )
+        case (true, false, _) =>
             p(id = Some("latest-calculation-overview-description")) {
                 Html(messages("tax-year-summary.latest-calculation-desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
             }
-        case (false, true) =>
-            val noteText = if(overview.isAmended) "tax-year-summary.previous-calculation-note-amended" else "tax-year-summary.previous-calculation-note-finalised"
+        case (false, true, _) =>
+            val noteText = if(overview.calculationRevisionType.isDefined) "tax-year-summary.previous-calculation-note-amended" else "tax-year-summary.previous-calculation-note-finalised"
 
             HtmlFormat.fill(
                 Seq(
