@@ -30,7 +30,7 @@ class ChargeClassificationTypeSpec extends UnitSpec {
         ("MC", ChargeClassificationType.ManualCorrection),
         ("RC", ChargeClassificationType.RejectedCorrection),
         ("RA", ChargeClassificationType.RevenueAmendments),
-        ("AF", ChargeClassificationType.AnnualFinancialAdjustment)
+        ("AF", ChargeClassificationType.AutoFinancialAdjustment)
       )
 
       forAll(chargeClassificationTypesTable) { (stringValue, chargeClassificationType) =>

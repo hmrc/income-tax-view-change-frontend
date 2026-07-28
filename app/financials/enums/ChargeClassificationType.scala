@@ -21,7 +21,7 @@ enum ChargeClassificationType(val value: String):
   case ManualCorrection extends ChargeClassificationType("MC")
   case RejectedCorrection extends ChargeClassificationType("RC")
   case RevenueAmendments extends ChargeClassificationType("RA")
-  case AnnualFinancialAdjustment extends ChargeClassificationType("AF")
+  case AutoFinancialAdjustment extends ChargeClassificationType("AF")
 
 object ChargeClassificationType:
   def fromString(value: String): Option[ChargeClassificationType] =
