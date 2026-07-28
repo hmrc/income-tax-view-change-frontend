@@ -46,10 +46,7 @@ implicit messages: Messages,  request: RequestHeader, user: MtdItUser[_]
 messages(s"claimToAdjustPoa.youCannotGoBack.$key", args: _*)
 }
 
-@tysLinkUrl = @{
-if(user.isAgent) appConfig.returnsTaxYearSummaryAgentUrl(poaTaxYear.endYear, returnsFrontendEnabled = returnsFrontendEnabled)
-else appConfig.returnsTaxYearSummaryIndividualUrl(poaTaxYear.endYear, returnsFrontendEnabled = returnsFrontendEnabled)
-}
+@tysLinkUrl = @{appConfig.taxYearSummaryUrl(user.isAgent, poaTaxYear.endYear, returnsEnabled = returnsFrontendEnabled)}
 
 @wyoLinkUrl = @{
 if(user.isAgent) financialsRoutes.WhatYouOweController.showAgent().url

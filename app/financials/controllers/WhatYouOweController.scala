@@ -20,7 +20,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.*
 import common.enums.GatewayPage.WhatYouOwePage
-import common.models.admin.SelfServeTimeToPayR17
+import common.models.admin.{SelfServeTimeToPayR17, ReturnsFrontend}
 import common.services.DateServiceInterface
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.WhatYouOweService
@@ -53,7 +53,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                     origin: Option[String] = None)
                    (implicit user: MtdItUser[_], hc: HeaderCarrier, ec: ExecutionContext): Future[Result] = {
 
-    whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, getTaxYearSummaryUrl(origin), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
+    whatYouOweService.createWhatYouOweViewModel(backUrl, getMoneyInYourAccountUrl, appConfig.taxYearSummaryUrl(user.isAgent, _ , origin=origin, returnsEnabled = isEnabled(ReturnsFrontend)), getAdjustPoaUrl, getChargeSummaryUrl, getPaymentHandOffUrl(origin)) map {
       case Some(viewModel) =>
         Ok(whatYouOwe(viewModel, origin, isEnabled(SelfServeTimeToPayR17)))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
@@ -93,13 +93,6 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
     case false if user.incomeSources.yearOfMigration.isDefined => routes.MoneyInYourAccountController.show()
     case false                                                 => routes.NotMigratedUserController.show()
   }).url
-
-  private def getTaxYearSummaryUrl(origin: Option[String])(implicit user: MtdItUser[_]): Int => String = {
-    //ToDo update this when the ReturnsFrontend feature switch is built
-    val returnsFrontendEnabled: Boolean = false
-    if (user.isAgent) appConfig.returnsTaxYearSummaryAgentUrl(_, None, returnsFrontendEnabled)
-    else appConfig.returnsTaxYearSummaryIndividualUrl(_, origin, None, returnsFrontendEnabled)
-  }
 
   private def getAdjustPoaUrl(implicit user: MtdItUser[_]): String = claimToAdjustPoaRoutes.AmendablePoaController.show(user.isAgent).url
 

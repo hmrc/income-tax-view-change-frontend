@@ -27,7 +27,7 @@ import play.test.Helpers.contentAsString
 
 class YouCannotGoBackViewSpec extends TestSupport {
 
-  class Setup(isAgent: Boolean) {
+  class Setup(isAgent: Boolean, returnsEnabled: Boolean) {
 
     val view: YouCannotGoBackView = app.injector.instanceOf[YouCannotGoBackView]
     implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
@@ -35,7 +35,7 @@ class YouCannotGoBackViewSpec extends TestSupport {
     val document: Document =
       Jsoup.parse(
         contentAsString(
-          view(TaxYear(2023, 2024), true)
+          view(TaxYear(2023, 2024), returnsEnabled)
         )
       )
   }
@@ -47,39 +47,32 @@ class YouCannotGoBackViewSpec extends TestSupport {
     else financialsRoutes.WhatYouOweController.show().url
   }
 
-  def getTaxYearSummaryControllerLink(isAgent: Boolean): String = {
-    if (isAgent)
-      appConfig.returnsTaxYearSummaryAgentUrl(2024, returnsFrontendEnabled = true)
-    else
-      appConfig.returnsTaxYearSummaryIndividualUrl(2024, returnsFrontendEnabled = true)
-  }
-
-  def executeTest(isAgent: Boolean): Unit = {
-    s"${if (isAgent) "Agent" else "Individual"}: CheckYourAnswersView" should {
-      "render the heading" in new Setup(isAgent) {
+  def executeTest(isAgent: Boolean, returnsEnabled: Boolean): Unit = {
+    s"${if (isAgent) "Agent" else "Individual"} with returns frontend ${if (returnsEnabled) "enabled" else "disabled"}: CheckYourAnswersView" should {
+      "render the heading" in new Setup(isAgent, returnsEnabled) {
         document.getElementsByClass("govuk-heading-xl").first().text() shouldBe messages("claimToAdjustPoa.youCannotGoBack.heading")
       }
-      "render the first paragraph" in new Setup(isAgent) {
+      "render the first paragraph" in new Setup(isAgent, returnsEnabled) {
         document.getElementById("paragraph-text-1").text() shouldBe
           messages("claimToAdjustPoa.youCannotGoBack.para1")
       }
-      "render the second paragraph" in new Setup(isAgent) {
+      "render the second paragraph" in new Setup(isAgent, returnsEnabled) {
         document.getElementById("paragraph-text-2").text() shouldBe
           messages("claimToAdjustPoa.youCannotGoBack.para2")
       }
-      "render the first bullet point with the correct link" in new Setup(isAgent) {
+      "render the first bullet point with the correct link" in new Setup(isAgent, returnsEnabled) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(0).text() shouldBe
           messages("claimToAdjustPoa.youCannotGoBack.bullet1Text") + " " + messages("claimToAdjustPoa.youCannotGoBack.bullet1Link")
-        document.getElementById("link-1").attr("href") shouldBe getTaxYearSummaryControllerLink(isAgent)
+        document.getElementById("link-1").attr("href") shouldBe appConfig.taxYearSummaryUrl(isAgent, 2024, returnsEnabled=returnsEnabled)
       }
-      "render the second bullet point with the correct link" in new Setup(isAgent) {
+      "render the second bullet point with the correct link" in new Setup(isAgent, returnsEnabled) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(1).text() shouldBe
           messages("claimToAdjustPoa.youCannotGoBack.bullet2Text") + " " + messages("claimToAdjustPoa.youCannotGoBack.bullet2Link")
         document.getElementById("link-2").attr("href") shouldBe
           getWhatYouOweControllerLink(isAgent)
       }
 
-      "render the third bullet point with the correct link" in new Setup(isAgent) {
+      "render the third bullet point with the correct link" in new Setup(isAgent, returnsEnabled) {
         document.getElementsByClass("govuk-!-margin-bottom-4").get(2).text() shouldBe
           messages("claimToAdjustPoa.youCannotGoBack.bullet3Text") + " " + messages("claimToAdjustPoa.youCannotGoBack.bullet3Link")
         document.getElementById("link-3").attr("href") shouldBe
@@ -88,7 +81,8 @@ class YouCannotGoBackViewSpec extends TestSupport {
     }
   }
 
-  executeTest(isAgent = false)
-  executeTest(isAgent = true)
+  for (isAgent <- List(false, true); returnsEnabled <- List(true, false)) {
+    executeTest(isAgent, returnsEnabled)
+  }
 
 }

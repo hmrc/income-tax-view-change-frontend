@@ -15,39 +15,21 @@
  *@
 
 @import hub.views.html.partials.newHome.overview.OverviewCard
-@import returns.controllers.routes.{TaxYearsController, TaxYearSummaryController, ProofOfYourIncomeController}
 @import common.models.incomeSourceDetails.TaxYear
+@import common.config.FrontendAppConfig
 
 @this(
     overviewCard: OverviewCard
 )
 
-@(isAgent: Boolean, taxYear: TaxYear, mortgageEvidenceEnabled: Boolean)(implicit messages: Messages)
+@(isAgent: Boolean, taxYear: TaxYear, mortgageEvidenceEnabled: Boolean, returnsFrontendEnabled: Boolean)(implicit messages: Messages, appConfig: FrontendAppConfig)
 
 
-@allTaxYearsUrl = @{
-    if(isAgent){
-        TaxYearsController.showAgentTaxYears().url
-    } else {
-        TaxYearsController.showTaxYears().url
-    }
-}
+@allTaxYearsUrl = @{appConfig.returnsTaxYearsUrl(isAgent, returnsFrontendEnabled)}
 
-@yearToYearTaxYearsUrl = @{
-    if(isAgent){
-        TaxYearSummaryController.renderAgentTaxYearSummaryPage(taxYear.endYear).url
-    } else {
-        TaxYearSummaryController.renderTaxYearSummaryPage(taxYear.endYear).url
-    }
-}
+@yearToYearTaxYearsUrl = @{appConfig.taxYearSummaryUrl(isAgent, taxYear.endYear, returnsEnabled=returnsFrontendEnabled)}
 
-@proofOfIncomeUrl = @{
-    if(isAgent){
-        ProofOfYourIncomeController.showAgent().url
-    } else {
-        ProofOfYourIncomeController.show().url
-    }
-}
+@proofOfIncomeUrl = @{appConfig.proofOfIncomeUrl(isAgent, returnsFrontendEnabled)}
 
 <div id="tax-year-overview-section">
     <h2 class="govuk-heading-m">@messages("new.home.overview.tax-year.sub-heading")</h2>
