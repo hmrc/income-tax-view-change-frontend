@@ -17,6 +17,7 @@
 package financials.models
 
 import common.services.DateServiceInterface
+import financials.enums.ChargeClassificationType
 import shared.enums.CodingOutType.*
 import shared.enums.DocumentType.*
 import play.api.Logger
@@ -45,6 +46,7 @@ case class DocumentDetail(taxYear: Int,
                           paymentLot: Option[String] = None,
                           effectiveDateOfPayment: Option[LocalDate] = None,
                           amountCodedOut: Option[BigDecimal] = None,
+                          chargeClassification: Option[String] = None,
                           documentDueDate: Option[LocalDate] = None,
                           poaRelevantAmount: Option[BigDecimal] = None
                          ) {
@@ -186,6 +188,12 @@ case class DocumentDetail(taxYear: Int,
     }
   }
 
+  def isRevenueAmendment: Boolean =
+    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
+      case Some(ChargeClassificationType.RevenueAmendments) => true
+      case _ => false
+    }
+
 }
 
 
@@ -227,6 +235,7 @@ object DocumentDetail {
       (__ \ "paymentLot").readNullable[String] and
       (__ \ "effectiveDateOfPayment").readNullable[LocalDate] and
       (__ \ "amountCodedOut").readNullable[BigDecimal] and
+      (__ \ "chargeClassification").readNullable[String] and
       (__ \ "documentDueDate").readNullable[LocalDate] and
       (__ \ "poaRelevantAmount").readNullable[BigDecimal]
     )(DocumentDetail.apply _)
