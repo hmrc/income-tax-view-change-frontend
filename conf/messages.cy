@@ -2616,6 +2616,8 @@ yourSelfAssessmentChargeSummary.codingOutPOAMessageFullyCollected       = Dyma o
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
 
+yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.text.heading                 = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
+
 yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Taliad mantoli
 yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = Taliad cyntaf ar gyfrif
 yourSelfAssessmentChargeSummary.paymentOnAccount2.text.heading                      = Ail daliad ar gyfrif
@@ -2650,6 +2652,8 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfri
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Crëwyd y swm ychwanegol taliad mantoli hwn oherwydd newid a wnaethoch i’ch Ffurflen Dreth.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
+
+yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.p                            = Yn dilyn gwiriad cydymffurfio, gwnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Newidiodd hyn eich cyfrifiad treth ar gyfer {0} i {1}, gan arwain at swm ychwanegol i’w dalu tuag at eich bil treth.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.

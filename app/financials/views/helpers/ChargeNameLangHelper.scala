@@ -22,9 +22,10 @@ import play.api.i18n.Messages
 
 object ChargeNameLangHelper {
 
-  def getHeading(chargeItem: ChargeItem, isInterestCharge: Boolean)(implicit messages: Messages): String = {
+  def getHeading(chargeItem: ChargeItem, isInterestCharge: Boolean, isRevenueAmendment: Boolean)(implicit messages: Messages): String = {
     val messagePrefix = if (isInterestCharge) "lpi." else ""
-    messages(s"yourSelfAssessmentChargeSummary.$messagePrefix${chargeItem.getChargeTypeKey}.heading")
+    val isRA = if (isRevenueAmendment) "ra." else ""
+    messages(s"yourSelfAssessmentChargeSummary.$messagePrefix$isRA${chargeItem.getChargeTypeKey}.heading")
   }
 
   def chargeHistoryCaption(chargeItem: ChargeItem)(implicit messages: Messages): String = {

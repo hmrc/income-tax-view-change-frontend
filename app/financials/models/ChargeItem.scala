@@ -19,6 +19,7 @@ package financials.models
 import common.exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
+import financials.enums.ChargeClassificationType
 import financials.models.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
 import play.api.libs.json.{Format, Json}
 
@@ -47,7 +48,8 @@ case class ChargeItem(
                        paymentLotItem: Option[String] = None,
                        paymentLot: Option[String] = None,
                        creationDate: Option[LocalDate] = None,
-                       chargeReference: Option[String]
+                       chargeReference: Option[String],
+                       chargeClassification: Option[String]
                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
@@ -216,6 +218,12 @@ case class ChargeItem(
     case PoaTwoDebit => poaTwoReconciliationDebit
     case _ => "no valid case"
   }
+
+  def isRevenueAmendment: Boolean =
+    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
+      case Some(ChargeClassificationType.RevenueAmendments) => true
+      case _ => false
+    }
 }
 
 object ChargeItem {
@@ -296,7 +304,8 @@ object ChargeItem {
       dueDateForFinancialDetail = FinancialDetailsModel.getDueDateForFinancialDetail(financialDetail),
       paymentLotItem = documentDetail.paymentLotItem,
       paymentLot = documentDetail.paymentLot,
-      chargeReference = financialDetail.chargeReference
+      chargeReference = financialDetail.chargeReference,
+      chargeClassification = documentDetail.chargeClassification
     )
   }
 

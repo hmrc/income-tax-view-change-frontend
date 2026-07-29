@@ -45,30 +45,33 @@ trait TransactionItem {
     }
   }
   
+  def isRevenueAmendment: Boolean
+  
   def getChargeTypeKey: String =
-    (transactionType, codedOutStatus) match {
-      case (PoaOneDebit, Some(Accepted))        => "poa1CodedOut.text"
-      case (PoaOneDebit, Some(FullyCollected))  => "poa1CodedOut.text"
-      case (PoaTwoDebit, Some(Accepted))        => "poa2CodedOut.text"
-      case (PoaTwoDebit, Some(FullyCollected))  => "poa2CodedOut.text"
-      case (PoaOneDebit, Some(Cancelled))       => "cancelledPayeSelfAssessment.text"
-      case (PoaTwoDebit, Some(Cancelled))       => "cancelledPayeSelfAssessment.text"
-      case (PoaOneDebit, _)                     => "paymentOnAccount1.text"
-      case (PoaTwoDebit, _)                     => "paymentOnAccount2.text"
-      case (MfaDebitCharge, _)                  => "hmrcAdjustment.text"
-      case (BalancingCharge, Some(Nics2))       => "class2Nic.text"
-      case (BalancingCharge, Some(Accepted))    => "codingOut.text"
-      case (BalancingCharge, Some(Cancelled))   => "cancelledPayeSelfAssessment.text"
-      case (BalancingCharge, _)                 => "balancingCharge.text"
-      case (PoaOneReconciliationDebit, _)       => "reviewAndReconcilePoa1.text"
-      case (PoaTwoReconciliationDebit, _)       => "reviewAndReconcilePoa2.text"
-      case (PoaOneReconciliationCredit, _)      => "reviewAndReconcilePoa1Credit.text"
-      case (PoaTwoReconciliationCredit, _)      => "reviewAndReconcilePoa2Credit.text"
-      case (LateSubmissionPenalty, _)           => "lateSubmissionPenalty.text"
-      case (FirstLatePaymentPenalty, _)         => "firstLatePaymentPenalty.text"
-      case (SecondLatePaymentPenalty, _)        => "secondLatePaymentPenalty.text"
-      case (ITSAReturnAmendment, _)             => "itsaReturnAmendment.text"
-      case (ITSAReturnAmendmentCredit, _)       => "itsaReturnAmendmentCredit.text"
+    (transactionType, codedOutStatus, isRevenueAmendment) match {
+      case (PoaOneDebit, Some(Accepted), _)        => "poa1CodedOut.text"
+      case (PoaOneDebit, Some(FullyCollected), _)  => "poa1CodedOut.text"
+      case (PoaTwoDebit, Some(Accepted), _)        => "poa2CodedOut.text"
+      case (PoaTwoDebit, Some(FullyCollected), _)  => "poa2CodedOut.text"
+      case (PoaOneDebit, Some(Cancelled), _)       => "cancelledPayeSelfAssessment.text"
+      case (PoaTwoDebit, Some(Cancelled), _)       => "cancelledPayeSelfAssessment.text"
+      case (PoaOneDebit, _, _)                     => "paymentOnAccount1.text"
+      case (PoaTwoDebit, _, _)                     => "paymentOnAccount2.text"
+      case (MfaDebitCharge, _, _)                  => "hmrcAdjustment.text"
+      case (BalancingCharge, Some(Nics2), _)       => "class2Nic.text"
+      case (BalancingCharge, Some(Accepted), _)    => "codingOut.text"
+      case (BalancingCharge, Some(Cancelled), _)   => "cancelledPayeSelfAssessment.text"
+      case (BalancingCharge, _, _)                 => "balancingCharge.text"
+      case (PoaOneReconciliationDebit, _, _)       => "reviewAndReconcilePoa1.text"
+      case (PoaTwoReconciliationDebit, _, _)       => "reviewAndReconcilePoa2.text"
+      case (PoaOneReconciliationCredit, _, _)      => "reviewAndReconcilePoa1Credit.text"
+      case (PoaTwoReconciliationCredit, _, _)      => "reviewAndReconcilePoa2Credit.text"
+      case (LateSubmissionPenalty, _, _)           => "lateSubmissionPenalty.text"
+      case (FirstLatePaymentPenalty, _, _)         => "firstLatePaymentPenalty.text"
+      case (SecondLatePaymentPenalty, _, _)        => "secondLatePaymentPenalty.text"
+      case (ITSAReturnAmendment, _, true)          => "itsaReturnAmendment.text"
+      case (ITSAReturnAmendment, _, false)         => "itsaReturnAmendment.text"
+      case (ITSAReturnAmendmentCredit, _, _)       => "itsaReturnAmendmentCredit.text"
       case error =>
         Logger("application").error(s"Missing or non-matching charge type: $error found")
         "unknownCharge"
