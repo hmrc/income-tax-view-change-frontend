@@ -180,6 +180,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2021, 7, 30)), codedOutStatus = Some(Accepted), accruingInterestAmount = None)
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
+  val extraAmountToPayDueToHMRCEnquiryAmendmentChargeList: List[TaxYearSummaryChargeItem] = List(
+    chargeItemModel(transactionType = ITSAReturnAmendment, dueDate = Some(LocalDate.of(2021, 7, 30)), codedOutStatus = None, accruingInterestAmount = None)
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
+
   val testBalancingPaymentChargeWithZeroValue: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType = BalancingCharge, originalAmount = 0.0, accruingInterestAmount = None)).map(TaxYearSummaryChargeItem.fromChargeItem)
 
@@ -793,6 +797,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val previousCalculationBill: String = "Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund."
     val quarterlyUpdate: String = "Quarterly update"
     val businessIncome: String = "Business income"
+    val extraAmountToPayDueToHMRCEnquiryAmendment: String = "Extra amount to pay due to HMRC enquiry amendment"
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -1079,6 +1084,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.h2.selectFirst("h2").text().contains(charges)
         layoutContent.selectHead("#payments").doesNotHave("table")
       }
+
       "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView(testDunningLockChargesList)) {
         val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) div:nth-child(3)")
         paymentType.text shouldBe paymentUnderReview
@@ -1169,6 +1175,19 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
           fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
+      }
+      // TODO add implementation to fix the test
+      "display the Extra amount to pay due to HMRC enquiry amendment" in new Setup(estimateView(extraAmountToPayDueToHMRCEnquiryAmendmentChargeList)) {
+        val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) div:nth-child(1)")
+        paymentType.text shouldBe extraAmountToPayDueToHMRCEnquiryAmendment
+      }
+
+      // TODO add implementation to fix the test
+      "display a link to Extra amount to pay due to HMRC enquiry amendment" in new Setup(estimateView(extraAmountToPayDueToHMRCEnquiryAmendmentChargeList)) {
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
+        paymentTypeLink.text shouldBe extraAmountToPayDueToHMRCEnquiryAmendment
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, true, financialsFrontendEnabled = true)
       }
 
       "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView()) {

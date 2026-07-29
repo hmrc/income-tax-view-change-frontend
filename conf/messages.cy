@@ -553,6 +553,7 @@ tax-year-summary.payments.amount                               = Swm
 tax-year-summary.payments.paymentOnAccount1.text               = Taliad cyntaf ar gyfrif
 tax-year-summary.payments.paymentOnAccount2.text               = Ail daliad ar gyfrif
 tax-year-summary.payments.balancingCharge.text                 = Taliad mantoli
+tax-year-summary.payments.enquiryAmendment.text                = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
