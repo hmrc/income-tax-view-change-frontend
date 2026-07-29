@@ -19,7 +19,7 @@ package testOnly.controllers
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{FeatureSwitchName, InvalidFS}
-import common.services.admin.FeatureSwitchService
+import testOnly.services.admin.FeatureSwitchService
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
 import common.models.admin.{BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend}
 import play.api.Logger

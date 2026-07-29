@@ -78,7 +78,8 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
 
   def getAllSwitches()(implicit headerCarrier: HeaderCarrier): Future[List[FeatureSwitch]] = {
 
-    val url = switchesStubBaseUrl
+    val configOnly = !appConfig.readFeatureSwitchesFromMongo
+    val url = s"$switchesStubBaseUrl?configOnly=$configOnly"
 
     http.get(url"$url")
       .execute[HttpResponse]

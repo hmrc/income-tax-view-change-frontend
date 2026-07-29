@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package common.services.admin
+package testOnly.services.admin
 
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
@@ -32,23 +32,27 @@ class FeatureSwitchService @Inject()(val featureSwitchConnector: FeatureSwitchCo
                                     (implicit val ec: ExecutionContext) extends FeatureSwitching {
 
   def getAll()(implicit hc: HeaderCarrier): Future[List[FeatureSwitch]] = {
+    featureSwitchConnector.getAllSwitches()
+  }
 
-    def enrich(mongoSwitches: List[FeatureSwitch]) = {
-      Logger("application").debug(s"reading FSS: $mongoSwitches")
-      FeatureSwitchName.allFeatureSwitches
-        .foldLeft(mongoSwitches) { (featureSwitches, missingSwitch) =>
-          if (featureSwitches.map(_.name).contains(missingSwitch))
-            featureSwitches
-          else
-            FeatureSwitch(missingSwitch, false) :: featureSwitches
-        }
-        .reverse
-    }
-
+  def set(featureSwitchName: FeatureSwitchName, enabled: Boolean)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    Logger("application").info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {
-      featureSwitchConnector.getAllSwitches().map(enrich)
+      featureSwitchConnector.setSwitch(featureSwitchName, enabled)
     } else {
-      Future.successful(enrich(getFSList))
+      Logger("application").error("Cannot set feature switch when read-from-mongo is disabled")
+      Future(false)
     }
   }
+
+  def setAll(featureSwitches: Map[FeatureSwitchName, Boolean])(implicit hc: HeaderCarrier): Future[Unit] = {
+    Logger("application").info(s"Setting all feature switches. FS values: $featureSwitches")
+    if (appConfig.readFeatureSwitchesFromMongo) {
+      featureSwitchConnector.setSwitches(featureSwitches).map(_ => ())
+    } else {
+      Logger("application").error("Cannot set feature switches when read-from-mongo is disabled")
+      Future.successful((): Unit)
+    }
+  }
+
 }
