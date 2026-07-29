@@ -2476,6 +2476,7 @@ money-in-your-account.where-from.table-row.tax-year.hidden              = Tax ye
 money-in-your-account.where-from.payment-row.description                = Payment you made to HMRC on {0}
 money-in-your-account.where-from.credit-row.description                 = Credit from an earlier tax year
 money-in-your-account.where-from.refund-row.description                 = Refund in progress
+money-in-your-account.where-from.ra-credit-row.description              = Credit from HMRC enquiry amendment
 money-in-your-account.claim-refund.button-text                          = Claim a refund
 
 # credits

@@ -53,12 +53,16 @@ object CreditRow {
               amount = transaction.amount,
               creditType = creditType,
               taxYear = year,
-              date = date)))
+              date = date,
+              isRevenueAmendment = transaction.isRevenueAmendment
+            )
+          )
+        )
     }
   }
 }
 
-case class CreditViewRow(transactionId: String, amount: BigDecimal, creditType: CreditType, taxYear: TaxYear, date: LocalDate) extends CreditRow {
+case class CreditViewRow(transactionId: String, amount: BigDecimal, creditType: CreditType, taxYear: TaxYear, date: LocalDate, isRevenueAmendment: Boolean) extends CreditRow {
   def descriptionLink(isAgent: Boolean): String = creditType match {
     case PoaOneReconciliationCredit | PoaTwoReconciliationCredit | ITSAReturnAmendmentCredit =>
       if (isAgent) routes.ChargeSummaryController.showAgent(taxYear = taxYear.endYear, id = transactionId).url else routes.ChargeSummaryController.show(taxYear = taxYear.endYear, id = transactionId).url
