@@ -54,5 +54,10 @@ class FeatureSwitchService @Inject()(val featureSwitchConnector: FeatureSwitchCo
       Future.successful((): Unit)
     }
   }
+  
+  def resetToProd()(implicit hc: HeaderCarrier): Future[Boolean] = {
+    Logger("application").info("Resetting feature switches to production values")
+    featureSwitchConnector.resetToProd()
+  }
 
 }
