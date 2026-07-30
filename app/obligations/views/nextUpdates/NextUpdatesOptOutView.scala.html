@@ -47,7 +47,8 @@
     isSupportingAgent: Boolean = false,
     origin: Option[String] = None,
     whatTheUserCanDo: Html,
-    taxYearStatusesCyNy: (ITSAStatus, ITSAStatus)
+    taxYearStatusesCyNy: (ITSAStatus, ITSAStatus),
+    isReturnsEnabled: Boolean
 )(implicit messages: Messages, user: MtdItUser[_])
 
 @mainTemplate(
@@ -61,7 +62,7 @@
 
     @p(id = Some("what-the-user-can-do")) { @whatTheUserCanDo }
 
-    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))
+    @nextUpdatesHelperR17(viewModel, optOutProposition, isSupportingAgent, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled)
 }
 
 @detailsContent = {

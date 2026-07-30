@@ -22,6 +22,7 @@ import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatus.Annual
 import common.models.obligations.{GroupedObligationsModel, ObligationWithIncomeType, ObligationsModel}
 import common.testUtils.TestSupport
+import common.models.admin.ReturnsFrontend
 import obligations.models.reportingObligations.optOut.NextUpdatesQuarterlyReportingContentChecks
 import obligations.models.*
 import obligations.services.reportingObligations.optOut.OptOutProposition
@@ -96,7 +97,8 @@ class NextUpdatesOptOutViewSpec extends TestSupport {
           "testBackURL",
           isSupportingAgent = isSupportingAgent,
           whatTheUserCanDo = whatTheUserCanDoContentMulti,
-          taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status)
+          taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status),
+          isReturnsEnabled = isEnabled(ReturnsFrontend),
         )(implicitly, user)
       ))
   }
