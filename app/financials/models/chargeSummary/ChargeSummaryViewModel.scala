@@ -48,7 +48,8 @@ case class ChargeSummaryViewModel(
                                    poaOneChargeUrl: String,
                                    poaTwoChargeUrl: String,
                                    LSPUrl: String,
-                                   LPPUrl: String
+                                   LPPUrl: String,
+                                   taxYearSummaryUrl: String
                                  )(implicit messages: Messages) {
 
   val dueDate = chargeItem.dueDate
@@ -96,6 +97,8 @@ case class ChargeSummaryViewModel(
   val isCodedOut: Boolean = chargeItem.codedOutStatus.exists(Seq(Accepted, FullyCollected).contains)
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !isCodedOut
+
+  val isRA: String = if (chargeItem.isRevenueAmendment) "Ra" else ""
 
   val creationEventNoInterestChargeAndNotCodedOut: Option[ChargeHistoryItem] = Option.when(chargeHistoryEnabled && noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
       ChargeHistoryItem(

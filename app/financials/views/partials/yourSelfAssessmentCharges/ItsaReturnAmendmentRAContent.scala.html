@@ -16,13 +16,17 @@
 
 @import common.views.html.components._
 @import financials.views.helpers.ChargeNameLangHelper
+@import common.config.FrontendAppConfig
+@import financials.models.chargeSummary.ChargeSummaryViewModel
+@import common.models.incomeSourceDetails.TaxYear
 
 @this(
         p: p,
-        link: link
+        link: link,
+        frontendAppConfig: FrontendAppConfig
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(viewModel: ChargeSummaryViewModel, taxYear: TaxYear)(implicit request: Request[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
@@ -30,6 +34,10 @@
 
 @p(){
     @getMessage(s"ra.itsaReturnAmendment.p1")
-    @getMessage(s"ra.itsaReturnAmendment.link")
-    @getMessage(s"ra.itsaReturnAmendment.p2")
+    @link(
+        link = viewModel.taxYearSummaryUrl,
+        messageKey = getMessage(s"ra.itsaReturnAmendment.link", taxYear.startYear.toString, taxYear.endYear.toString),
+        outerMessage = getMessage(s"ra.itsaReturnAmendment.p2")
+    )
+
 }
