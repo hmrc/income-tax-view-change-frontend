@@ -29,8 +29,8 @@ import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import scala.collection.immutable.ListMap
 
+import scala.collection.immutable.ListMap
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -121,10 +121,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     submittedData match {
       case _ if submittedData.contains(PROD_FEATURES) =>
         for {
-          _ <- for {
-            _ <- featureSwitchService.resetToProd()
-            features <- featureSwitchService.getAll()
-          } yield features.map(fs => featureSwitchService.set(fs.name, fs.isEnabled))
+          _ <- featureSwitchService.resetToProd()
         } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
       case _ =>
         // TODO: might worth to use setAll method from relevant repo (transactional approach?)
