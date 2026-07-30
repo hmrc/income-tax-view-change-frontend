@@ -30,12 +30,16 @@ import scala.concurrent.{ExecutionContext, Future}
 class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
                                        http: HttpClientV2)(implicit ec: ExecutionContext) extends RawResponseReads{
 
-  def setSwitchStubUrl(featureFlagName: FeatureSwitchName, isEnabled: Boolean): String = {
-    s"${appConfig.dynamicStubUrl}/features/${featureFlagName.name}?isEnabled=$isEnabled"
-  }
-
   def switchesStubBaseUrl: String = {
     s"${appConfig.dynamicStubUrl}/features"
+  }
+  
+  def setSwitchStubUrl(featureFlagName: FeatureSwitchName, isEnabled: Boolean): String = {
+    s"$switchesStubBaseUrl/${featureFlagName.name}?isEnabled=$isEnabled"
+  }
+  
+  def resetToProdUrl: String = {
+    s"$switchesStubBaseUrl/reset-to-prod"
   }
 
   def setSwitch(featureFlagName: FeatureSwitchName, isEnabled: Boolean)(implicit headerCarrier: HeaderCarrier): Future[Boolean] = {
@@ -89,6 +93,20 @@ class FeatureSwitchConnector @Inject()(val appConfig: FrontendAppConfig,
             response.json.as[Seq[FeatureSwitch]].toList
           case _ =>
             throw new RuntimeException(s"Failed to fetch feature switches: ${response.status}")
+        }
+      }
+  }
+  
+  def resetToProd()(implicit headerCarrier: HeaderCarrier): Future[Boolean] = {
+
+    val url = resetToProdUrl
+
+    http.post(url"$url")
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case NO_CONTENT => true
+          case _ => false
         }
       }
   }
