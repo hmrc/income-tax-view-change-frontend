@@ -271,13 +271,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                     )
                   }
 
-                  println("XXXXXXX")
-                  println("XXXXXXX")
-                  println(chargeItem)
-                  println(appConfig.taxYearSummaryUrl(isAgent, taxYear, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend)))
-                  println("XXXXXXX")
-                  println("XXXXXXX")
-
                   getPaymentAllocation(chargeItem).map { allocationData =>
 
                     mandatoryViewDataPresent(isInterestCharge, documentDetailWithDueDate) match {

@@ -2083,7 +2083,8 @@ object FinancialDetailsTestConstants {
       amountCodedOut = None,
       dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
       poaRelevantAmount = None,
-      chargeReference = Some("chargeRef"))
+      chargeReference = Some("chargeRef"),
+      chargeClassification = None)
     List(
       CreditDetailModel(documentDetail1.documentDate, charge = newCharge, MfaCreditType, financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment),
       CreditDetailModel(documentDetail2.documentDate, charge = newCharge, MfaCreditType, financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment)
@@ -2114,7 +2115,8 @@ object FinancialDetailsTestConstants {
       amountCodedOut = None,
       dueDate = Some(LocalDate.parse("2022-01-01")), dunningLock = false,
       poaRelevantAmount = None,
-      chargeReference = Some("chargeRef"))
+      chargeReference = Some("chargeRef"),
+      chargeClassification = None)
     List(
       CreditDetailModel(documentDetailMFA1.documentDate, charge = newCharge, MfaCreditType, financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment),
       CreditDetailModel(documentDetailMFA2.documentDate, charge = newCharge, MfaCreditType, financialDetailCreditCharge.balanceDetails.totalCreditAvailableForRepayment),

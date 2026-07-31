@@ -68,7 +68,8 @@ trait ChargeSummaryControllerHelper  extends MockAuthActions
           amountCodedOut = None,
           dunningLock = false,
           poaRelevantAmount = None,
-          chargeReference = Some("chargeRef")
+          chargeReference = Some("chargeRef"),
+          chargeClassification = None
         )
       ))
 
