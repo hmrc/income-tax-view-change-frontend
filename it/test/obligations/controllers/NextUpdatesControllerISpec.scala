@@ -234,7 +234,7 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
 
       }
 
-      "the user has a Opt Out R17 Feature Switch Enabled" in {
+      "the user has a Opt Out R17 Feature Switch Enabled - having quarterly updates" in {
         stubGetFeatureSwitches(List(OptOutFs))
 
         MTDIndividualAuthStub.stubAuthorisedAndMTDEnrolled()
@@ -331,12 +331,27 @@ class NextUpdatesControllerISpec extends ControllerISpecHelper {
           pageTitleIndividual("nextUpdates.heading")
         )
 
-        Then("the annual info sections")
+        Then("the page displays the missed deadlines table")
         res should have(
-          elementTextByID("current-year-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
-          elementTextByID("current-year-subheading")(expectedValue = "Tax return due"),
-          elementTextByID("current-year-compatible-software-desc")(expectedValue = "As you are not using Making Tax Digital for Income Tax, you can find out here how you file your Self Assessment tax return (opens in new tab)."),
-          elementTextByID("current-year-return-due-date")(expectedValue = "Your return for the 2022 to 2023 tax year is due by 31 January 2024.")
+          elementTextByID("missed-deadlines-warning")(expectedValue = "! Warning You have missed deadlines for one or more quarterly updates."),
+          elementTextByID("missed-deadlines-table-heading")(expectedValue = "Missed deadlines"),
+          elementTextByID("table-head-name-deadline-missed")(expectedValue = "Deadline"),
+          elementTextByID("table-head-name-period-missed")(expectedValue = "Period"),
+          elementTextByID("table-head-name-updates-due-missed")(expectedValue = "Income source updates due"),
+          elementTextByID("quarterly-deadline-date-missed-0")(expectedValue = "1 Jan 2018"),
+          elementTextByID("quarterly-period-missed-0")(expectedValue = "6 Apr 2017 to 5 Jul 2017"),
+          elementTextByID("quarterly-income-sources-missed-0")(expectedValue = "Foreign property business"),
+        )
+
+        Then("the quarterly updates info sections")
+        res should have(
+          elementTextByID("active-quarterly-desc")(expectedValue = "This page shows your upcoming due dates and any missed deadlines."),
+          elementTextByID("active-quarterly-subheading")(expectedValue = "Quarterly updates due"),
+          elementTextByID("active-quarterly-subdesc")(expectedValue = "Every 3 months an update is due for each of your property and sole trader income sources."),
+          elementTextByClass("govuk-details__summary-text")(expectedValue = "Find out more about quarterly updates"),
+          elementTextByID("active-quarterly-dropdown-desc")(expectedValue = "Each quarterly update is a running total of income and expenses for the tax year so far. It combines:"),
+          elementTextByClass("govuk-list govuk-list--bullet")(expectedValue = "new information and corrections made since the last update any information you’ve already provided that has not changed"),
+          elementTextByID("active-quarterly-dropdown-desc2")(expectedValue = "This is done using software compatible with Making Tax Digital for Income Tax (opens in new tab).")
         )
       }
 

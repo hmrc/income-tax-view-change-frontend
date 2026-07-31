@@ -56,7 +56,7 @@
 @currentTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.endYear.toString }
 @nextTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.nextYear.endYear.toString }
 @nextYearTaxReturnYear = @{ nextTaxYearEnd.toInt + 1 }
-@isCurrentYearQuarterly = @{ optOutProposition.isCurrentYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
+@isCurrentYearQuarterly = @{ optOutProposition.isCurrentYearQuarterly }
 @isNextYearQuarterly = @{ optOutProposition.isNextYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
 
 @currentYearLabel = @{ if(!isCurrentYearQuarterly) getMessage("annual.label", currentTaxYearStart, currentTaxYearEnd) else getMessage("quarterly.label", currentTaxYearStart, currentTaxYearEnd) }
