@@ -18,6 +18,8 @@ package returns.models
 
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
+import financials.enums.ChargeClassificationType
+import financials.enums.ChargeClassificationType.isRevenueAmendment
 import play.api.Logger
 
 trait TransactionItem {
@@ -35,6 +37,8 @@ trait TransactionItem {
   val isAccruingInterest: Boolean
 
   val amountCodedOut: Option[BigDecimal]
+
+  val chargeClassification: Option[String]
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean
 
@@ -67,7 +71,7 @@ trait TransactionItem {
       case (LateSubmissionPenalty, _)           => "lateSubmissionPenalty.text"
       case (FirstLatePaymentPenalty, _)         => "firstLatePaymentPenalty.text"
       case (SecondLatePaymentPenalty, _)        => "secondLatePaymentPenalty.text"
-      case (ITSAReturnAmendment, _)             => "itsaReturnAmendment.text"
+      case (ITSAReturnAmendment, _)             => if (isRevenueAmendment(chargeClassification)) "enquiryAmendment.text" else "itsaReturnAmendment.text"
       case (ITSAReturnAmendmentCredit, _)       => "itsaReturnAmendmentCredit.text"
       case error =>
         Logger("application").error(s"Missing or non-matching charge type: $error found")

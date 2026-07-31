@@ -181,7 +181,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val extraAmountToPayDueToHMRCEnquiryAmendmentChargeList: List[TaxYearSummaryChargeItem] = List(
-    chargeItemModel(transactionType = ITSAReturnAmendment, dueDate = Some(LocalDate.of(2021, 7, 30)), codedOutStatus = None, accruingInterestAmount = None)
+    chargeItemModel(transactionType = ITSAReturnAmendment, dueDate = None, codedOutStatus = None, accruingInterestAmount = None, chargeClassification = Some("RA"))
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val testBalancingPaymentChargeWithZeroValue: List[TaxYearSummaryChargeItem] = List(
@@ -1176,18 +1176,17 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
           fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
       }
-      // TODO add implementation to fix the test
+
       "display the Extra amount to pay due to HMRC enquiry amendment" in new Setup(estimateView(extraAmountToPayDueToHMRCEnquiryAmendmentChargeList)) {
         val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) div:nth-child(1)")
         paymentType.text shouldBe extraAmountToPayDueToHMRCEnquiryAmendment
       }
 
-      // TODO add implementation to fix the test
       "display a link to Extra amount to pay due to HMRC enquiry amendment" in new Setup(estimateView(extraAmountToPayDueToHMRCEnquiryAmendmentChargeList)) {
         val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
         paymentTypeLink.text shouldBe extraAmountToPayDueToHMRCEnquiryAmendment
         paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
-          fullDocumentDetailModel.transactionId, true, financialsFrontendEnabled = true)
+          fullDocumentDetailModel.transactionId, financialsFrontendEnabled = true)
       }
 
       "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView()) {

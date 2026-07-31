@@ -47,7 +47,8 @@ case class ChargeItem(
                        paymentLotItem: Option[String] = None,
                        paymentLot: Option[String] = None,
                        creationDate: Option[LocalDate] = None,
-                       chargeReference: Option[String]
+                       chargeReference: Option[String],
+                       chargeClassification: Option[String] = None
                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
@@ -296,7 +297,8 @@ object ChargeItem {
       dueDateForFinancialDetail = FinancialDetailsModel.getDueDateForFinancialDetail(financialDetail),
       paymentLotItem = documentDetail.paymentLotItem,
       paymentLot = documentDetail.paymentLot,
-      chargeReference = financialDetail.chargeReference
+      chargeReference = financialDetail.chargeReference,
+      chargeClassification = documentDetail.chargeClassification
     )
   }
 
