@@ -21,11 +21,8 @@ import businessDetails.core.{IncomeSourceId, IncomeSourceIdHash}
 import businessDetails.enums.IncomeSourceJourney.{ForeignProperty, IncomeSourceType, SelfEmployment, UkProperty}
 import common.auth.MtdItUser
 import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
-import businessDetails.core.IncomeSourceId.mkIncomeSourceId
-import common.services.DateServiceInterface
-import businessDetails.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
-import play.api.libs.json.{Format, JsValue, Json, OFormat}
 import play.api.Logging
+import play.api.libs.json.{Format, JsValue, Json, OFormat}
 import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 import uk.gov.hmrc.crypto.json.JsonEncryption
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}

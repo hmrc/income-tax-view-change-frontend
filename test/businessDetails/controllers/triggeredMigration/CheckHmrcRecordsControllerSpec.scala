@@ -18,13 +18,13 @@ package businessDetails.controllers.triggeredMigration
 
 import businessDetails.core.IncomeSourceId
 import businessDetails.enums.IncomeSourceJourney.SelfEmployment
-import businessDetails.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
 import businessDetails.mocks.services.MockTriggeredMigrationService
 import businessDetails.models.triggeredMigration.viewModels.{CheckHmrcRecordsSoleTraderDetails, CheckHmrcRecordsViewModel}
 import businessDetails.services.triggeredMigration.TriggeredMigrationService
 import common.connectors.{ITSAStatusConnector, IncomeTaxCalculationConnector}
 import common.enums.MTDIndividual
+import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.mocks.auth.MockAuthActions
 import common.models.admin.TriggeredMigration
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
@@ -35,21 +35,18 @@ import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncom
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-
-import play.api
-import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
-import common.models.incomeSourceDetails.IncomeSourceDetailsModel
-import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
-import businessDetails.enums.TriggeredMigration.{TriggeredMigrationAdded, TriggeredMigrationCeased}
-
-import scala.concurrent.Future
 import org.scalatestplus.mockito.MockitoSugar.mock => sMock
+import play.api
+import play.api.Application
+import play.api.test.Helpers.{defaultAwaitTimeout, redirectLocation, status}
+
+import scala.concurrent.Future 
 
 class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredMigrationService {
 
   lazy val mockYearOfMigrationService = sMock[YearOfMigrationService]
 
-  override lazy val app = applicationBuilderWithAuthBindings
+  override lazy val app: Application = applicationBuilderWithAuthBindings
     .overrides(
       api.inject.bind[TriggeredMigrationService].toInstance(mockTriggeredMigrationService),
       api.inject.bind[ITSAStatusConnector].toInstance(mockItsaStatusConnector),
@@ -58,7 +55,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
       api.inject.bind[YearOfMigrationService].toInstance(mockYearOfMigrationService)
     ).build()
 
-  lazy val testController = app.injector.instanceOf[CheckHmrcRecordsController]
+  lazy val testController: CheckHmrcRecordsController = app.injector.instanceOf[CheckHmrcRecordsController]
 
   val checkHmrcRecordsSoleTraderDetails = CheckHmrcRecordsSoleTraderDetails(
     incomeSourceId = IncomeSourceId("XA00001234"),
@@ -74,7 +71,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
 
   val singleBusinessIncomeWithYearOfMigration = IncomeSourceDetailsModel("AA123456A", testMtditid, Some("2018"), List(business1), Nil, channel = HmrcUnconfirmed.getValue)
 
-  val singleBusinessIncomeUnconfirmed = singleBusinessIncomeNoYearOfMigration.copy(channel = HmrcUnconfirmed.getValue)
+  val singleBusinessIncomeUnconfirmed: IncomeSourceDetailsModel = singleBusinessIncomeNoYearOfMigration.copy(channel = HmrcUnconfirmed.getValue)
 
   mtdAllRoles.foreach { mtdRole =>
     val fakeRequest = fakeGetRequestBasedOnMTDUserType(mtdRole)
