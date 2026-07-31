@@ -55,7 +55,8 @@ case class DocumentDetail(
                            documentNumberReducedCharge: Option[String] = None,
                            chargeTypeReducedCharge: Option[String] = None,
                            amendmentDateReducedCharge: Option[LocalDate] = None,
-                           taxYearReducedCharge: Option[String] = None
+                           taxYearReducedCharge: Option[String] = None,
+                           chargeClassification: Option[String] = None
                          ) {
 
   val isAccruingInterest: Boolean =
