@@ -2053,6 +2053,7 @@ whatYouOwe.pre-mtd-link                                            = visit your 
 whatYouOwe.pre-mtd-outstanding-charges                             = Any payment made will be used for outstanding tax for earlier Self Assessment tax years first, and will not be displayed here.
 whatYouOwe.tableRow.na                                             = Not applicable
 whatYouOwe.total-row.label                                         = Total (not including accruing interest):
+whatYouOwe.revenueAmendment.label                                  = Extra amount to pay due to HMRC enquiry amendment
 
 
 
@@ -3639,3 +3640,9 @@ triggered-migration.checkComplete.submitUpdates.p1                              
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = create a digital record of your property and sole trader income and expenses
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = send your quarterly update(s) to HMRC
 triggered-migration.checkComplete.submitUpdates.linkText                                = Check your latest submission deadlines
+
+# Choose tax years range page
+chooseTaxYearsRange.heading = Which tax years do you want to view and manage?
+chooseTaxYearsRange.hint = The tax year runs from 6 April to 5 April
+chooseTaxYearsRange.option.mtd = {0} to {1} onwards
+chooseTaxYearsRange.option.sa = {0} to {1} and earlier

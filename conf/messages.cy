@@ -2039,6 +2039,7 @@ whatYouOwe.pre-mtd.heading                                      = Gall fod genny
 whatYouOwe.pre-mtd.body                                         = I wirio a oes gennych daliadau heb eu talu, mae angen i chi fynd i’ch
 whatYouOwe.pre-mtd-link                                         = cyfrif Hunanasesiad ar-lein blaenorol
 whatYouOwe.pre-mtd-outstanding-charges                          = Bydd unrhyw daliad a wneir yn cael ei ddefnyddio ar gyfer treth sydd heb eu talu ar gyfer blynyddoedd treth Hunanasesiad blaenorol yn gyntaf, ac ni fydd yn cael ei arddangos yma.
+whatYouOwe.revenueAmendment.label                               = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 
 making-payment.heading                                          = Gwneud taliad
 making-payment.what-payment-goes-towards.heading                = Tuag at beth fydd eich taliad yn mynd
@@ -3621,3 +3622,9 @@ triggered-migration.checkComplete.submitUpdates.p1                              
 triggered-migration.checkComplete.submitUpdates.ul.li1                                  = creu cofnod digidol o’ch incwm o eiddo a’ch incwm o fod yn unig fasnachwr, a’r treuliau cysylltiedig
 triggered-migration.checkComplete.submitUpdates.ul.li2                                  = anfon eich diweddariad(au) chwarterol at CThEF
 triggered-migration.checkComplete.submitUpdates.linkText                                = Gwiriwch eich dyddiadau cau diweddaraf ar gyfer cyflwyno
+
+# Choose tax years range page
+chooseTaxYearsRange.heading = Pa flynyddoedd treth ydych am eu gweld a’u rheoli?
+chooseTaxYearsRange.hint = Mae’r flwyddyn dreth yn rhedeg o 6 Ebrill i 5 Ebrill
+chooseTaxYearsRange.option.mtd = {0} i {1} ymlaen
+chooseTaxYearsRange.option.sa = {0} i {1} a chyn hynny

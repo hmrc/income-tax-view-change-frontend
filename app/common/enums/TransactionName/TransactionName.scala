@@ -165,3 +165,7 @@ case object TriggeredMigrationStart extends TransactionName {
 case object TriggeredMigrationComplete extends TransactionName {
   val name = "triggered-migration-complete"
 }
+
+case object ChooseTaxYearsRangeSubmitted extends TransactionName {
+  val name = "ChooseTaxYearsRangeSubmitted"
+}

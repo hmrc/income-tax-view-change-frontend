@@ -23,6 +23,9 @@ GET         /help                                                         hub.co
 GET         /agents/overview                                              hub.controllers.HomeController.handleOverview(origin: Option[String] ?= None, isAgent: Boolean = true)
 GET         /agents/help                                                  hub.controllers.HomeController.handleHelp(origin: Option[String] ?= None, isAgent: Boolean = true)
 
+GET         /manage-self-assessment/choose-tax-years-range                hub.controllers.ChooseTaxYearsRangeController.show()
+POST        /manage-self-assessment/choose-tax-years-range                hub.controllers.ChooseTaxYearsRangeController.submit()
+
 
 
 ->          /                                                             common.Routes

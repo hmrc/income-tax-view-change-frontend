@@ -1,0 +1,85 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import common.views.html.layouts.unifiedLayout
+@import hub.forms.{ChooseTaxYearsRangeForm, ChooseTaxYearsRangeOption}
+@import hub.models.TaxYearRangeLabels
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import common.views.html.components._
+
+@this(
+    mainTemplate: unifiedLayout,
+    govukRadios: GovukRadios,
+    govukErrorSummary: GovukErrorSummary,
+    formWithCSRF: FormWithCSRF,
+    continueButton: ContinueButton
+)
+
+@(form: Form[ChooseTaxYearsRangeOption], postAction: Call, taxYearRangeLabels: TaxYearRangeLabels)(implicit messages: Messages, request: Request[_])
+
+@mainTemplate(
+    pageTitle = messages("chooseTaxYearsRange.heading"),
+    backUrl = Some("#"),
+    form = Some(form),
+    isAgent = false
+) {
+    @if(form.hasErrors) {
+        @govukErrorSummary(
+            ErrorSummary(
+                title = Text(messages("base.error_summary.heading")),
+                errorList = form.errors.map(err =>
+                    ErrorLink(
+                        href = Some(s"#${err.key}"),
+                        content = Text(messages(err.message, err.args: _*))
+                    )
+                ).toSeq
+            )
+        )
+    }
+
+    @formWithCSRF(action = postAction, Symbol("id") -> "choose-tax-years-range-form") {
+        @govukRadios(
+            Radios(
+                idPrefix = Some(ChooseTaxYearsRangeForm.response),
+                name = ChooseTaxYearsRangeForm.response,
+                fieldset = Some(Fieldset(
+                    legend = Some(Legend(
+                        content = Text(messages("chooseTaxYearsRange.heading")),
+                        classes = "govuk-fieldset__legend govuk-fieldset__legend--xl",
+                        isPageHeading = true
+                    ))
+                )),
+                hint = Some(Hint(content = Text(messages("chooseTaxYearsRange.hint")))),
+                items = Seq(
+                    RadioItem(
+                        id = Some("choose-tax-years-range-mtd"),
+                        value = Some(ChooseTaxYearsRangeForm.mtdOption),
+                        content = Text(messages("chooseTaxYearsRange.option.mtd", taxYearRangeLabels.mtdFromYear, taxYearRangeLabels.mtdToYear))
+                    ),
+                    RadioItem(
+                        id = Some("choose-tax-years-range-sa"),
+                        value = Some(ChooseTaxYearsRangeForm.legacyOption),
+                        content = Text(messages("chooseTaxYearsRange.option.sa", taxYearRangeLabels.saFromYear, taxYearRangeLabels.saToYear))
+                    )
+                ),
+                errorMessage = form.error(ChooseTaxYearsRangeForm.response)
+                    .map(e => ErrorMessage(content = Text(messages(e.message, e.args: _*))))
+            ).withFormField(form(ChooseTaxYearsRangeForm.response))
+        )
+
+        @continueButton()
+    }
+}

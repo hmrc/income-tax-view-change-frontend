@@ -165,3 +165,7 @@ case object TriggeredMigrationStart extends AuditType {
 case object TriggeredMigrationComplete extends AuditType {
   val name = "TriggeredMigrationComplete"
 }
+
+case object ChooseTaxYearsRangeSubmitted extends AuditType {
+  val name = "ChooseTaxYearsRangeSubmitted"
+}
