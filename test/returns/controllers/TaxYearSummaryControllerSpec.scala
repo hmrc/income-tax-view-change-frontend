@@ -1144,7 +1144,7 @@ class TaxYearSummaryControllerSpec
             periodFrom = None,
             periodTo = None,
             messages = None,
-            isAmended = false
+            calculationRevisionType = None
           )
 
         val actual =
@@ -1171,7 +1171,7 @@ class TaxYearSummaryControllerSpec
             periodFrom = None,
             periodTo = None,
             messages = None,
-            isAmended = false
+            calculationRevisionType = None
           )
 
         val actual =
@@ -1198,7 +1198,7 @@ class TaxYearSummaryControllerSpec
             periodFrom = None,
             periodTo = None,
             messages = None,
-            isAmended = false
+            calculationRevisionType = None
           )
 
         val actual =
@@ -1228,7 +1228,7 @@ class TaxYearSummaryControllerSpec
             periodFrom = None,
             periodTo = None,
             messages = None,
-            isAmended = false
+            calculationRevisionType = None
           )
 
         val actual =

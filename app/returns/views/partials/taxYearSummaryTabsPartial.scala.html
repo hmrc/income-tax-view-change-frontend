@@ -32,6 +32,7 @@
 
 @taxCalculationTabItem() = @{
     taxCalculationContent.map { html => {
+        println(Console.MAGENTA + s"hasLatestAmendments: $hasLatestAmendments, pfaEnabled: $pfaEnabled" + Console.RESET)
             if(hasLatestAmendments && pfaEnabled) {
                 TabItem(
                     id = Some("latestCalculation"),

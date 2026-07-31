@@ -63,24 +63,63 @@
     }
 }
 
+@paymentsLink = @{
+    if(isAgent){
+        financials.controllers.routes.PaymentHistoryController.showAgent().url
+    } else {
+        financials.controllers.routes.PaymentHistoryController.show().url
+    }
+}
+
+@whatYouOweLink = @{
+    if(isAgent){
+        financials.controllers.routes.WhatYouOweController.showAgent().url
+    } else {
+        financials.controllers.routes.WhatYouOweController.show().url
+    }
+}
+
 @overviewDescription = @{
     (isLatest, isPrevious, overview.calculationRevisionType) match {
         case (true, false, Some(revisionType)) if correctionAndRevenueAmendmentTypes.contains(revisionType) =>
-            p(id = Some("tax-year-summary.latest-calculation.correction-revenueAmendment.overview-description")) {
-                Html(messages("tax-year-summary.latest-calculation.correction-revenueAmendment.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
-            }
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("correction-and-revenue-amendment-overview-description")) {
+                        Html(messages("tax-year-summary.latest-calculation.correction-revenueAmendment.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+                    },
+                    govukInsetText(InsetText(
+                        id = Some("correction-and-revenue-amendment-inset"),
+                        content = HtmlContent(
+                            p(id = Some("latest-calculcation-inset-1"), classes = "govuk-body govuk-!-font-weight-bold")(Html(messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-1"))).toString +
+                            p(id = Some("latest-calculcation-inset-2"))(Html(messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-2"))).toString +
+                            p(id = Some("latest-calculcation-inset-3"))(
+                                Html(
+                                    messages("tax-year-summary-latest-calculation.correction-revenueAmendment.inset-3") +
+                                    link(
+                                        link = paymentsLink,
+                                        messageKey = messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-1"),
+                                        id = Some("payments-history-link")
+                                    ).toString +
+                                    messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-inset-4") +
+                                    link(
+                                        link = whatYouOweLink,
+                                        messageKey = messages("tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-2"),
+                                        id = Some("what-you-owe-link"),
+                                        outerMessage = messages("base.fullstop")
+                                    ).toString
 
-            govukInsetText(InsetText(
-                id = Some("update-inset"),
-                content = HtmlContent(messages("tax-year-summary.latest-calculation.rejection.inset-1"))
-            ))
-
+                                )
+                            ).toString
+                        )
+                    ))
+                )
+            )
         case (false, true, Some(revisionType)) if correctionAndRevenueAmendmentTypes.contains(revisionType) =>
 
             HtmlFormat.fill(
                 Seq(
                     p(id = Some("previous-calculation-overview-description")) {
-                        Html(messages("tax-year-summary.previous-calculation.correction-revenueAmendment.desc"))
+                        Html(messages("tax-year-summary.previous-calculation.correction-revenueAmendment.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
                     },
                     h3(optId = Some("previous-calculation-subheading"), msg = messages("tax-year-summary.previous-calculation.correction-revenueAmendment.subheading", overview.timestamp.map(_.toLongDate).getOrElse("")), classes = "govuk-heading-m"),
                     p(id = Some("previous-calculation-note")) {
@@ -89,19 +128,43 @@
                 )
             )
         case (true, false, Some(revisionType)) if revisionType == CustomerRejection =>
-            p(id = Some("tax-year-summary.latest-calculation.rejection-overview-description")) {
-                Html(messages("tax-year-summary.latest-calculation.rejection.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
-            }
+            HtmlFormat.fill(
+                Seq(
+                    p(id = Some("rejection-overview-description")) {
+                        Html(messages("tax-year-summary.latest-calculation.rejection.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
+                    },
+                    govukInsetText(InsetText(
+                        id = Some("rejection-inset"),
+                        content = HtmlContent(
+                            p(id = Some("latest-calculcation-inset-1"), classes = "govuk-body govuk-!-font-weight-bold")(Html(messages("tax-year-summary.latest-calculation.rejection.inset-1"))).toString +
+                                    p(id = Some("latest-calculcation-inset-2"))(Html(messages("tax-year-summary.latest-calculation.rejection.inset-2"))).toString +
+                                    p(id = Some("latest-calculcation-inset-3"))(
+                                        Html(
+                                            messages("tax-year-summary-latest-calculation.rejection.inset-3") +
+                                                    link(
+                                                        link = paymentsLink,
+                                                        messageKey = messages("tax-year-summary.latest-calculation.rejection.inset-link-1"),
+                                                        id = Some("payments-history-link")
+                                                    ).toString +
+                                                    messages("tax-year-summary.latest-calculation.rejection.inset-inset-4") +
+                                                    link(
+                                                        link = whatYouOweLink,
+                                                        messageKey = messages("tax-year-summary.latest-calculation.rejection.inset-link-2"),
+                                                        id = Some("what-you-owe-link"),
+                                                        outerMessage = messages("base.fullstop")
+                                                    ).toString
 
-            govukInsetText(InsetText(
-                id = Some("update-inset"),
-                content = HtmlContent(messages("tax-year-summary.latest-calculation.rejection.inset-1"))
-            ))
+                                        )
+                                    ).toString
+                        )
+                    ))
+                )
+            )
         case (false, true, Some(revisionType)) if revisionType == CustomerRejection =>
             HtmlFormat.fill(
                 Seq(
                     p(id = Some("previous-calculation-overview-description")) {
-                        Html(messages("tax-year-summary.previous-calculation.rejection.desc"))
+                        Html(messages("tax-year-summary.previous-calculation.rejection.desc", <b>{overview.timestamp.map(_.toLongDate).getOrElse("")}</b>))
                     },
                     h3(optId = Some("previous-calculation-subheading"), msg = messages("tax-year-summary.previous-calculation.rejection.subheading", overview.timestamp.map(_.toLongDate).getOrElse("")), classes = "govuk-heading-m"),
                     p(id = Some("previous-calculation-note")) {

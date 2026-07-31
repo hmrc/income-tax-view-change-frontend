@@ -25,6 +25,7 @@
 @import common.viewUtils.ExternalUrlHelper
 @import returns.views.html.partials.taxYearSummary.TaxCalculationAmendmentGuidance
 @import common.models.liabilitycalculation.CalculationRevisionType
+@import common.models.liabilitycalculation.CalculationRevisionType.Amendment
 
 @this(
         p: p,
@@ -229,7 +230,7 @@
                 )))
             }
 
-            @if(isPrevious) {
+            @if(isPrevious && calculationRevisionType.contains(Amendment)) {
                 @taxCalculationAmendmentGuidance(taxYear, "previous-calculation")
             }
 

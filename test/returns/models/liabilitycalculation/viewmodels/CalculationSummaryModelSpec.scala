@@ -41,7 +41,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
           forecastAllowancesAndDeductions = None,
           periodFrom = None,
           periodTo = None,
-          isAmended = false
+          calculationRevisionType = None
         )
     }
 
@@ -67,7 +67,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
             warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
             errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
           )),
-          isAmended = false
+          calculationRevisionType = None
         )
 
         CalculationSummary(liabilityCalculationModelSuccessful) shouldBe expectedCalculationSummary
@@ -94,7 +94,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
               errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
             )),
-            isAmended = false
+            calculationRevisionType = None
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -129,7 +129,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
               warnings = Some(Seq(Message(id = "C22214", text = "warn msg text1"))),
               errors = Some(Seq(Message(id = "C22216", text = "error msg text1")))
             )),
-            isAmended = false
+            calculationRevisionType = None
           )
 
           val liabilityCalculationModel = liabilityCalculationModelSuccessful.copy(
@@ -166,7 +166,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
                 Message("C55009", "updates cannot include gaps.")
               ))
             )),
-            isAmended = false
+            calculationRevisionType = None
           )
       }
     }
@@ -181,7 +181,7 @@ class CalculationSummaryModelSpec extends UnitSpec with ImplicitDateParser {
           income = 0,
           deductions = 0.0,
           totalTaxableIncome = 0,
-          isAmended = false
+          calculationRevisionType = None
         )
     }
   }

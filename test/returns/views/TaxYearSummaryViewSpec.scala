@@ -19,7 +19,7 @@ package returns.views
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.incomeSourceDetails.TaxYear
-import common.models.liabilitycalculation.{Message, Messages}
+import common.models.liabilitycalculation.{CalculationRevisionType, Message, Messages}
 import common.models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import common.testUtils.ViewSpec
 import common.viewUtils.ExternalUrlHelper
@@ -49,7 +49,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   import TaxYearSummaryMessages.*
   import implicitDateFormatter.*
 
-  def modelComplete(crystallised: Boolean, unattendedCalc: Boolean = false, isAmended: Boolean = false, testPeriod: Int = testYear): CalculationSummary =
+  def modelComplete(crystallised: Boolean, unattendedCalc: Boolean = false, calculationRevisionType: Option[CalculationRevisionType] = None, testPeriod: Int = testYear): CalculationSummary =
     CalculationSummary(
       timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
       income = 1,
@@ -64,7 +64,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       forecastTotalTaxableIncome = Some(8300),
       periodFrom = Some(LocalDate.of(testPeriod - 1, 1, 1)),
       periodTo = Some(LocalDate.of(testPeriod, 1, 1)),
-      isAmended = isAmended
+      calculationRevisionType = calculationRevisionType
     )
 
   val date: String = dateService.getCurrentDate.toLongDate
@@ -618,7 +618,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def calculationWithLatestAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), None,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, calculationRevisionType = Some(CalculationRevisionType.Amendment))), None,
       List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
@@ -635,8 +635,8 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   def calculationWithLatestAndPreviousAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)),
-        Some(modelComplete(crystallised = false, isAmended = true)), List.empty, testObligationsModel,
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, calculationRevisionType = Some(CalculationRevisionType.Amendment))),
+        Some(modelComplete(crystallised = false, calculationRevisionType = Some(CalculationRevisionType.Amendment))), List.empty, testObligationsModel,
         ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
@@ -686,7 +686,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(
-        calculationSummary = Some(modelComplete(crystallised = true, isAmended = false)),
+        calculationSummary = Some(modelComplete(crystallised = true, calculationRevisionType = None)),
         previousCalculationSummary = None,
         charges = List.empty,
         obligations = testObligationsModel,

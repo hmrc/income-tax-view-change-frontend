@@ -825,7 +825,7 @@ tax-year-summary.latest-calculation.correction-revenueAmendment.inset-inset-4 = 
 tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-2  = what you owe and how to make a payment
 
 tax-year-summary.previous-calculation.correction-revenueAmendment.desc            = HMRC amended your tax return on {0}. This changed your tax calculation at that time. This is now a previous calculation. A newer calculation may have been made since.
-tax-year-summary.previous-calculation.correction-revenueAmendment.subheading      = Calculation made on {0} A newer calculation may have been made since.
+tax-year-summary.previous-calculation.correction-revenueAmendment.subheading      = Calculation made on {0}
 tax-year-summary.previous-calculation.correction-revenueAmendment.subheading.desc = This calculation reflects the tax position at that time.
 
 tax-year-summary.latest-calculation.rejection.desc          = On {0} HMRC changed your tax return back to what it was before HMRC amended it. As a result, this is your most up-to-date calculation.

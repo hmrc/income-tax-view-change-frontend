@@ -68,6 +68,7 @@ object CalculationSummary extends ImplicitDateParser {
   }
 
   def apply(calc: LiabilityCalculationResponse): CalculationSummary = {
+    println(Console.RED + calc.metadata.calculationRevisionType + Console.RESET)
 
     CalculationSummary(
       timestamp = calc.metadata.calculationTimestamp.map(_.toZonedDateTime.toLocalDate),
