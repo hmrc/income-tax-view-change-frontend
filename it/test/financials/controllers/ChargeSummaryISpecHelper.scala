@@ -200,7 +200,8 @@ trait ChargeSummaryISpecHelper extends ControllerISpecHelper {
     amountCodedOut = None,
     dunningLock = false,
     poaRelevantAmount = None,
-    chargeReference = Some("chargeRef")
+    chargeReference = Some("chargeRef"),
+    chargeClassification = None
   )
 
   val chargeItemPaid = chargeItemUnpaid.copy(outstandingAmount = 0)
