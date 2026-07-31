@@ -17,7 +17,6 @@
 package financials.models
 
 import common.services.DateServiceInterface
-import financials.enums.ChargeClassificationType
 import play.api.Logger
 import play.api.libs.json.*
 import shared.enums.CodingOutType.*
