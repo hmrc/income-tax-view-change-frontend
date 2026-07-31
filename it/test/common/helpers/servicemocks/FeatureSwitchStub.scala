@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 
 object FeatureSwitchStub {
 
-  def featureSwitchUrl(): String = s"/features"
+  def featureSwitchUrl(): String = s"/features?configOnly=false"
 
   def stubGetFeatureSwitches(featureSwitches: List[FeatureSwitchName] = List()): Unit = {
     WiremockHelper.stubGet(featureSwitchUrl(), OK, featureSwitchResponse(featureSwitches).toString())

@@ -27,7 +27,7 @@ import org.jsoup.nodes.Document
 import play.api.i18n.*
 import play.twirl.api.Html
 
-class PoaAdjustedViewSpec extends TestSupport{
+class PoaAdjustedViewSpec extends TestSupport { 
 
   val poaAdjustedView: PoaAdjustedView = app.injector.instanceOf[PoaAdjustedView]
   lazy val msgs: MessagesApi = app.injector.instanceOf[MessagesApi]
@@ -40,14 +40,6 @@ class PoaAdjustedViewSpec extends TestSupport{
     implicit val testUser: MtdItUser[?] = if (isAgent) agentUserConfirmedClient() else individualUser
     val view: Html = poaAdjustedView(taxYear, poaTotalAmount, showOverDue)
     val document: Document = Jsoup.parse(view.toString())
-  }
-
-  def taxYearSummaryUrl(isAgent: Boolean): String = {
-    if(isAgent) {
-      appConfig.returnsTaxYearSummaryAgentUrl(taxYear.endYear, returnsFrontendEnabled = true)
-    } else {
-      appConfig.returnsTaxYearSummaryIndividualUrl(taxYear.endYear, returnsFrontendEnabled = true)
-    }
   }
 
   def whatYouOweUrl(isAgent: Boolean): String = {

@@ -142,11 +142,8 @@ class WhatYouOweControllerSpec extends MockAuthActions
     dunningLock = dunningLock,
     moneyInYourAccountUrl = if (isAgent) MoneyInYourAccountController.showAgent().url else MoneyInYourAccountController.show().url,
     creditAndRefundEnabled = true,
-    taxYearSummaryUrl = taxYearEnd => if (isAgent) {
-      appConfig.returnsTaxYearSummaryAgentUrl(taxYearEnd, returnsFrontendEnabled = returnsFrontendEnabled)
-    } else {
-      appConfig.returnsTaxYearSummaryIndividualUrl(taxYearEnd, returnsFrontendEnabled = returnsFrontendEnabled)
-    },
+    taxYearSummaryUrl = taxYearEnd => 
+      appConfig.taxYearSummaryUrl(isAgent, taxYearEnd, returnsEnabled = returnsFrontendEnabled),
     claimToAdjustViewModel = claimToAdjustViewModel.getOrElse(ctaViewModel(adjustPaymentsOnAccountFSEnabled, poaTaxYear)),
     lpp2Url = LPP2Url,
     adjustPoaUrl = claimToAdjustPoaRoutes.AmendablePoaController.show(isAgent = isAgent).url,

@@ -19,9 +19,9 @@ package testOnly.controllers
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{FeatureSwitchName, InvalidFS}
-import common.services.admin.FeatureSwitchService
+import testOnly.services.admin.FeatureSwitchService
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
-import common.models.admin.{BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend}
+import common.models.admin.{BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend}
 import play.api.Logger
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,8 +29,8 @@ import testOnly.views.html.FeatureSwitchView
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import scala.collection.immutable.ListMap
 
+import scala.collection.immutable.ListMap
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -81,7 +81,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
   }
 
-  lazy val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend)
+  lazy val newServices: Set[FeatureSwitchName] = Set(BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend)
 
   // TODO: refactor next method
   def submit(): Action[AnyContent] = Action.async { implicit request =>
@@ -92,15 +92,12 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
     }
 
     //Team is in agreement that environments in app configs will be exactly as in prod, and we use test-only/feature-switch to change FS.
-    val prodEnabledFsList: Set[String] = featureSwitchService.getFSListFromConfig.filter(_.isEnabled).map(_.name.name).toSet
-    
 
     def getEnabledFeatureSwitches: Map[FeatureSwitchName, Boolean] = {
       val subData: Set[String] =
         submittedData match {
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => Set.empty
           case _ if submittedData.contains(ENABLE_ALL_FEATURES) => (allFeatureSwitches -- newServices).map(_.name)
-          case _ if submittedData.contains(PROD_FEATURES) => prodEnabledFsList
           case _ => submittedData
         }
       subData.map(x => allFeatureSwitches.find(e => e.name == x)).collect {
@@ -113,7 +110,6 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
         submittedData match {
           case _ if submittedData.contains(ENABLE_ALL_FEATURES) => newServices.map(_.name)
           case _ if submittedData.contains(DISABLE_ALL_FEATURES) => allFeatureSwitches.map(_.name)
-          case _ if submittedData.contains(PROD_FEATURES) => allFeatureSwitches.map(_.name) diff prodEnabledFsList
           case _ => allFeatureSwitches.map(_.name) diff submittedData
         }
 
@@ -122,15 +118,21 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       }.map(x => x -> false).toMap
     }
 
-    // TODO: might worth to use setAll method from relevant repo (transactional approach?)
-    for {
-      _ <- Future.sequence(
+    submittedData match {
+      case _ if submittedData.contains(PROD_FEATURES) =>
         for {
-          (fs, enableState) <- (getEnabledFeatureSwitches ++ getDisabledFeatureSwitches)
-        } yield featureSwitchService.set(fs, enableState)
-      )
-    } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
-
+          _ <- featureSwitchService.resetToProd()
+        } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
+      case _ =>
+        // TODO: might worth to use setAll method from relevant repo (transactional approach?)
+        for {
+          _ <- Future.sequence(
+            for {
+              (fs, enableState) <- (getEnabledFeatureSwitches ++ getDisabledFeatureSwitches)
+            } yield featureSwitchService.set(fs, enableState)
+          )
+        } yield Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
+    }
   }
 
   def enableAll(): Action[AnyContent] = Action.async { implicit request =>

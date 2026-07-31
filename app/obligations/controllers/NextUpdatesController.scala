@@ -20,7 +20,7 @@ import obligations.models.audit.NextUpdatesAuditing.NextUpdatesAuditModel
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
-import common.models.admin.OptOutFs
+import common.models.admin.{OptOutFs, ReturnsFrontend}
 import common.models.obligations.ObligationsModel
 import common.services.AuditingService
 import obligations.services.NextUpdatesService
@@ -98,7 +98,9 @@ class NextUpdatesController @Inject()(
                     isSupportingAgent = user.isSupportingAgent,
                     origin = origin,
                     whatTheUserCanDo = whatTheUserCanDoContent,
-                  taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status))
+                    taxYearStatusesCyNy = (optOutProposition.currentTaxYear.status, optOutProposition.nextTaxYear.status),
+                    isReturnsEnabled = isEnabled(ReturnsFrontend)
+                  )
                 )
               }
             }.recoverWith {

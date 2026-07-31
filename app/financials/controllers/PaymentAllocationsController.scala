@@ -21,7 +21,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.enums.GatewayPage.GatewayPage
 import common.implicits.ImplicitDateFormatterImpl
-import common.models.admin.CreditsRefundsRepay
+import common.models.admin.{CreditsRefundsRepay, ReturnsFrontend}
 import common.models.core.Nino
 import common.services.AuditingService
 import financials.controllers.agent.errors.routes as agentErrorRoutes
@@ -55,9 +55,6 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
                                              val appConfig: FrontendAppConfig) extends FrontendController(mcc)
   with I18nSupport with FeatureSwitching with FallBackBackLinks {
 
-  //ToDo update this when the ReturnsFrontend feature switch is built
-  override val returnsFrontendEnabled: Boolean = false
-
   private lazy val redirectUrlIndividual: String = errorRoutes.NotFoundDocumentIDLookupController.show().url
   private lazy val redirectUrlAgent: String = agentErrorRoutes.AgentNotFoundDocumentIDLookupController.show().url
 
@@ -84,7 +81,7 @@ class PaymentAllocationsController @Inject()(val paymentAllocationView: PaymentA
     paymentAllocations.getPaymentAllocation(Nino(user.nino), documentNumber) map {
       case Right(paymentAllocations: PaymentAllocationViewModel) =>
         val taxYearOpt = paymentAllocations.originalPaymentAllocationWithClearingDate.headOption.flatMap(_.allocationDetail.flatMap(_.getTaxYearOpt))
-        val backUrl = getPaymentAllocationBackUrl(sessionGatewayPage, taxYearOpt, origin, isAgent)
+        val backUrl = getPaymentAllocationBackUrl(isAgent, sessionGatewayPage, taxYearOpt, origin, isEnabled(ReturnsFrontend))
         auditingService.extendedAudit(PaymentAllocationsResponseAuditModel(user, paymentAllocations))
         Ok(paymentAllocationView(paymentAllocations, backUrl = backUrl, user.saUtr,
           serviceNavigationPartial = user.serviceNavigationPartial,

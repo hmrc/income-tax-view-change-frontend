@@ -48,12 +48,20 @@ case class ChargeItem(
                        paymentLot: Option[String] = None,
                        creationDate: Option[LocalDate] = None,
                        chargeReference: Option[String],
-                       chargeClassification: Option[String] = None
+                       chargeClassification: Option[String] = None,
+                       isRevenueAmendment: Boolean = false
                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_.isBefore(dateService.getCurrentDate))
 
+  def getMessageKey(): String = {
+    if (isRevenueAmendment) {
+      "revenueAmendment.label"
+    } else {
+      getChargeTypeKey
+    }
+  }
   // TODO: to clarify / raise with the BA / why we have two way of identifying credits charge?
   val isCredit = originalAmount < 0
 
@@ -298,7 +306,8 @@ object ChargeItem {
       paymentLotItem = documentDetail.paymentLotItem,
       paymentLot = documentDetail.paymentLot,
       chargeReference = financialDetail.chargeReference,
-      chargeClassification = documentDetail.chargeClassification
+      chargeClassification = documentDetail.chargeClassification,
+      isRevenueAmendment = documentDetail.isRevenueAmendment
     )
   }
 

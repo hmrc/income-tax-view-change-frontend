@@ -20,7 +20,7 @@ import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.*
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.enums.GatewayPage.GatewayPage
-import common.models.admin.{ChargeHistory, CreditsRefundsRepay, PenaltiesAndAppeals}
+import common.models.admin.{ChargeHistory, CreditsRefundsRepay, PenaltiesAndAppeals, ReturnsFrontend}
 import common.models.core.Nino
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{AuditingService, DateServiceInterface}
@@ -66,9 +66,6 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FallBackBackLinks with TransactionUtils with FeatureSwitching {
-
-  //ToDo update this when the ReturnsFrontend feature switch is built
-  override val returnsFrontendEnabled: Boolean = false
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
@@ -252,7 +249,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                     ChargeSummaryViewModel(
                       currentDate = dateService.getCurrentDate,
                       chargeItem = chargeItem,
-                      backUrl = getChargeSummaryBackUrl(sessionGatewayPage, taxYear, origin, isAgent),
+                      backUrl = getChargeSummaryBackUrl(user.isAgent, sessionGatewayPage, taxYear, origin, isEnabled(ReturnsFrontend)),
                       gatewayPage = sessionGatewayPage,
                       paymentBreakdown = paymentBreakdown,
                       paymentAllocations = paymentAllocations,

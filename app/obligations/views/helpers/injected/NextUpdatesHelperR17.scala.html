@@ -44,7 +44,7 @@
         appConfig: FrontendAppConfig
 )
 
-@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus))(implicit messages: Messages, user: MtdItUser[_])
+@(viewModel: NextUpdatesViewModel, optOutProposition: OptOutProposition, isSupportingAgent: Boolean, taxYearStatusesCyNy: (ITSAStatus, ITSAStatus), isReturnsEnabled: Boolean)(implicit messages: Messages, user: MtdItUser[_])
 
 @import implicitDateFormatter.longDate
     
@@ -56,7 +56,7 @@
 @currentTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.endYear.toString }
 @nextTaxYearEnd = @{ optOutProposition.currentTaxYear.taxYear.nextYear.endYear.toString }
 @nextYearTaxReturnYear = @{ nextTaxYearEnd.toInt + 1 }
-@isCurrentYearQuarterly = @{ optOutProposition.isCurrentYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
+@isCurrentYearQuarterly = @{ optOutProposition.isCurrentYearQuarterly }
 @isNextYearQuarterly = @{ optOutProposition.isNextYearQuarterly && !user.incomeSources.areAllBusinessesCeased }
 
 @currentYearLabel = @{ if(!isCurrentYearQuarterly) getMessage("annual.label", currentTaxYearStart, currentTaxYearEnd) else getMessage("quarterly.label", currentTaxYearStart, currentTaxYearEnd) }
@@ -308,7 +308,7 @@
     Html(obligations.map(obl => messages(obl.incomeType)).map(msg => s"<div>$msg</div>").mkString)
 }
 
-@taxYearSummaryLink = @{appConfig.returnsTaxYearsUrl(user.isAgent, viewModel.isFinancialsEnabled)}
+@taxYearSummaryLink = @{appConfig.returnsTaxYearsUrl(user.isAgent, isReturnsEnabled)}
 
 @missedDeadlinesText = @{
     if(optOutProposition.currentTaxYear.canOptOut) {
