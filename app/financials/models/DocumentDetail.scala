@@ -246,53 +246,6 @@ object DocumentDetail {
       documentDate = documentDate
     )
 
-  implicit val writes: OWrites[DocumentDetail] = OWrites { model =>
-    Json
-      .obj(
-        "taxYear" -> model.taxYear.toString,
-        "documentID" -> model.transactionId,
-        "formBundleNumber" -> model.formBundleNumber,
-        "creditReason" -> model.creditReason,
-        "documentDate" -> model.documentDate,
-        "documentText" -> model.documentText,
-        "documentDueDate" -> model.documentDueDate,
-        "documentDescription" -> model.documentDescription,
-        "totalAmount" -> model.originalAmount,
-        "documentOutstandingAmount" -> model.outstandingAmount,
-        "poaRelevantAmount" -> model.poaRelevantAmount,
-        "lastClearingDate" -> model.lastClearingDate,
-        "lastClearingReason" -> model.lastClearingReason,
-        "lastClearedAmount" -> model.lastClearedAmount,
-        "statisticalFlag" -> model.statisticalFlag,
-        "informationCode" -> model.informationCode,
-        "paymentLot" -> model.paymentLot,
-        "paymentLotItem" -> model.paymentLotItem,
-        "effectiveDateOfPayment" -> model.effectiveDateOfPayment,
-        "accruingInterestAmount" -> model.accruingInterestAmount,
-        "interestRate" -> model.interestRate,
-        "interestFromDate" -> model.interestFromDate,
-        "interestEndDate" -> model.interestEndDate,
-        "latePaymentInterestID" -> model.latePaymentInterestId,
-        "latePaymentInterestAmount" -> model.latePaymentInterestAmount,
-        "lpiWithDunningLock" -> model.lpiWithDunningLock,
-        "interestOutstandingAmount" -> model.interestOutstandingAmount,
-        "amountCodedOut" -> model.amountCodedOut,
-        "documentNumberReducedCharge" -> model.documentNumberReducedCharge,
-        "chargeTypeReducedCharge" -> model.chargeTypeReducedCharge,
-        "amendmentDateReducedCharge" -> model.amendmentDateReducedCharge,
-        "chargeClassification" -> model.chargeClassification,
-        "taxYearReducedCharge" -> model.taxYearReducedCharge
-      )
-      .fields
-      .collect {
-        case (key, value) if value != JsNull =>
-          key -> value
-      }
-      .foldLeft(Json.obj()) {
-        case (json, (key, value)) =>
-          json + (key -> value)
-      }
-  }
   private val normalise: Reads[JsObject] = Reads { json =>
     json.validate[JsObject].map { obj =>
       val taxYearRenamed: Seq[(String, JsValue)] =
@@ -327,9 +280,22 @@ object DocumentDetail {
       )
     }
   }
-
   private val macroReads: Reads[DocumentDetail] = Json.using[Json.WithDefaultValues].reads[DocumentDetail]
 
   implicit val reads: Reads[DocumentDetail] = normalise.andThen(macroReads)
 
+  private val macroWrites: OWrites[DocumentDetail] = Json.writes[DocumentDetail]
+
+  private val legacyRename: Map[String, String] = Map(
+    "transactionId" -> "documentID",
+    "originalAmount" -> "totalAmount",
+    "outstandingAmount" -> "documentOutstandingAmount",
+    "latePaymentInterestId" -> "latePaymentInterestID"
+  )
+
+  implicit val writes: OWrites[DocumentDetail] = OWrites { d =>
+    val base = macroWrites.writes(d).fields.filterNot { case (_, v) => v == JsNull }
+    val renamed = base.map { case (k, v) => legacyRename.getOrElse(k, k) -> v }
+    JsObject(renamed) ++ Json.obj("taxYear" -> d.taxYear.toString)
+  }
 }
