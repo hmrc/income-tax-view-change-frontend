@@ -162,7 +162,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
       response.status match {
         case OK => (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          logger.error(s"[overwriteTaxCalculationData] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }

@@ -79,7 +79,7 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
   }
 
   def overwriteTaxCalculationData(nino: String, taxCalculationUser: TaxCalculationUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("Overwriting tax calculation data (2083/5294) via the dynamic stub")
+    logger.debug("Overwriting tax calculation data (2083/5294) via the dynamic stub")
 
     dynamicStubConnector.overwriteTaxCalculationData(nino, taxCalculationUser)
   }

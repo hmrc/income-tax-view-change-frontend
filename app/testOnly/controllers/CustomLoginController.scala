@@ -168,8 +168,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     }.recover {
       case ex =>
         val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application")
-          .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+        logger.error(s"[overwriteDataForCalculations] Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
