@@ -26,7 +26,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.models.incomeSourceDetails.{LatencyDetails, TaxYear}
 import common.models.itsaStatus.StatusDetail
 import common.services.{DateService, ITSAStatusService}
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import shared.enums.JourneyState
@@ -44,9 +44,10 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       val dateService: DateService,
                                       val appConfig: FrontendAppConfig)
-                                     (implicit val ec: ExecutionContext) extends JourneyCheckerManageBusinesses {
+                                     (implicit val ec: ExecutionContext)
+  extends JourneyCheckerManageBusinesses with Logging {
 
-  def agentPrefix(isAgent: Boolean): String = if (isAgent) "[Agent]" else ""
+  def agentPrefix(isAgent: Boolean): String = if (isAgent) "Agent - " else ""
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -71,7 +72,7 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
       case true =>
         Future.successful(updatedSessionData)
       case _ =>
-        Logger("application").error("incomeSourceReportingFrequencyData status update failed")
+        logger.error("incomeSourceReportingFrequencyData status update failed")
         throw new Exception("incomeSourceReportingFrequencyData status update failed")
     }
   }
@@ -128,7 +129,7 @@ class IncomeSourceRFService @Inject()(val sessionService: SessionService,
                     .flatMap(codeBlock(_))
                 }
               case None =>
-                Logger("application").error(
+                logger.error(
                   agentPrefix(isAgent) + s"Unable to retrieve incomeSourceId from session data for $incomeSourceType on IncomeSourceReportingFrequency page")
                 Future.successful(errorHandler(isAgent).showInternalServerError())
             }

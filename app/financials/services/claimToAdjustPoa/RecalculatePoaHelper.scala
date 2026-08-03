@@ -28,9 +28,8 @@ import financials.models.claimToAdjustPoa.{ClaimToAdjustNrsPayload, PoaAmendment
 import financials.models.nrs.*
 import financials.services.{NrsService, PaymentOnAccountSessionService}
 import financials.utils.ErrorRecovery
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.{Lang, LangImplicits, Messages}
-import play.api.libs.Files.logger
 import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -43,7 +42,7 @@ import java.security.MessageDigest
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
-trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with ErrorRecovery {
+trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with ErrorRecovery with Logging {
   private def dataFromSession(poaSessionService: PaymentOnAccountSessionService)(implicit hc: HeaderCarrier, ec: ExecutionContext)
   : Future[PoaAmendmentData] = {
     poaSessionService.getMongo(hc, ec).flatMap {
@@ -62,7 +61,7 @@ trait RecalculatePoaHelper extends FeatureSwitching with LangImplicits with Erro
       case PoaAmendmentData(Some(poaAdjustmentReason), Some(amount), _) =>
         ctaCalculationService.recalculate(nino, poa.taxYear, amount, poaAdjustmentReason) map {
           case Left(ex) =>
-            Logger("application").error(s"POA recalculation request failed: ${ex.getMessage}")
+            logger.error(s"POA recalculation request failed: ${ex.getMessage}")
             auditingService.extendedAudit(AdjustPaymentsOnAccountAuditModel(
               isSuccessful = false,
               previousPaymentOnAccountAmount = poa.totalAmountOne,

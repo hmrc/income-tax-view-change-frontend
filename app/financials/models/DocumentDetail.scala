@@ -18,7 +18,7 @@ package financials.models
 
 import common.services.DateServiceInterface
 import financials.enums.ChargeClassificationType
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.*
 import shared.enums.CodingOutType.*
 import shared.enums.DocumentType
@@ -59,7 +59,7 @@ case class DocumentDetail(
                            chargeTypeReducedCharge: Option[String] = None,
                            amendmentDateReducedCharge: Option[LocalDate] = None,
                            taxYearReducedCharge: Option[String] = None
-                         ) {
+                         ) extends Logging {
 
   def findTaxYear: Int = taxYear match {
     case year if taxYear != 9999 => year
@@ -173,7 +173,7 @@ case class DocumentDetail(
       case _ => "balancingCharge.text"
     }
     case error =>
-      Logger("application").error(s"Missing or non-matching charge type: $error found")
+      logger.error(s"Missing or non-matching charge type: $error found")
       "unknownCharge"
   }
 

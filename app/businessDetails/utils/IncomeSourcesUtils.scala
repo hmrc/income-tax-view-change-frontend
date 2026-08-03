@@ -21,14 +21,14 @@ import common.auth.MtdItUser
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.OverseasBusinessAddress
 import common.models.incomeSourceDetails.PropertyDetailsModel
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 
 import java.util.UUID
 import scala.concurrent.{ExecutionContext, Future}
 
-trait IncomeSourcesUtils extends FeatureSwitching {
+trait IncomeSourcesUtils extends FeatureSwitching with Logging {
 
   def selectActiveProperty(incomeSourceType: IncomeSourceType, filter: PropertyDetailsModel => Boolean)(implicit user: MtdItUser[_]): Option[PropertyDetailsModel] = {
 
@@ -38,7 +38,7 @@ trait IncomeSourcesUtils extends FeatureSwitching {
       case property :: Nil =>
         Some(property)
       case _ =>
-        Logger("application").error(s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
+        logger.error(s"Invalid amount of $incomeSourceType: expected 1, found ${activeProperty.length}")
         None
     }
   }

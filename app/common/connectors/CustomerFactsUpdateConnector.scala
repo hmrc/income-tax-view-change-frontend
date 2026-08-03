@@ -17,7 +17,7 @@
 package common.connectors
 
 import common.config.FrontendAppConfig
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CustomerFactsUpdateConnector @Inject()(val http: HttpClientV2,
                                              val appConfig: FrontendAppConfig
-                                            )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                            )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def getCustomerFactsUpdateUrl(mtdId: String): String =
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/customer-facts/update/$mtdId"
@@ -37,18 +37,18 @@ class CustomerFactsUpdateConnector @Inject()(val http: HttpClientV2,
                          (implicit headerCarrier: HeaderCarrier): Future[HttpResponse] = {
 
     val url = getCustomerFactsUpdateUrl(mtdId)
-    Logger("application").debug(s"PUT $url")
+    logger.debug(s"PUT $url")
 
     http.put(url"$url")
       .execute[HttpResponse]
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").info(s"Customer facts update returned OK for mtdId=$mtdId")
+            logger.info(s"Customer facts update returned OK for mtdId=$mtdId")
           case status if status >= INTERNAL_SERVER_ERROR =>
-            Logger("application").error(s"Customer facts update failed. status=$status body=${response.body}")
+            logger.error(s"Customer facts update failed. status=$status body=${response.body}")
           case status =>
-            Logger("application").warn(s"Customer facts update returned status=$status body=${response.body}")
+            logger.warn(s"Customer facts update returned status=$status body=${response.body}")
         }
         response
       }

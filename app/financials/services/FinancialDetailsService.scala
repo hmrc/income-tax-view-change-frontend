@@ -22,7 +22,7 @@ import common.models.incomeSourceDetails.{TaxYear, TaxYearRange}
 import common.services.DateServiceInterface
 import financials.connectors.FinancialDetailsConnector
 import financials.models.{DocumentDetail, FinancialDetailsErrorModel, FinancialDetailsModel, FinancialDetailsResponseModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FinancialDetailsService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
                                         implicit val dateService: DateServiceInterface)
-                                       (implicit val appConfig: FrontendAppConfig) {
+                                       (implicit val appConfig: FrontendAppConfig) extends Logging {
 
   def getFinancialDetails(taxYear: Int, nino: String)(implicit hc: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
     financialDetailsConnector.getFinancialDetails(taxYear, nino)
@@ -44,12 +44,11 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
 
   def getAllFinancialDetails(implicit user: MtdItUser[_],
                              hc: HeaderCarrier, ec: ExecutionContext): Future[List[(Int, FinancialDetailsResponseModel)]] = {
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    logger.debug(s"[getAllFinancialDetails] Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
     Future.sequence(user.incomeSources.orderedTaxYearsByYearOfMigration.map {
       taxYear =>
-        Logger("application").debug(s"Getting financial details for TaxYear: $taxYear")
+        logger.debug(s"[getAllFinancialDetails] Getting financial details for TaxYear: $taxYear")
         financialDetailsConnector.getFinancialDetails(taxYear, user.nino).map {
           case financialDetails: FinancialDetailsModel => Some((taxYear, financialDetails))
           case error: FinancialDetailsErrorModel if error.code != NOT_FOUND => Some((taxYear, error))
@@ -60,8 +59,7 @@ class FinancialDetailsService @Inject()(val financialDetailsConnector: Financial
 
   def getAllFinancialDetailsV2(implicit user: MtdItUser[_],
                                hc: HeaderCarrier, ec: ExecutionContext): Future[Option[FinancialDetailsResponseModel]] = {
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    logger.debug(s"[getAllFinancialDetailsV2] Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
     val yearsOfMigration = user.incomeSources.orderedTaxYearsByYearOfMigration
     if (yearsOfMigration.isEmpty)

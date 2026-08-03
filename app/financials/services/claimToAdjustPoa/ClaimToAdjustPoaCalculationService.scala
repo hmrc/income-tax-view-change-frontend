@@ -21,7 +21,7 @@ import common.models.incomeSourceDetails.TaxYear
 import financials.connectors.ClaimToAdjustPoaConnector
 import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.{ClaimToAdjustPoaError, ClaimToAdjustPoaInvalidJson, ClaimToAdjustPoaSuccess, UnexpectedError}
 import financials.models.claimToAdjustPoa.{ClaimToAdjustPoaRequest, SelectYourReason}
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ClaimToAdjustPoaCalculationService @Inject()(
                                                     claimToAdjustPoaConnector: ClaimToAdjustPoaConnector)
-                                                  (implicit ec: ExecutionContext) {
+                                                  (implicit ec: ExecutionContext) extends Logging {
 
 
   def recalculate(nino: Nino, taxYear: TaxYear,
@@ -46,16 +46,16 @@ class ClaimToAdjustPoaCalculationService @Inject()(
         response <- claimToAdjustPoaConnector.postClaimToAdjustPoa(request)
       } yield response match {
         case Left(ClaimToAdjustPoaError(message)) =>
-          Logger("application").error(s"POA recalculation failure: $message")
+          logger.error(s"POA recalculation failure: $message")
           Left(new Exception(message))
         case Left(ClaimToAdjustPoaInvalidJson) =>
-          Logger("application").error(s"POA recalculation failure / json error: ${ClaimToAdjustPoaInvalidJson.message}")
+          logger.error(s"POA recalculation failure / json error: ${ClaimToAdjustPoaInvalidJson.message}")
           Left(new Exception(ClaimToAdjustPoaInvalidJson.message))
         case Left(UnexpectedError) =>
-          Logger("application").error(s"POA recalculation failure / unexpected error: ${UnexpectedError.message}")
+          logger.error(s"POA recalculation failure / unexpected error: ${UnexpectedError.message}")
           Left(new Exception(UnexpectedError.message))
         case Right(ClaimToAdjustPoaSuccess(_)) =>
-          Logger("application").info(s"POA recalculation success")
+          logger.info(s"POA recalculation success")
           Right((): Unit)
       }
 

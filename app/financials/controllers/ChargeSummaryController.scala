@@ -37,7 +37,7 @@ import financials.models.paymentAllocationCharges.PaymentAllocationViewModel
 import financials.services.{ChargeHistoryService, FinancialDetailsService, PaymentAllocationsService}
 import financials.utils.FallBackBackLinks
 import financials.views.html.{ChargeSummaryView, YourSelfAssessmentChargeSummaryView}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -65,11 +65,11 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                                         val languageUtils: LanguageUtils,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FallBackBackLinks with TransactionUtils with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FallBackBackLinks with TransactionUtils with FeatureSwitching with Logging {
 
   def onError(message: String, isAgent: Boolean, showInternalServerError: Boolean)(implicit request: Request[_]): Result = {
     val errorPrefix: String = s"[ChargeSummaryController]${if (isAgent) "[Agent]" else ""}[showChargeSummary]"
-    Logger("application").error(s"$errorPrefix $message")
+    logger.error(s"[onError] $errorPrefix $message")
     if (showInternalServerError) {
       if (isAgent) itvcErrorHandlerAgent.showInternalServerError()
       else itvcErrorHandler.showInternalServerError()
@@ -339,7 +339,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
     else {
       val valuePhrase = if (undefinedOptions.size > 1) "values" else "value"
       val msg = s"Missing view $valuePhrase: ${undefinedOptions.mkString(", ")}"
-      Logger("application").error(msg)
+      logger.error(s"[mandatoryViewDataPresent] $msg")
       Left(ErrorCode(msg))
     }
   }

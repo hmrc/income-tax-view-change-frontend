@@ -18,7 +18,7 @@ package testOnly.controllers
 
 import common.config.FrontendAppConfig
 import common.controllers.BaseController
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.JsValue
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,12 +32,12 @@ class StubUsersController @Inject()(implicit val appConfig: FrontendAppConfig,
                                     val mcc: MessagesControllerComponents,
                                     val executionContext: ExecutionContext,
                                     userRepository: UserRepository
-                                   ) extends BaseController with I18nSupport {
+                                   ) extends BaseController with I18nSupport with Logging {
 
   def stubUsers: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[UserRecord](
       userRecord => {
-        Logger("application").info("userRecord:" + userRecord)
+        logger.info("userRecord:" + userRecord)
         userRepository.addUser(userRecord).map { result =>
           if (result.wasAcknowledged()) {
             Ok("User upload success")

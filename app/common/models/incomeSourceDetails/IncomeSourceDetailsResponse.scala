@@ -23,7 +23,7 @@ import common.enums.TriggeredMigration.Channel.{CustomerLed, HmrcConfirmed}
 import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import common.services.DateServiceInterface
 import play.api.libs.json.{Format, JsValue, Json, OFormat}
-import play.api.{Logger, Logging}
+import play.api.Logging
 import uk.gov.hmrc.crypto.Sensitive.SensitiveString
 import uk.gov.hmrc.crypto.json.JsonEncryption
 import uk.gov.hmrc.crypto.{Decrypter, Encrypter}
@@ -104,10 +104,10 @@ case class IncomeSourceDetailsModel(
   def orderedTaxYearsByAccountingPeriods(implicit dateService: DateServiceInterface): List[Int] = {
     startingTaxYear match {
       case Some(startTaxYear) =>
-        Logger("application").debug(s"[IncomeSourceDetailsModel][orderedTaxYearsByAccountingPeriods] startTaxYear: $startTaxYear, endTaxYear: ${dateService.getCurrentTaxYearEnd}")
+        logger.debug(s"startTaxYear: $startTaxYear, endTaxYear: ${dateService.getCurrentTaxYearEnd}")
         (startTaxYear to dateService.getCurrentTaxYearEnd).toList
       case None =>
-        Logger("application").error("[IncomeSourceDetailsModel][orderedTaxYearsByAccountingPeriods] No income source start date found returning empty list")
+        logger.error("No income source start date found returning empty list")
         List.empty
     }
   }
@@ -119,14 +119,14 @@ case class IncomeSourceDetailsModel(
   }
 
   def startingTaxYear: Option[Int] = {
-    Logger("application").debug(s"[IncomeSourceDetailsModel][startingTaxYear] Businesses firstAccountingPeriodEndDate:${businesses.flatMap(_.firstAccountingPeriodEndDate)}, properties firstAccountingPeriodEndDate: ${properties.flatMap(_.firstAccountingPeriodEndDate)}")
+    logger.debug(s"Businesses firstAccountingPeriodEndDate:${businesses.flatMap(_.firstAccountingPeriodEndDate)}, properties firstAccountingPeriodEndDate: ${properties.flatMap(_.firstAccountingPeriodEndDate)}")
     (businesses.flatMap(_.firstAccountingPeriodEndDate) ++ properties.flatMap(_.firstAccountingPeriodEndDate))
       .map(_.getYear).sortWith(_ < _).headOption
   }
 
   def orderedTaxYearsByYearOfMigration(implicit dateService: DateServiceInterface): List[Int] = {
     val taxYears = yearOfMigration.map(year => (year.toInt to dateService.getCurrentTaxYearEnd).toList).getOrElse(orderedTaxYearsByAccountingPeriods)
-    Logger("application").debug(s"Tax years list = $taxYears")
+    logger.debug(s"Tax years list = $taxYears")
     taxYears
   }
 

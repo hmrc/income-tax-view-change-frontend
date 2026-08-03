@@ -38,7 +38,7 @@ import common.auth.{AuthUserDetails, AuthorisedUserRequest, FrontendAuthorisedFu
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.viewUtils.InternalUrlHelper
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.auth.core.*
@@ -59,9 +59,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                      val appConfig: FrontendAppConfig,
                                      mcc: MessagesControllerComponents)
-  extends FeatureSwitching with ActionRefiner[Request, AuthorisedUserRequest] {
+  extends FeatureSwitching with ActionRefiner[Request, AuthorisedUserRequest] with Logging {
 
-  lazy val logger: Logger = Logger(getClass)
   implicit val executionContext: ExecutionContext = mcc.executionContext
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedUserRequest[A]]] = {

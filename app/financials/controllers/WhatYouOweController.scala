@@ -25,7 +25,7 @@ import common.services.DateServiceInterface
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.services.WhatYouOweService
 import financials.forms.utils.SessionKeys.gatewayPage
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,8 +44,8 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
                                      whatYouOwe: WhatYouOweView
                                     )(implicit val appConfig: FrontendAppConfig,
                                       val mcc: MessagesControllerComponents,
-                                      val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+                                      val ec: ExecutionContext)
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with Logging {
 
   def handleRequest(backUrl: String,
                     itvcErrorHandler: ShowInternalServerError,
@@ -58,12 +58,12 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
         Ok(whatYouOwe(viewModel, origin, isEnabled(SelfServeTimeToPayR17)))
           .addingToSession(gatewayPage -> WhatYouOwePage.name)
       case None =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" + "Failed to create WhatYouOweViewModel")
+        logger.error(s"${if (isAgent) "Agent - " else ""}" + "Failed to create WhatYouOweViewModel")
         itvcErrorHandler.showInternalServerError()
     }
   } recover {
     case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+      logger.error(s"${if (isAgent) "Agent - " else ""}" +
         s"Error received while getting WhatYouOwe page details: ${ex.getMessage} - ${ex.getCause}")
       itvcErrorHandler.showInternalServerError()
   }

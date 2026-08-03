@@ -25,7 +25,7 @@ import common.services.agent.ClientDetailsService
 import common.utils.AuthUtils.*
 import common.utils.sessionUtils.SessionKeys
 import hub.forms.agent.ClientsUTRForm
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound}
@@ -48,7 +48,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: AgentItvcErrorHandler,
                                           val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with Logging {
 
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(Ok(enterClientsUTR(
@@ -82,7 +82,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
                 Future.successful(Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*))
               }.recover {
                 case ex =>
-                  Logger("application").error(s"[EnterClientsUTRController] - ${ex.getMessage} - ${ex.getCause}")
+                  logger.error(s"[submit] - ${ex.getMessage} - ${ex.getCause}")
                   sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId, None)
                   Redirect(hub.controllers.agent.routes.UTRErrorController.show())
               }
@@ -91,7 +91,7 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
               val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
               Future.successful(Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*))
             case Left(_) =>
-              Logger("application").error(s"[EnterClientsUTRController] - Error response received from API")
+              logger.error(s"[submit] - Error response received from API")
               Future.successful(itvcErrorHandler.showInternalServerError())
           }
       }

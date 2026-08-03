@@ -28,7 +28,7 @@ import financials.models.*
 import financials.models.chargeHistory.ChargesHistoryErrorModel
 import financials.models.repaymentHistory.{RepaymentHistory, RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import financials.services.PaymentHistoryService.PaymentHistoryError
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
@@ -43,7 +43,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
                                       chargeHistoryService: ChargeHistoryService,
                                       implicit val dateService: DateServiceInterface,
                                       val appConfig: FrontendAppConfig)
-                                     (implicit ec: ExecutionContext) extends TransactionUtils with FeatureSwitching {
+                                     (implicit ec: ExecutionContext) extends TransactionUtils with FeatureSwitching with Logging {
 
   def getPaymentHistory(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentHistoryError.type, List[Payment]]] = {
 
@@ -70,7 +70,7 @@ class PaymentHistoryService @Inject()(repaymentHistoryConnector: RepaymentHistor
     val orderedTaxYears: List[Int] = user.incomeSources.orderedTaxYearsByYearOfMigration.reverse.take(appConfig.paymentHistoryLimit)
 
     val (from, to) = (orderedTaxYears.min, orderedTaxYears.max)
-    Logger("application").debug(s"Getting payment history for TaxYears: $from - $to")
+    logger.debug(s"Getting payment history for TaxYears: $from - $to")
 
     for {
       response <- financialDetailsConnector.getPayments(TaxYear.forYearEnd(from), TaxYear.forYearEnd(to))

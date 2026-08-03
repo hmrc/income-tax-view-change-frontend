@@ -22,7 +22,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{ITSASubmissionIntegration, MortgageEvidence, PostFinalisationAmendmentsR18}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -39,7 +39,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
                                    val ec: ExecutionContext,
                                    val dateService: DateServiceInterface
                                   ) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+  with I18nSupport with FeatureSwitching with Logging {
 
 
   def handleRequest(backUrl: String,
@@ -49,7 +49,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
 
     user.incomeSources.orderedTaxYearsByAccountingPeriods match {
       case orderedTaxYearsByAccountingPeriods if orderedTaxYearsByAccountingPeriods.nonEmpty =>
-        Logger("application").debug(s"[TaxYearsController][handleRequest] taxYears = ${user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse}")
+        logger.debug(s"taxYears = ${user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse}")
         Future(Ok(taxYearsView(
           taxYears = user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse,
           backUrl = backUrl,
@@ -63,7 +63,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
           origin = origin
         )))
       case _ =>
-        Logger("application").error(s"[TaxYearsController][handleRequest] failed to render taxYearsView for taxYears due to no orderedTaxYearsByAccountingPeriods returned")
+        logger.error(s"failed to render taxYearsView for taxYears due to no orderedTaxYearsByAccountingPeriods returned")
         Future(BadRequest(taxYearsView(
           taxYears = List(),
           backUrl = backUrl,

@@ -22,7 +22,7 @@ import common.implicits.ImplicitDateFormatter
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.{AuditingService, DateServiceInterface}
 import returns.forms.utils.SessionKeys.calcPagesBackPage
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import returns.models.audit.{ViewInYearTaxEstimateAuditBody, ViewInYearTaxEstimateAuditModel}
@@ -48,7 +48,7 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
                                                val appConfig: FrontendAppConfig,
                                                val languageUtils: LanguageUtils,
                                                val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with ImplicitDateFormatter {
+  with I18nSupport with ImplicitDateFormatter with Logging {
 
 
   def handleRequest(isAgent: Boolean, currentDate: LocalDate, timeStamp: String, origin: Option[String] = None)
@@ -79,10 +79,10 @@ class InYearTaxCalculationController @Inject()(authActions: AuthActions,
         Ok(view(taxCalc, taxYear, isAgent, backUrl, timeStamp, serviceNavigationPartial = user.serviceNavigationPartial))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
-        Logger("application").info("No calculation data returned from downstream.")
+        logger.info("No calculation data returned from downstream.")
         errorHandler.showInternalServerError()
       case _ =>
-        Logger("application").error("Unexpected error has occurred while retrieving calculation data.")
+        logger.error("Unexpected error has occurred while retrieving calculation data.")
         errorHandler.showInternalServerError()
     }
   }

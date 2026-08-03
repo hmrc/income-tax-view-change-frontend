@@ -21,7 +21,7 @@ import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.models.claimToAdjustPoa.PoaAmendmentData
 import financials.services.PaymentOnAccountSessionService
 import financials.utils.ErrorRecovery
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import shared.enums.{AfterSubmissionPage, BeforeSubmissionPage, CannotGoBackPage, InitialPage, JourneyState}
@@ -29,7 +29,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait JourneyCheckerClaimToAdjust extends ErrorRecovery {
+trait JourneyCheckerClaimToAdjust extends ErrorRecovery with Logging {
   self =>
 
   val poaSessionService: PaymentOnAccountSessionService
@@ -49,7 +49,8 @@ trait JourneyCheckerClaimToAdjust extends ErrorRecovery {
             Future.successful(logAndRedirect(s"Necessary session data was empty in mongo"))
           case Left(ex: Throwable) =>
             Future.successful(
-              logAndRedirect(s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
+              logAndRedirect("[withSessionData] " +
+                s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
         }
       }
   }
@@ -71,24 +72,24 @@ trait JourneyCheckerClaimToAdjust extends ErrorRecovery {
     poaSessionService.getMongo flatMap {
       case Right(Some(poaData: PoaAmendmentData)) =>
         if (poaData.journeyCompleted) {
-          Logger("application").info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
+          logger.info(s"The current active mongo Claim to Adjust POA session has been completed by the user, so a new session will be created")
           poaSessionService.createSession.flatMap {
             case Right(_) => codeBlock(poaData)
             case Left(ex: Throwable) =>
-              Future.successful(logAndRedirect(
+              Future.successful(logAndRedirect("[handleSession] " +
                 s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
           }
         } else {
-          Logger("application").info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
+          logger.info(s"The current active mongo Claim to Adjust POA session has not been completed by the user")
           codeBlock(poaData)
         }
       case Right(None) =>
-        Logger("application").info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
+        logger.info(s"There is no active mongo Claim to Adjust POA session, so a new one will be created")
         poaSessionService.createSession.flatMap(
           _ => codeBlock(PoaAmendmentData())
         )
       case Left(ex) =>
-        Future.successful(logAndRedirect(
+        Future.successful(logAndRedirect("[handleSession] " +
           s"There was an error while retrieving the mongo data. < Exception message: ${ex.getMessage}, Cause: ${ex.getCause} >"))
     }
   }

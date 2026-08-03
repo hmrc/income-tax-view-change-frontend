@@ -16,21 +16,21 @@
 
 package testOnly.controllers
 
-import play.api.Logger
-import play.api.mvc._
+import play.api.Logging
+import play.api.mvc.*
 import testOnly.utils.FileUtil.getFileFromPath
 
 import javax.inject.Inject
 
-class TestOnlyAssetsController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class TestOnlyAssetsController @Inject()(cc: ControllerComponents) extends AbstractController(cc) with Logging {
 
   def at(filePath: String): Action[AnyContent] = Action {
     getFileFromPath(s"/testOnly/$filePath") match {
       case Right(content) =>
-        Logger("application").info(s"[TestOnlyAssetsController] - can read content")
+        logger.info(s"can read content")
         Ok(content).as("text/javascript")
       case Left(ex) =>
-        Logger("application").error(s"[TestOnlyAssetsController] - $filePath - $ex")
+        logger.error(s"$filePath - $ex")
         NotFound
     }
   }

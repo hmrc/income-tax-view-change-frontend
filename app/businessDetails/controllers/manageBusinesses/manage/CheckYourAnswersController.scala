@@ -25,7 +25,7 @@ import businessDetails.models.incomeSourceDetails.viewmodels.CheckYourAnswersVie
 import businessDetails.models.updateIncomeSource.{TaxYearSpecific, UpdateIncomeSourceResponseError, UpdateIncomeSourceResponseModel}
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -53,7 +53,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
                                           (implicit val ec: ExecutionContext,
                                            val mcc: MessagesControllerComponents,
                                            val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with JourneyCheckerManageBusinesses {
+  with I18nSupport with JourneyCheckerManageBusinesses with Logging {
 
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType): Action[AnyContent] =
@@ -114,7 +114,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
 
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
-    Logger("application").error("[CheckYourAnswersController]" + errorMessage)
+    logger.error("[logAndShowError]" + errorMessage)
     (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 
@@ -202,7 +202,7 @@ class CheckYourAnswersController @Inject()(val checkYourAnswers: CheckYourAnswer
         Some(ManageIncomeSourceData(Some(incomeSourceId.value), Some(reportingMethod.name), Some(taxYear.endYear), Some(true))))
 
       sessionService.setMongoData(newUIJourneySessionData).map { _ =>
-        Logger("application").debug("[CheckYourAnswersController] Updated tax year specific reporting method")
+        logger.debug("Updated tax year specific reporting method")
         auditingService
           .extendedAudit(
             ManageIncomeSourceCheckYourAnswersAuditModel(

@@ -25,7 +25,7 @@ import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityC
 import common.models.obligations.{ObligationsErrorModel, ObligationsModel}
 import common.services.AuditingService
 import returns.forms.utils.SessionKeys.calcPagesBackPage
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import returns.models.audit.TaxDueResponseAuditModel
@@ -54,7 +54,7 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
                                         mcc: MessagesControllerComponents,
                                         val ec: ExecutionContext
                                        ) extends FrontendController(mcc)
-  with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink {
+  with ImplicitDateFormatter with FeatureSwitching with I18nSupport with TaxCalcFallBackBackLink with Logging {
 
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
@@ -70,13 +70,13 @@ class TaxDueSummaryController @Inject()(val authActions: AuthActions,
       obligations   <- obligationsConnector.getAllObligationsDateRange(taxYearModel.toFinancialYearStart, taxYearModel.toFinancialYearEnd)
     } yield (liabilityCalc, obligations) match {
       case (calcErrorResponse: LiabilityCalculationError, _) if calcErrorResponse.status == NO_CONTENT =>
-        Logger("application").info("[TaxDueSummaryController][handleRequest] No calculation data returned from downstream. Not Found.")
+        logger.info("No calculation data returned from downstream. Not Found.")
         itvcErrorHandler.showInternalServerError()
       case (_: LiabilityCalculationError, _) =>
-        Logger("application").error(s"[TaxDueSummaryController][handleRequest][$taxYear] No new calc deductions data error found. Downstream error")
+        logger.error(s"taxYear: $taxYear, No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
       case (_, _: ObligationsErrorModel) =>
-        Logger("application").error(s"[TaxDueSummaryController][handleRequest][$taxYear] Failed to retrieve obligations. Downstream error")
+        logger.error(s"taxYear: $taxYear, Failed to retrieve obligations. Downstream error")
         itvcErrorHandler.showInternalServerError()
       case (liabilityCalc: LiabilityCalculationResponse, obligations: ObligationsModel) =>
 

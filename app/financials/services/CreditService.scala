@@ -24,7 +24,7 @@ import financials.connectors.FinancialDetailsConnector
 import financials.models.Repayment
 import financials.models.core.ErrorModel
 import financials.models.creditsandrefunds.CreditsModel
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -35,19 +35,18 @@ import scala.util.Try
 class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsConnector,
                               implicit val dateService: DateServiceInterface)
                              (implicit ec: ExecutionContext,
-                              val appConfig: FrontendAppConfig) {
+                              val appConfig: FrontendAppConfig) extends Logging {
 
   def getAllCredits(implicit user: MtdItUser[_], hc: HeaderCarrier): Future[CreditsModel] = {
 
     val mergeCreditAndRefundModels = (x: CreditsModel, y: CreditsModel) =>
       x.copy(transactions = x.transactions :++ y.transactions.filterNot(item => item.transactionType == Repayment || x.transactions.map(_.transactionId).contains(item.transactionId)))
 
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    logger.debug(s"[getAllCredits] Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
     Future.sequence(
         user.incomeSources.orderedTaxYearsByYearOfMigration.map { taxYearInt =>
-          Logger("application").debug(s"Getting financial details for TaxYear: $taxYearInt")
+          logger.debug(s"[getAllCredits] Getting financial details for TaxYear: $taxYearInt")
           for {
             taxYear <- Future.fromTry(Try(TaxYear.forYearEnd(taxYearInt)))
             response <- financialDetailsConnector.getCreditsAndRefund(taxYear, user.nino)
@@ -69,11 +68,10 @@ class CreditService @Inject()(val financialDetailsConnector: FinancialDetailsCon
   def getAllCreditsV2(implicit user: MtdItUser[_],
                       hc: HeaderCarrier): Future[CreditsModel] = {
 
-    Logger("application").debug(
-      s"Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
+    logger.debug(s"[getAllCreditsV2] Requesting Financial Details for all periods for mtditid: ${user.mtditid}")
 
     val (from, to) = (user.incomeSources.orderedTaxYearsByYearOfMigration.min, user.incomeSources.orderedTaxYearsByYearOfMigration.max)
-    Logger("application").debug(s"Getting financial details for TaxYears: $from - $to")
+    logger.debug(s"[getAllCreditsV2] Getting financial details for TaxYears: $from - $to")
 
     for {
       taxYearFrom <- Future.fromTry(Try(TaxYear.forYearEnd(from)))
