@@ -46,7 +46,8 @@ case class DocumentDetail(
                            paymentLot: Option[String] = None,
                            effectiveDateOfPayment: Option[LocalDate] = None,
                            amountCodedOut: Option[BigDecimal] = None,
-                           chargeClassification: Option[String] = None, documentDueDate: Option[LocalDate] = None,
+                           chargeClassification: Option[String] = None,
+                           documentDueDate: Option[LocalDate] = None,
                            poaRelevantAmount: Option[BigDecimal] = None,
                            formBundleNumber: Option[String] = None,
                            creditReason: Option[String] = None,
@@ -279,6 +280,7 @@ object DocumentDetail {
         "documentNumberReducedCharge" -> model.documentNumberReducedCharge,
         "chargeTypeReducedCharge" -> model.chargeTypeReducedCharge,
         "amendmentDateReducedCharge" -> model.amendmentDateReducedCharge,
+        "chargeClassification" -> model.chargeClassification,
         "taxYearReducedCharge" -> model.taxYearReducedCharge
       )
       .fields
@@ -418,6 +420,9 @@ object DocumentDetail {
       taxYearReducedCharge <-
         (json \ "taxYearReducedCharge").validateOpt[String]
 
+      chargeClassification <-
+        (json \ "chargeClassification").validateOpt[String]
+
     } yield DocumentDetail(
       taxYear = taxYear,
       transactionId = transactionId,
@@ -450,7 +455,8 @@ object DocumentDetail {
       documentNumberReducedCharge = documentNumberReducedCharge,
       chargeTypeReducedCharge = chargeTypeReducedCharge,
       amendmentDateReducedCharge = amendmentDateReducedCharge,
-      taxYearReducedCharge = taxYearReducedCharge
+      taxYearReducedCharge = taxYearReducedCharge,
+      chargeClassification = chargeClassification
     )
   }
 }
