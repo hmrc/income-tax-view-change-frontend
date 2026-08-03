@@ -49,7 +49,6 @@ case class ChargeItem(
                        paymentLot: Option[String] = None,
                        creationDate: Option[LocalDate] = None,
                        chargeReference: Option[String],
-                       isRevenueAmendment: Boolean = false,
                        chargeClassification: Option[String],
                      ) extends TransactionItem {
 
@@ -313,7 +312,6 @@ object ChargeItem {
       paymentLotItem = documentDetail.paymentLotItem,
       paymentLot = documentDetail.paymentLot,
       chargeReference = financialDetail.chargeReference,
-      isRevenueAmendment = documentDetail.isRevenueAmendment,
       chargeClassification = documentDetail.chargeClassification
     )
   }
