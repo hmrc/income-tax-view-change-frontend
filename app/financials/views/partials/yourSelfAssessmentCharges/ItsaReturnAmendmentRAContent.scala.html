@@ -15,6 +15,9 @@
  *@
 
 @import common.views.html.components._
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukWarningText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.WarningText
+@import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 @import financials.views.helpers.ChargeNameLangHelper
 @import common.config.FrontendAppConfig
 @import financials.models.chargeSummary.ChargeSummaryViewModel
@@ -23,7 +26,8 @@
 @this(
         p: p,
         link: link,
-        frontendAppConfig: FrontendAppConfig
+        frontendAppConfig: FrontendAppConfig,
+        govUkWarningText: GovukWarningText
 )
 
 @(viewModel: ChargeSummaryViewModel, taxYear: TaxYear)(implicit request: Request[_], messages: Messages)
@@ -41,3 +45,5 @@
     )
 
 }
+
+@govUkWarningText(WarningText(content = Text(getMessage("itsaReturnAmendment.warning"))))

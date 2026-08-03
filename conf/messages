@@ -2236,6 +2236,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC c
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
+chargeSummary.chargeHistory.created.enquiryAmendment.text               = Extra amount created when HMRC amended your tax return
 chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment extra amount due to amended return
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
@@ -2524,6 +2525,7 @@ yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC h
 
 yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading              = This charge goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text              = This balancing payment extra amount goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.enquiryAmendment.caption.text             = This extra amount goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.poaOneReconciliation.caption.text         = This first payment on account extra amount goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.poaTwoReconciliation.caption.text         = This second payment on account extra amount goes towards your {0} to {1} tax bill.
 
@@ -2596,7 +2598,7 @@ yourSelfAssessmentChargeSummary.codingOutPOAMessageFullyCollected       = This w
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
 
-yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.text.heading                 = Extra amount to pay due to HMRC enquiry amendment
+yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Extra amount to pay due to HMRC enquiry amendment
 
 yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Balancing payment
 yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = First payment on account

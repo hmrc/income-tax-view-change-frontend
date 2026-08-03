@@ -51,9 +51,16 @@
 
     @(viewModel.chargeItem.transactionType, viewModel.latePaymentInterestCharge) match {
         case (ITSAReturnAmendment, false) => {
-            @p(id = Some("charge-history-caption")) {
-                @messages("yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text",
-                    viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+            @if(viewModel.chargeItem.chargeClassification.contains("RA")) {
+                @p(id = Some("charge-history-caption")) {
+                    @messages("yourSelfAssessmentChargeSummary.chargeHistory.enquiryAmendment.caption.text",
+                        viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+                }
+            } else {
+                @p(id = Some("charge-history-caption")) {
+                    @messages("yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text",
+                        viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)
+                }
             }
         }
         case (PoaOneReconciliationDebit, false) => {

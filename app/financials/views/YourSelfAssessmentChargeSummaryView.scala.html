@@ -83,7 +83,7 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@pageHeading = @{ ChargeNameLangHelper.getHeading(viewModel.chargeItem, viewModel.latePaymentInterestCharge, viewModel.chargeItem.isRevenueAmendment)}
+@pageHeading = @{ ChargeNameLangHelper.getHeading(viewModel.chargeItem, viewModel.latePaymentInterestCharge)}
 
 @WYOLinkContent = {
     @p() {
