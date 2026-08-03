@@ -124,6 +124,8 @@ class TaxCalculationOverviewSpec extends ViewSpec with FeatureSwitching with Cha
 
         val doc = Jsoup.parse(partial.body)
 
+        println(Console.MAGENTA + doc + Console.RESET)
+
         doc.getElementById(taxCalcCannotBeDisplayedH3Id).text() shouldBe "Your tax calculation cannot be displayed"
         doc.getElementById(notFiledCompatibleParagraph).text() shouldBe "This is because your tax return was not filed using software compatible with Making Tax Digital for Income Tax."
         doc.getElementById(viewTaxCalcLinkId).text() shouldBe "View your tax calculation if you filed your tax return using the HMRC online service (opens in new tab)"
