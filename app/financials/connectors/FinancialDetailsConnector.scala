@@ -28,7 +28,7 @@ import financials.models.core.CorrelationId
 import financials.models.creditsandrefunds.CreditsModel
 import financials.models.paymentAllocationCharges.{FinancialDetailsWithDocumentDetailsErrorModel, FinancialDetailsWithDocumentDetailsModel, FinancialDetailsWithDocumentDetailsResponse}
 import financials.models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError, PaymentAllocationsResponse}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, OK}
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -41,7 +41,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FinancialDetailsConnector @Inject()(
                                            httpV2: HttpClientV2,
                                            appConfig: FrontendAppConfig
-                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                         )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   private[connectors] val baseUrl = s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details"
 
@@ -67,7 +67,7 @@ class FinancialDetailsConnector @Inject()(
                            )(implicit headerCarrier: HeaderCarrier): Future[PaymentAllocationsResponse] = {
 
     val url = getPaymentAllocationsUrl(nino.value, paymentLot, paymentLotItem)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"[getPaymentAllocations] GET $url")
 
     httpV2
       .get(url"$url")
@@ -75,24 +75,24 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            logger.debug(s"[getPaymentAllocations] Status: ${response.status}, json: ${response.json}")
             response.json.validate[PaymentAllocations].fold(
               invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
+                logger.error(s"[getPaymentAllocations] Json Validation Error: $invalid")
                 PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing Payment Allocations Data Response")
               },
               valid => valid
             )
           case status if status >= 500 =>
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getPaymentAllocations] Status: ${response.status}, body: ${response.body}")
             PaymentAllocationsError(response.status, response.body)
           case _ =>
-            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getPaymentAllocations] Status: ${response.status}, body: ${response.body}")
             PaymentAllocationsError(response.status, response.body)
         }
       }.recover {
         case ex =>
-          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+          logger.error(s"[getPaymentAllocations] Unexpected failure, ${ex.getMessage}", ex)
           PaymentAllocationsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
@@ -101,7 +101,7 @@ class FinancialDetailsConnector @Inject()(
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
     val url = getCreditAndRefundUrl(nino, taxYear.financialYearStartString, taxYear.financialYearEndString)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"[getCreditsAndRefund(taxYear, nino)] GET $url")
 
     val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
@@ -114,7 +114,7 @@ class FinancialDetailsConnector @Inject()(
       .execute[ResponseModel[CreditsModel]]
       .recover {
         case e =>
-          Logger("application").error(e.getMessage)
+          logger.error(s"[getCreditsAndRefund(taxYear, nino)] ${e.getMessage}")
           Left(UnexpectedError)
       }
   }
@@ -123,7 +123,7 @@ class FinancialDetailsConnector @Inject()(
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[ResponseModel[CreditsModel]] = {
 
     val url = getCreditAndRefundUrl(nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"[getCreditsAndRefund(taxYear, taxYearTo, nino)] GET $url")
 
     val hc = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
@@ -136,7 +136,7 @@ class FinancialDetailsConnector @Inject()(
       .execute[ResponseModel[CreditsModel]]
       .recover {
         case e =>
-          Logger("application").error(e.getMessage)
+          logger.error(s"[getCreditsAndRefund(taxYear, taxYearTo, nino)] ${e.getMessage}")
           Left(UnexpectedError)
       }
   }
@@ -148,7 +148,7 @@ class FinancialDetailsConnector @Inject()(
     val dateTo: String = taxYear.toString + "-04-05"
 
     val url = getChargesUrl(nino, dateFrom, dateTo)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"[getFinancialDetails] GET $url")
 
     val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
@@ -159,24 +159,24 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            logger.debug(s"[getFinancialDetails] Status: ${response.status}, json: ${response.json}")
             response.json.validate[FinancialDetailsModel].fold(
               invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid ")
+                logger.error(s"[getFinancialDetails] Json Validation Error: $invalid ")
                 FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
               },
               valid => valid
             )
           case status if status >= 500 =>
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getFinancialDetails] Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
           case _ =>
-            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getFinancialDetails] Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
         }
       }.recover {
         case ex =>
-          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+          logger.error(s"[getFinancialDetails] Unexpected failure, ${ex.getMessage}", ex)
           FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
@@ -185,7 +185,7 @@ class FinancialDetailsConnector @Inject()(
                          (implicit headerCarrier: HeaderCarrier, mtdItUser: MtdItUser[_]): Future[FinancialDetailsResponseModel] = {
 
     val url = getChargesUrl(nino, taxYearRange.startYear.financialYearStartString, taxYearRange.endYear.financialYearEndString)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"[getFinancialDetailsByTaxYearRange] GET $url")
 
     val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
@@ -196,24 +196,24 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            logger.debug(s"[getFinancialDetailsByTaxYearRange] Status: ${response.status}, json: ${response.json}")
             response.json.validate[FinancialDetailsModel].fold(
               invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
+                logger.error(s"[getFinancialDetailsByTaxYearRange] Json Validation Error: $invalid")
                 FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
               },
               valid => valid
             )
           case status if status >= 500 =>
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getFinancialDetailsByTaxYearRange] Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
           case _ =>
-            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getFinancialDetailsByTaxYearRange] Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
         }
       }.recover {
         case ex =>
-          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+          logger.error(s"[getFinancialDetailsByTaxYearRange] Unexpected failure, ${ex.getMessage}", ex)
           FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }
@@ -222,7 +222,7 @@ class FinancialDetailsConnector @Inject()(
                  (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
 
     val url: String = getPaymentsUrl(mtdUser.nino, taxYear.toFinancialYearStart.toString, taxYear.toFinancialYearEnd.toString)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"[getPayments(taxYear)] GET $url")
 
     httpV2
       .get(url"$url")
@@ -230,19 +230,19 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            logger.debug(s"[getPayments(taxYear)] Status: ${response.status}, json: ${response.json}")
             response.json.validate[Seq[Payment]].fold(
               invalid => {
-                Logger("application").error(s"Json validation error: $invalid")
+                logger.error(s"[getPayments(taxYear)] Json validation error: $invalid")
                 PaymentsError(response.status, "Json validation error")
               },
               valid => Payments(valid)
             )
           case status if status >= 500 =>
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getPayments(taxYear)] Status: ${response.status}, body: ${response.body}")
             PaymentsError(status, response.body)
           case status =>
-            Logger("application").warn(s"Status ${response.status}, body: ${response.body}")
+            logger.warn(s"[getPayments(taxYear)] Status ${response.status}, body: ${response.body}")
             PaymentsError(status, response.body)
         }
       }
@@ -252,7 +252,7 @@ class FinancialDetailsConnector @Inject()(
                  (implicit headerCarrier: HeaderCarrier, mtdUser: MtdItUser[_]): Future[PaymentsResponse] = {
 
     val url: String = getPaymentsUrl(mtdUser.nino, taxYearFrom.financialYearStartString, taxYearTo.financialYearEndString)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"[getPayments(taxYearFrom, taxYearTo)] GET $url")
 
     httpV2
       .get(url"$url")
@@ -260,19 +260,19 @@ class FinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").info(s"Status: ${response.status}, json: ${response.json}")
+            logger.info(s"[getPayments(taxYearFrom, taxYearTo)] Status: ${response.status}, json: ${response.json}")
             response.json.validate[Seq[Payment]].fold(
               invalid => {
-                Logger("application").error(s"Json validation error: $invalid")
+                logger.error(s"[getPayments(taxYearFrom, taxYearTo)] Json validation error: $invalid")
                 PaymentsError(response.status, "Json validation error")
               },
               valid => Payments(valid)
             )
           case status if status >= 500 =>
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getPayments(taxYearFrom, taxYearTo)] Status: ${response.status}, body: ${response.body}")
             PaymentsError(status, response.body)
           case status =>
-            Logger("application").warn(s"Status ${response.status}, body: ${response.body}")
+            logger.warn(s"[getPayments(taxYearFrom, taxYearTo)] Status ${response.status}, body: ${response.body}")
             PaymentsError(status, response.body)
         }
       }
@@ -292,16 +292,16 @@ class FinancialDetailsConnector @Inject()(
           case OK =>
             response.json.validate[FinancialDetailsWithDocumentDetailsModel].fold(
               invalid => {
-                Logger("application").error(s"Json validation error parsing calculation response, error $invalid")
+                logger.error(s"[getFinancialDetailsByDocumentId] Json validation error parsing calculation response, error $invalid")
                 FinancialDetailsWithDocumentDetailsErrorModel(INTERNAL_SERVER_ERROR, "Json validation error parsing calculation response")
               },
               valid => valid
             )
           case status if status >= INTERNAL_SERVER_ERROR =>
-            Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getFinancialDetailsByDocumentId] Response status: ${response.status}, body: ${response.body}")
             FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
           case _ =>
-            Logger("application").warn(s"Response status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getFinancialDetailsByDocumentId] Response status: ${response.status}, body: ${response.body}")
             FinancialDetailsWithDocumentDetailsErrorModel(response.status, response.body)
         }
       }

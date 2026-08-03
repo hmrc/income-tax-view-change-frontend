@@ -18,7 +18,7 @@ package common.services.agent
 
 import common.connectors.BusinessDetailsConnector
 import common.connectors.agent.CitizenDetailsConnector
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.NOT_FOUND
 import ClientDetailsService.{BusinessDetailsNotFound, CitizenDetailsNotFound, ClientDetails, ClientDetailsFailure}
 import common.models.citizenDetails.{CitizenDetailsErrorModel, CitizenDetailsModel}
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConnector,
                                      businessDetailsConnector: BusinessDetailsConnector)
-                                    (implicit ec: ExecutionContext) {
+                                    (implicit ec: ExecutionContext) extends Logging {
 
   def checkClientDetails(utr: String)(implicit hc: HeaderCarrier): Future[Either[ClientDetailsFailure, ClientDetails]] =
     citizenDetailsConnector.getCitizenDetailsBySaUtr(utr).flatMap {
@@ -40,20 +40,20 @@ class ClientDetailsService @Inject()(citizenDetailsConnector: CitizenDetailsConn
           case IncomeSourceDetailsModel(_, mtdbsa, _, _, _, _) =>
             Future.successful(Right(ClientDetailsService.ClientDetails(optionalFirstName, optionalLastName, nino, mtdbsa)))
           case IncomeSourceDetailsError(NOT_FOUND, _) =>
-            Logger("application").warn("[ClientDetailsService][checkClientDetails] - Income Source details not found for this Nino")
+            logger.warn("Income Source details not found for this Nino")
             Future.successful(Left(BusinessDetailsNotFound))
           case _ =>
-            Logger("application").error(s"[ClientDetailsService][checkClientDetails] error response from Income Source Details")
+            logger.error(s"error response from Income Source Details")
             Future.successful(Left(ClientDetailsService.APIError))
         }
       case CitizenDetailsModel(_, _, None) =>
-        Logger("application").warn("[ClientDetailsService][checkClientDetails] - No NINO for this UTR")
+        logger.warn("No NINO for this UTR")
         Future.successful(Left(CitizenDetailsNotFound))
       case CitizenDetailsErrorModel(NOT_FOUND, message) =>
-        Logger("application").warn("[ClientDetailsService][checkClientDetails] - No entry on CitizenDetails for this UTR, response: " + message)
+        logger.warn("No entry on CitizenDetails for this UTR, response: " + message)
         Future.successful(Left(CitizenDetailsNotFound))
       case _ =>
-        Logger("application").error("[ClientDetailsService][checkClientDetails] error response from Citizen Details")
+        logger.error("error response from Citizen Details")
         Future.successful(Left(ClientDetailsService.APIError))
     }
 }

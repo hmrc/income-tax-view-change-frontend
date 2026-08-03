@@ -16,7 +16,7 @@
 
 package common.models.admin
 
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.PathBindable
 
@@ -32,7 +32,7 @@ sealed trait FeatureSwitchName {
   val name: String
 }
 
-object FeatureSwitchName {
+object FeatureSwitchName extends Logging {
 
   implicit val writes: Writes[FeatureSwitchName] = (o: FeatureSwitchName) => JsString(o.name)
 
@@ -84,7 +84,7 @@ object FeatureSwitchName {
     case JsString(ReturnsFrontend.name) =>
       JsSuccess(ReturnsFrontend)
     case invalidName =>
-      Logger("application").error(s"Invalid feature switch Json found: $invalidName")
+      logger.error(s"Invalid feature switch Json found: $invalidName")
       JsSuccess(InvalidFS)
   }
 

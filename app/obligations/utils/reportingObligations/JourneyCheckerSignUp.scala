@@ -20,14 +20,14 @@ import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import obligations.controllers.reportingObligations.routes as reportingObligationsRoutes
 import obligations.services.reportingObligations.signUp.SignUpService
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait JourneyCheckerSignUp extends ReportingObligationsUtils {
+trait JourneyCheckerSignUp extends ReportingObligationsUtils with Logging{
   self =>
 
   val signUpService: SignUpService
@@ -42,11 +42,11 @@ trait JourneyCheckerSignUp extends ReportingObligationsUtils {
           signUpService.saveIntent(taxYear).flatMap {
             case true => codeBlock
             case false =>
-              Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+              logger.error(s"Could not save sign up tax year to session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
               Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent)))
           }
         case false =>
-          Logger("application").error(s"[JourneyCheckerSignUp][withSessionData] - Could not initialise opt-in context data in session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
+          logger.error(s"Could not initialise opt-in context data in session for intent year: ${taxYear.toString} and user with sessionId: ${hc.sessionId.getOrElse("NO SESSION ID")} from referrer: ${hc.otherHeaders.find(h => h._1 == "Referer").getOrElse(("Referer", "No Referer"))._2}")
           Future(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(user.isAgent)))
       }
     } else {

@@ -18,7 +18,7 @@ package common.connectors
 
 import common.config.FrontendAppConfig
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel, IncomeSourceDetailsResponse}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.HttpReads.Implicits.*
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BusinessDetailsConnector @Inject()(
                                           httpClient: HttpClientV2,
                                           appConfig: FrontendAppConfig
-                                        )(implicit val ec: ExecutionContext) {
+                                        )(implicit val ec: ExecutionContext) extends Logging {
 
   private[connectors] def getBusinessDetailsUrl(nino: String): String = {
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/get-business-details/nino/$nino"
@@ -48,7 +48,7 @@ class BusinessDetailsConnector @Inject()(
 
   def getBusinessDetails(nino: String)(implicit headerCarrier: HeaderCarrier): Future[IncomeSourceDetailsResponse] = {
     val url = getBusinessDetailsUrl(nino)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"GET $url")
 
     httpClient
       .get(url"$url")
@@ -56,24 +56,24 @@ class BusinessDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"[FE Business Details Connector][getBusinessDetails] RESPONSE status: ${response.status}, json: ${response.json}")
+            logger.debug(s"[getBusinessDetails] RESPONSE status: ${response.status}, json: ${response.json}")
             response.json.validate[IncomeSourceDetailsModel].fold(
               invalid => {
-                Logger("application").error(s"$invalid")
+                logger.error(s"[getBusinessDetails] $invalid")
                 IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, "Json Validation Error Parsing Income Source Details response")
               },
               valid => valid
             )
           case status if status >= 500 =>
-            Logger("application").error(s"[FE Business Details Connector][getBusinessDetails] RESPONSE status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getBusinessDetails] RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
           case _ =>
-            Logger("application").warn(s"[FE Business Details Connector][getBusinessDetails] RESPONSE status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getBusinessDetails] RESPONSE status: ${response.status}, body: ${response.body}")
             IncomeSourceDetailsError(response.status, response.body)
         }
       }.recover {
         case ex =>
-          Logger("application").error(s"[FE Business Details Connector][getBusinessDetails] Unexpected future failed error, ${ex.getMessage}")
+          logger.error(s"[getBusinessDetails] Unexpected future failed error, ${ex.getMessage}")
           IncomeSourceDetailsError(Status.INTERNAL_SERVER_ERROR, s"Unexpected future failed error, ${ex.getMessage}")
       }
   }

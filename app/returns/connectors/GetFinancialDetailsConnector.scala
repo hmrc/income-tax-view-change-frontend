@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import common.utils.Headers.checkAndAddTestHeader
 import returns.models.*
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class GetFinancialDetailsConnector @Inject()(
                                            httpV2: HttpClientV2,
                                            appConfig: FrontendAppConfig
-                                         )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                         )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   private[connectors] val baseUrl = s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details"
 
@@ -48,7 +48,7 @@ class GetFinancialDetailsConnector @Inject()(
     val dateTo: String = taxYear.toString + "-04-05"
 
     val url = getChargesUrl(nino, dateFrom, dateTo)
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"GET $url")
 
     val hc: HeaderCarrier = checkAndAddTestHeader(mtdItUser.path, headerCarrier, appConfig.poaAdjustmentOverrides(), "afterPoaAmountAdjusted")
 
@@ -59,24 +59,24 @@ class GetFinancialDetailsConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            logger.debug(s"Status: ${response.status}, json: ${response.json}")
             response.json.validate[FinancialDetailsModel].fold(
               invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid ")
+                logger.error(s"Json Validation Error: $invalid ")
                 FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing FinancialDetails Data Response")
               },
               valid => valid
             )
           case status if status >= 500 =>
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            logger.error(s"Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
           case _ =>
-            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+            logger.warn(s"Status: ${response.status}, body: ${response.body}")
             FinancialDetailsErrorModel(response.status, response.body)
         }
       }.recover {
         case ex =>
-          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+          logger.error(s"Unexpected failure, ${ex.getMessage}", ex)
           FinancialDetailsErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }

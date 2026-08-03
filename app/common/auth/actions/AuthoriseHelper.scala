@@ -20,7 +20,7 @@ import common.auth.AuthorisedAndEnrolledRequest
 import common.config.featureswitch.FeatureSwitching
 import common.viewUtils.InternalUrlHelper
 import common.controllers.errors.routes as errorRoutes
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
@@ -30,7 +30,7 @@ import uk.gov.hmrc.auth.core.retrieve.{AgentInformation, Credentials, ItmpAddres
 import java.time.LocalDate
 import scala.concurrent.Future
 
-trait AuthoriseHelper extends FeatureSwitching {
+trait AuthoriseHelper extends FeatureSwitching with Logging {
 
   type AuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
   type NrsIndividualAuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel ~
@@ -40,8 +40,6 @@ trait AuthoriseHelper extends FeatureSwitching {
     Option[String] ~ Option[String] ~ Option[String] ~ Option[String] ~ Option[LocalDate] ~ Option[String]~ AgentInformation ~
     Option[String] ~ Option[CredentialRole] ~ Option[MdtpInformation] ~ Option[ItmpName] ~ Option[LocalDate] ~
     Option[ItmpAddress] ~ Option[String] ~ LoginTimes
-
-  val logger: Logger
 
   def logAndRedirect[A](): PartialFunction[Throwable, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _: BearerTokenExpired =>

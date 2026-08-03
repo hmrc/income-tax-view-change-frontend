@@ -25,7 +25,7 @@ import common.controllers.agent.routes as agentRoutes
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.utils.AuthUtils.*
 import common.viewUtils.InternalUrlHelper
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.auth.core.*
@@ -39,9 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunctions,
                                              val appConfig: FrontendAppConfig,
                                              mcc: MessagesControllerComponents,
-                                             errorHandler: AgentItvcErrorHandler) extends FeatureSwitching with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] {
-
-  lazy val logger: Logger = Logger(getClass)
+                                             errorHandler: AgentItvcErrorHandler) extends FeatureSwitching with ActionRefiner[AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest] with Logging {
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
 

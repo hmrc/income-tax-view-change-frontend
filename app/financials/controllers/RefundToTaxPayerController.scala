@@ -28,7 +28,7 @@ import financials.models.audit.RefundToTaxPayerResponseAuditModel
 import financials.models.creditsandrefunds.RefundToTaxPayerViewModel
 import financials.models.repaymentHistory.{RepaymentHistoryErrorModel, RepaymentHistoryModel}
 import financials.views.html.RefundToTaxPayerView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -47,7 +47,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                                           (implicit mcc: MessagesControllerComponents,
                                            val ec: ExecutionContext,
                                            val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+  with I18nSupport with FeatureSwitching with Logging {
 
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
@@ -63,7 +63,7 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
               val viewModelMaybe = RefundToTaxPayerViewModel.createViewModel(repaymentHistory)
               viewModelMaybe match {
                 case Left(error) =>
-                  Logger("application").error(s"error constructing view model: ${error.getMessage}")
+                  logger.error(s"error constructing view model: ${error.getMessage}")
                   itvcErrorHandler.showInternalServerError()
                 case Right(viewModel: RefundToTaxPayerViewModel) =>
                   Ok(
@@ -74,13 +74,13 @@ class RefundToTaxPayerController @Inject()(val refundToTaxPayerView: RefundToTax
                       serviceNavigationPartial = user.serviceNavigationPartial))
               }
             case None => {
-              Logger("application").error(s"No repayment details returned")
+              logger.error(s"No repayment details returned")
               itvcErrorHandler.showInternalServerError()
             }
           }
         case error: RepaymentHistoryErrorModel =>
-          Logger("application")
-            .error(s"${if (user.isAgent) "[Agent] " else ""}Could not retrieve repayment history" +
+          logger
+            .error(s"${if (user.isAgent) "Agent -  " else ""}Could not retrieve repayment history" +
               s" for repaymentRequestNumber: $repaymentRequestNumber - ${error.message} - ${error.code}")
           itvcErrorHandler.showInternalServerError()
       }

@@ -17,7 +17,7 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.core.IncomeSourceIdHash.mkFromQueryString
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -52,7 +52,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
                                               mcc: MessagesControllerComponents,
                                               val ec: ExecutionContext,
                                               dateService: DateService)
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with Logging {
 
   private def getBackCall(isAgent: Boolean): Call = {
     if(isAgent) {
@@ -126,7 +126,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
       }
     } recover {
       case ex: Exception =>
-        Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+        logger.error(s"[handleRequest] ${if (isAgent) "Agent - " else ""}" +
           s"Error getting IncomeSourceEndDate page: ${ex.getMessage} - ${ex.getCause}")
         errorHandler(isAgent).showInternalServerError()
     }
@@ -209,7 +209,7 @@ class IncomeSourceEndDateController @Inject()(val authActions: AuthActions,
     }
   } recover {
     case ex: Exception =>
-      Logger("application").error(s"${if (isAgent) "[Agent]" else ""}" +
+      logger.error(s"[handleSubmitRequest] ${if (isAgent) "Agent - " else ""}" +
         s"Error getting IncomeSourceEndDate page: ${ex.getMessage} ${ex.getCause}")
       errorHandler(isAgent).showInternalServerError()
   }

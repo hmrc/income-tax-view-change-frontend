@@ -36,7 +36,7 @@ import hub.utils.HomePageUtils
 import hub.views.html.newHomePage.NewHomeYourTasksView
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.services.reportingObligations.signUp.SignUpService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -63,7 +63,8 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig,
                                           val itvcErrorHandler: ItvcErrorHandler,
-                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler) extends FrontendController(mcc) with I18nSupport with FeatureSwitching with HomePageUtils {
+                                          val itvcErrorHandlerAgent: AgentItvcErrorHandler)
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with HomePageUtils with Logging {
 
 
   def show(origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividual().async {
@@ -104,7 +105,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       dueDates <- nextUpdatesService.getDueDates(Some(obligationsResponseModel)).flatMap {
         case Right(dueDates) => Future.successful(dueDates)
         case Left(ex) => 
-          Logger("application").error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
+          logger.error(s"Unable to get next updates ${ex.getMessage} - ${ex.getCause}")
           Future.failed(ex)
       }
 
@@ -183,7 +184,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
       }
     }.recoverWith {
       case ex =>
-        Logger("application").error(s"Failed to retrieve reporting content checks: ${ex.getMessage}")
+        logger.error(s"Failed to retrieve reporting content checks: ${ex.getMessage}")
         Future.successful(SubmissionDeadlinesViewModel(Seq.empty, dateService.getCurrentDate, None, None))
     }
     submissionDeadlinesViewModel
@@ -193,7 +194,7 @@ class HandleYourTasksController @Inject()(val authActions: AuthActions,
     obligationsResponseModel.flatMap {
       case openObligations: ObligationsModel if openObligations.obligations.forall(_.obligations.nonEmpty) => Future.successful(openObligations.obligations.flatMap(_.obligations))
       case _ =>
-        Logger("application").error("Unexpected Exception getting open obligations")
+        logger.error("Unexpected Exception getting open obligations")
         Future.successful(Seq.empty[SingleObligationModel])
     }
   }

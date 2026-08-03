@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.FeatureSwitchConnector
 import common.models.admin.{FeatureSwitch, FeatureSwitchName}
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -29,12 +29,12 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FeatureSwitchService @Inject()(val featureSwitchConnector: FeatureSwitchConnector,
                                      val appConfig: FrontendAppConfig)
-                                    (implicit val ec: ExecutionContext) extends FeatureSwitching {
+                                    (implicit val ec: ExecutionContext) extends FeatureSwitching with Logging {
 
   def getAll()(implicit hc: HeaderCarrier): Future[List[FeatureSwitch]] = {
 
     def enrich(mongoSwitches: List[FeatureSwitch]) = {
-      Logger("application").debug(s"reading FSS: $mongoSwitches")
+      logger.debug(s"reading FSS: $mongoSwitches")
       FeatureSwitchName.allFeatureSwitches
         .foldLeft(mongoSwitches) { (featureSwitches, missingSwitch) =>
           if (featureSwitches.map(_.name).contains(missingSwitch))

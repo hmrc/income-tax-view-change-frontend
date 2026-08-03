@@ -25,7 +25,7 @@ import financials.models.audit.CreditSummaryAuditing
 import financials.models.creditDetailModel.CreditDetailModel
 import financials.services.CreditHistoryService
 import financials.views.html.CreditsSummaryView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,7 +45,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
                                           msgApi: MessagesApi,
                                           val auditingService: AuditingService,
                                           ec: ExecutionContext
-                                        ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+                                        ) extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging {
 
   private def creditsSummaryUrl(calendarYear: Int, origin: Option[String]): String =
     financialsRoutes.CreditsSummaryController.showCreditsSummary(calendarYear, origin).url
@@ -100,11 +100,11 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
           origin = origin)))
       case Left(_) =>
         if (isAgent) {
-          Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+          logger.error(s"Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}, isAgent: $isAgent")
           Future.successful(agentItvcErrorHandler.showInternalServerError())
         }
         else {
-          Logger("application").error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}")
+          logger.error(s"- Could not retrieve financial details for Calendar year: $calendarYear, NINO: ${user.nino}, isAgent: $isAgent")
           Future.successful(itvcErrorHandler.showInternalServerError())
         }
     }

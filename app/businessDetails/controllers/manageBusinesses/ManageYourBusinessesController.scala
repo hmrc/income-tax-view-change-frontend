@@ -18,9 +18,9 @@ package businessDetails.controllers.manageBusinesses
 
 import businessDetails.services.{IncomeSourceDetailsService, SessionService}
 import businessDetails.utils.IncomeSourcesUtils
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.ManageYourBusinessesView
 import common.auth.{AuthActions, MtdItUser}
@@ -43,7 +43,7 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
                                                val itvcErrorHandler: ItvcErrorHandler,
                                                val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with FeatureSwitching with IncomeSourcesUtils with I18nSupport {
+  with FeatureSwitching with IncomeSourcesUtils with I18nSupport with Logging {
 
   def show(): Action[AnyContent] = authActions.asMTDIndividual().async { implicit user =>
     handleRequest(
@@ -76,13 +76,11 @@ class ManageYourBusinessesController @Inject()(val manageYourBusinesses: ManageY
           }
         }.recover {
           case ex: Exception =>
-            Logger("application").error(
-              s"Session Error: ${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"[handleRequest] Session Error: ${ex.getMessage} - ${ex.getCause}")
             errorHandler.showInternalServerError()
         }
       case Left(ex) =>
-        Logger("application").error(
-          s"Error: ${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"[handleRequest] Error: ${ex.getMessage} - ${ex.getCause}")
         Future(errorHandler.showInternalServerError())
     }
   }

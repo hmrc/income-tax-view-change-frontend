@@ -23,7 +23,7 @@ import common.services.SessionDataService
 import common.services.agent.ClientDetailsService
 import common.utils.sessionUtils.SessionKeys
 import common.models.sessionData.SessionDataGetResponse.SessionDataNotFound
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -38,9 +38,7 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
                                    errorHandler: AgentItvcErrorHandler,
                                    mcc: MessagesControllerComponents,
                                    appConfig: FrontendAppConfig)
-                                  (implicit val executionContext: ExecutionContext) {
-
-  lazy val logger: Logger = Logger(getClass)
+                                  (implicit val executionContext: ExecutionContext) extends Logging {
 
   def authorise(useCookies: Boolean = false): ActionRefiner[AuthorisedUserRequest, AuthorisedAgentWithClientDetailsRequest] = new ActionRefiner[AuthorisedUserRequest, AuthorisedAgentWithClientDetailsRequest] {
 
@@ -74,7 +72,7 @@ class RetrieveClientData @Inject()(sessionDataService: SessionDataService,
                 agentClientDetails
             ))
             case Left(error) =>
-              Logger("error").error(s"unable to find client with UTR: ${sessionData.utr} " + error)
+              logger.error(s"unable to find client with UTR: ${sessionData.utr} " + error)
               Left(Redirect(appConfig.enterClientsUTRUrl))
           }
         case Left(_: SessionDataNotFound) => Future.successful(Left(Redirect(appConfig.enterClientsUTRUrl)))

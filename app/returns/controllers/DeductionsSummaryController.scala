@@ -22,7 +22,7 @@ import common.implicits.ImplicitDateFormatter
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.AuditingService
 import returns.forms.utils.SessionKeys.calcPagesBackPage
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.*
 import returns.models.audit.AllowanceAndDeductionsResponseAuditModel
@@ -48,7 +48,7 @@ class DeductionsSummaryController @Inject()(val authActions: AuthActions,
                                             val mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext,
                                             val languageUtils: LanguageUtils)
-  extends FrontendController(mcc) with ImplicitDateFormatter with I18nSupport with TaxCalcFallBackBackLink {
+  extends FrontendController(mcc) with ImplicitDateFormatter with I18nSupport with TaxCalcFallBackBackLink with Logging {
 
   def handleRequest(origin: Option[String] = None,
                     itcvErrorHandler: ShowInternalServerError,
@@ -64,11 +64,11 @@ class DeductionsSummaryController @Inject()(val authActions: AuthActions,
           liabilityCalc.metadata.isCalculationCrystallised, taxYear, origin)
         Ok(deductionBreakdownView(viewModel, taxYear, backUrl = fallbackBackUrl, serviceNavigationPartial = user.serviceNavigationPartial, isAgent = isAgent)(implicitly, messages))
       case error: LiabilityCalculationError if error.status == NO_CONTENT =>
-        Logger("application").info(s"${if (isAgent) "[Agent]" else ""}[$taxYear] No deductions data found.")
+        logger.info(s"${if (isAgent) "Agent -" else ""} taxYear: $taxYear - No deductions data found.")
         itvcErrorHandler.showInternalServerError()
       case _: LiabilityCalculationError =>
-        Logger("application").error(
-          s"${if (isAgent) "[Agent]" else ""}[$taxYear] No new calc deductions data error found. Downstream error")
+        logger.error(
+          s"${if (isAgent) "Agent -" else ""} taxYear: $taxYear - No new calc deductions data error found. Downstream error")
         itvcErrorHandler.showInternalServerError()
     }
   }

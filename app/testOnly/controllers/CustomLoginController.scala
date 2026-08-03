@@ -21,7 +21,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.controllers.BaseController
 import common.models.incomeSourceDetails.TaxYear
 import common.services.{DateServiceInterface, ITSAStatusService}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import testOnly.TestOnlyAppConfig
@@ -51,7 +51,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                                       val itvcErrorHandler: ItvcErrorHandler,
                                       val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                       dateService: DateServiceInterface
-                                     ) extends BaseController with I18nSupport with FeatureSwitching {
+                                     ) extends BaseController with I18nSupport with FeatureSwitching with Logging {
 
   private final val customIncomeSourceUsers         = Seq("TR000001A", "AS000000A", "AS000001A")
   private final val customReportingObligationsUsers =
@@ -84,11 +84,11 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
                 val homePage = s"${appConfig.baseUrl}/$redirectURL"
 
                 updateEffectiveDateOfPayment().failed.foreach(ex => {
-                  Logger("application").error("Failed to update effectiveDateOfPayment", ex)
+                  logger.error("Failed to update effectiveDateOfPayment", ex)
                 })
 
                 updateEstimatedRepaymentDate().failed.foreach(ex => {
-                  Logger("application").error("Failed to update estimatedRepaymentDate", ex)
+                  logger.error("Failed to update estimatedRepaymentDate", ex)
                 })
 
                 user.category match {
@@ -117,8 +117,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     }.recover {
       case ex =>
         val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application")
-          .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+        logger.error(s"[overwriteDataForIncomeSources] Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -139,8 +138,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     }.recover {
       case ex =>
         val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application")
-          .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+        logger.error(s"[overwriteDataForReportingObligations] Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
@@ -156,8 +154,7 @@ class CustomLoginController @Inject()(implicit val appConfig: FrontendAppConfig,
     }.recover {
       case ex =>
         val errorHandler = if (postedUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-        Logger("application")
-          .error(s"Unexpected response, status: - ${ex.getMessage} - ${ex.getCause} - ")
+        logger.error(s"[overwriteDataforLatentBusinesses] Unexpected response, status: - ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
   }
