@@ -21,7 +21,7 @@ import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
 import common.connectors.IncomeSourceConnector
 import common.controllers.BaseController
 import common.models.incomeSourceDetails.{IncomeSourceDetailsError, IncomeSourceDetailsModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual}
 
@@ -33,19 +33,20 @@ class IncomeSourceRetrievalAction @Inject()(val incomeSourceConnector: IncomeSou
                                            (implicit val executionContext: ExecutionContext,
                                             val individualErrorHandler: ItvcErrorHandler,
                                             val agentErrorHandler: AgentItvcErrorHandler,
-                                            mcc: MessagesControllerComponents) extends BaseController with ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] {
+                                            mcc: MessagesControllerComponents)
+  extends BaseController with ActionRefiner[AuthorisedAndEnrolledRequest, MtdItUser] with Logging {
 
   private def internalServerErrorFor(request: AuthorisedAndEnrolledRequest[_]): Result = {
 
     request.authUserDetails.affinityGroup match {
       case Some(Agent) =>
-        Logger(getClass).error(s"[IncomeSourceRetrievalAction][internalServerErrorFor] Showing Agent error page")
+        logger.error(s"Showing Agent error page")
         agentErrorHandler.showInternalServerError()(request)
       case Some(Individual) =>
-        Logger(getClass).error(s"[IncomeSourceRetrievalAction][internalServerErrorFor] Showing Individual error page")
+        logger.error(s"Showing Individual error page")
         individualErrorHandler.showInternalServerError()(request)
       case _ =>
-        Logger(getClass).error(s"[IncomeSourceRetrievalAction][internalServerErrorFor] Unknown user type or unknown error")
+        logger.error(s"Unknown user type or unknown error")
         individualErrorHandler.showInternalServerError()(request)
     }
   }
@@ -70,10 +71,10 @@ class IncomeSourceRetrievalAction @Inject()(val incomeSourceConnector: IncomeSou
   def logWithUserType[A](msg: String)(implicit req: AuthorisedAndEnrolledRequest[A]): Result = {
     req.authUserDetails.affinityGroup match {
       case Some(Agent) =>
-        Logger(this.getClass).error(s"[Agent] $msg")
+        logger.error(s"Agent - $msg")
         agentErrorHandler.showInternalServerError()
       case _ =>
-        Logger(this.getClass).error(msg)
+        logger.error(msg)
         individualErrorHandler.showInternalServerError()
     }
   }

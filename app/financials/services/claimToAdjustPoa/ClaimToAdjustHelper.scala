@@ -25,7 +25,7 @@ import shared.enums.DocumentType.{Poa1Charge, Poa2Charge}
 import financials.models.*
 import financials.models.chargeHistory.{ChargeHistoryModel, ChargesHistoryErrorModel, ChargesHistoryModel}
 import financials.models.claimToAdjustPoa.viewModels.PaymentOnAccountViewModel
-import play.api.Logger
+import play.api.Logging
 import shared.connectors.CalculationListConnector
 import shared.models.calculationList.{CalculationListErrorModel, CalculationListModel}
 import uk.gov.hmrc.http.{HeaderCarrier, InternalServerException}
@@ -34,7 +34,7 @@ import java.time.{LocalDate, Month}
 import scala.concurrent.{ExecutionContext, Future}
 
 
-trait ClaimToAdjustHelper {
+trait ClaimToAdjustHelper extends Logging {
 
   private val LAST_DAY_OF_JANUARY: Int = 31
 
@@ -116,7 +116,7 @@ trait ClaimToAdjustHelper {
         case None => Right(None)
       }
       case ChargesHistoryErrorModel(code, message) =>
-        Logger("application").error("chargeHistoryConnector.getChargeHistory returned a non-valid response")
+        logger.error("chargeHistoryConnector.getChargeHistory returned a non-valid response")
         Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }
@@ -130,10 +130,10 @@ trait ClaimToAdjustHelper {
       calculationListConnector.getCalculationList(nino, taxYear.endYear.toString, user.mtditid).flatMap {
         case res: CalculationListModel => Future.successful(res.crystallised.getOrElse(false))
         case err: CalculationListErrorModel if err.code == 404 =>
-          Logger("application").info("User had no calculations for this tax year, therefore is non-crystallised")
+          logger.info("User had no calculations for this tax year, therefore is non-crystallised")
           Future.successful(false)
         case err: CalculationListErrorModel =>
-          Logger("application").error("getCalculationList returned a non-valid response")
+          logger.error("getCalculationList returned a non-valid response")
           Future.failed(new InternalServerException(err.message))
       }.map(!_)
     }
@@ -171,7 +171,7 @@ trait ClaimToAdjustHelper {
       case ChargesHistoryModel(_, _, _, Some(charges)) if charges.filter(_.isPoa).exists(_.poaAdjustmentReason.isDefined) => Right(true)
       case ChargesHistoryModel(_, _, _, _) => Right(false)
       case ChargesHistoryErrorModel(code, message) =>
-        Logger("application").error("getChargeHistory returned a non-valid response")
+        logger.error("getChargeHistory returned a non-valid response")
         Left(new Exception(s"Error retrieving charge history code: $code message: $message"))
     }
   }

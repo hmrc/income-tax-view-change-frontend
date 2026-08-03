@@ -19,7 +19,7 @@ package financials.models.paymentAllocations
 import common.exceptions.MissingFieldException
 import common.models.core.AccountingPeriodModel
 import financials.models.FinancialDetail
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate
@@ -34,13 +34,13 @@ case class AllocationDetail(
                              amount: Option[BigDecimal],
                              clearedAmount: Option[BigDecimal],
                              chargeReference: Option[String]
-                           ) {
+                           ) extends Logging {
 
   def getPaymentAllocationKeyInPaymentAllocations: String = {
     FinancialDetail.getMessageKeyByTypes(mainType, chargeType)
       .map(typesKey => s"paymentAllocation.paymentAllocations.$typesKey")
       .getOrElse {
-        Logger("application").error(s"[PaymentAllocations] Non-matching document/charge found with main charge: $mainType and sub-charge: $chargeType")
+        logger.error(s"Non-matching document/charge found with main charge: $mainType and sub-charge: $chargeType")
         ""
       }
   }

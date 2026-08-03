@@ -20,7 +20,7 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler}
 import common.connectors.FeedbackConnector
 import common.forms.FeedbackForm
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -38,7 +38,7 @@ class FeedbackController @Inject()(val authActions: AuthActions,
                                    val feedbackConnector : FeedbackConnector)
                                   (implicit val config: FrontendAppConfig,
                                     mcc: MessagesControllerComponents,
-                                    ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                    ec: ExecutionContext) extends FrontendController(mcc) with I18nSupport with Logging {
 
 
   def show: Action[AnyContent] = authActions.asAuthorisedUser.async {
@@ -68,12 +68,11 @@ class FeedbackController @Inject()(val authActions: AuthActions,
             case Right(_) =>
               Future.successful(Redirect(routes.FeedbackController.thankYou()))
             case Left(status) =>
-              Logger("application").error(s"Unexpected status code from feedback form: $status")
+              logger.error(s"Unexpected status code from feedback form: $status")
               throw new Error(s"Failed to on post request: $status")
           }).recover {
           case ex: Exception =>
-            Logger("application")
-              .error(s"Unexpected error code from feedback form: - ${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"Unexpected error code from feedback form: - ${ex.getMessage} - ${ex.getCause}")
             itvcErrorHandler.showInternalServerError()
         }
   }
@@ -88,12 +87,11 @@ class FeedbackController @Inject()(val authActions: AuthActions,
             case Right(_) =>
               Future.successful(Redirect(routes.FeedbackController.thankYouAgent()))
             case Left(status) =>
-              Logger("application").error(s"[Agent] Unexpected status code from feedback form: $status")
+              logger.error(s"Agent - Unexpected status code from feedback form: $status")
               throw new Error(s"Failed to on post request: $status")
           }).recover {
           case ex: Exception =>
-            Logger("application")
-              .error(s"[Agent] Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
+            logger.error(s"Agent - Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
             agentItvcErrorHandler.showInternalServerError()
         }
   }

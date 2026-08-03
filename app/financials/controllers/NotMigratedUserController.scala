@@ -19,7 +19,7 @@ package financials.controllers
 import common.auth.{AuthActions, MtdItUser}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,7 +36,7 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
                                          (implicit val ec: ExecutionContext,
                                           mcc: MessagesControllerComponents,
                                           val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+  with I18nSupport with FeatureSwitching with Logging {
 
   def handleShowRequest(errorHandler: ShowInternalServerError, backUrl: String)
                        (implicit user: MtdItUser[_], ec: ExecutionContext): Future[Result] = {
@@ -46,13 +46,12 @@ class NotMigratedUserController @Inject()(val notMigrated: NotMigratedUserView,
           Ok(notMigrated(backUrl))
         }
       } else {
-        Logger("application").error("Migrated user not allowed to access this page")
+        logger.error("Migrated user not allowed to access this page")
         Future.successful(errorHandler.showInternalServerError())
       }
     } .recover {
       case ex =>
-        Logger("application")
-          .error(s"error, ${ex.getMessage} - ${ex.getCause}")
+        logger.error(s"[handleShowRequest] error, ${ex.getMessage} - ${ex.getCause}")
         itvcErrorHandler.showInternalServerError()
     }
   }

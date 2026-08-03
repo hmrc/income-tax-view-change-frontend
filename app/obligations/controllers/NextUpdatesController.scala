@@ -27,7 +27,7 @@ import obligations.services.NextUpdatesService
 import obligations.services.reportingObligations.optOut.OptOutService
 import obligations.viewUtils.NextUpdatesViewUtils
 import obligations.views.html.nextUpdates.{NextUpdatesOptOutView, NoNextUpdatesView}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -53,7 +53,7 @@ class NextUpdatesController @Inject()(
                                        val agentItvcErrorHandler: AgentItvcErrorHandler,
                                        val ec: ExecutionContext
                                      )
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging{
 
   private def hasAnyIncomeSource(action: => Future[Result])(implicit user: MtdItUser[_], origin: Option[String]): Future[Result] = {
 
@@ -77,7 +77,7 @@ class NextUpdatesController @Inject()(
 
         result <- nextUpdates.obligations match {
           case Nil =>
-            Logger("application").warn(s"${if (isAgent) "[Agent]" else ""} No open obligations found for user.")
+            logger.warn(s"${if (isAgent) "Agent - " else ""} No open obligations found for user.")
             Future.successful(errorHandler.showInternalServerError())
           case _ =>
             auditNextUpdates(user, isAgent, origin)
@@ -105,7 +105,7 @@ class NextUpdatesController @Inject()(
               }
             }.recoverWith {
               case ex =>
-                Logger("application").error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
+                logger.error(s"Failed to retrieve quarterly reporting content checks: ${ex.getMessage}")
                 Future.successful(errorHandler.showInternalServerError())
             }
             optOutSetup

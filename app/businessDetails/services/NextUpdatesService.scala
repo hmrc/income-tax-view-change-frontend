@@ -22,7 +22,7 @@ import businessDetails.core.IncomeSourceId.mkIncomeSourceId
 import common.services.DateServiceInterface
 import businessDetails.models.incomeSourceDetails.viewmodels.*
 import common.models.obligations.{ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
-import play.api.Logger
+import play.api.Logging
 import shared.connectors.ObligationsConnector
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -32,10 +32,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class NextUpdatesService @Inject()(
                                     val obligationsConnector: ObligationsConnector
-                                  )(implicit val dateService: DateServiceInterface) {
+                                  )(implicit val dateService: DateServiceInterface) extends Logging {
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
-    Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
+    logger.debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
     obligationsConnector.getOpenObligations()
   }
 
@@ -44,8 +44,7 @@ class NextUpdatesService @Inject()(
                         (implicit user: MtdItUser[_], ec: ExecutionContext, hc: HeaderCarrier): Future[Seq[DatesModel]] = {
     getOpenObligations() map {
       case ObligationsErrorModel(code, message) =>
-        Logger("application").error(
-          s"Error: $message, code $code")
+        logger.error(s"[getObligationDates] Error: $message, code $code")
         Seq.empty
       case model: ObligationsModel =>
         Seq(model.obligations.flatMap(nextUpdatesModel => nextUpdatesModel.currentCrystDeadlines) map {

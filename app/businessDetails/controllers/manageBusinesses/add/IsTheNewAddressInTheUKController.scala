@@ -20,7 +20,7 @@ import businessDetails.enums.IncomeSourceJourney.SelfEmployment
 import businessDetails.forms.manageBusinesses.add.IsTheNewAddressInTheUKForm as form
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -49,7 +49,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
                                                  val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                  val mcc: MessagesControllerComponents,
                                                  val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses with Logging{
 
   def show(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent, isTriggeredMigration).async {
     implicit user =>
@@ -85,7 +85,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[handleRequest] ${ex.getMessage} - ${ex.getCause}")
       val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
       errorHandler.showInternalServerError()
   }
@@ -116,7 +116,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
     }
   }.recover {
     case ex =>
-      Logger("application").error(s"${ex.getMessage} - ${ex.getCause}")
+      logger.error(s"[handleSubmitRequest] ${ex.getMessage} - ${ex.getCause}")
       errorHandler.showInternalServerError()
   }
 
@@ -133,7 +133,7 @@ class IsTheNewAddressInTheUKController @Inject()(val authActions: AuthActions,
       case Some(form.responseUK) => Future.successful(Redirect(ukPropertyUrl))
       case Some(form.responseForeign) => Future.successful(Redirect(foreignPropertyUrl))
       case _ =>
-        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
+        logger.error(s"[handleValidForm] Unexpected response, isAgent = $isAgent")
         val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
         Future.successful(errorHandler.showInternalServerError())
     }

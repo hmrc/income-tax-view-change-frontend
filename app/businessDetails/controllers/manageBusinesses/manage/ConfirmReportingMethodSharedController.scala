@@ -24,7 +24,7 @@ import businessDetails.models.incomeSourceDetails.{LatencyYear, ManageIncomeSour
 import businessDetails.services.{SessionService, UpdateIncomeSourceService}
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import common.models.incomeSourceDetails.TaxYear.getTaxYearModel
-import play.api.Logger
+import play.api.Logging
 import play.api.MarkerContext.NoMarker
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
@@ -54,7 +54,7 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
                                                        val mcc: MessagesControllerComponents,
                                                        val itvcErrorHandlerAgent: AgentItvcErrorHandler,
                                                        val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses with I18nSupport {
+  with FeatureSwitching with IncomeSourcesUtils with JourneyCheckerManageBusinesses with I18nSupport with Logging {
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
@@ -244,13 +244,13 @@ class ConfirmReportingMethodSharedController @Inject()(val authActions: AuthActi
         routes.ManageObligationsController.show(isAgent = isAgent, incomeSourceType = incomeSourceType).url)
       )
       case _ =>
-        Logger("application").error(s"Unexpected response, isAgent = $isAgent")
+        logger.error(s"[handleValidForm] Unexpected response, isAgent = $isAgent")
         Future.successful(errorHandler(isAgent).showInternalServerError())
     }
   }
 
   private def logAndShowError(isAgent: Boolean, errorMessage: String)(implicit user: MtdItUser[_]): Result = {
-    Logger("application").error("[ConfirmReportingMethodSharedController]" + errorMessage)
+    logger.error(errorMessage)
     (if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler).showInternalServerError()
   }
 

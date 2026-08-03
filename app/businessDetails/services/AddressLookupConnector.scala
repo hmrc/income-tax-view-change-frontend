@@ -24,7 +24,7 @@ import common.models.core.Mode
 import common.viewUtils.InternalUrlHelper
 import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.*
 import play.api.libs.ws.writeableOf_JsValue
@@ -37,7 +37,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
                                        http: HttpClientV2,
-                                       val messagesApi: MessagesApi)(implicit ec: ExecutionContext) extends FeatureSwitching {
+                                       val messagesApi: MessagesApi)(implicit ec: ExecutionContext)
+  extends FeatureSwitching with Logging {
 
   val baseUrl: String = appConfig.addressLookupService
 
@@ -310,7 +311,7 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
   }
 
   def initialiseAddressLookup(isAgent: Boolean, mode: Mode, isTriggeredMigration: Boolean, ukOnly: Boolean)(implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[PostAddressLookupResponse] = {
-    Logger("application").info(s"[AddressLookupConnector] - URL: $addressLookupInitializeUrl")
+    logger.info(s"URL: $addressLookupInitializeUrl")
     val payload = (isAgent, ukOnly) match {
       case (true, true)   => addressJson(continueUrl(isAgent, mode, isTriggeredMigration), agentFeedbackUrl, agentEnglishBanner, agentWelshBanner)
       case (false, true)  => addressJson(continueUrl(isAgent, mode, isTriggeredMigration), individualFeedbackUrl, individualEnglishBanner, individualWelshBanner)

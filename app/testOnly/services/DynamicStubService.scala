@@ -21,7 +21,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
 import common.models.incomeSourceDetails.TaxYear
 import common.models.itsaStatus.ITSAStatusResponseModel
-import play.api.Logger
+import play.api.Logging
 import testOnly.connectors.DynamicStubConnector
 import testOnly.models.{DataModel, IncomeSourcesUser, LatentBusinessUser, Nino}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
@@ -31,12 +31,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                    dynamicStubConnector: DynamicStubConnector,
-                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
+                                   implicit val appConfig: FrontendAppConfig) extends FeatureSwitching with Logging {
 
   def overwriteCalculationList(nino: Nino, taxYearRange: String, crystallisationStatus: String)
                               (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("" +
-      s"Overwriting calculation list (1896) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
+    logger.debug(s"Overwriting calculation list (1896) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
     dynamicStubConnector.overwriteCalculationList(nino, taxYearRange, crystallisationStatus)
   }
 
@@ -50,55 +49,54 @@ class DynamicStubService @Inject()(itsaStatusConnector: ITSAStatusConnector,
       history = false
     ) map {
       case Right(itsaStatus: List[ITSAStatusResponseModel]) if itsaStatus.nonEmpty =>
-        Logger("application").info(s"Success! >! ITSA Status Response Model: $itsaStatus !<")
+        logger.info(s"Success! >! ITSA Status Response Model: $itsaStatus !<")
         itsaStatus
       case Left(error) =>
-        Logger("application").error(s"$error")
+        logger.error(s"[getITSAStatusDetail] $error")
         throw new Exception("Failed to retrieve ITSAStatus")
       case _ =>
-        Logger("application").error(s"Unexpected error. List of ITSAStatusResponseModels was empty!")
+        logger.error(s"Unexpected error. List of ITSAStatusResponseModels was empty!")
         throw new Exception("Unexpected error. List of ITSAStatusResponseModels was empty!")
     }
   }
 
   def overwriteItsaStatus(nino: Nino, taxYearRange: String, ITSAStatus: String)
                          (implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("" +
-      s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
+    logger.debug(s"Overwriting ITSA Status (1878) data via the dynamic stub with nino / taxYearRange: ${nino.value} - $taxYearRange")
     dynamicStubConnector.overwriteItsaStatus(nino, taxYearRange, ITSAStatus)
   }
 
   def overwriteBusinessData(mtdid: String, incomeSourcesUser: IncomeSourcesUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("Overwriting business data (5266) via the dynamic stub")
+    logger.debug("Overwriting business data (5266) via the dynamic stub")
     
     dynamicStubConnector.overwriteBusinessData(mtdid, incomeSourcesUser)
   }
   
   def overwriteLatentBusinessData(mtdid: String, latentBusinessUser: LatentBusinessUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("Overwriting latent business data (5266) via the dynamic stub")
+    logger.debug("Overwriting latent business data (5266) via the dynamic stub")
     
     dynamicStubConnector.overwriteLatentBusinessData(mtdid, latentBusinessUser)
   }
 
   def overwriteObligationsData(nino: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("Overwriting obligations data (1330) via the dynamic stub")
+    logger.debug("Overwriting obligations data (1330) via the dynamic stub")
     dynamicStubConnector.overwriteObligationsData(nino)
   }
 
   def overwriteEstimatedRepaymentDate()(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("Overwriting estimatedRepaymentDate the via dynamic stub")
+    logger.debug("Overwriting estimatedRepaymentDate the via dynamic stub")
     dynamicStubConnector.overwriteEstimatedRepaymentDate()
   }
 
   def addData(dataModel: DataModel)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpResponse] = {
     dynamicStubConnector.addData(dataModel).map { response =>
-      Logger("application").info(s"${response.status} " + response.body)
+      logger.info(s"[addData] ${response.status} " + response.body)
       response
     }
   }
 
   def overwriteEffectiveDateOfPaymentUrl()(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    Logger("application").debug("Overwriting effectiveDateOfPayment the via dynamic stub")
+    logger.debug("Overwriting effectiveDateOfPayment the via dynamic stub")
     dynamicStubConnector.overwriteEffectiveDateOfPayment()
   }
 }

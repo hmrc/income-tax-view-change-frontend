@@ -18,7 +18,7 @@ package businessDetails.connectors
 
 import businessDetails.models.createIncomeSource.*
 import common.config.FrontendAppConfig
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, Json}
 import play.api.libs.ws.writeableOf_JsValue
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CreateIncomeSourceConnector @Inject()(val http: HttpClientV2,
                                             val appConfig: FrontendAppConfig
-                                           )(implicit val ec: ExecutionContext) {
+                                           )(implicit val ec: ExecutionContext) extends Logging{
 
   def createBusinessIncomeSourcesUrl(): String =
     s"${appConfig.incomeTaxBusinessDetailsBaseUrl}/income-tax-business-details/create-income-source/business"
@@ -41,7 +41,7 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClientV2,
                         (implicit headerCarrier: HeaderCarrier): Future[Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]] = {
     val url = createBusinessIncomeSourcesUrl()
     val jsonRequest = Json.toJson(request)
-    Logger("application").debug("createBusinessRequest json: " + jsonRequest)
+    logger.debug("createBusinessRequest json: " + jsonRequest)
     http.post(url"$url").withBody(jsonRequest).execute[HttpResponse].flatMap(handleResponse)
   }
 
@@ -65,13 +65,13 @@ class CreateIncomeSourceConnector @Inject()(val http: HttpClientV2,
     if (response.status == OK) {
       response.json.validate[List[CreateIncomeSourceResponse]].fold(
         errors => {
-          Logger("application").error(s"Json validation error parsing business income sources response, error ${JsError.toJson(errors)}")
+          logger.error(s"Json validation error parsing business income sources response, error ${JsError.toJson(errors)}")
           Future.successful(Left(CreateIncomeSourceErrorResponse(response.status, s"Not valid json: ${response.body}")))
         },
         valid => Future.successful(Right(valid))
       )
     } else {
-      Logger("application").error(s"Response status: ${response.status}, body: ${response.body}")
+      logger.error(s"[handleResponse] Response status: ${response.status}, body: ${response.body}")
       Future.successful(Left(CreateIncomeSourceErrorResponse(response.status, s"Error creating incomeSource: ${response.json}")))
     }
   }

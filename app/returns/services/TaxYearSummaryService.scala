@@ -19,28 +19,28 @@ package returns.services
 import common.auth.MtdItUser
 import common.models.incomeSourceDetails.TaxYear
 import common.models.liabilitycalculation.*
-import play.api.Logger
+import play.api.Logging
 import returns.models.taxyearsummary.{AgentCannotViewTaxCalc, IrsaEnrolementHandedOff, LegacyAndCesa, MtdSoftwareShowCalc, NoIrsaAEnrolement, TaxYearViewScenarios}
 
 import javax.inject.Inject
 
 // noinspection ScalaStyle
-class TaxYearSummaryService @Inject() {
+class TaxYearSummaryService @Inject() extends Logging {
 
   def checkSubmissionChannel(liabilityCalculationResponse: Option[LiabilityCalculationResponseModel]): TaxYearViewScenarios = {
 
     liabilityCalculationResponse match {
       case Some(LiabilityCalculationError(404, message)) =>
-        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationError - LegacyAndCesa, status: 404, error message: $message")
+        logger.info(s"LiabilityCalculationError - LegacyAndCesa, status: 404, error message: $message")
         LegacyAndCesa
       case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacyWithCesa))) =>
-        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsLegacyWithCesa")
+        logger.info(s"LiabilityCalculationResponse - IsLegacyWithCesa")
         LegacyAndCesa
       case Some(LiabilityCalculationResponse(_, _, _, _, Some(IsMTD))) =>
-        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] LiabilityCalculationResponse - IsMTD - show MtdSoftwareShowCalc calc panel")
+        logger.info(s"LiabilityCalculationResponse - IsMTD - show MtdSoftwareShowCalc calc panel")
         MtdSoftwareShowCalc
       case response =>
-        Logger("application").info(s"[TaxYearSummaryService][checkSubmissionChannel] Catch all - show MtdSoftwareShowCalc calc panel - $response")
+        logger.info(s"Catch all - show MtdSoftwareShowCalc calc panel - $response")
         MtdSoftwareShowCalc
     }
   }
@@ -56,16 +56,16 @@ class TaxYearSummaryService @Inject() {
 
     (liabilityCalculationResponse, irsaEnrolement) match {
       case (Some(LiabilityCalculationError(_, _)) | Some(LiabilityCalculationResponse(_, _, _, _, Some(IsLegacyWithCesa) | Some(UnableToDetermineSubmissionChannel))), _) if mtdItUser.isAgent =>
-        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] AgentCannotViewTaxCalc")
+        logger.info(s"AgentCannotViewTaxCalc")
         AgentCannotViewTaxCalc
       case (Some(LiabilityCalculationError(status, _)), Some(_)) if taxYear.isBefore(taxYear2023) && status != 404 =>
-        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] IrsaEnrolementHandedOff")
+        logger.info(s"IrsaEnrolementHandedOff")
         IrsaEnrolementHandedOff
       case (Some(LiabilityCalculationError(status, _)), None) if taxYear.isBefore(taxYear2023) && status != 404 =>
-        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] NoIrsaAEnrolement")
+        logger.info(s"NoIrsaAEnrolement")
         NoIrsaAEnrolement
       case _ =>
-        Logger("application").info(s"[TaxYearSummaryService][determineCannotDisplayCalculationContentScenario] checkSubmissionChannel")
+        logger.info(s"checkSubmissionChannel")
         checkSubmissionChannel(liabilityCalculationResponse)
     }
   }

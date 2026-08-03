@@ -21,7 +21,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.implicits.ImplicitDateFormatter
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.AuditingService
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import returns.models.audit.ForecastIncomeAuditModel
@@ -44,11 +44,11 @@ class ForecastIncomeSummaryController @Inject()(val authActions: AuthActions,
                                                 val languageUtils: LanguageUtils,
                                                 val appConfig: FrontendAppConfig,
                                                 mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter {
+  extends FrontendController(mcc) with I18nSupport with ImplicitDateFormatter with Logging {
 
   def onError(message: String, isAgent: Boolean, taxYear: Int)(implicit request: Request[_]): Result = {
-    val errorPrefix: String = s"[ForecastIncomeSummaryController]${if (isAgent) "[agent]" else ""}[showIncomeSummary[$taxYear]]"
-    Logger("application").error(s"$errorPrefix $message")
+    val errorPrefix: String = s"${if (isAgent) "Agent" else ""}showIncomeSummary[$taxYear]"
+    logger.error(s"$errorPrefix - $message")
     if (isAgent) itvcErrorHandlerAgent.showInternalServerError() else itvcErrorHandler.showInternalServerError()
   }
 

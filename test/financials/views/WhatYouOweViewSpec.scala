@@ -1163,6 +1163,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       s"have the title $whatYouOweTitle and page header and notes" in new TestSetup(charges = noChargesButCodedOutModel) {
         pageDocument.title() shouldBe whatYouOweTitle
         pageDocument.selectFirst("h1").text shouldBe whatYouOweHeading
+        pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote2)

@@ -17,7 +17,7 @@
 package testOnly.connectors
 
 import common.connectors.RawResponseReads
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.libs.ws.{writeableOf_JsValue, writeableOf_urlEncodedForm}
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
                                      val http: HttpClientV2
-                                    )(implicit ec: ExecutionContext) extends RawResponseReads {
+                                    )(implicit ec: ExecutionContext) extends RawResponseReads with Logging {
 
   def addSchema(schemaModel: SchemaModel)(implicit hc: HeaderCarrier): Future[HttpResponse] = {
     lazy val url = s"${appConfig.dynamicStubUrl}/setup/schema"
@@ -92,7 +92,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          logger.error(s"[overwriteItsaStatus] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
@@ -118,7 +118,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          logger.error(s"[overwriteBusinessData] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
@@ -140,7 +140,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
       response.status match {
         case OK => (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          logger.error(s"[overwriteLatentBusinessData] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
@@ -163,7 +163,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          logger.error(s"[overwriteObligationsData] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
@@ -184,7 +184,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          logger.error(s"[overwriteEstimatedRepaymentDate] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
@@ -205,7 +205,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          logger.error(s"[overwriteCalculationList] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
@@ -226,7 +226,7 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
         case OK =>
           (): Unit
         case _ =>
-          Logger("application").error(s" Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          logger.error(s"[overwriteEffectiveDateOfPayment] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
           throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
       }
     }
