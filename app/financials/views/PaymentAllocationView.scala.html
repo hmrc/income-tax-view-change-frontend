@@ -25,20 +25,24 @@
 @import java.time.LocalDate
 @import common.config.FrontendAppConfig
 @import common.auth.MtdItUser
+@import financials.controllers.routes as financialsRoutes
+@import _root_.shared.implicits.HtmlFormatter.NbspString
+@import financials.models.paymentAllocationCharges._
 
-
-@this(mainTemplate: unifiedLayout,
-      paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
-      paymentAllocationsForLpi: PaymentAllocationsForLpi,
-      paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
-      implicitDateFormatter: ImplicitDateFormatterImpl,
-      h1:h1,
-      h2: h2,
-      p:p,
-      govukInsetText: GovukInsetText,
-      link: link,
-      appConfig: FrontendAppConfig,
-      numberList: orderedNumberList
+@this(
+        mainTemplate: unifiedLayout,
+        paymentAllocationsForNonLpi: PaymentAllocationsForNonLpi,
+        paymentAllocationsForLpi: PaymentAllocationsForLpi,
+        paymentAllocationsCreditAmount: PaymentAllocationsCreditAmount,
+        implicitDateFormatter: ImplicitDateFormatterImpl,
+        h1:h1,
+        h2: h2,
+        p:p,
+        govukInsetText: GovukInsetText,
+        link: link,
+        appConfig: FrontendAppConfig,
+        numberList: orderedNumberList,
+        govukTable: GovukTable
 )
 
 @(paymentAllocations: financials.models.paymentAllocationCharges.PaymentAllocationViewModel, backUrl: String, saUtr: Option[String],
@@ -53,6 +57,119 @@
         else
             "paymentAllocation.heading"
     )
+}
+
+@paymentAllocationHref(paymentAllocation: AllocationDetailWithClearingDate) = @{
+    if(user.isAgent){
+        financialsRoutes.ChargeSummaryController.showAgent(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
+    } else {
+        financialsRoutes.ChargeSummaryController.show(paymentAllocation.allocationDetailActual.getTaxYear, paymentAllocation.allocationDetailActual.transactionIdActual)
+    }
+}
+
+@LpiPaymentTableRows: Seq[Seq[TableRow]] = @{
+    paymentAllocations.latePaymentInterestPaymentAllocationDetails.map{lpiAllocationDetails => {
+        Seq(
+            Seq(
+                TableRow(
+                    classes = "govuk-table__cell",
+                    content = Text(messages("paymentAllocation.noData"))
+                ),
+                TableRow(
+                    classes = "govuk-table__cell",
+                    attributes = Map("id" -> "payment-allocation-0"),
+                    content =
+                        if(user.isAgent){
+                            HtmlContent(link(
+                                link = financialsRoutes.ChargeSummaryController.showAgent(lpiAllocationDetails.documentDetail.taxYear, lpiAllocationDetails.documentDetail.transactionId, isInterestCharge = true).url,
+                                messageKey = messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getDocumentChargeTypeKey}")
+                            ))
+                        }else{
+                            HtmlContent(link(
+                                link = financialsRoutes.ChargeSummaryController.show(lpiAllocationDetails.documentDetail.taxYear, lpiAllocationDetails.documentDetail.transactionId, isInterestCharge = true, origin).url,
+                                messageKey = messages(s"paymentAllocation.paymentAllocations.${lpiAllocationDetails.documentDetail.getDocumentChargeTypeKey}")
+                            ))
+                        }
+
+                ),
+                TableRow(
+                    classes = "govuk-table__cell",
+                    content = HtmlContent({
+                        p(classes = "govuk-visually-hidden"){
+                            Html(messages("paymentAllocation.taxYearHidden"))
+                        }
+                        p(classes = "govuk-body no-wrap"){
+                            Html(messages("paymentAllocation.taxYear", (lpiAllocationDetails.documentDetail.taxYear - 1).toString, lpiAllocationDetails.documentDetail.taxYear.toString))
+                        }
+                    })
+                ),
+                TableRow(
+                    classes = "govuk-table__cell govuk-table__cell--numeric",
+                    content = HtmlContent(lpiAllocationDetails.amount.abs.toCurrencyString)
+                )
+            )
+        )
+    }}.getOrElse(Seq(Seq(TableRow()))) //TODO handle this properly - did this just for compilation
+}
+
+@nonLpiPaymentTableRows: Seq[Seq[TableRow]] = @{
+    paymentAllocations.originalPaymentAllocationWithClearingDate.zipWithIndex.map{ case(paymentAllocation, index) =>
+        Seq(
+            TableRow(
+                classes = "govuk-table__cell",
+                content = Text(paymentAllocation.clearingDateActual.toLongDateShort.toNonBreaking.toString)
+            ),
+            TableRow(
+                attributes = Map( ("id", s"payment-allocation-$index") ),
+                classes = "govuk-table__cell",
+                content = HtmlContent({
+                    //TODO check this by reversing the if statement in the original as it's rather dodgy looking there and not sure what the intended behaviour is
+                    if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined && !paymentAllocation.allocationDetailActual.mainType.contains("On Account")) {
+                        link(
+                            classes = "govuk-link",
+                            link = s"${paymentAllocationHref(paymentAllocation)}",
+                            messageKey = messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
+                        )
+                    }else if(paymentAllocation.allocationDetailActual.mainType.contains("On Account")) {
+                        link(
+                            classes = "govuk-link",
+                            link = s"${paymentAllocationHref(paymentAllocation)}",
+                            messageKey = messages("paymentAllocation.paymentAllocations.onAccount.table.description.poa")
+                        )
+                    }else {
+                        link(
+                            classes = "govuk-link",
+                            link = "",
+                            messageKey = messages(paymentAllocation.allocationDetailActual.getPaymentAllocationKeyInPaymentAllocations)
+                        )
+                    }
+                })
+            ),
+            TableRow(
+                content = HtmlContent({
+                    if(paymentAllocation.allocationDetailActual.getTaxYearOpt.isDefined) {
+                        p(classes = "govuk-visually-hidden"){
+                            Html(messages("paymentAllocation.taxYearHidden"))
+                        }
+                        p(classes = "govuk-body no-wrap"){
+                            Html(messages("paymentAllocation.taxYear", (paymentAllocation.allocationDetailActual.getTaxYear - 1).toString, paymentAllocation.allocationDetailActual.getTaxYear.toString))
+                        }
+                    }else{
+                        //TODO don't know about this - seems dodgy, need to find out if we can use aria-hidden
+                        Html("""<span class="govuk-body no-wrap" aria-hidden="true">messages("paymentAllocation.noData")</span>""")
+                    }
+                })
+            )
+        )
+    }
+}
+
+@tableRows: Seq[Seq[TableRow]] = @{
+    if(paymentAllocations.isLpiPayment) {
+        LpiPaymentTableRows
+    }else {
+        nonLpiPaymentTableRows
+    }
 }
 
 @mainTemplate(
@@ -123,4 +240,33 @@
         }
         @paymentAllocationsCreditAmount(paymentAllocations.outstandingAmount, paymentAllocations.dueDate, creditsRefundsRepayEnabled, user.isAgent)
     </table>
+
+
+    @govukTable(
+        Table(
+            rows = tableRows,
+            head = Some(Seq(
+                HeadCell(
+                    classes = "govuk-table__header",
+                    content = Text(messages("paymentAllocation.tableHead.allocated-date"))
+                ),
+                HeadCell(
+                    classes = "govuk-table__header",
+                    content = Text(messages("paymentAllocation.tableHead.description"))
+                ),
+                HeadCell(
+                    classes = "govuk-table__header",
+                    content = Text(messages("paymentAllocation.tableHead.tax-year"))
+                ),
+                HeadCell(
+                    classes = "govuk-table__header govuk-table__header--numeric",
+                    content = Text(messages("paymentAllocation.tableHead.amount"))
+                ))
+            ),
+            caption = Some("Dates and amounts"),
+            captionClasses = "govuk-table__caption--m",
+            firstCellIsHeader = true,
+            classes = "govuk-table--small-text-until-tablet"
+        )
+    )
 }}
