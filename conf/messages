@@ -2671,9 +2671,9 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                    
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = This balancing payment extra amount was created because of a change you made to your return.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Pay this charge to stop this interest from increasing daily.
 
-yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.p1                            = Following a compliance check, HMRC made a change to your tax return known as an ‘enquiry amendment’. This changed your
-yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.link                          = tax calculation for {0} to {1}
-yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.p2                            = , resulting in an extra amount to pay towards your tax bill.
+yourSelfAssessmentChargeSummary.enquiryAmendment.p1                                 = Following a compliance check, HMRC made a change to your tax return known as an ‘enquiry amendment’. This changed your
+yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = tax calculation for {0} to {1}
+yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , resulting in an extra amount to pay towards your tax bill.
 
 
 

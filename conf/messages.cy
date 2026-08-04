@@ -2590,6 +2590,7 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i dde
 
 yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading              = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
 yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text              = Mae’r swm ychwanegol taliad mantoli hwn yn cyfrannu at eich bil treth ar gyfer {0} i {1}
+yourSelfAssessmentChargeSummary.chargeHistory.enquiryAmendment.caption.text             = Mae’r swm ychwanegol hwn yn cyfrannu at eich bil treth o {0} i {1}.
 yourSelfAssessmentChargeSummary.chargeHistory.poaOneReconciliation.caption.text         = Mae’r swm ychwanegol taliad cyntaf ar gyfrif hwn yn cyfrannu at eich bil treth {0} i {1}.
 yourSelfAssessmentChargeSummary.chargeHistory.poaTwoReconciliation.caption.text         = Mae’r swm ychwanegol ail daliad ar gyfrif hwn yn cyfrannu at eich bil treth {0} i {1}.
 
@@ -2655,9 +2656,9 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfri
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Crëwyd y swm ychwanegol taliad mantoli hwn oherwydd newid a wnaethoch i’ch Ffurflen Dreth.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
 
-yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.p1                           = Yn dilyn gwiriad cydymffurfio, gwnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Newidiodd hyn eich
-yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.link                         = cyfrifiad treth ar gyfer {0} i {1}
-yourSelfAssessmentChargeSummary.ra.itsaReturnAmendment.p2                           = , gan arwain at swm ychwanegol i’w dalu tuag at eich bil treth.
+yourSelfAssessmentChargeSummary.enquiryAmendment.p1                                 = Yn dilyn gwiriad cydymffurfio, gwnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Newidiodd hyn eich
+yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = cyfrifiad treth ar gyfer {0} i {1}
+yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , gan arwain at swm ychwanegol i’w dalu tuag at eich bil treth.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.

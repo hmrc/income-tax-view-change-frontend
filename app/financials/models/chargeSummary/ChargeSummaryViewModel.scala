@@ -98,8 +98,6 @@ case class ChargeSummaryViewModel(
 
   val noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment: Boolean = !latePaymentInterestCharge && !isCodedOut
 
-  val isRA: String = if (chargeItem.isRevenueAmendment) "Ra" else ""
-
   val creationEventNoInterestChargeAndNotCodedOut: Option[ChargeHistoryItem] = Option.when(chargeHistoryEnabled && noInterestChargeAndNoCodingOutEnabledWithIsPayeSelfAssessment) {
       ChargeHistoryItem(
         date = adjustmentHistory.creationEvent.adjustmentDate.getOrElse(chargeItem.documentDate),
