@@ -22,19 +22,19 @@
     </appender>
 
 
-    <logger name="application" level="ERROR"/>
-    <logger name="com.google.inject" level="ERROR"/>
-    <logger name="org.asynchttpclient.netty" level="ERROR"/>
-    <logger name="uk.gov.hmrc.play.bootstrap.audit" level="WARN"/>
-    <logger name="uk.gov.hmrc.audit" level="WARN"/>
-    <logger name="io.netty" level="WARN"/>
-    <logger name="play.core.netty.testUtils.ServerCookieDecoder" level="WARN"/>
+    <logger name="application" level="DEBUG"/>
+    <logger name="com.google.inject" level="DEBUG"/>
+    <logger name="org.asynchttpclient.netty" level="DEBUG"/>
+    <logger name="uk.gov.hmrc.play.bootstrap.audit" level="DEBUG"/>
+    <logger name="uk.gov.hmrc.audit" level="DEBUG"/>
+    <logger name="io.netty" level="DEBUG"/>
+    <logger name="play.core.netty.testUtils.ServerCookieDecoder" level="DEBUG"/>
 
-    <logger name="connector" level="WARN">
+    <logger name="connector" level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="ERROR">
+    <root level="DEBUG">
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>
