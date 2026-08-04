@@ -458,13 +458,15 @@ class ChargeSummaryControllerSpec extends ChargeSummaryControllerHelper {
                 status(result) shouldBe Status.OK
                 val document = JsoupParse(result).toHtmlDocument
 
+                println(Console.YELLOW + document.toString)
+
                 document.select("h1").first().text() shouldBe "Credit from your amended tax return"
                 document.getElementsByClass("govuk-caption-xl").first().text() should include("2017 to 2018 tax year")
                 document.getElementsByClass("govuk-heading-m").first().text() shouldBe "Total credit amount: £100.00"
                 document.getElementById("credit-created-text").text() shouldBe "This credit was created on 29 March 2018"
                 document.getElementById("itsa-return-amendment-credit-p1").text() shouldBe "HMRC has added a credit to your account because your amended tax return shows that your 2017 to 2018 tax bill was too high."
                 document.getElementById("itsa-return-amendment-credit-p2").text() shouldBe "This credit may be used automatically by HMRC to cover your future tax bills when they become due."
-                document.getElementById("allocation-section").text() shouldBe "Where the credit was applied"
+                document.getElementById("allocation-section").text() shouldBe "Where the credit was applied" //TODO where credit was applied doesn't appear in the HTML - this may be a fault with the table logic
               }
 
               "provided with an id associated to a Late Submission Penalty" in new Setup(testValidFinancialDetailsModelWithLateSubmissionPenalty, docId = id1040000123) {
