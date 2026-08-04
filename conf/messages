@@ -837,7 +837,7 @@ tax-year-summary.latest-calculation.rejection.inset-inset-4 = or see
 tax-year-summary.latest-calculation.rejection.inset-link-2  = what you owe and how to make a payment
 
 tax-year-summary.previous-calculation.rejection.desc            = HMRC amended your tax return on {0}. This changed your tax calculation at that time. This is now a previous calculation. A newer calculation may have been made since.
-tax-year-summary.previous-calculation.rejection.subheading      = Calculation made on {0} A newer calculation may have been made since.
+tax-year-summary.previous-calculation.rejection.subheading      = Calculation made on {0}
 tax-year-summary.previous-calculation.rejection.subheading.desc = This calculation reflects the tax position at that time.
 
 ## Income Breakdown Page ##
