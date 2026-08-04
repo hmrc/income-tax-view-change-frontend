@@ -50,7 +50,7 @@ class TaxYearsController @Inject()(taxYearsView: TaxYearsView,
 
     yearOfMigrationService.orderedTaxYearsByYearOfMigration(user.nino).flatMap {
       case taxYearList @ orderedTaxYearsByYearOfMigration if orderedTaxYearsByYearOfMigration.nonEmpty =>
-        logger.debug(s"taxYears = ${user.incomeSources.orderedTaxYearsByAccountingPeriods.reverse}")
+        logger.debug(s"[TaxYearsController][handleRequest] taxYears = ${taxYearList.reverse}")
         Future(Ok(taxYearsView(
           taxYears = taxYearList.reverse,
           backUrl = backUrl,
