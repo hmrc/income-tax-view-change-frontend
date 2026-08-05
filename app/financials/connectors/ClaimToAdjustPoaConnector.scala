@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import financials.models.claimToAdjustPoa.ClaimToAdjustPoaRequest
 import financials.models.claimToAdjustPoa.ClaimToAdjustPoaResponse.*
 import financials.models.core.CorrelationId
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.Json
 import play.api.libs.ws.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ClaimToAdjustPoaConnector @Inject() ( frontendAppConfig: FrontendAppConfig,
                                             val http: HttpClientV2)
-                                          ( implicit val ec: ExecutionContext ) {
+                                          ( implicit val ec: ExecutionContext ) extends Logging {
 
   val endpoint = s"${frontendAppConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details/submit-claim-to-adjust-poa"
 
@@ -51,7 +51,7 @@ class ClaimToAdjustPoaConnector @Inject() ( frontendAppConfig: FrontendAppConfig
       .execute[ClaimToAdjustPoaResponse]
       .recover {
         case e => {
-          Logger("application").error(e.getMessage)
+          logger.error(s"[postClaimToAdjustPoa] ${e.getMessage}")
           Left(UnexpectedError)
         }
       }

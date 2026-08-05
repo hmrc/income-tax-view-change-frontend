@@ -26,7 +26,7 @@ import obligations.controllers.reportingObligations.routes as reportingObligatio
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.utils.reportingObligations.JourneyCheckerSignUp
 import obligations.views.html.reportingObligations.signUp.SignUpStartView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -44,7 +44,7 @@ class SignUpStartController @Inject()(authActions: AuthActions,
                                      (implicit val ec: ExecutionContext,
                                       val appConfig: FrontendAppConfig,
                                       mcc: MessagesControllerComponents)
-  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with JourneyCheckerSignUp {
+  extends FrontendController(mcc) with I18nSupport with FeatureSwitching with JourneyCheckerSignUp with Logging {
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
@@ -70,7 +70,7 @@ class SignUpStartController @Inject()(authActions: AuthActions,
               }
             }
           case None =>
-            Logger("application").warn("[SignUpStartController.show] chosen tax year intent not found. Redirecting to reporting obligations page.")
+            logger.warn("[SignUpStartController.show] chosen tax year intent not found. Redirecting to reporting obligations page.")
             Future.successful(Redirect(reportingObligationsRoutes.ReportingFrequencyPageController.show(isAgent)))
         }
       }
@@ -80,7 +80,7 @@ class SignUpStartController @Inject()(authActions: AuthActions,
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
       case ex: Exception =>
-        Logger("application").error(s"request failed :: $ex")
+        logger.error(s"request failed :: $ex")
         errorHandler(isAgent).showInternalServerError()
     }
   }

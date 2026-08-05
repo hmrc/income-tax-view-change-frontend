@@ -21,7 +21,7 @@ import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler
 import common.config.featureswitch.FeatureSwitching
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import returns.forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import returns.models.finalTaxCalculation.TaxReturnRequestModel
@@ -42,7 +42,7 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
                                              )(implicit val appConfig: FrontendAppConfig,
                                                val mcc: MessagesControllerComponents,
                                                ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching {
+  with I18nSupport with FeatureSwitching with Logging {
 
   def handleShowRequest(taxYear: Int,
                         itvcErrorHandler: ShowInternalServerError,
@@ -56,10 +56,10 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
         Ok(view(calculationSummary, taxYear, isAgent = isAgent, backUrl, serviceNavigationPartial = user.serviceNavigationPartial))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
-        Logger("application").info("No calculation data returned from downstream.")
+        logger.info("No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
-        Logger("application").error("Unexpected error has occurred while retrieving calculation data.")
+        logger.error("Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandler.showInternalServerError()
     }
   }
@@ -116,14 +116,14 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
               summaryData -> submissionOverview.asJsonString
             )
           case _ =>
-            Logger("application").error("[Agent]UTR missing.")
+            logger.error("Agent - UTR missing.")
             itvcErrorHandlerAgent.showInternalServerError()
         }
       case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
-        Logger("application").info("[Agent]No calculation data returned from downstream.")
+        logger.info("Agent - No calculation data returned from downstream.")
         itvcErrorHandlerAgent.showInternalServerError()
       case _ =>
-        Logger("application").error("[Agent]Unexpected error has occurred while retrieving calculation data.")
+        logger.error("Agent - Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandlerAgent.showInternalServerError()
     }
   }
@@ -148,14 +148,14 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
               summaryData -> submissionOverview.asJsonString
             )
           case _ =>
-            Logger("application").error("Name or UTR missing.")
+            logger.error("Name or UTR missing.")
             itvcErrorHandler.showInternalServerError()
         }
       case calcError: LiabilityCalculationError if calcError.status == NO_CONTENT =>
-        Logger("application").info("No calculation data returned from downstream.")
+        logger.info("No calculation data returned from downstream.")
         itvcErrorHandler.showInternalServerError()
       case _ =>
-        Logger("application").error("Unexpected error has occurred while retrieving calculation data.")
+        logger.error("Unexpected error has occurred while retrieving calculation data.")
         itvcErrorHandler.showInternalServerError()
     }
   }

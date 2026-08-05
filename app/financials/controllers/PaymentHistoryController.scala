@@ -31,7 +31,7 @@ import financials.models.paymentCreditAndRefundHistory.PaymentCreditAndRefundHis
 import financials.models.repaymentHistory.RepaymentHistoryUtils
 import financials.services.{PaymentHistoryService, RepaymentService}
 import financials.views.html.PaymentHistoryView
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -55,7 +55,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
                                           val languageUtils: LanguageUtils,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with FeatureSwitching with ImplicitDateFormatter with TransactionUtils {
+  with I18nSupport with FeatureSwitching with ImplicitDateFormatter with TransactionUtils with Logging {
 
   def handleRequest(backUrl: String,
                     origin: Option[String] = None,
@@ -122,7 +122,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
       if (isEnabled(PaymentHistoryRefunds)) {
         repaymentService.view(user.nino).map {
           case Right(nextUrl) => Redirect(nextUrl)
-          case Left(ex) => logAndHandleError(ex.getMessage)
+          case Left(ex) => logAndHandleError(s"[refundStatus] ${ex.getMessage}")
         }
       } else {
         Future.successful(Ok(customNotFoundErrorView()(user, user.messages)))
@@ -131,7 +131,7 @@ class PaymentHistoryController @Inject()(authActions: AuthActions,
 
   def logAndHandleError(message: String)
                        (implicit mtdItUser: MtdItUser[_]): Result = {
-    Logger("application").error(message)
+    logger.error(message)
     val errorHandler = if(mtdItUser.isAgent) itvcErrorHandlerAgent else itvcErrorHandler
     errorHandler.showInternalServerError()
   }

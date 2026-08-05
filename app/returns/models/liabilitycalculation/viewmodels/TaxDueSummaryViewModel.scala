@@ -21,7 +21,7 @@ import common.models.liabilitycalculation.*
 import common.models.liabilitycalculation.taxcalculation.{Nic4Bands, TaxBands}
 import CalculationSummary.getTaxDue
 import common.models.obligations.ObligationsModel
-import play.api.Logger
+import play.api.Logging
 
 case class TaxDueSummaryViewModel(
                                    taxRegime: String = "",
@@ -161,16 +161,16 @@ object TaxDueSummaryViewModel {
   }
 }
 
-object TransitionProfitRow {
+object TransitionProfitRow extends Logging {
   def apply(incomeTaxCharged: Option[BigDecimal], totalTaxableProfit: Option[BigDecimal]): Option[TransitionProfitRow] = {
 
     (incomeTaxCharged, totalTaxableProfit) match {
       case (Some(tax), Some(profit)) => Some(TransitionProfitRow(incomeTaxCharged = tax, totalTaxableProfit = profit))
       case (None, Some(_)) =>
-        Logger("application").warn(s"missing incomeTaxChargedOnTransitionProfits")
+        logger.warn(s"missing incomeTaxChargedOnTransitionProfits")
         None
       case (Some(_), None) =>
-        Logger("application").warn(s"missing totalTaxableTransitionProfit")
+        logger.warn(s"missing totalTaxableTransitionProfit")
         None
       case _ => None
     }

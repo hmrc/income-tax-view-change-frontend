@@ -25,7 +25,7 @@ import businessDetails.models.createIncomeSource.CreateIncomeSourceResponse
 import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import businessDetails.services.{CreateBusinessDetailsService, SessionService}
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -54,7 +54,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
                                                   (implicit val ec: ExecutionContext,
                                                    val mcc: MessagesControllerComponents,
                                                    val appConfig: FrontendAppConfig) extends FrontendController(mcc)
-  with JourneyCheckerManageBusinesses with I18nSupport {
+  with JourneyCheckerManageBusinesses with I18nSupport with Logging {
 
 
   private lazy val errorRedirectUrl: (Boolean, IncomeSourceType, Boolean) => String = (isAgent: Boolean, incomeSourceType: IncomeSourceType, isTriggeredMigration: Boolean) =>
@@ -106,18 +106,16 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
             )
           }
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"Unable to construct view model for $incomeSourceType")
+          val agentPrefix = if (isAgent) "Agent - " else ""
+          logger.error(s"[handleRequest] ${agentPrefix}Unable to construct view model for $incomeSourceType")
           Future.successful {
             errorHandler.showInternalServerError()
           }
       }
     }.recover {
       case ex: Throwable =>
-        val agentPrefix = if (isAgent) "[Agent]" else ""
-        Logger("application").error(agentPrefix +
-          s"Unexpected exception ${ex.getMessage} - ${ex.getCause}")
+        val agentPrefix = if (isAgent) "Agent - " else ""
+        logger.error(s"[handleRequest] ${agentPrefix}Unexpected exception ${ex.getMessage} - ${ex.getCause}")
         errorHandler.showInternalServerError()
     }
 
@@ -228,9 +226,8 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
               Future.failed(ex)
           }
         case None =>
-          val agentPrefix = if (isAgent) "[Agent]" else ""
-          Logger("application").error(agentPrefix +
-            s"Unable to construct view model for $incomeSourceType")
+          val agentPrefix = if (isAgent) "Agent - " else ""
+          logger.error(s"[handleSubmit] ${agentPrefix}Unable to construct view model for $incomeSourceType")
           Future.successful {
             Redirect(errorRedirectUrl(isAgent, incomeSourceType, isTriggeredMigration))
           }
@@ -238,7 +235,7 @@ class IncomeSourceCheckDetailsController @Inject()(val incomeSourceCheckDetailsV
     }
   }.recover {
     case ex: Exception =>
-      Logger("application").error(s"${ex.getMessage}")
+      logger.error(s"[handleSubmit] ${ex.getMessage}")
       Redirect(errorRedirectUrl(isAgent, incomeSourceType, !user.incomeSources.isConfirmedUser))
   }
 }

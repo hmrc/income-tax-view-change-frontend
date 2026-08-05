@@ -19,7 +19,7 @@ package financials.connectors
 import common.config.FrontendAppConfig
 import common.connectors.RawResponseReads
 import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel, OutstandingChargesResponseModel}
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class OutstandingChargesConnector @Inject()(
                                             httpV2: HttpClientV2,
                                             appConfig: FrontendAppConfig
-                                          )(implicit val ec: ExecutionContext) extends RawResponseReads {
+                                          )(implicit val ec: ExecutionContext) extends RawResponseReads with Logging {
 
   private[connectors] val baseUrl = s"${appConfig.incomeTaxFinancialDetailsService}/income-tax-financial-details"
 
@@ -44,7 +44,7 @@ class OutstandingChargesConnector @Inject()(
 
 
     val url = getOutstandingChargesUrl(idType, idNumber, s"$taxYear-04-05")
-    Logger("application").debug(s"GET $url")
+    logger.debug(s"[getOutstandingCharges] GET $url")
 
     httpV2
       .get(url"$url")
@@ -52,24 +52,24 @@ class OutstandingChargesConnector @Inject()(
       .map { response =>
         response.status match {
           case OK =>
-            Logger("application").debug(s"Status: ${response.status}, json: ${response.json}")
+            logger.debug(s"[getOutstandingCharges] Status: ${response.status}, json: ${response.json}")
             response.json.validate[OutstandingChargesModel].fold(
               invalid => {
-                Logger("application").error(s"Json Validation Error: $invalid")
+                logger.error(s"[getOutstandingCharges] Json Validation Error: $invalid")
                 OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, "Json Validation Error. Parsing OutstandingCharges Data Response")
               },
               valid => valid
             )
           case status if status >= Status.INTERNAL_SERVER_ERROR =>
-            Logger("application").error(s"Status: ${response.status}, body: ${response.body}")
+            logger.error(s"[getOutstandingCharges] Status: ${response.status}, body: ${response.body}")
             OutstandingChargesErrorModel(response.status, response.body)
           case _ =>
-            Logger("application").warn(s"Status: ${response.status}, body: ${response.body}")
+            logger.warn(s"[getOutstandingCharges] Status: ${response.status}, body: ${response.body}")
             OutstandingChargesErrorModel(response.status, response.body)
         }
       }.recover {
         case ex =>
-          Logger("application").error(s"Unexpected failure, ${ex.getMessage}", ex)
+          logger.error(s"[getOutstandingCharges] Unexpected failure, ${ex.getMessage}", ex)
           OutstandingChargesErrorModel(Status.INTERNAL_SERVER_ERROR, s"Unexpected failure, ${ex.getMessage}")
       }
   }

@@ -17,7 +17,7 @@
 package testOnly.controllers
 
 import common.config.FrontendAppConfig
-import play.api.Logger
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,7 +35,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
                                            (implicit mcc: MessagesControllerComponents,
                                             val appConfig: FrontendAppConfig,
                                             ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+  extends FrontendController(mcc) with I18nSupport with Logging {
 
   def form: Form[StubClientDetailsModel] = StubClientDetailsForm.clientDetailsForm.fill(
     StubClientDetailsModel(
@@ -54,7 +54,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
 
   def submitWithParams(nino: String, utr: String): Action[AnyContent] = Action.async { implicit request =>
     matchingStubConnector.stubClient(StubClientDetailsModel(nino, utr, OK)) map { response =>
-      Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
+      logger.info(s"[submitWithParams] matching stub, status: ${response.status}, body: ${response.body}")
       Redirect(hub.controllers.agent.routes.EnterClientsUTRController.showWithUtr(utr))
     }
   }
@@ -66,7 +66,7 @@ class StubClientDetailsController @Inject()(stubClientDetails: StubClientDetails
         postAction = testOnly.controllers.routes.StubClientDetailsController.submit()
       ))), { data =>
         matchingStubConnector.stubClient(data) map { response =>
-          Logger("application").info(s"matching stub, status: ${response.status}, body: ${response.body}")
+          logger.info(s"[submit] matching stub, status: ${response.status}, body: ${response.body}")
           Redirect(hub.controllers.agent.routes.EnterClientsUTRController.show())
         }
       }

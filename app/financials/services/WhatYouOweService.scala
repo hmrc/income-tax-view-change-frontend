@@ -29,7 +29,7 @@ import financials.models.ChargeItem.isAKnownTypeOfCharge
 import financials.models.audit.WhatYouOweResponseAuditModel
 import financials.models.outstandingCharges.{OutstandingChargesErrorModel, OutstandingChargesModel}
 import financials.services.claimToAdjustPoa.ClaimToAdjustService
-import play.api.Logger
+import play.api.Logging
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -47,7 +47,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
                                   implicit val dateService: DateServiceInterface)
                                  (implicit ec: ExecutionContext,
                                   val appConfig: FrontendAppConfig)
-  extends TransactionUtils with FeatureSwitching {
+  extends TransactionUtils with FeatureSwitching with Logging {
 
   implicit lazy val localDateOrdering: Ordering[LocalDate] = Ordering.by(_.toEpochDay)
 
@@ -170,7 +170,7 @@ class WhatYouOweService @Inject()(val financialDetailsService: FinancialDetailsS
       optTotalBalance = getTotalBalance(whatYouOweChargesList)
     } yield lpp2Url match {
       case  None =>
-        Logger("application").error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
+        logger.error("No chargeReference supplied with second late payment penalty. Hand-off url could not be formulated")
         None
       case Some(lpp2Url) =>
         auditingService.extendedAudit(WhatYouOweResponseAuditModel(user, whatYouOweChargesList) (dateService))

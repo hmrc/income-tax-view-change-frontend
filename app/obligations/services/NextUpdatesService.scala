@@ -25,7 +25,7 @@ import common.models.incomeSourceDetails.{QuarterTypeCalendar, QuarterTypeStanda
 import common.models.obligations.{ObligationWithIncomeType, ObligationsErrorModel, ObligationsModel, ObligationsResponseModel}
 import obligations.models.*
 import obligations.services.NextUpdatesService.{QuarterlyUpdatesCountForTaxYear, noQuarterlyUpdates}
-import play.api.Logger
+import play.api.Logging
 import shared.connectors.ObligationsConnector
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -45,7 +45,7 @@ class NextUpdatesService @Inject()(
                                     val obligationsConnector: ObligationsConnector
                                   )(implicit ec: ExecutionContext,
                                     val dateService: DateServiceInterface,
-                                    val appConfig: FrontendAppConfig) extends FeatureSwitching {
+                                    val appConfig: FrontendAppConfig) extends FeatureSwitching with Logging{
 
   def getNextUpdatesViewModel(obligationsModel: ObligationsModel)(implicit user: MtdItUser[_]): NextUpdatesViewModel = {
     val allDeadlines =
@@ -69,7 +69,7 @@ class NextUpdatesService @Inject()(
   }
 
   def getOpenObligations()(implicit hc: HeaderCarrier, mtdUser: MtdItUser[_]): Future[ObligationsResponseModel] = {
-    Logger("application").debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
+    logger.debug(s"Requesting current Next Updates for nino: ${mtdUser.nino}")
     obligationsConnector.getOpenObligations()
   }
 

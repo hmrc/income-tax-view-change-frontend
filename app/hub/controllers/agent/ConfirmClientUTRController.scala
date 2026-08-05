@@ -25,7 +25,7 @@ import common.services.AuditingService
 import common.utils.sessionUtils.SessionKeys
 import hub.models.sessionData.SessionDataPostResponse.{SessionDataPostFailure, SessionDataPostSuccess}
 import hub.connectors.PostSessionDataConnector
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -44,7 +44,7 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
                                            val appConfig: FrontendAppConfig,
                                            val itvcErrorHandler: AgentItvcErrorHandler,
                                            val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging {
 
   def show: Action[AnyContent] =
     authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
@@ -101,14 +101,14 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
     if (getSessionDataStorageFS) {
       postSessionDataConnector.postSessionData(sessionCookieData.toSessionDataModel).flatMap {
         case Left(value: SessionDataPostFailure) =>
-          Logger("application").error(s"[Agent] Posting user session data was unsuccessful. Status: ${value.status}, error message: ${value.errorMessage}")
+          logger.error(s"Agent - Posting user session data was unsuccessful. Status: ${value.status}, error message: ${value.errorMessage}")
           Future(itvcErrorHandler.showInternalServerError())
         case Right(value: SessionDataPostSuccess) =>
-          Logger("application").info(s"[Agent] Posting user session data was successful. Status: ${value.status}")
+          logger.info(s"Agent - Posting user session data was successful. Status: ${value.status}")
           codeBlock(sessionCookieData.toSessionCookieSeq)
       }
     } else {
-      Logger("application").info(s"[Agent] GetUserSessionApi feature switch was off so session data has not been posted to the session-data service")
+      logger.info(s"Agent - GetUserSessionApi feature switch was off so session data has not been posted to the session-data service")
       codeBlock(sessionCookieData.toSessionCookieSeq)
     }
   }

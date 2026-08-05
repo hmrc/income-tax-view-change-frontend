@@ -17,7 +17,7 @@
 package common.auth.actions
 
 import common.viewUtils.InternalUrlHelper
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.*
 import uk.gov.hmrc.http.SessionKeys
@@ -27,7 +27,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[Request, Request] with ActionBuilder[Request, AnyContent] {
+  extends ActionRefiner[Request, Request] with ActionBuilder[Request, AnyContent] with Logging {
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, Request[A]]] = {
 
@@ -39,7 +39,7 @@ class SessionTimeoutAction @Inject()(val parser: BodyParsers.Default)(implicit v
     (request.session.get(SessionKeys.lastRequestTimestamp), request.session.get(SessionKeys.authToken)) match {
       case (Some(_), None) =>
         // Auth session has been wiped by Frontend Bootstrap Filter, hence timed out.
-        Logger(getClass).warn("Session Time Out.")
+        logger.warn("Session Time Out.")
         Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
       case (_, _) =>
         val mtdItUserWithUpdatedHeaders = request.withHeaders(updatedHeaders)

@@ -17,7 +17,7 @@
 package businessDetails.controllers.manageBusinesses.cease
 
 import businessDetails.core.IncomeSourceId.mkIncomeSourceId
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.http.HeaderCarrier
@@ -49,7 +49,7 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
                                                        (implicit val appConfig: FrontendAppConfig,
                                                         val mcc: MessagesControllerComponents,
                                                         val ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses {
+  extends FrontendController(mcc) with I18nSupport with JourneyCheckerManageBusinesses with Logging {
 
   private def getBusinessName(incomeSourceId: IncomeSourceId)(implicit user: MtdItUser[_]): Option[String] = {
     user.incomeSources.businesses
@@ -126,16 +126,16 @@ class IncomeSourceCeasedObligationsController @Inject()(val authActions: AuthAct
             )))
         case (Some(_), None) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - " else ""}cease session data not found for $incomeSourceType")
+          logger.error(s"${if (isAgent) "Agent - " else ""}cease session data not found for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
 
         case (None, Some(_)) =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - " else ""}IncomeSourceId not found for $incomeSourceType")
+          logger.error(s"${if (isAgent) "Agent - " else ""}IncomeSourceId not found for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
         case _ =>
           val errorHandler = if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
-          Logger("application").error(s"${if (isAgent) "[Agent] - " else ""}missing incomeSourceId and endDate for $incomeSourceType")
+          logger.error(s"${if (isAgent) "Agent - " else ""}missing incomeSourceId and endDate for $incomeSourceType")
           Future(errorHandler.showInternalServerError())
       }
     }

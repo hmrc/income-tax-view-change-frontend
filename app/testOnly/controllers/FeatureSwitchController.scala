@@ -21,8 +21,8 @@ import common.config.featureswitch.FeatureSwitching
 import common.models.admin.{FeatureSwitchName, InvalidFS}
 import testOnly.services.admin.FeatureSwitchService
 import common.models.admin.FeatureSwitchName.allFeatureSwitches
-import common.models.admin.{BusinessDetailsFrontend, ObligationsFrontend, FinancialsFrontend, ReturnsFrontend}
-import play.api.Logger
+import common.models.admin.{BusinessDetailsFrontend, FinancialsFrontend, ObligationsFrontend, ReturnsFrontend}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import testOnly.views.html.FeatureSwitchView
@@ -40,7 +40,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
                                        (implicit mcc: MessagesControllerComponents,
                                         val appConfig: FrontendAppConfig,
                                         ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging {
 
   val ENABLE_ALL_FEATURES: String = "feature-switch.enable-all-switches"
   val DISABLE_ALL_FEATURES: String = "feature-switch.disable-all-switches"
@@ -52,10 +52,10 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
       HeaderCarrierConverter.fromRequest(request)
     featureSwitchService.set(featureFlagName, isEnabled).map {
       case true =>
-        Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
+        logger.info(s"Set FSS - $FeatureSwitchName - $isEnabled: result success")
         Ok(s"Flag $featureFlagName set to $isEnabled")
       case false =>
-        Logger("application").info(s"Set FSS - $FeatureSwitchName - $isEnabled: result failure")
+        logger.info(s"Set FSS - $FeatureSwitchName - $isEnabled: result failure")
         InternalServerError(s"Error while setting flag $featureFlagName to $isEnabled")
     }
   }
@@ -148,7 +148,7 @@ class FeatureSwitchController @Inject()(featureSwitchView: FeatureSwitchView,
         }
       )
     } yield {
-      Logger("application").info(s"Enabled all FSS")
+      logger.info(s"Enabled all FSS")
       Redirect(testOnly.controllers.routes.FeatureSwitchController.show())
     }
   }

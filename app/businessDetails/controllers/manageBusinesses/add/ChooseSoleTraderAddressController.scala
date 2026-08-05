@@ -22,7 +22,7 @@ import businessDetails.models.incomeSourceDetails.{AddIncomeSourceData, Address,
 import businessDetails.services.SessionService
 import businessDetails.utils.{IncomeSourcesUtils, JourneyCheckerManageBusinesses}
 import jakarta.inject.Singleton
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -49,7 +49,8 @@ class ChooseSoleTraderAddressController @Inject()(
                                                  )(implicit val appConfig: FrontendAppConfig,
                                                    val mcc: MessagesControllerComponents,
                                                    val ec: ExecutionContext
-                                                 ) extends FrontendController(mcc) with FeatureSwitching with IncomeSourcesUtils with I18nSupport with JourneyCheckerManageBusinesses {
+                                                 )
+  extends FrontendController(mcc) with FeatureSwitching with IncomeSourcesUtils with I18nSupport with JourneyCheckerManageBusinesses with Logging{
 
   lazy val errorHandler: Boolean => ShowInternalServerError = (isAgent: Boolean) =>
     if (isAgent) itvcErrorHandlerAgent
@@ -115,7 +116,7 @@ class ChooseSoleTraderAddressController @Inject()(
               case _ =>
                 uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = None))
                 val updatedData: UIJourneySessionData = uiSessionData.copy(addIncomeSourceData = uiSessionData.addIncomeSourceData.map(_.copy(chooseSoleTraderAddress = None)))
-                Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] Pre-existing ui session data but invalid form response")
+                logger.error("Pre-existing ui session data but invalid form response")
                 sessionService.setMongoData(updatedData).map { data => showGenericErrorPage }
             }
           case None =>
@@ -143,7 +144,7 @@ class ChooseSoleTraderAddressController @Inject()(
                 val redirect = Redirect(redirectCallByType)
                 sessionService.setMongoData(uiSessionData).map { data => redirect }
               case _ =>
-                Logger("application").error("[ChooseSoleTraderAddress][handleValidForm] No existing ui session data and invalid form response")
+                logger.error("No existing ui session data and invalid form response")
                 Future(showGenericErrorPage)
             }
         }

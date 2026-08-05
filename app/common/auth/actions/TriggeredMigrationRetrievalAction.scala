@@ -25,7 +25,7 @@ import common.enums.TaxYearSummary.CalculationRecord.LATEST
 import common.models.admin.{BusinessDetailsFrontend, TriggeredMigration}
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import common.services.{CustomerFactsUpdateService, DateServiceInterface, ITSAStatusService}
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.http.HeaderCarrier
@@ -45,7 +45,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
                                                   individualErrorHandler: ItvcErrorHandler,
                                                   agentErrorHandler: AgentItvcErrorHandler,
                                                   mcc: MessagesControllerComponents)
-  extends BaseController with FeatureSwitching {
+  extends BaseController with FeatureSwitching with Logging {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
 
@@ -136,7 +136,7 @@ class TriggeredMigrationRetrievalAction @Inject()(
 
   private def showErrorPageBasedOnContext(request: MtdItUser[_], context: String): Result = {
 
-    Logger(getClass).error(s"[TriggeredMigrationRetrievalAction][$context]")
+    logger.error(context)
 
     (request.authUserDetails.affinityGroup, context) match {
       case (Some(Agent), "startingTaxYearNone") => agentErrorHandler.showBadRequestError()(request)

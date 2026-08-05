@@ -22,7 +22,7 @@ import common.config.featureswitch.FeatureSwitching
 import common.connectors.ITSAStatusConnector
 import common.models.incomeSourceDetails.{LatencyDetails, LatencyYearsAnnual, LatencyYearsQuarterly, LatencyYearsQuarterlyAndAnnualStatus, TaxYear}
 import common.models.itsaStatus.{ITSAStatusResponseModel, StatusDetail}
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
                                   dateService: DateService,
-                                  implicit val appConfig: FrontendAppConfig) extends FeatureSwitching {
+                                  implicit val appConfig: FrontendAppConfig) extends FeatureSwitching with Logging {
 
   def getITSAStatusDetail(taxYear: TaxYear, futureYears: Boolean, history: Boolean)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext, user: MtdItUser[_]): Future[List[ITSAStatusResponseModel]] = {
@@ -42,7 +42,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
       history = history).flatMap {
       case Right(itsaStatus) => Future.successful(itsaStatus)
       case Left(error) =>
-        Logger("application").error(s"$error")
+        logger.error(s"[getITSAStatusDetail] $error")
         Future.failed(new Exception("Failed to retrieve ITSAStatus"))
     }
   }
@@ -57,7 +57,7 @@ class ITSAStatusService @Inject()(itsaStatusConnector: ITSAStatusConnector,
       history = history).flatMap {
       case Right(itsaStatus) => Future.successful(itsaStatus.map(_.taxYear))
       case Left(error) =>
-        Logger("application").error(s"$error")
+        logger.error(s"[getTaxYears] $error")
         Future.failed(new Exception("Failed to retrieve tax years from ITSAStatus"))
     }
   }

@@ -21,7 +21,7 @@ import common.auth.{AuthUserDetails, AuthorisedUserRequest, FrontendAuthorisedFu
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.viewUtils.InternalUrlHelper
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
 import uk.gov.hmrc.auth.core.AffinityGroup.{Individual, Organisation}
@@ -43,9 +43,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthoriseAndRetrieveAgent @Inject()(val authorisedFunctions: FrontendAuthorisedFunctions,
                                           val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents)
-  extends FeatureSwitching {
-
-  lazy val logger: Logger = Logger(getClass)
+  extends FeatureSwitching with Logging {
 
   def authorise(arnRequired: Boolean = true): ActionRefiner[Request, AuthorisedUserRequest] = new ActionRefiner[Request, AuthorisedUserRequest] {
 

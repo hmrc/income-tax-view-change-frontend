@@ -20,7 +20,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.connectors.FeatureSwitchConnector
 import common.models.admin.{FeatureSwitch, FeatureSwitchName}
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -29,34 +29,34 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FeatureSwitchService @Inject()(val featureSwitchConnector: FeatureSwitchConnector,
                                      val appConfig: FrontendAppConfig)
-                                    (implicit val ec: ExecutionContext) extends FeatureSwitching {
+                                    (implicit val ec: ExecutionContext) extends FeatureSwitching with Logging {
 
   def getAll()(implicit hc: HeaderCarrier): Future[List[FeatureSwitch]] = {
     featureSwitchConnector.getAllSwitches()
   }
 
   def set(featureSwitchName: FeatureSwitchName, enabled: Boolean)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    Logger("application").info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
+    logger.info(s"Setting feature switch ${featureSwitchName.name} to ${enabled.toString}")
     if (appConfig.readFeatureSwitchesFromMongo) {
       featureSwitchConnector.setSwitch(featureSwitchName, enabled)
     } else {
-      Logger("application").error("Cannot set feature switch when read-from-mongo is disabled")
+      logger.error("[set] Cannot set feature switch when read-from-mongo is disabled")
       Future(false)
     }
   }
 
   def setAll(featureSwitches: Map[FeatureSwitchName, Boolean])(implicit hc: HeaderCarrier): Future[Unit] = {
-    Logger("application").info(s"Setting all feature switches. FS values: $featureSwitches")
+    logger.info(s"Setting all feature switches. FS values: $featureSwitches")
     if (appConfig.readFeatureSwitchesFromMongo) {
       featureSwitchConnector.setSwitches(featureSwitches).map(_ => ())
     } else {
-      Logger("application").error("Cannot set feature switches when read-from-mongo is disabled")
+      logger.error("[setAll] Cannot set feature switches when read-from-mongo is disabled")
       Future.successful((): Unit)
     }
   }
   
   def resetToProd()(implicit hc: HeaderCarrier): Future[Boolean] = {
-    Logger("application").info("Resetting feature switches to production values")
+    logger.info("Resetting feature switches to production values")
     featureSwitchConnector.resetToProd()
   }
 

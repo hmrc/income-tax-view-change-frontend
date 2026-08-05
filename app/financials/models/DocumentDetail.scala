@@ -17,7 +17,8 @@
 package financials.models
 
 import common.services.DateServiceInterface
-import play.api.Logger
+import financials.enums.ChargeClassificationType
+import play.api.Logging
 import play.api.libs.json.*
 import shared.enums.CodingOutType.*
 import shared.enums.DocumentType
@@ -59,7 +60,7 @@ case class DocumentDetail(
                            chargeTypeReducedCharge: Option[String] = None,
                            amendmentDateReducedCharge: Option[LocalDate] = None,
                            taxYearReducedCharge: Option[String] = None
-                         ) {
+                         ) extends Logging {
 
   def findTaxYear: Int = taxYear match {
     case year if taxYear != 9999 => year
@@ -173,7 +174,7 @@ case class DocumentDetail(
       case _ => "balancingCharge.text"
     }
     case error =>
-      Logger("application").error(s"Missing or non-matching charge type: $error found")
+      logger.error(s"Missing or non-matching charge type: $error found")
       "unknownCharge"
   }
 
@@ -197,6 +198,12 @@ case class DocumentDetail(
       case _ => OtherCharge
     }
   }
+
+  def isRevenueAmendment: Boolean =
+    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
+      case Some(ChargeClassificationType.RevenueAmendments) => true
+      case _ => false
+    }
 
 }
 
@@ -270,10 +277,10 @@ object DocumentDetail {
         "lpiWithDunningLock" -> model.lpiWithDunningLock,
         "interestOutstandingAmount" -> model.interestOutstandingAmount,
         "amountCodedOut" -> model.amountCodedOut,
-        "chargeClassification" -> model.chargeClassification,
         "documentNumberReducedCharge" -> model.documentNumberReducedCharge,
         "chargeTypeReducedCharge" -> model.chargeTypeReducedCharge,
         "amendmentDateReducedCharge" -> model.amendmentDateReducedCharge,
+        "chargeClassification" -> model.chargeClassification,
         "taxYearReducedCharge" -> model.taxYearReducedCharge
       )
       .fields
@@ -401,9 +408,6 @@ object DocumentDetail {
       amountCodedOut <-
         (json \ "amountCodedOut").validateOpt[BigDecimal]
 
-      chargeClassification <-
-        (json \ "chargeClassification").validateOpt[String]
-
       documentNumberReducedCharge <-
         (json \ "documentNumberReducedCharge").validateOpt[String]
 
@@ -415,6 +419,9 @@ object DocumentDetail {
 
       taxYearReducedCharge <-
         (json \ "taxYearReducedCharge").validateOpt[String]
+
+      chargeClassification <-
+        (json \ "chargeClassification").validateOpt[String]
 
     } yield DocumentDetail(
       taxYear = taxYear,
@@ -436,7 +443,6 @@ object DocumentDetail {
       paymentLot = paymentLot,
       effectiveDateOfPayment = effectiveDateOfPayment,
       amountCodedOut = amountCodedOut,
-      chargeClassification = chargeClassification,
       documentDueDate = documentDueDate,
       poaRelevantAmount = poaRelevantAmount,
       formBundleNumber = formBundleNumber,
@@ -449,7 +455,8 @@ object DocumentDetail {
       documentNumberReducedCharge = documentNumberReducedCharge,
       chargeTypeReducedCharge = chargeTypeReducedCharge,
       amendmentDateReducedCharge = amendmentDateReducedCharge,
-      taxYearReducedCharge = taxYearReducedCharge
+      taxYearReducedCharge = taxYearReducedCharge,
+      chargeClassification = chargeClassification
     )
   }
 }

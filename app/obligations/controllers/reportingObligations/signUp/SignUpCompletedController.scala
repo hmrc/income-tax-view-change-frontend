@@ -24,7 +24,7 @@ import common.models.itsaStatus.ITSAStatus
 import obligations.models.reportingObligations.signUp.SignUpCompletedViewModel
 import obligations.services.reportingObligations.signUp.SignUpService
 import obligations.utils.reportingObligations.{JourneyCheckerSignUp, ReportingObligationsUtils}
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -42,14 +42,14 @@ class SignUpCompletedController @Inject()(val view: SignUpCompletedView,
                                          (implicit val appConfig: FrontendAppConfig,
                                           mcc: MessagesControllerComponents,
                                           val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils with JourneyCheckerSignUp {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with ReportingObligationsUtils with JourneyCheckerSignUp with Logging{
 
   private val errorHandler = (isAgent: Boolean) => if (isAgent) itvcErrorHandlerAgent else itvcErrorHandler
 
   private def withRecover(isAgent: Boolean)(code: => Future[Result])(implicit mtdItUser: MtdItUser[_]): Future[Result] = {
     code.recover {
       case ex: Exception =>
-        Logger("application").error(s"request failed :: $ex")
+        logger.error(s"request failed :: $ex")
         errorHandler(isAgent).showInternalServerError()
     }
   }

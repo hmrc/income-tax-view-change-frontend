@@ -22,7 +22,7 @@ import businessDetails.models.createIncomeSource.*
 import businessDetails.models.incomeSourceDetails.viewmodels.{CheckBusinessDetailsViewModel, CheckDetailsViewModel, CheckPropertyViewModel}
 import common.auth.MtdItUser
 import businessDetails.models.incomeSourceDetails.viewmodels.*
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import businessDetails.utils.OptionExtension
 
@@ -31,7 +31,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: CreateIncomeSourceConnector) {
+class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: CreateIncomeSourceConnector) extends Logging {
 
   private def createBusiness(requestObject: CreateBusinessIncomeSourceRequest)
                             (implicit ec: ExecutionContext, hc: HeaderCarrier): Future[Either[Throwable, CreateIncomeSourceResponse]] = {
@@ -51,13 +51,13 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
   def handleResponse(response: Either[CreateIncomeSourceErrorResponse, List[CreateIncomeSourceResponse]]): Future[Either[Error, CreateIncomeSourceResponse]] = {
     response match {
       case Right(List(incomeSourceId)) =>
-        Logger("application").info(s"New income source created successfully: $incomeSourceId")
+        logger.info(s"New income source created successfully: $incomeSourceId")
         Future.successful(Right(incomeSourceId))
       case Right(_) =>
-        Logger("application").error("failed to create, unexpected response")
+        logger.error("failed to create, unexpected response")
         Future.successful(Left(new Error("Failed to create incomeSources")))
       case Left(incomeSourceError) =>
-        Logger("application").error("failed to create")
+        logger.error("failed to create")
         Future.successful(Left(new Error(s"Failed to create incomeSources: $incomeSourceError")))
     }
   }
@@ -109,7 +109,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       case Right(requestObject) =>
         createBusiness(requestObject)
       case Left(ex) =>
-        Logger("application").error("unable to create request object")
+        logger.error("[createBusiness] unable to create request object")
         Future.successful(Left(ex))
     }
   }
@@ -136,7 +136,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       case Right(requestObject) =>
         createForeignProperty(requestObject)
       case Left(ex) =>
-        Logger("application").error("unable to create request object")
+        logger.error("[createForeignProperty] unable to create request object")
         Future.successful(Left(ex))
     }
   }
@@ -164,7 +164,7 @@ class CreateBusinessDetailsService @Inject()(val createIncomeSourceConnector: Cr
       case Right(requestObject) =>
         createUKProperty(requestObject)
       case Left(ex) =>
-        Logger("application").error("unable to create request object")
+        logger.error("unable to create request object")
         Future.successful(Left(ex))
     }
   }

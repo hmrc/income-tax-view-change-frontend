@@ -21,7 +21,7 @@ import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.controllers.routes as appRoutes
 import common.models.admin.NoIncomeSourcesRedirect
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
 
@@ -31,11 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class RedirectIfNoIncomeSourcesAction @Inject()(frontendAppConfig: FrontendAppConfig)
                                      (implicit val executionContext: ExecutionContext)
-  extends ActionRefiner[MtdItUser, MtdItUser] with FeatureSwitching {
+  extends ActionRefiner[MtdItUser, MtdItUser] with FeatureSwitching with Logging {
 
   override val appConfig: FrontendAppConfig = frontendAppConfig
-
-  private val logger = Logger("application")
 
   override protected def refine[A](request: MtdItUser[A]): Future[Either[Result, MtdItUser[A]]] = {
     implicit val req: MtdItUser[A] = request
@@ -44,9 +42,7 @@ class RedirectIfNoIncomeSourcesAction @Inject()(frontendAppConfig: FrontendAppCo
       if (req.incomeSources.hasAnyIncomeSources) {
         Future.successful(Right(req))
       } else {
-        logger.info(
-          s"[RedirectIfNoIncomeSourcesAction][refine] User has no income sources. Redirecting to no income sources page. isAgent=${req.isAgent}"
-        )
+        logger.info(s"User has no income sources. Redirecting to no income sources page. isAgent=${req.isAgent}")
         Future.successful(Left(Redirect(appRoutes.NoIncomeSourcesController.show(req.isAgent))))
       }
     } else {

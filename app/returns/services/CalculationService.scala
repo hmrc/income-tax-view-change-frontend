@@ -23,7 +23,7 @@ import common.connectors.IncomeTaxCalculationConnector
 import common.enums.TaxYearSummary.CalculationRecord.{LATEST, PREVIOUS}
 import common.models.admin.PostFinalisationAmendmentsR18
 import common.models.liabilitycalculation.{LiabilityCalculationResponse, LiabilityCalculationResponseModel}
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -32,11 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class CalculationService @Inject()(
                                     incomeTaxCalculationConnector: IncomeTaxCalculationConnector
-                                  )(implicit ec: ExecutionContext, val appConfig: FrontendAppConfig) extends FeatureSwitching {
+                                  )(implicit ec: ExecutionContext, val appConfig: FrontendAppConfig)
+  extends FeatureSwitching with Logging {
 
   def getLatestCalculation(mtditid: String, nino: String, calcId: String, taxYear: Int)
                           (implicit headerCarrier: HeaderCarrier): Future[LiabilityCalculationResponseModel] = {
-    Logger("application").debug("" + s"Requesting calc data from the backend by calc id and taxYear: $calcId - $taxYear")
+    logger.debug(s"Requesting calc data from the backend by calc id and taxYear: $calcId - $taxYear")
     incomeTaxCalculationConnector.getCalculationResponseByCalcId(mtditid, nino, calcId, taxYear)
   }
 

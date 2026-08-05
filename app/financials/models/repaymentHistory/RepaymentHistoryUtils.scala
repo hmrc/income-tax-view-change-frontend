@@ -21,14 +21,14 @@ import common.services.DateServiceInterface
 import financials.controllers.routes as financialsRoutes
 import shared.implicits.ImplicitCurrencyFormatter.CurrencyFormatter
 import financials.models.*
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.language.LanguageUtils
 
 import java.time.LocalDate
 
-object RepaymentHistoryUtils {
+object RepaymentHistoryUtils extends Logging {
 
   private def getControllerHref(transactionId: Option[String], isAgent: Boolean) = {
     if (isAgent) {
@@ -97,7 +97,7 @@ object RepaymentHistoryUtils {
     val filteredPayments = payments.flatMap { payment => filterPayment(payment, isAgent) match {
         case Right(entry) => Some(entry)
         case Left(error) =>
-          Logger("application").error(s"Error processing payment: ${error.getMessage}")
+          logger.error(s"Error processing payment: ${error.getMessage}")
           None
       }
     }
@@ -131,7 +131,7 @@ object RepaymentHistoryUtils {
 
   private def paymentToHMRCEntry(payment: Payment, isAgent: Boolean)
                                 (implicit dateServiceInterface: DateServiceInterface): PaymentHistoryEntry = {
-    Logger("application").info("json:" + Json.prettyPrint(Json.toJson(payment)))
+    logger.info("[paymentToHMRCEntry] json:" + Json.prettyPrint(Json.toJson(payment)))
     PaymentHistoryEntry(
       date = payment.dueDate.getOrElse(throw MissingFieldException("Payment Due Date")),
       creditType = PaymentType,

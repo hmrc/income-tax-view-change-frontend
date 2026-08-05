@@ -25,7 +25,6 @@ import common.enums.MTDIndividual
 import common.models.audit.IvUpliftRequiredAuditModel
 import common.services.AuditingService
 import common.utils.AuthUtils.{ORIGIN, mtdEnrolmentName}
-import play.api.Logger
 import play.api.mvc.*
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.auth.core.*
@@ -48,12 +47,10 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
                                                val appConfig: FrontendAppConfig,
                                                mcc: MessagesControllerComponents,
                                                val auditingService: AuditingService)
-  extends AuthoriseHelper with ActionRefiner[Request, AuthorisedAndEnrolledRequest]{
+  extends AuthoriseHelper with ActionRefiner[Request, AuthorisedAndEnrolledRequest] {
 
   implicit val executionContext: ExecutionContext = mcc.executionContext
   lazy val requiredConfidenceLevel: Int = appConfig.requiredConfidenceLevel
-
-  val logger = Logger(getClass)
 
   override protected def refine[A](request: Request[A]): Future[Either[Result, AuthorisedAndEnrolledRequest[A]]] = {
 

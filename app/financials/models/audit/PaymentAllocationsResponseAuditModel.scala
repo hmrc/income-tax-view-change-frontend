@@ -24,7 +24,7 @@ import common.models.core.AccountingPeriodModel
 import common.utils.audit.Utilities.userAuditDetails
 import financials.models.paymentAllocationCharges.{AllocationDetailWithClearingDate, PaymentAllocationViewModel}
 import financials.models.paymentAllocations.AllocationDetail
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate
@@ -33,7 +33,7 @@ import java.time.LocalDate
 case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
                                                 paymentAllocations: PaymentAllocationViewModel
                                                 )
-  extends ExtendedAuditModel {
+  extends ExtendedAuditModel with Logging {
 
   override val transactionName: String = TransactionName.PaymentAllocations
   override val auditType: String = PaymentAllocations
@@ -69,7 +69,7 @@ case class PaymentAllocationsResponseAuditModel(mtdItUser: MtdItUser[_],
     case "paymentOnAccount2.text" => "Late payment interest for second payment on account"
     case "balancingCharge.text" => "Late payment interest for remaining balance"
     case other =>
-      Logger("application").warn("key not found: " + other)
+      logger.warn("key not found: " + other)
       "allocation"
   }
 

@@ -23,7 +23,7 @@ import financials.connectors.FinancialDetailsConnector
 import financials.models.FinancialDetailsModel
 import financials.models.paymentAllocationCharges.*
 import financials.models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError}
-import play.api.Logger
+import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -34,7 +34,7 @@ import scala.util.Try
 class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDetailsConnector,
                                           financialDetailsService: FinancialDetailsService,
                                           val appConfig: FrontendAppConfig)
-                                         (implicit ec: ExecutionContext) {
+                                         (implicit ec: ExecutionContext) extends Logging {
   def getPaymentAllocation(nino: Nino, documentNumber: String)
                           (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
 
@@ -51,17 +51,17 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
           case paymentAllocations: PaymentAllocations =>
             handlePaymentAllocations(paymentAllocations, documentDetailsWithFinancialDetailsModel)
           case PaymentAllocationsError(404, _) =>
-            Logger("application").warn(s"$functionName Payment allocations returned 404 - rendering page without allocations table")
+            logger.warn(s"$functionName Payment allocations returned 404 - rendering page without allocations table")
             Future.successful(Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel, Seq.empty, allocationsUnavailable = true)))
           case _ =>
-            Logger("application").error(s"$functionName Could not retrieve payment allocations with document details")
+            logger.error(s"$functionName Could not retrieve payment allocations with document details")
             Future.successful(Left(PaymentAllocationError()))
         }
       case paymentAllocation: FinancialDetailsWithDocumentDetailsErrorModel if paymentAllocation.code == 404 =>
-        Logger("application").error(s"$functionName payment allocation could not be found")
+        logger.error(s"$functionName payment allocation could not be found")
         Future.successful(Left(PaymentAllocationError(Some(paymentAllocation.code))))
       case _ =>
-        Logger("application").error(s"$functionName Could not retrieve document with financial details for payment charge model")
+        logger.error(s"$functionName Could not retrieve document with financial details for payment charge model")
         Future.successful(Left(PaymentAllocationError()))
     }
   }

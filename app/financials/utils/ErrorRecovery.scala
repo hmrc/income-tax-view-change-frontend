@@ -18,11 +18,11 @@ package financials.utils
 
 import common.auth.MtdItUser
 import common.config.{AgentItvcErrorHandler, ItvcErrorHandler}
-import play.api.Logger
+import play.api.Logging
 import play.api.mvc.Result
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 
-trait ErrorRecovery {
+trait ErrorRecovery extends Logging {
 
   val individualErrorHandler: ItvcErrorHandler
   val agentErrorHandler: AgentItvcErrorHandler
@@ -41,9 +41,9 @@ trait ErrorRecovery {
   private def logWithUserType[A](msg: String)(implicit user: MtdItUser[A]): Unit = {
     user.userType match {
       case Some(Agent) =>
-        Logger(this.getClass).error(s"[Agent] $msg")
+        logger.error(s"Agent - $msg")
       case _ =>
-        Logger(this.getClass).error(msg)
+        logger.error(msg)
     }
   }
 

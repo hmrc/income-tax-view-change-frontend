@@ -19,9 +19,9 @@ package businessDetails.controllers.manageBusinesses.manage
 import businessDetails.enums.IncomeSourceJourney.IncomeSourceType
 import businessDetails.services.SessionService
 import businessDetails.utils.JourneyCheckerManageBusinesses
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import businessDetails.views.html.manageBusinesses.YouCannotGoBackErrorView
 import common.auth.{AuthActions, MtdItUser}
@@ -40,7 +40,7 @@ class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
                                            (implicit val appConfig: FrontendAppConfig,
                                             mcc: MessagesControllerComponents,
                                             val ec: ExecutionContext) extends FrontendController(mcc)
-  with I18nSupport with JourneyCheckerManageBusinesses {
+  with I18nSupport with JourneyCheckerManageBusinesses with Logging {
 
   def show(isAgent: Boolean,
            incomeSourceType: IncomeSourceType): Action[AnyContent] = {
@@ -71,7 +71,7 @@ class CannotGoBackErrorController @Inject()(val authActions: AuthActions,
           }
         case _ =>
           val errorPrefix = if (isAgent) "[Agent]" else " "
-          Logger("application").error(errorPrefix + s"Unable to retrieve manage data from Mongo for $incomeSourceType.")
+          logger.error(errorPrefix + s"Unable to retrieve manage data from Mongo for $incomeSourceType.")
           Future.successful {
             errorHandler(isAgent).showInternalServerError()
           }

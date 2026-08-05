@@ -20,7 +20,7 @@ import common.auth.AuthActions
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
 import common.config.featureswitch.FeatureSwitching
 import common.utils.sessionUtils.SessionKeys
-import play.api.Logger
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
@@ -36,10 +36,10 @@ class UTRErrorController @Inject()(utrError: UTRErrorView,
                                    val appConfig: FrontendAppConfig,
                                    val itvcErrorHandler: AgentItvcErrorHandler,
                                    val ec: ExecutionContext)
-  extends FrontendController(mcc) with FeatureSwitching with I18nSupport {
+  extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging {
 
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
-    Logger("application").warn(s"[FE UTRErrorContoller] - Agent shown the cannot-view-client page")
+    logger.warn("Agent shown the cannot-view-client page")
     Future.successful(Ok(utrError(
       postAction = hub.controllers.agent.routes.UTRErrorController.submit()
     )))
