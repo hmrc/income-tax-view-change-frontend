@@ -2093,7 +2093,7 @@ chargeSummary.reviewAndReconcilePoa2.text				           = Second payment on acco
 chargeSummary.reviewAndReconcilePoa1Credit.text				       = First payment on account: credit from your tax return
 chargeSummary.reviewAndReconcilePoa2Credit.text				       = Second payment on account: credit from your tax return
 chargeSummary.balancingCharge.text  							   = Balancing payment
-chargeSummary.enquiryAmendment.text                    = Extra amount to pay due to HMRC enquiry amendment
+chargeSummary.enquiryAmendment.text                                = Extra amount to pay due to HMRC enquiry amendment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
 chargeSummary.poa1CodedOut.text                                    = First payment on account collected through PAYE tax code
@@ -2608,6 +2608,7 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credit from your amended tax return
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
+yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Extra amount to pay due to HMRC enquiry amendment
 
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					= Late payment interest on first payment on account
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading					= Late payment interest on second payment on account

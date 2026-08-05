@@ -2629,6 +2629,7 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credyd o’ch Ffurfln Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Anhysbys
+yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = Taliad cyntaf ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
