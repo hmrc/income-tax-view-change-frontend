@@ -97,7 +97,6 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
               stubAuthorised(mtdUserRole)
               GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
 
-              println(getCurrentTaxYearEnd)
               FinancialDetailsStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
                 to = s"${getCurrentTaxYearEnd.getYear}-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
 
