@@ -36,12 +36,13 @@
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
 }
 
-@p(){
-    @getMessage(s"ra.itsaReturnAmendment.p1")
+@p(id = Some("itsaEnquiryAmendment.p1")){
+    @getMessage(s"enquiryAmendment.p1")
     @link(
         link = viewModel.taxYearSummaryUrl,
-        messageKey = getMessage(s"ra.itsaReturnAmendment.link", taxYear.startYear.toString, taxYear.endYear.toString),
-        outerMessage = getMessage(s"ra.itsaReturnAmendment.p2")
+        messageKey = getMessage(s"enquiryAmendment.link", taxYear.startYear.toString, taxYear.endYear.toString),
+        outerMessage = getMessage(s"enquiryAmendment.p2"),
+        id = Some("itsaEnquiryAmendment.link")
     )
 
 }
