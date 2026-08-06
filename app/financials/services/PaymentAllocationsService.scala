@@ -22,7 +22,7 @@ import common.models.core.Nino
 import financials.connectors.FinancialDetailsConnector
 import financials.models.FinancialDetailsModel
 import financials.models.paymentAllocationCharges.*
-import financials.models.paymentAllocations.{PaymentAllocations, PaymentAllocationsError}
+import financials.models.paymentAllocations.{AllocationDetail, PaymentAllocations, PaymentAllocationsError}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -70,47 +70,53 @@ class PaymentAllocationsService @Inject()(financialDetailsConnector: FinancialDe
                                        documentDetailsWithFinancialDetailsModel: FinancialDetailsWithDocumentDetailsModel)
                                       (implicit hc: HeaderCarrier, user: MtdItUser[_]):
   Future[Either[PaymentAllocationError, PaymentAllocationViewModel]] = {
-    if (paymentAllocations.allocations.exists(_.mainType.get.contains("Late Payment Interest"))) {
-      createPaymentAllocationForLpi(paymentAllocations, documentDetailsWithFinancialDetailsModel) map { lpiPaymentAllocationDetails =>
-        lpiPaymentAllocationDetails.map(lpiPaymentAllocationDetails =>
-          Right(PaymentAllocationViewModel(paymentAllocationChargeModel = documentDetailsWithFinancialDetailsModel,
-            latePaymentInterestPaymentAllocationDetails = Some(lpiPaymentAllocationDetails), isLpiPayment = true))).getOrElse(Left(PaymentAllocationError()))
-      }
-    } else {
-      financialDetailsService.getAllFinancialDetails.map { financialDetailsWithTaxYear =>
-        val allFinancialDetails = financialDetailsWithTaxYear.collect {
-          case (_, financialDetails: FinancialDetailsModel) => financialDetails.financialDetails
-        }.flatten
-
-        val paymentAllocationWithClearingDate = paymentAllocations.allocations.map { allocation =>
-          val fallbackTaxYear =
-            if (allocation.to.isDefined) {
-              None
-            } else {
-              allFinancialDetails
-                .find { financialDetail =>
-                  financialDetail.mainType == allocation.mainType &&
-                    financialDetail.chargeType == allocation.chargeType
-                }
-                .flatMap(financialDetail => Try(financialDetail.taxYear.toInt).toOption)
-            }
-
-          AllocationDetailWithClearingDate(Some(allocation.copy(fallbackTaxYear = fallbackTaxYear)), paymentAllocations.transactionDate)
+    val latePaymentInterestAllocations = paymentAllocations.allocations.collectFirst { case x if x.mainType.get.contains("Late Payment Interest") => x }
+    latePaymentInterestAllocations match {
+      case Some(latePaymentInterestAllocation) =>
+        createPaymentAllocationForLpi(latePaymentInterestAllocation, documentDetailsWithFinancialDetailsModel) map { lpiPaymentAllocationDetails =>
+          lpiPaymentAllocationDetails.map(lpiPaymentAllocationDetails =>
+            Right(PaymentAllocationViewModel(paymentAllocationChargeModel = documentDetailsWithFinancialDetailsModel,
+              latePaymentInterestPaymentAllocationDetails = Some(lpiPaymentAllocationDetails), isLpiPayment = true)))
+            .getOrElse{
+              logger.error(s"[handlePaymentAllocations] Could not retrieve LPI payment allocation details")
+              Left(PaymentAllocationError())
+          }
         }
+      case None =>
+        financialDetailsService.getAllFinancialDetails.map { financialDetailsWithTaxYear =>
+          val allFinancialDetails = financialDetailsWithTaxYear.collect {
+            case (_, financialDetails: FinancialDetailsModel) => financialDetails.financialDetails
+          }.flatten
 
-        Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel,
-          paymentAllocationWithClearingDate))
-      }
+          val paymentAllocationWithClearingDate = paymentAllocations.allocations.map { allocation =>
+            val fallbackTaxYear =
+              if (allocation.to.isDefined) {
+                None
+              } else {
+                allFinancialDetails
+                  .find { financialDetail =>
+                    financialDetail.mainType == allocation.mainType &&
+                      financialDetail.chargeType == allocation.chargeType
+                  }
+                  .flatMap(financialDetail => Try(financialDetail.taxYear.toInt).toOption)
+              }
+
+            AllocationDetailWithClearingDate(Some(allocation.copy(fallbackTaxYear = fallbackTaxYear)), paymentAllocations.transactionDate)
+          }
+
+          Right(PaymentAllocationViewModel(documentDetailsWithFinancialDetailsModel,
+            paymentAllocationWithClearingDate))
+        }
     }
   }
 
-  private def createPaymentAllocationForLpi(paymentCharge: PaymentAllocations,
+  private def createPaymentAllocationForLpi(allocation: AllocationDetail,
                                             documentDetailsWithFinancialDetails: FinancialDetailsWithDocumentDetailsModel)
                                            (implicit hc: HeaderCarrier, user: MtdItUser[_]): Future[Option[LatePaymentInterestPaymentAllocationDetails]] = {
     financialDetailsService.getAllFinancialDetails.map { financialDetailsWithTaxYear =>
       financialDetailsWithTaxYear.flatMap {
         case (_, financialDetails: FinancialDetailsModel) =>
-          financialDetails.documentDetailsWithLpiId(paymentCharge.allocations.head.chargeReference).map {
+          financialDetails.documentDetailsWithLpiId(allocation.chargeReference).map {
             documentDetailsWithLpiId =>
               LatePaymentInterestPaymentAllocationDetails(documentDetailsWithLpiId,
                 documentDetailsWithFinancialDetails.documentDetails.head.originalAmount)
