@@ -95,17 +95,17 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                     pageTitle(mtdUserRole, messages("credits.heading", s"$calendarYear"))
                   )
 
-                  AuditStub.verifyAuditContainsDetail(
-                    CreditsSummaryModel(
-                      saUTR = testSaUtr,
-                      nino = testNino,
-                      userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
-                      credId = credId,
-                      mtdRef = testMtditid,
-                      creditOnAccount = "5",
-                      creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
-                    ).detail
-                  )
+                   AuditStub.verifyAuditContainsDetail(
+                     CreditsSummaryModel(
+                       saUTR = testSaUtr,
+                       nino = testNino,
+                       userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
+                       credId = credId,
+                       mtdRef = testMtditid,
+                       creditOnAccount = BigDecimal(5),
+                       creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgs)
+                     ).detail
+                   )
                 }
               }
             }
@@ -147,17 +147,17 @@ class CreditsSummaryControllerISpec extends ControllerISpecHelper with CreditsSu
                     pageTitle(mtdUserRole, messages("credits.heading", s"$calendarYear"))
                   )
 
-                  AuditStub.verifyAuditContainsDetail(
-                    CreditsSummaryModel(
-                      saUTR = testSaUtr,
-                      nino = testNino,
-                      userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
-                      credId = credId,
-                      mtdRef = testMtditid,
-                      creditOnAccount = "5",
-                      creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
-                    ).detail
-                  )
+                   AuditStub.verifyAuditContainsDetail(
+                     CreditsSummaryModel(
+                       saUTR = testSaUtr,
+                       nino = testNino,
+                       userType = {if(mtdUserRole == MTDIndividual) Individual else Agent}.toString,
+                       credId = credId,
+                       mtdRef = testMtditid,
+                       creditOnAccount = BigDecimal(5),
+                       creditDetails = toCreditSummaryDetailsSeq(chargesListV2)(msgs)
+                     ).detail
+                   )
                 }
               }
             }

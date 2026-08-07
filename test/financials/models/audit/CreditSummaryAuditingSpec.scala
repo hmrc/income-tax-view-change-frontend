@@ -140,17 +140,17 @@ class CreditSummaryAuditingSpec extends TestSupport {
         userType = testUserTypeIndividual.toString,
         credId = testCredId,
         mtdRef = testMtditid,
-        creditOnAccount = "5",
+        creditOnAccount = BigDecimal(5),
         creditDetails = toCreditSummaryDetailsSeq(chargesList)(msgApi)
       )
 
-      testCreditSummaryModel.detail shouldBe Json.obj(
-        "saUtr" -> testSaUtr,
+        testCreditSummaryModel.detail shouldBe Json.obj(
+          "saUtr" -> testSaUtr,
           "nino" -> testNino,
           "userType" -> testUserTypeIndividual.toString,
           "credId" -> testCredId,
           "mtditid" -> testMtditid,
-          "creditOnAccount" -> "5",
+          "creditOnAccount" -> BigDecimal(5),
           "creditDetails" -> testCreditSummaryModel.getCreditDetails
         )
     }
