@@ -225,12 +225,6 @@ case class ChargeItem(
     case PoaTwoDebit => poaTwoReconciliationDebit
     case _ => "no valid case"
   }
-
-  def isRevenueAmendment: Boolean =
-    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
-      case Some(ChargeClassificationType.RevenueAmendments) => true
-      case _ => false
-    }
 }
 
 object ChargeItem {
