@@ -39,7 +39,7 @@
         case PaymentCreditRow(_, amount, date, _) => {
             @paymentViewRow(amount, date)
         }
-        case CreditViewRow(_, amount, creditType, taxYear, _) => {
+        case CreditViewRow(_, amount, creditType, taxYear, _, _) => {
             @creditViewRow(amount, creditType, taxYear)
         }
         case RefundRow(amount, _) => {
