@@ -2220,6 +2220,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = Creodd
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = Creodd CThEF y swm ychwanegol hwn ar gyfer eich ail daliad ar gyfrif yn seiliedig ar eich Ffurflen Dreth
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = Gwnaeth CThEF greu eich cosb am gyflwyno’n hwyr
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = Gwnaeth CThEF greu eich cosb am dalu’n hwyr
+chargeSummary.chargeHistory.created.enquiryAmendment.text               = Cafodd y swm ychwanegol ei greu pan wnaeth CThEF diwygio’ch Ffurflen Dreth
 chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = Creodd CThEF eich swm ychwanegol taliad mantoli o ganlyniad i Ffurflen Dreth ddiwygiedig
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = Addasiad CThEF wedi’i greu
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = Y taliad cyntaf ar gyfrif wedi’i ostwng oherwydd cais gan y trethdalwr
@@ -2589,6 +2590,7 @@ yourSelfAssessmentChargeSummary.whatIsPaymentOnAccount.p4           = Help i dde
 
 yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading              = Mae’r tâl hwn yn mynd tuag at eich bil treth {0} i {1}
 yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text              = Mae’r swm ychwanegol taliad mantoli hwn yn cyfrannu at eich bil treth ar gyfer {0} i {1}
+yourSelfAssessmentChargeSummary.chargeHistory.enquiryAmendment.caption.text             = Mae’r swm ychwanegol hwn yn cyfrannu at eich bil treth o {0} i {1}.
 yourSelfAssessmentChargeSummary.chargeHistory.poaOneReconciliation.caption.text         = Mae’r swm ychwanegol taliad cyntaf ar gyfrif hwn yn cyfrannu at eich bil treth {0} i {1}.
 yourSelfAssessmentChargeSummary.chargeHistory.poaTwoReconciliation.caption.text         = Mae’r swm ychwanegol ail daliad ar gyfrif hwn yn cyfrannu at eich bil treth {0} i {1}.
 
@@ -2616,6 +2618,8 @@ yourSelfAssessmentChargeSummary.codingOutBCDMessageFullyCollected       = Dyma o
 yourSelfAssessmentChargeSummary.codingOutPOAMessageFullyCollected       = Dyma oedd y dreth oedd yn ddyledus ar gyfer y flwyddyn dreth {0} i {1}. Cafodd ei gasglu yn y flwyddyn dreth {2} i {3} drwy’ch cod treth TWE.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = Dyma’r taliad Yswiriant Gwladol Dosbarth 2 ar gyfer blwyddyn dreth {0} i {1}.
+
+yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 
 yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Taliad mantoli
 yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = Taliad cyntaf ar gyfrif
@@ -2651,6 +2655,10 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link = Gweld sut y cyfri
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = Crëwyd y swm ychwanegol taliad mantoli hwn oherwydd newid a wnaethoch i’ch Ffurflen Dreth.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Talwch y tâl hwn er mwyn stopio’r llog rhag cynyddu’n ddyddiol.
+
+yourSelfAssessmentChargeSummary.enquiryAmendment.p1                                 = Yn dilyn gwiriad cydymffurfio, gwnaeth CThEF newid i’ch Ffurflen Dreth a elwir yn ‘diwygiad yn sgil ymholiad’. Newidiodd hyn eich
+yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = cyfrifiad treth ar gyfer {0} i {1}
+yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , gan arwain at swm ychwanegol i’w dalu tuag at eich bil treth.
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = Mae CThEF wedi ychwanegu credyd at eich cyfrif oherwydd bod eich Ffurflen Dreth ddiwygiedig yn dangos bod eich bil treth ar gyfer {0} i {1} yn rhy uchel.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = Efallai y bydd CThEF yn defnyddio’r credyd hwn yn awtomatig i dalu’ch biliau treth yn y dyfodol pan fydd y rhain yn dod yn ddyledus.
