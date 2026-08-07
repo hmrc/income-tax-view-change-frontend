@@ -38,8 +38,7 @@ class AddIncomeSourceStartDateControllerISpec extends ControllerISpecHelper {
 
   val prefixSoleTraderBusiness: String = "add-business-start-date"
   val continueButtonText: String = messagesAPI("base.continue")
-  val hintTextUKProperty: String =  messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " + messagesAPI("incomeSources.add.UKPropertyStartDate.hint2") + " " +
-    messagesAPI("dateForm.hint")
+  val hintTextUKProperty: String =  messagesAPI("incomeSources.add.UKPropertyStartDate.hint") + " " + messagesAPI("dateForm.hint")
   val prefixForeignProperty = "incomeSources.add.foreignProperty.startDate"
 
   val sessionService: SessionService = app.injector.instanceOf[SessionService]

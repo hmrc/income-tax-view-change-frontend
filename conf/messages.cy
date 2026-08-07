@@ -2824,9 +2824,8 @@ add-international-business-address.countryPicker.heading = Nodwch y wlad neu’r
 add-international-business-address.countryPicker.hint = Nodwch wlad neu diriogaeth
 
 incomeSources.add.UKPropertyStartDate.heading                   = Dyddiad dechrau’r busnes
-incomeSources.add.UKPropertyStartDate.date-question             = Pryd y dechreuodd eich busnes eiddo yn y DU?
+incomeSources.add.UKPropertyStartDate.date-question             = Pryd y cawsoch incwm rhent am y tro cyntaf o’r busnes eiddo yn y DU hwn?
 incomeSources.add.UKPropertyStartDate.hint                      = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
-incomeSources.add.UKPropertyStartDate.hint2                     = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo yn y DU hwn, megis rhoi unrhyw eiddo neu dir ar osod.
 incomeSources.add.UKPropertyStartDate.required.all              = Nodwch y dyddiad y dechreuodd eich busnes eiddo yn y DU
 incomeSources.add.UKPropertyStartDate.required.two              = Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
 incomeSources.add.UKPropertyStartDate.required                  = Mae’n rhaid i’r dyddiad gynnwys {0}
@@ -2910,9 +2909,8 @@ incomeSources.cease.endDate.ukProperty.hint-1                      = Dyma’r dy
 incomeSources.cease.endDate.foreignProperty.hint-1                 = Dyma’r dyddiad y gwnaethoch gael incwm rhent ddiwethaf neu wedi gwneud cost sy’n gysylltiedig â’ch busnes eiddo tramor.
 
 incomeSources.add.foreignProperty.startDate.heading                  = Dyddiad dechrau’r busnes
-incomeSources.add.foreignProperty.startDate.date-question            = Pryd y dechreuodd eich busnes eiddo tramor?
+incomeSources.add.foreignProperty.startDate.date-question            = Pryd gawsoch chi incwm rhent o’r busnes eiddo tramor hwn am y tro cyntaf?
 incomeSources.add.foreignProperty.startDate.hint                     = Gall y dyddiad y dechreuodd eich busnes fasnachu fod heddiw, yn y gorffennol neu hyd at 7 diwrnod yn y dyfodol.
-incomeSources.add.foreignProperty.startDate.hint2                    = Dyma’r dyddiad cyntaf y cawsoch incwm rhent o’r busnes eiddo tramor hwn, megis rhoi unrhyw eiddo neu dir ar osod.
 incomeSources.add.foreignProperty.startDate.hintExample              = Er enghraifft, 27 3 2020
 incomeSources.add.foreignProperty.startDate.invalid                  = Mae’n rhaid i’r dyddiad fod yn ddyddiad go iawn
 incomeSources.add.foreignProperty.startDate.required.all             = Nodwch y dyddiad y dechreuodd eich busnes eiddo tramor
@@ -3604,7 +3602,8 @@ triggered-migration.check-hmrc-records.cessation-section.text-link   = Gweld eic
 
 triggered-migration.check-hmrc-records.heading                       = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
 triggered-migration.check-hmrc-records.title                         = Gwirio bod cofnodion CThEF dim ond yn cynnwys eich busnesau cyfredol
-triggered-migration.check-hmrc-records.desc                          = Nawr, mae’ch dyddiadau cau chwarterol ar gyfer eich busnesau fel unig fasnachwr a/neu eich busnesau eiddo wedi’u rhestru yma.
+triggered-migration.check-hmrc-records.desc                          = Mae’n rhaid i chi wirio a chadarnhau eich ffynonellau incwm ar gyfer blwyddyn dreth {0} i {1} ac ymlaen cyn y gallwch barhau. Cafodd y ffynonellau incwm hyn eu creu gan ddefnyddio gwybodaeth o’ch Ffurflen Dreth flaenorol.
+triggered-migration.check-hmrc-records.desc2                         = Efallai bod gennych bellach derfynau amser chwarterol ar gyfer eich busnesau unig fasnachwr a/neu eiddo sydd wedi’u rhestru yma.
 triggered-migration.check-hmrc-records.inset                         = Bydd sicrhau bod y manylion ar y dudalen hon yn gywir yn eich helpu chi i osgoi colli dyddiadau cau ar gyfer eich busnesau cyfredol, ac yn osgoi rhoi dyddiadau cau i chi ar gyfer ffynonellau incwm y gallech fod wedi’u cau neu eu gwerthu.
 triggered-migration.check-hmrc-records.bulletStart                   = Bydd yn rhaid i chi wneud y canlynol, os oes angen:
 triggered-migration.check-hmrc-records.bullet1                       = ychwanegu unrhyw fusnesau sydd ar goll
@@ -3617,7 +3616,7 @@ triggered-migration.check-hmrc-records.soleTrader.businessName       = Enw’r b
 triggered-migration.check-hmrc-records.soleTrader.businessState      = Statws y busnes
 triggered-migration.check-hmrc-records.soleTrader.active             = Cyfredol
 triggered-migration.check-hmrc-records.soleTrader.add.link           = Ychwanegu busnes unig fasnachwr
-triggered-migration.check-hmrc-records.soleTrader.guidance           = Rydych yn unig fasnachwr os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn hunangyflogedig.
+triggered-migration.check-hmrc-records.soleTrader.guidance           = Rydych yn hunangyflogedig os ydych yn rhedeg eich busnes eich hun fel unigolyn ac yn gweithio i chi’ch hun. Enw arall ar hyn yw bod yn ‘unig fasnachwr’. Os ydych yn gweithio drwy gwmni cyfyngedig, nid unig fasnachwr ydych chi.
 triggered-migration.check-hmrc-records.soleTrader.unknown            = Anhysbys
 
 triggered-migration.check-hmrc-records.property.heading              = Busnesau eiddo

@@ -71,9 +71,6 @@
     @h3(messages("triggered-migration.check-hmrc-records.soleTrader.heading"), classes = "govuk-heading-m", optId = Some("sole-trader-heading"))
 
     @p(id = Some("sole-trader-guidance")){@messages("triggered-migration.check-hmrc-records.soleTrader.guidance")}
-    @govukInsetText(InsetText(
-        content = Text(messages("manage.your.businesses.sole-trader-inset"))
-    ))
 
     @for((business, index) <- viewModel.soleTraderBusinesses.zipWithIndex) {
         <div class="govuk-summary-card">
@@ -245,7 +242,9 @@
 
     @h1(messages("triggered-migration.check-hmrc-records.heading"), id = Some("check-hmrc-records-heading"))
 
-    @p(id = Some("check-hmrc-records-desc")){@messages("triggered-migration.check-hmrc-records.desc")}
+    @p(id = Some("check-hmrc-records-desc-1")){@messages("triggered-migration.check-hmrc-records.desc")}
+
+    @p(id = Some("check-hmrc-records-desc-2")){@messages("triggered-migration.check-hmrc-records.desc2")}
 
     @govukInsetText(InsetText(
         id = Some("check-hmrc-records-inset"),
