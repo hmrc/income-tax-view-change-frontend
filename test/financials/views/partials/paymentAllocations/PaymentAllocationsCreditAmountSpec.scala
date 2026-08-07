@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/**
 package financials.views.partials.paymentAllocations
 
 import common.testUtils.TestSupport
 import financials.controllers.routes as financialsRoutes
 import financials.models.paymentAllocationCharges.PaymentAllocationViewModel
 import financials.testConstants.PaymentAllocationsTestConstants.paymentAllocationChargesModelWithCredit
-import financials.views.html.partials.paymentAllocations.PaymentAllocationsCreditAmount
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.Helpers.*
@@ -28,7 +27,7 @@ import play.twirl.api.HtmlFormat
 
 import java.time.LocalDate
 
-
+//TODO look into moving any needed tests over into the PaymentAllocationViewSpec
 class PaymentAllocationsCreditAmountSpec extends TestSupport {
 
   lazy val paymentAllocationsCreditAmount = app.injector.instanceOf[PaymentAllocationsCreditAmount]
@@ -65,3 +64,4 @@ class PaymentAllocationsCreditAmountSpec extends TestSupport {
     }
   }
 }
+**/

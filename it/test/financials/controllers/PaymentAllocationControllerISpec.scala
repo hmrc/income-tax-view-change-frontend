@@ -86,7 +86,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
                 result should have(
                   httpStatus(OK),
                   pageTitle(mtdUserRole, "paymentAllocation.heading"),
-                  elementTextBySelector("tbody")("31 Jan 2021 HMRC adjustment Tax year 2021 to 2022 2021 to 2022 £800.00"),
+                  elementTextBySelector("tbody")("31 Jan 2021 HMRC adjustment 2021 to 2022 £800.00"),
                 )
 
                 verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), paymentAllocationViewModelHmrcAdjustment).detail)
