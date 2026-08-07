@@ -3628,3 +3628,4 @@ chooseTaxYearsRange.heading = Pa flynyddoedd treth ydych am eu gweld a’u rheol
 chooseTaxYearsRange.hint = Mae’r flwyddyn dreth yn rhedeg o 6 Ebrill i 5 Ebrill
 chooseTaxYearsRange.option.mtd = {0} i {1} ymlaen
 chooseTaxYearsRange.option.sa = {0} i {1} a chyn hynny
+chooseTaxYearsRange.error.empty = Dewiswch pa flynyddoedd treth rydych am eu gweld a’u rheoli

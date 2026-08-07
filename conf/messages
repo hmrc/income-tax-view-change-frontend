@@ -3646,3 +3646,4 @@ chooseTaxYearsRange.heading = Which tax years do you want to view and manage?
 chooseTaxYearsRange.hint = The tax year runs from 6 April to 5 April
 chooseTaxYearsRange.option.mtd = {0} to {1} onwards
 chooseTaxYearsRange.option.sa = {0} to {1} and earlier
+chooseTaxYearsRange.error.empty = Select which tax years you want to view and manage

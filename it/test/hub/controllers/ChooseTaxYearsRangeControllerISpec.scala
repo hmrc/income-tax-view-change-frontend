@@ -95,7 +95,7 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
       result should have(
         httpStatus(BAD_REQUEST),
         elementTextByClass("govuk-error-summary__title")("There is a problem"),
-        elementTextByClass("govuk-error-summary__list")("Select an option")
+        elementTextByClass("govuk-error-summary__list")("Select which tax years you want to view and manage")
       )
     }
 

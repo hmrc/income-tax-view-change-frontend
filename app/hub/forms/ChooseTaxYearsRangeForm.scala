@@ -23,7 +23,7 @@ object ChooseTaxYearsRangeForm {
   val response: String = "choose-tax-years-range"
   val mtdOption: String = "MTD"
   val legacyOption: String = "SA"
-  private val noSelectionError = "manageBusinesses.type-of-property.error"
+  private val noSelectionError = "chooseTaxYearsRange.error.empty"
 
   def apply(): Form[ChooseTaxYearsRangeOption] =
     Form(

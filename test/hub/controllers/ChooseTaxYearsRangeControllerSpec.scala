@@ -119,7 +119,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
       val result = controller.submit()(fakePostRequestBasedOnMTDUserType(MTDIndividual))
 
       status(result) shouldBe BAD_REQUEST
-      contentAsString(result) should include("Select an option")
+      contentAsString(result) should include("Select which tax years you want to view and manage")
     }
 
     testMTDIndividualAuthFailures(controller.submit())

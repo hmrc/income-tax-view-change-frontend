@@ -61,7 +61,7 @@ class ChooseTaxYearsRangeViewSpec extends TestSupport {
 
     "render validation error when no option is selected" in new Setup(ChooseTaxYearsRangeForm().bind(Map.empty[String, String])) {
       pageDocument.select(".govuk-error-summary__title").text() shouldBe "There is a problem"
-      pageDocument.select(".govuk-error-summary__list").text() should include("Select an option")
+      pageDocument.select(".govuk-error-summary__list").text() should include("Select which tax years you want to view and manage")
     }
   }
 }
