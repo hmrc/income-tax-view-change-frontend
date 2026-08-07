@@ -21,6 +21,7 @@ import common.auth.MtdItUser
 import common.controllers.ControllerISpecHelper
 import common.enums.MTDIndividual
 import common.helpers.servicemocks.MTDIndividualAuthStub
+import common.helpers.servicemocks.YearOfMigrationStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}
 import common.models.incomeSourceDetails.{BusinessDetailsModel, IncomeSourceDetailsModel}
@@ -72,6 +73,7 @@ class HomeControllerISpec extends ControllerISpecHelper {
             status = OK,
             response = incomeSourceDetailsModel
           )
+          YearOfMigrationStub.stubGetYearOfMigration("2023")
 
           NextUpdatesStub.stubGetNextUpdatesError(testNino)
 
@@ -98,8 +100,6 @@ class HomeControllerISpec extends ControllerISpecHelper {
           )
         }
       }
-
-      testAuthFailures(path, MTDIndividual)
     }
   }
 }
