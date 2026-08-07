@@ -27,6 +27,7 @@
 @import financials.models.repaymentHistory.RepaymentHistoryUtils
 @import financials.models.ChargeItem
 @import financials.views.helpers.ChargeNameLangHelper
+@import financials.enums.ChargeClassificationType
 
 @this(
     govukTable: GovukTable,
@@ -51,7 +52,7 @@
 
     @(viewModel.chargeItem.transactionType, viewModel.latePaymentInterestCharge) match {
         case (ITSAReturnAmendment, false) => {
-            @if(viewModel.chargeItem.chargeClassification.contains("RA")) {
+            @if(ChargeClassificationType.isRevenueAmendment(viewModel.chargeItem.chargeClassification)) {
                 @p(id = Some("charge-history-caption")) {
                     @messages("yourSelfAssessmentChargeSummary.chargeHistory.enquiryAmendment.caption.text",
                         viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString)

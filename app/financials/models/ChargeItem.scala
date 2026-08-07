@@ -55,8 +55,8 @@ case class ChargeItem(
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_.isBefore(dateService.getCurrentDate))
 
-  def getMessageKey(): String = {
-    if (isRevenueAmendment) {
+  def getMessageKey: String = {
+    if (ChargeClassificationType.isRevenueAmendment(chargeClassification)) {
       "revenueAmendment.label"
     } else {
       getChargeTypeKey
