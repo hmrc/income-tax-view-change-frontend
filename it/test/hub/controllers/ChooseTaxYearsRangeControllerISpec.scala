@@ -20,10 +20,10 @@ import common.controllers.ControllerISpecHelper
 import common.enums.MTDIndividual
 import common.helpers.GetInsourceDetailsStub
 import common.helpers.servicemocks.AuditStub
-import common.testConstants.BaseIntegrationTestConstants.testMtditid
+import common.testConstants.BaseIntegrationTestConstants.{testMtditid, testSaUtr}
 import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncome
 import hub.forms.ChooseTaxYearsRangeForm
-import play.api.http.Status.{BAD_REQUEST, NOT_IMPLEMENTED, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.libs.json.Json
 
 class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
@@ -49,7 +49,7 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
   }
 
   s"POST $path" should {
-    "redirect to home when MTD option is selected" in {
+    "redirect to your-tasks when MTD option is selected" in {
       stubAuthorised(MTDIndividual)
       stubIncomeSourceDetails()
 
@@ -60,7 +60,7 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
 
       result should have(
         httpStatus(SEE_OTHER),
-        redirectURI(appConfig.homePageUrl(isAgent = false))
+        redirectURI(hub.controllers.newHomePage.routes.HandleYourTasksController.show().url)
       )
 
       AuditStub.verifyAuditContainsDetail(
@@ -71,7 +71,7 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
       )
     }
 
-    "return NotImplemented when legacy SA option is selected" in {
+    "redirect to classic SA when legacy option is selected" in {
       stubAuthorised(MTDIndividual)
       stubIncomeSourceDetails()
 
@@ -81,7 +81,8 @@ class ChooseTaxYearsRangeControllerISpec extends ControllerISpecHelper {
       ).futureValue
 
       result should have(
-        httpStatus(NOT_IMPLEMENTED)
+        httpStatus(SEE_OTHER),
+        redirectURI(appConfig.saViewLandPService(testSaUtr))
       )
     }
 

@@ -20,12 +20,12 @@ import common.enums.MTDIndividual
 import common.mocks.auth.MockAuthActions
 import common.connectors.ITSAStatusConnector
 import common.services.DateServiceInterface
-import common.testConstants.BaseTestConstants.businessesAndPropertyIncome
+import common.testConstants.BaseTestConstants.{businessesAndPropertyIncome, testSaUtr}
 import hub.audit.models.ChooseTaxYearsRangeSubmittedAuditModel
 import hub.forms.ChooseTaxYearsRangeForm
 import play.api
 import play.api.Application
-import play.api.http.Status.{BAD_REQUEST, NOT_IMPLEMENTED, OK, SEE_OTHER}
+import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, redirectLocation, status}
 
 class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
@@ -65,7 +65,7 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
   }
 
   "submit" should {
-    "redirect to home when 2026 onwards option is selected" in {
+    "redirect to your-tasks when MTD onwards option is selected" in {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -76,14 +76,14 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
       )
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(appConfig.homePageUrl(isAgent = false))
+      redirectLocation(result) shouldBe Some(hub.controllers.newHomePage.routes.HandleYourTasksController.show().url)
       verifyExtendedAudit(ChooseTaxYearsRangeSubmittedAuditModel(
         taxYearsPresented = Seq("2018 to 2019 onwards", "2017 to 2018 and earlier"),
         taxYearRangeSelected = ChooseTaxYearsRangeForm.mtdOption
       ))
     }
 
-    "return NotImplemented when 2025 to 2026 and earlier option is selected" in {
+    "redirect to classic SA when legacy option is selected" in {
       setupMockSuccess(MTDIndividual)
       mockItsaStatusRetrievalAction(businessesAndPropertyIncome)
       setupMockGetIncomeSourceDetails(businessesAndPropertyIncome)
@@ -93,8 +93,8 @@ class ChooseTaxYearsRangeControllerSpec extends MockAuthActions {
           .withFormUrlEncodedBody(ChooseTaxYearsRangeForm.response -> ChooseTaxYearsRangeForm.legacyOption)
       )
 
-      status(result) shouldBe NOT_IMPLEMENTED
-      contentAsString(result) should include("TODO")
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result) shouldBe Some(appConfig.saViewLandPService(testSaUtr))
     }
 
     "redirect to home when user does not have IR-SA enrolment" in {

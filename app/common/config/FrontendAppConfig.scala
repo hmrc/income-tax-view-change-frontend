@@ -34,6 +34,10 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val baseUrl: String = servicesConfig.getString("base.url")
   lazy val appName: String = servicesConfig.getString("appName")
 
+  def appUrl(path: String): String =
+    if (path.startsWith(basePath)) s"$baseUrl$path"
+    else s"$baseUrl$basePath$path"
+
   //Feedback Config
   private lazy val contactHost: String = servicesConfig.getString("contact-frontend.host")
   private lazy val contactFrontendService: String = servicesConfig.baseUrl("contact-frontend")

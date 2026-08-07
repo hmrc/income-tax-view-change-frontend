@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import hub.views.html.ChooseTaxYearsRangeView
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Request}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +43,10 @@ class ChooseTaxYearsRangeController @Inject()(
                                               mcc: MessagesControllerComponents,
                                               ec: ExecutionContext
                                             ) extends FrontendController(mcc) with I18nSupport {
-  private val submitCall = routes.ChooseTaxYearsRangeController.submit()
+  private val submitCall = {
+    val submitRoute = routes.ChooseTaxYearsRangeController.submit()
+    Call(submitRoute.method, appConfig.appUrl(submitRoute.url))
+  }
 
   private def migrationYear(user: MtdItUser[_]): Int =
     user.incomeSources.yearOfMigration
@@ -100,8 +103,10 @@ class ChooseTaxYearsRangeController @Inject()(
 
           case Some(ChooseTaxYearsRangeForm.legacyOption) =>
             auditSubmission(labels, ChooseTaxYearsRangeForm.legacyOption)
-            // TODO: replace with the confirmed legacy SA destination once provided.
-            Future.successful(NotImplemented("TODO: legacy Self Assessment destination route still to be confirmed"))
+            val utr = user.saUtr.getOrElse(
+              throw new IllegalStateException("SA UTR is missing for legacy SA redirect")
+            )
+            Future.successful(Redirect(appConfig.saViewLandPService(utr)))
 
           case Some(other) => throw new IllegalStateException(s"Unexpected tax years range selection: $other")
           case None => throw new IllegalStateException("Missing tax years range selection after successful form bind")

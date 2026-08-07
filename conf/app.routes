@@ -8,7 +8,7 @@ GET         /assets/*file                                                 contro
 GET         /assets/*file                                                 controllers.Assets.at(path="/public", file)
 
 #Home Controller
-GET         /                                                             hub.controllers.HomeController.show(origin: Option[String] ?= None)
+GET         /                                                            hub.controllers.ChooseTaxYearsRangeController.show()
 GET         /income-tax                                                   hub.controllers.HomeController.show(origin: Option[String] ?= None)
 GET         /agents/client-income-tax                                     hub.controllers.HomeController.showAgent()
 GET         /agents                                                       hub.controllers.HomeController.showAgent()

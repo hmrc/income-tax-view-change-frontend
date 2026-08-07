@@ -22,6 +22,7 @@ import hub.forms.{ChooseTaxYearsRangeForm, ChooseTaxYearsRangeOption}
 import hub.models.TaxYearRangeLabels
 import hub.views.html.ChooseTaxYearsRangeView
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout}
 
@@ -30,7 +31,7 @@ class ChooseTaxYearsRangeViewSpec extends TestSupport {
   val view: ChooseTaxYearsRangeView = app.injector.instanceOf[ChooseTaxYearsRangeView]
 
   private class Setup(form: Form[ChooseTaxYearsRangeOption]) {
-    val pageDocument = Jsoup.parse(contentAsString(
+    val pageDocument: Document = Jsoup.parse(contentAsString(
       view(
         form,
         routes.ChooseTaxYearsRangeController.submit(),
@@ -48,6 +49,8 @@ class ChooseTaxYearsRangeViewSpec extends TestSupport {
     "render all page content" in new Setup(ChooseTaxYearsRangeForm()) {
       pageDocument.title() shouldBe "Which tax years do you want to view and manage? - Manage your Self Assessment - GOV.UK"
       pageDocument.select("h1").text() shouldBe "Which tax years do you want to view and manage?"
+      pageDocument.getElementById("choose-tax-years-range-form").attr("action") shouldBe
+        routes.ChooseTaxYearsRangeController.submit().url
       pageDocument.getElementsByClass("govuk-hint").text() should include("The tax year runs from 6 April to 5 April")
       pageDocument.select("input[type=radio][value=MTD]").size() shouldBe 1
       pageDocument.text() should include("2018 to 2019 onwards")
