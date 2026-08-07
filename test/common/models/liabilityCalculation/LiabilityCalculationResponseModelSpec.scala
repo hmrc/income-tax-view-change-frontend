@@ -18,6 +18,7 @@ package common.models.liabilityCalculation
 
 import common.models.helpers.LiabilityCalculationDataHelper
 import common.models.liabilitycalculation.*
+import common.models.liabilitycalculation.CalculationRevisionType.HmrcManualCorrection
 import common.testUtils.TestSupport
 import play.api.http.Status
 import play.api.i18n.Lang
@@ -221,6 +222,36 @@ class LiabilityCalculationResponseModelSpec extends LiabilityCalculationDataHelp
 
         successModelMinimal.metadata.hasAnAmendment shouldBe false
       }
+    }
+  }
+
+  "calculationRevisionType" should {
+    "return Some(HmrcManualCorrection) when calculationType is AM and calculationReason is HMRCmanualCorrection" in {
+      val successModel = Metadata(None, "AM", Some("HMRCmanualCorrection"))
+
+      successModel.calculationRevisionType shouldBe Some(HmrcManualCorrection)
+    }
+    "return Some(HmrcAutoCorrection) when calculationType is AM and calculationReason is HMRCAutoCorrection" in {
+      val successModel = Metadata(None, "AM", Some("HMRCAutoCorrection"))
+
+      successModel.calculationRevisionType shouldBe Some(CalculationRevisionType.HmrcAutoCorrection)
+    }
+    "return Some(CustomerRejection) when calculationType is AM and calculationReason is customerRejectionOfaCorrection" in {
+      val successModel = Metadata(None, "AM", Some("customerRejectionOfaCorrection"))
+
+      successModel.calculationRevisionType shouldBe Some(CalculationRevisionType.CustomerRejection)
+    }
+
+    "return Some(RevenueAmendment) when calculationType is AM and calculationReason is HMRCrevenueamendment" in {
+      val successModel = Metadata(None, "AM", Some("HMRCrevenueamendment"))
+
+      successModel.calculationRevisionType shouldBe Some(CalculationRevisionType.RevenueAmendment)
+    }
+
+    "return None when calculationType is not an amendment type" in {
+      val successModel = Metadata(None, "DF", Some("customerRequest"))
+
+      successModel.calculationRevisionType shouldBe None
     }
   }
 }

@@ -18,22 +18,23 @@
 @import returns.views.html.partials.taxYearSummary.TaxCalculationNotPresent
 @import returns.models.liabilitycalculation.viewmodels.CalculationSummary
 @import returns.models.taxyearsummary._
+@import common.models.liabilitycalculation.CalculationRevisionType
 
 @this(taxCalculationOverview: TaxCalculationOverview, taxCalculationNotPresent: TaxCalculationNotPresent)
 
 @(
-    taxYear: Int,
-    calcSummary: Option[CalculationSummary],
-    isAgent: Boolean,
-    pfaEnabled: Boolean,
-    isAmended: Boolean,
-    isLatest: Boolean = false,
-    isPrevious: Boolean = false,
-    taxYearViewScenarios: TaxYearViewScenarios,
-    showNoTaxCalc: Boolean,
-    viewTaxCalcLink: Option[String],
-    selfAssessmentLink: String,
-    contactHmrcLink: String
+        taxYear: Int,
+        calcSummary: Option[CalculationSummary],
+        isAgent: Boolean,
+        pfaEnabled: Boolean,
+        calculationRevisionType: Option[CalculationRevisionType],
+        isLatest: Boolean = false,
+        isPrevious: Boolean = false,
+        taxYearViewScenarios: TaxYearViewScenarios,
+        showNoTaxCalc: Boolean,
+        viewTaxCalcLink: Option[String],
+        selfAssessmentLink: String,
+        contactHmrcLink: String
 )(implicit request: Request[_], messages: Messages)
 
 @taxCalculationOverview(
@@ -43,7 +44,7 @@
     isLatest = isLatest,
     isPrevious = isPrevious,
     pfaEnabled = pfaEnabled,
-    isAmended = isAmended,
+    calculationRevisionType = calculationRevisionType,
     taxYearViewScenarios = taxYearViewScenarios,
     showNoTaxCalc = showNoTaxCalc,
     viewTaxCalcLink = viewTaxCalcLink,

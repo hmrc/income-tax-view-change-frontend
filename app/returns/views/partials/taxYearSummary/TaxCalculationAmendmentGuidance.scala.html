@@ -27,7 +27,7 @@
 
 <section id="@prefix-amend-guidance" class="govuk-!-margin-top-6 govuk-!-margin-bottom-6">
 
-  @h3(optId = Some("${prefix}-amend-subheading"), msg = messages(s"tax-year-summary.${prefix}-amend-subheading"), classes = "govuk-heading-m")
+  @h3(optId = Some(s"$prefix-amend-subheading"), msg = messages(s"tax-year-summary.$prefix-amend-subheading"), classes = "govuk-heading-m")
 
 
   @p(id = Some(s"${prefix}-bullet-start"))(Html(messages(s"tax-year-summary.${prefix}-bullet-start")))

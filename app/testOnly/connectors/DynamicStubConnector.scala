@@ -146,6 +146,28 @@ class DynamicStubConnector @Inject()(val appConfig: TestOnlyAppConfig,
     }
   }
 
+  private def getOverwriteTaxCalculationDataUrl(nino: String): String = {
+    s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/tax-calculation-data/$nino"
+  }
+
+  def overwriteTaxCalculationData(nino: String, taxCalculationUser: TaxCalculationUser)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+    val url = getOverwriteTaxCalculationDataUrl(nino)
+
+    val requestJson = Json.toJson(taxCalculationUser)
+
+    http.post(url"$url")
+      .setHeader("Accept" -> "application/vnd.hmrc.2.0+json")
+      .withBody(requestJson)
+      .execute[HttpResponse] map { response =>
+      response.status match {
+        case OK => (): Unit
+        case _ =>
+          logger.error(s"[overwriteTaxCalculationData] Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+          throw new Exception(s"Overwrite unsuccessful. ~ Response status: ${response.status} ~. < Response body: ${response.body} >")
+      }
+    }
+  }
+
   def getOverwriteObligationsDataUrl(nino: String): String = {
     s"${appConfig.dynamicStubUrl}/income-tax-view-change/override/obligations-data/$nino"
   }
