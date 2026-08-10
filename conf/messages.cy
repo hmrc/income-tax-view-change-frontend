@@ -811,6 +811,31 @@ tax-year-summary.calculation-contact-hmrc                          = Os yw’r d
 tax-year-summary.calculation-contact-hmrc-link                     = bydd angen i chi gysylltu â CThEF
 tax-year-summary.calculation-bill                                  = Caiff eich cyfrifiad yn ogystal â’ch bil ei ddiweddaru yn seiliedig ar yr hyn yr ydych yn rhoi gwybod amdano. Gallai hyn olygu y bydd yn rhaid i chi dalu mwy o dreth, neu gallwch hawlio ad-daliad.
 
+# Tax Year Summary - Errors and Corrections #
+tax-year-summary.latest-calculation.correction-revenueAmendment.desc          = Mae CThEF wedi diwygio’ch Ffurflen Dreth ar {0} ac, o ganlyniad, dyma’ch cyfrifiad mwyaf diweddar.
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-1       = Rydym wedi diweddaru’ch cyfrifiad treth.
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-2       = Mae’n bosibl bod faint o dreth sydd arnoch wedi cynyddu neu ostwng.
+tax-year-summary-latest-calculation.correction-revenueAmendment.inset-3       = Gallwch wirio
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-1  = hanes eich taliadau, credydau ac ad-daliadau
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-inset-4 = neu weld
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-2  = faint sydd arnoch a sut i wneud taliad
+
+tax-year-summary.previous-calculation.correction-revenueAmendment.desc            = Diwygiodd CThEF eich Ffurflen Dreth ar {0}. Newidiodd hyn eich cyfrifiad treth ar yr adeg honno. Mae hwn bellach yn gyfrifiad blaenorol. Efallai bod cyfrifiad mwy diweddar wedi’i wneud ers hynny.
+tax-year-summary.previous-calculation.correction-revenueAmendment.subheading      = Y cyfrifiad a wnaed ar {0}
+tax-year-summary.previous-calculation.correction-revenueAmendment.subheading.desc = Mae’r cyfrifiad hwn yn adlewyrchu’r sefyllfa dreth ar yr adeg honno.
+
+tax-year-summary.latest-calculation.rejection.desc          = Ar {0} gwnaeth CThEF newid eich Ffurflen Dreth yn ôl i’r hyn yr oedd hi yn wreiddiol cyn i CThEF ei diwygio. O ganlyniad i hyn, dyma eich cyfrifiad mwyaf diweddarBottom of Form
+tax-year-summary.latest-calculation.rejection.inset-1       = Rydym wedi diweddaru’ch cyfrifiad treth.
+tax-year-summary.latest-calculation.rejection.inset-2       = Mae’n bosibl bod faint o dreth sydd arnoch wedi cynyddu neu ostwng.
+tax-year-summary-latest-calculation.rejection.inset-3       = Gallwch wirio
+tax-year-summary.latest-calculation.rejection.inset-link-1  = hanes eich taliadau, credydau ac ad-daliadau
+tax-year-summary.latest-calculation.rejection.inset-inset-4 = neu weld
+tax-year-summary.latest-calculation.rejection.inset-link-2  = faint sydd arnoch a sut i wneud taliad
+
+tax-year-summary.previous-calculation.rejection.desc            = Diwygiodd CThEF eich Ffurflen Dreth ar {0}. Newidiodd hyn eich cyfrifiad treth ar yr adeg honno. Mae hwn bellach yn gyfrifiad blaenorol. Efallai bod cyfrifiad mwy diweddar wedi’i wneud ers hynny.
+tax-year-summary.previous-calculation.rejection.subheading      = Y cyfrifiad a wnaed ar {0}
+tax-year-summary.previous-calculation.rejection.subheading.desc = Mae’r cyfrifiad hwn yn adlewyrchu’r sefyllfa dreth ar yr adeg honno.
+
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
 income_breakdown.table.header                                   = Math o incwm
