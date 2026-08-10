@@ -30,7 +30,7 @@
         govUkWarningText: GovukWarningText
 )
 
-@(viewModel: ChargeSummaryViewModel, taxYear: TaxYear)(implicit request: Request[_], messages: Messages)
+@(viewModel: ChargeSummaryViewModel)(implicit request: Request[_], messages: Messages)
 
 @getMessage(key: String, args: String*) = @{
     messages(s"yourSelfAssessmentChargeSummary.$key", args: _*)
@@ -39,8 +39,8 @@
 @p(id = Some("itsaEnquiryAmendment.p1")){
     @getMessage(s"enquiryAmendment.p1")
     @link(
-        link = viewModel.taxYearSummaryUrl,
-        messageKey = getMessage(s"enquiryAmendment.link", taxYear.startYear.toString, taxYear.endYear.toString),
+        link = viewModel.taxYearSummaryUrl(viewModel.chargeItem.taxYear.endYear),
+        messageKey = getMessage(s"enquiryAmendment.link", viewModel.chargeItem.taxYear.startYear.toString, viewModel.chargeItem.taxYear.endYear.toString),
         outerMessage = getMessage(s"enquiryAmendment.p2"),
         id = Some("itsaEnquiryAmendment.link")
     )

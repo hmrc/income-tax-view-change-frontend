@@ -77,7 +77,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
                   adjustmentHistory: AdjustmentHistoryModel = defaultAdjustmentHistory,
                   poaExtraChargeLink: Option[String] = None,
                   whatYouOweUrl: String = financialsRoutes.WhatYouOweController.show().url,
-                  taxYearSummaryUrl: String = appConfig.taxYearSummaryUrl(false, 2018, returnsEnabled = true)) {
+                  taxYearSummaryUrl: Int => String = (taxYear: Int) => appConfig.taxYearSummaryUrl(false, 2018, returnsEnabled = true)) {
 
     val viewModel: ChargeSummaryViewModel = ChargeSummaryViewModel(
       currentDate = dateService.getCurrentDate,
@@ -110,7 +110,7 @@ class YourSelfAssessmentChargeSummaryViewSpec extends ViewSpec with ChargeConsta
       "display the correct content" in new TestSetup(chargeItem = chargeItemModel(transactionType = ITSAReturnAmendment, chargeClassification = Some("RA"))) {
         document.getElementsByClass("govuk-heading-xl").first().text() shouldBe itsaEnquiryAmendmentHeading
         document.getElementById("itsaEnquiryAmendment.p1").text() shouldBe itsaEnquiryAmendmentParagraph1(2017, 2018)
-        document.getElementById("itsaEnquiryAmendment.link").attr("href") shouldBe viewModel.taxYearSummaryUrl
+        document.getElementById("itsaEnquiryAmendment.link").attr("href") shouldBe viewModel.taxYearSummaryUrl(2018)
         document.getElementsByClass("govuk-warning-text__text").text() shouldBe warningText
         document.getElementById("charge-history-caption").text() shouldBe "This extra amount goes towards your 2017 to 2018 tax bill."
         document.select("#payment-history-table > tbody > tr > td:nth-child(2)").text() shouldBe enquiryAmendmentDescriptionText

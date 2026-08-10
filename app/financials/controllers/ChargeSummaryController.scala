@@ -267,7 +267,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                       poaTwoChargeUrl = poaTwoChargeUrl,
                       LSPUrl = LSPUrl,
                       LPPUrl = LPPUrl,
-                      taxYearSummaryUrl = appConfig.taxYearSummaryUrl(isAgent, taxYear, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend))
+                      taxYearSummaryUrl = appConfig.taxYearSummaryUrl(isAgent, _, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend))
                     )
                   }
 

@@ -96,7 +96,7 @@
     case (LateSubmissionPenalty, _, _, _)                     => lateSubmissionPenaltyContent(viewModel.LSPUrl)
     case (FirstLatePaymentPenalty, _, true, _)                => firstLatePaymentPenaltyLPIContent()
     case (FirstLatePaymentPenalty, _, _, _)                   => firstLatePaymentPenaltyContent(viewModel.LPPUrl)
-    case (ITSAReturnAmendment, _, _, true)                        => itsaReturnAmendmentRAContent(viewModel, viewModel.chargeItem.taxYear)
+    case (ITSAReturnAmendment, _, _, true)                        => itsaReturnAmendmentRAContent(viewModel)
     case (ITSAReturnAmendment, _, true, false)                    => itsaAmendmentChargeLPIContent()
     case (ITSAReturnAmendment, _, _, false)                       => itsaReturnAmendmentContent()
     case (ITSAReturnAmendmentCredit, _, _, _)                 => itsaReturnAmendmentCreditContent(viewModel.chargeItem.taxYear)

@@ -78,7 +78,7 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
       poaExtraChargeLink = poaExtraChargeLink,
       LSPUrl = "testLSPUrl",
       LPPUrl = "testLPPUrl",
-      taxYearSummaryUrl = ""
+      taxYearSummaryUrl = (taxYear: Int) => appConfig.taxYearSummaryUrl(isAgent, taxYear, returnsEnabled = true)
     )
 
     val view: Html = chargeSummary(viewModel, whatYouOweUrl)
@@ -1533,7 +1533,8 @@ class ChargeSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeCo
         adjustmentHistory = defaultAdjustmentHistory,
         LSPUrl = "",
         LPPUrl = "",
-        taxYearSummaryUrl = "")
+        taxYearSummaryUrl = (taxYear: Int) => appConfig.taxYearSummaryUrl(isAgent = false, taxYear = taxYear, returnsEnabled = true)
+      )
       val thrownException = intercept[MissingFieldException] {
 
         chargeSummary(exceptionViewModel, financialsRoutes.WhatYouOweController.show().url)
