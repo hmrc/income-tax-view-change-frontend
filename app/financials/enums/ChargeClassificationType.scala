@@ -26,3 +26,9 @@ enum ChargeClassificationType(val value: String):
 object ChargeClassificationType:
   def fromString(value: String): Option[ChargeClassificationType] =
     values.find(_.value == value)
+
+  def isRevenueAmendment(chargeClassification: Option[String]): Boolean =
+    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
+      case Some(ChargeClassificationType.RevenueAmendments) => true
+      case _ => false
+    }

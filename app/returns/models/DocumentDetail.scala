@@ -43,6 +43,7 @@ case class DocumentDetail(
                            paymentLot: Option[String] = None,
                            effectiveDateOfPayment: Option[LocalDate] = None,
                            amountCodedOut: Option[BigDecimal] = None,
+                           chargeClassification: Option[String] = None,
                            documentDueDate: Option[LocalDate] = None,
                            poaRelevantAmount: Option[BigDecimal] = None,
                            formBundleNumber: Option[String] = None,
@@ -174,6 +175,7 @@ object DocumentDetail {
           "interestOutstandingAmount" ->
             model.interestOutstandingAmount,
           "amountCodedOut" -> model.amountCodedOut,
+          "chargeClassification" -> model.chargeClassification,
           "documentNumberReducedCharge" ->
             model.documentNumberReducedCharge,
           "chargeTypeReducedCharge" ->
@@ -326,6 +328,9 @@ object DocumentDetail {
         amountCodedOut <-
           (json \ "amountCodedOut").validateOpt[BigDecimal]
 
+        chargeClassification <-
+          (json \ "chargeClassification").validateOpt[String]
+
         documentNumberReducedCharge <-
           (json \ "documentNumberReducedCharge")
             .validateOpt[String]
@@ -364,6 +369,7 @@ object DocumentDetail {
         paymentLot = paymentLot,
         effectiveDateOfPayment = effectiveDateOfPayment,
         amountCodedOut = amountCodedOut,
+        chargeClassification = chargeClassification,
         documentDueDate = documentDueDate,
         poaRelevantAmount = poaRelevantAmount,
         formBundleNumber = formBundleNumber,

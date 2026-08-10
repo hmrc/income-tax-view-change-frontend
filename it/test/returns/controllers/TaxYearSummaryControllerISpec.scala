@@ -298,6 +298,64 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
               }
 
+              "has payments with enquiry amendment RA in the payments tab" in {
+                stubAuthorised(mtdUserRole, List(FinancialsFrontend))
+                GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, singleBusinessResponseWoMigration)
+                IncomeTaxCalculationStub.stubGetCalculationResponseWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")(
+                  status = OK,
+                  body = liabilityCalculationModelSuccessful
+                )
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(financialDetailsSuccessWithEnquiryAmendment)
+                )
+                ObligationsStub.stubGetAllObligations(
+                  nino = testNino,
+                  fromDate = getCurrentTaxYearEnd.minusYears(1).plusDays(1),
+                  toDate = getCurrentTaxYearEnd,
+                  deadlines = allObligations
+                )
+                FinancialDetailsStub.stubGetFinancialDetailsByDateRange(
+                  nino = testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString
+                )(
+                  status = OK,
+                  response = Json.toJson(financialDetailsSuccessWithEnquiryAmendment)
+                )
+
+                val res = buildGETMTDClient(path, additionalCookies).futureValue
+
+                GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
+                IncomeTaxCalculationStub.verifyGetCalculationWithFlagResponse(testNino, getCurrentTaxYearEnd.getYear.toString, "LATEST")
+                FinancialDetailsStub.verifyGetFinancialDetailsByDateRange(testNino,
+                  from = getCurrentTaxYearEnd.minusYears(1).plusDays(1).toString,
+                  to = getCurrentTaxYearEnd.toString,
+                  noOffcalls = 2
+                )
+
+                allObligations.obligations.foreach {
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                }
+
+                res should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "tax-year-summary.heading"),
+                  elementTextBySelectorList("#payments", "tbody", "tr:nth-of-type(1)", "a")(enquiryAmendment),
+                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)")("23 Apr 2021"),
+                  elementTextBySelectorList("#payments-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(3)")("£1,000.00"),
+                )
+
+                AuditStub.verifyAuditEvent(TaxYearSummaryResponseAuditModel(testUser(mtdUserRole, singleBusinessResponse),
+                  messagesAPI, TaxYearSummaryViewModel(Some(CalculationSummary(liabilityCalculationModelSuccessfulExpected)),
+                    None, financialDetailsSuccessWithEnquiryAmendment.toChargeItem.map(TaxYearSummaryChargeItem.fromChargeItem),
+                    allObligations, showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
+              }
+
 
               "has Coding out that is requested and immediately rejected by NPS" in {
                 stubAuthorised(mtdUserRole, List(FinancialsFrontend))
@@ -347,6 +405,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
 
                 )
               }
+//              TODO add tests here
 
               "has Coding out that has been accepted and rejected by NPS part way through the year" in {
                 stubAuthorised(mtdUserRole, List(FinancialsFrontend))

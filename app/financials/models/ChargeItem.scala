@@ -19,6 +19,7 @@ package financials.models
 import common.exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
+import financials.enums.ChargeClassificationType.isRevenueAmendment
 import financials.models.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
 import play.api.libs.json.{Format, Json}
 
@@ -48,6 +49,7 @@ case class ChargeItem(
                        paymentLot: Option[String] = None,
                        creationDate: Option[LocalDate] = None,
                        chargeReference: Option[String],
+                       chargeClassification: Option[String] = None,
                        isRevenueAmendment: Boolean = false
                      ) extends TransactionItem {
 
@@ -305,7 +307,8 @@ object ChargeItem {
       paymentLotItem = documentDetail.paymentLotItem,
       paymentLot = documentDetail.paymentLot,
       chargeReference = financialDetail.chargeReference,
-      isRevenueAmendment = documentDetail.isRevenueAmendment
+      chargeClassification = documentDetail.chargeClassification,
+      isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification)
     )
   }
 
