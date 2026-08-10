@@ -48,7 +48,8 @@ case class ChargeSummaryViewModel(
                                    poaOneChargeUrl: String,
                                    poaTwoChargeUrl: String,
                                    LSPUrl: String,
-                                   LPPUrl: String
+                                   LPPUrl: String,
+                                   taxYearSummaryUrl: Int => String
                                  )(implicit messages: Messages) {
 
   val dueDate = chargeItem.dueDate

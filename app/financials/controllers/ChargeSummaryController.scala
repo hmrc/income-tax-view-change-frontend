@@ -245,7 +245,7 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                   val LSPUrl = appConfig.incomeTaxPenaltiesFrontend
                   val LPPUrl = if (isAgent) appConfig.incomeTaxPenaltiesFrontendLPP1CalculationAgent(chargeRef) else appConfig.incomeTaxPenaltiesFrontendLPP1Calculation(chargeRef)
 
-                  val viewModel: ChargeSummaryViewModel =
+                  val viewModel: ChargeSummaryViewModel = {
                     ChargeSummaryViewModel(
                       currentDate = dateService.getCurrentDate,
                       chargeItem = chargeItem,
@@ -266,8 +266,10 @@ class ChargeSummaryController @Inject()(val authActions: AuthActions,
                       poaOneChargeUrl = poaOneChargeUrl,
                       poaTwoChargeUrl = poaTwoChargeUrl,
                       LSPUrl = LSPUrl,
-                      LPPUrl = LPPUrl
+                      LPPUrl = LPPUrl,
+                      taxYearSummaryUrl = appConfig.taxYearSummaryUrl(isAgent, _, origin = origin, returnsEnabled = isEnabled(ReturnsFrontend))
                     )
+                  }
 
                   getPaymentAllocation(chargeItem).map { allocationData =>
 

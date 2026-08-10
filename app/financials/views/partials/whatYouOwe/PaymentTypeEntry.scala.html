@@ -43,7 +43,7 @@
 
 @paymentTypeEntry(chargeItem: ChargeItem, rowId: String, isInterest: Boolean, linkSuffix: String, isMFADebit: Boolean, index: Int) = @{
 
-    val chargeTypeKey = chargeItem.getMessageKey()
+    val chargeTypeKey = chargeItem.getMessageKey
     val lpi = if(isInterest) "lpi." else ""
     val linkText = getMessage(s"${lpi}${chargeTypeKey}")
     val taxYear = chargeItem.taxYear

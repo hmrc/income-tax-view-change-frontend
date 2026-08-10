@@ -2264,6 +2264,7 @@ chargeSummary.chargeHistory.created.reviewAndReconcilePoa1.text         = HMRC c
 chargeSummary.chargeHistory.created.reviewAndReconcilePoa2.text         = HMRC created this extra amount for your second payment on account based on your tax return
 chargeSummary.chargeHistory.created.lateSubmissionPenalty.text          = HMRC created your late submission penalty
 chargeSummary.chargeHistory.created.firstLatePaymentPenalty.text        = HMRC created your late payment penalty
+chargeSummary.chargeHistory.created.enquiryAmendment.text               = Extra amount created when HMRC amended your tax return
 chargeSummary.chargeHistory.created.itsaReturnAmendment.text            = HMRC created your balancing payment extra amount due to amended return
 chargeSummary.chargeHistory.created.hmrcAdjustment.text                 = HMRC adjustment created
 chargeSummary.chargeHistory.request.paymentOnAccount1.text	   	        = First payment on account reduced by taxpayer request
@@ -2552,6 +2553,7 @@ yourSelfAssessmentChargeSummary.definition.hmrcadjustment               = HMRC h
 
 yourSelfAssessmentChargeSummary.chargeHistory.caption.generic.text.heading              = This charge goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.returnAmendment.caption.text              = This balancing payment extra amount goes towards your {0} to {1} tax bill.
+yourSelfAssessmentChargeSummary.chargeHistory.enquiryAmendment.caption.text             = This extra amount goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.poaOneReconciliation.caption.text         = This first payment on account extra amount goes towards your {0} to {1} tax bill.
 yourSelfAssessmentChargeSummary.chargeHistory.poaTwoReconciliation.caption.text         = This second payment on account extra amount goes towards your {0} to {1} tax bill.
 
@@ -2623,6 +2625,8 @@ yourSelfAssessmentChargeSummary.codingOutBCDMessageFullyCollected       = This w
 yourSelfAssessmentChargeSummary.codingOutPOAMessageFullyCollected       = This was the tax you owed for the {0} to {1} tax year. It was collected in the {2} to {3} tax year through your PAYE tax code.
 
 yourSelfAssessmentChargeSummary.classTwoNICSContent.p1                              = This is the Class 2 National Insurance payment for the {0} to {1} tax year.
+
+yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Extra amount to pay due to HMRC enquiry amendment
 
 yourSelfAssessmentChargeSummary.balancingCharge.text.heading                        = Balancing payment
 yourSelfAssessmentChargeSummary.paymentOnAccount1.text.heading                      = First payment on account
@@ -2696,10 +2700,14 @@ yourSelfAssessmentChargeSummary.firstLatePaymentPenalty.link                    
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.p                               = This balancing payment extra amount was created because of a change you made to your return.
 yourSelfAssessmentChargeSummary.itsaReturnAmendment.warning                         = Pay this charge to stop this interest from increasing daily.
 
+yourSelfAssessmentChargeSummary.enquiryAmendment.p1                                 = Following a compliance check, HMRC made a change to your tax return known as an ‘enquiry amendment’. This changed your
+yourSelfAssessmentChargeSummary.enquiryAmendment.link                               = tax calculation for {0} to {1}
+yourSelfAssessmentChargeSummary.enquiryAmendment.p2                                 = , resulting in an extra amount to pay towards your tax bill.
+
+
 
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p1                        = HMRC has added a credit to your account because your amended tax return shows that your {0} to {1} tax bill was too high.
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.p2                        = This credit may be used automatically by HMRC to cover your future tax bills when they become due.
-
 #######################################################################################################################
 ## Business Details
 #######################################################################################################################

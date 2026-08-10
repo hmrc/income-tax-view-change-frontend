@@ -48,7 +48,7 @@ trait TransactionItem extends Logging {
       case _ => true
     }
   }
-  
+
   def getChargeTypeKey: String =
     (transactionType, codedOutStatus) match {
       case (PoaOneDebit, Some(Accepted))        => "poa1CodedOut.text"
