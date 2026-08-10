@@ -117,6 +117,33 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
                 verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), lpiPaymentAllocationViewModel).detail)
               }
             }
+
+
+
+            s"has an LPI and Payment" in {
+              stubAuthorised(mtdUserRole)
+              GetInsourceDetailsStub.stubGetIncomeSourceDetailsResponse(testMtditid)(OK, paymentHistoryBusinessAndPropertyResponse)
+
+              FinancialDetailsStub.stubGetFinancialDetailsByDateRange(nino = testNino, from = s"${getCurrentTaxYearEnd.getYear - 1}-04-06",
+                to = s"${getCurrentTaxYearEnd.getYear}-04-05")(OK, testValidFinancialDetailsModelJson(10.34, 1.2))
+
+              FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, docNumber)(OK, validPaymentAllocationChargesJson)
+              FinancialDetailsStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAndLpiPaymentAllocationsModel))
+              FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
+              FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
+
+              whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
+                result should have(
+                  httpStatus(OK),
+                  pageTitle(mtdUserRole, "paymentAllocation.heading"),
+                  elementAttributeBySelector("#payment-allocation-0 a", "href")(
+                    s"$basePath" + {if(mtdUserRole != MTDIndividual) "/agents" else ""} +"/tax-years/9999/charge?id=PAYID01&isInterestCharge=true"),
+                  elementTextBySelector("#payment-allocation-0 a")(s"${messagesAPI("paymentAllocation.paymentAllocations.balancingCharge.text")}")
+                )
+
+                verifyAuditContainsDetail(PaymentAllocationsResponseAuditModel(testUser(mtdUserRole), lpiPaymentAllocationViewModel).detail)
+              }
+            }
           }
         }
         testAuthFailures(path, mtdUserRole)

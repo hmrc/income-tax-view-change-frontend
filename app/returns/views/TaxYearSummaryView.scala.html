@@ -107,8 +107,7 @@
 }
 
 @previousCalculationContent = @{
-    val isAmended =
-        viewModel.calculationSummary.exists(_.isAmended)
+    val calculationRevisionType = viewModel.calculationSummary.flatMap(_.calculationRevisionType)
 
     val result =
         if (viewModel.pfaEnabled) {
@@ -121,8 +120,7 @@
                         calcSummary = viewModel.previousCalculationSummary,
                         isAgent = isAgent,
                         pfaEnabled = viewModel.pfaEnabled,
-                        isAmended = isAmended,
-                        isLatest = false,
+                        calculationRevisionType = calculationRevisionType,
                         isPrevious = true,
                         taxYearViewScenarios = taxYearViewScenarios,
                         showNoTaxCalc = showNoTaxCalc,
@@ -141,15 +139,15 @@
 
 @calculationContent = @{
 
-    val isAmended = viewModel.calculationSummary.exists(_.isAmended)
+    val calculationRevisionType = viewModel.calculationSummary.flatMap(_.calculationRevisionType)
 
-    if(viewModel.pfaEnabled && isAmended) {
+    if(viewModel.pfaEnabled && calculationRevisionType.isDefined) {
         Some(taxCalculationContent(
             taxYear,
             viewModel.calculationSummary,
             isAgent,
             viewModel.pfaEnabled,
-            isAmended,
+            calculationRevisionType,
             isLatest = true,
             taxYearViewScenarios = taxYearViewScenarios,
             showNoTaxCalc = showNoTaxCalc,
@@ -163,8 +161,7 @@
             viewModel.calculationSummary,
             isAgent,
             viewModel.pfaEnabled,
-            isAmended,
-            isLatest = false,
+            calculationRevisionType,
             taxYearViewScenarios = taxYearViewScenarios,
             showNoTaxCalc = showNoTaxCalc,
             viewTaxCalcLink = viewTaxCalcLink,
@@ -225,7 +222,7 @@
                 paymentsContent(viewModel, taxYear, isAgent, origin),
                 forecastContent(viewModel, taxYear, isAgent),
                 submissionsContent(viewModel),
-                viewModel.calculationSummary.exists(_.isAmended),
+                viewModel.calculationSummary.flatMap(_.calculationRevisionType).isDefined,
                 viewModel.pfaEnabled
             )
         </div>

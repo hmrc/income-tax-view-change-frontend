@@ -557,6 +557,7 @@ tax-year-summary.payments.amount                                   = Amount
 tax-year-summary.payments.paymentOnAccount1.text                   = First payment on account
 tax-year-summary.payments.paymentOnAccount2.text                   = Second payment on account
 tax-year-summary.payments.balancingCharge.text                     = Balancing payment
+tax-year-summary.payments.enquiryAmendment.text                    = Extra amount to pay due to HMRC enquiry amendment
 tax-year-summary.payments.lpi.paymentOnAccount1.text               = Late payment interest on first payment on account
 tax-year-summary.payments.lpi.paymentOnAccount2.text               = Late payment interest on second payment on account
 tax-year-summary.payments.lpi.balancingCharge.text                 = Late payment interest on balancing payment
@@ -814,6 +815,31 @@ tax-year-summary.calculation-example                               = For example
 tax-year-summary.calculation-contact-hmrc                          = If that date has passed, or you cannot amend your return for another reason,
 tax-year-summary.calculation-contact-hmrc-link                     = you’ll need to contact HMRC
 tax-year-summary.calculation-bill                                  = Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund.
+
+# Tax Year Summary - Errors and Corrections #
+tax-year-summary.latest-calculation.correction-revenueAmendment.desc          = HMRC amended your tax return on {0} and as a result this is your most up-to-date calculation.
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-1       = We’ve updated your tax calculation.
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-2       = The amount of tax you owe may have increased or decreased.
+tax-year-summary-latest-calculation.correction-revenueAmendment.inset-3       = You can check your
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-1  = payments, credits and refunds history
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-inset-4 = or see
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-2  = what you owe and how to make a payment
+
+tax-year-summary.previous-calculation.correction-revenueAmendment.desc            = HMRC amended your tax return on {0}. This changed your tax calculation at that time. This is now a previous calculation. A newer calculation may have been made since.
+tax-year-summary.previous-calculation.correction-revenueAmendment.subheading      = Calculation made on {0}
+tax-year-summary.previous-calculation.correction-revenueAmendment.subheading.desc = This calculation reflects the tax position at that time.
+
+tax-year-summary.latest-calculation.rejection.desc          = On {0} HMRC changed your tax return back to what it was before HMRC amended it. As a result, this is your most up-to-date calculation.
+tax-year-summary.latest-calculation.rejection.inset-1       = We’ve updated your tax calculation.
+tax-year-summary.latest-calculation.rejection.inset-2       = The amount of tax you owe may have increased or decreased.
+tax-year-summary-latest-calculation.rejection.inset-3       = You can check your
+tax-year-summary.latest-calculation.rejection.inset-link-1  = payments, credits and refunds history
+tax-year-summary.latest-calculation.rejection.inset-inset-4 = or see
+tax-year-summary.latest-calculation.rejection.inset-link-2  = what you owe and how to make a payment
+
+tax-year-summary.previous-calculation.rejection.desc            = HMRC amended your tax return on {0}. This changed your tax calculation at that time. This is now a previous calculation. A newer calculation may have been made since.
+tax-year-summary.previous-calculation.rejection.subheading      = Calculation made on {0}
+tax-year-summary.previous-calculation.rejection.subheading.desc = This calculation reflects the tax position at that time.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Income
@@ -1990,6 +2016,7 @@ whatYouOwe.lpi.paymentOnAccount1.text                              = Late paymen
 whatYouOwe.lpi.paymentOnAccount2.text                              = Late payment interest on second payment on account
 whatYouOwe.lpi.balancingCharge.text                                = Late payment interest on balancing payment
 whatYouOwe.balancingCharge.text  							       = Balancing payment
+whatYouOwe.enquiryAmendment.text                                   = Extra amount to pay due to HMRC enquiry amendment
 whatYouOwe.balancingCharge.interest.line1.text                     = Interest on Balancing payment
 whatYouOwe.balancingCharge.interest.line2.text                     = {0} to {1}
 whatYouOwe.lateSubmissionPenalty.text                              = Late submission penalty
@@ -2091,6 +2118,7 @@ chargeSummary.reviewAndReconcilePoa2.text				           = Second payment on acco
 chargeSummary.reviewAndReconcilePoa1Credit.text				       = First payment on account: credit from your tax return
 chargeSummary.reviewAndReconcilePoa2Credit.text				       = Second payment on account: credit from your tax return
 chargeSummary.balancingCharge.text  							   = Balancing payment
+chargeSummary.enquiryAmendment.text                                = Extra amount to pay due to HMRC enquiry amendment
 chargeSummary.class2Nic.text                                       = Class 2 National Insurance
 chargeSummary.codingOut.text                                       = Balancing payment collected through PAYE tax code
 chargeSummary.poa1CodedOut.text                                    = First payment on account collected through PAYE tax code
@@ -2609,6 +2637,7 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Balancing payment collected through PAYE tax code
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credit from your amended tax return
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Unknown
+yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Extra amount to pay due to HMRC enquiry amendment
 
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount1.text.heading					= Late payment interest on first payment on account
 yourSelfAssessmentChargeSummary.lpi.paymentOnAccount2.text.heading					= Late payment interest on second payment on account

@@ -19,7 +19,7 @@ package financials.models
 import common.exceptions.{CouldNotCreateChargeItemException, MissingFieldException}
 import common.models.incomeSourceDetails.TaxYear
 import common.services.DateServiceInterface
-import financials.enums.ChargeClassificationType
+import financials.enums.ChargeClassificationType.isRevenueAmendment
 import financials.models.ChargeType.{poaOneReconciliationDebit, poaTwoReconciliationDebit}
 import play.api.libs.json.{Format, Json}
 
@@ -49,14 +49,15 @@ case class ChargeItem(
                        paymentLot: Option[String] = None,
                        creationDate: Option[LocalDate] = None,
                        chargeReference: Option[String],
-                       chargeClassification: Option[String],
+                       chargeClassification: Option[String] = None,
+                       isRevenueAmendment: Boolean = false
                      ) extends TransactionItem {
 
   def isOverdue()(implicit dateService: DateServiceInterface): Boolean =
     dueDate.exists(_.isBefore(dateService.getCurrentDate))
 
-  def getMessageKey: String = {
-    if (ChargeClassificationType.isRevenueAmendment(chargeClassification)) {
+  def getMessageKey(): String = {
+    if (isRevenueAmendment) {
       "revenueAmendment.label"
     } else {
       getChargeTypeKey
@@ -306,7 +307,8 @@ object ChargeItem {
       paymentLotItem = documentDetail.paymentLotItem,
       paymentLot = documentDetail.paymentLot,
       chargeReference = financialDetail.chargeReference,
-      chargeClassification = documentDetail.chargeClassification
+      chargeClassification = documentDetail.chargeClassification,
+      isRevenueAmendment = isRevenueAmendment(documentDetail.chargeClassification)
     )
   }
 

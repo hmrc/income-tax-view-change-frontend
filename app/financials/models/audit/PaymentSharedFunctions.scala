@@ -16,28 +16,31 @@
 
 package financials.models.audit
 
+import financials.enums.ChargeClassificationType
 import financials.models.*
 
 trait PaymentSharedFunctions {
 
   def getChargeType(docDetail: TransactionItem, latePaymentCharge: Boolean): Option[String] =
-    (docDetail.transactionType, docDetail.codedOutStatus) match {
-      case (MfaDebitCharge, _)        => Some("MFADebit")
-      case (_, Some(Nics2))           => Some("Class 2 National Insurance")
-      case (_, Some(Cancelled))       => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
-      case (BalancingCharge, Some(Accepted))        => Some("Balancing payment collected through PAYE tax code")
-      case (PoaOneDebit, Some(Accepted))            => Some("First payment on account collected through PAYE tax code")
-      case (PoaTwoDebit, Some(Accepted))            => Some("Second payment on account collected through PAYE tax code")
-      case (PoaOneDebit,  _)  => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
-      case (PoaTwoDebit,  _)  => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
-      case (BalancingCharge, None )   => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
-      case (FirstLatePaymentPenalty, _) => if (latePaymentCharge) Some("Late payment interest on first late payment penalty") else Some("First late payment penalty")
-      case (SecondLatePaymentPenalty, _) => if (latePaymentCharge) Some("Late payment interest on second late payment penalty") else Some("Second late payment penalty")
-      case (LateSubmissionPenalty, _) => if (latePaymentCharge) Some("Late payment interest on late submission penalty") else Some("Late submission penalty")
-      case (ITSAReturnAmendment, _) => if (latePaymentCharge) Some("Late payment interest on balancing payment: extra amount due to amended return") else Some("Balancing payment: extra amount due to amended return")
-      case (PoaOneReconciliationDebit, _) => if (latePaymentCharge) Some("Interest for first payment on account: extra amount") else Some("First payment on account: extra amount from your tax return")
-      case (PoaTwoReconciliationDebit, _) => if (latePaymentCharge) Some("Interest for second payment on account: extra amount") else Some("Second payment on account: extra amount from your tax return")
-      case (_, _)                     => Some(docDetail.transactionType.key)
+    (docDetail.transactionType, docDetail.codedOutStatus, docDetail.chargeClassification) match {
+      case (MfaDebitCharge, _, _)        => Some("MFADebit")
+      case (_, Some(Nics2), _)           => Some("Class 2 National Insurance")
+      case (_, Some(Cancelled), _)       => Some("Cancelled PAYE Self Assessment (through your PAYE tax code)")
+      case (BalancingCharge, Some(Accepted), _)        => Some("Balancing payment collected through PAYE tax code")
+      case (PoaOneDebit, Some(Accepted), _)            => Some("First payment on account collected through PAYE tax code")
+      case (PoaTwoDebit, Some(Accepted), _)            => Some("Second payment on account collected through PAYE tax code")
+      case (PoaOneDebit,  _, _)  => if (latePaymentCharge) Some("Late payment interest on first payment on account") else Some("First payment on account")
+      case (PoaTwoDebit,  _, _)  => if (latePaymentCharge) Some("Late payment interest on second payment on account") else Some("Second payment on account")
+      case (BalancingCharge, None, _)   => if (latePaymentCharge) Some("Late payment interest for remaining balance") else Some("Remaining balance")
+      case (FirstLatePaymentPenalty, _, _) => if (latePaymentCharge) Some("Late payment interest on first late payment penalty") else Some("First late payment penalty")
+      case (SecondLatePaymentPenalty, _, _) => if (latePaymentCharge) Some("Late payment interest on second late payment penalty") else Some("Second late payment penalty")
+      case (LateSubmissionPenalty, _, _) => if (latePaymentCharge) Some("Late payment interest on late submission penalty") else Some("Late submission penalty")
+      case (ITSAReturnAmendment, _, chargeClassification) => if ChargeClassificationType.isRevenueAmendment(chargeClassification) then Some("Extra amount to pay due to HMRC enquiry amendment") 
+                                                             else if (latePaymentCharge) Some("Late payment interest on balancing payment: extra amount due to amended return") 
+                                                             else Some("Balancing payment: extra amount due to amended return")
+      case (PoaOneReconciliationDebit, _, _) => if (latePaymentCharge) Some("Interest for first payment on account: extra amount") else Some("First payment on account: extra amount from your tax return")
+      case (PoaTwoReconciliationDebit, _, _) => if (latePaymentCharge) Some("Interest for second payment on account: extra amount") else Some("Second payment on account: extra amount from your tax return")
+      case (_, _, _)                     => Some(docDetail.transactionType.key)
     }
 
 }

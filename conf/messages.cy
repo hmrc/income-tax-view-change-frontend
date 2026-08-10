@@ -553,6 +553,7 @@ tax-year-summary.payments.amount                               = Swm
 tax-year-summary.payments.paymentOnAccount1.text               = Taliad cyntaf ar gyfrif
 tax-year-summary.payments.paymentOnAccount2.text               = Ail daliad ar gyfrif
 tax-year-summary.payments.balancingCharge.text                 = Taliad mantoli
+tax-year-summary.payments.enquiryAmendment.text                = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 tax-year-summary.payments.lpi.paymentOnAccount1.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 1 o 2
 tax-year-summary.payments.lpi.paymentOnAccount2.text           = Llog am dalu’n hwyr ar gyfer taliad ar gyfrif 2 o 2
 tax-year-summary.payments.lpi.balancingCharge.text             = Llog am dalu’n hwyr ar gyfer y Taliad Mantoli
@@ -809,6 +810,31 @@ tax-year-summary.calculation-example                               = Er enghraif
 tax-year-summary.calculation-contact-hmrc                          = Os yw’r dyddiad hwnnw wedi mynd heibio neu os na allwch ddiwygio’ch Ffurflen Dreth am reswm arall,
 tax-year-summary.calculation-contact-hmrc-link                     = bydd angen i chi gysylltu â CThEF
 tax-year-summary.calculation-bill                                  = Caiff eich cyfrifiad yn ogystal â’ch bil ei ddiweddaru yn seiliedig ar yr hyn yr ydych yn rhoi gwybod amdano. Gallai hyn olygu y bydd yn rhaid i chi dalu mwy o dreth, neu gallwch hawlio ad-daliad.
+
+# Tax Year Summary - Errors and Corrections #
+tax-year-summary.latest-calculation.correction-revenueAmendment.desc          = Mae CThEF wedi diwygio’ch Ffurflen Dreth ar {0} ac, o ganlyniad, dyma’ch cyfrifiad mwyaf diweddar.
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-1       = Rydym wedi diweddaru’ch cyfrifiad treth.
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-2       = Mae’n bosibl bod faint o dreth sydd arnoch wedi cynyddu neu ostwng.
+tax-year-summary-latest-calculation.correction-revenueAmendment.inset-3       = Gallwch wirio
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-1  = hanes eich taliadau, credydau ac ad-daliadau
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-inset-4 = neu weld
+tax-year-summary.latest-calculation.correction-revenueAmendment.inset-link-2  = faint sydd arnoch a sut i wneud taliad
+
+tax-year-summary.previous-calculation.correction-revenueAmendment.desc            = Diwygiodd CThEF eich Ffurflen Dreth ar {0}. Newidiodd hyn eich cyfrifiad treth ar yr adeg honno. Mae hwn bellach yn gyfrifiad blaenorol. Efallai bod cyfrifiad mwy diweddar wedi’i wneud ers hynny.
+tax-year-summary.previous-calculation.correction-revenueAmendment.subheading      = Y cyfrifiad a wnaed ar {0}
+tax-year-summary.previous-calculation.correction-revenueAmendment.subheading.desc = Mae’r cyfrifiad hwn yn adlewyrchu’r sefyllfa dreth ar yr adeg honno.
+
+tax-year-summary.latest-calculation.rejection.desc          = Ar {0} gwnaeth CThEF newid eich Ffurflen Dreth yn ôl i’r hyn yr oedd hi yn wreiddiol cyn i CThEF ei diwygio. O ganlyniad i hyn, dyma eich cyfrifiad mwyaf diweddarBottom of Form
+tax-year-summary.latest-calculation.rejection.inset-1       = Rydym wedi diweddaru’ch cyfrifiad treth.
+tax-year-summary.latest-calculation.rejection.inset-2       = Mae’n bosibl bod faint o dreth sydd arnoch wedi cynyddu neu ostwng.
+tax-year-summary-latest-calculation.rejection.inset-3       = Gallwch wirio
+tax-year-summary.latest-calculation.rejection.inset-link-1  = hanes eich taliadau, credydau ac ad-daliadau
+tax-year-summary.latest-calculation.rejection.inset-inset-4 = neu weld
+tax-year-summary.latest-calculation.rejection.inset-link-2  = faint sydd arnoch a sut i wneud taliad
+
+tax-year-summary.previous-calculation.rejection.desc            = Diwygiodd CThEF eich Ffurflen Dreth ar {0}. Newidiodd hyn eich cyfrifiad treth ar yr adeg honno. Mae hwn bellach yn gyfrifiad blaenorol. Efallai bod cyfrifiad mwy diweddar wedi’i wneud ers hynny.
+tax-year-summary.previous-calculation.rejection.subheading      = Y cyfrifiad a wnaed ar {0}
+tax-year-summary.previous-calculation.rejection.subheading.desc = Mae’r cyfrifiad hwn yn adlewyrchu’r sefyllfa dreth ar yr adeg honno.
 
 ## Income Breakdown Page ##
 income_breakdown.heading                                        = Incwm
@@ -1974,6 +2000,7 @@ whatYouOwe.lpi.reviewAndReconcilePoa1.text                      = Llog ar y tali
 whatYouOwe.lpi.reviewAndReconcilePoa2.text                      = Llog ar yr ail daliad ar gyfrif: swm ychwanegol
 whatYouOwe.hmrcAdjustment.text                                  = Addasiad CThEF
 whatYouOwe.balancingCharge.text  							    = Taliad mantoli
+whatYouOwe.enquiryAmendment.text                                = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 whatYouOwe.lateSubmissionPenalty.text                              = Cosb am gyflwyno’n hwyr
 whatYouOwe.firstLatePaymentPenalty.text                            = Cosb gyntaf am dalu’n hwyr
 whatYouOwe.secondLatePaymentPenalty.text                           = Ail gosb am dalu’n hwyr
@@ -2075,6 +2102,7 @@ chargeSummary.reviewAndReconcilePoa2.text				        = Ail daliad ar gyfrif: swm
 chargeSummary.reviewAndReconcilePoa1Credit.text				    = Taliad cyntaf ar gyfrif: credyd o’ch Ffurflen Dreth
 chargeSummary.reviewAndReconcilePoa2Credit.text				    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
 chargeSummary.balancingCharge.text                              = Taliad mantoli
+chargeSummary.enquiryAmendment.text                             = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 chargeSummary.class2Nic.text                                    = Yswiriant Gwladol Dosbarth 2
 chargeSummary.codingOut.text                                    = Taliad mantoli a gesglir drwy’r cod treth TWE
 chargeSummary.poa1CodedOut.text                                 = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy god treth TWE
@@ -2630,6 +2658,7 @@ yourSelfAssessmentChargeSummary.class2Nic.text.heading                          
 yourSelfAssessmentChargeSummary.codingOut.text.heading                              = Taliad mantoli a gesglir drwy’r cod treth TWE
 yourSelfAssessmentChargeSummary.itsaReturnAmendmentCredit.text.heading              = Credyd o’ch Ffurfln Dreth ddiwygiedig
 yourSelfAssessmentChargeSummary.unknown.heading                                     = Anhysbys
+yourSelfAssessmentChargeSummary.enquiryAmendment.text.heading                       = Swm ychwanegol i’w dalu oherwydd diwygiad yn sgil ymholiad gan CThEF
 
 yourSelfAssessmentChargeSummary.poa1CodedOut.text.heading                           = Taliad cyntaf ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE
 yourSelfAssessmentChargeSummary.poa2CodedOut.text.heading                           = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE

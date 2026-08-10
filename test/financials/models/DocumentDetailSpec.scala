@@ -17,11 +17,9 @@
 package financials.models
 
 import common.testUtils.UnitSpec
-import financials.enums.ChargeClassificationType
 import shared.enums.CodingOutType.*
 import shared.enums.DocumentType.{BalancingCharge, Poa1ReconciliationDebit, Poa2ReconciliationDebit}
-import financials.testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailModel, documentDetailModelWithRevenueAmendment, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
-import org.scalatest.prop.TableDrivenPropertyChecks.*
+import financials.testConstants.FinancialDetailsTestConstants.{documentDetailBalancingCharge, documentDetailClass2Nic, documentDetailPOA2, documentDetailPaye, fullDocumentDetailModel, fullDocumentDetailWithDueDateModel}
 
 import java.time.LocalDate
 
@@ -344,34 +342,4 @@ class DocumentDetailSpec extends UnitSpec {
       fullDocumentDetailWithDueDateModel.isAccruingInterest shouldBe false
     }
   }
-
-  "isRevenueAmendment" should {
-    "return true" when {
-      "the chargeClassification is RA" in {
-        documentDetailModelWithRevenueAmendment.isRevenueAmendment shouldBe true
-      }
-    }
-
-    "return false" when {
-      "the chargeClassification is not RevenueAmendments type" in {
-        val notRevenueAmendmentsTypesTable = Table(
-          "String Value",
-          ChargeClassificationType.values.collect { 
-              case v if v != ChargeClassificationType.RevenueAmendments => v.value
-            }.mkString(",")
-        )
-
-        forAll(notRevenueAmendmentsTypesTable) { value =>
-          documentDetailModel(chargeClassification = Some(value)).isRevenueAmendment shouldBe false
-        }
-      }
-    }
-
-    "return false" when {
-      "the chargeClassification is not present" in {
-        fullDocumentDetailModel.isRevenueAmendment shouldBe false
-      }
-    }
-  }
-
 }

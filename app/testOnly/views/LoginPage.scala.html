@@ -30,7 +30,7 @@
     form: FormWithCSRF
 )
 
-@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], incomeSourcesUsers: Seq[String], latentBusinessUser: String)(implicit request: Request[_], messages: Messages)
+@(postAction: Call, users: Seq[UserRecord], optOutCustomDataUserPrefixes: Seq[String], incomeSourcesUsers: Seq[String], latentBusinessUser: String, customTaxCalculationUser: String)(implicit request: Request[_], messages: Messages)
 
 @ITSAOptions = @{
     ITSAStatus.values.unsorted.map { status =>
@@ -93,6 +93,16 @@
             }
         }
 
+        function calculationReasonCustomData(answer, customNino) {
+            const ninoValue = answer.value;
+
+            if (customNino.includes(ninoValue)) {
+                document.getElementById("TaxCalculationDropdowns").classList.remove("display-none");
+            } else {
+                document.getElementById("TaxCalculationDropdowns").classList.add("display-none");
+            }
+        }
+
         document.addEventListener("DOMContentLoaded", function () {
             const ninoSelect = document.getElementById("nino");
 
@@ -100,16 +110,19 @@
                 const reportingObligationsUsers = JSON.parse(ninoSelect.getAttribute("data-reporting-obligations-users") || "[]");
                 const incomeSourcesUsers = JSON.parse(ninoSelect.getAttribute("data-income-sources-users") || "[]");
                 const latentBusinessUsers = JSON.parse(ninoSelect.getAttribute("data-latent-business-users") || "[]");
+                const customTaxCalculationUsers = JSON.parse(ninoSelect.getAttribute("data-custom-tax-calculation-user") || "[]");
 
                 ninoSelect.addEventListener("change", function () {
                     optOutCustomData(this, reportingObligationsUsers);
                     IncomeSourcesCustomData(this, incomeSourcesUsers);
                     latentBusinessCustomData(this, latentBusinessUsers);
+                    calculationReasonCustomData(this, customTaxCalculationUsers);
                 });
 
                 optOutCustomData(ninoSelect, reportingObligationsUsers);
                 IncomeSourcesCustomData(ninoSelect, incomeSourcesUsers);
                 latentBusinessCustomData(ninoSelect, latentBusinessUsers);
+                calculationReasonCustomData(ninoSelect, customTaxCalculationUsers);
             }
         });
     </script>
@@ -124,7 +137,8 @@
             <select class="govuk-select" id="nino" name="nino"
                     data-reporting-obligations-users='@Html(Json.toJson(optOutCustomDataUserPrefixes).toString)'
                     data-income-sources-users='@Html(Json.toJson(incomeSourcesUsers).toString)'
-                    data-latent-business-users='@Html(Json.toJson(Seq(latentBusinessUser)).toString)'>
+                    data-latent-business-users='@Html(Json.toJson(Seq(latentBusinessUser)).toString)'
+                    data-custom-tax-calculation-user='@Html(Json.toJson(Seq(customTaxCalculationUser)).toString)'>
 
             @for((category, groupedUsers) <- users
             .groupBy(_.category)
@@ -316,6 +330,70 @@
                 ),
                 label = Label(content = Text("Latency Indicator CY+1"))
             ))
+        </div>
+
+        <div class="display-none" id="TaxCalculationDropdowns">
+
+            @govukSelect(Select(
+                id = "latestCalculationReason",
+                name = "latestCalculationReason",
+                items =
+                    Seq(
+                        SelectItem(
+                            value = Some("customerRequest"),
+                            text = "Amendment"
+                        ),
+                        SelectItem(
+                            value = Some("HMRCAutoCorrection"),
+                            text = "Auto Correction"
+                        ),
+                        SelectItem(
+                            value = Some("HMRCmanualCorrection"),
+                            text = "Manual Correction"
+                        ),
+                        SelectItem(
+                            value = Some("customerRejectionOfaCorrection"),
+                            text = "Customer Rejection"
+                        ),
+                        SelectItem(
+                            value = Some("HMRCrevenueamendment"),
+                            text = "Revenue Amendment"
+                        )
+                    ),
+                label = Label(
+                    content = Text("Latest Calculation Reason"))
+            ))
+
+            @govukSelect(Select(
+                id = "previousCalculationReason",
+                name = "previousCalculationReason",
+                items =
+                    Seq(
+                        SelectItem(
+                            value = Some("customerRequest"),
+                            text = "Amendment"
+                        ),
+                        SelectItem(
+                            value = Some("HMRCAutoCorrection"),
+                            text = "Auto Correction"
+                        ),
+                        SelectItem(
+                            value = Some("HMRCmanualCorrection"),
+                            text = "Manual Correction"
+                        ),
+                        SelectItem(
+                            value = Some("customerRejectionOfaCorrection"),
+                            text = "Customer Rejection"
+                        ),
+                        SelectItem(
+                            value = Some("HMRCrevenueamendment"),
+                            text = "Revenue Amendment"
+                        )
+                    ),
+                label = Label(
+                    content = Text("Previous Calculation Reason"))
+            ))
+
         </div>
 
         @govukButton(Button(content = Text("Login")))

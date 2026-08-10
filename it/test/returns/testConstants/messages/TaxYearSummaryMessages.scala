@@ -38,6 +38,5 @@ object TaxYearSummaryMessages extends ComponentSpecBase {
   val quarterlyUpdate: String = messagesAPI("submissionsTab.submission.quarterly")
   val propertyIncome: String = messagesAPI("submissionsTab.obligationType.property")
   val paymentHistoryHeading: String = messagesAPI("Payment refund and history")
-
-
+  val enquiryAmendment: String = messagesAPI("tax-year-summary.payments.enquiryAmendment.text")
 }

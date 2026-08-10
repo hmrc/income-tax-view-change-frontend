@@ -19,7 +19,8 @@ package returns.views
 import common.config.featureswitch.FeatureSwitching
 import common.implicits.ImplicitDateFormatterImpl
 import common.models.incomeSourceDetails.TaxYear
-import common.models.liabilitycalculation.{Message, Messages}
+import common.models.liabilitycalculation.CalculationRevisionType.{Amendment, CustomerRejection, HmrcAutoCorrection}
+import common.models.liabilitycalculation.{CalculationRevisionType, Message, Messages}
 import common.models.obligations.{ObligationWithIncomeType, ObligationsModel}
 import common.testUtils.ViewSpec
 import common.viewUtils.ExternalUrlHelper
@@ -49,7 +50,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   import TaxYearSummaryMessages.*
   import implicitDateFormatter.*
 
-  def modelComplete(crystallised: Boolean, unattendedCalc: Boolean = false, isAmended: Boolean = false, testPeriod: Int = testYear): CalculationSummary =
+  def modelComplete(crystallised: Boolean, unattendedCalc: Boolean = false, calculationRevisionType: Option[CalculationRevisionType] = None, testPeriod: Int = testYear): CalculationSummary =
     CalculationSummary(
       timestamp = Some("2020-01-01T00:35:34.185Z".toZonedDateTime.toLocalDate),
       income = 1,
@@ -64,7 +65,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
       forecastTotalTaxableIncome = Some(8300),
       periodFrom = Some(LocalDate.of(testPeriod - 1, 1, 1)),
       periodTo = Some(LocalDate.of(testPeriod, 1, 1)),
-      isAmended = isAmended
+      calculationRevisionType = calculationRevisionType
     )
 
   val date: String = dateService.getCurrentDate.toLongDate
@@ -178,6 +179,10 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   val payeChargeList: List[TaxYearSummaryChargeItem] = List(
     chargeItemModel(transactionType = BalancingCharge, dueDate = Some(LocalDate.of(2021, 7, 30)), codedOutStatus = Some(Accepted), accruingInterestAmount = None)
+  ).map(TaxYearSummaryChargeItem.fromChargeItem)
+
+  val extraAmountToPayDueToHMRCEnquiryAmendmentChargeList: List[TaxYearSummaryChargeItem] = List(
+    chargeItemModel(transactionType = ITSAReturnAmendment, dueDate = None, codedOutStatus = None, accruingInterestAmount = None, chargeClassification = Some("RA"))
   ).map(TaxYearSummaryChargeItem.fromChargeItem)
 
   val testBalancingPaymentChargeWithZeroValue: List[TaxYearSummaryChargeItem] = List(
@@ -618,7 +623,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
 
   def calculationWithLatestAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable = taxYearSummaryView(
     taxYear = testYear,
-    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)), None,
+    viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, calculationRevisionType = Some(CalculationRevisionType.Amendment))), None,
       List.empty, testObligationsModel, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
     backUrl = "testBackURL",
     isAgent = isAgent,
@@ -632,11 +637,11 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
   )
 
 
-  def calculationWithLatestAndPreviousAmendmentsView(isAgent: Boolean): HtmlFormat.Appendable =
+  def calculationWithLatestAndPreviousAmendmentsView(isAgent: Boolean, calculationRevisionType: CalculationRevisionType = Amendment): HtmlFormat.Appendable =
     taxYearSummaryView(
       taxYear = testYear,
-      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, isAmended = true)),
-        Some(modelComplete(crystallised = false, isAmended = true)), List.empty, testObligationsModel,
+      viewModel = TaxYearSummaryViewModel(Some(modelComplete(crystallised = false, calculationRevisionType = Some(calculationRevisionType))),
+        Some(modelComplete(crystallised = false, calculationRevisionType = Some(calculationRevisionType))), List.empty, testObligationsModel,
         ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = true, financialsFrontendEnabled = true),
       backUrl = "testBackURL",
       isAgent = isAgent,
@@ -686,7 +691,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     taxYearSummaryView(
       taxYear = testYear,
       viewModel = TaxYearSummaryViewModel(
-        calculationSummary = Some(modelComplete(crystallised = true, isAmended = false)),
+        calculationSummary = Some(modelComplete(crystallised = true, calculationRevisionType = None)),
         previousCalculationSummary = None,
         charges = List.empty,
         obligations = testObligationsModel,
@@ -793,6 +798,18 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
     val previousCalculationBill: String = "Your calculation as well as your bill will then be updated based on what you report. This may mean you have to pay more tax or that you can claim a refund."
     val quarterlyUpdate: String = "Quarterly update"
     val businessIncome: String = "Business income"
+    val extraAmountToPayDueToHMRCEnquiryAmendment: String = "Extra amount to pay due to HMRC enquiry amendment"
+
+    val latestCalculationCorrectionAndRevenueDesc: String = "HMRC amended your tax return on 1 January 2020 and as a result this is your most up-to-date calculation."
+    val latestCalculationRejectionDesc: String = "On 1 January 2020 HMRC changed your tax return back to what it was before HMRC amended it. As a result, this is your most up-to-date calculation."
+
+    val latestCalculationErrorsAndCorrectionsInset1: String = "We’ve updated your tax calculation."
+    val latestCalculationErrorsAndCorrectionsInset2: String = "The amount of tax you owe may have increased or decreased."
+    val latestCalculationErrorsAndCorrectionsInset3: String = "You can check your payments, credits and refunds history or see what you owe and how to make a payment."
+
+    val previousCalculationErrorsAndCorrectionsDesc: String = "HMRC amended your tax return on 1 January 2020. This changed your tax calculation at that time. This is now a previous calculation. A newer calculation may have been made since."
+    val previousCalculationErrorsAndCorrectionsSubheading: String = "Calculation made on 1 January 2020"
+    val previousCalculationErrorsAndCorrectionsSubheadingDesc: String = "This calculation reflects the tax position at that time."
 
     def updateCaption(from: String, to: String): String = s"$from to $to"
 
@@ -1079,6 +1096,7 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         layoutContent.h2.selectFirst("h2").text().contains(charges)
         layoutContent.selectHead("#payments").doesNotHave("table")
       }
+
       "display the late payment interest POA1 with a dunning lock applied" in new Setup(estimateView(testDunningLockChargesList)) {
         val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) div:nth-child(3)")
         paymentType.text shouldBe paymentUnderReview
@@ -1169,6 +1187,18 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         paymentTypeLink.text shouldBe taxYearSummaryClass2Nic
         paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
           fullDocumentDetailModel.transactionId, false, financialsFrontendEnabled = true)
+      }
+
+      "display the Extra amount to pay due to HMRC enquiry amendment" in new Setup(estimateView(extraAmountToPayDueToHMRCEnquiryAmendmentChargeList)) {
+        val paymentType: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) div:nth-child(1)")
+        paymentType.text shouldBe extraAmountToPayDueToHMRCEnquiryAmendment
+      }
+
+      "display a link to Extra amount to pay due to HMRC enquiry amendment" in new Setup(estimateView(extraAmountToPayDueToHMRCEnquiryAmendmentChargeList)) {
+        val paymentTypeLink: Element = layoutContent.selectHead("#payments-table tr:nth-child(1) a")
+        paymentTypeLink.text shouldBe extraAmountToPayDueToHMRCEnquiryAmendment
+        paymentTypeLink.attr("href") shouldBe appConfig.financialsChargeSummaryIndividualUrl(testYear,
+          fullDocumentDetailModel.transactionId, financialsFrontendEnabled = true)
       }
 
       "display Balancing payment - User has Coding out that is requested and immediately rejected by NPS" in new Setup(immediatelyRejectedByNpsView()) {
@@ -1383,6 +1413,34 @@ class TaxYearSummaryViewSpec extends ViewSpec with FeatureSwitching with ChargeC
         contactLink.attr("target") shouldBe "_blank"
 
         document.getElementById("calculation-bill").text should include(messagesLookUp("tax-year-summary.calculation-bill"))
+      }
+
+      "display revenue amendments and correction content when pfa is enabled, the user's calculations are amendments and their calculation reason is manual/auto correction or revenue amendment" in new Setup(calculationWithLatestAndPreviousAmendmentsView(false, calculationRevisionType = HmrcAutoCorrection)) {
+        layoutContent.selectHead("""a[href$="#latestCalculation"]""").text shouldBe latestCalculationTab
+        layoutContent.selectHead("""a[href$="#previousCalculation"]""").text shouldBe previousCalculationTab
+
+        document.getElementById("correction-and-revenue-amendment-overview-description").text() shouldBe latestCalculationCorrectionAndRevenueDesc
+        document.getElementById("latest-calculcation-inset-1").text() shouldBe latestCalculationErrorsAndCorrectionsInset1
+        document.getElementById("latest-calculcation-inset-2").text() shouldBe latestCalculationErrorsAndCorrectionsInset2
+        document.getElementById("latest-calculcation-inset-3").text() shouldBe latestCalculationErrorsAndCorrectionsInset3
+
+        document.getElementById("previous-calculation-overview-description").text() shouldBe previousCalculationErrorsAndCorrectionsDesc
+        document.getElementById("previous-calculation-subheading").text() shouldBe previousCalculationErrorsAndCorrectionsSubheading
+        document.getElementById("previous-calculation-note").text() shouldBe previousCalculationErrorsAndCorrectionsSubheadingDesc
+      }
+
+      "display rejection content when pfa is enabled, the user's calculations are amendments and their calculation reason is rejection" in new Setup(calculationWithLatestAndPreviousAmendmentsView(false, calculationRevisionType = CustomerRejection)) {
+        layoutContent.selectHead("""a[href$="#latestCalculation"]""").text shouldBe latestCalculationTab
+        layoutContent.selectHead("""a[href$="#previousCalculation"]""").text shouldBe previousCalculationTab
+
+        document.getElementById("rejection-overview-description").text() shouldBe latestCalculationRejectionDesc
+        document.getElementById("latest-calculcation-inset-1").text() shouldBe latestCalculationErrorsAndCorrectionsInset1
+        document.getElementById("latest-calculcation-inset-2").text() shouldBe latestCalculationErrorsAndCorrectionsInset2
+        document.getElementById("latest-calculcation-inset-3").text() shouldBe latestCalculationErrorsAndCorrectionsInset3
+
+        document.getElementById("previous-calculation-overview-description").text() shouldBe previousCalculationErrorsAndCorrectionsDesc
+        document.getElementById("previous-calculation-subheading").text() shouldBe previousCalculationErrorsAndCorrectionsSubheading
+        document.getElementById("previous-calculation-note").text() shouldBe previousCalculationErrorsAndCorrectionsSubheadingDesc
       }
 
     }
