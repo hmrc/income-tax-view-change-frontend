@@ -2011,6 +2011,7 @@ whatYouOwe.itsaReturnAmendment.text                                = Taliad mant
 whatYouOwe.lpi.itsaReturnAmendment.text                            = Llog am dalu’r daliad mantoli yn hwyr: swm ychwanegol oherwydd Ffurflen Dreth ddiwygiedig
 
 whatYouOwe.payments-due                                         = Y dreth sydd arnoch yn nhrefn y dyddiadau dyledus
+whatYouOwe.suspended-charges                                    = Treth sy’n ddyledus ond nad yw’n cael ei chasglu ar hyn o bryd
 whatYouOwe.tax-owed-due-order-heading                           = Y dreth sydd arnoch yn nhrefn y dyddiadau dyledus
 whatYouOwe.payments-processing-note                             = Gall taliadau a wnewch gymryd hyd at 3 diwrnod gwaith yn dibynnu ar y dull talu rydych chi’n ei ddefnyddio. Rhaid i daliadau gyrraedd CThEF erbyn y dyddiad dyledus er mwyn osgoi unrhyw log neu gosb am dalu’n hwyr.
 whatYouOwe.over-due                                             = Yn hwyr

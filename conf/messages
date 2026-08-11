@@ -2027,6 +2027,7 @@ whatYouOwe.lpi.secondLatePaymentPenalty.text                       = Late paymen
 whatYouOwe.lpi.lateSubmissionPenalty.text                          = Late payment interest on late submission penalty
 whatYouOwe.itsaReturnAmendment.text                                = Balancing payment: extra amount due to amended return
 whatYouOwe.payments-due                                            = The tax you owe in the order it is due
+whatYouOwe.suspended-charges                                       = Tax owed that is currently not being collected
 whatYouOwe.tax-owed-due-order-heading                              = The tax you owe in the order it is due
 whatYouOwe.payments-processing-note                                = Payments you make may take up to 3 working days depending on the payment method you use. Payments must reach HMRC by the due date to avoid any late payment interest or penalty.
 whatYouOwe.over-due                                                = Overdue

@@ -150,7 +150,7 @@
                             ))
                         ).flatten
                     ),
-                    viewModel.whatYouOweChargesList.sortedChargesList.zipWithIndex.flatMap { case (charge, index) =>
+                    viewModel.whatYouOweChargesList.sortedChargesListWithNoDunningLock.zipWithIndex.flatMap { case (charge, index) =>
                         Seq(
                             Some(Seq[IterableOnce[TableRow]](
                                 Some(TableRow(
@@ -159,7 +159,7 @@
                                 )),
                                 Some(TableRow(
                                     attributes = Map("id" -> s"due-$index"),
-                                    content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false))
+                                    content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), showLabel = false))
                                 )),
                                 Some(TableRow(
                                     attributes = Map("id" -> s"due-charge-tax-year-$index"),
@@ -207,10 +207,6 @@
         ))
     }
 
-    @if(viewModel.chargesListIsNotEmptyAndDunningLock) {
-        @dunningLockParagraph()
-    }
-
     @paymentsMadeContent(
         origin = origin,
         viewModel = viewModel)
@@ -237,6 +233,67 @@
                 )
             }
         }
+
+        <div id="suspended-charges">
+            @if(viewModel.suspendedChargesListNonEmpty) {
+                @govukTable(Table(
+                    head = Some(Seq(
+                        Some(HeadCell(content = Text(getMessage("tableHead.due-date")))),
+                        Some(HeadCell(content = Text(getMessage("tableHead.charge-type")))),
+                        Some(HeadCell(content = Text(getMessage("tableHead.tax-year")))),
+                        Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest)(
+                            HeadCell(content = Text(getMessage("tableHead.interest")),
+                                classes = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) "govuk-!-text-align-right" else "govuk-!-text-align-left"),
+                        ),
+                        Some(HeadCell(content = HtmlContent(getMessage("tableHead.amount-due").toNonBreaking),
+                            format = Some("numeric")))
+                    ).flatten),
+                    rows = Seq(
+                        viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.zipWithIndex.flatMap { case (charge, index) =>
+                            Seq(
+                                Some(Seq[IterableOnce[TableRow]](
+                                    Some(TableRow(
+                                        attributes = Map("id" -> s"due-charge-due-date-$index"),
+                                        content = HtmlContent(charge.getChargeDueDate.toLongDateShort.toNonBreaking)
+                                    )),
+                                    Some(TableRow(
+                                        attributes = Map("id" -> s"due-$index"),
+                                        content = HtmlContent(chargeInfo(viewModel.lpp2Url, s"due-$index", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), showLabel = false))
+                                    )),
+                                    Some(TableRow(
+                                        attributes = Map("id" -> s"due-charge-tax-year-$index"),
+                                        content = HtmlContent(taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl))
+                                    )),
+                                    Option.when(charge.isAccruingInterest)(
+                                        TableRow(
+                                            attributes = Map("id" -> s"accrued-interest-amount-due-$index"),
+                                            content = HtmlContent(charge.accruingInterestAmount.get.toCurrency),
+                                            format = if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields) Some("numeric") else None
+                                        )
+                                    ).orElse(
+                                        if(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest){
+                                            Some(TableRow(
+                                                attributes = Map("id" -> s"fallback-$index"),
+                                                content = HtmlContent(getMessage("tableRow.na"))))
+                                        }else {
+                                            None
+                                        }
+
+                                    ),
+                                    Some(TableRow(
+                                        attributes = Map("id" -> s"due-charge-amount-due-$index"),
+                                        content = HtmlContent(charge.remainingToPayOnCharge.toCurrency),
+                                        format = Some("numeric")
+                                    ))
+                                ).flatten)
+                            ).flatten
+                        }
+                    ).flatten,
+                    caption = Some(getMessage("suspended-charges")),
+                    captionClasses = "govuk-table__caption govuk-table__caption--m"
+                ))
+            }
+        </div>
 
         @if(viewModel.creditAndRefundEnabled) {
             @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
