@@ -3605,9 +3605,9 @@ triggered-migration.check-hmrc-records.title                         = Gwirio bo
 triggered-migration.check-hmrc-records.desc                          = Mae’n rhaid i chi wirio a chadarnhau eich ffynonellau incwm ar gyfer blwyddyn dreth {0} i {1} ac ymlaen cyn y gallwch barhau. Cafodd y ffynonellau incwm hyn eu creu gan ddefnyddio gwybodaeth o’ch Ffurflen Dreth flaenorol.
 triggered-migration.check-hmrc-records.desc2                         = Efallai bod gennych bellach derfynau amser chwarterol ar gyfer eich busnesau unig fasnachwr a/neu eiddo sydd wedi’u rhestru yma.
 triggered-migration.check-hmrc-records.inset                         = Bydd sicrhau bod y manylion ar y dudalen hon yn gywir yn eich helpu chi i osgoi colli dyddiadau cau ar gyfer eich busnesau cyfredol, ac yn osgoi rhoi dyddiadau cau i chi ar gyfer ffynonellau incwm y gallech fod wedi’u cau neu eu gwerthu.
-triggered-migration.check-hmrc-records.bulletStart                   = Bydd yn rhaid i chi wneud y canlynol, os oes angen:
-triggered-migration.check-hmrc-records.bullet1                       = ychwanegu unrhyw fusnesau sydd ar goll
-triggered-migration.check-hmrc-records.bullet2                       = dod ag unrhyw fusnesau, nad ydynt bellach yn rhoi incwm i chi, i ben
+triggered-migration.check-hmrc-records.bulletStart                   = Felly, bydd yn rhaid i chi wneud y canlynol yn ôl yr angen:
+triggered-migration.check-hmrc-records.bullet1                       = ychwanegu unrhyw fusnesau cyfredol sydd ar goll
+triggered-migration.check-hmrc-records.bullet2                       = rhoi’r gorau i unrhyw fusnes cyfredol nad ydych bellach yn cael incwm oddi wrtho mwyach
 
 triggered-migration.check-hmrc-records.yourActiveBusinesses.heading  = Eich busnesau cyfredol
 triggered-migration.check-hmrc-records.soleTrader.heading            = Busnesau unig fasnachwr
