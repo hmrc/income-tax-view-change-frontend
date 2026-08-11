@@ -2330,6 +2330,7 @@ paymentHistory.POA1RR-credit                                    = Taliad cyntaf 
 paymentHistory.POA2RR-credit                                    = Ail daliad ar gyfrif: credyd o’ch Ffurflen Dreth
 paymentHistory.IRA-credit                                       = Credyd o’ch Ffurfln Dreth ddiwygiedig
 paymentHistory.activity                                         = Gweithgarwch {0}
+paymentHistory.revenueAmendment                                 = Credyd o ddiwygiad yn sgil ymholiad gan CThEF
 
 paymentHistory.POA1                                             = Taliad ar gyfrif cyntaf sy’n cael ei gasglu drwy’ch cod treth TWE
 paymentHistory.POA2                                             = Ail daliad ar gyfrif sy’n cael ei gasglu drwy’ch cod treth TWE

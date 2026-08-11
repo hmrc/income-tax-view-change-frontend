@@ -17,6 +17,7 @@
 package financials.models
 
 import play.api.libs.json.{Format, Json}
+import financials.enums.ChargeClassificationType
 
 import java.time.LocalDate
 
@@ -52,7 +53,8 @@ case class Payment(taxYear: Int,
                    transactionId: Option[String],
                    mainType: Option[String] = None,
                    mainTransaction: Option[String] = None,
-                   clearingSAPDocument: Option[String] = None) {
+                   clearingSAPDocument: Option[String] = None,
+                   chargeClassification: Option[String] = None) {
 
   val creditType: Option[TransactionType] = mainTransaction.flatMap(TransactionType.fromCode)
 
@@ -73,6 +75,11 @@ case class Payment(taxYear: Int,
     case _ => None
   }
 
+  def isRevenueAmendment: Boolean =
+    chargeClassification.flatMap(value => ChargeClassificationType.fromString(value)) match {
+      case Some(ChargeClassificationType.RevenueAmendments) => true
+      case _ => false
+    }
 }
 
 
