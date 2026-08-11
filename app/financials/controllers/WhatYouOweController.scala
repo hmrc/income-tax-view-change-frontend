@@ -78,6 +78,10 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
 
+  def showAgentRedirect: Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
+    Future.successful(Redirect(routes.WhatYouOweController.showAgent()))
+  }
+
   def showAgent: Action[AnyContent] = authActions.asMTDPrimaryAgent().async {
     implicit mtdItUser =>
       handleRequest(
