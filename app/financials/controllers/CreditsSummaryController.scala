@@ -140,7 +140,7 @@ class CreditsSummaryController @Inject()(creditsView: CreditsSummaryView,
         userType = user.userType.fold("")(_.toString),
         credId = user.credId.getOrElse(""),
         mtdRef = user.mtditid,
-        creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)).toString(),
+        creditOnAccount = creditOnAccount.getOrElse(BigDecimal(0.0)),
         creditDetails = toCreditSummaryDetailsSeq(charges)(msgApi)
       )
     )
