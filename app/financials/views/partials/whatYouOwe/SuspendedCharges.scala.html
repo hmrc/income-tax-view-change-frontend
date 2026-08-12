@@ -1,0 +1,71 @@
+@*
+ * Copyright 2026 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import _root_.common.implicits.ImplicitDateFormatterImpl
+@import _root_.shared.implicits.ImplicitCurrencyFormatter._
+@import _root_.shared.implicits.HtmlFormatter.NbspString
+@import financials.models.WhatYouOweViewModel
+@import financials.views.helpers.whatYouOweChargesSummary.WYOMessagesHelper._
+@import common.services.DateServiceInterface
+@import financials.views.html.partials.whatYouOwe._
+@import common.auth.MtdItUser
+
+@this(
+        chargeInfo: ChargeInfo,
+        taxYearSummaryLink: TaxYearSummaryLink,
+        implicitDateFormatter: ImplicitDateFormatterImpl
+)
+
+@(viewModel: WhatYouOweViewModel, origin: Option[String] = None)(implicit messages: Messages, dateService: DateServiceInterface, user: MtdItUser[_])
+
+@import implicitDateFormatter.longDate
+
+<h2 class="govuk-heading-m" id="suspended-charges-in-order-due">@getMessage("suspended-charges")</h2>
+<table class="govuk-table" aria-labelledby="suspended-charges-in-order-due">
+
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.due-date")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.charge-type")</th>
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.tax-year")</th>
+            @Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest){
+            <th scope="col" class="govuk-table__header @if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields){govuk-!-text-align-right} else {govuk-!-text-align-left}">
+            }
+            <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount-due").toNonBreaking</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @viewModel.whatYouOweChargesList.sortedChargesListWithDunningLock.zipWithIndex.map { case (charge, index) =>
+           <tr class="govuk-table__row">
+                <td class="govuk-table__cell" id="due-charge-due-date-@{index}">@charge.getChargeDueDate.toLongDateShort.toNonBreaking</td>
+                <td class="govuk-table__cell" id="due-@{index}">@chargeInfo(viewModel.lpp2Url, s"due-${index}", charge, index, viewModel.chargeSummaryUrl(charge.taxYear.endYear, charge.transactionId, charge.isOnlyInterest, origin), false)</td>
+                <td class="govuk-table__cell" id="due-charge-tax-year-@{index}">@taxYearSummaryLink(charge.taxYear.endYear, index, viewModel.taxYearSummaryUrl)</td>
+                @if(charge.isAccruingInterest) {
+                    <td class="govuk-table__cell" id="accrued-interest-amount-due-@{index}">
+                        @charge.accruingInterestAmount.get.toCurrency
+                    </td>
+                } else if(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest) {
+                    <td class="govuk-table__cell" id="fallback-@{index}">
+                        @getMessage("tableRow.na")
+                    </td>
+                }
+                <td class="govuk-table__cell" id="due-charge-amount-due-@{index}">@charge.remainingToPayOnCharge.toCurrency</td>
+           </tr>
+            }
+    </tbody>
+</table>
+
+

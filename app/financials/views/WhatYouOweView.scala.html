@@ -51,7 +51,8 @@
         availableCreditInAccount: AvailableCreditInAccount,
         interestOnBalancingCharge: InterestOnBalancingCharge,
         balancingChargePreMtdDigital: BalancingChargePreMtdDigital,
-        totalTableRow: TotalTableRow
+        totalTableRow: TotalTableRow,
+        suspendedCharges: SuspendedCharges
 )
 @(
         viewModel: WhatYouOweViewModel,
@@ -294,6 +295,8 @@
                 ))
             }
         </div>
+
+        @suspendedCharges(viewModel)
 
         @if(viewModel.creditAndRefundEnabled) {
             @viewModel.whatYouOweChargesList.availableCredit.map { ac =>
