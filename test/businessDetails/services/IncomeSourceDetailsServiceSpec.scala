@@ -133,20 +133,21 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockNextUpdatesSer
     "a user has a uk property and a sole trader business" should {
       "return a ViewIncomeSourcesViewModel with a sole trader business and uk property" in {
 
-        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome, true)
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(ukPropertyAndSoleTraderBusinessIncome, true, false)
 
         result shouldBe Right(ViewIncomeSourcesViewModel(
           viewSoleTraderBusinesses = List(viewBusinessDetailsViewModel2),
           viewUkProperty = Some(viewUkPropertyDetailsViewModel),
           viewForeignProperty = None,
           viewCeasedBusinesses = Nil,
-          displayStartDate = true))
+          displayStartDate = true,
+          hideBusinessName = false))
       }
     }
     "a user has a foreign property and a ceased businesses" should {
       "return an AddIncomeSourcesViewModel with a foreign property, ceased business, ceased uk property and ceased foreign property" in {
 
-        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome, true)
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome, true, false)
 
         result shouldBe Right(ViewIncomeSourcesViewModel(
           viewSoleTraderBusinesses = Nil,
@@ -157,7 +158,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockNextUpdatesSer
             CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
             CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
           ),
-          displayStartDate = true
+          displayStartDate = true,
+          hideBusinessName = false
         ))
       }
     }
@@ -166,7 +168,7 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockNextUpdatesSer
   "The IncomeSourceDetailsService.getCeasedBusinesses method" when {
     "a user has a business without a cessation date" should {
       "return the list of ceased income sources without the income source without a cessation date" in {
-        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome, true)
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedBusinessesIncome, true, false)
 
         result shouldBe Right(ViewIncomeSourcesViewModel(
           viewSoleTraderBusinesses = Nil,
@@ -177,13 +179,14 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockNextUpdatesSer
             CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get),
             CeasedBusinessDetailsViewModel(None, ForeignProperty, testPropertyStartDateOption2, testPropertyCessation2.date.get),
           ),
-          displayStartDate = true
+          displayStartDate = true,
+          hideBusinessName = false
         ))
       }
     }
     "a user has a property business without an income source type" should {
       "return the list of ceased income sources without the income source without an income source type" in {
-        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedPropertyIncomeWithNoIncomeSourceType, true)
+        val result = TestIncomeSourceDetailsService.getViewIncomeSourceViewModel(foreignPropertyAndCeasedPropertyIncomeWithNoIncomeSourceType, true, false)
 
         result shouldBe Right(ViewIncomeSourcesViewModel(
           viewSoleTraderBusinesses = Nil,
@@ -193,7 +196,8 @@ class IncomeSourceDetailsServiceSpec extends TestSupport with MockNextUpdatesSer
             //            CeasedBusinessDetailsViewModel(testTradeNameOption2, SelfEmployment, testStartDateOption3, testCessation2.date.get),
             CeasedBusinessDetailsViewModel(None, UkProperty, testPropertyStartDateOption, testPropertyCessation3.date.get)
           ),
-          displayStartDate = true
+          displayStartDate = true,
+          hideBusinessName = false
         ))
       }
     }

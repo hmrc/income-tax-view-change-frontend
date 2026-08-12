@@ -86,14 +86,16 @@
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key" id="sole-trader-business-name-@index">
-                        @messages("triggered-migration.check-hmrc-records.soleTrader.businessName")
-                        </dt>
-                        <dd class="govuk-summary-list__value" id="sole-trader-business-name-value-@index">
-                        @business.businessName.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
-                        </dd>
-                    </div>
+                    @if(!viewModel.hideBusinessName || business.businessName.nonEmpty) {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key" id="sole-trader-business-name-@index">
+                            @messages("triggered-migration.check-hmrc-records.soleTrader.businessName")
+                            </dt>
+                            <dd class="govuk-summary-list__value" id="sole-trader-business-name-value-@index">
+                            @business.businessName.getOrElse(messages("triggered-migration.check-hmrc-records.soleTrader.unknown"))
+                            </dd>
+                        </div>
+                    }
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key" id="sole-trader-business-state-@index">
                         @messages("triggered-migration.check-hmrc-records.soleTrader.businessState")
