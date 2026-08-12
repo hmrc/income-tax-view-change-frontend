@@ -30,7 +30,6 @@ import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.json.Writes
-import common.enums.AuditType.ViewObligationsResponse
 import shared.models.audit.NextUpdatesResponseAuditModel
 import common.models.obligations.SingleObligationModel
 import common.auth.MtdItUser
@@ -93,6 +92,6 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
 
   def sendViewObligationsResponseAuditEvent(incomeSourceId: String, nextUpdates: Seq[SingleObligationModel])(using HeaderCarrier, ExecutionContext, MtdItUser[?]) = 
     val model = NextUpdatesResponseAuditModel(incomeSourceId, nextUpdates)
-    sendAuditEvent(ViewObligationsResponse.name, model)
+    sendAuditEvent(model.auditType, model)
 
 }

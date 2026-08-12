@@ -18,6 +18,7 @@ package shared.models.audit
 
 import common.auth.MtdItUser
 import common.models.obligations.SingleObligationModel
+import common.models.audit.AuditEvent
 import uk.gov.hmrc.auth.core.AffinityGroup
 
 import play.api.libs.json.*
@@ -25,7 +26,7 @@ import play.api.libs.functional.syntax._
 import java.time.LocalDate
 
 case class NextUpdatesResponseAuditModel(
-  mtdId: String,
+  mtditid: String,
   nino: String,
   incomeSourceId: String,
   reportDeadlines: Seq[SingleObligationModel],
@@ -33,7 +34,9 @@ case class NextUpdatesResponseAuditModel(
   credId: Option[String],
   userType: Option[AffinityGroup],
   agentReferenceNumber: Option[String]
-)
+) extends AuditEvent {
+  override def auditType: String = "ViewObligationsResponse"
+}
 
 object NextUpdatesResponseAuditModel:
 
