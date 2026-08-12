@@ -17,6 +17,7 @@
 package returns.controllers
 
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
+import common.implicits.Json.*
 import common.helpers.CalculationListStub
 import common.helpers.servicemocks.{AuditStub, IncomeTaxCalculationStub}
 import common.helpers.servicemocks.AuditStub.{verifyAuditContainsDetail, verifyAuditEvent}
@@ -233,7 +234,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 )
 
                 allObligations.obligations.foreach {
-                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                 }
 
                 res should have(
@@ -284,7 +285,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 )
 
                 allObligations.obligations.foreach {
-                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                 }
 
                 res should have(
@@ -339,7 +340,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                 )
 
                 allObligations.obligations.foreach {
-                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                 }
 
                 res should have(
@@ -548,7 +549,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     noOffcalls = 2)
 
                   allObligations.obligations.foreach {
-                    obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                    obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                   }
 
                   res should have(
@@ -644,7 +645,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                   )
 
                   allObligations.obligations.foreach {
-                    obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                    obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                   }
 
                   val errMessages = liabilityCalculationModelErrorMessagesFormatted(mtdUserRole).messages.get.errorMessages
@@ -714,7 +715,7 @@ class TaxYearSummaryControllerISpec extends TaxSummaryISpecHelper {
                     showForecastData = true, ctaViewModel = emptyCTAModel, LPP2Url = "", pfaEnabled = false, financialsFrontendEnabled = false)))
 
                 allObligations.obligations.foreach {
-                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).detail)
+                  obligation => verifyAuditContainsDetail(NextUpdatesResponseAuditModel(testUser(mtdUserRole), obligation.identification, obligation.obligations).toJson)
                 }
                 result should have(
                   httpStatus(OK),

@@ -30,7 +30,7 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
   val auditType = "ViewObligationsResponse"
 
   "The NextUpdatesResponseAuditModel" when {
-    val multipleDeadlines = List(openObligation, openObligation, overdueObligation)
+    val multipleDeadlines = List(openObligation, openObligation, overdueObligation, quarterlyObligation2016)
     val modelWithMultipleDeadlines = 
       NextUpdatesResponseAuditModel(
         testMtdItAgentUser,
@@ -75,6 +75,14 @@ class NextUpdatesResponseAuditModelSpec extends TestSupport {
               "dueDate" -> "2017-10-30",
               "obligationType" -> "Quarterly",
               "periodKey" -> "#002"
+            ),
+            Json.obj(
+              "startDate" -> "2016-05-01",
+              "endDate" -> "2016-07-30",
+              "dueDate" -> "2016-07-30",
+              "obligationType" -> "Quarterly",
+              "dateReceived" -> "2016-07-30",
+              "periodKey" -> "#001"
             ))
           )
       }
