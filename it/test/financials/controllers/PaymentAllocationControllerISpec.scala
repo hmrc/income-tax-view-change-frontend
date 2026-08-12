@@ -132,6 +132,7 @@ class PaymentAllocationControllerISpec extends ControllerISpecHelper {
               FinancialDetailsStub.stubGetPaymentAllocationResponse(testNino, "paymentLot", "paymentLotItem")(OK, Json.toJson(testValidPaymentAndLpiPaymentAllocationsModel))
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000872")(OK, validPaymentAllocationChargesJson)
               FinancialDetailsStub.stubGetFinancialsByDocumentId(testNino, "1040000873")(OK, validPaymentAllocationChargesJson)
+              YearOfMigrationStub.stubGetYearOfMigration((getCurrentTaxYearEnd.getYear - 1).toString)
 
               whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                 result should have(
