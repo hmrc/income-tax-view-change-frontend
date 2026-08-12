@@ -115,9 +115,9 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
   val repaymentRequestNumber = "000000003135"
 
   val groupedRepayments: List[(Int, List[PaymentHistoryEntry])] = List(
-    (2021, List(PaymentHistoryEntry("2021-08-22", Repayment, None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface),
-      PaymentHistoryEntry("2021-08-21", Repayment, Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface),
-      PaymentHistoryEntry("2021-08-20", Repayment, Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None)(dateServiceInterface)))
+    (2021, List(PaymentHistoryEntry("2021-08-22", Repayment, None, None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None, isRevenueAmendment = false)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-21", Repayment, Some(300.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None, isRevenueAmendment = false)(dateServiceInterface),
+      PaymentHistoryEntry("2021-08-20", Repayment, Some(301.0), None, s"refund-to-taxpayer/$repaymentRequestNumber", repaymentRequestNumber, None, isRevenueAmendment = false)(dateServiceInterface)))
   )
 
   val expectedDatesOrder: List[String] = List("25 December 2020", "13 April 2020", "25 December 2019", "25 September 2019", "25 April 2019", "25 April 2018")
@@ -144,8 +144,11 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
 
   val paymentHistoryMessageInfo = s"${messages("paymentHistory.info")} ${messages("taxYears.oldSa.agent.content.2")} ${messages("pagehelp.opensInNewTabText")}. ${messages("paymentHistory.info.2")}"
 
-  val entry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = MfaCreditType, amount = Some(-10000.00), transactionId = Some("TRANS123"),
-    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None)(dateServiceInterface)
+  val entry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = ITSAReturnAmendmentCredit, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None, isRevenueAmendment = false)(dateServiceInterface)
+
+  val revenueAmendmentEntry: PaymentHistoryEntry = PaymentHistoryEntry(date = "2020-12-25", creditType = ITSAReturnAmendmentCredit, amount = Some(-10000.00), transactionId = Some("TRANS123"),
+    linkUrl = "link1", visuallyHiddenText = "hidden-text1", None, isRevenueAmendment = true)(dateServiceInterface)
 
   def getContent(row: Int)(implicit layoutContent: Element): String = {
     val sectionContent = layoutContent.selectHead(s"#accordion-default-content-1")
@@ -205,6 +208,10 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             document.title() shouldBe messages("htmlTitle", messages("paymentHistory.heading"))
             layoutContent.selectHead("h1").text shouldBe messages("paymentHistory.heading")
           }
+        s"display revenue amendments in the table" in new PaymentHistorySetup(List(
+          (2020, List(revenueAmendmentEntry)))) {
+          document.getElementById("payment-0").child(0).ownText() shouldBe "Credit from HMRC enquiry amendment"
+        }
       }
 
       s"the user has has a payment history for multiple years" should {
