@@ -172,7 +172,7 @@ class PaymentHistoryViewSpec extends ViewSpec with ImplicitDateFormatter {
             entry.copy(date = "2020-12-20", creditType = PaymentType)(dateServiceInterface),
             entry.copy(date = "2020-12-19", creditType = Repayment)(dateServiceInterface))))) {
 
-          document.getElementById("payment-0").child(0).ownText() shouldBe "Credit from HMRC adjustment"
+          document.getElementById("payment-0").child(0).ownText() shouldBe "Credit from your amended tax return"
           document.getElementById("payment-1").child(0).ownText() shouldBe "Credit from an earlier tax year"
           document.getElementById("payment-2").child(0).ownText() shouldBe "Credit from overpaid tax"
           document.getElementById("payment-3").child(0).ownText() shouldBe "Credit from repayment interest"
