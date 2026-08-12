@@ -123,7 +123,7 @@ trait ExternalRedirectHelper {
 
   lazy val financialsWhatYouOweAgentUrl: Boolean => String = financialsFrontendEnabled =>
     if (financialsFrontendEnabled)
-      s"$financialsAgentBaseUrl/what-your-client-owes"
+      s"$financialsAgentBaseUrl/what-you-owe"
     else
       financialsRoutes.WhatYouOweController.showAgent().url
 

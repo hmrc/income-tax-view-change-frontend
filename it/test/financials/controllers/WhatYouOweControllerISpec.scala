@@ -122,7 +122,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
     if (mtdRole == MTDIndividual) {
       "/what-you-owe"
     } else {
-      "/agents/what-your-client-owes"
+      "/agents/what-you-owe"
     }
   }
 
@@ -155,7 +155,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}")
+                    pageTitle(MTDIndividual, "whatYouOwe.heading")
                   )
                 }
               }
@@ -177,12 +177,12 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    pageTitle(MTDIndividual, "whatYouOwe.heading"),
                     isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
                     isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
                     isElementVisibleById("due-0")(expectedValue = true),
                     isElementVisibleById("due-1")(expectedValue = true),
-                    isElementVisibleById("payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                    isElementVisibleById("payment-button")(expectedValue = true),
                     isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                     isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                     isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
@@ -226,14 +226,14 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                   Then("the result should have a HTTP status of OK (200) and the payments due page")
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    pageTitle(MTDIndividual, "whatYouOwe.heading"),
                     isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                     isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                     isElementVisibleById("due-0")(expectedValue = true),
                     isElementVisibleById("charge-interest-0")(expectedValue = false),
                     isElementVisibleById("due-1")(expectedValue = true),
                     isElementVisibleById("charge-interest-1")(expectedValue = false),
-                    isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                    isElementVisibleById(s"payment-button")(expectedValue = true),
                     isElementVisibleById(s"sa-note-1-migrated-1")(expectedValue = true),
                     isElementVisibleById(s"sa-note-1-migrated-2")(expectedValue = true),
                     isElementVisibleById(s"sa-note-2-migrated")(expectedValue = true),
@@ -277,7 +277,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                   Then("the result should have a HTTP status of OK (200) and the payments due page")
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    pageTitle(MTDIndividual, "whatYouOwe.heading"),
                     isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
                     isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
                     isElementVisibleById("due-0")(expectedValue = true),
@@ -324,7 +324,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    pageTitle(MTDIndividual, "whatYouOwe.heading"),
                     isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = false),
                     isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
@@ -365,7 +365,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    pageTitle(MTDIndividual, "whatYouOwe.heading"),
                     isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
                     isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
@@ -403,7 +403,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                   Then("the result should have a HTTP status of OK (200) and the payments due page")
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    pageTitle(MTDIndividual, "whatYouOwe.heading"),
                     isElementVisibleById("disagree-with-tax-appeal-link")(expectedValue = true),
                     isElementVisibleById("no-payments-due")(expectedValue = false)
                   )
@@ -426,7 +426,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                     result should have(
                       httpStatus(OK),
-                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      pageTitle(MTDIndividual, "whatYouOwe.heading"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
@@ -455,7 +455,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                     GetInsourceDetailsStub.verifyGetIncomeSourceDetails(testMtditid)
                     result should have(
                       httpStatus(OK),
-                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      pageTitle(MTDIndividual, "whatYouOwe.heading"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
@@ -497,7 +497,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                     result should have(
                       httpStatus(OK),
-                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      pageTitle(MTDIndividual, "whatYouOwe.heading"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById(s"payment-button")(expectedValue = false),
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = false),
@@ -544,10 +544,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                     result should have(
                       httpStatus(OK),
-                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      pageTitle(MTDIndividual, "whatYouOwe.heading"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
-                      isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                      isElementVisibleById(s"payment-button")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
@@ -578,10 +578,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                     result should have(
                       httpStatus(OK),
-                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      pageTitle(MTDIndividual, "whatYouOwe.heading"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-                      isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                      isElementVisibleById(s"payment-button")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
@@ -611,10 +611,10 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                     result should have(
                       httpStatus(OK),
-                      pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                      pageTitle(MTDIndividual, "whatYouOwe.heading"),
                       isElementVisibleById("balancing-charge-type-0")(expectedValue = false),
                       isElementVisibleById("balancing-charge-type-1")(expectedValue = false),
-                      isElementVisibleById(s"payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                      isElementVisibleById(s"payment-button")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                       isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                       isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
@@ -644,12 +644,12 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
 
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    pageTitle(MTDIndividual, "whatYouOwe.heading"),
                     isElementVisibleById("balancing-charge-type-0")(expectedValue = true),
                     isElementVisibleById("balancing-charge-type-1")(expectedValue = true),
                     isElementVisibleById("due-0")(expectedValue = true),
                     isElementVisibleById("due-1")(expectedValue = true),
-                    isElementVisibleById("payment-button")(expectedValue = mtdUserRole == MTDIndividual),
+                    isElementVisibleById("payment-button")(expectedValue = true),
                     isElementVisibleById("sa-note-1-migrated-1")(expectedValue = true),
                     isElementVisibleById("sa-note-1-migrated-2")(expectedValue = true),
                     isElementVisibleById("sa-note-2-migrated")(expectedValue = true),
@@ -675,7 +675,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                   Then("The expected result is returned")
                   result should have(
                     httpStatus(OK),
-                    pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                    pageTitle(MTDIndividual, "whatYouOwe.heading"),
                     elementTextBySelectorList("#what-you-owe-payments-due-table", "tbody", "tr:nth-of-type(1)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 1"),
                     elementTextBySelectorList("#what-you-owe-payments-due-table", "tbody", "tr:nth-of-type(2)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 2"),
                     elementTextBySelectorList("#what-you-owe-payments-due-table", "tbody", "tr:nth-of-type(3)", "td:nth-of-type(2)", "a:nth-of-type(1)")(s"$hmrcAdjustment 3"),
@@ -698,7 +698,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                       result should have(
                         httpStatus(OK),
-                        pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}")
+                        pageTitle(MTDIndividual, "whatYouOwe.heading")
                       )
                     }
                   }
@@ -715,7 +715,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                       result should have(
                         httpStatus(OK),
-                        pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}")
+                        pageTitle(MTDIndividual, "whatYouOwe.heading"),
                       )
                     }
                   }
@@ -733,7 +733,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                     whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                       result should have(
                         httpStatus(OK),
-                        pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                        pageTitle(MTDIndividual, "whatYouOwe.heading"),
                         isElementVisibleById("adjust-poa-link")(expectedValue = false),
                         isElementVisibleById("adjust-poa-content")(expectedValue = false))
                     }
@@ -768,7 +768,7 @@ class WhatYouOweControllerISpec extends ControllerISpecHelper
                         whenReady(buildGETMTDClient(path, additionalCookies)) { result =>
                           result should have(
                             httpStatus(OK),
-                            pageTitle(mtdUserRole, s"whatYouOwe.heading${if (mtdUserRole != MTDIndividual) "-agent" else ""}"),
+                            pageTitle(MTDIndividual, "whatYouOwe.heading"),
                             isElementVisibleById(s"money-in-your-account")(expectedValue = true),
                             elementTextBySelector("#money-in-your-account")(
                               messagesAPI("whatYouOwe.moneyOnAccount") + " " +
