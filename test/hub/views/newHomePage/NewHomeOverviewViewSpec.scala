@@ -446,7 +446,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe and make a payment",
-            linkHref = "/agents/what-your-owe"
+            linkHref = "/agents/what-you-owe"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
@@ -470,7 +470,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe",
-            linkHref = "/agents/what-your-owe"
+            linkHref = "/agents/what-you-owe"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
@@ -507,7 +507,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         "the user has charges to pay and no POA to adjust" in new TestSetup(isAgent = true, ctaViewModel = WYOClaimToAdjustViewModel(None), creditsRefundsRepayEnabled = true) {
           document.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
           document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "Check what you owe and make a payment"
-          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/agents/what-your-owe")
+          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/agents/what-you-owe")
 
           document.select(".govuk-summary-card-no-border").get(1).text() shouldBe "View payment, credit and refund history"
           document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/agents/payment-refund-history")
@@ -548,7 +548,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe and make a payment",
-            linkHref = "/agents/what-your-owe"
+            linkHref = "/agents/what-you-owe"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
@@ -568,7 +568,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
 
           chargesSection.hasCorrectOverviewCardLink(
             linkText = "Check what you owe",
-            linkHref = "/agents/what-your-owe"
+            linkHref = "/agents/what-you-owe"
           )
           chargesSection.hasCorrectOverviewCardLink(
             cardIndex = 1,
@@ -585,7 +585,7 @@ class NewHomeOverviewViewSpec extends TestSupport with FeatureSwitching with Imp
         "the user has charges to pay and no POA to adjust" in new TestSetup(isAgent = true, ctaViewModel = WYOClaimToAdjustViewModel(None), creditsRefundsRepayEnabled = false) {
           document.select("h2.govuk-heading-m").get(0).text() shouldBe "Charges, payments, credits and refunds"
           document.select(".govuk-summary-card-no-border").get(0).text() shouldBe "Check what you owe and make a payment"
-          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/agents/what-your-owe")
+          document.select(".govuk-summary-card-no-border").get(0).hasCorrectHref("/agents/what-you-owe")
 
           document.select(".govuk-summary-card-no-border").get(1).text() shouldBe "View payment, credit and refund history"
           document.select(".govuk-summary-card-no-border").get(1).hasCorrectHref("/agents/payment-refund-history")
