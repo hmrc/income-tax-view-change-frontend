@@ -106,7 +106,7 @@
     gatewayPage = viewModel.gatewayPage,
     btaAndPtaServiceNavigation = viewModel.serviceNavigationPartial) {
 
-    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock) {
+    @if(viewModel.hasDunningLocks || viewModel.chargeItem.hasLpiWithDunningLock || viewModel.chargeHasDunningLock) {
         @chargeSummaryHasDunningLocksOrLpiWithDunningLock(viewModel.chargeItem, viewModel.dueDate, viewModel.latePaymentInterestCharge, appConfig)
     }
 
@@ -119,11 +119,13 @@
 
   @if(!viewModel.chargeItem.isCredit && !viewModel.latePaymentInterestCharge) {
       <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
+          // TODO add condition for "overDueCharge" for the stood over Penalties yourSelfAssessmentChargeSummary.stoodOverFullCharge
           s"${
               getMessage(
-                  if(viewModel.chargeItem.isCodingOutFullyCollected) "amountCollected" else
-                  if(viewModel.chargeItem.isCodingOutAccepted) "toBeCollected" else
-                  if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
+                  if(viewModel.chargeItem.isCodingOutFullyCollected) "amountCollected"
+                  else if(viewModel.chargeItem.isCodingOutAccepted) "toBeCollected"
+                  else if(viewModel.chargeHasDunningLock) "stoodOverFullCharge"
+                  else if(viewModel.chargeItem.isOverdue() || viewModel.chargeItem.isPaid) "overDueCharge"
                   else "charge"
               )
           }\t${viewModel.chargeItem.outstandingAmount.toCurrencyString}${
@@ -187,6 +189,7 @@
         }
     }
   }
+@* TODO add condition for the stood over Penalties yourSelfAssessmentChargeSummary.stoodOverFullCharge *@
     @if(viewModel.latePaymentInterestCharge) {
         <h2 class="govuk-heading-m" id="charge-amount-heading"> @{
             s"${

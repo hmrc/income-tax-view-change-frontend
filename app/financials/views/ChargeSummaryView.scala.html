@@ -436,7 +436,7 @@
 
 
     @if(viewModel.chargeHistoryEnabledOrPaymentAllocationWithNoIsBalancingChargeZeroAndIsNotCredit){
-        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus == None) {
+        @if(viewModel.hasPaymentBreakdown && viewModel.chargeItem.codedOutStatus.isEmpty) {
             @h3(
                 msg = messages("chargeSummary.chargeHistory.heading"),
                 classes = "govuk-heading-m",
