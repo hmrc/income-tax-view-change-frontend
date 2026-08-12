@@ -1961,6 +1961,7 @@ refund-to-taxpayer.tableHead.total-interest                     = Total interest
 refund-to-taxpayer.tableHead.varied-interest-rates-value        = Rate of interest varied between {0}% and {1}% from {2} and {3}
 refund-to-taxpayer.method-type-bacs                             = Bacs
 refund-to-taxpayer.method-type-card                             = Card
+refund-to-taxpayer.method-type-repayment-to-card                = Repayment to card
 refund-to-taxpayer.method-type-postal-order                     = Postal Order
 refund-to-taxpayer.method-type-payable-order-repayment          = Payable order repayment
 refund-to-taxpayer.method-type-bacs-payment-out                 = BACS payment out
