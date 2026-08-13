@@ -29,6 +29,10 @@ import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json.Writes
+import shared.models.audit.NextUpdatesResponseAuditModel
+import common.models.obligations.SingleObligationModel
+import common.auth.MtdItUser
 
 @Singleton
 class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) extends Logging {
@@ -82,5 +86,12 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
       detail = details
     )
   }
+
+  private def sendAuditEvent[T : Writes](auditType: String, event: T)(using HeaderCarrier, ExecutionContext): Unit = 
+    auditConnector.sendExplicitAudit(auditType, event)
+
+  def sendViewObligationsResponseAuditEvent(incomeSourceId: String, nextUpdates: Seq[SingleObligationModel])(using HeaderCarrier, ExecutionContext, MtdItUser[?]) = 
+    val model = NextUpdatesResponseAuditModel(incomeSourceId, nextUpdates)
+    sendAuditEvent(model.auditType, model)
 
 }

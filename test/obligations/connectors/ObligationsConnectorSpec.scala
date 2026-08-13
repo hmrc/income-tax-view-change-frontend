@@ -44,7 +44,6 @@ import play.mvc.Http.Status
 import common.testConstants.BaseTestConstants.*
 import common.testUtils.TestSupport
 import shared.connectors.ObligationsConnector
-import shared.models.audit.NextUpdatesResponseAuditModel
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -93,7 +92,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
       val result: Future[ObligationsResponseModel] = connector.getOpenObligations()
       result.futureValue shouldBe obligationsDataSelfEmploymentOnlySuccessModel
 
-      verifyExtendedAudit(NextUpdatesResponseAuditModel(individualUser, testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations))
+      verifyViewObligationsResponseAuditEvent(testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations)
     }
 
     "return ErrorResponse model in case of failure" in new Setup {
@@ -141,8 +140,7 @@ class ObligationsConnectorSpec extends TestSupport with MockHttpV2 with MockAudi
 
       val result: Future[ObligationsResponseModel] = connector.getAllObligationsDateRange(fromDate, toDate)
       result.futureValue shouldBe obligationsDataSelfEmploymentOnlySuccessModel
-
-      verifyExtendedAudit(NextUpdatesResponseAuditModel(individualUser, testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations))
+      verifyViewObligationsResponseAuditEvent(testSelfEmploymentId, nextUpdatesDataSelfEmploymentSuccessModel.obligations)
     }
 
     "return an error model in case of failure" in new Setup {
