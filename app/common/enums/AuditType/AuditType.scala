@@ -74,10 +74,6 @@ case object ObligationsPageView extends AuditType {
   val name = "obligationsPageView"
 }
 
-case object ViewObligationsResponse extends AuditType {
-  val name = "ViewObligationsResponse"
-}
-
 case object PaymentAllocations extends AuditType {
   val name = "PaymentAllocations"
 }

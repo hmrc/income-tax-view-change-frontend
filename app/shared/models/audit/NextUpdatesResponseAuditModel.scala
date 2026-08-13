@@ -17,36 +17,50 @@
 package shared.models.audit
 
 import common.auth.MtdItUser
-import common.enums.AuditType.ViewObligationsResponse
-import common.models.audit.ExtendedAuditModel
 import common.models.obligations.SingleObligationModel
+import common.models.audit.AuditEvent
+import uk.gov.hmrc.auth.core.AffinityGroup
+
 import play.api.libs.json.*
+import play.api.libs.functional.syntax._
+import java.time.LocalDate
 
-case class NextUpdatesResponseAuditModel(mtdItUser: MtdItUser[_],
-                                         incomeSourceId: String,
-                                         nextUpdates: Seq[SingleObligationModel]) extends ExtendedAuditModel {
-
-  override val transactionName: String = "view-obligations-response"
-  override val auditType: String = ViewObligationsResponse
-
-  private def nextUpdateJson(nextUpdate: SingleObligationModel): JsObject = Json.obj(
-    "startDate" -> nextUpdate.start,
-    "endDate" -> nextUpdate.end,
-    "dueDate" -> nextUpdate.due,
-    "obligationType" -> nextUpdate.obligationType,
-    "periodKey" -> nextUpdate.periodKey
-  ) ++ Json.obj("dateReceived"-> nextUpdate.dateReceived)
-
-  private val nextUpdatesJson: Seq[JsObject] = nextUpdates.map(nextUpdateJson)
-
-  override val detail: JsValue = Json.obj(
-    "mtditid" -> mtdItUser.mtditid,
-    "nino" -> mtdItUser.nino,
-    "incomeSourceId" -> incomeSourceId,
-    "reportDeadlines" -> nextUpdatesJson
-  ) ++
-    Json.obj("saUtr"-> mtdItUser.saUtr) ++
-    Json.obj("credId"-> mtdItUser.credId) ++
-    Json.obj("userType"-> mtdItUser.userType) ++
-    Json.obj("agentReferenceNumber"-> mtdItUser.arn)
+case class NextUpdatesResponseAuditModel(
+  mtditid: String,
+  nino: String,
+  incomeSourceId: String,
+  reportDeadlines: Seq[SingleObligationModel],
+  saUtr: Option[String],
+  credId: Option[String],
+  userType: Option[AffinityGroup],
+  agentReferenceNumber: Option[String]
+) extends AuditEvent {
+  override def auditType: String = "ViewObligationsResponse"
 }
+
+object NextUpdatesResponseAuditModel:
+
+  def apply(incomeSourceId: String, nextUpdates: Seq[SingleObligationModel])(using user: MtdItUser[?]): NextUpdatesResponseAuditModel =
+    apply(user, incomeSourceId, nextUpdates)
+
+  def apply(user: MtdItUser[?], incomeSourceId: String, nextUpdates: Seq[SingleObligationModel]): NextUpdatesResponseAuditModel =
+    NextUpdatesResponseAuditModel(
+      user.mtditid,
+      user.nino,
+      incomeSourceId,
+      nextUpdates,
+      user.saUtr,
+      user.credId,
+      user.userType,
+      user.arn
+    )
+
+  given Writes[NextUpdatesResponseAuditModel] = Json.writes[NextUpdatesResponseAuditModel]
+  given specificWrites: Writes[SingleObligationModel] = (
+      (__ \ "startDate").write[LocalDate] and
+      (__ \ "endDate").write[LocalDate] and 
+      (__ \ "dueDate").write[LocalDate] and
+      (__ \ "obligationType").write[String] and
+      (__ \ "periodKey").write[String] and
+      (__ \ "dateReceived").writeNullable[LocalDate]
+    )(model => (model.start, model.end, model.due, model.obligationType, model.periodKey, model.dateReceived))
