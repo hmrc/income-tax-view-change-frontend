@@ -1947,6 +1947,7 @@ refund-to-taxpayer.tableHead.total-interest                     = Cyfanswm y llo
 refund-to-taxpayer.tableHead.varied-interest-rates-value        = Roedd y gyfradd llog yn amrywio rhwng {0}% a {1}% o {2} i {3}
 refund-to-taxpayer.method-type-bacs                             = Bacs
 refund-to-taxpayer.method-type-card                             = Cerdyn
+refund-to-taxpayer.method-type-repayment-to-card                = Ad-daliad i gerdyn
 refund-to-taxpayer.method-type-postal-order                     = Archeb Bost
 refund-to-taxpayer.method-type-payable-order-repayment          = Ad-daliad archeb talu
 refund-to-taxpayer.method-type-bacs-payment-out                 = Taliad BACS i chi
