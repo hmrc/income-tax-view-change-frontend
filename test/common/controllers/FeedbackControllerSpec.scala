@@ -16,13 +16,13 @@
 
 package common.controllers
 
+
 import common.connectors.FeedbackConnector
-import common.controllers.feedback.{FeedbackController, routes as feedbackRoutes}
+import common.controllers.feedback.FeedbackController
 import common.enums.MTDIndividual
 import common.implicits.ImplicitDateFormatter
 import common.mocks.auth.MockAuthActions
 import common.testConstants.BaseTestConstants.*
-import common.viewUtils.InternalUrlHelper
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
@@ -100,7 +100,7 @@ class FeedbackControllerSpec extends MockAuthActions
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
           val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(feedbackRoutes.FeedbackController.thankYou().url)
+          redirectLocation(result) shouldBe Some(appConfig.feedBackThankYouUrl(false))
         }
       }
       "return a BadRequest" when {
@@ -136,7 +136,7 @@ class FeedbackControllerSpec extends MockAuthActions
           when(mockFeedbackConnector.submit(any())(any())).thenReturn(Future.successful(Right(())))
           val result: Future[Result] = action(fakeRequest.withFormUrlEncodedBody(fields.toSeq: _*))
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(feedbackRoutes.FeedbackController.thankYouAgent().url)
+          redirectLocation(result) shouldBe Some(appConfig.feedBackThankYouUrl(true))
         }
       }
       "return a BadRequest" when {
@@ -199,7 +199,7 @@ class FeedbackControllerSpec extends MockAuthActions
         val result: Future[Result] = action(fakeRequest)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
+        redirectLocation(result) shouldBe Some(appConfig.signinUrl)
       }
     }
 
@@ -208,7 +208,7 @@ class FeedbackControllerSpec extends MockAuthActions
         val result: Future[Result] = action(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
+        redirectLocation(result) shouldBe Some(appConfig.timeoutUrl)
       }
     }
   }

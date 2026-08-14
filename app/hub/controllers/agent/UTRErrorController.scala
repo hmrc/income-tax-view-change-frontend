@@ -38,16 +38,27 @@ class UTRErrorController @Inject()(utrError: UTRErrorView,
                                    val ec: ExecutionContext)
   extends FrontendController(mcc) with FeatureSwitching with I18nSupport with Logging {
 
+  lazy val postAction =
+    if (appConfig.isNewHubUrl)
+      routes.EnterClientsUTRController.submitNewUrl()
+    else
+      hub.controllers.agent.routes.UTRErrorController.submit()
+
+
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     logger.warn("Agent shown the cannot-view-client page")
     Future.successful(Ok(utrError(
-      postAction = hub.controllers.agent.routes.UTRErrorController.submit()
+      postAction = postAction
     )))
   }
 
-  def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
+  def submit: Action[AnyContent] = handleSubmit
+
+  def submitNewUrl: Action[AnyContent] = handleSubmit
+
+  def handleSubmit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     Future.successful(
-      Redirect(routes.EnterClientsUTRController.show().url).removingFromSession(SessionKeys.clientUTR)
+      Redirect(appConfig.enterClientsUTRUrl).removingFromSession(SessionKeys.clientUTR)
     )
   }
 

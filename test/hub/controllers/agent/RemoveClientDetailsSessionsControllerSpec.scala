@@ -16,10 +16,10 @@
 
 package hub.controllers.agent
 
+
 import common.connectors.ITSAStatusConnector
 import common.mocks.auth.MockAuthActions
 import common.services.DateServiceInterface
-import common.viewUtils.InternalUrlHelper
 import hub.mocks.views.agent.MockEnterClientsUTR
 import play.api
 import play.api.Application
@@ -51,7 +51,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe Status.SEE_OTHER
-          redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
+          redirectLocation(result) shouldBe Some(appConfig.signinUrl)
         }
       }
 
@@ -66,7 +66,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
           val result = testRemoveClientDetailsSessionsController.show()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
+          redirectLocation(result) shouldBe Some(appConfig.timeoutUrl)
         }
       }
     }
@@ -97,7 +97,7 @@ class RemoveClientDetailsSessionsControllerSpec extends MockAuthActions
           removedSessionKeys.foreach(key => result.futureValue.header.headers.get(key) shouldBe None)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some("/report-quarterly/income-and-expenses/view/agents/client-utr")
+          redirectLocation(result) shouldBe Some(appConfig.enterClientsUTRUrl)
         }
       }
     }

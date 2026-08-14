@@ -17,7 +17,7 @@
 package hub.controllers.agent
 
 import common.auth.MtdItUser
-import common.controllers.ControllerISpecHelper
+import hub.controllers.ControllerISpecHelper
 import common.enums.MTDPrimaryAgent
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}
 import common.models.core.{AccountingPeriodModel, CessationModel}

@@ -19,8 +19,6 @@ package common.auth.actions
 import com.google.inject.Singleton
 import common.auth.{AuthUserDetails, AuthorisedAndEnrolledRequest, Constants, FrontendAuthorisedFunctions}
 import common.config.FrontendAppConfig
-import common.controllers.errors.routes as errorRoutes
-import common.controllers.routes as appRoutes
 import common.enums.MTDIndividual
 import common.models.audit.IvUpliftRequiredAuditModel
 import common.services.AuditingService
@@ -75,8 +73,8 @@ class AuthoriseAndRetrieveIndividual @Inject()(val authorisedFunctions: Frontend
   def ivUpliftRedirectUrl[A](implicit request: Request[A]):String = {
     val host = if (appConfig.relativeIVUpliftParams) "" else appConfig.baseUrl
     @unused val origin = request.getQueryString(ORIGIN)
-    val completionUrl: String = s"$host${appRoutes.UpliftSuccessController.success().url}"
-    val failureUrl: String = s"$host${errorRoutes.UpliftFailedController.show().url}"
+    val completionUrl: String = s"$host${appConfig.upliftSuccessUrl}"
+    val failureUrl: String = s"$host${appConfig.upliftFailureUrl}"
     s"${appConfig.ivUrl}/uplift?origin=ITVC&confidenceLevel=$requiredConfidenceLevel&completionURL=${URLEncoder.encode(completionUrl, "UTF-8")}&failureURL=${URLEncoder.encode(failureUrl, "UTF-8")}"
   }
 

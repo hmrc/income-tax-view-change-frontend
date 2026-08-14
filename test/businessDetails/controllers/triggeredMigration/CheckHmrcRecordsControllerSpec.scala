@@ -147,7 +147,7 @@ class CheckHmrcRecordsControllerSpec extends MockAuthActions with MockTriggeredM
             val result = action(fakeRequest)
 
             status(result) shouldBe 303
-            redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+            redirectLocation(result).get should include(appConfig.homePageUrl(isAgent))
           }
         }
       }

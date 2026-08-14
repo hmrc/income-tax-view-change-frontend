@@ -17,7 +17,7 @@
 package businessDetails.testConstants
 
 import play.api.libs.json.Json
-import common.helpers.WiremockHelper.baseUrl
+import common.helpers.WiremockHelper._
 
 object AddressLookupTestConstants {
 
@@ -32,10 +32,7 @@ object AddressLookupTestConstants {
   val accessibilityUrl = {
     accessibilityHost + accessibilityPath
   }
-
-  val accessibilityFooterUrl = {
-    accessibilityUrl + "?referrerUrl=%2Freport-quarterly%2Fincome-and-expenses%2Fview"
-  }
+  
 
   val ukRequestBodyIndividual = Json.parse(
     s"""{
@@ -44,10 +41,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "$baseUrl/session-timeout",
-      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
+      |      "timeoutUrl": "$hubBaseUrl/session-timeout",
+      |      "timeoutKeepAliveUrl": "$hubBaseUrl/keep-alive"
       |    },
-      |    "signOutHref": "$baseUrl/sign-out",
+      |    "signOutHref": "$hubBaseUrl/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -67,7 +64,7 @@ object AddressLookupTestConstants {
       |      "showSearchAgainLink": true,
       |      "showConfirmChangeText": true
       |    },
-      |    "phaseFeedbackLink": "$baseUrl/feedback",
+      |    "phaseFeedbackLink": "$hubBaseUrl/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": true
@@ -118,10 +115,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/agents/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "$baseUrl/session-timeout",
-      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
+      |      "timeoutUrl": "$hubBaseUrl/session-timeout",
+      |      "timeoutKeepAliveUrl": "$hubBaseUrl/keep-alive"
       |    },
-      |    "signOutHref": "$baseUrl/sign-out",
+      |    "signOutHref": "$hubBaseUrl/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -141,7 +138,7 @@ object AddressLookupTestConstants {
       |      "showSearchAgainLink": true,
       |      "showConfirmChangeText": true
       |    },
-      |    "phaseFeedbackLink": "$baseUrl/agents/feedback",
+      |    "phaseFeedbackLink": "$hubBaseUrl/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": true
@@ -193,10 +190,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "$baseUrl/session-timeout",
-      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
+      |      "timeoutUrl": "$hubBaseUrl/session-timeout",
+      |      "timeoutKeepAliveUrl": "$hubBaseUrl/keep-alive"
       |    },
-      |    "signOutHref": "$baseUrl/sign-out",
+      |    "signOutHref": "$hubBaseUrl/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -217,7 +214,7 @@ object AddressLookupTestConstants {
       |      "line3MaxLength": 35,
       |      "townMaxLength": 35
       |    },
-      |    "phaseFeedbackLink": "$baseUrl/feedback",
+      |    "phaseFeedbackLink": "$hubBaseUrl/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": false
@@ -281,10 +278,10 @@ object AddressLookupTestConstants {
       |    "continueUrl": "$baseUrl/agents/manage-your-businesses/add/business-address/id/",
       |    "timeoutConfig": {
       |      "timeoutAmount": 3600,
-      |      "timeoutUrl": "$baseUrl/session-timeout",
-      |      "timeoutKeepAliveUrl": "$baseUrl/keep-alive"
+      |      "timeoutUrl": "$hubBaseUrl/session-timeout",
+      |      "timeoutKeepAliveUrl": "$hubBaseUrl/keep-alive"
       |    },
-      |    "signOutHref": "$baseUrl/sign-out",
+      |    "signOutHref": "$hubBaseUrl/sign-out",
       |    "accessibilityFooterUrl": "$accessibilityUrl",
       |    "selectPageConfig": {
       |      "proposalListLimit": 15
@@ -305,7 +302,7 @@ object AddressLookupTestConstants {
       |      "line3MaxLength": 35,
       |      "townMaxLength": 35
       |    },
-      |    "phaseFeedbackLink": "$baseUrl/agents/feedback",
+      |    "phaseFeedbackLink": "$hubBaseUrl/agents/feedback",
       |    "deskProServiceName": "cds-reimbursement-claim",
       |    "showPhaseBanner": true,
       |    "ukMode": false

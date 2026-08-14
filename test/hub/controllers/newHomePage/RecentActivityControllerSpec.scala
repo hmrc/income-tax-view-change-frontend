@@ -97,7 +97,7 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
             setupMockSuccess(mtdRole, false)
 
             val result = action(fakeRequest)
-            val yourTasksUrl = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/your-tasks" else "/report-quarterly/income-and-expenses/view/your-tasks"
+            val yourTasksUrl = if(isAgent) appConfig.agentYourTasksUrl else appConfig.individualYourTasksUrl
 
             status(result) shouldBe Status.SEE_OTHER
             redirectLocation(result) shouldBe Some(yourTasksUrl)
@@ -115,7 +115,7 @@ class RecentActivityControllerSpec extends MockAuthActions with MockDateService 
               setupMockSuccess(mtdRole, false, List(RecentActivity))
 
               val result = action(fakeRequest)
-              val overviewUrl = if (isAgent) "/report-quarterly/income-and-expenses/view/agents/overview" else "/report-quarterly/income-and-expenses/view/overview"
+              val overviewUrl = s"${appConfig.hubBaseUrl(isAgent)}/overview"
 
               status(result) shouldBe Status.SEE_OTHER
               redirectLocation(result) shouldBe Some(overviewUrl)

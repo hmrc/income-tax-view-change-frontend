@@ -19,7 +19,9 @@ package common.testConstants
 object MicroserviceSpecificConstants {
 
   val basePath = "/report-quarterly/income-and-expenses/view"
+  val hubBasePath = "/manage-self-assessment"
   val baseUrl = s"http://localhost:9081$basePath"
+  val hubBaseUrl = s"http://localhost:9081$hubBasePath"
   val auditSource = "income-tax-view-change-frontend"
 
 }

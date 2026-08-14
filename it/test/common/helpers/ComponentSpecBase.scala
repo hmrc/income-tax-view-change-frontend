@@ -38,6 +38,7 @@ import play.api.libs.crypto.DefaultCookieSigner
 import play.api.test.FakeRequest
 import play.api.{Application, Environment, Mode}
 import common.testConstants.BaseIntegrationTestConstants.*
+import common.testConstants.MicroserviceSpecificConstants
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.language.LanguageUtils
 
@@ -189,7 +190,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "feature-switches.read-from-mongo" -> "true",
     "feature-switch.enable-time-machine" -> "false",
     "time-machine.add-years" -> "0",
-    "time-machine.add-days" -> "0"
+    "time-machine.add-days" -> "0",
+    "base.context-root" -> MicroserviceSpecificConstants.hubBasePath
   )
 
   val btaPartialUrl = "/business-account/partial/service-info"

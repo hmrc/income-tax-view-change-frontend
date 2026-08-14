@@ -50,11 +50,10 @@ class RecentActivityController @Inject()(val newHomeRecentActivityView: hub.view
 
   def show(isAgent: Boolean, origin: Option[String] = None): Action[AnyContent] = authActions.asMTDIndividualOrAgentWithClient(isAgent).async {
     implicit user =>
-      (isEnabled(RecentActivity), !user.isSupportingAgent, user.isAgent) match {
-        case (true, true, _) => handleShowRequest(origin)
-        case (true, false, _) => Future.successful(Redirect(hub.controllers.routes.HomeController.handleOverview(origin, isAgent)))
-        case (false, _, true) => Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
-        case (false, _, false) => Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.show()))
+      (isEnabled(RecentActivity), !user.isSupportingAgent) match {
+        case (true, true) => handleShowRequest(origin)
+        case (true, false) => Future.successful(Redirect(overviewUrl(origin, isAgent)))
+        case (false, _) => Future.successful(Redirect(yourTasksUrl(origin, isAgent)))
       }
   }
   

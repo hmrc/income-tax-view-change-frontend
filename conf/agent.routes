@@ -2,18 +2,33 @@
 
 
 # Enter Clients UTR
-GET         /client-utr                                                    hub.controllers.agent.EnterClientsUTRController.show()
-POST        /client-utr                                                    hub.controllers.agent.EnterClientsUTRController.submit()
-GET         /client-utr/:utr                                               hub.controllers.agent.EnterClientsUTRController.showWithUtr(utr: String)
+GET         /manage-self-assessment/agents/client-utr                      hub.controllers.agent.EnterClientsUTRController.show()
+POST        /manage-self-assessment/agents/client-utr                      hub.controllers.agent.EnterClientsUTRController.submitNewUrl()
+GET         /manage-self-assessment/agents/client-utr/:utr                 hub.controllers.agent.EnterClientsUTRController.showWithUtr(utr: String)
 
 # Confirm Client
-GET         /confirm-client-details                                         hub.controllers.agent.ConfirmClientUTRController.show()
-POST        /confirm-client-details                                         hub.controllers.agent.ConfirmClientUTRController.submit()
+GET         /manage-self-assessment/agents/confirm-client-details          hub.controllers.agent.ConfirmClientUTRController.show()
+POST        /manage-self-assessment/agents/confirm-client-details          hub.controllers.agent.ConfirmClientUTRController.submitNewUrl()
 
 # UTR Error
-GET         /cannot-view-client                                            hub.controllers.agent.UTRErrorController.show()
-POST        /cannot-view-client                                            hub.controllers.agent.UTRErrorController.submit()
+GET         /manage-self-assessment/agents/cannot-view-client              hub.controllers.agent.UTRErrorController.show()
+POST        /manage-self-assessment/agents/cannot-view-client              hub.controllers.agent.UTRErrorController.submitNewUrl()
 
 #Home Controller
-GET         /remove-client-sessions                                        hub.controllers.agent.RemoveClientDetailsSessionsController.show()
+GET         /manage-self-assessment/agents/remove-client-sessions          hub.controllers.agent.RemoveClientDetailsSessionsController.show()
 
+# Enter Clients UTR
+GET         /report-quarterly/income-and-expenses/view/agents/client-utr                      hub.controllers.agent.EnterClientsUTRController.show()
+POST        /report-quarterly/income-and-expenses/view/agents/client-utr                      hub.controllers.agent.EnterClientsUTRController.submit()
+GET         /report-quarterly/income-and-expenses/view/agents/client-utr/:utr                 hub.controllers.agent.EnterClientsUTRController.showWithUtr(utr: String)
+
+# Confirm Client
+GET         /report-quarterly/income-and-expenses/view/agents/confirm-client-details          hub.controllers.agent.ConfirmClientUTRController.show()
+POST        /report-quarterly/income-and-expenses/view/agents/confirm-client-details          hub.controllers.agent.ConfirmClientUTRController.submit()
+
+# UTR Error
+GET         /report-quarterly/income-and-expenses/view/agents/cannot-view-client              hub.controllers.agent.UTRErrorController.show()
+POST        /report-quarterly/income-and-expenses/view/agents/cannot-view-client              hub.controllers.agent.UTRErrorController.submit()
+
+#Home Controller
+GET         /report-quarterly/income-and-expenses/view/agents/remove-client-sessions          hub.controllers.agent.RemoveClientDetailsSessionsController.show()

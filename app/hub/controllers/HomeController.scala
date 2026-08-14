@@ -82,9 +82,9 @@ class HomeController @Inject()(val newHomeRecentActivityView: hub.views.html.new
   private def handleYourTasks(@unused origin: Option[String] = None, isAgent: Boolean)
                              (implicit  @unused user: MtdItUser[_]): Future[Result] = {
     if(isAgent){
-      Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.showAgent()))
-    }else {
-     Future.successful(Redirect(hub.controllers.newHomePage.routes.HandleYourTasksController.show()))
+      Future.successful(Redirect(appConfig.agentYourTasksUrl))
+    } else {
+     Future.successful(Redirect(appConfig.individualYourTasksUrl))
     }
   }
 

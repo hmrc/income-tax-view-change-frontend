@@ -16,7 +16,7 @@
 
 package hub.testConstants.messages
 
-import common.helpers.ComponentSpecBase
+import hub.helpers.ComponentSpecBase
 
 object HomeMessages extends ComponentSpecBase {
 

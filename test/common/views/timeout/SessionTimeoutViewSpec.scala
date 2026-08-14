@@ -18,7 +18,6 @@ package common.views.timeout
 
 import common.config.FrontendAppConfig
 import common.testUtils.TestSupport
-import common.viewUtils.InternalUrlHelper
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.test.FakeRequest
@@ -51,7 +50,7 @@ class SessionTimeoutViewSpec extends TestSupport {
       }
 
       "has a link to sign-in page" in {
-        document.getElementById("sign-in-link").attr("href") shouldBe InternalUrlHelper.signinUrl
+        document.getElementById("sign-in-link").attr("href") shouldBe appConfig.signinUrl
       }
 
     }

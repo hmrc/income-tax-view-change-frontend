@@ -17,9 +17,8 @@
 package common.auth.actions
 
 import common.auth.AuthorisedAndEnrolledRequest
+import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.viewUtils.InternalUrlHelper
-import common.controllers.errors.routes as errorRoutes
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{Request, Result}
@@ -31,6 +30,8 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 trait AuthoriseHelper extends FeatureSwitching with Logging {
+
+  val appConfig: FrontendAppConfig
 
   type AuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel
   type NrsIndividualAuthRetrievals = Enrolments ~ Option[Name] ~ Option[Credentials] ~ Option[AffinityGroup] ~ ConfidenceLevel ~
@@ -44,13 +45,13 @@ trait AuthoriseHelper extends FeatureSwitching with Logging {
   def logAndRedirect[A](): PartialFunction[Throwable, Future[Either[Result, AuthorisedAndEnrolledRequest[A]]]] = {
     case _: BearerTokenExpired =>
       logger.warn("Bearer Token Timed Out.")
-      Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
+      Future.successful(Left(Redirect(appConfig.timeoutUrl)))
     case insufficientEnrolments: InsufficientEnrolments =>
       logger.warn(s"Insufficient enrolments: ${insufficientEnrolments.msg}")
-      Future.successful(Left(Redirect(errorRoutes.NotEnrolledController.show())))
+      Future.successful(Left(Redirect(appConfig.notEnrolledUrl)))
     case authorisationException: AuthorisationException =>
       logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-      Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
+      Future.successful(Left(Redirect(appConfig.signinUrl)))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
   }

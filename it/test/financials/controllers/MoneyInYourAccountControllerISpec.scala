@@ -207,7 +207,7 @@ class MoneyInYourAccountControllerISpec extends ControllerISpecHelper {
                   httpStatus(INTERNAL_SERVER_ERROR),
                   pageTitle(mtdUserRole, "standardError.heading", isErrorPage = true),
                   elementAttributeBySelector(".govuk-phase-banner__text a", "href")
-                  (s"$basePath${if(mtdUserRole == MTDIndividual) "" else "/agents"}/feedback")
+                  (s"${if(mtdUserRole == MTDIndividual) appConfig.feedbackUrl else appConfig.agentFeedbackUrl}")
                 )
               }
 

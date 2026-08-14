@@ -79,9 +79,9 @@ class OptOutTaxYearQuestionControllerSpec extends MockAuthActions with MockOptOu
 
   private def homeLink(isAgent: Boolean): String = {
     if (isAgent) {
-      "/report-quarterly/income-and-expenses/view/agents"
+      appConfig.agentHomeUrl
     } else {
-      "/report-quarterly/income-and-expenses/view"
+      appConfig.individualHomeUrl
     }
   }
 

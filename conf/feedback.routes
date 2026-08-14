@@ -1,0 +1,14 @@
+#Feedback Routes
+GET         /manage-self-assessment/feedback                                                     common.controllers.feedback.FeedbackController.show()
+GET         /manage-self-assessment/agents/feedback                                              common.controllers.feedback.FeedbackController.showAgent()
+POST        /manage-self-assessment/feedback                                                     common.controllers.feedback.FeedbackController.submitNewUrl()
+POST        /manage-self-assessment/agents/feedback                                              common.controllers.feedback.FeedbackController.submitAgentNewUrl()
+GET         /manage-self-assessment/thankyou                                                     common.controllers.feedback.FeedbackController.thankYou()
+GET         /manage-self-assessment/agents/thankyou                                              common.controllers.feedback.FeedbackController.thankYouAgent()
+
+GET         /report-quarterly/income-and-expenses/view/feedback                                                     common.controllers.feedback.FeedbackController.show()
+GET         /report-quarterly/income-and-expenses/view/agents/feedback                                              common.controllers.feedback.FeedbackController.showAgent()
+POST        /report-quarterly/income-and-expenses/view/feedback                                                     common.controllers.feedback.FeedbackController.submit()
+POST        /report-quarterly/income-and-expenses/view/agents/feedback                                              common.controllers.feedback.FeedbackController.submitAgent()
+GET         /report-quarterly/income-and-expenses/view/thankyou                                                     common.controllers.feedback.FeedbackController.thankYou()
+GET         /report-quarterly/income-and-expenses/view/agents/thankyou                                              common.controllers.feedback.FeedbackController.thankYouAgent()

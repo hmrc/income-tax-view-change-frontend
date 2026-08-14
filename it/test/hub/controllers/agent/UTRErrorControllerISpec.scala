@@ -16,24 +16,23 @@
 
 package hub.controllers.agent
 
-import common.controllers.agent.errors.routes as agentErrorRoutes
-import common.helpers.ComponentSpecBase
+
+import hub.helpers.ComponentSpecBase
 import common.helpers.servicemocks.MTDAgentAuthStub
-import common.viewUtils.InternalUrlHelper
 import play.api.http.Status.*
 
 class UTRErrorControllerISpec extends ComponentSpecBase {
   val path = "/agents/cannot-view-client"
 
   s"GET $path" should {
-    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
+    s"redirect ($SEE_OTHER) to ${appConfig.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildGETMTDClient(path).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(InternalUrlHelper.signinUrl)
+          redirectURI(appConfig.signinUrl)
         )
       }
     }
@@ -46,7 +45,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
         Then(s"Agent error page is shown with status SEE_OTHER")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+          redirectURI(appConfig.agentErrorUrl)
         )
       }
     }
@@ -67,14 +66,14 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
   }
 
   s"POST $path" should {
-    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
+    s"redirect ($SEE_OTHER) to ${appConfig.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
         val result = buildPOSTMTDPostClient(path, body = Map.empty).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(InternalUrlHelper.signinUrl)
+          redirectURI(appConfig.signinUrl)
         )
       }
     }
@@ -86,7 +85,7 @@ class UTRErrorControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+          redirectURI(appConfig.agentErrorUrl)
         )
       }
     }

@@ -16,7 +16,7 @@
 
 package hub.controllers.agent
 
-import common.controllers.ControllerISpecHelper
+import hub.controllers.ControllerISpecHelper
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.testConstants.BaseIntegrationTestConstants.{getAgentClientDetailsForCookie, testMtditid}
 import hub.testConstants.HubIntegrationTestConstants.businessOnlyResponse
@@ -52,7 +52,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+            redirectURI(appConfig.enterClientsUTRUrl)
           )
 
         }
@@ -85,7 +85,7 @@ class RemoveClientDetailsSessionsControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+            redirectURI(appConfig.enterClientsUTRUrl)
           )
 
         }

@@ -14,14 +14,6 @@ GET         /agents/no-assignment                                         common
 GET         /no-income-sources                                              common.controllers.NoIncomeSourcesController.show(isAgent: Boolean = false)
 GET         /agents/no-income-sources                                       common.controllers.NoIncomeSourcesController.show(isAgent: Boolean = true)
 
-#Feedback Routes
-GET         /feedback                                                     common.controllers.feedback.FeedbackController.show()
-GET         /agents/feedback                                              common.controllers.feedback.FeedbackController.showAgent()
-POST        /feedback                                                     common.controllers.feedback.FeedbackController.submit()
-POST        /agents/feedback                                              common.controllers.feedback.FeedbackController.submitAgent()
-GET         /thankyou                                                     common.controllers.feedback.FeedbackController.thankYou()
-GET         /agents/thankyou                                              common.controllers.feedback.FeedbackController.thankYouAgent()
-
 #Timeout Routes
 GET         /session-timeout                                              common.controllers.timeout.SessionTimeoutController.timeout()
 GET         /keep-alive                                                   common.controllers.timeout.SessionTimeoutController.keepAlive()

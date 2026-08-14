@@ -21,10 +21,8 @@ import common.auth.AuthExceptions.NoAssignment
 import common.auth.{AuthorisedAgentWithClientDetailsRequest, AuthorisedAndEnrolledRequest}
 import common.config.featureswitch.FeatureSwitching
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig}
-import common.controllers.agent.routes as agentRoutes
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.utils.AuthUtils.*
-import common.viewUtils.InternalUrlHelper
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
@@ -100,16 +98,16 @@ class AuthoriseAndRetrieveMtdAgent @Inject()(authorisedFunctions: AuthorisedFunc
     throwable match {
       case _: BearerTokenExpired =>
         logger.warn("Bearer Token Timed Out.")
-        Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
+        Future.successful(Left(Redirect(appConfig.timeoutUrl)))
       case _: InsufficientEnrolments =>
         logger.error(s"missing delegated enrolment. Redirect to agent error page.")
-        Future.successful(Left(Redirect(agentRoutes.ClientRelationshipFailureController.show())))
+        Future.successful(Left(Redirect(appConfig.clientRelationshipFailureUrl)))
       case _: NoAssignment =>
         logger.error(s"Agent User is not in an access group associated with the Client.")
-        Future.successful(Left(Redirect(agentRoutes.NoAssignmentController.show())))
+        Future.successful(Left(Redirect(appConfig.noAssignmentUrl)))
       case authorisationException: AuthorisationException =>
         logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-        Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
+        Future.successful(Left(Redirect(appConfig.signinUrl)))
       case ex =>
         logger.error(s"Unexpected error from Auth. Error message = ${ex.getMessage}")
         Future.successful(Left(errorHandler.showInternalServerError()))

@@ -16,11 +16,9 @@
 
 package common.controllers.agent
 
-import common.controllers.agent.errors.routes as agentErrorRoutes
-import common.controllers.agent.routes as agentRoutes
+
 import common.helpers.ComponentSpecBase
 import common.helpers.servicemocks.MTDAgentAuthStub
-import common.viewUtils.InternalUrlHelper
 import play.api.http.Status.*
 import play.api.libs.ws.WSResponse
 
@@ -28,8 +26,8 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
 
   val path = "/agents/not-authorised-to-view-client"
 
-  s"GET ${agentRoutes.ClientRelationshipFailureController.show().url}" should {
-    s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" when {
+  s"GET ${appConfig.clientRelationshipFailureUrl}" should {
+    s"redirect ($SEE_OTHER) to ${appConfig.signinUrl}" when {
       "the user is not authenticated" in {
         MTDAgentAuthStub.stubUnauthorised()
 
@@ -37,7 +35,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(InternalUrlHelper.signinUrl)
+          redirectURI(appConfig.signinUrl)
         )
       }
     }
@@ -50,7 +48,7 @@ class ClientDetailsFailureControllerISpec extends ComponentSpecBase {
         Then(s"Technical difficulties are shown with status OK")
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+          redirectURI(appConfig.agentErrorUrl)
         )
       }
     }

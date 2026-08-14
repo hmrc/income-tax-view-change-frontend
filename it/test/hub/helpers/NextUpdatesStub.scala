@@ -16,7 +16,6 @@
 
 package hub.helpers
 
-import common.helpers.WiremockHelper
 import common.models.obligations.ObligationsModel
 import play.api.http.Status
 import play.api.libs.json.Json

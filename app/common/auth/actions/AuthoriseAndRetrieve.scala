@@ -35,9 +35,8 @@ package common.auth.actions
 
 import com.google.inject.Singleton
 import common.auth.{AuthUserDetails, AuthorisedUserRequest, FrontendAuthorisedFunctions}
-import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
-import common.viewUtils.InternalUrlHelper
+import common.config.FrontendAppConfig
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, MessagesControllerComponents, Request, Result}
@@ -79,13 +78,13 @@ class AuthoriseAndRetrieve @Inject()(val authorisedFunctions: FrontendAuthorised
   def logAndRedirect[A]: PartialFunction[Throwable, Future[Either[Result, AuthorisedUserRequest[A]]]] = {
     case _: BearerTokenExpired =>
       logger.warn("Bearer Token Timed Out.")
-      Future.successful(Left(Redirect(InternalUrlHelper.timeoutCall)))
+      Future.successful(Left(Redirect(appConfig.timeoutUrl)))
     case _: InsufficientEnrolments =>
       logger.error(s"missing agent reference. Redirect to agent error page.")
-      Future.successful(Left(Redirect(InternalUrlHelper.agentErrorCall)))
+      Future.successful(Left(Redirect(appConfig.agentErrorUrl)))
     case authorisationException: AuthorisationException =>
       logger.warn(s"Unauthorised request: ${authorisationException.reason}. Redirect to Sign In.")
-      Future.successful(Left(Redirect(InternalUrlHelper.signinCall)))
+      Future.successful(Left(Redirect(appConfig.signinUrl)))
     // No catch all block at end - bubble up to global error handler
     // See investigation: https://github.com/hmrc/income-tax-view-change-frontend/pull/2432
   }

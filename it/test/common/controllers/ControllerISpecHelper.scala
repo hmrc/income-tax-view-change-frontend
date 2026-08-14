@@ -17,9 +17,6 @@
 package common.controllers
 
 import common.config.FrontendAppConfig
-import common.controllers.agent.errors.routes as agentErrorRoutes
-import common.controllers.agent.routes as agentRoutes
-import common.controllers.errors.routes as errorRoutes
 import common.enums.{MTDIndividual, MTDPrimaryAgent, MTDSupportingAgent, MTDUserRole}
 import common.helpers.ComponentSpecBase
 import common.helpers.servicemocks.BusinessDetailsStub.stubGetBusinessDetails
@@ -28,7 +25,6 @@ import common.helpers.servicemocks.FeatureSwitchStub.stubGetFeatureSwitches
 import common.helpers.servicemocks.{AuditStub, MTDAgentAuthStub, MTDIndividualAuthStub, SessionDataStub}
 import common.models.admin.FeatureSwitchName
 import common.models.audit.AccessDeniedForSupportingAgentAuditModel
-import common.viewUtils.InternalUrlHelper
 import play.api.http.Status.{SEE_OTHER, UNAUTHORIZED}
 import play.api.libs.ws.WSResponse
 import common.testConstants.BaseIntegrationTestConstants.getAgentClientDetailsForCookie
@@ -103,7 +99,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
     if(mtdUserRole != MTDSupportingAgent) {
       "does not have a valid session" should {
-        s"redirect ($SEE_OTHER) to ${InternalUrlHelper.signinUrl}" in {
+        s"redirect ($SEE_OTHER) to ${appConfig.signinUrl}" in {
           if (mtdUserRole != MTDIndividual) {
             SessionDataStub.stubGetSessionDataResponseSuccess()
             stubGetCitizenDetails()
@@ -114,13 +110,13 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(InternalUrlHelper.signinUrl)
+            redirectURI(appConfig.signinUrl)
           )
         }
       }
 
       "has an expired bearerToken" should {
-        s"redirect ($SEE_OTHER) to ${InternalUrlHelper.timeoutUrl}" in {
+        s"redirect ($SEE_OTHER) to ${appConfig.timeoutUrl}" in {
           if (mtdUserRole != MTDIndividual) {
             SessionDataStub.stubGetSessionDataResponseSuccess()
             stubGetCitizenDetails()
@@ -131,7 +127,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(InternalUrlHelper.timeoutUrl)
+            redirectURI(appConfig.timeoutUrl)
           )
         }
       }
@@ -147,13 +143,13 @@ trait ControllerISpecHelper extends ComponentSpecBase {
   def testIndividualAuthFailures(requestPath: String,
                                  optBody: Option[Map[String, Seq[String]]]): Unit = {
     "does not have HMRC-MTD-IT enrolment" should {
-      s"redirect ($SEE_OTHER) to ${errorRoutes.NotEnrolledController.show().url}" in {
+      s"redirect ($SEE_OTHER) to ${appConfig.notEnrolledUrl}" in {
         MTDIndividualAuthStub.stubInsufficientEnrolments()
         val result = buildMTDClient(requestPath, optBody = optBody).futureValue
 
         result should have(
           httpStatus(SEE_OTHER),
-          redirectURI(errorRoutes.NotEnrolledController.show().url)
+          redirectURI(appConfig.notEnrolledUrl)
         )
       }
     }
@@ -189,7 +185,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
                             mtdUserRole: MTDUserRole): Unit = {
     if (mtdUserRole == MTDPrimaryAgent) {
       "does not have arn enrolment" should {
-        s"redirect ($SEE_OTHER) to ${agentErrorRoutes.AgentErrorController.show().url}" in {
+        s"redirect ($SEE_OTHER) to ${appConfig.agentErrorUrl}" in {
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
           stubGetBusinessDetails()()
@@ -199,7 +195,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(agentErrorRoutes.AgentErrorController.show().url)
+            redirectURI(appConfig.agentErrorUrl)
           )
         }
       }
@@ -224,7 +220,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
       }
     } else {
       "does not have a valid delegated MTD enrolment" should {
-        s"redirect ($SEE_OTHER) to ${agentRoutes.ClientRelationshipFailureController.show().url}" in {
+        s"redirect ($SEE_OTHER) to ${appConfig.clientRelationshipFailureUrl}" in {
           SessionDataStub.stubGetSessionDataResponseSuccess()
           stubGetCitizenDetails()
           stubGetBusinessDetails()()
@@ -233,7 +229,7 @@ trait ControllerISpecHelper extends ComponentSpecBase {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(agentRoutes.ClientRelationshipFailureController.show().url)
+            redirectURI(appConfig.clientRelationshipFailureUrl)
           )
         }
       }

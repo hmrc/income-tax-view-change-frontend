@@ -50,10 +50,17 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
                                           val ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport with FeatureSwitching with Logging {
 
+  lazy val postAction =
+    if(appConfig.isNewHubUrl)
+      routes.EnterClientsUTRController.submitNewUrl()
+    else
+      routes.EnterClientsUTRController.submit()
+
   def show: Action[AnyContent] = authActions.asAgent().async { implicit user =>
+
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form,
-      postAction = routes.EnterClientsUTRController.submit()
+      postAction = postAction
     )))
   }
 
@@ -61,16 +68,20 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
     val utrSafe = utr.filter(_.isDigit).take(10)
     Future.successful(Ok(enterClientsUTR(
       clientUTRForm = ClientsUTRForm.form.fill(utrSafe),
-      postAction = routes.EnterClientsUTRController.submit()
+      postAction = postAction
     )))
   }
 
+  def submit: Action[AnyContent] = handleSubmit
 
-  def submit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
+  def submitNewUrl: Action[AnyContent] = handleSubmit
+
+
+  def handleSubmit: Action[AnyContent] = authActions.asAgent().async { implicit user =>
     ClientsUTRForm.form.bindFromRequest().fold(
       hasErrors => Future.successful(BadRequest(enterClientsUTR(
         clientUTRForm = hasErrors,
-        postAction = routes.EnterClientsUTRController.submit()
+        postAction = postAction
       ))),
       validUTR => {
         clientDetailsService.checkClientDetails(utr = validUTR)
@@ -79,17 +90,17 @@ class EnterClientsUTRController @Inject()(enterClientsUTR: EnterClientsUTRView,
               checkAgentAuthorisedAndGetRole(clientDetails.mtdItId).flatMap { userRole =>
                 val sessionCookies: Seq[(String, String)] = SessionCookieData(clientDetails, validUTR, userRole == MTDSupportingAgent).toSessionCookieSeq
                 sendAudit(true, user, validUTR, clientDetails.nino, clientDetails.mtdItId, Some(userRole == MTDSupportingAgent))
-                Future.successful(Redirect(routes.ConfirmClientUTRController.show()).addingToSession(sessionCookies: _*))
+                Future.successful(Redirect(appConfig.confirmClientUTRUrl).addingToSession(sessionCookies: _*))
               }.recover {
                 case ex =>
                   logger.error(s"[submit] - ${ex.getMessage} - ${ex.getCause}")
                   sendAudit(false, user, validUTR, clientDetails.nino, clientDetails.mtdItId, None)
-                  Redirect(hub.controllers.agent.routes.UTRErrorController.show())
+                  Redirect(appConfig.utrErrorUrl)
               }
 
             case Left(CitizenDetailsNotFound | BusinessDetailsNotFound) =>
               val sessionValue: Seq[(String, String)] = Seq(SessionKeys.clientUTR -> validUTR)
-              Future.successful(Redirect(routes.UTRErrorController.show()).addingToSession(sessionValue: _*))
+              Future.successful(Redirect(appConfig.utrErrorUrl).addingToSession(sessionValue: _*))
             case Left(_) =>
               logger.error(s"[submit] - Error response received from API")
               Future.successful(itvcErrorHandler.showInternalServerError())

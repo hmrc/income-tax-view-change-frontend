@@ -16,8 +16,8 @@
 
 package common.views.errorPages.agent
 
+
 import common.testUtils.ViewSpec
-import common.viewUtils.InternalUrlHelper
 import play.twirl.api.Html
 import common.views.html.errorPages.agent.AgentError
 
@@ -58,7 +58,7 @@ class AgentErrorViewSpec extends ViewSpec {
     s"have a sign out button stating: ${messages("base.sign-out")}" in new Setup(agentErrorView) {
       val signoutLinkButton = layoutContent.select("a[class=govuk-button]")
       signoutLinkButton.text shouldBe messages("base.sign-out")
-      signoutLinkButton.attr("href") shouldBe InternalUrlHelper.signoutUrl
+      signoutLinkButton.attr("href") shouldBe appConfig.signoutUrl
     }
 
   }

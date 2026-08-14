@@ -16,7 +16,6 @@
 
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
-@import common.viewUtils.InternalUrlHelper
 @import common.config.FrontendAppConfig
 
 @this(
@@ -42,7 +41,7 @@
     }
 
     <div>
-        @link(link = InternalUrlHelper.signoutUrl, messageKey = "base.sign-out",
+        @link(link = appConfig.signoutUrl, messageKey = "base.sign-out",
         classes = "govuk-button")
     </div>
 }

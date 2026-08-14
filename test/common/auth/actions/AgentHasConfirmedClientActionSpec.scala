@@ -71,7 +71,7 @@ class AgentHasConfirmedClientActionSpec extends AuthActionsSpecHelper {
         )
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view/agents")
+        redirectLocation(result).get should include(appConfig.confirmClientUTRUrl)
 
       }
     }

@@ -18,7 +18,6 @@ package hub.controllers
 
 import hub.testConstants.HubIntegrationTestConstants.b2CessationDate
 import common.auth.MtdItUser
-import common.controllers.ControllerISpecHelper
 import common.enums.MTDIndividual
 import common.helpers.servicemocks.MTDIndividualAuthStub
 import common.helpers.servicemocks.YearOfMigrationStub

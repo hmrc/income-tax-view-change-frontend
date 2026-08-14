@@ -16,13 +16,14 @@
 
 @import common.views.html.layouts.unifiedLayout
 @import common.views.html.components._
-@import common.viewUtils.InternalUrlHelper
+@import common.config.FrontendAppConfig
 
 @this(
     layout: unifiedLayout,
     h1: h1,
     p: p,
-    link: link
+    link: link,
+    appConfig: FrontendAppConfig
 )
 
 @()(implicit request: Request[_], messages: Messages)
@@ -30,7 +31,7 @@
 @paragraph = {
     @messages("timeout.signIn.1")
     @link(
-        link = InternalUrlHelper.signinUrl,
+        link = appConfig.signinUrl,
         messageKey = "timeout.signIn.2",
 
         id = Some("sign-in-link"),

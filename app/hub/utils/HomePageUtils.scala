@@ -17,6 +17,7 @@
 package hub.utils
 
 import common.auth.MtdItUser
+import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.admin.PenaltiesAndAppeals
 import common.services.DateServiceInterface
@@ -32,6 +33,7 @@ import scala.concurrent.Future
 trait HomePageUtils extends FeatureSwitching {
   val whatYouOweService: WhatYouOweService
   val dateService: DateServiceInterface
+  val appConfig: FrontendAppConfig
 
   def getOutstandingChargesModel(unpaidCharges: List[FinancialDetailsResponseModel])
                                         (implicit user: MtdItUser[_], hc: HeaderCarrier): Future[List[OutstandingChargeModel]] =
@@ -92,12 +94,19 @@ trait HomePageUtils extends FeatureSwitching {
       .sortWith(_ isBefore _)
       .headOption
 
-  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = if (isAgent) hub.controllers.newHomePage.routes.HandleYourTasksController.showAgent().url else hub.controllers.newHomePage.routes.HandleYourTasksController.show().url
-  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = hub.controllers.newHomePage.routes.RecentActivityController.show(isAgent, origin).url
-  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = hub.controllers.routes.HomeController.handleOverview(origin, isAgent).url
-  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = hub.controllers.routes.HomeController.handleHelp(origin, isAgent).url
+  def yourTasksUrl(origin: Option[String] = None, isAgent: Boolean): String = getUrl(origin, isAgent, "/your-tasks")
+  def recentActivityUrl(origin: Option[String] = None, isAgent: Boolean): String = getUrl(origin, isAgent, "/recent-activity")
+  def overviewUrl(origin: Option[String] = None, isAgent: Boolean): String = getUrl(origin, isAgent, "/overview")
+  def helpUrl(origin: Option[String] = None, isAgent: Boolean): String = getUrl(origin, isAgent, "/help")
 
   private def mainChargeIsNotPaidFilter: PartialFunction[ChargeItem, ChargeItem] = {
     case x if x.remainingToPayByChargeOrInterestWhenChargeIsPaid => x
+  }
+  
+  private def getUrl(origin: Option[String] = None, isAgent: Boolean, path: String) = {
+    if (isAgent)
+      s"${appConfig.hubAgentBaseUrl}$path"
+    else
+      origin.fold(s"${appConfig.hubBaseUrl}$path")(o => s"${appConfig.hubBaseUrl}$path?origin=$o")
   }
 }

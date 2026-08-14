@@ -16,10 +16,9 @@
 
 package common.controllers.agent
 
-import common.controllers.agent.errors.routes as agentErrorRoutes
+
 import common.mocks.auth.MockAuthActions
 import common.mocks.views.agent.MockClientRelationshipFailure
-import common.viewUtils.InternalUrlHelper
 import play.api
 import play.api.Application
 import play.api.test.Helpers.*
@@ -49,7 +48,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
         val result = action(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
+        redirectLocation(result) shouldBe Some(appConfig.signinUrl)
       }
     }
     "the user has timed out" should {
@@ -57,7 +56,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
         val result = action(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
+        redirectLocation(result) shouldBe Some(appConfig.timeoutUrl)
       }
     }
     "the user does not have an agent reference number" should {
@@ -67,7 +66,7 @@ class ClientDetailsFailureControllerSpec extends MockAuthActions
         val result = action(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(appConfig.agentErrorUrl)
       }
     }
 

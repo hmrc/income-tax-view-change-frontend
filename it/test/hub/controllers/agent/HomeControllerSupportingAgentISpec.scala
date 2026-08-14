@@ -17,7 +17,7 @@
 package hub.controllers.agent
 
 import common.auth.MtdItUser
-import common.controllers.ControllerISpecHelper
+import hub.controllers.ControllerISpecHelper
 import common.enums.MTDSupportingAgent
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.implicits.{ImplicitDateFormatter, ImplicitDateFormatterImpl}

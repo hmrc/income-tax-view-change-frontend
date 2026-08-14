@@ -24,16 +24,19 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import javax.inject.Singleton
 
 @Singleton
-class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) extends ExternalRedirectHelper {
+class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config: Configuration) extends ExternalRedirectHelper with InternalUrlHelper {
 
   lazy val hasEnabledTestOnlyRoutes: Boolean = config.get[String]("play.http.router") == "testOnlyDoNotUseInAppConf.Routes"
 
   //App
-  lazy val basePath: String = servicesConfig.getString("base.context-root")
+  override val basePath: String = servicesConfig.getString("base.context-root")
   lazy val agentBasePath: String = s"$basePath/agents"
   lazy val baseUrl: String = servicesConfig.getString("base.url")
   override val baseFullUrl: String = s"$baseUrl$basePath"
   lazy val appName: String = servicesConfig.getString("appName")
+  override val isNewHubUrl: Boolean = basePath.contains("/manage-self-assessment")
+  lazy val basePathOld: String = "/report-quarterly/income-and-expenses/view"
+  lazy val agentBasePathOld: String = s"$basePathOld/agents"
 
   //Feedback Config
   private lazy val contactHost: String = servicesConfig.getString("contact-frontend.host")
@@ -66,9 +69,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   def saViewLandPService(utr: String): String = servicesConfig.getString("old-sa-viewer-frontend.host") + s"/$utr/account"
 
   //individual sa302
-  def sa302:String = s"$baseUrl$basePath/mortgage-evidence/proof-of-income"
+  def sa302:String = s"$baseUrl$basePathOld/mortgage-evidence/proof-of-income"
   //agent sa302
-  def sa302Agent:String = s"$baseUrl$agentBasePath/mortgage-evidence/proof-of-income"
+  def sa302Agent:String = s"$baseUrl$agentBasePathOld/mortgage-evidence/proof-of-income"
 
   //GG Sign In via BAS Gateway
   lazy val signInUrl: String = s"$baseFullUrl/sign-in"
@@ -116,9 +119,9 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val hipRepaymentsUrl: String = servicesConfig.baseUrl("hip-repayment-api")
 
   //Payment Redirect route
-  lazy val paymentRedirectUrl: String = s"$baseUrl$basePath/what-you-owe"
+  lazy val paymentRedirectUrl: String = s"$baseUrl$basePathOld/what-you-owe"
   //Payment Redirect route
-  lazy val agentPaymentRedirectUrl: String = s"$baseUrl$agentBasePath/payments-owed"
+  lazy val agentPaymentRedirectUrl: String = s"$baseUrl$agentBasePathOld/payments-owed"
 
 
   // Submission service

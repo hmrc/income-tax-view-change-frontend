@@ -16,7 +16,7 @@
 
 package hub.controllers.newHomePage
 
-import common.controllers.ControllerISpecHelper
+import hub.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.servicemocks.ITSAStatusDetailsStub
 import common.models.admin.{FeatureSwitchName, RecentActivity}
@@ -220,7 +220,7 @@ class RecentActivityControllerISpec extends ControllerISpecHelper {
 
               result should have(
                 httpStatus(SEE_OTHER),
-                redirectURI(s"$basePath/agents/overview")
+                redirectURI(s"${appConfig.hubAgentBaseUrl}/overview")
               )
             }
           }

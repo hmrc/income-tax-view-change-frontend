@@ -157,9 +157,9 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents"
+              appConfig.agentHomeUrl
             } else {
-              "/report-quarterly/income-and-expenses/view"
+              appConfig.individualHomeUrl
             }
 
             status(result) shouldBe Status.SEE_OTHER
@@ -249,9 +249,9 @@ class ConfirmOptOutUpdateControllerSpec extends MockAuthActions with MockOptOutS
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents"
+              appConfig.agentHomeUrl
             } else {
-              "/report-quarterly/income-and-expenses/view"
+              appConfig.individualHomeUrl
             }
 
             status(result) shouldBe Status.SEE_OTHER

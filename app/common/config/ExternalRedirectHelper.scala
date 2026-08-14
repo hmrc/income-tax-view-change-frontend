@@ -20,7 +20,6 @@ import businessDetails.controllers.manageBusinesses.routes as manageBusinessRout
 import businessDetails.controllers.triggeredMigration.routes as triggeredMigrationRoutes
 import financials.controllers.claimToAdjustPoa.routes as claimToAdjustPoaRoutes
 import financials.controllers.routes as financialsRoutes
-import hub.controllers.agent.routes as hubAgentRoutes
 import obligations.controllers.reportingObligations.routes as reportingObligationRoutes
 import obligations.controllers.routes as obligationsRoutes
 import play.api.Configuration
@@ -36,6 +35,8 @@ trait ExternalRedirectHelper {
   
   lazy val hubBaseUrl: String = baseFullUrl
   lazy val hubAgentBaseUrl: String = s"${hubBaseUrl}/agents"
+  
+  def hubBaseUrl(isAgent: Boolean): String = if (isAgent) hubAgentBaseUrl else hubBaseUrl
   
   lazy val individualHomeUrl: String =
     s"$hubBaseUrl/income-tax"
@@ -54,10 +55,14 @@ trait ExternalRedirectHelper {
   lazy val agentYourTasksUrl: String =
     s"$hubAgentBaseUrl/your-tasks"
     
-  lazy val enterClientsUTRUrl: String =
-    hubAgentRoutes.EnterClientsUTRController.show().url
-  lazy val confirmClientUTRUrl: String =
-    hubAgentRoutes.ConfirmClientUTRController.show().url
+  lazy val enterClientsUTRUrl: String = {
+    s"$hubAgentBaseUrl/client-utr"
+  }
+  lazy val confirmClientUTRUrl: String = {
+    s"$hubAgentBaseUrl/confirm-client-details"
+  }
+
+  lazy val utrErrorUrl = s"$hubAgentBaseUrl/cannot-view-client"
 
   //Obligation routes
   

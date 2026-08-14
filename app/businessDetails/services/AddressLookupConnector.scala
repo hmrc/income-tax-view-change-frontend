@@ -21,7 +21,6 @@ import common.auth.MtdItUser
 import common.config.FrontendAppConfig
 import common.config.featureswitch.FeatureSwitching
 import common.models.core.Mode
-import common.viewUtils.InternalUrlHelper
 import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.GetAddressLookupDetailsHttpParser.GetAddressLookupDetailsResponse
 import businessDetails.models.incomeSourceDetails.viewmodels.httpparser.PostAddressLookupHttpParser.PostAddressLookupResponse
 import play.api.Logging
@@ -55,8 +54,8 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
     else addBusinessesRoutes.AddBusinessAddressController.submit(None, mode = mode, isTriggeredMigration).url
   }
 
-  lazy val individualFeedbackUrl: String = InternalUrlHelper.feedbackUrl
-  lazy val agentFeedbackUrl: String = InternalUrlHelper.agentFeedbackUrl
+  lazy val individualFeedbackUrl: String = appConfig.feedbackUrl
+  lazy val agentFeedbackUrl: String = appConfig.agentFeedbackUrl
 
   lazy val individualEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("header.serviceName")
   lazy val agentEnglishBanner: String = messagesApi.preferred(Seq(Lang("en")))("agent.header.serviceName")
@@ -75,11 +74,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.baseUrl + InternalUrlHelper.timeoutUrl),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.baseUrl + InternalUrlHelper.keepAliveUrl)
+                "timeoutUrl" -> JsString(appConfig.baseUrl + appConfig.timeoutUrl),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.baseUrl + appConfig.keepAliveUrl)
               )
             ),
-            "signOutHref" -> JsString(appConfig.baseUrl + InternalUrlHelper.signoutUrl),
+            "signOutHref" -> JsString(appConfig.baseUrl + appConfig.signoutUrl),
             "accessibilityFooterUrl" -> JsString(appConfig.accessibilityUrl),
             "selectPageConfig" -> JsObject(
               Seq(
@@ -189,11 +188,11 @@ class AddressLookupConnector @Inject()(val appConfig: FrontendAppConfig,
             "timeoutConfig" -> JsObject(
               Seq(
                 "timeoutAmount" -> JsNumber(3600),
-                "timeoutUrl" -> JsString(appConfig.baseUrl + InternalUrlHelper.timeoutUrl),
-                "timeoutKeepAliveUrl" -> JsString(appConfig.baseUrl + InternalUrlHelper.keepAliveUrl)
+                "timeoutUrl" -> JsString(appConfig.baseUrl + appConfig.timeoutUrl),
+                "timeoutKeepAliveUrl" -> JsString(appConfig.baseUrl + appConfig.keepAliveUrl)
               )
             ),
-            "signOutHref" -> JsString(appConfig.baseUrl + InternalUrlHelper.signoutUrl),
+            "signOutHref" -> JsString(appConfig.baseUrl + appConfig.signoutUrl),
             "accessibilityFooterUrl" -> JsString(appConfig.accessibilityUrl),
             "selectPageConfig" -> JsObject(
               Seq(

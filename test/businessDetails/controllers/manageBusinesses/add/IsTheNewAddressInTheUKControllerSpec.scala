@@ -160,7 +160,7 @@ class IsTheNewAddressInTheUKControllerSpec extends MockAuthActions with MockSess
                   .copy(addIncomeSourceData = Some(AddIncomeSourceData())))))
 
                 status(result) shouldBe SEE_OTHER
-                redirectLocation(result).get should include("/report-quarterly/income-and-expenses/view")
+                redirectLocation(result).get should include(appConfig.individualHomeUrl)
             }
           }
         }

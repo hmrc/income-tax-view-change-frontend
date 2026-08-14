@@ -16,8 +16,7 @@
 
 package hub.controllers.agent
 
-import common.viewUtils.InternalUrlHelper
-import common.controllers.agent.errors.routes as agentErrorRoutes
+
 import common.mocks.auth.MockAuthActions
 import common.utils.sessionUtils.SessionKeys
 import play.api
@@ -48,7 +47,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
+        redirectLocation(result) shouldBe Some(appConfig.signinUrl)
       }
     }
 
@@ -58,7 +57,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
+        redirectLocation(result) shouldBe Some(appConfig.timeoutUrl)
       }
     }
 
@@ -69,7 +68,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(appConfig.agentErrorUrl)
       }
     }
 
@@ -92,7 +91,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+        redirectLocation(result) shouldBe Some(appConfig.enterClientsUTRUrl)
       }
     }
 
@@ -102,7 +101,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
+        redirectLocation(result) shouldBe Some(appConfig.timeoutUrl)
       }
     }
 
@@ -113,7 +112,7 @@ class UTRErrorControllerSpec extends MockAuthActions
         val result = testUTRErrorController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(appConfig.agentErrorUrl)
       }
     }
 
@@ -124,7 +123,7 @@ class UTRErrorControllerSpec extends MockAuthActions
       val result = testUTRErrorController.submit()(fakeRequestWithClientUTR)
 
       status(result) shouldBe SEE_OTHER
-      redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.EnterClientsUTRController.show().url)
+      redirectLocation(result) shouldBe Some(appConfig.enterClientsUTRUrl)
       result.futureValue.session(fakeRequestWithClientUTR).get(SessionKeys.clientUTR) shouldBe None
     }
   }

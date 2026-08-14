@@ -31,7 +31,6 @@ import play.api.mvc._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import hub.views.html.agent.ConfirmClientUTRView
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,18 +47,26 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
 
   def show: Action[AnyContent] =
     authActions.asMTDAgentWithUnconfirmedClient { implicit user =>
+      val postAction = if(appConfig.isNewHubUrl)
+        routes.ConfirmClientUTRController.submitNewUrl()
+      else routes.ConfirmClientUTRController.submit()
+        
       Ok(
         confirmClientUTRView(
           clientName = user.optClientNameAsString,
           clientUtr = user.saUtr,
-          postAction = routes.ConfirmClientUTRController.submit(),
+          postAction = postAction,
           backUrl = backUrl,
           isSupportingAgent = user.isSupportingAgent
         )
       )
     }
 
-  def submit: Action[AnyContent] =
+  def submit: Action[AnyContent] = handleSubmit
+  
+  def submitNewUrl: Action[AnyContent] = handleSubmit
+    
+  def handleSubmit: Action[AnyContent] =
     authActions.asMTDAgentWithUnconfirmedClient.async { implicit user =>
 
       val clientName = user.optClientNameAsString.getOrElse("")
@@ -86,13 +93,13 @@ class ConfirmClientUTRController @Inject()(confirmClientUTRView: ConfirmClientUT
         ))
 
         Future(
-          Redirect(hub.controllers.routes.HomeController.showAgent().url)
+          Redirect(appConfig.agentHomeUrl)
             .addingToSession(SessionKeys.confirmedClient -> "true")
         )
-    }
+      }
     }
 
-  lazy val backUrl: String = hub.controllers.agent.routes.EnterClientsUTRController.show().url
+  lazy val backUrl: String = appConfig.enterClientsUTRUrl
 
   def getSessionDataStorageFS: Boolean = appConfig.isSessionDataStorageEnabled
 

@@ -58,15 +58,20 @@ class FeedbackController @Inject()(val authActions: AuthActions,
         }
   }
 
-  def submit: Action[AnyContent] = authActions.asAuthorisedUser.async {
+  def submit: Action[AnyContent] = handleSubmit(false)
+  def submitNewUrl: Action[AnyContent] = handleSubmit(false)
+  def submitAgent: Action[AnyContent] = handleSubmit(true)
+  def submitAgentNewUrl: Action[AnyContent] = handleSubmit(true)
+
+  def handleSubmit(isAgent: Boolean): Action[AnyContent] = authActions.asAuthorisedUser.async {
     implicit request =>
       FeedbackForm.form.bindFromRequest().fold(
         hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
-          postAction = routes.FeedbackController.submit()))),
+          postAction = if(isAgent) config.feedbackAgentPostCall else config.feedbackPostCall))),
         formData =>
           feedbackConnector.submit(formData).flatMap {
             case Right(_) =>
-              Future.successful(Redirect(routes.FeedbackController.thankYou()))
+              Future.successful(Redirect(config.feedBackThankYouUrl(isAgent)))
             case Left(status) =>
               logger.error(s"Unexpected status code from feedback form: $status")
               throw new Error(s"Failed to on post request: $status")
@@ -74,25 +79,6 @@ class FeedbackController @Inject()(val authActions: AuthActions,
           case ex: Exception =>
             logger.error(s"Unexpected error code from feedback form: - ${ex.getMessage} - ${ex.getCause}")
             itvcErrorHandler.showInternalServerError()
-        }
-  }
-
-  def submitAgent: Action[AnyContent] = authActions.asAuthorisedUser.async {
-    implicit request =>
-      FeedbackForm.form.bindFromRequest().fold(
-        hasErrors => Future.successful(BadRequest(feedbackView(feedbackForm = hasErrors,
-          postAction = routes.FeedbackController.submitAgent()))),
-        formData =>
-          feedbackConnector.submit(formData).flatMap {
-            case Right(_) =>
-              Future.successful(Redirect(routes.FeedbackController.thankYouAgent()))
-            case Left(status) =>
-              logger.error(s"Agent - Unexpected status code from feedback form: $status")
-              throw new Error(s"Failed to on post request: $status")
-          }).recover {
-          case ex: Exception =>
-            logger.error(s"Agent - Unexpected error code from feedback form: ${ex.getMessage} - ${ex.getCause}")
-            agentItvcErrorHandler.showInternalServerError()
         }
   }
 

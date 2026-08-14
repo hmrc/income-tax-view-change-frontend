@@ -32,6 +32,7 @@ import common.testConstants.IncomeSourceDetailsTestConstants.singleBusinessIncom
 import common.helpers.GetInsourceDetailsStub
 import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import common.models.incomeSourceDetails.IncomeSourceDetailsModel
+import common.testConstants.MicroserviceSpecificConstants
 
 class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper {
 
@@ -42,12 +43,12 @@ class CheckActiveBusinessesConfirmControllerISpec extends ControllerISpecHelper 
 
   def getCompletePath(mtdRole: MTDUserRole): String = {
     val prefix = if (mtdRole == MTDIndividual) "" else "/agents"
-    s"${appConfig.basePath}$prefix/check-your-active-businesses/complete"
+    s"${MicroserviceSpecificConstants.basePath}$prefix/check-your-active-businesses/complete"
   }
 
   def getCheckHmrcRecordsPath(mtdRole: MTDUserRole): String = {
     val prefix = if (mtdRole == MTDIndividual) "" else "/agents"
-    s"${appConfig.basePath}$prefix/check-your-active-businesses/hmrc-record"
+    s"${MicroserviceSpecificConstants.basePath}$prefix/check-your-active-businesses/hmrc-record"
   }
 
   object CheckActiveBusinessesConfirmMessages {

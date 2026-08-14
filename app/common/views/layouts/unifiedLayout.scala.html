@@ -15,7 +15,6 @@
  *@
 
 @import common.viewUtils.ExternalUrlHelper
-@import common.viewUtils.InternalUrlHelper
 @import common.views.helpers.CurrentLanguage
 @import common.views.helpers.HtmlTitle
 @import uk.gov.hmrc.govukfrontend.views.html.components._
@@ -94,7 +93,7 @@
     hmrcHeader(HeaderParams(
         headerUrls = HeaderUrls(
             homepageUrl = ExternalUrlHelper.homepageLink,
-            signOutHref = Some(InternalUrlHelper.signoutUrl)
+            signOutHref = Some(appConfig.signoutUrl)
         ),
         banners = Banners(
             userResearchBanner = Some(UserResearchBanner(url = appConfig.enterSurveyUrl)),
@@ -123,8 +122,8 @@
         language = Some(CurrentLanguage().code),
         timeout = Option(900),
         countdown = Option(120),
-        keepAliveUrl = Some(InternalUrlHelper.keepAliveUrl),
-        signOutUrl = Some(InternalUrlHelper.signoutUrl),
+        keepAliveUrl = Some(appConfig.keepAliveUrl),
+        signOutUrl = Some(appConfig.signoutUrl),
         keepAliveButtonText = Some(messages("button.continue"))
         ))
     }

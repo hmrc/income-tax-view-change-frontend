@@ -33,6 +33,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.crypto.DefaultCookieSigner
 import play.api.{Application, Environment, Mode}
 import common.testConstants.BaseIntegrationTestConstants.testSessionId
+import common.testConstants.MicroserviceSpecificConstants
 import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 import uk.gov.hmrc.play.language.LanguageUtils
 
@@ -116,6 +117,7 @@ trait ControllerISpecBase
     "feature-switches.read-from-mongo" -> "true",
     "feature-switch.enable-time-machine" -> "false",
     "time-machine.add-years" -> "0",
-    "time-machine.add-days" -> "0"
+    "time-machine.add-days" -> "0",
+    "base.context-root" -> MicroserviceSpecificConstants.basePath
   )
 }

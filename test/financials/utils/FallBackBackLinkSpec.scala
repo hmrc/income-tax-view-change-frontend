@@ -48,11 +48,11 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return homepage link when no tax year available" in {
         val url = getPaymentAllocationBackUrl(isAgent = false, Some(TaxYearSummaryPage), None, None)
-        url should include("/report-quarterly/income-and-expenses/view")
+        url should include(appConfig.individualHomeUrl)
       }
       "return Agent homepage link when no tax year available" in {
         val url = getPaymentAllocationBackUrl(isAgent = true, Some(TaxYearSummaryPage), None, None)
-        url should include("/report-quarterly/income-and-expenses/view/agents")
+        url should include(appConfig.agentHomeUrl)
       }
 
       "return What You Owe link" in {
@@ -66,20 +66,20 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return homepage link if NoMatchPage" in {
         val url = getPaymentAllocationBackUrl(isAgent = false, Some(NoMatch), None, None)
-        url should include("/report-quarterly/income-and-expenses/view")
+        url should include(appConfig.individualHomeUrl)
       }
       "return Agent homepage link if NoMatchPage" in {
         val url = getPaymentAllocationBackUrl(isAgent = true, Some(NoMatch), None, None)
-        url should include("/report-quarterly/income-and-expenses/view/agents")
+        url should include(appConfig.agentHomeUrl)
       }
 
       "return homepage link if no gateway page found" in {
         val url = getPaymentAllocationBackUrl(isAgent = false, None, None, None)
-        url should include("/report-quarterly/income-and-expenses/view")
+        url should include(appConfig.individualHomeUrl)
       }
       "return Agent homepage link if no gateway page found" in {
         val url = getPaymentAllocationBackUrl(isAgent = true, None, None, None)
-        url should include("/report-quarterly/income-and-expenses/view/agents")
+        url should include(appConfig.agentHomeUrl)
       }
     }
 
@@ -113,20 +113,20 @@ class FallBackBackLinkSpec extends TestSupport with FallBackBackLinks {
 
       "return homepage link if NoMatchPage" in {
         val url = getChargeSummaryBackUrl(isAgent = false, Some(NoMatch), testTaxYear, None)
-        url should include("/report-quarterly/income-and-expenses/view")
+        url should include(appConfig.individualHomeUrl)
       }
       "return Agent homepage link if NoMatchPage" in {
         val url = getChargeSummaryBackUrl(isAgent = true, Some(NoMatch), testTaxYear, None)
-        url should include("/report-quarterly/income-and-expenses/view/agents")
+        url should include(appConfig.agentHomeUrl)
       }
 
       "return homepage link if no page found" in {
         val url = getChargeSummaryBackUrl(isAgent = false, None, testTaxYear, None)
-        url should include("/report-quarterly/income-and-expenses/view")
+        url should include(appConfig.individualHomeUrl)
       }
       "return Agent homepage link if no page found" in {
         val url = getChargeSummaryBackUrl(isAgent = true, None, testTaxYear, None)
-        url should include("/report-quarterly/income-and-expenses/view/agents")
+        url should include(appConfig.agentHomeUrl)
       }
     }
   }

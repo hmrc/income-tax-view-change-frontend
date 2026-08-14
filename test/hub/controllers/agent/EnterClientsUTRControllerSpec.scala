@@ -16,12 +16,11 @@
 
 package hub.controllers.agent
 
+
 import hub.audit.models.EnterClientUTRAuditModel
-import common.controllers.agent.errors.routes as agentErrorRoutes
 import common.mocks.auth.MockAuthActions
 import common.mocks.services.{MockClientDetailsService, MockITSAStatusService}
 import common.utils.sessionUtils.SessionKeys
-import common.viewUtils.InternalUrlHelper
 import hub.forms.agent.ClientsUTRForm
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{times, verify}
@@ -55,7 +54,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         val result = testEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
+        redirectLocation(result) shouldBe Some(appConfig.signinUrl)
       }
     }
     "the user has timed out" should {
@@ -63,7 +62,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         val result = testEnterClientsUTRController.show()(fakeRequestWithTimeoutSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
+        redirectLocation(result) shouldBe Some(appConfig.timeoutUrl)
       }
     }
     "the user does not have an agent reference number" should {
@@ -73,7 +72,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         val result = testEnterClientsUTRController.show()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
+        redirectLocation(result) shouldBe Some(appConfig.agentErrorUrl)
       }
     }
 
@@ -98,14 +97,14 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
         val result = testEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(InternalUrlHelper.signinUrl)
+        redirectLocation(result) shouldBe Some(appConfig.signinUrl)
       }
       "the user has timed out" should {
         "redirect to the session timeout page" in {
           val result = testEnterClientsUTRController.submit()(fakeRequestWithTimeoutSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(InternalUrlHelper.timeoutUrl)
+          redirectLocation(result) shouldBe Some(appConfig.timeoutUrl)
         }
       }
       "the user does not have an agent reference number" should {
@@ -115,7 +114,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           val result = testEnterClientsUTRController.submit()(fakeRequestWithActiveSession)
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(agentErrorRoutes.AgentErrorController.show().url)
+          redirectLocation(result) shouldBe Some(appConfig.agentErrorUrl)
         }
       }
       "redirect to the confirm client details page" when {
@@ -132,7 +131,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           whenReady(testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(ClientsUTRForm.utr -> validUTR))) { result =>
             result.header.status shouldBe SEE_OTHER
             verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), Some(false)))
-            result.header.headers.get(LOCATION) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+            result.header.headers.get(LOCATION) shouldBe Some(appConfig.confirmClientUTRUrl)
             result.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
             result.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
             result.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
@@ -159,7 +158,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           whenReady(testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(ClientsUTRForm.utr -> validUTR))) { result =>
             result.header.status shouldBe SEE_OTHER
             verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), Some(true)))
-            result.header.headers.get(LOCATION) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+            result.header.headers.get(LOCATION) shouldBe Some(appConfig.confirmClientUTRUrl)
             result.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
             result.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
             result.session.get(SessionKeys.clientUTR) shouldBe Some(validUTR)
@@ -187,7 +186,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           whenReady(testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(ClientsUTRForm.utr -> utrWithSpaces))) { result =>
             result.header.status shouldBe SEE_OTHER
             verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), Some(false)))
-            result.header.headers.get(LOCATION) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+            result.header.headers.get(LOCATION) shouldBe Some(appConfig.confirmClientUTRUrl)
 
             result.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
             result.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -215,7 +214,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           whenReady(testEnterClientsUTRController.submit()(fakePostRequestWithActiveSession.withFormUrlEncodedBody(ClientsUTRForm.utr -> utrWithSpaces))) { result =>
             result.header.status shouldBe SEE_OTHER
             verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = true, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), Some(true)))
-            result.header.headers.get(LOCATION) shouldBe Some(routes.ConfirmClientUTRController.show().url)
+            result.header.headers.get(LOCATION) shouldBe Some(appConfig.confirmClientUTRUrl)
 
             result.session.get(SessionKeys.clientFirstName) shouldBe Some("John")
             result.session.get(SessionKeys.clientLastName) shouldBe Some("Doe")
@@ -258,7 +257,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.UTRErrorController.show().url)
+          redirectLocation(result) shouldBe Some(s"${appConfig.hubAgentBaseUrl}/cannot-view-client")
         }
 
         "a business details not found error is returned from the client lookup" in {
@@ -274,7 +273,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
           ))
 
           status(result) shouldBe SEE_OTHER
-          redirectLocation(result) shouldBe Some(hub.controllers.agent.routes.UTRErrorController.show().url)
+          redirectLocation(result) shouldBe Some(s"${appConfig.hubAgentBaseUrl}/cannot-view-client")
         }
 
         "client details exist but there is no agent/client relationship" in {
@@ -293,7 +292,7 @@ class EnterClientsUTRControllerSpec extends MockAuthActions
 
             result.header.status shouldBe SEE_OTHER
             verifyExtendedAudit(EnterClientUTRAuditModel(isSuccessful = false, nino = testNino, mtditid = testMtditid, arn = Some(testArn), saUtr = validUTR, credId = Some(testCredId), None))
-            result.header.headers.get(LOCATION) shouldBe Some(hub.controllers.agent.routes.UTRErrorController.show().url)
+            result.header.headers.get(LOCATION) shouldBe Some(s"${appConfig.hubAgentBaseUrl}/cannot-view-client")
           }
         }
       }

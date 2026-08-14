@@ -16,7 +16,7 @@
 
 package hub.controllers.agent
 
-import common.controllers.ControllerISpecHelper
+import hub.controllers.ControllerISpecHelper
 import common.enums.{MTDPrimaryAgent, MTDSupportingAgent}
 import common.helpers.servicemocks.AuditStub
 import common.helpers.servicemocks.SessionDataStub.{stubPostSessionDataResponseFailure, stubPostSessionDataResponseOkResponse}
@@ -102,7 +102,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(hub.controllers.routes.HomeController.showAgent().url)
+            redirectURI(appConfig.agentHomeUrl)
           )
           AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn,
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))
@@ -157,7 +157,7 @@ class ConfirmClientUTRControllerISpec extends ControllerISpecHelper {
 
           result should have(
             httpStatus(SEE_OTHER),
-            redirectURI(hub.controllers.routes.HomeController.showAgent().url)
+            redirectURI(appConfig.agentHomeUrl)
           )
           AuditStub.verifyAuditEvent(ConfirmClientDetailsAuditModel(clientName = "Issac Newton", nino = testNino, mtditid = testMtditid, arn = testArn,
             saUtr = testSaUtr, isSupportingAgent = isSupportingAgent, credId = Some(credId)))

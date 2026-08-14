@@ -165,9 +165,9 @@ class ConfirmedOptOutControllerSpec extends MockAuthActions with MockOptOutServi
             val result = action(fakeRequest)
 
             val redirectUrl = if (isAgent) {
-              "/report-quarterly/income-and-expenses/view/agents"
+              appConfig.agentHomeUrl
             } else {
-              "/report-quarterly/income-and-expenses/view"
+              appConfig.individualHomeUrl
             }
 
             status(result) shouldBe Status.SEE_OTHER

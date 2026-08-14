@@ -18,7 +18,7 @@ package hub.controllers.newHomePage
 
 import common.enums.TriggeredMigration.Channel.HmrcUnconfirmed
 import businessDetails.testConstants.NewCalcBreakdownItTestConstants.liabilityCalculationModelSuccessfulNotCrystallised
-import common.controllers.ControllerISpecHelper
+import hub.controllers.ControllerISpecHelper
 import common.enums.{MTDIndividual, MTDSupportingAgent, MTDUserRole}
 import common.helpers.{GetInsourceDetailsStub, WiremockHelper}
 import common.helpers.servicemocks.AuditStub.verifyAuditContainsDetail
