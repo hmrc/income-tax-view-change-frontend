@@ -87,7 +87,7 @@ class WhatYouOweController @Inject()(val authActions: AuthActions,
       )
   }
     
-  private def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (if (user.isAgent) {
+  def getMoneyInYourAccountUrl(implicit user: MtdItUser[_]): String = (if (user.isAgent) {
     routes.MoneyInYourAccountController.showAgent()
   } else {
     routes.MoneyInYourAccountController.show()

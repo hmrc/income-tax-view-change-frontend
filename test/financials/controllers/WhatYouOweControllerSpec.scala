@@ -462,27 +462,13 @@ class WhatYouOweControllerSpec extends MockAuthActions
 
   "getMoneyInYourAccountUrl" should {
     "return the correct url for an agent" in {
-      when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
-        .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
-
       val result = testController.getMoneyInYourAccountUrl(getAgentUser(fakeGetRequestBasedOnMTDUserType(MTDPrimaryAgent)))
-      result.futureValue shouldBe routes.MoneyInYourAccountController.showAgent().url
+      result shouldBe routes.MoneyInYourAccountController.showAgent().url
     }
 
     "return the correct url for an individual" in {
-      when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
-        .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(Some("2025"))))
-
       val result = testController.getMoneyInYourAccountUrl()
-      result.futureValue shouldBe routes.MoneyInYourAccountController.show().url
-    }
-
-    "return the correct url for an individual when no year of migration" in {
-      when(mockYearOfMigrationService.getYearOfMigration(any())(any(), any()))
-        .thenReturn(Future.successful(ITSAStatusYearOfMigrationModel(None)))
-
-      val result = testController.getMoneyInYourAccountUrl()
-      result.futureValue shouldBe routes.NotMigratedUserController.show().url
+      result shouldBe routes.MoneyInYourAccountController.show().url
     }
   }
 }
