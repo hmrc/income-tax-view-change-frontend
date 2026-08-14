@@ -16,8 +16,8 @@
 
 package financials.models.audit
 
-import financials.enums.ChargeClassificationType
 import financials.models.*
+import shared.enums.ChargeClassificationType
 
 trait PaymentSharedFunctions {
 
