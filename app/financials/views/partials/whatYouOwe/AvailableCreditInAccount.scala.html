@@ -38,7 +38,8 @@
         link(
             link = creditAndRefundsUrl,
             messageKey = "whatYouOwe.moneyOnAccount-link",
-            rel = Some("noreferrer noopener")
+            rel = Some("noreferrer noopener"),
+            id = Some("money-in-your-account-content-link")
         ).toString().trim +
         messages("whatYouOwe.moneyOnAccount-2", availableCredit)
     ))
