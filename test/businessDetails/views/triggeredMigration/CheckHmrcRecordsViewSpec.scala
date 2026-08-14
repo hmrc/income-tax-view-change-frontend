@@ -45,7 +45,8 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
       hasActiveUkProperty = activeUkProperty,
       hasActiveForeignProperty = activeForeignProperty,
       triggeredMigrationState = triggeredMigrationState,
-      numberOfCeasedBusinesses = numOfCeasedBusinesses
+      numberOfCeasedBusinesses = numOfCeasedBusinesses,
+      yearOfMigrationEndYear = 2027
     )
     val pageDocument = Jsoup.parse(contentAsString(view(viewModel, isAgent = false)))
   }
@@ -53,7 +54,8 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
   object CheckHmrcRecordsMessages {
     val heading = "Check HMRC records only list your active businesses"
     val title = "Check HMRC records only list your active businesses - Manage your Self Assessment - GOV.UK"
-    val desc = "You may now have quarterly deadlines for your sole trader and/or property businesses listed here."
+    val desc = "You must check and confirm your income sources for the 2026 to 2027 tax year onwards, before you can continue. These income sources were created using information from your previous tax return."
+    val desc2 = "You may now have quarterly deadlines for your sole trader and/or property businesses listed here."
     val inset = "Making sure this page is correct will help avoid both missing deadlines for your active businesses and having deadlines for an income source you may have closed down or sold."
     val bulletStart = "So if necessary, you must:"
     val bullet1 = "add any active businesses that are missing"
@@ -281,7 +283,7 @@ class CheckHmrcRecordsViewSpec extends TestSupport{
     }
 
     "have the correct description - 2" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBusinesses, None) {
-      pageDocument.getElementById("check-hmrc-records-desc-2").text() shouldBe CheckHmrcRecordsMessages.desc
+      pageDocument.getElementById("check-hmrc-records-desc-2").text() shouldBe CheckHmrcRecordsMessages.desc2
     }
 
     "have the correct inset" in new Setup(activeSoleTrader = activeSoleTrader, activeUkProperty = activeUkProperty, activeForeignProperty = activeForeignProperty, noCeasedBusinesses, None) {

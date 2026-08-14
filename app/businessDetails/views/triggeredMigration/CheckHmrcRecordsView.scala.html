@@ -242,7 +242,7 @@
 
     @h1(messages("triggered-migration.check-hmrc-records.heading"), id = Some("check-hmrc-records-heading"))
 
-    @p(id = Some("check-hmrc-records-desc-1")){@messages("triggered-migration.check-hmrc-records.desc")}
+    @p(id = Some("check-hmrc-records-desc-1")){@messages("triggered-migration.check-hmrc-records.desc", (viewModel.yearOfMigrationEndYear - 1).toString, viewModel.yearOfMigrationEndYear.toString)}
 
     @p(id = Some("check-hmrc-records-desc-2")){@messages("triggered-migration.check-hmrc-records.desc2")}
 
