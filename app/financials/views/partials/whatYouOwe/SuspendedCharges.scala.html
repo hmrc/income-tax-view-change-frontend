@@ -34,6 +34,10 @@
 @import implicitDateFormatter.longDate
 
 <h2 class="govuk-heading-m" id="suspended-charges-in-order-due">@getMessage("suspended-charges")</h2>
+
+<p class="govuk-body">Tax is suspended because there is an appeal</p>
+<p class="govuk-body">You'll be charged interest paragraph</p>
+
 <table class="govuk-table" aria-labelledby="suspended-charges-in-order-due">
 
     <thead class="govuk-table__head">
@@ -44,7 +48,7 @@
             @Option.when(viewModel.whatYouOweChargesList.hasChargeWithAccruingInterest){
             <th scope="col" class="govuk-table__header @if(!viewModel.whatYouOweChargesList.hasInterestAccruingAndNotApplicableFields){govuk-!-text-align-right} else {govuk-!-text-align-left}">
             }
-            <th scope="col" class="govuk-table__header">@getMessage("tableHead.amount-due").toNonBreaking</th>
+            <th scope="col" class="govuk-table__header govuk-table__cell--numeric">@getMessage("tableHead.amount-due").toNonBreaking</th>
         </tr>
     </thead>
     <tbody class="govuk-table__body">
@@ -62,7 +66,9 @@
                         @getMessage("tableRow.na")
                     </td>
                 }
-                <td class="govuk-table__cell" id="due-charge-amount-due-@{index}">@charge.remainingToPayOnCharge.toCurrency</td>
+               <td class="govuk-table__cell govuk-table__cell--numeric" id="due-charge-amount-due-@{
+                   index
+               }">@charge.remainingToPayOnCharge.toCurrency</td>
            </tr>
             }
     </tbody>
