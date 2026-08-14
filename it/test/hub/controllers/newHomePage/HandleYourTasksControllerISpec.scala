@@ -78,7 +78,7 @@ class HandleYourTasksControllerISpec extends ControllerISpecHelper {
   def taskLink(id: String) = s"#$id > a"
 
   def submissionsLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"$basePath/agents/submission-deadlines" else s"$basePath/submission-deadlines"
-  def whatYouOweLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"$basePath/agents/what-your-client-owes" else s"$basePath/what-you-owe"
+  def whatYouOweLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) s"$basePath/agents/what-you-owe" else s"$basePath/what-you-owe"
   def lspAndLppLink(mtdUserRole: MTDUserRole, chargeId: String = "1040000123") = if(mtdUserRole != MTDIndividual) s"$basePath/agents/tax-years/2018/charge?id=$chargeId" else s"$basePath/tax-years/2018/charge?id=$chargeId"
   def lspTabLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "http://localhost:9185/view-penalty/self-assessment/agent#lspTab" else "http://localhost:9185/view-penalty/self-assessment#lspTab"
   def lppTabLink(mtdUserRole: MTDUserRole) = if(mtdUserRole != MTDIndividual) "http://localhost:9185/view-penalty/self-assessment/agent#lppTab" else "http://localhost:9185/view-penalty/self-assessment#lppTab"

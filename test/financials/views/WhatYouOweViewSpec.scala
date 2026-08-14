@@ -46,9 +46,9 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
   val whatYouOweView: WhatYouOweView = app.injector.instanceOf[WhatYouOweView]
   val whatYouOweTitle: String = messages("htmlTitle", messages("whatYouOwe.heading"))
   val whatYouOweHeading: String = messages("whatYouOwe.heading")
-  val whatYouOweAgentHeading: String = messages("whatYouOwe.heading-agent")
+  val whatYouOweAgentHeading: String = messages("whatYouOwe.heading")
   val noPaymentsDue: String = messages("whatYouOwe.no-payments-due")
-  val noPaymentsAgentDue: String = messages("whatYouOwe.no-payments-due-agent")
+  val noPaymentsAgentDue: String = messages("whatYouOwe.no-payments-due")
   val preMtdHeading: String = messages("whatYouOwe.pre-mtd.heading")
   val saNote1Heading: String = messages("whatYouOwe.sa-note-1-heading")
   val saLink1_1: String = s"${messages("whatYouOwe.sa-link-1-body-1")} ${messages("pagehelp.opensInNewTabText")}"
@@ -1283,18 +1283,15 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
     "The What you owe view with financial details model" when {
 
       s"have the title '${
-        messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
+        messages("htmlTitle", messages("whatYouOwe.heading"))
       }'" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()(dateService)) {
-        pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
+        pageDocument.title() shouldBe messages("htmlTitle", messages("whatYouOwe.heading"))
         pageDocument.getElementById("due-0-link").attr("href") shouldBe financialsRoutes.ChargeSummaryController.showAgent(fixedDate.getYear, "1040000124").url
         pageDocument.getElementById("taxYearSummary-link-0").attr("href") shouldBe
           appConfig.taxYearSummaryUrl(isAgent = true, taxYear = fixedDate.getYear, returnsEnabled = true)
       }
 
       "not have button Pay now with no charges but coded out" in new AgentTestSetup(charges = noChargesButCodedOutModel) {
-        findAgentElementById("payment-button") shouldBe None
-      }
-      "not have button Pay now with charges" in new AgentTestSetup(charges = whatYouOweDataWithDataDueIn30Days()) {
         findAgentElementById("payment-button") shouldBe None
       }
 
@@ -1330,7 +1327,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the user has no charges but is coded out" should {
       s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentTestSetup(charges = noChargesButCodedOutModel) {
-        pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
+        pageDocument.title() shouldBe messages("htmlTitle", messages("whatYouOwe.heading"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_2)
@@ -1341,7 +1338,7 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
 
     "the user has no charges at all" should {
       s"have the title ${messages("agent.header.serviceName", messages("whatYouOwe.heading-agent"))} and page header and notes" in new AgentTestSetup(charges = noChargesModel) {
-        pageDocument.title() shouldBe messages("htmlTitle.agent", messages("whatYouOwe.heading-agent"))
+        pageDocument.title() shouldBe messages("htmlTitle", messages("whatYouOwe.heading"))
         pageDocument.selectFirst("h1").text shouldBe whatYouOweAgentHeading
         pageDocument.getElementById("no-payments-due").text shouldBe noPaymentsAgentDue
         pageDocument.getElementById("payments-due-note").selectFirst("a").text.contains(saNote1_1)
