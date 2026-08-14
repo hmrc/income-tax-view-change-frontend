@@ -99,11 +99,11 @@ case object WhatYouOweResponse extends AuditType {
 }
 
 case object RefundToTaxPayerResponse extends AuditType {
-  override val name: String = "RefundToTaxpayerResponse"
+  override val name = "RefundToTaxpayerResponse"
 }
 
 case object CreditsSummaryResponse extends AuditType {
-  override val name: String = "CreditsSummaryResponse"
+  override val name = "CreditsSummaryResponse"
 }
 
 case object CeaseIncomeSource extends AuditType {
