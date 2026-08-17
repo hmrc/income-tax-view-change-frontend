@@ -19,6 +19,7 @@ package returns.controllers
 import common.auth.{AuthActions, MtdItUser}
 import common.config.{AgentItvcErrorHandler, FrontendAppConfig, ItvcErrorHandler, ShowInternalServerError}
 import common.config.featureswitch.FeatureSwitching
+import common.models.admin.FinancialsFrontend
 import common.models.liabilitycalculation.{LiabilityCalculationError, LiabilityCalculationResponse}
 import returns.forms.utils.SessionKeys.{calcPagesBackPage, summaryData}
 import play.api.Logging
@@ -53,7 +54,7 @@ class FinalTaxCalculationController @Inject()(authActions: AuthActions,
       case calculationResponse: LiabilityCalculationResponse =>
         lazy val backUrl: String = appConfig.submissionFrontendTaxOverviewUrl(taxYear)
         val calculationSummary: CalculationSummary = CalculationSummary(calculationResponse)
-        Ok(view(calculationSummary, taxYear, isAgent = isAgent, backUrl, serviceNavigationPartial = user.serviceNavigationPartial))
+        Ok(view(calculationSummary, taxYear, isAgent = isAgent, backUrl, serviceNavigationPartial = user.serviceNavigationPartial, financialsFrontendEnabled = isEnabled(FinancialsFrontend)))
           .addingToSession(calcPagesBackPage -> "submission")
       case calcErrorResponse: LiabilityCalculationError if calcErrorResponse.status == NO_CONTENT =>
         logger.info("No calculation data returned from downstream.")

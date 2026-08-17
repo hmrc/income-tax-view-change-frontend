@@ -126,7 +126,8 @@
                         showNoTaxCalc = showNoTaxCalc,
                         viewTaxCalcLink = viewTaxCalcLink,
                         selfAssessmentLink = selfAssessmentLink,
-                        contactHmrcLink = contactHmrcLink
+                        contactHmrcLink = contactHmrcLink,
+                        financialsFrontendEnabled = viewModel.financialsFrontendEnabled
                     )
                 )
             }
@@ -153,7 +154,8 @@
             showNoTaxCalc = showNoTaxCalc,
             viewTaxCalcLink = viewTaxCalcLink,
             selfAssessmentLink = selfAssessmentLink,
-            contactHmrcLink = contactHmrcLink
+            contactHmrcLink = contactHmrcLink,
+            financialsFrontendEnabled = viewModel.financialsFrontendEnabled
         ))
     } else {
         Some(taxCalculationContent(
@@ -166,7 +168,8 @@
             showNoTaxCalc = showNoTaxCalc,
             viewTaxCalcLink = viewTaxCalcLink,
             selfAssessmentLink = selfAssessmentLink,
-            contactHmrcLink = contactHmrcLink
+            contactHmrcLink = contactHmrcLink,
+            financialsFrontendEnabled = viewModel.financialsFrontendEnabled
         ))
     }
 }
