@@ -31,8 +31,10 @@ trait ExternalRedirectHelper {
 
   val servicesConfig: ServicesConfig
   val config: Configuration
+
+  val baseFullUrl: String
   
-  lazy val hubBaseUrl: String = servicesConfig.getString("base.fullUrl")
+  lazy val hubBaseUrl: String = baseFullUrl
   lazy val hubAgentBaseUrl: String = s"${hubBaseUrl}/agents"
   
   lazy val individualHomeUrl: String =

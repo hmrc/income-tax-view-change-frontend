@@ -32,6 +32,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   lazy val basePath: String = servicesConfig.getString("base.context-root")
   lazy val agentBasePath: String = s"$basePath/agents"
   lazy val baseUrl: String = servicesConfig.getString("base.url")
+  override val baseFullUrl: String = s"$baseUrl$basePath"
   lazy val appName: String = servicesConfig.getString("appName")
 
   //Feedback Config
@@ -70,7 +71,7 @@ class FrontendAppConfig @Inject()(val servicesConfig: ServicesConfig, val config
   def sa302Agent:String = s"$baseUrl$agentBasePath/mortgage-evidence/proof-of-income"
 
   //GG Sign In via BAS Gateway
-  lazy val signInUrl: String = servicesConfig.getString("base.sign-in")
+  lazy val signInUrl: String = s"$baseFullUrl/sign-in"
   lazy val ggSignInUrl: String = servicesConfig.getString("government-gateway.sign-in.url")
 
   //Exit Survey
