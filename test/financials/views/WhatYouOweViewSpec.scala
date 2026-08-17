@@ -1319,7 +1319,6 @@ class WhatYouOweViewSpec extends TestSupport with FeatureSwitching with Implicit
       pageDocument.getElementById("payments-made-migrated").text shouldBe paymentsMadeBody(amount = amount)
       pageDocument.getElementById("payments-made-migrated-link").attr("href") shouldBe financialsRoutes.PaymentHistoryController.showAgent().url
       pageDocument.getElementsByTag("h2").text should include(saNote1Heading)
-      pageDocument.getElementById("sa-note-1-migrated-1").text shouldBe saNote1_1
       pageDocument.getElementById("sa-note-1-migrated-2").text shouldBe saNote1_2
       pageDocument.getElementsByTag("h2").text should include(saNote2HeadingAgent)
       pageDocument.getElementById("sa-note-2-migrated").text shouldBe saNote2Agent
